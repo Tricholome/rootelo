@@ -1,27 +1,40 @@
 import os
 import requests
 import pandas as pd
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date, timezone
 
-# --- Configuration (Fetch secrets from GitHub Actions) ---
+# --- 1. Configuration (Fetch secrets from GitHub Actions) ---
 API_TOKEN = os.getenv('API_TOKEN')
 HEADERS = {'Authorization': f'Token {API_TOKEN}'} if API_TOKEN else {}
 TOURNAMENT_ID = 24
 
-# --- Dynamic Cutoff Date (Set to yesterday) ---
-yesterday = datetime.now() - timedelta(days=1)
-CUTOFF_DATE = yesterday.strftime('%Y-%m-%d')
+# --- 2. Dynamic Date Setup ---
+# 'today' represents 00:00:00 of the current day
+today = date.today()
+# 'CUTOFF_DATE' is yesterday, used for the website display
+CUTOFF_DATE = today - timedelta(days=1)
 
-print(f"Processing data until cutoff: {CUTOFF_DATE}")
+print(f"Update started. Filtering matches closed before: {today}")
 
-# --- 1. Load Correction File ---
+# --- 3. Load Correction File (Excel) ---
 excel_file_path = 'Root_Elo_LH01_Corrected_Dates.xlsx'
-df_updates = pd.read_excel(excel_file_path, engine='openpyxl')
 
-# Ensure the 'New_Date' column is in datetime format for proper merging
-df_updates['New_Date'] = pd.to_datetime(df_updates['New_Date'])
+# Initialize an empty mapping first to avoid NameError
+game_id_mapping = pd.Series(dtype='datetime64[ns]')
 
-# --- 2. Fetch Match Data from API ---
+try:
+    if os.path.exists(excel_file_path):
+        df_updates = pd.read_excel(excel_file_path, engine='openpyxl')
+        if not df_updates.empty and 'GameID' in df_updates.columns:
+            # Populate the mapping if the file is valid
+            game_id_mapping = df_updates.set_index('GameID')['New_Date']
+            print(f"Loaded {len(game_id_mapping)} manual corrections from Excel.")
+    else:
+        print(f"Note: {excel_file_path} not found. Skipping manual corrections.")
+except Exception as e:
+    print(f"Warning: Could not process Excel file: {e}. Proceeding without corrections.")
+
+# --- 4. Fetch Match Data from API ---
 all_matches = []
 # Initial URL for the tournament matches
 next_page_url = f"https://rootleague.pliskin.dev/api/match/?format=json&limit=500&tournament={TOURNAMENT_ID}"
@@ -38,10 +51,10 @@ while next_page_url:
         print(f"API Error occurred: {e}")
         break
 
-# --- 3. Data Processing & Date Alignment ---
+# --- 5. Data Processing & Date Alignment (with Cutoff) ---
 raw_data = []
 for match in all_matches:
-    participants = match['participants']
+    participants = match.get('participants', [])
     # We only process standard 4-player games
     if len(participants) == 4:
         for p in participants:
@@ -53,22 +66,26 @@ for match in all_matches:
             })
 
 df = pd.DataFrame(raw_data)
+
 # Convert API dates to datetime (ISO8601)
 df['Date_Closed'] = pd.to_datetime(df['Date_Closed'], format='ISO8601', utc=True)
 
 # Apply manual date corrections from the Excel file
-# We map the GameID to the New_Date column from df_updates
-game_id_mapping = df_updates.set_index('GameID')['New_Date']
+# (game_id_mapping is already defined in the configuration part)
 mask = df['GameID'].isin(game_id_mapping.index)
-
 if mask.any():
-    # Update the dates for the matching GameIDs
     df.loc[mask, 'Date_Closed'] = pd.to_datetime(df.loc[mask, 'GameID'].map(game_id_mapping), utc=True)
+
+# We only keep matches where the Date_Closed is strictly before today (00:00:00 UTC)
+# This ensures that games played today don't affect the leaderboard until tomorrow.
+df = df[df['Date_Closed'].dt.date < today].copy()
 
 # Sort the entire history by date to ensure ELO is calculated chronologically
 df = df.sort_values(by='Date_Closed').reset_index(drop=True)
 
-# --- 4. ELO Calculation Logic ---
+print(f"Final dataset: {len(df)//4} matches confirmed before {today}")
+
+# --- 6. ELO Calculation Logic ---
 # Initialize ratings at 1200 for all unique players found in the data
 elo_ratings = {player: 1200 for player in df['Player'].unique()}
 
@@ -115,7 +132,7 @@ for game_id, group in df.groupby('GameID', sort=False):
     for name, new_val in match_updates.items():
         elo_ratings[name] = new_val
 
-# --- 5. Final Leaderboard Preparation ---
+# --- 7. Final Leaderboard Preparation ---
 
 def get_tier_icon(rating, games):
     if games < 10: return ""
@@ -146,7 +163,7 @@ final_df = pd.DataFrame(leaderboard_results).sort_values(by='Rating', ascending=
 final_df['Rank'] = range(1, len(final_df) + 1)
 final_df = final_df[['Rank', 'Tier', 'Player', 'Rating', 'Games', 'Wins', 'Win Rate']]
 
-# --- 6. HTML Webpage Generation ---
+# --- 8. HTML Webpage Generation ---
 html_table = final_df.to_html(index=False, classes='leaderboard-table')
 html_content = f"""
 <!DOCTYPE html>
