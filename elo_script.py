@@ -141,27 +141,44 @@ def get_tier_icon(rating, games):
     if rating >= 1300: return "🐰"
     if rating >= 1200: return "🐭"
     return ""
-
+    
 leaderboard_results = []
 for player_name, final_rating in elo_ratings.items():
-    win_count = player_stats[player_name]['wins']
-    total_games = player_stats[player_name]['games']
+    wins = player_stats[player_name]['wins']
+    games = player_stats[player_name]['games']
     
-    # Qualification: 1+ win AND 10+ games
-    if win_count > 0 and total_games >= 10:
+    # NEW RULE: At least 1 win to appear at all
+    if wins > 0:
+        # Qualification check for Ranking
+        is_qualified = (games >= 10 and final_rating >= 1200)
+        
         leaderboard_results.append({
-            'Rank': 0,
-            'Tier': get_tier_icon(final_rating, total_games),
+            'Rank': 0, # Placeholder
+            'Tier': get_tier_icon(final_rating, games),
             'Player': player_name,
-            'Rating': round(final_rating),
-            'Games': total_games,
-            'Wins': round(win_count, 1),
-            'Win Rate': f"{(win_count / total_games):.0%}"
+            'ELO Score': round(final_rating),
+            'Games': games,
+            'Wins': round(wins, 1),
+            'Win Rate': f"{(wins / games):.0%}",
+            'Qualified': is_qualified # Helper for JS coloring
         })
 
-final_df = pd.DataFrame(leaderboard_results).sort_values(by='Rating', ascending=False)
-final_df['Rank'] = range(1, len(final_df) + 1)
-final_df = final_df[['Rank', 'Tier', 'Player', 'Rating', 'Games', 'Wins', 'Win Rate']]
+# Sort by ELO
+final_df = pd.DataFrame(leaderboard_results).sort_values(by='ELO Score', ascending=False)
+
+# Assign Rank only to qualified players
+current_rank = 1
+ranks = []
+for _, row in final_df.iterrows():
+    if row['Qualified']:
+        ranks.append(current_rank)
+        current_rank += 1
+    else:
+        ranks.append("-") # Unranked players get a dash
+
+final_df['Rank'] = ranks
+# We drop 'Qualified' before HTML conversion but keep it for logic if needed
+# Or keep it as a hidden column in HTML to help the Javascript
 
 # --- 8. HTML Webpage Generation with DataTables & Mobile Support ---
 html_table = final_df.to_html(index=False, classes='leaderboard-table display nowrap', table_id="leaderboard")
@@ -178,33 +195,45 @@ html_content = f"""
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
 
     <style>
-        body {{ font-family: 'Segoe UI', Helvetica, Arial, sans-serif; background-color: #121212; color: #eee; text-align: center; padding: 20px 5px; }}
-        .container {{ width: 95%; max-width: 1000px; margin: auto; background: #1e1e1e; padding: 20px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.6); }}
-        
-        h1 {{ color: #4a90e2; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px; font-size: 1.5em; }}
-        h3 {{ color: #777; font-weight: 400; font-size: 0.85em; margin-bottom: 20px; }}
+    body {{ font-family: 'Segoe UI', Helvetica, Arial, sans-serif; background-color: #121212; color: #eee; text-align: center; padding: 20px 5px; }}
+    .container {{ width: 95%; max-width: 1000px; margin: auto; background: #1e1e1e; padding: 20px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.6); }}
+    
+    h1 {{ color: #4a90e2; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px; font-size: 1.5em; }}
+    h3 {{ color: #777; font-weight: 400; font-size: 0.85em; margin-bottom: 20px; }}
 
-        /* Dark Mode DataTables */
-        .dataTables_wrapper .dataTables_length, .dataTables_wrapper .dataTables_filter, 
-        .dataTables_wrapper .dataTables_info, .dataTables_wrapper .dataTables_paginate {{ color: #aaa !important; font-size: 0.8em; }}
-        
-        input {{ background-color: #333 !important; color: white !important; border: 1px solid #444 !important; border-radius: 4px; padding: 4px; }}
-        
-        .leaderboard-table {{ width: 100% !important; border-collapse: collapse; margin-top: 15px; background: #1e1e1e; }}
-        .leaderboard-table th {{ background-color: #252525 !important; color: #4a90e2 !important; font-size: 0.75em; text-transform: uppercase; }}
-        .leaderboard-table td {{ border-bottom: 1px solid #2a2a2a; padding: 10px; font-size: 0.9em; text-align: center; }}
-        
-        /* Tier Icon Specifics */
-        .leaderboard-table td:nth-child(2) {{ font-size: 1.3em; width: 40px; }}
-        
-        /* Mobile specific adjustments */
-        @media (max-width: 600px) {{
-            h1 {{ font-size: 1.2em; }}
-            .container {{ padding: 10px; }}
-        }}
+    /* Dark Mode DataTables */
+    .dataTables_wrapper .dataTables_length, .dataTables_wrapper .dataTables_filter, 
+    .dataTables_wrapper .dataTables_info, .dataTables_wrapper .dataTables_paginate {{ color: #aaa !important; font-size: 0.8em; }}
+    
+    input {{ background-color: #333 !important; color: white !important; border: 1px solid #444 !important; border-radius: 4px; padding: 4px; }}
+    
+    .leaderboard-table {{ width: 100% !important; border-collapse: collapse; margin-top: 15px; background: #1e1e1e; }}
+    .leaderboard-table th {{ background-color: #252525 !important; color: #4a90e2 !important; font-size: 0.75em; text-transform: uppercase; padding: 12px; }}
+    .leaderboard-table td {{ border-bottom: 1px solid #2a2a2a; padding: 10px; font-size: 0.9em; text-align: center; }}
+    
+    /* Tier Icon Specifics */
+    .leaderboard-table td:nth-child(2) {{ font-size: 1.3em; width: 40px; }}
 
-        .footer {{ margin-top: 30px; font-size: 0.7em; color: #555; line-height: 1.5; border-top: 1px solid #333; padding-top: 15px; }}
-    </style>
+    /* Subtle background and left border for qualified players */
+    .tier-eagle {{ background-color: rgba(255, 215, 0, 0.05) !important; border-left: 4px solid #ffd700 !important; }}
+    .tier-fox   {{ background-color: rgba(255, 102, 0, 0.05) !important; border-left: 4px solid #ff6600 !important; }}
+    .tier-bunny {{ background-color: rgba(205, 127, 50, 0.05) !important; border-left: 4px solid #cd7f32 !important; }}
+    .tier-mouse {{ background-color: rgba(74, 144, 226, 0.05) !important; border-left: 4px solid #4a90e2 !important; }}
+    
+    /* Style for players with wins but not yet qualified (Unranked) */
+    .unranked {{ opacity: 0.6; }}
+    .unranked td:first-child {{ color: #555; font-style: italic; }}
+    
+    /* Mobile specific adjustments */
+    @media (max-width: 600px) {{
+        h1 {{ font-size: 1.2em; }}
+        .container {{ padding: 10px; }}
+        /* Make borders slightly thinner on mobile */
+        .tier-eagle, .tier-fox, .tier-bunny, .tier-mouse {{ border-left-width: 3px !important; }}
+    }}
+
+    .footer {{ margin-top: 30px; font-size: 0.7em; color: #555; line-height: 1.5; border-top: 1px solid #333; padding-top: 15px; }}
+</style>
 </head>
 <body>
     <div class="container">
@@ -227,24 +256,41 @@ html_content = f"""
    <script>
         $(document).ready(function() {{
             $('#leaderboard').DataTable({{
-                "order": [[0, "asc"]],
+                "order": [[3, "desc"]], // Default sort by ELO Score
                 "responsive": true,
-                "pageLength": 25,
+                "pageLength": 50,
+                "createdRow": function(row, data, dataIndex) {{
+                    // data[0] = Rank, data[3] = ELO Score
+                    var rank = data[0];         
+                    var elo = parseInt(data[3]); 
+                    
+                    if (rank === "-") {{
+                        $(row).addClass('unranked');
+                    }} else {{
+                        // Apply tier colors based on ELO thresholds
+                        if (elo >= 1500) $(row).addClass('tier-eagle');
+                        else if (elo >= 1400) $(row).addClass('tier-fox');
+                        else if (elo >= 1300) $(row).addClass('tier-bunny');
+                        else if (elo >= 1200) $(row).addClass('tier-mouse');
+                    }}
+                }},
                 "columnDefs": [
-                    /* Priority 1-4: These columns will stay visible as long as possible */
+                    // HIGH PRIORITY (Always visible)
                     {{ "responsivePriority": 1, "targets": 0 }}, // Rank
                     {{ "responsivePriority": 2, "targets": 2 }}, // Player
-                    {{ "responsivePriority": 3, "targets": 3 }}, // Rating (ELO)
-                    {{ "responsivePriority": 4, "targets": 1 }}, // Tier (Icon)
+                    {{ "responsivePriority": 3, "targets": 3 }}, // ELO Score
                     
-                    /* Force Rank, Tier, Player, and Rating to ALWAYS show on mobile */
-                    {{ "className": "all", "targets": [0, 1, 2, 3] }},
+                    // LOW PRIORITY (Hidden on small screens)
+                    {{ "responsivePriority": 10, "targets": 1 }}, // Tier Icon (Hidden first)
+                    {{ "responsivePriority": 11, "targets": 4 }}, // Games
+                    {{ "responsivePriority": 12, "targets": 5 }}, // Wins
+                    {{ "responsivePriority": 13, "targets": 6 }}, // Win Rate
                     
-                    /* Lower priority: These will hide first (Games, Wins, Win Rate) */
-                    {{ "responsivePriority": 10, "targets": [4, 5, 6] }}
+                    // Force the Rank, Player, and ELO to never hide
+                    {{ "className": "all", "targets": [0, 2, 3] }}
                 ],
                 "language": {{
-                    "search": "Search:",
+                    "search": "Search Player:",
                     "lengthMenu": "_MENU_ per page"
                 }}
             }});
