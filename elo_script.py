@@ -170,7 +170,7 @@ table_rows = ""
 for _, row in final_df.iterrows():
     icon_path, suit_class = get_tier_icon(row['ELO'], row['Games'])
     icon_tag = f'<div class="tier-icon-container"><img src="{icon_path}"></div>' if icon_path else ""
-    
+    display_name = str(row['Player']).split('+')[0].split('#')[0]
     table_rows += f"""
     <tr>
         <td>{row['Rank']}</td>
@@ -249,10 +249,10 @@ html_content = f"""
         {html_table}
         <div class="footer">
             <strong>Tier System</strong> (min 10 games):<br>
-            <span class="footer-tier-item"><img src="assets/icons/bird.png"> 1500</span>
-            <span class="footer-tier-item"><img src="assets/icons/fox.png"> 1400</span>
-            <span class="footer-tier-item"><img src="assets/icons/rabbit.png"> 1300</span>
-            <span class="footer-tier-item"><img src="assets/icons/mouse.png"> 1200</span>
+            <span class="footer-tier-item"><img src="assets/icons/bird.png"> 1500+</span>
+            <span class="footer-tier-item"><img src="assets/icons/fox.png"> 1400+</span>
+            <span class="footer-tier-item"><img src="assets/icons/rabbit.png"> 1300+</span>
+            <span class="footer-tier-item"><img src="assets/icons/mouse.png"> 1200+</span>
             <br>
             Generated on {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M')} UTC
         </div>
