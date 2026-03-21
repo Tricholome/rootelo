@@ -167,27 +167,21 @@ final_df = final_df[['Rank', 'Tier', 'Player', 'ELO', 'Games', 'Wins', 'Win Rate
 # --- 8. HTML Webpage Generation ---
 table_rows = ""
 for _, row in final_df.iterrows():
-    # Get the icon path based on the Elo score
-    # Note: We use the numeric Elo here to pick the right icon
-    icon_path, suit_class = get_tier_icon(row['ELO_Score'], row['Games'])
-    
-    # Create the image tag
+    icon_path, suit_class = get_tier_icon(row['ELO'], row['Games'])
     icon_tag = f'<img src="{icon_path}" style="width:20px;height:24px;vertical-align:middle;">' if icon_path else ""
-    
-    # Build the row using your exact column order
     table_rows += f"""
     <tr>
         <td>{row['Rank']}</td>
         <td>{icon_tag}</td>
         <td>{row['Player']}</td>
-        <td>{row['ELO_Score']}</td>
+        <td>{row['ELO']}</td>
         <td>{row['Games']}</td>
         <td>{row['Wins']}</td>
-        <td>{row['Win_Rate']}</td>
-        <td>{row['Peak_ELO']}</td>
-        <td>{row['+/-']}</td>
+        <td>{row['Win Rate']}</td>
+        <td>{row['Peak']}</td>
+        <td>{row['Last']}</td>
     </tr>"""
-
+    
 html_content = f"""
 <!DOCTYPE html>
 <html lang="en">
