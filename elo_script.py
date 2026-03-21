@@ -224,17 +224,24 @@ html_content = f"""
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
 
-    <script>
+   <script>
         $(document).ready(function() {{
             $('#leaderboard').DataTable({{
                 "order": [[0, "asc"]],
                 "responsive": true,
                 "pageLength": 25,
                 "columnDefs": [
+                    /* Priority 1-4: These columns will stay visible as long as possible */
                     {{ "responsivePriority": 1, "targets": 0 }}, // Rank
                     {{ "responsivePriority": 2, "targets": 2 }}, // Player
-                    {{ "responsivePriority": 3, "targets": 3 }}, // Rating
-                    {{ "responsivePriority": 4, "targets": 1 }}  // Tier
+                    {{ "responsivePriority": 3, "targets": 3 }}, // Rating (ELO)
+                    {{ "responsivePriority": 4, "targets": 1 }}, // Tier (Icon)
+                    
+                    /* Force Rank, Tier, Player, and Rating to ALWAYS show on mobile */
+                    {{ "className": "all", "targets": [0, 1, 2, 3] }},
+                    
+                    /* Lower priority: These will hide first (Games, Wins, Win Rate) */
+                    {{ "responsivePriority": 10, "targets": [4, 5, 6] }}
                 ],
                 "language": {{
                     "search": "Search:",
