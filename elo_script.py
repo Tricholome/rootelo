@@ -169,7 +169,7 @@ final_df = final_df[['Rank', 'Tier', 'Player', 'ELO', 'Games', 'Wins', 'Win Rate
 table_rows = ""
 for _, row in final_df.iterrows():
     icon_path, suit_class = get_tier_icon(row['ELO'], row['Games'])
-    icon_tag = f'<img src="{icon_path}" style="width:24px;height:auto;vertical-align:middle;">' if icon_path else ""
+    icon_tag = f'<img src="{icon_path}" style="width:auto;height:24px;vertical-align:middle;">' if icon_path else ""
     
     table_rows += f"""
     <tr>
