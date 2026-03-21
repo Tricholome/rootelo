@@ -261,42 +261,29 @@ html_content = f"""
    <script>
         $(document).ready(function() {{
             $('#leaderboard').DataTable({{
-                "order": [[3, "desc"]], // Default sort by ELO Score
+                "order": [[0, "asc"]], 
                 "responsive": true,
                 "pageLength": 50,
+                "columnDefs": [
+                    // This is the magic line:
+                    {{ "type": "num", "targets": 0 }}, 
+                    
+                    {{ "responsivePriority": 1, "targets": [0, 2, 3] }},
+                    {{ "responsivePriority": 10, "targets": 1 }},
+                    {{ "className": "all", "targets": [0, 2, 3] }}
+                ],
                 "createdRow": function(row, data, dataIndex) {{
-                    // data[0] = Rank, data[3] = ELO Score
                     var rank = data[0];         
                     var elo = parseInt(data[3]); 
                     
                     if (rank === "-") {{
                         $(row).addClass('unranked');
                     }} else {{
-                        // Apply tier colors based on ELO thresholds
                         if (elo >= 1500) $(row).addClass('tier-eagle');
                         else if (elo >= 1400) $(row).addClass('tier-fox');
                         else if (elo >= 1300) $(row).addClass('tier-bunny');
                         else if (elo >= 1200) $(row).addClass('tier-mouse');
                     }}
-                }},
-                "columnDefs": [
-                    // HIGH PRIORITY (Always visible)
-                    {{ "responsivePriority": 1, "targets": 0 }}, // Rank
-                    {{ "responsivePriority": 2, "targets": 2 }}, // Player
-                    {{ "responsivePriority": 3, "targets": 3 }}, // ELO Score
-                    
-                    // LOW PRIORITY (Hidden on small screens)
-                    {{ "responsivePriority": 10, "targets": 1 }}, // Tier Icon (Hidden first)
-                    {{ "responsivePriority": 11, "targets": 4 }}, // Games
-                    {{ "responsivePriority": 12, "targets": 5 }}, // Wins
-                    {{ "responsivePriority": 13, "targets": 6 }}, // Win Rate
-                    
-                    // Force the Rank, Player, and ELO to never hide
-                    {{ "className": "all", "targets": [0, 2, 3] }}
-                ],
-                "language": {{
-                    "search": "Search Player:",
-                    "lengthMenu": "_MENU_ per page"
                 }}
             }});
         }});
