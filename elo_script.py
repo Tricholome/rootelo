@@ -163,8 +163,8 @@ final_df = pd.DataFrame(leaderboard_results).sort_values(by='Rating', ascending=
 final_df['Rank'] = range(1, len(final_df) + 1)
 final_df = final_df[['Rank', 'Tier', 'Player', 'Rating', 'Games', 'Wins', 'Win Rate']]
 
-# --- 8. HTML Webpage Generation with DataTables ---
-html_table = final_df.to_html(index=False, classes='leaderboard-table display', table_id="leaderboard")
+# --- 8. HTML Webpage Generation with DataTables & Mobile Support ---
+html_table = final_df.to_html(index=False, classes='leaderboard-table display nowrap', table_id="leaderboard")
 
 html_content = f"""
 <!DOCTYPE html>
@@ -175,28 +175,35 @@ html_content = f"""
     <title>Root League Leaderboard</title>
     
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
 
     <style>
-        body {{ font-family: 'Segoe UI', Arial, sans-serif; background-color: #121212; color: #eee; text-align: center; padding: 40px 10px; }}
-        .container {{ max-width: 900px; margin: auto; background: #1e1e1e; padding: 25px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.6); }}
-        h1 {{ color: #4a90e2; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px; }}
-        h3 {{ color: #777; font-weight: 400; font-size: 0.9em; margin-bottom: 25px; }}
+        body {{ font-family: 'Segoe UI', Helvetica, Arial, sans-serif; background-color: #121212; color: #eee; text-align: center; padding: 20px 5px; }}
+        .container {{ width: 95%; max-width: 1000px; margin: auto; background: #1e1e1e; padding: 20px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.6); }}
+        
+        h1 {{ color: #4a90e2; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px; font-size: 1.5em; }}
+        h3 {{ color: #777; font-weight: 400; font-size: 0.85em; margin-bottom: 20px; }}
 
-        /* Customizing DataTables for Dark Mode */
+        /* Dark Mode DataTables */
         .dataTables_wrapper .dataTables_length, .dataTables_wrapper .dataTables_filter, 
-        .dataTables_wrapper .dataTables_info, .dataTables_wrapper .dataTables_processing, 
-        .dataTables_wrapper .dataTables_paginate {{ color: #aaa !important; margin-bottom: 10px; }}
+        .dataTables_wrapper .dataTables_info, .dataTables_wrapper .dataTables_paginate {{ color: #aaa !important; font-size: 0.8em; }}
         
-        input {{ background-color: #333 !important; color: white !important; border: 1px solid #444 !important; border-radius: 5px; padding: 5px; }}
+        input {{ background-color: #333 !important; color: white !important; border: 1px solid #444 !important; border-radius: 4px; padding: 4px; }}
         
-        .leaderboard-table {{ width: 100% !important; border-collapse: collapse; margin-top: 20px; }}
-        .leaderboard-table th {{ background-color: #252525 !important; color: #4a90e2 !important; cursor: pointer; }}
-        .leaderboard-table td {{ border-bottom: 1px solid #2a2a2a; padding: 12px; text-align: center; }}
+        .leaderboard-table {{ width: 100% !important; border-collapse: collapse; margin-top: 15px; background: #1e1e1e; }}
+        .leaderboard-table th {{ background-color: #252525 !important; color: #4a90e2 !important; font-size: 0.75em; text-transform: uppercase; }}
+        .leaderboard-table td {{ border-bottom: 1px solid #2a2a2a; padding: 10px; font-size: 0.9em; text-align: center; }}
         
-        .leaderboard-table td:nth-child(2) {{ font-size: 1.4em; }} /* Tier Icon size */
+        /* Tier Icon Specifics */
+        .leaderboard-table td:nth-child(2) {{ font-size: 1.3em; width: 40px; }}
         
-        .footer {{ margin-top: 30px; font-size: 0.75em; color: #555; line-height: 1.6; border-top: 1px solid #333; padding-top: 15px; }}
+        /* Mobile specific adjustments */
+        @media (max-width: 600px) {{
+            h1 {{ font-size: 1.2em; }}
+            .container {{ padding: 10px; }}
+        }}
+
+        .footer {{ margin-top: 30px; font-size: 0.7em; color: #555; line-height: 1.5; border-top: 1px solid #333; padding-top: 15px; }}
     </style>
 </head>
 <body>
@@ -209,22 +216,29 @@ html_content = f"""
         <div class="footer">
             <strong>Qualification:</strong> 10+ games & 1+ win.<br>
             <strong>Tiers:</strong> 1500+ 🦅 | 1400+ 🦊 | 1300+ 🐰 | 1200+ 🐭<br>
-            Generated on {datetime.now().strftime('%Y-%m-%d %H:%M')} UTC
+            Generated on {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M')} UTC
         </div>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
 
     <script>
         $(document).ready(function() {{
             $('#leaderboard').DataTable({{
-                "order": [[0, "asc"]], // Default sort by Rank
-                "pageLength": 25,      // Number of players shown per page
-                "lengthMenu": [10, 25, 50, 100],
+                "order": [[0, "asc"]],
                 "responsive": true,
+                "pageLength": 25,
+                "columnDefs": [
+                    {{ "responsivePriority": 1, "targets": 0 }}, // Rank
+                    {{ "responsivePriority": 2, "targets": 2 }}, // Player
+                    {{ "responsivePriority": 3, "targets": 3 }}, // Rating
+                    {{ "responsivePriority": 4, "targets": 1 }}  // Tier
+                ],
                 "language": {{
-                    "search": "Search Player:"
+                    "search": "Search:",
+                    "lengthMenu": "_MENU_ per page"
                 }}
             }});
         }});
@@ -232,9 +246,10 @@ html_content = f"""
 </body>
 </html>
 """
+
 # --- 9. Save to File ---
 with open("index.html", "w", encoding="utf-8") as f:
     f.write(html_content)
 
-print("index.html successfully generated!")
+print("index.html successfully generated with Responsive support!")
 
