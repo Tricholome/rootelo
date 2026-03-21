@@ -163,8 +163,9 @@ final_df = pd.DataFrame(leaderboard_results).sort_values(by='Rating', ascending=
 final_df['Rank'] = range(1, len(final_df) + 1)
 final_df = final_df[['Rank', 'Tier', 'Player', 'Rating', 'Games', 'Wins', 'Win Rate']]
 
-# --- 8. HTML Webpage Generation ---
-html_table = final_df.to_html(index=False, classes='leaderboard-table')
+# --- 8. HTML Webpage Generation with DataTables ---
+html_table = final_df.to_html(index=False, classes='leaderboard-table display', table_id="leaderboard")
+
 html_content = f"""
 <!DOCTYPE html>
 <html lang="en">
@@ -172,16 +173,29 @@ html_content = f"""
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Root League Leaderboard</title>
+    
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+
     <style>
-        body {{ font-family: 'Segoe UI', Helvetica, Arial, sans-serif; background-color: #121212; color: #eee; text-align: center; padding: 40px 10px; }}
-        .container {{ max-width: 850px; margin: auto; background: #1e1e1e; padding: 25px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.6); }}
+        body {{ font-family: 'Segoe UI', Arial, sans-serif; background-color: #121212; color: #eee; text-align: center; padding: 40px 10px; }}
+        .container {{ max-width: 900px; margin: auto; background: #1e1e1e; padding: 25px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.6); }}
         h1 {{ color: #4a90e2; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px; }}
         h3 {{ color: #777; font-weight: 400; font-size: 0.9em; margin-bottom: 25px; }}
-        .leaderboard-table {{ width: 100%; border-collapse: collapse; margin-bottom: 20px; }}
-        .leaderboard-table th {{ background-color: #252525; color: #4a90e2; padding: 12px; font-size: 0.8em; border-bottom: 2px solid #333; }}
-        .leaderboard-table td {{ padding: 12px; border-bottom: 1px solid #2a2a2a; }}
-        .leaderboard-table td:nth-child(2) {{ font-size: 1.4em; }}
-        tr:nth-child(1) td:first-child {{ color: #ffd700; font-weight: bold; font-size: 1.2em; }}
+
+        /* Customizing DataTables for Dark Mode */
+        .dataTables_wrapper .dataTables_length, .dataTables_wrapper .dataTables_filter, 
+        .dataTables_wrapper .dataTables_info, .dataTables_wrapper .dataTables_processing, 
+        .dataTables_wrapper .dataTables_paginate {{ color: #aaa !important; margin-bottom: 10px; }}
+        
+        input {{ background-color: #333 !important; color: white !important; border: 1px solid #444 !important; border-radius: 5px; padding: 5px; }}
+        
+        .leaderboard-table {{ width: 100% !important; border-collapse: collapse; margin-top: 20px; }}
+        .leaderboard-table th {{ background-color: #252525 !important; color: #4a90e2 !important; cursor: pointer; }}
+        .leaderboard-table td {{ border-bottom: 1px solid #2a2a2a; padding: 12px; text-align: center; }}
+        
+        .leaderboard-table td:nth-child(2) {{ font-size: 1.4em; }} /* Tier Icon size */
+        
         .footer {{ margin-top: 30px; font-size: 0.75em; color: #555; line-height: 1.6; border-top: 1px solid #333; padding-top: 15px; }}
     </style>
 </head>
@@ -189,16 +203,32 @@ html_content = f"""
     <div class="container">
         <h1>Root Digital League</h1>
         <h3>Official Rankings • Data until {CUTOFF_DATE}</h3>
+        
         {html_table}
+        
         <div class="footer">
-            <strong>Qualification:</strong> Players must have 10+ games and 1+ win to be ranked.<br>
+            <strong>Qualification:</strong> 10+ games & 1+ win.<br>
             <strong>Tiers:</strong> 1500+ 🦅 | 1400+ 🦊 | 1300+ 🐰 | 1200+ 🐭<br>
             Generated on {datetime.now().strftime('%Y-%m-%d %H:%M')} UTC
         </div>
     </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+    <script>
+        $(document).ready(function() {{
+            $('#leaderboard').DataTable({{
+                "order": [[0, "asc"]], // Default sort by Rank
+                "pageLength": 25,      // Number of players shown per page
+                "lengthMenu": [10, 25, 50, 100],
+                "responsive": true,
+                "language": {{
+                    "search": "Search Player:"
+                }}
+            }});
+        }});
+    </script>
 </body>
 </html>
-"""
 
-with open("index.html", "w", encoding="utf-8") as f:
-    f.write(html_content)
