@@ -85,53 +85,38 @@ df = df.sort_values(by='Date_Closed').reset_index(drop=True)
 
 print(f"Final dataset: {len(df)//4} matches confirmed before {today}")
 
-# --- 6. ELO Calculation Logic ---
-# Initialize ratings at 1200 for all unique players found in the data
+# --- 6. ELO Calculation Logic (Updated) ---
 elo_ratings = {player: 1200 for player in df['Player'].unique()}
-
-# Track statistics for each player to determine their K-Factor
+peak_elo = {player: 1200 for player in df['Player'].unique()}
+last_diff = {player: 0 for player in df['Player'].unique()}
 player_stats = {player: {'games': 0, 'wins': 0.0} for player in df['Player'].unique()}
 
-# Group data by GameID and process matches one by one (chronologically)
 for game_id, group in df.groupby('GameID', sort=False):
     match_participants = group.to_dict('records')
+    if len(match_participants) != 4: continue
     
-    # Validation: Ensure we have exactly 4 participants for a standard game
-    if len(match_participants) != 4:
-        continue
-    
-    # Calculate the Total Q (sum of 10^(Rating/400)) for the table
     total_q = sum([10**(elo_ratings[p['Player']]/400) for p in match_participants])
-    
-    # Store temporary updates to apply them simultaneously after the match
-    match_updates = {}
     
     for p in match_participants:
         name = p['Player']
-        actual_score = p['Score']
+        actual = p['Score']
+        expected = (10**(elo_ratings[name]/400)) / total_q
         
-        # Calculate expected score (Probability of winning)
-        expected_score = (10**(elo_ratings[name]/400)) / total_q
-        
-        # Update player match count and win tally
+        # Calculate K-factor
         player_stats[name]['games'] += 1
-        player_stats[name]['wins'] += actual_score
-        
-        # Dynamic K-Factor based on experience
-        if player_stats[name]['games'] <= 10:
-            k_factor = 80
-        elif player_stats[name]['games'] <= 50:
-            k_factor = 40
-        else:
-            k_factor = 20
+        player_stats[name]['wins'] += actual
+        if player_stats[name]['games'] <= 10: k = 80
+        elif player_stats[name]['games'] <= 50: k = 40
+        else: k = 20
             
-        # Calculate new rating for this match
-        match_updates[name] = elo_ratings[name] + k_factor * (actual_score - expected_score)
-    
-    # Apply all rating updates after the match calculation is complete
-    for name, new_val in match_updates.items():
-        elo_ratings[name] = new_val
-
+        change = k * (actual - expected)
+        elo_ratings[name] += change
+        last_diff[name] = change # Keep track of the last delta
+        
+        # Update Peak ELO
+        if elo_ratings[name] > peak_elo[name]:
+            peak_elo[name] = elo_ratings[name]
+            
 # --- 7. Final Leaderboard Preparation ---
 
 def get_tier_icon(rating, games):
@@ -143,42 +128,49 @@ def get_tier_icon(rating, games):
     return ""
     
 leaderboard_results = []
-for player_name, final_rating in elo_ratings.items():
-    wins = player_stats[player_name]['wins']
-    games = player_stats[player_name]['games']
+for p_name, rating in elo_ratings.items():
+    w = player_stats[p_name]['wins']
+    g = player_stats[p_name]['games']
     
-    # NEW RULE: At least 1 win to appear at all
-    if wins > 0:
-        # Qualification check for Ranking
-        is_qualified = (games >= 10 and final_rating >= 1200)
+    if w >= 1:
+        is_qual = (g >= 10 and rating >= 1200)
         
+        # Formatting Wins: Remove .0, keep .5
+        formatted_wins = int(w) if w % 1 == 0 else round(w, 1)
+        
+        # Formatting Last Change: Add + or - sign
+        diff = round(last_diff[p_name])
+        str_diff = f"+{diff}" if diff > 0 else f"{diff}"
+        if diff == 0: str_diff = "0"
+
         leaderboard_results.append({
-            'Rank': 0, # Placeholder
-            'Tier': get_tier_icon(final_rating, games),
-            'Player': player_name,
-            'ELO Score': round(final_rating),
-            'Games': games,
-            'Wins': round(wins, 1),
-            'Win Rate': f"{(wins / games):.0%}",
-            'Qualified': is_qualified # Helper for JS coloring
+            'Rank': 0,
+            'Tier': get_tier_icon(rating, g),
+            'Player': p_name,
+            'ELO': round(rating),
+            'Peak': round(peak_elo[p_name]),
+            '+/-': str_diff,
+            'Games': g,
+            'Wins': formatted_wins,
+            'Win Rate': f"{(w/g):.1%}", # 1 decimal
+            'Qualified': is_qual
         })
 
-# Sort by ELO
-final_df = pd.DataFrame(leaderboard_results).sort_values(by='ELO Score', ascending=False)
-
-# Assign Rank only to qualified players
-current_rank = 1
-ranks = []
+# Sort by ELO and Assign Rank
+final_df = pd.DataFrame(leaderboard_results).sort_values(by='ELO', ascending=False)
+curr_rank = 1
+rank_list = []
 for _, row in final_df.iterrows():
     if row['Qualified']:
-        ranks.append(current_rank)
-        current_rank += 1
+        rank_list.append(curr_rank)
+        curr_rank += 1
     else:
-        ranks.append("-") # Unranked players get a dash
+        rank_list.append("-")
 
-final_df['Rank'] = ranks
-# We drop 'Qualified' before HTML conversion but keep it for logic if needed
-# Or keep it as a hidden column in HTML to help the Javascript
+final_df['Rank'] = rank_list
+
+# Drop 'Qualified' column so it doesn't show in HTML
+final_df = final_df.drop(columns=['Qualified'])
 
 # --- 8. HTML Webpage Generation with DataTables & Mobile Support ---
 html_table = final_df.to_html(index=False, classes='leaderboard-table display nowrap', table_id="leaderboard")
@@ -270,7 +262,7 @@ html_content = f"""
         }});
 
         $('#leaderboard').DataTable({{
-            "order": [[0, "asc"]],
+            "order": [[3, "asc"]],
             "responsive": true,
             "pageLength": 50,
             "columnDefs": [
