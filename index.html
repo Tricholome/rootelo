@@ -10,33 +10,45 @@
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
 
     <style>
-        body { font-family: 'Segoe UI', Helvetica, Arial, sans-serif; background-color: #121212; color: #eee; text-align: center; padding: 20px 5px; }
-        .container { width: 95%; max-width: 1000px; margin: auto; background: #1e1e1e; padding: 20px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.6); }
-        
-        h1 { color: #4a90e2; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px; font-size: 1.5em; }
-        h3 { color: #777; font-weight: 400; font-size: 0.85em; margin-bottom: 20px; }
+    body { font-family: 'Segoe UI', Helvetica, Arial, sans-serif; background-color: #121212; color: #eee; text-align: center; padding: 20px 5px; }
+    .container { width: 95%; max-width: 1000px; margin: auto; background: #1e1e1e; padding: 20px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.6); }
+    
+    h1 { color: #4a90e2; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px; font-size: 1.5em; }
+    h3 { color: #777; font-weight: 400; font-size: 0.85em; margin-bottom: 20px; }
 
-        /* Dark Mode DataTables */
-        .dataTables_wrapper .dataTables_length, .dataTables_wrapper .dataTables_filter, 
-        .dataTables_wrapper .dataTables_info, .dataTables_wrapper .dataTables_paginate { color: #aaa !important; font-size: 0.8em; }
-        
-        input { background-color: #333 !important; color: white !important; border: 1px solid #444 !important; border-radius: 4px; padding: 4px; }
-        
-        .leaderboard-table { width: 100% !important; border-collapse: collapse; margin-top: 15px; background: #1e1e1e; }
-        .leaderboard-table th { background-color: #252525 !important; color: #4a90e2 !important; font-size: 0.75em; text-transform: uppercase; }
-        .leaderboard-table td { border-bottom: 1px solid #2a2a2a; padding: 10px; font-size: 0.9em; text-align: center; }
-        
-        /* Tier Icon Specifics */
-        .leaderboard-table td:nth-child(2) { font-size: 1.3em; width: 40px; }
-        
-        /* Mobile specific adjustments */
-        @media (max-width: 600px) {
-            h1 { font-size: 1.2em; }
-            .container { padding: 10px; }
-        }
+    /* Dark Mode DataTables */
+    .dataTables_wrapper .dataTables_length, .dataTables_wrapper .dataTables_filter, 
+    .dataTables_wrapper .dataTables_info, .dataTables_wrapper .dataTables_paginate { color: #aaa !important; font-size: 0.8em; }
+    
+    input { background-color: #333 !important; color: white !important; border: 1px solid #444 !important; border-radius: 4px; padding: 4px; }
+    
+    .leaderboard-table { width: 100% !important; border-collapse: collapse; margin-top: 15px; background: #1e1e1e; }
+    .leaderboard-table th { background-color: #252525 !important; color: #4a90e2 !important; font-size: 0.75em; text-transform: uppercase; padding: 12px; }
+    .leaderboard-table td { border-bottom: 1px solid #2a2a2a; padding: 10px; font-size: 0.9em; text-align: center; }
+    
+    /* Tier Icon Specifics */
+    .leaderboard-table td:nth-child(2) { font-size: 1.3em; width: 40px; }
 
-        .footer { margin-top: 30px; font-size: 0.7em; color: #555; line-height: 1.5; border-top: 1px solid #333; padding-top: 15px; }
-    </style>
+    /* Subtle background and left border for qualified players */
+    .tier-eagle { background-color: rgba(255, 215, 0, 0.05) !important; border-left: 4px solid #ffd700 !important; }
+    .tier-fox   { background-color: rgba(255, 102, 0, 0.05) !important; border-left: 4px solid #ff6600 !important; }
+    .tier-bunny { background-color: rgba(205, 127, 50, 0.05) !important; border-left: 4px solid #cd7f32 !important; }
+    .tier-mouse { background-color: rgba(74, 144, 226, 0.05) !important; border-left: 4px solid #4a90e2 !important; }
+    
+    /* Style for players with wins but not yet qualified (Unranked) */
+    .unranked { opacity: 0.6; }
+    .unranked td:first-child { color: #555; font-style: italic; }
+    
+    /* Mobile specific adjustments */
+    @media (max-width: 600px) {
+        h1 { font-size: 1.2em; }
+        .container { padding: 10px; }
+        /* Make borders slightly thinner on mobile */
+        .tier-eagle, .tier-fox, .tier-bunny, .tier-mouse { border-left-width: 3px !important; }
+    }
+
+    .footer { margin-top: 30px; font-size: 0.7em; color: #555; line-height: 1.5; border-top: 1px solid #333; padding-top: 15px; }
+</style>
 </head>
 <body>
     <div class="container">
@@ -49,13 +61,24 @@
       <th>Rank</th>
       <th>Tier</th>
       <th>Player</th>
-      <th>Rating</th>
+      <th>ELO Score</th>
       <th>Games</th>
       <th>Wins</th>
       <th>Win Rate</th>
+      <th>Qualified</th>
     </tr>
   </thead>
   <tbody>
+    <tr>
+      <td>-</td>
+      <td></td>
+      <td>doejurko+3088</td>
+      <td>1555</td>
+      <td>8</td>
+      <td>8.0</td>
+      <td>100%</td>
+      <td>False</td>
+    </tr>
     <tr>
       <td>1</td>
       <td>🦊</td>
@@ -64,6 +87,7 @@
       <td>149</td>
       <td>86.0</td>
       <td>58%</td>
+      <td>True</td>
     </tr>
     <tr>
       <td>2</td>
@@ -73,6 +97,7 @@
       <td>20</td>
       <td>14.0</td>
       <td>70%</td>
+      <td>True</td>
     </tr>
     <tr>
       <td>3</td>
@@ -82,6 +107,7 @@
       <td>14</td>
       <td>10.0</td>
       <td>71%</td>
+      <td>True</td>
     </tr>
     <tr>
       <td>4</td>
@@ -91,24 +117,27 @@
       <td>32</td>
       <td>19.0</td>
       <td>59%</td>
+      <td>True</td>
     </tr>
     <tr>
       <td>5</td>
-      <td>🦊</td>
-      <td>Mouseman+7870</td>
-      <td>1437</td>
-      <td>14</td>
-      <td>8.0</td>
-      <td>57%</td>
-    </tr>
-    <tr>
-      <td>6</td>
       <td>🦊</td>
       <td>ShuShuBana+2889</td>
       <td>1437</td>
       <td>57</td>
       <td>30.0</td>
       <td>53%</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>🦊</td>
+      <td>Mouseman+7870</td>
+      <td>1437</td>
+      <td>14</td>
+      <td>8.0</td>
+      <td>57%</td>
+      <td>True</td>
     </tr>
     <tr>
       <td>7</td>
@@ -118,6 +147,7 @@
       <td>21</td>
       <td>12.0</td>
       <td>57%</td>
+      <td>True</td>
     </tr>
     <tr>
       <td>8</td>
@@ -127,6 +157,17 @@
       <td>14</td>
       <td>8.0</td>
       <td>57%</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <td>-</td>
+      <td></td>
+      <td>tofuwater+4853</td>
+      <td>1409</td>
+      <td>9</td>
+      <td>6.0</td>
+      <td>67%</td>
+      <td>False</td>
     </tr>
     <tr>
       <td>9</td>
@@ -136,6 +177,7 @@
       <td>17</td>
       <td>9.0</td>
       <td>53%</td>
+      <td>True</td>
     </tr>
     <tr>
       <td>10</td>
@@ -145,6 +187,7 @@
       <td>10</td>
       <td>7.0</td>
       <td>70%</td>
+      <td>True</td>
     </tr>
     <tr>
       <td>11</td>
@@ -154,6 +197,7 @@
       <td>42</td>
       <td>15.0</td>
       <td>36%</td>
+      <td>True</td>
     </tr>
     <tr>
       <td>12</td>
@@ -163,6 +207,7 @@
       <td>50</td>
       <td>17.0</td>
       <td>34%</td>
+      <td>True</td>
     </tr>
     <tr>
       <td>13</td>
@@ -172,6 +217,7 @@
       <td>70</td>
       <td>29.0</td>
       <td>41%</td>
+      <td>True</td>
     </tr>
     <tr>
       <td>14</td>
@@ -181,6 +227,7 @@
       <td>49</td>
       <td>19.0</td>
       <td>39%</td>
+      <td>True</td>
     </tr>
     <tr>
       <td>15</td>
@@ -190,6 +237,17 @@
       <td>78</td>
       <td>27.5</td>
       <td>35%</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <td>-</td>
+      <td></td>
+      <td>tippop+7531</td>
+      <td>1360</td>
+      <td>8</td>
+      <td>4.0</td>
+      <td>50%</td>
+      <td>False</td>
     </tr>
     <tr>
       <td>16</td>
@@ -199,6 +257,7 @@
       <td>22</td>
       <td>10.0</td>
       <td>45%</td>
+      <td>True</td>
     </tr>
     <tr>
       <td>17</td>
@@ -208,6 +267,7 @@
       <td>15</td>
       <td>7.0</td>
       <td>47%</td>
+      <td>True</td>
     </tr>
     <tr>
       <td>18</td>
@@ -217,6 +277,7 @@
       <td>18</td>
       <td>7.0</td>
       <td>39%</td>
+      <td>True</td>
     </tr>
     <tr>
       <td>19</td>
@@ -226,24 +287,27 @@
       <td>20</td>
       <td>8.0</td>
       <td>40%</td>
+      <td>True</td>
     </tr>
     <tr>
       <td>20</td>
-      <td>🐰</td>
-      <td>ChippZamoose+906</td>
-      <td>1335</td>
-      <td>32</td>
-      <td>14.0</td>
-      <td>44%</td>
-    </tr>
-    <tr>
-      <td>21</td>
       <td>🐰</td>
       <td>BareGammon+82</td>
       <td>1335</td>
       <td>10</td>
       <td>5.0</td>
       <td>50%</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <td>21</td>
+      <td>🐰</td>
+      <td>ChippZamoose+906</td>
+      <td>1335</td>
+      <td>32</td>
+      <td>14.0</td>
+      <td>44%</td>
+      <td>True</td>
     </tr>
     <tr>
       <td>22</td>
@@ -253,6 +317,7 @@
       <td>26</td>
       <td>9.0</td>
       <td>35%</td>
+      <td>True</td>
     </tr>
     <tr>
       <td>23</td>
@@ -262,6 +327,7 @@
       <td>63</td>
       <td>24.5</td>
       <td>39%</td>
+      <td>True</td>
     </tr>
     <tr>
       <td>24</td>
@@ -271,6 +337,7 @@
       <td>15</td>
       <td>6.0</td>
       <td>40%</td>
+      <td>True</td>
     </tr>
     <tr>
       <td>25</td>
@@ -280,6 +347,17 @@
       <td>40</td>
       <td>14.5</td>
       <td>36%</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <td>-</td>
+      <td></td>
+      <td>Bitto+476</td>
+      <td>1321</td>
+      <td>6</td>
+      <td>3.0</td>
+      <td>50%</td>
+      <td>False</td>
     </tr>
     <tr>
       <td>26</td>
@@ -289,6 +367,17 @@
       <td>30</td>
       <td>11.0</td>
       <td>37%</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <td>-</td>
+      <td></td>
+      <td>PokerFace126+7192</td>
+      <td>1316</td>
+      <td>5</td>
+      <td>3.0</td>
+      <td>60%</td>
+      <td>False</td>
     </tr>
     <tr>
       <td>27</td>
@@ -298,6 +387,7 @@
       <td>10</td>
       <td>4.0</td>
       <td>40%</td>
+      <td>True</td>
     </tr>
     <tr>
       <td>28</td>
@@ -307,6 +397,27 @@
       <td>12</td>
       <td>4.0</td>
       <td>33%</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <td>-</td>
+      <td></td>
+      <td>time2orush+2871</td>
+      <td>1311</td>
+      <td>7</td>
+      <td>4.0</td>
+      <td>57%</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>-</td>
+      <td></td>
+      <td>gord20+7161</td>
+      <td>1305</td>
+      <td>2</td>
+      <td>2.0</td>
+      <td>100%</td>
+      <td>False</td>
     </tr>
     <tr>
       <td>29</td>
@@ -316,6 +427,17 @@
       <td>13</td>
       <td>5.0</td>
       <td>38%</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <td>-</td>
+      <td></td>
+      <td>complexartichoke+1699</td>
+      <td>1305</td>
+      <td>3</td>
+      <td>2.0</td>
+      <td>67%</td>
+      <td>False</td>
     </tr>
     <tr>
       <td>30</td>
@@ -325,6 +447,17 @@
       <td>10</td>
       <td>5.0</td>
       <td>50%</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <td>-</td>
+      <td></td>
+      <td>vinnie+746</td>
+      <td>1300</td>
+      <td>3</td>
+      <td>2.0</td>
+      <td>67%</td>
+      <td>False</td>
     </tr>
     <tr>
       <td>31</td>
@@ -334,6 +467,27 @@
       <td>12</td>
       <td>5.0</td>
       <td>42%</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <td>-</td>
+      <td></td>
+      <td>Aleph+9548</td>
+      <td>1298</td>
+      <td>3</td>
+      <td>2.0</td>
+      <td>67%</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>-</td>
+      <td></td>
+      <td>Blurr+1887</td>
+      <td>1296</td>
+      <td>3</td>
+      <td>2.0</td>
+      <td>67%</td>
+      <td>False</td>
     </tr>
     <tr>
       <td>32</td>
@@ -343,6 +497,27 @@
       <td>21</td>
       <td>7.0</td>
       <td>33%</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <td>-</td>
+      <td></td>
+      <td>dindane+250</td>
+      <td>1287</td>
+      <td>5</td>
+      <td>2.0</td>
+      <td>40%</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>-</td>
+      <td></td>
+      <td>mishaelh1+6045</td>
+      <td>1286</td>
+      <td>8</td>
+      <td>3.0</td>
+      <td>38%</td>
+      <td>False</td>
     </tr>
     <tr>
       <td>33</td>
@@ -352,6 +527,7 @@
       <td>50</td>
       <td>18.0</td>
       <td>36%</td>
+      <td>True</td>
     </tr>
     <tr>
       <td>34</td>
@@ -361,6 +537,37 @@
       <td>97</td>
       <td>28.5</td>
       <td>29%</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <td>-</td>
+      <td></td>
+      <td>AxlPrototype+5016</td>
+      <td>1279</td>
+      <td>8</td>
+      <td>3.0</td>
+      <td>38%</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>-</td>
+      <td></td>
+      <td>bootle+7207</td>
+      <td>1273</td>
+      <td>6</td>
+      <td>2.0</td>
+      <td>33%</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>-</td>
+      <td></td>
+      <td>Nudraxon+7640</td>
+      <td>1273</td>
+      <td>1</td>
+      <td>1.0</td>
+      <td>100%</td>
+      <td>False</td>
     </tr>
     <tr>
       <td>35</td>
@@ -370,6 +577,7 @@
       <td>14</td>
       <td>5.0</td>
       <td>36%</td>
+      <td>True</td>
     </tr>
     <tr>
       <td>36</td>
@@ -379,6 +587,7 @@
       <td>76</td>
       <td>21.5</td>
       <td>28%</td>
+      <td>True</td>
     </tr>
     <tr>
       <td>37</td>
@@ -388,6 +597,27 @@
       <td>38</td>
       <td>14.0</td>
       <td>37%</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <td>-</td>
+      <td></td>
+      <td>Intraceptor+5437</td>
+      <td>1264</td>
+      <td>5</td>
+      <td>2.0</td>
+      <td>40%</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>-</td>
+      <td></td>
+      <td>Bengal3+6710</td>
+      <td>1263</td>
+      <td>9</td>
+      <td>3.0</td>
+      <td>33%</td>
+      <td>False</td>
     </tr>
     <tr>
       <td>38</td>
@@ -397,6 +627,37 @@
       <td>25</td>
       <td>8.0</td>
       <td>32%</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <td>-</td>
+      <td></td>
+      <td>Oriol+2638</td>
+      <td>1262</td>
+      <td>1</td>
+      <td>1.0</td>
+      <td>100%</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>-</td>
+      <td></td>
+      <td>Cabbage0642+3776</td>
+      <td>1262</td>
+      <td>1</td>
+      <td>1.0</td>
+      <td>100%</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>-</td>
+      <td></td>
+      <td>lazarus210</td>
+      <td>1262</td>
+      <td>1</td>
+      <td>1.0</td>
+      <td>100%</td>
+      <td>False</td>
     </tr>
     <tr>
       <td>39</td>
@@ -406,6 +667,37 @@
       <td>15</td>
       <td>5.0</td>
       <td>33%</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <td>-</td>
+      <td></td>
+      <td>ShowStopperW+549</td>
+      <td>1258</td>
+      <td>1</td>
+      <td>1.0</td>
+      <td>100%</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>-</td>
+      <td></td>
+      <td>udon66+6395</td>
+      <td>1255</td>
+      <td>2</td>
+      <td>1.0</td>
+      <td>50%</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>-</td>
+      <td></td>
+      <td>Mindger+7576</td>
+      <td>1253</td>
+      <td>5</td>
+      <td>2.0</td>
+      <td>40%</td>
+      <td>False</td>
     </tr>
     <tr>
       <td>40</td>
@@ -415,6 +707,7 @@
       <td>16</td>
       <td>5.0</td>
       <td>31%</td>
+      <td>True</td>
     </tr>
     <tr>
       <td>41</td>
@@ -424,6 +717,7 @@
       <td>50</td>
       <td>14.0</td>
       <td>28%</td>
+      <td>True</td>
     </tr>
     <tr>
       <td>42</td>
@@ -433,6 +727,47 @@
       <td>84</td>
       <td>22.0</td>
       <td>26%</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <td>-</td>
+      <td></td>
+      <td>ermactually+9395</td>
+      <td>1244</td>
+      <td>2</td>
+      <td>1.0</td>
+      <td>50%</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>-</td>
+      <td></td>
+      <td>pwarren8590+4047</td>
+      <td>1241</td>
+      <td>9</td>
+      <td>3.0</td>
+      <td>33%</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>-</td>
+      <td></td>
+      <td>ToasterTrash+8502</td>
+      <td>1240</td>
+      <td>8</td>
+      <td>2.0</td>
+      <td>25%</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>-</td>
+      <td></td>
+      <td>KarmaBurn+1193</td>
+      <td>1239</td>
+      <td>2</td>
+      <td>1.0</td>
+      <td>50%</td>
+      <td>False</td>
     </tr>
     <tr>
       <td>43</td>
@@ -442,6 +777,7 @@
       <td>40</td>
       <td>9.0</td>
       <td>22%</td>
+      <td>True</td>
     </tr>
     <tr>
       <td>44</td>
@@ -451,6 +787,27 @@
       <td>83</td>
       <td>22.0</td>
       <td>27%</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <td>-</td>
+      <td></td>
+      <td>Mohammad+8142</td>
+      <td>1235</td>
+      <td>2</td>
+      <td>1.0</td>
+      <td>50%</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>-</td>
+      <td></td>
+      <td>Napalminthebirdsong+5528</td>
+      <td>1234</td>
+      <td>6</td>
+      <td>2.0</td>
+      <td>33%</td>
+      <td>False</td>
     </tr>
     <tr>
       <td>45</td>
@@ -460,6 +817,27 @@
       <td>12</td>
       <td>3.0</td>
       <td>25%</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <td>-</td>
+      <td></td>
+      <td>Nymmer+3243</td>
+      <td>1228</td>
+      <td>9</td>
+      <td>2.0</td>
+      <td>22%</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>-</td>
+      <td></td>
+      <td>Octavius+8289</td>
+      <td>1228</td>
+      <td>2</td>
+      <td>1.0</td>
+      <td>50%</td>
+      <td>False</td>
     </tr>
     <tr>
       <td>46</td>
@@ -469,6 +847,37 @@
       <td>15</td>
       <td>5.0</td>
       <td>33%</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <td>-</td>
+      <td></td>
+      <td>Karcher+6280</td>
+      <td>1225</td>
+      <td>3</td>
+      <td>1.0</td>
+      <td>33%</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>-</td>
+      <td></td>
+      <td>deejaythink+9834</td>
+      <td>1223</td>
+      <td>8</td>
+      <td>2.0</td>
+      <td>25%</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>-</td>
+      <td></td>
+      <td>hakoo</td>
+      <td>1221</td>
+      <td>3</td>
+      <td>1.0</td>
+      <td>33%</td>
+      <td>False</td>
     </tr>
     <tr>
       <td>47</td>
@@ -478,6 +887,37 @@
       <td>15</td>
       <td>4.0</td>
       <td>27%</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <td>-</td>
+      <td></td>
+      <td>TAKSpx+9156</td>
+      <td>1218</td>
+      <td>6</td>
+      <td>2.0</td>
+      <td>33%</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>-</td>
+      <td></td>
+      <td>BuliBaka+6658</td>
+      <td>1218</td>
+      <td>4</td>
+      <td>1.0</td>
+      <td>25%</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>-</td>
+      <td></td>
+      <td>Mcauthor+181</td>
+      <td>1218</td>
+      <td>4</td>
+      <td>1.0</td>
+      <td>25%</td>
+      <td>False</td>
     </tr>
     <tr>
       <td>48</td>
@@ -487,51 +927,97 @@
       <td>146</td>
       <td>33.0</td>
       <td>23%</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <td>-</td>
+      <td></td>
+      <td>Awesem+1966</td>
+      <td>1217</td>
+      <td>3</td>
+      <td>1.0</td>
+      <td>33%</td>
+      <td>False</td>
     </tr>
     <tr>
       <td>49</td>
-      <td>🐭</td>
-      <td>TheDolphinman+2630</td>
-      <td>1217</td>
-      <td>25</td>
-      <td>6.0</td>
-      <td>24%</td>
-    </tr>
-    <tr>
-      <td>50</td>
       <td>🐭</td>
       <td>ImJustExisting+9170</td>
       <td>1217</td>
       <td>16</td>
       <td>4.5</td>
       <td>28%</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <td>50</td>
+      <td>🐭</td>
+      <td>TheDolphinman+2630</td>
+      <td>1217</td>
+      <td>25</td>
+      <td>6.0</td>
+      <td>24%</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <td>-</td>
+      <td></td>
+      <td>Acecreamsundae+1472</td>
+      <td>1216</td>
+      <td>3</td>
+      <td>1.0</td>
+      <td>33%</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>-</td>
+      <td></td>
+      <td>GlisteningGeetus+4225</td>
+      <td>1216</td>
+      <td>5</td>
+      <td>2.0</td>
+      <td>40%</td>
+      <td>False</td>
     </tr>
     <tr>
       <td>51</td>
-      <td>🐭</td>
-      <td>DemaRogue+7727</td>
-      <td>1216</td>
-      <td>52</td>
-      <td>15.0</td>
-      <td>29%</td>
-    </tr>
-    <tr>
-      <td>52</td>
       <td>🐭</td>
       <td>Perdita+9449</td>
       <td>1216</td>
       <td>24</td>
       <td>7.0</td>
       <td>29%</td>
+      <td>True</td>
     </tr>
     <tr>
-      <td>53</td>
+      <td>52</td>
       <td>🐭</td>
       <td>uwtron+573</td>
       <td>1216</td>
       <td>19</td>
       <td>5.0</td>
       <td>26%</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <td>53</td>
+      <td>🐭</td>
+      <td>DemaRogue+7727</td>
+      <td>1216</td>
+      <td>52</td>
+      <td>15.0</td>
+      <td>29%</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <td>-</td>
+      <td></td>
+      <td>Sjepeal+9206</td>
+      <td>1215</td>
+      <td>4</td>
+      <td>1.0</td>
+      <td>25%</td>
+      <td>False</td>
     </tr>
     <tr>
       <td>54</td>
@@ -541,6 +1027,17 @@
       <td>33</td>
       <td>8.0</td>
       <td>24%</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <td>-</td>
+      <td></td>
+      <td>Bodnamax+6783</td>
+      <td>1209</td>
+      <td>4</td>
+      <td>1.0</td>
+      <td>25%</td>
+      <td>False</td>
     </tr>
     <tr>
       <td>55</td>
@@ -550,447 +1047,677 @@
       <td>11</td>
       <td>3.0</td>
       <td>27%</td>
+      <td>True</td>
     </tr>
     <tr>
-      <td>56</td>
+      <td>-</td>
+      <td></td>
+      <td>BadScra+3199</td>
+      <td>1205</td>
+      <td>9</td>
+      <td>3.0</td>
+      <td>33%</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>-</td>
+      <td></td>
+      <td>Sirius+9323</td>
+      <td>1205</td>
+      <td>7</td>
+      <td>2.0</td>
+      <td>29%</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>-</td>
+      <td></td>
+      <td>BjarkeHuse+2923</td>
+      <td>1204</td>
+      <td>6</td>
+      <td>2.0</td>
+      <td>33%</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>-</td>
       <td></td>
       <td>AERotters+5277</td>
       <td>1199</td>
       <td>74</td>
       <td>18.0</td>
       <td>24%</td>
+      <td>False</td>
     </tr>
     <tr>
-      <td>57</td>
+      <td>-</td>
       <td></td>
       <td>BMPerJMPer+9145</td>
       <td>1197</td>
       <td>31</td>
       <td>8.0</td>
       <td>26%</td>
+      <td>False</td>
     </tr>
     <tr>
-      <td>58</td>
+      <td>-</td>
       <td></td>
       <td>lumpyprol+3206</td>
       <td>1194</td>
       <td>41</td>
       <td>8.0</td>
       <td>20%</td>
+      <td>False</td>
     </tr>
     <tr>
-      <td>59</td>
+      <td>-</td>
+      <td></td>
+      <td>micherin+7972</td>
+      <td>1189</td>
+      <td>9</td>
+      <td>1.0</td>
+      <td>11%</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>-</td>
       <td></td>
       <td>Peppy+6321</td>
       <td>1189</td>
       <td>19</td>
       <td>4.0</td>
       <td>21%</td>
+      <td>False</td>
     </tr>
     <tr>
-      <td>60</td>
+      <td>-</td>
+      <td></td>
+      <td>FausDav+5901</td>
+      <td>1187</td>
+      <td>5</td>
+      <td>1.0</td>
+      <td>20%</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>-</td>
       <td></td>
       <td>LutherStr+1358</td>
       <td>1186</td>
       <td>40</td>
       <td>8.0</td>
       <td>20%</td>
+      <td>False</td>
     </tr>
     <tr>
-      <td>61</td>
+      <td>-</td>
       <td></td>
-      <td>mouseinabox+992</td>
-      <td>1183</td>
-      <td>71</td>
-      <td>14.0</td>
+      <td>Mati92+4633</td>
+      <td>1184</td>
+      <td>5</td>
+      <td>1.0</td>
       <td>20%</td>
+      <td>False</td>
     </tr>
     <tr>
-      <td>62</td>
+      <td>-</td>
       <td></td>
       <td>Youdge+8117</td>
       <td>1183</td>
       <td>11</td>
       <td>2.0</td>
       <td>18%</td>
+      <td>False</td>
     </tr>
     <tr>
-      <td>63</td>
+      <td>-</td>
+      <td></td>
+      <td>mouseinabox+992</td>
+      <td>1183</td>
+      <td>71</td>
+      <td>14.0</td>
+      <td>20%</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>-</td>
       <td></td>
       <td>DelSol+6479</td>
       <td>1178</td>
       <td>12</td>
       <td>2.0</td>
       <td>17%</td>
+      <td>False</td>
     </tr>
     <tr>
-      <td>64</td>
+      <td>-</td>
       <td></td>
       <td>Sebby+9924</td>
       <td>1177</td>
       <td>23</td>
       <td>6.0</td>
       <td>26%</td>
+      <td>False</td>
     </tr>
     <tr>
-      <td>65</td>
+      <td>-</td>
+      <td></td>
+      <td>alevGO+2990</td>
+      <td>1176</td>
+      <td>7</td>
+      <td>1.0</td>
+      <td>14%</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>-</td>
       <td></td>
       <td>Excitedteapot+2857</td>
       <td>1175</td>
       <td>11</td>
       <td>2.0</td>
       <td>18%</td>
+      <td>False</td>
     </tr>
     <tr>
-      <td>66</td>
+      <td>-</td>
+      <td></td>
+      <td>Jasiuńcio+3892</td>
+      <td>1174</td>
+      <td>6</td>
+      <td>1.0</td>
+      <td>17%</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>-</td>
       <td></td>
       <td>RFMerlo+6470</td>
       <td>1172</td>
       <td>14</td>
       <td>3.0</td>
       <td>21%</td>
+      <td>False</td>
     </tr>
     <tr>
-      <td>67</td>
+      <td>-</td>
+      <td></td>
+      <td>StoneOfShame+5048</td>
+      <td>1170</td>
+      <td>6</td>
+      <td>1.0</td>
+      <td>17%</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>-</td>
+      <td></td>
+      <td>Lobster+5525</td>
+      <td>1165</td>
+      <td>8</td>
+      <td>1.0</td>
+      <td>12%</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>-</td>
       <td></td>
       <td>MylesMoose+6850</td>
       <td>1164</td>
       <td>25</td>
       <td>5.0</td>
       <td>20%</td>
+      <td>False</td>
     </tr>
     <tr>
-      <td>68</td>
+      <td>-</td>
       <td></td>
       <td>DanzigMF+6351</td>
       <td>1162</td>
       <td>40</td>
       <td>7.0</td>
       <td>18%</td>
+      <td>False</td>
     </tr>
     <tr>
-      <td>69</td>
+      <td>-</td>
+      <td></td>
+      <td>Valzaan+3564</td>
+      <td>1160</td>
+      <td>8</td>
+      <td>1.0</td>
+      <td>12%</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>-</td>
+      <td></td>
+      <td>Drinken+3181</td>
+      <td>1159</td>
+      <td>7</td>
+      <td>1.0</td>
+      <td>14%</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>-</td>
+      <td></td>
+      <td>brrrlinguist+929</td>
+      <td>1159</td>
+      <td>6</td>
+      <td>1.0</td>
+      <td>17%</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>-</td>
       <td></td>
       <td>LHlegend+5313</td>
       <td>1158</td>
       <td>25</td>
       <td>5.0</td>
       <td>20%</td>
+      <td>False</td>
     </tr>
     <tr>
-      <td>70</td>
+      <td>-</td>
       <td></td>
       <td>TonyDeloreanESQ+4756</td>
       <td>1155</td>
       <td>41</td>
       <td>5.0</td>
       <td>12%</td>
+      <td>False</td>
     </tr>
     <tr>
-      <td>71</td>
+      <td>-</td>
+      <td></td>
+      <td>Biggins96+3792</td>
+      <td>1155</td>
+      <td>9</td>
+      <td>1.0</td>
+      <td>11%</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>-</td>
       <td></td>
       <td>secretpaths+8130</td>
       <td>1151</td>
       <td>19</td>
       <td>3.0</td>
       <td>16%</td>
+      <td>False</td>
     </tr>
     <tr>
-      <td>72</td>
+      <td>-</td>
+      <td></td>
+      <td>Baradhas+8593</td>
+      <td>1151</td>
+      <td>7</td>
+      <td>1.0</td>
+      <td>14%</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>-</td>
       <td></td>
       <td>FVMLion+1706</td>
       <td>1148</td>
       <td>20</td>
       <td>3.5</td>
       <td>18%</td>
+      <td>False</td>
     </tr>
     <tr>
-      <td>73</td>
+      <td>-</td>
       <td></td>
       <td>darkcat+794</td>
       <td>1145</td>
       <td>17</td>
       <td>3.0</td>
       <td>18%</td>
+      <td>False</td>
     </tr>
     <tr>
-      <td>74</td>
+      <td>-</td>
+      <td></td>
+      <td>Sharkskln+6071</td>
+      <td>1144</td>
+      <td>8</td>
+      <td>1.0</td>
+      <td>12%</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>-</td>
+      <td></td>
+      <td>BugMuff44+9091</td>
+      <td>1144</td>
+      <td>6</td>
+      <td>1.0</td>
+      <td>17%</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>-</td>
       <td></td>
       <td>PlagueCarrier+5718</td>
       <td>1140</td>
       <td>25</td>
       <td>4.0</td>
       <td>16%</td>
+      <td>False</td>
     </tr>
     <tr>
-      <td>75</td>
+      <td>-</td>
       <td></td>
       <td>Banzai7000+1191</td>
       <td>1137</td>
       <td>11</td>
       <td>1.0</td>
       <td>9%</td>
+      <td>False</td>
     </tr>
     <tr>
-      <td>76</td>
-      <td></td>
-      <td>Wrestler+3756</td>
-      <td>1136</td>
-      <td>48</td>
-      <td>8.0</td>
-      <td>17%</td>
-    </tr>
-    <tr>
-      <td>77</td>
+      <td>-</td>
       <td></td>
       <td>HobGungan+2914</td>
       <td>1136</td>
       <td>79</td>
       <td>14.5</td>
       <td>18%</td>
+      <td>False</td>
     </tr>
     <tr>
-      <td>78</td>
+      <td>-</td>
+      <td></td>
+      <td>Wrestler+3756</td>
+      <td>1136</td>
+      <td>48</td>
+      <td>8.0</td>
+      <td>17%</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>-</td>
+      <td></td>
+      <td>marksoz00+1780</td>
+      <td>1133</td>
+      <td>9</td>
+      <td>1.0</td>
+      <td>11%</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>-</td>
       <td></td>
       <td>TheFourthJesse+9103</td>
       <td>1133</td>
       <td>12</td>
       <td>1.0</td>
       <td>8%</td>
+      <td>False</td>
     </tr>
     <tr>
-      <td>79</td>
+      <td>-</td>
       <td></td>
       <td>benssoon+802</td>
       <td>1132</td>
       <td>14</td>
       <td>2.0</td>
       <td>14%</td>
+      <td>False</td>
     </tr>
     <tr>
-      <td>80</td>
-      <td></td>
-      <td>Hadjiya+4475</td>
-      <td>1131</td>
-      <td>55</td>
-      <td>9.0</td>
-      <td>16%</td>
-    </tr>
-    <tr>
-      <td>81</td>
+      <td>-</td>
       <td></td>
       <td>Odinius+897</td>
       <td>1131</td>
       <td>51</td>
       <td>8.5</td>
       <td>17%</td>
+      <td>False</td>
     </tr>
     <tr>
-      <td>82</td>
+      <td>-</td>
+      <td></td>
+      <td>Hadjiya+4475</td>
+      <td>1131</td>
+      <td>55</td>
+      <td>9.0</td>
+      <td>16%</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>-</td>
       <td></td>
       <td>BaconBoy+9689</td>
       <td>1130</td>
       <td>53</td>
       <td>9.0</td>
       <td>17%</td>
+      <td>False</td>
     </tr>
     <tr>
-      <td>83</td>
+      <td>-</td>
       <td></td>
       <td>Gagneto+8499</td>
       <td>1128</td>
       <td>12</td>
       <td>1.0</td>
       <td>8%</td>
+      <td>False</td>
     </tr>
     <tr>
-      <td>84</td>
+      <td>-</td>
       <td></td>
       <td>ReoWulf+5368</td>
       <td>1123</td>
       <td>19</td>
       <td>3.0</td>
       <td>16%</td>
+      <td>False</td>
     </tr>
     <tr>
-      <td>85</td>
-      <td></td>
-      <td>Wubba+9310</td>
-      <td>1121</td>
-      <td>16</td>
-      <td>2.0</td>
-      <td>12%</td>
-    </tr>
-    <tr>
-      <td>86</td>
+      <td>-</td>
       <td></td>
       <td>radiantchaos+5523</td>
       <td>1121</td>
       <td>29</td>
       <td>5.0</td>
       <td>17%</td>
+      <td>False</td>
     </tr>
     <tr>
-      <td>87</td>
+      <td>-</td>
+      <td></td>
+      <td>Wubba+9310</td>
+      <td>1121</td>
+      <td>16</td>
+      <td>2.0</td>
+      <td>12%</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <td>-</td>
       <td></td>
       <td>FakeSki+4232</td>
       <td>1120</td>
       <td>22</td>
       <td>2.5</td>
       <td>11%</td>
+      <td>False</td>
     </tr>
     <tr>
-      <td>88</td>
+      <td>-</td>
       <td></td>
       <td>Podge0303+8578</td>
       <td>1119</td>
       <td>23</td>
       <td>3.0</td>
       <td>13%</td>
+      <td>False</td>
     </tr>
     <tr>
-      <td>89</td>
+      <td>-</td>
       <td></td>
       <td>Hurple+6007</td>
       <td>1117</td>
       <td>12</td>
       <td>1.0</td>
       <td>8%</td>
+      <td>False</td>
     </tr>
     <tr>
-      <td>90</td>
+      <td>-</td>
       <td></td>
       <td>mkcy3+8006</td>
       <td>1117</td>
       <td>16</td>
       <td>2.0</td>
       <td>12%</td>
+      <td>False</td>
     </tr>
     <tr>
-      <td>91</td>
+      <td>-</td>
       <td></td>
       <td>Dandel+3128</td>
       <td>1113</td>
       <td>15</td>
       <td>2.0</td>
       <td>13%</td>
+      <td>False</td>
     </tr>
     <tr>
-      <td>92</td>
+      <td>-</td>
       <td></td>
       <td>WyvernElement+1816</td>
       <td>1106</td>
       <td>18</td>
       <td>2.0</td>
       <td>11%</td>
+      <td>False</td>
     </tr>
     <tr>
-      <td>93</td>
+      <td>-</td>
       <td></td>
       <td>ellbelle+9011</td>
       <td>1102</td>
       <td>13</td>
       <td>1.0</td>
       <td>8%</td>
+      <td>False</td>
     </tr>
     <tr>
-      <td>94</td>
+      <td>-</td>
       <td></td>
       <td>Oppapi+9478</td>
       <td>1099</td>
       <td>30</td>
       <td>4.0</td>
       <td>13%</td>
+      <td>False</td>
     </tr>
     <tr>
-      <td>95</td>
+      <td>-</td>
       <td></td>
       <td>tunnndz+4270</td>
       <td>1088</td>
       <td>24</td>
       <td>2.0</td>
       <td>8%</td>
+      <td>False</td>
     </tr>
     <tr>
-      <td>96</td>
+      <td>-</td>
       <td></td>
       <td>Piechu+7320</td>
       <td>1082</td>
       <td>47</td>
       <td>6.0</td>
       <td>13%</td>
+      <td>False</td>
     </tr>
     <tr>
-      <td>97</td>
+      <td>-</td>
       <td></td>
       <td>Klishu+3272</td>
       <td>1079</td>
       <td>32</td>
       <td>3.0</td>
       <td>9%</td>
+      <td>False</td>
     </tr>
     <tr>
-      <td>98</td>
+      <td>-</td>
       <td></td>
       <td>100pctskillz+6186</td>
       <td>1060</td>
       <td>46</td>
       <td>6.0</td>
       <td>13%</td>
+      <td>False</td>
     </tr>
     <tr>
-      <td>99</td>
+      <td>-</td>
       <td></td>
       <td>DawnDiVito+5802</td>
       <td>1058</td>
       <td>49</td>
       <td>4.0</td>
       <td>8%</td>
+      <td>False</td>
     </tr>
     <tr>
-      <td>100</td>
+      <td>-</td>
       <td></td>
       <td>BaliHoo+3674</td>
       <td>1041</td>
       <td>31</td>
       <td>2.0</td>
       <td>6%</td>
+      <td>False</td>
     </tr>
     <tr>
-      <td>101</td>
+      <td>-</td>
       <td></td>
       <td>Wriggleroom+4502</td>
       <td>1039</td>
       <td>45</td>
       <td>3.0</td>
       <td>7%</td>
+      <td>False</td>
     </tr>
     <tr>
-      <td>102</td>
+      <td>-</td>
       <td></td>
       <td>buurn+343</td>
       <td>1034</td>
       <td>78</td>
       <td>8.0</td>
       <td>10%</td>
+      <td>False</td>
     </tr>
     <tr>
-      <td>103</td>
+      <td>-</td>
       <td></td>
       <td>cjahwon+6865</td>
       <td>1034</td>
       <td>30</td>
       <td>1.0</td>
       <td>3%</td>
+      <td>False</td>
     </tr>
     <tr>
-      <td>104</td>
+      <td>-</td>
       <td></td>
       <td>DarthOblivius+1339</td>
       <td>1011</td>
       <td>45</td>
       <td>1.0</td>
       <td>2%</td>
+      <td>False</td>
     </tr>
   </tbody>
 </table>
@@ -998,7 +1725,7 @@
         <div class="footer">
             <strong>Qualification:</strong> 10+ games & 1+ win.<br>
             <strong>Tiers:</strong> 1500+ 🦅 | 1400+ 🦊 | 1300+ 🐰 | 1200+ 🐭<br>
-            Generated on 2026-03-21 19:21 UTC
+            Generated on 2026-03-21 20:11 UTC
         </div>
     </div>
 
@@ -1009,24 +1736,41 @@
    <script>
         $(document).ready(function() {
             $('#leaderboard').DataTable({
-                "order": [[0, "asc"]],
+                "order": [[3, "desc"]], // Default sort by ELO Score
                 "responsive": true,
-                "pageLength": 25,
+                "pageLength": 50,
+                "createdRow": function(row, data, dataIndex) {
+                    // data[0] = Rank, data[3] = ELO Score
+                    var rank = data[0];         
+                    var elo = parseInt(data[3]); 
+                    
+                    if (rank === "-") {
+                        $(row).addClass('unranked');
+                    } else {
+                        // Apply tier colors based on ELO thresholds
+                        if (elo >= 1500) $(row).addClass('tier-eagle');
+                        else if (elo >= 1400) $(row).addClass('tier-fox');
+                        else if (elo >= 1300) $(row).addClass('tier-bunny');
+                        else if (elo >= 1200) $(row).addClass('tier-mouse');
+                    }
+                },
                 "columnDefs": [
-                    /* Priority 1-4: These columns will stay visible as long as possible */
+                    // HIGH PRIORITY (Always visible)
                     { "responsivePriority": 1, "targets": 0 }, // Rank
                     { "responsivePriority": 2, "targets": 2 }, // Player
-                    { "responsivePriority": 3, "targets": 3 }, // Rating (ELO)
-                    { "responsivePriority": 4, "targets": 1 }, // Tier (Icon)
+                    { "responsivePriority": 3, "targets": 3 }, // ELO Score
                     
-                    /* Force Rank, Tier, Player, and Rating to ALWAYS show on mobile */
-                    { "className": "all", "targets": [0, 1, 2, 3] },
+                    // LOW PRIORITY (Hidden on small screens)
+                    { "responsivePriority": 10, "targets": 1 }, // Tier Icon (Hidden first)
+                    { "responsivePriority": 11, "targets": 4 }, // Games
+                    { "responsivePriority": 12, "targets": 5 }, // Wins
+                    { "responsivePriority": 13, "targets": 6 }, // Win Rate
                     
-                    /* Lower priority: These will hide first (Games, Wins, Win Rate) */
-                    { "responsivePriority": 10, "targets": [4, 5, 6] }
+                    // Force the Rank, Player, and ELO to never hide
+                    { "className": "all", "targets": [0, 2, 3] }
                 ],
                 "language": {
-                    "search": "Search:",
+                    "search": "Search Player:",
                     "lengthMenu": "_MENU_ per page"
                 }
             });
