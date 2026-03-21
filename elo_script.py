@@ -1,22 +1,29 @@
+import os
 import requests
 import pandas as pd
-import math
-import os
+from datetime import datetime, timedelta
 
-# --- Configuration (Récupération du Token API caché dans GitHub Secrets) ---
+# --- Configuration (Fetch secrets from GitHub Actions) ---
 API_TOKEN = os.getenv('API_TOKEN')
 HEADERS = {'Authorization': f'Token {API_TOKEN}'} if API_TOKEN else {}
-
-CUTOFF_DATE = '2026-03-20'
 TOURNAMENT_ID = 24
 
-# --- 1. Lecture du fichier de corrections (Directement dans le dépôt GitHub) ---
+# --- Dynamic Cutoff Date (Set to yesterday) ---
+yesterday = datetime.now() - timedelta(days=1)
+CUTOFF_DATE = yesterday.strftime('%Y-%m-%d')
+
+print(f"Processing data until cutoff: {CUTOFF_DATE}")
+
+# --- 1. Load Correction File ---
 excel_file_path = 'Root_Elo_LH01_Corrected_Dates.xlsx'
-df_updates = pd.read_excel(excel_file_path)
+df_updates = pd.read_excel(excel_file_path, engine='openpyxl')
+
+# Ensure the 'New_Date' column is in datetime format for proper merging
 df_updates['New_Date'] = pd.to_datetime(df_updates['New_Date'])
 
-# --- 2. Fetch Data depuis l'API ---
-all_data = []
+# --- 2. Fetch Match Data from API ---
+all_matches = []
+# Initial URL for the tournament matches
 next_page_url = f"https://rootleague.pliskin.dev/api/match/?format=json&limit=500&tournament={TOURNAMENT_ID}"
 
 while next_page_url:
@@ -24,95 +31,154 @@ while next_page_url:
         response = requests.get(next_page_url, headers=HEADERS)
         response.raise_for_status()
         page_data = response.json()
-        all_data.extend(page_data.get('results', []))
+        all_matches.extend(page_data.get('results', []))
+        # API returns 'next' URL if more pages exist, else None
         next_page_url = page_data.get('next')
     except Exception as e:
-        print(f"Erreur API: {e}")
+        print(f"API Error occurred: {e}")
         break
 
-# --- 3. Traitement des données & Calcul ELO ---
-elo_data = []
-for match in all_data:
+# --- 3. Data Processing & Date Alignment ---
+raw_data = []
+for match in all_matches:
     participants = match['participants']
+    # We only process standard 4-player games
     if len(participants) == 4:
         for p in participants:
-            elo_data.append({
+            raw_data.append({
                 'GameID': match['id'],
                 'Player': p.get('player'),
-                'Tournament Score': float(p.get('tournament_score', 0.0)),
+                'Score': float(p.get('tournament_score', 0.0)),
                 'Date_Closed': match.get('date_closed')
             })
 
-df = pd.DataFrame(elo_data)
+df = pd.DataFrame(raw_data)
+# Convert API dates to datetime (ISO8601)
 df['Date_Closed'] = pd.to_datetime(df['Date_Closed'], format='ISO8601', utc=True)
 
-# Application des corrections de dates
-game_id_to_new_date = df_updates.set_index('GameID')['New_Date']
-mask = df['GameID'].isin(game_id_to_new_date.index)
-if mask.any():
-    df.loc[mask, 'Date_Closed'] = pd.to_datetime(df.loc[mask, 'GameID'].map(game_id_to_new_date), utc=True)
+# Apply manual date corrections from the Excel file
+# We map the GameID to the New_Date column from df_updates
+game_id_mapping = df_updates.set_index('GameID')['New_Date']
+mask = df['GameID'].isin(game_id_mapping.index)
 
+if mask.any():
+    # Update the dates for the matching GameIDs
+    df.loc[mask, 'Date_Closed'] = pd.to_datetime(df.loc[mask, 'GameID'].map(game_id_mapping), utc=True)
+
+# Sort the entire history by date to ensure ELO is calculated chronologically
 df = df.sort_values(by='Date_Closed').reset_index(drop=True)
 
-# --- 4. Logique ELO (Simplifiée pour l'exemple, identique à la tienne) ---
-elo_ratings = {p: 1200 for p in df['Player'].unique()}
-stats = {p: {'games': 0, 'wins': 0.0} for p in df['Player'].unique()}
+# --- 4. ELO Calculation Logic ---
+# Initialize ratings at 1200 for all unique players found in the data
+elo_ratings = {player: 1200 for player in df['Player'].unique()}
 
+# Track statistics for each player to determine their K-Factor
+player_stats = {player: {'games': 0, 'wins': 0.0} for player in df['Player'].unique()}
+
+# Group data by GameID and process matches one by one (chronologically)
 for game_id, group in df.groupby('GameID', sort=False):
-    players = group.to_dict('records')
-    if len(players) != 4: continue
+    match_participants = group.to_dict('records')
     
-    total_q = sum([10**(elo_ratings[p['Player']]/400) for p in players])
-    updates = {}
-    for p in players:
+    # Validation: Ensure we have exactly 4 participants for a standard game
+    if len(match_participants) != 4:
+        continue
+    
+    # Calculate the Total Q (sum of 10^(Rating/400)) for the table
+    total_q = sum([10**(elo_ratings[p['Player']]/400) for p in match_participants])
+    
+    # Store temporary updates to apply them simultaneously after the match
+    match_updates = {}
+    
+    for p in match_participants:
         name = p['Player']
-        actual = p['Tournament Score']
-        expected = (10**(elo_ratings[name]/400)) / total_q
+        actual_score = p['Score']
         
-        stats[name]['games'] += 1
-        stats[name]['wins'] += actual
+        # Calculate expected score (Probability of winning)
+        expected_score = (10**(elo_ratings[name]/400)) / total_q
         
-        # K-Factor
-        k = 80 if stats[name]['games'] <= 10 else (40 if stats[name]['games'] <= 50 else 20)
-        updates[name] = elo_ratings[name] + k * (actual - expected)
+        # Update player match count and win tally
+        player_stats[name]['games'] += 1
+        player_stats[name]['wins'] += actual_score
+        
+        # Dynamic K-Factor based on experience
+        if player_stats[name]['games'] <= 10:
+            k_factor = 80
+        elif player_stats[name]['games'] <= 50:
+            k_factor = 40
+        else:
+            k_factor = 20
+            
+        # Calculate new rating for this match
+        match_updates[name] = elo_ratings[name] + k_factor * (actual_score - expected_score)
     
-    for name, val in updates.items():
-        elo_ratings[name] = val
+    # Apply all rating updates after the match calculation is complete
+    for name, new_val in match_updates.items():
+        elo_ratings[name] = new_val
 
-# --- 5. Préparation du classement final ---
-res = []
-for p, score in elo_ratings.items():
-    if stats[p]['wins'] > 0:
-        res.append({
-            'Player': p,
-            'ELO': round(score),
-            'Games': stats[p]['games'],
-            'Wins': round(stats[p]['wins'], 1),
-            'WinRate': f"{(stats[p]['wins']/stats[p]['games']):.1%}"
+# --- 5. Final Leaderboard Preparation ---
+
+def get_tier_icon(rating, games):
+    if games < 10: return ""
+    if rating >= 1500: return "🦅"
+    if rating >= 1400: return "🦊"
+    if rating >= 1300: return "🐰"
+    if rating >= 1200: return "🐭"
+    return ""
+
+leaderboard_results = []
+for player_name, final_rating in elo_ratings.items():
+    win_count = player_stats[player_name]['wins']
+    total_games = player_stats[player_name]['games']
+    
+    # Qualification: 1+ win AND 10+ games
+    if win_count > 0 and total_games >= 10:
+        leaderboard_results.append({
+            'Rank': 0,
+            'Tier': get_tier_icon(final_rating, total_games),
+            'Player': player_name,
+            'Rating': round(final_rating),
+            'Games': total_games,
+            'Wins': round(win_count, 1),
+            'Win Rate': f"{(win_count / total_games):.0%}"
         })
 
-final_df = pd.DataFrame(res).sort_values(by='ELO', ascending=False)
+final_df = pd.DataFrame(leaderboard_results).sort_values(by='Rating', ascending=False)
+final_df['Rank'] = range(1, len(final_df) + 1)
+final_df = final_df[['Rank', 'Tier', 'Player', 'Rating', 'Games', 'Wins', 'Win Rate']]
 
-# --- 6. Génération de la page HTML ---
-html_table = final_df.to_html(index=False, classes='leaderboard')
+# --- 6. HTML Webpage Generation ---
+html_table = final_df.to_html(index=False, classes='leaderboard-table')
 html_content = f"""
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Root League Leaderboard</title>
     <style>
-        body {{ font-family: 'Segoe UI', sans-serif; background: #121212; color: #eee; text-align: center; padding: 50px; }}
-        table {{ margin: 20px auto; border-collapse: collapse; background: #1e1e1e; border-radius: 8px; overflow: hidden; }}
-        th, td {{ padding: 15px 25px; border-bottom: 1px solid #333; }}
-        th {{ background: #333; color: #4a90e2; text-transform: uppercase; }}
-        tr:hover {{ background: #252525; }}
+        body {{ font-family: 'Segoe UI', Helvetica, Arial, sans-serif; background-color: #121212; color: #eee; text-align: center; padding: 40px 10px; }}
+        .container {{ max-width: 850px; margin: auto; background: #1e1e1e; padding: 25px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.6); }}
+        h1 {{ color: #4a90e2; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px; }}
+        h3 {{ color: #777; font-weight: 400; font-size: 0.9em; margin-bottom: 25px; }}
+        .leaderboard-table {{ width: 100%; border-collapse: collapse; margin-bottom: 20px; }}
+        .leaderboard-table th {{ background-color: #252525; color: #4a90e2; padding: 12px; font-size: 0.8em; border-bottom: 2px solid #333; }}
+        .leaderboard-table td {{ padding: 12px; border-bottom: 1px solid #2a2a2a; }}
+        .leaderboard-table td:nth-child(2) {{ font-size: 1.4em; }}
+        tr:nth-child(1) td:first-child {{ color: #ffd700; font-weight: bold; font-size: 1.2em; }}
+        .footer {{ margin-top: 30px; font-size: 0.75em; color: #555; line-height: 1.6; border-top: 1px solid #333; padding-top: 15px; }}
     </style>
 </head>
 <body>
-    <h1>Root Digital League - Classement ELO</h1>
-    {html_table}
-    <p style="margin-top: 20px; color: #666;">Dernière mise à jour automatique : {pd.Timestamp.now().strftime('%Y-%m-%d %H:%M')}</p>
+    <div class="container">
+        <h1>Root Digital League</h1>
+        <h3>Official Rankings • Data until {CUTOFF_DATE}</h3>
+        {html_table}
+        <div class="footer">
+            <strong>Qualification:</strong> Players must have 10+ games and 1+ win to be ranked.<br>
+            <strong>Tiers:</strong> 1500+ 🦅 | 1400+ 🦊 | 1300+ 🐰 | 1200+ 🐭<br>
+            Generated on {datetime.now().strftime('%Y-%m-%d %H:%M')} UTC
+        </div>
+    </div>
 </body>
 </html>
 """
