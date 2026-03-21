@@ -143,7 +143,7 @@ for p_name, rating in elo_ratings.items():
             'Wins': formatted_wins,
             'Win Rate': f"{(w/g):.1%}",
             'Peak': round(peak_elo[p_name]),
-            'Gain/Loss': str_diff,
+            'Last': str_diff,
             'Qualified': is_qual
         })
 
@@ -161,7 +161,7 @@ final_df['Rank'] = rank_list
 final_df = final_df.drop(columns=['Qualified'])
 
 # Set strict Column Order
-final_df = final_df[['Rank', 'Tier', 'Player', 'ELO', 'Games', 'Wins', 'Win Rate', 'Peak', 'Gain/Loss']]
+final_df = final_df[['Rank', 'Tier', 'Player', 'ELO', 'Games', 'Wins', 'Win Rate', 'Peak', 'Last']]
 
 # --- 8. HTML Webpage Generation ---
 html_table = final_df.to_html(index=False, classes='leaderboard-table display nowrap', table_id="leaderboard")
@@ -201,7 +201,7 @@ html_content = f"""
         .tier-rabbit td:nth-child(3), .tier-rabbit td:nth-child(4) {{ color: #dfa679; font-weight: bold; }}
         .tier-mouse td:nth-child(3), .tier-mouse td:nth-child(4) {{ color: #7db3f2; font-weight: bold; }}
 
-        /* Secondary columns styling (Peak & Gain/Loss) */
+        /* Secondary columns styling (Peak & Last) */
         .leaderboard-table td:nth-child(8), .leaderboard-table td:nth-child(9) {{ color: #888; font-size: 0.85em; }}
 
         .unranked {{ opacity: 0.5; font-style: italic; }}
@@ -216,11 +216,11 @@ html_content = f"""
 </head>
 <body>
     <div class="container">
-        <h1>Root Digital League</h1>
-        <h3>Official Rankings • Data until {CUTOFF_DATE}</h3>
+        <h1>Root Digital League • Seson LH01</h1>
+        <h3>Alternative ELO Leaderboard • Data until {CUTOFF_DATE}</h3>
         {html_table}
         <div class="footer">
-            <strong>Qualification:</strong> 10+ games & 1200+ Elo.<br>
+            <strong>Tier System</strong> (min 10 games): 🦅 1500, 🦊 1400, 🐰 1300, 🐭 1200<br>
             Generated on {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M')} UTC
         </div>
     </div>
