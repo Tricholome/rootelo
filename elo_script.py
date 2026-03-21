@@ -169,7 +169,7 @@ table_rows = ""
 for _, row in final_df.iterrows():
     # Get the icon path based on the Elo score
     # Note: We use the numeric Elo here to pick the right icon
-    icon_path, suit_class = get_tier_info(row['ELO_Score'], row['Games'])
+    icon_path, suit_class = get_tier_icon(row['ELO_Score'], row['Games'])
     
     # Create the image tag
     icon_tag = f'<img src="{icon_path}" style="width:20px;height:24px;vertical-align:middle;">' if icon_path else ""
