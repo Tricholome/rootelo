@@ -112,13 +112,14 @@ for game_id, group in df.groupby('GameID', sort=False):
 
 # --- 7. Final Leaderboard Preparation ---
 def get_tier_icon(rating, games):
-    if games < 10: return ""
+    if games < 10:
+        return None, "unranked"
     r = round(rating)
-    if rating >= 1500: return "🦅"
-    if rating >= 1400: return "🦊"
-    if rating >= 1300: return "🐰"
-    if rating >= 1200: return "🐭"
-    return ""
+    if r >= 1500: return "assets/icons/bird.png", "suit-bird"
+    if r >= 1400: return "assets/icons/fox.png", "suit-fox"
+    if r >= 1300: return "assets/icons/rabbit.png", "suit-rabbit"
+    if r >= 1200: return "assets/icons/mouse.png", "suit-mouse"
+    return None, "unranked"
 
 leaderboard_results = []
 for p_name, rating in elo_ratings.items():
@@ -164,7 +165,44 @@ final_df = final_df.drop(columns=['Qualified'])
 final_df = final_df[['Rank', 'Tier', 'Player', 'ELO', 'Games', 'Wins', 'Win Rate', 'Peak', 'Last']]
 
 # --- 8. HTML Webpage Generation ---
-html_table = final_df.to_html(index=False, classes='leaderboard-table display nowrap', table_id="leaderboard")
+
+table_rows = ""
+for _, row in final_df.iterrows():
+    icon_path, suit_class = get_tier_icon(row['ELO'], row['Games'])
+    icon_tag = f'<img src="{icon_path}" style="width:20px;height:24px;vertical-align:middle;">' if icon_path else ""
+    
+    table_rows += f"""
+    <tr>
+        <td>{row['Rank']}</td>
+        <td>{icon_tag}</td>
+        <td>{row['Player']}</td>
+        <td>{row['ELO']}</td>
+        <td>{row['Games']}</td>
+        <td>{row['Wins']}</td>
+        <td>{row['Win Rate']}</td>
+        <td>{row['Peak']}</td>
+        <td>{row['Last']}</td>
+    </tr>"""
+
+html_table = f"""
+<table id="leaderboard" class="leaderboard-table display nowrap">
+    <thead>
+        <tr>
+            <th>Rank</th>
+            <th>Tier</th>
+            <th>Player</th>
+            <th>ELO</th>
+            <th>Games</th>
+            <th>Wins</th>
+            <th>Win Rate</th>
+            <th>Peak</th>
+            <th>Last</th>
+        </tr>
+    </thead>
+    <tbody>
+        {table_rows}
+    </tbody>
+</table>"""
 
 html_content = f"""
 <!DOCTYPE html>
@@ -180,43 +218,26 @@ html_content = f"""
         .container {{ width: 95%; max-width: 1100px; margin: auto; background: #1e1e1e; padding: 20px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.6); }}
         h1 {{ color: #4a90e2; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px; font-size: 1.5em; }}
         h3 {{ color: #777; font-weight: 400; font-size: 0.85em; margin-bottom: 20px; }}
-
-        /* DataTables Styling */
-        .dataTables_wrapper .dataTables_length, .dataTables_wrapper .dataTables_filter, 
-        .dataTables_wrapper .dataTables_info, .dataTables_wrapper .dataTables_paginate {{ color: #aaa !important; font-size: 0.8em; }}
-        input {{ background-color: #333 !important; color: white !important; border: 1px solid #444 !important; border-radius: 4px; padding: 4px; }}
         .leaderboard-table {{ width: 100% !important; border-collapse: collapse; margin-top: 15px; background: #1e1e1e; }}
         .leaderboard-table th {{ background-color: #252525 !important; color: #4a90e2 !important; font-size: 0.75em; text-transform: uppercase; padding: 12px; }}
         .leaderboard-table td {{ border-bottom: 1px solid #2a2a2a; padding: 10px; font-size: 0.9em; text-align: center; }}
-
-        /* Tier Styling */
         .tier-bird   {{ background-color: rgba(255, 215, 0, 0.15) !important; border-left: 5px solid #ffd700 !important; }}
-        .tier-fox   {{ background-color: rgba(255, 102, 0, 0.15) !important; border-left: 5px solid #ff6600 !important; }}
-        .tier-rabbit  {{ background-color: rgba(205, 127, 50, 0.15) !important; border-left: 5px solid #cd7f32 !important; }}
-        .tier-mouse {{ background-color: rgba(74, 144, 226, 0.15) !important; border-left: 5px solid #4a90e2 !important; }}
-        
-        /* Colored Text for Rank 3/4 (Player/ELO) */
+        .tier-fox    {{ background-color: rgba(255, 102, 0, 0.15) !important; border-left: 5px solid #ff6600 !important; }}
+        .tier-rabbit {{ background-color: rgba(205, 127, 50, 0.15) !important; border-left: 5px solid #cd7f32 !important; }}
+        .tier-mouse  {{ background-color: rgba(74, 144, 226, 0.15) !important; border-left: 5px solid #4a90e2 !important; }}
         .tier-bird td:nth-child(3), .tier-bird td:nth-child(4)   {{ color: #ffd700; font-weight: bold; }}
         .tier-fox td:nth-child(3), .tier-fox td:nth-child(4)   {{ color: #ff8533; font-weight: bold; }}
         .tier-rabbit td:nth-child(3), .tier-rabbit td:nth-child(4) {{ color: #dfa679; font-weight: bold; }}
         .tier-mouse td:nth-child(3), .tier-mouse td:nth-child(4) {{ color: #7db3f2; font-weight: bold; }}
-
-        /* Secondary columns styling (Peak & Last) */
         .leaderboard-table td:nth-child(8), .leaderboard-table td:nth-child(9) {{ color: #888; font-size: 0.85em; }}
-
         .unranked {{ opacity: 0.5; font-style: italic; }}
         .unranked td {{ color: #888 !important; }}
-
-        @media (max-width: 600px) {{
-            h1 {{ font-size: 1.2em; }}
-            .container {{ padding: 10px; }}
-        }}
-        .footer {{ margin-top: 30px; font-size: 0.7em; color: #555; line-height: 1.5; border-top: 1px solid #333; padding-top: 15px; }}
+        .footer {{ margin-top: 30px; font-size: 0.7em; color: #555; border-top: 1px solid #333; padding-top: 15px; }}
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Root Digital League • Seson LH01</h1>
+        <h1>Root Digital League • Season LH01</h1>
         <h3>Alternative ELO Leaderboard • Data until {CUTOFF_DATE}</h3>
         {html_table}
         <div class="footer">
@@ -224,17 +245,14 @@ html_content = f"""
             Generated on {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M')} UTC
         </div>
     </div>
-
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
-
     <script>
     $(document).ready(function() {{
         $.extend($.fn.dataTable.ext.type.order, {{
             "rank-pre": function (d) {{ return d === "-" ? 9999 : parseInt(d); }}
         }});
-
         $('#leaderboard').DataTable({{
             "order": [[3, "desc"]],
             "responsive": true,
