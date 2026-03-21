@@ -41,25 +41,22 @@ while next_page_url:
         print(f"API Error: {e}")
         break
 
-# --- 5. Data Processing & Alignment ---
-raw_data = []
-for match in all_matches:
-    participants = match.get('participants', [])
-    if len(participants) == 4:
-        for p in participants:
-            raw_data.append({
-                'GameID': match['id'],
-                'Player': p.get('player'),
-                'Score': float(p.get('tournament_score', 0.0)),
-                'Date_Closed': match.get('date_closed')
-            })
-
+# --- 5. Data Processing (Time-Preservation Fix) ---
 df = pd.DataFrame(raw_data)
 df['Date_Closed'] = pd.to_datetime(df['Date_Closed'], format='ISO8601', utc=True)
 
-mask = df['GameID'].isin(game_id_mapping.index)
-if mask.any():
-    df.loc[mask, 'Date_Closed'] = pd.to_datetime(df.loc[mask, 'GameID'].map(game_id_mapping), utc=True)
+try:
+    if not game_id_mapping.empty:
+        mask = df['GameID'].isin(game_id_mapping.index)
+        
+        if mask.any():
+            original_times = df.loc[mask, 'Date_Closed'].dt.strftime('%H:%M:%S.%f')
+            new_dates = df.loc[mask, 'GameID'].map(game_id_mapping).dt.strftime('%Y-%m-%d')
+            combined_datetimes = new_dates + ' ' + original_times
+            df.loc[mask, 'Date_Closed'] = pd.to_datetime(combined_datetimes, utc=True)
+            print(f"Corrected {mask.sum() // 4} games while preserving original times.")
+except Exception as e:
+    print(f"Date mapping note: {e}")
 
 df = df[df['Date_Closed'].dt.date < today].copy()
 df = df.sort_values(by='Date_Closed').reset_index(drop=True)
