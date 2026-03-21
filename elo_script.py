@@ -232,3 +232,9 @@ html_content = f"""
 </body>
 </html>
 """
+# --- 9. Save to File ---
+with open("index.html", "w", encoding="utf-8") as f:
+    f.write(html_content)
+
+print("index.html successfully generated!")
+
