@@ -1730,7 +1730,7 @@
         <div class="footer">
             <strong>Qualification:</strong> 10+ games & 1+ win.<br>
             <strong>Tiers:</strong> 1500+ 🦅 | 1400+ 🦊 | 1300+ 🐰 | 1200+ 🐭<br>
-            Generated on 2026-03-21 20:25 UTC
+            Generated on 2026-03-21 20:28 UTC
         </div>
     </div>
 
@@ -1739,34 +1739,41 @@
     <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
 
    <script>
-        $(document).ready(function() {
-            $('#leaderboard').DataTable({
-                "order": [[0, "asc"]], 
-                "responsive": true,
-                "pageLength": 50,
-                "columnDefs": [
-                    // This is the magic line:
-                    { "type": "num", "targets": 0 }, 
-                    
-                    { "responsivePriority": 1, "targets": [0, 2, 3] },
-                    { "responsivePriority": 10, "targets": 1 },
-                    { "className": "all", "targets": [0, 2, 3] }
-                ],
-                "createdRow": function(row, data, dataIndex) {
-                    var rank = data[0];         
-                    var elo = parseInt(data[3]); 
-                    
-                    if (rank === "-") {
-                        $(row).addClass('unranked');
-                    } else {
-                        if (elo >= 1500) $(row).addClass('tier-eagle');
-                        else if (elo >= 1400) $(row).addClass('tier-fox');
-                        else if (elo >= 1300) $(row).addClass('tier-bunny');
-                        else if (elo >= 1200) $(row).addClass('tier-mouse');
-                    }
-                }
-            });
+    $(document).ready(function() {
+        // Custom sorting logic for Rank
+        $.extend($.fn.dataTable.ext.type.order, {
+            "rank-pre": function (d) {
+                // If the value is "-", return a very high number (9999)
+                // Otherwise, return the actual rank number
+                return d === "-" ? 9999 : parseInt(d);
+            }
         });
-    </script>
+
+        $('#leaderboard').DataTable({
+            "order": [[0, "asc"]],
+            "responsive": true,
+            "pageLength": 50,
+            "columnDefs": [
+                { "type": "rank", "targets": 0 }, // Use our custom 'rank' sorter
+                { "responsivePriority": 1, "targets": [0, 2, 3] },
+                { "responsivePriority": 10, "targets": 1 },
+                { "className": "all", "targets": [0, 2, 3] }
+            ],
+            "createdRow": function(row, data, dataIndex) {
+                var rank = data[0];         
+                var elo = parseInt(data[3]); 
+                
+                if (rank === "-") {
+                    $(row).addClass('unranked');
+                } else {
+                    if (elo >= 1500) $(row).addClass('tier-eagle');
+                    else if (elo >= 1400) $(row).addClass('tier-fox');
+                    else if (elo >= 1300) $(row).addClass('tier-bunny');
+                    else if (elo >= 1200) $(row).addClass('tier-mouse');
+                }
+            }
+        });
+    });
+</script>
 </body>
 </html>
