@@ -214,21 +214,20 @@ html_content = f"""
     /* Tier Icon Specifics */
     .leaderboard-table td:nth-child(2) {{ font-size: 1.3em; width: 40px; }}
 
-    /* Subtle background and strong left border */
-    .tier-eagle { background-color: rgba(255, 215, 0, 0.15) !important; border-left: 5px solid #ffd700 !important; }
-    .tier-fox   { background-color: rgba(255, 102, 0, 0.15) !important; border-left: 5px solid #ff6600 !important; }
-    .tier-bunny { background-color: rgba(205, 127, 50, 0.15) !important; border-left: 5px solid #cd7f32 !important; }
-    .tier-mouse { background-color: rgba(74, 144, 226, 0.15) !important; border-left: 5px solid #4a90e2 !important; }
+   /* Use double curly braces for CSS inside a Python f-string */
+    .tier-eagle {{ background-color: rgba(255, 215, 0, 0.15) !important; border-left: 5px solid #ffd700 !important; }}
+    .tier-fox   {{ background-color: rgba(255, 102, 0, 0.15) !important; border-left: 5px solid #ff6600 !important; }}
+    .tier-bunny {{ background-color: rgba(205, 127, 50, 0.15) !important; border-left: 5px solid #cd7f32 !important; }}
+    .tier-mouse {{ background-color: rgba(74, 144, 226, 0.15) !important; border-left: 5px solid #4a90e2 !important; }}
     
-    /* Text Coloring for Qualified Players (Player and ELO columns) */
-    .tier-eagle td:nth-child(3), .tier-eagle td:nth-child(4) { color: #ffd700; font-weight: bold; }
-    .tier-fox   td:nth-child(3), .tier-fox   td:nth-child(4) { color: #ff8533; font-weight: bold; }
-    .tier-bunny td:nth-child(3), .tier-bunny td:nth-child(4) { color: #dfa679; font-weight: bold; }
-    .tier-mouse td:nth-child(3), .tier-mouse td:nth-child(4) { color: #7db3f2; font-weight: bold; }
+    /* Text Coloring for Player and ELO columns */
+    .tier-eagle td:nth-child(3), .tier-eagle td:nth-child(4) {{ color: #ffd700; font-weight: bold; }}
+    .tier-fox   td:nth-child(3), .tier-fox   td:nth-child(4) {{ color: #ff8533; font-weight: bold; }}
+    .tier-bunny td:nth-child(3), .tier-bunny td:nth-child(4) {{ color: #dfa679; font-weight: bold; }}
+    .tier-mouse td:nth-child(3), .tier-mouse td:nth-child(4) {{ color: #7db3f2; font-weight: bold; }}
 
-    /* Style for Unranked (Dashed) players */
-    .unranked { opacity: 0.5; font-style: italic; }
-    .unranked td { color: #888 !important; }
+    .unranked {{ opacity: 0.5; font-style: italic; }}
+    .unranked td {{ color: #888 !important; }}
     
     /* Mobile specific adjustments */
     @media (max-width: 600px) {{
