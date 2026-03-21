@@ -112,13 +112,14 @@ for game_id, group in df.groupby('GameID', sort=False):
 
 # --- 7. Final Leaderboard Preparation ---
 def get_tier_icon(rating, games):
-    if games < 10: return ""
+    if games < 10:
+        return None, "unranked"
     r = round(rating)
-    if rating >= 1500: return "🦅"
-    if rating >= 1400: return "🦊"
-    if rating >= 1300: return "🐰"
-    if rating >= 1200: return "🐭"
-    return ""
+    if r >= 1500: return "assets/icons/bird.png", "suit-bird"
+    if r >= 1400: return "assets/icons/fox.png", "suit-fox"
+    if r >= 1300: return "assets/icons/rabbit.png", "suit-rabbit"
+    if r >= 1200: return "assets/icons/mouse.png", "suit-mouse"
+    return None, "unranked"
 
 leaderboard_results = []
 for p_name, rating in elo_ratings.items():
@@ -164,7 +165,28 @@ final_df = final_df.drop(columns=['Qualified'])
 final_df = final_df[['Rank', 'Tier', 'Player', 'ELO', 'Games', 'Wins', 'Win Rate', 'Peak', 'Last']]
 
 # --- 8. HTML Webpage Generation ---
-html_table = final_df.to_html(index=False, classes='leaderboard-table display nowrap', table_id="leaderboard")
+table_rows = ""
+for _, row in final_df.iterrows():
+    # Get the icon path based on the Elo score
+    # Note: We use the numeric Elo here to pick the right icon
+    icon_path, suit_class = get_tier_info(row['ELO_Score'], row['Games'])
+    
+    # Create the image tag
+    icon_tag = f'<img src="{icon_path}" style="width:20px;height:24px;vertical-align:middle;">' if icon_path else ""
+    
+    # Build the row using your exact column order
+    table_rows += f"""
+    <tr>
+        <td>{row['Rank']}</td>
+        <td>{icon_tag}</td>
+        <td>{row['Player']}</td>
+        <td>{row['ELO_Score']}</td>
+        <td>{row['Games']}</td>
+        <td>{row['Wins']}</td>
+        <td>{row['Win_Rate']}</td>
+        <td>{row['Peak_ELO']}</td>
+        <td>{row['+/-']}</td>
+    </tr>"""
 
 html_content = f"""
 <!DOCTYPE html>
@@ -216,7 +238,7 @@ html_content = f"""
 </head>
 <body>
     <div class="container">
-        <h1>Root Digital League • Seson LH01</h1>
+        <h1>Root Digital League • Season LH01</h1>
         <h3>Alternative ELO Leaderboard • Data until {CUTOFF_DATE}</h3>
         {html_table}
         <div class="footer">
