@@ -169,7 +169,8 @@ final_df = final_df[['Rank', 'Tier', 'Player', 'ELO', 'Games', 'Wins', 'Win Rate
 table_rows = ""
 for _, row in final_df.iterrows():
     icon_path, suit_class = get_tier_icon(row['ELO'], row['Games'])
-    icon_tag = f'<img src="{icon_path}" style="width:auto;height:24px;vertical-align:middle;">' if icon_path else ""
+    # Using a container to handle the tall rabbit ears and square mouse/fox
+    icon_tag = f'<div class="tier-icon-container"><img src="{icon_path}"></div>' if icon_path else ""
     
     table_rows += f"""
     <tr>
@@ -218,20 +219,28 @@ html_content = f"""
         .container {{ width: 95%; max-width: 1100px; margin: auto; background: #1e1e1e; padding: 20px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.6); }}
         h1 {{ color: #4a90e2; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px; font-size: 1.5em; }}
         h3 {{ color: #777; font-weight: 400; font-size: 0.85em; margin-bottom: 20px; }}
+
         .leaderboard-table {{ width: 100% !important; border-collapse: collapse; margin-top: 15px; background: #1e1e1e; }}
         .leaderboard-table th {{ background-color: #252525 !important; color: #4a90e2 !important; font-size: 0.75em; text-transform: uppercase; padding: 12px; }}
-        .leaderboard-table td {{ border-bottom: 1px solid #2a2a2a; padding: 10px; font-size: 0.9em; text-align: center; }}
-        .tier-bird   {{ background-color: rgba(255, 215, 0, 0.15) !important; border-left: 5px solid #ffd700 !important; }}
-        .tier-fox    {{ background-color: rgba(255, 102, 0, 0.15) !important; border-left: 5px solid #ff6600 !important; }}
-        .tier-rabbit {{ background-color: rgba(205, 127, 50, 0.15) !important; border-left: 5px solid #cd7f32 !important; }}
-        .tier-mouse  {{ background-color: rgba(74, 144, 226, 0.15) !important; border-left: 5px solid #4a90e2 !important; }}
-        .tier-bird td:nth-child(3), .tier-bird td:nth-child(4)   {{ color: #ffd700; font-weight: bold; }}
-        .tier-fox td:nth-child(3), .tier-fox td:nth-child(4)   {{ color: #ff8533; font-weight: bold; }}
-        .tier-rabbit td:nth-child(3), .tier-rabbit td:nth-child(4) {{ color: #dfa679; font-weight: bold; }}
-        .tier-mouse td:nth-child(3), .tier-mouse td:nth-child(4) {{ color: #7db3f2; font-weight: bold; }}
-        .leaderboard-table td:nth-child(8), .leaderboard-table td:nth-child(9) {{ color: #888; font-size: 0.85em; }}
+        .leaderboard-table td {{ border-bottom: 1px solid #2a2a2a; padding: 10px; font-size: 0.9em; text-align: center; vertical-align: middle; }}
+
+        /* Icon Container for consistent Bunny ears/Mouse width */
+        .tier-icon-container {{ width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; margin: 0 auto; }}
+        .tier-icon-container img {{ max-width: 100%; max-height: 100%; object-fit: contain; }}
+
+        /* Colors matched to your uploaded icons */
+        .tier-bird   {{ background-color: rgba(103, 192, 199, 0.1) !important; border-left: 4px solid #67c0c7 !important; }}
+        .tier-fox    {{ background-color: rgba(230, 55, 45, 0.1) !important; border-left: 4px solid #e6372d !important; }}
+        .tier-rabbit {{ background-color: rgba(247, 235, 91, 0.1) !important; border-left: 4px solid #f7eb5b !important; }}
+        .tier-mouse  {{ background-color: rgba(242, 144, 87, 0.1) !important; border-left: 4px solid #f29057 !important; }}
+        
+        /* Text color matching for Player/ELO */
+        .tier-bird td:nth-child(3), .tier-bird td:nth-child(4)   {{ color: #67c0c7; font-weight: bold; }}
+        .tier-fox td:nth-child(3), .tier-fox td:nth-child(4)   {{ color: #e6372d; font-weight: bold; }}
+        .tier-rabbit td:nth-child(3), .tier-rabbit td:nth-child(4) {{ color: #f7eb5b; font-weight: bold; }}
+        .tier-mouse td:nth-child(3), .tier-mouse td:nth-child(4) {{ color: #f29057; font-weight: bold; }}
+
         .unranked {{ opacity: 0.5; font-style: italic; }}
-        .unranked td {{ color: #888 !important; }}
         .footer {{ margin-top: 30px; font-size: 0.7em; color: #555; border-top: 1px solid #333; padding-top: 15px; }}
     </style>
 </head>
@@ -241,7 +250,6 @@ html_content = f"""
         <h3>Alternative ELO Leaderboard • Data until {CUTOFF_DATE}</h3>
         {html_table}
         <div class="footer">
-            <strong>Tier System</strong> (min 10 games): 🦅 1500, 🦊 1400, 🐰 1300, 🐭 1200<br>
             Generated on {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M')} UTC
         </div>
     </div>
@@ -250,19 +258,10 @@ html_content = f"""
     <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
     <script>
     $(document).ready(function() {{
-        $.extend($.fn.dataTable.ext.type.order, {{
-            "rank-pre": function (d) {{ return d === "-" ? 9999 : parseInt(d); }}
-        }});
         $('#leaderboard').DataTable({{
             "order": [[3, "desc"]],
             "responsive": true,
             "pageLength": 50,
-            "columnDefs": [
-                {{ "type": "rank", "targets": 0 }},
-                {{ "responsivePriority": 1, "targets": [0, 2, 3] }},
-                {{ "responsivePriority": 10, "targets": [1, 4, 5, 6, 7, 8] }},
-                {{ "className": "all", "targets": [0, 2, 3] }}
-            ],
             "createdRow": function(row, data, dataIndex) {{
                 var rank = data[0];         
                 var elo = parseInt(data[3]); 
@@ -284,4 +283,3 @@ html_content = f"""
 
 with open("index.html", "w", encoding="utf-8") as f:
     f.write(html_content)
-print("index.html generated successfully!")
