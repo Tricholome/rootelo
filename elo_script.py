@@ -113,6 +113,7 @@ for game_id, group in df.groupby('GameID', sort=False):
 # --- 7. Final Leaderboard Preparation ---
 def get_tier_icon(rating, games):
     if games < 10: return ""
+    r = round(rating)
     if rating >= 1500: return "🦅"
     if rating >= 1400: return "🦊"
     if rating >= 1300: return "🐰"
@@ -142,7 +143,7 @@ for p_name, rating in elo_ratings.items():
             'Wins': formatted_wins,
             'Win Rate': f"{(w/g):.1%}",
             'Peak': round(peak_elo[p_name]),
-            '+/-': str_diff,
+            'Gain/Loss': str_diff,
             'Qualified': is_qual
         })
 
@@ -160,7 +161,7 @@ final_df['Rank'] = rank_list
 final_df = final_df.drop(columns=['Qualified'])
 
 # Set strict Column Order
-final_df = final_df[['Rank', 'Tier', 'Player', 'ELO', 'Games', 'Wins', 'Win Rate', 'Peak', '+/-']]
+final_df = final_df[['Rank', 'Tier', 'Player', 'ELO', 'Games', 'Wins', 'Win Rate', 'Peak', 'Gain/Loss']]
 
 # --- 8. HTML Webpage Generation ---
 html_table = final_df.to_html(index=False, classes='leaderboard-table display nowrap', table_id="leaderboard")
@@ -189,18 +190,18 @@ html_content = f"""
         .leaderboard-table td {{ border-bottom: 1px solid #2a2a2a; padding: 10px; font-size: 0.9em; text-align: center; }}
 
         /* Tier Styling */
-        .bird   {{ background-color: rgba(255, 215, 0, 0.15) !important; border-left: 5px solid #ffd700 !important; }}
+        .tier-bird   {{ background-color: rgba(255, 215, 0, 0.15) !important; border-left: 5px solid #ffd700 !important; }}
         .tier-fox   {{ background-color: rgba(255, 102, 0, 0.15) !important; border-left: 5px solid #ff6600 !important; }}
-        .rabbit  {{ background-color: rgba(205, 127, 50, 0.15) !important; border-left: 5px solid #cd7f32 !important; }}
+        .tier-rabbit  {{ background-color: rgba(205, 127, 50, 0.15) !important; border-left: 5px solid #cd7f32 !important; }}
         .tier-mouse {{ background-color: rgba(74, 144, 226, 0.15) !important; border-left: 5px solid #4a90e2 !important; }}
         
         /* Colored Text for Rank 3/4 (Player/ELO) */
-        .bird td:nth-child(3), .bird td:nth-child(4)   {{ color: #ffd700; font-weight: bold; }}
+        .tier-bird td:nth-child(3), .tier-bird td:nth-child(4)   {{ color: #ffd700; font-weight: bold; }}
         .tier-fox td:nth-child(3), .tier-fox td:nth-child(4)   {{ color: #ff8533; font-weight: bold; }}
-        .rabbit td:nth-child(3), .rabbit td:nth-child(4) {{ color: #dfa679; font-weight: bold; }}
+        .tier-rabbit td:nth-child(3), .tier-rabbit td:nth-child(4) {{ color: #dfa679; font-weight: bold; }}
         .tier-mouse td:nth-child(3), .tier-mouse td:nth-child(4) {{ color: #7db3f2; font-weight: bold; }}
 
-        /* Secondary columns styling (Peak & +/-) */
+        /* Secondary columns styling (Peak & Gain/Loss) */
         .leaderboard-table td:nth-child(8), .leaderboard-table td:nth-child(9) {{ color: #888; font-size: 0.85em; }}
 
         .unranked {{ opacity: 0.5; font-style: italic; }}
@@ -250,9 +251,9 @@ html_content = f"""
                 if (rank === "-") {{
                     $(row).addClass('unranked');
                 }} else {{
-                    if (elo >= 1500) $(row).addClass('bird');
+                    if (elo >= 1500) $(row).addClass('tier-bird');
                     else if (elo >= 1400) $(row).addClass('tier-fox');
-                    else if (elo >= 1300) $(row).addClass('rabbit');
+                    else if (elo >= 1300) $(row).addClass('tier-rabbit');
                     else if (elo >= 1200) $(row).addClass('tier-mouse');
                 }}
             }}
