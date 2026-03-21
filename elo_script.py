@@ -231,4 +231,4 @@ html_content = f"""
     </script>
 </body>
 </html>
-
+"""
