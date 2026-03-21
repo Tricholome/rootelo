@@ -16,12 +16,23 @@ CUTOFF_DATE = today - timedelta(days=1)
 
 print(f"Update started. Filtering matches closed before: {today}")
 
-# --- 3. Load Correction File ---
+# --- 3. Load Correction File (Excel) ---
 excel_file_path = 'Root_Elo_LH01_Corrected_Dates.xlsx'
-df_updates = pd.read_excel(excel_file_path, engine='openpyxl')
 
-# Ensure the 'New_Date' column is in datetime format for proper merging
-df_updates['New_Date'] = pd.to_datetime(df_updates['New_Date'])
+# Initialize an empty mapping first to avoid NameError
+game_id_mapping = pd.Series(dtype='datetime64[ns]')
+
+try:
+    if os.path.exists(excel_file_path):
+        df_updates = pd.read_excel(excel_file_path, engine='openpyxl')
+        if not df_updates.empty and 'GameID' in df_updates.columns:
+            # Populate the mapping if the file is valid
+            game_id_mapping = df_updates.set_index('GameID')['New_Date']
+            print(f"Loaded {len(game_id_mapping)} manual corrections from Excel.")
+    else:
+        print(f"Note: {excel_file_path} not found. Skipping manual corrections.")
+except Exception as e:
+    print(f"Warning: Could not process Excel file: {e}. Proceeding without corrections.")
 
 # --- 4. Fetch Match Data from API ---
 all_matches = []
