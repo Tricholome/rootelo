@@ -175,7 +175,7 @@ for _, row in final_df.iterrows():
     <tr>
         <td>{row['Rank']}</td>
         <td>{icon_tag}</td>
-        <td>{row['Player']}</td>
+        <td>{display_name}</td>
         <td>{row['ELO']}</td>
         <td>{row['Games']}</td>
         <td>{row['Wins']}</td>
