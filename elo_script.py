@@ -446,6 +446,14 @@ matches_html_content = f"""
 </html>
 """
 # --- 11. Generate trends ---
+import json
+
+# Clean the keys (remove +123, #456) so the search matches the leaderboard names
+clean_history = {k.split('+')[0].split('#')[0]: v for k, v in player_history.items()}
+
+# Convert the Python dictionary into a JSON string for JavaScript to use
+history_json = json.dumps(clean_history)
+
 trends_html = f"""
 <!DOCTYPE html>
 <html lang="en">
