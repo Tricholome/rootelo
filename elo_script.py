@@ -395,27 +395,26 @@ def build_leaderboard_page(df, filename, title, heading, subtitle):
 
 
 def build_matches_page(df, filename, title, heading):
-    if df.empty: return
-
     match_rows = ""
-    for _, row in df.iterrows():
-        def clean_names(name_str):
-            if pd.isna(name_str) or not str(name_str).strip(): return ""
-            return ", ".join([str(n).strip().split('+')[0].split('#')[0] for n in str(name_str).split(',')])
+    if not df.empty:
+        for _, row in df.iterrows():
+            def clean_names(name_str):
+                if pd.isna(name_str) or not str(name_str).strip(): return ""
+                return ", ".join([str(n).strip().split('+')[0].split('#')[0] for n in str(name_str).split(',')])
 
-        cleaned_winner = clean_names(row.get("Winner", ""))
-        cleaned_others = clean_names(row.get("Other Players", ""))
-        winner_html = f'<span style="color: #f7eb5b; font-weight: bold;">{cleaned_winner}</span>'
-        others_html = f'<span style="color: #888;">{cleaned_others}</span>'
-        lineup_html = f'<div style="white-space: normal; word-break: break-word; min-width: 150px;">{winner_html}, {others_html}</div>'
-        match_url = f"https://rootleague.pliskin.dev/match/{row['MatchID']}/"
+            cleaned_winner = clean_names(row.get("Winner", ""))
+            cleaned_others = clean_names(row.get("Other Players", ""))
+            winner_html = f'<span style="color: #f7eb5b; font-weight: bold;">{cleaned_winner}</span>'
+            others_html = f'<span style="color: #888;">{cleaned_others}</span>'
+            lineup_html = f'<div style="white-space: normal; word-break: break-word; min-width: 150px;">{winner_html}, {others_html}</div>'
+            match_url = f"https://rootleague.pliskin.dev/match/{row['MatchID']}/"
         
-        match_rows += f"""
-        <tr>
-            <td>{row['Rank']}</td><td style="font-weight:bold; color:#4a90e2;">{row['ELO_Sum']}</td>
-            <td>{row['Date']}</td><td style="text-align: left; padding-left: 20px;">{lineup_html}</td>
-            <td><a href="{match_url}" target="_blank" style="color: #666; text-decoration: none; font-family: monospace; font-size: 0.9em; border: 1px solid #333; padding: 2px 6px; border-radius: 4px;">{row['MatchID']} ↗</a></td>
-        </tr>"""
+            match_rows += f"""
+            <tr>
+                <td>{row['Rank']}</td><td style="font-weight:bold; color:#4a90e2;">{row['ELO_Sum']}</td>
+                <td>{row['Date']}</td><td style="text-align: left; padding-left: 20px;">{lineup_html}</td>
+                <td><a href="{match_url}" target="_blank" style="color: #666; text-decoration: none; font-family: monospace; font-size: 0.9em; border: 1px solid #333; padding: 2px 6px; border-radius: 4px;">{row['MatchID']} ↗</a></td>
+            </tr>"""
 
     content = f"""
         <table id="matchesTable" class="display nowrap responsive" style="width:100%">
