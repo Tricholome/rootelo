@@ -255,10 +255,13 @@ def generate_page_html(title, page_heading, current_page, content, custom_css=""
     is_archive = "_lh01.html" in current_page
     
     # 1. Main Navigation (Adapts to selected season)
-    nav_links = [("index", "Leaderboard"), ("matches", "Match Archive"), ("trends", "Player Trends")]
+    nav_links = [("index", "Leaderboard"), ("matches", "Top Tables"), ("trends", "Player's Journey"), ("about", "Codex")]
     nav_html = ""
     for base, label in nav_links:
-        target = f"{base}_lh01.html" if is_archive else f"{base}.html"
+        if base == "about":
+            target = "about.html"
+        else:
+            target = f"{base}_lh01.html" if is_archive else f"{base}.html"
         active = "active" if current_page.startswith(base) else ""
         nav_html += f'<a href="{target}" class="{active}">{label}</a>'
 
@@ -497,6 +500,33 @@ def build_trends_page(history_dict, filename, title, heading):
     with open(filename, "w", encoding="utf-8") as f:
         f.write(generate_page_html(title, heading, filename, content, css, js, extra_head))
 
+def build_about_page(filename, title, heading):
+    # Texte du Codex (À personnaliser selon tes règles)
+    codex_text = """
+    <div style="text-align: left; max-width: 800px; margin: 40px auto; line-height: 1.6; color: #ccc;">
+        <h2 style="color: #4a90e2;">The ELO System</h2>
+        <p>Our ranking is based on the ELO algorithm, adjusted for 4-player matches. 
+        Points are gained or lost based on the probability of victory against your opponents.</p>
+        
+        <h2 style="color: #4a90e2;">The Tiers</h2>
+        <ul>
+            <li><strong>Bird:</strong> 1500+ (Elite level)</li>
+            <li><strong>Fox:</strong> 1400+ (Expert)</li>
+            <li><strong>Rabbit:</strong> 1300+ (Advanced)</li>
+            <li><strong>Mouse:</strong> 1200+ (Learner)</li>
+        </ul>
+        
+        <h2 style="color: #4a90e2;">Top Tables</h2>
+        <p>This section ranks matches by their <strong>ELO Sum</strong>. This represents the total skill 
+        density of the table. The higher the sum, the more "elite" the match was.</p>
+        
+        <p style="margin-top: 50px; font-size: 0.8em; color: #555;">
+        Last updated: """ + datetime.now(timezone.utc).strftime('%Y-%m-%d') + """</p>
+    </div>
+    """
+    with open(filename, "w", encoding="utf-8") as f:
+        f.write(generate_page_html(title, heading, filename, codex_text))
+
 # =========================================================================
 # --- 9. DATA PREPARATION (DISPLAY FILTERS) ---
 # =========================================================================
@@ -528,5 +558,8 @@ print("Generating Archive LH01 pages...")
 build_leaderboard_page(display_archive_df, "index_lh01.html", "Archive LH01 Leaderboard", "Season LH01 Archive", "Final Standings • Season LH01")
 build_matches_page(archive_matches_df, "matches_lh01.html", "Archive LH01 Matches", "Match Archive • Season LH01")
 build_trends_page(archive_history, "trends_lh01.html", "Archive LH01 Trends", "Player Progression • Season LH01")
+
+# C. Generate Codex Page
+build_about_page("about.html", "Codex • Root League", "The Woodland Codex")
 
 print("Done! All files generated.")
