@@ -266,16 +266,19 @@ def generate_page_html(title, page_heading, current_page, content, custom_css=""
         nav_html += f'<a href="{target}" class="{active}">{label}</a>'
 
     # 2. Sub Navigation (Season Selector)
-    current_prefix = current_page.replace("_lh01.html", "").replace(".html", "")
-    sub_links = {
-        f"{current_prefix}.html": "Current Season",
-        f"{current_prefix}_lh01.html": "Season LH01"
-    }
-    sub_items_html = "".join([
-        f'<a href="{url}" class="sub-nav-item {"active" if url == current_page else ""}">{name}</a>'
-        for url, name in sub_links.items()
-    ])
-    sub_nav_html = f'<div class="sub-nav-container">{sub_items_html}</div>'
+    if current_page == "about.html":
+        sub_nav_html = ""
+    else:
+        current_prefix = current_page.replace("_lh01.html", "").replace(".html", "")
+        sub_links = {
+            f"{current_prefix}.html": "Current Season (LH02)",
+            f"{current_prefix}_lh01.html": "LH01"
+        }
+        sub_items_html = "".join([
+            f'<a href="{url}" class="sub-nav-item {"active" if url == current_page else ""}">{name}</a>'
+            for url, name in sub_links.items()
+        ])
+        sub_nav_html = f'<div class="sub-nav-container">{sub_items_html}</div>'
 
     base_css = """
         body { font-family: 'Segoe UI', Helvetica, Arial, sans-serif; background-color: #121212; color: #eee; text-align: center; padding: 20px 5px; margin: 0; overflow-x: hidden; }
@@ -434,11 +437,15 @@ def build_matches_page(df, filename, title, heading):
     js = """<script>
     $(document).ready(function() {
         $('#matchesTable').DataTable({
-            "order": [[1, "desc"]], "responsive": { details: { type: 'column', target: 0 } }, "pageLength": 25,
+            "order": [[1, "desc"]], 
+            "responsive": true, 
+            "pageLength": 25,
             "columnDefs": [
-                { "className": "dtr-control", "targets": 0 }, { "width": "40px", "targets": [0, 1] },
-                { "className": "lineup-cell", "targets": 3 }, { "responsivePriority": 1, "targets": [1, 3] },
-                { "responsivePriority": 2, "targets": 2 }, { "responsivePriority": 3, "targets": 4 }
+                { "width": "40px", "targets": [0, 1] },
+                { "className": "lineup-cell", "targets": 3 }, 
+                { "responsivePriority": 1, "targets": [0, 1, 3] },
+                { "responsivePriority": 2, "targets": 2 }, 
+                { "responsivePriority": 3, "targets": 4 }
             ]
         });
     });
