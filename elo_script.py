@@ -84,6 +84,7 @@ elo_ratings = {player: 1200 for player in df['Player'].unique()}
 peak_elo = {player: 1200 for player in df['Player'].unique()}
 last_diff = {player: 0 for player in df['Player'].unique()}
 player_stats = {player: {'games': 0, 'wins': 0.0} for player in df['Player'].unique()}
+player_history = {player: [1200] for player in df['Player'].unique()}
 
 match_history_data = []
 
@@ -126,6 +127,8 @@ for game_id, group in df.groupby('GameID', sort=False):
         
         if elo_ratings[name] > peak_elo[name]:
             peak_elo[name] = elo_ratings[name]
+
+        player_history[name].append(round(elo_ratings[name]))
 
 # --- 7. Final Leaderboard Preparation ---
 def get_tier_icon(rating, games):
@@ -261,9 +264,10 @@ html_content = f"""
 </head>
 <body>
     <div class="container">
-        <nav style="margin-bottom: 20px; border-bottom: 1px solid #333; padding-bottom: 15px;">
-            <a href="index.html" style="color: #4a90e2; margin: 0 15px; text-decoration: none; font-weight: bold; border-bottom: 2px solid #4a90e2; padding-bottom: 5px;">Leaderboard</a>
-            <a href="matches.html" style="color: #4a90e2; margin: 0 15px; text-decoration: none; font-weight: bold;">Best Matches</a>
+        <nav>
+            <a href="index.html">Leaderboard</a>
+            <a href="matches.html">Match Archive</a>
+            <a href="trends.html" style="border-bottom: 2px solid #4a90e2; padding-bottom: 5px;">Player Trends</a>
         </nav>
         <h1>Root Digital League • Season LH01</h1>
         <h3>Alternative ELO Leaderboard • Data until {CUTOFF_DATE}</h3>
@@ -397,7 +401,8 @@ matches_html_content = f"""
     <div class="container">
         <nav>
             <a href="index.html">Leaderboard</a>
-            <a href="matches.html" style="border-bottom: 2px solid #4a90e2; padding-bottom: 5px;">Match Archive</a>
+            <a href="matches.html">Match Archive</a>
+            <a href="trends.html" style="border-bottom: 2px solid #4a90e2; padding-bottom: 5px;">Player Trends</a>
         </nav>
         
         <h1>Match Archive</h1>
@@ -440,6 +445,102 @@ matches_html_content = f"""
 </body>
 </html>
 """
+# --- 11. Generate trends ---
+import json
+
+# Clean the keys (remove +123, #456) so the search matches the leaderboard names
+clean_history = {k.split('+')[0].split('#')[0]: v for k, v in player_history.items()}
+
+# Convert the Python dictionary into a JSON string for JavaScript to use
+history_json = json.dumps(clean_history)
+
+trends_html = f"""
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Player Progression • Root League</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {{ font-family: 'Segoe UI', sans-serif; background-color: #121212; color: #eee; text-align: center; padding: 20px; }}
+        .container {{ width: 95%; max-width: 900px; margin: auto; background: #1e1e1e; padding: 30px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.5); }}
+        nav {{ margin-bottom: 30px; border-bottom: 1px solid #333; padding-bottom: 15px; }}
+        nav a {{ color: #4a90e2; text-decoration: none; margin: 0 15px; font-weight: bold; text-transform: uppercase; font-size: 0.9em; }}
+        h1 {{ color: #4a90e2; }}
+        input {{ background: #252525; color: #fff; border: 1px solid #444; padding: 12px; border-radius: 6px; width: 300px; font-size: 1em; margin-bottom: 20px; }}
+        .chart-container {{ position: relative; height: 400px; width: 100%; margin-top: 20px; }}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav>
+            <a href="index.html">Leaderboard</a>
+            <a href="matches.html">Match Archive</a>
+            <a href="trends.html" style="border-bottom: 2px solid #4a90e2; padding-bottom: 5px;">Player Trends</a>
+        </nav>
+
+        <h1>Player Progression</h1>
+        <p style="color: #888;">Type your name to see your ELO journey over time.</p>
+        
+        <input type="text" id="playerName" placeholder="Enter Player Name..." oninput="updateChart()">
+        
+        <div class="chart-container">
+            <canvas id="progressionChart"></canvas>
+        </div>
+    </div>
+
+    <script>
+        const allData = {history_json};
+        let myChart;
+
+        function updateChart() {{
+            const name = document.getElementById('playerName').value.trim();
+            const ctx = document.getElementById('progressionChart').getContext('2d');
+            
+            if (allData[name]) {{
+                const dataPoints = allData[name];
+                const labels = dataPoints.map((_, i) => i === 0 ? "Start" : "Match " + i);
+
+                if (myChart) myChart.destroy();
+
+                myChart = new Chart(ctx, {{
+                    type: 'line',
+                    data: {{
+                        labels: labels,
+                        datasets: [{{
+                            label: name + ' ELO Progression',
+                            data: dataPoints,
+                            borderColor: '#4a90e2',
+                            backgroundColor: 'rgba(74, 144, 226, 0.1)',
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.3,
+                            pointRadius: 4,
+                            pointHoverRadius: 8
+                        }}]
+                    }},
+                    options: {{
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {{
+                            y: {{ grid: {{ color: '#333' }}, ticks: {{ color: '#aaa' }} }},
+                            x: {{ grid: {{ display: false }}, ticks: {{ color: '#aaa' }} }}
+                        }},
+                        plugins: {{
+                            legend: {{ labels: {{ color: '#fff' }} }}
+                        }}
+                    }}
+                }});
+            }}
+        }}
+    </script>
+</body>
+</html>
+"""
+
+with open("trends.html", "w", encoding="utf-8") as f:
+    f.write(trends_html)
 
 with open("matches.html", "w", encoding="utf-8") as f:
     f.write(matches_html_content)
