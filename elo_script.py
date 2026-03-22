@@ -4,7 +4,7 @@ import pandas as pd
 import json
 from datetime import datetime, timedelta, date, timezone
 
-# --- 1. Configuration (GitHub Secrets) ---
+# --- 1. Configuration ---
 API_TOKEN = os.getenv('API_TOKEN')
 HEADERS = {'Authorization': f'Token {API_TOKEN}'} if API_TOKEN else {}
 TOURNAMENT_ID = 24
@@ -14,7 +14,7 @@ today = date.today()
 CUTOFF_DATE = today - timedelta(days=1)
 print(f"Update started. Data until: {CUTOFF_DATE}")
 
-# --- 3. Load Correction File (Excel) ---
+# --- 3. Load Correction File ---
 excel_file_path = 'Root_Elo_LH01_Corrected_Dates.xlsx'
 game_id_mapping = pd.Series(dtype='datetime64[ns]')
 
@@ -52,7 +52,7 @@ for m in all_matches:
                 'Date_Closed': m.get('date_closed')
             })
 
-# --- 5. Data Processing ---
+# --- 5. Data Processing (Time-Preservation Fix) ---
 df = pd.DataFrame(raw_data)
 df['Date_Closed'] = pd.to_datetime(df['Date_Closed'], format='ISO8601', utc=True)
 
@@ -64,14 +64,14 @@ try:
             new_dates = df.loc[mask, 'GameID'].map(game_id_mapping).dt.strftime('%Y-%m-%d')
             combined_datetimes = new_dates + ' ' + original_times
             df.loc[mask, 'Date_Closed'] = pd.to_datetime(combined_datetimes, utc=True)
-            print(f"Corrected {mask.sum() // 4} games.")
+            print(f"Corrected {mask.sum() // 4} games while preserving timestamps.")
 except Exception as e:
     print(f"Date mapping note: {e}")
 
 df = df[df['Date_Closed'].dt.date < today].copy()
 df = df.sort_values(by='Date_Closed').reset_index(drop=True)
 
-# --- 6. ELO Calculation Logic (The "Memorizer") ---
+# --- 6. ELO Calculation Logic ---
 elo_ratings = {player: 1200 for player in df['Player'].unique()}
 peak_elo = {player: 1200 for player in df['Player'].unique()}
 last_diff = {player: 0 for player in df['Player'].unique()}
@@ -99,7 +99,6 @@ for game_id, group in df.groupby('GameID', sort=False):
     })
     
     total_q = sum([10**(elo_ratings[p['Player']]/400) for p in match_participants])
-    
     for p in match_participants:
         name = p['Player']
         actual = p['Score']
@@ -108,16 +107,15 @@ for game_id, group in df.groupby('GameID', sort=False):
         player_stats[name]['wins'] += actual
         
         k = 80 if player_stats[name]['games'] <= 10 else (40 if player_stats[name]['games'] <= 50 else 20)
-            
         change = k * (actual - expected)
         elo_ratings[name] += change
         last_diff[name] = change
         if elo_ratings[name] > peak_elo[name]: peak_elo[name] = elo_ratings[name]
         
-        # Save [Date, ELO] for Trends
+        # Track history for Trends page
         player_history[name].append([current_date, round(elo_ratings[name])])
 
-# --- 7. Final Leaderboard Prep ---
+# --- 7. Tier Icon Logic ---
 def get_tier_icon(rating, games):
     if games < 10: return None, "unranked"
     r = round(rating)
@@ -127,17 +125,17 @@ def get_tier_icon(rating, games):
     if r >= 1200: return "assets/icons/mouse.png", "tier-mouse"
     return None, "unranked"
 
+# --- 8. HTML: index.html (Leaderboard) ---
 leaderboard_results = []
 for p_name, rating in elo_ratings.items():
-    g = player_stats[p_name]['games']
-    w = player_stats[p_name]['wins']
+    w, g = player_stats[p_name]['wins'], player_stats[p_name]['games']
     if w >= 1:
-        formatted_wins = int(w) if w % 1 == 0 else round(w, 1)
         diff = round(last_diff[p_name])
         leaderboard_results.append({
             'Rank': 0, 'Player': p_name, 'ELO': round(rating), 'Games': g,
-            'Wins': formatted_wins, 'Win Rate': f"{(w/g):.1%}",
-            'Peak': round(peak_elo[p_name]), 'Last': f"+{diff}" if diff > 0 else str(diff),
+            'Wins': int(w) if w % 1 == 0 else round(w, 1),
+            'Win Rate': f"{(w/g):.1%}", 'Peak': round(peak_elo[p_name]),
+            'Last': f"+{diff}" if diff > 0 else str(diff),
             'Qualified': (g >= 10 and rating >= 1200)
         })
 
@@ -150,7 +148,6 @@ for _, row in final_df.iterrows():
     else: ranks.append("-")
 final_df['Rank'] = ranks
 
-# --- 8. HTML: index.html ---
 table_rows = ""
 for _, row in final_df.iterrows():
     icon_path, suit_class = get_tier_icon(row['ELO'], row['Games'])
@@ -165,52 +162,77 @@ html_content = f"""
     <meta charset="UTF-8">
     <title>Root League Leaderboard</title>
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
     <style>
-        body {{ font-family: sans-serif; background: #121212; color: #eee; text-align: center; }}
-        .container {{ width: 95%; max-width: 1100px; margin: auto; background: #1e1e1e; padding: 20px; border-radius: 12px; }}
-        nav {{ margin-bottom: 20px; border-bottom: 1px solid #333; padding: 10px; }}
-        nav a {{ color: #4a90e2; text-decoration: none; margin: 0 15px; font-weight: bold; }}
-        table {{ width: 100% !important; background: #1e1e1e; color: #eee; }}
+        body {{ font-family: 'Segoe UI', sans-serif; background-color: #121212; color: #eee; text-align: center; padding: 20px 5px; }}
+        .container {{ width: 95%; max-width: 1100px; margin: auto; background: #1e1e1e; padding: 20px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.6); }}
+        nav {{ margin-bottom: 25px; border-bottom: 1px solid #333; padding-bottom: 15px; }}
+        nav a {{ color: #4a90e2; text-decoration: none; margin: 0 15px; font-weight: bold; text-transform: uppercase; font-size: 0.9em; }}
+        h1 {{ color: #4a90e2; text-transform: uppercase; letter-spacing: 2px; }}
+        .leaderboard-table {{ width: 100% !important; background: #1e1e1e; }}
+        .leaderboard-table th {{ background: #252525 !important; color: #4a90e2 !important; }}
         .tier-icon-container img {{ height: 24px; }}
-        .unranked {{ opacity: 0.5; }}
+        .tier-bird {{ border-left: 4px solid #67c0c7 !important; background: rgba(103,192,199,0.05); }}
+        .tier-fox {{ border-left: 4px solid #e6372d !important; background: rgba(230,55,45,0.05); }}
+        .tier-rabbit {{ border-left: 4px solid #f7eb5b !important; background: rgba(247,235,91,0.05); }}
+        .tier-mouse {{ border-left: 4px solid #f29057 !important; background: rgba(242,144,87,0.05); }}
+        .unranked {{ opacity: 0.5; font-style: italic; }}
     </style>
 </head>
 <body>
     <div class="container">
-        <nav><a href="index.html" style="border-bottom: 2px solid #4a90e2;">Leaderboard</a><a href="matches.html">Match Archive</a><a href="trends.html">Player Trends</a></nav>
-        <h1>Root Digital League Leaderboard</h1>
-        <table id="leaderboard">
+        <nav><a href="index.html" style="border-bottom: 2px solid #4a90e2; padding-bottom:5px;">Leaderboard</a><a href="matches.html">Match Archive</a><a href="trends.html">Player Trends</a></nav>
+        <h1>Root League Leaderboard</h1>
+        <table id="leaderboard" class="leaderboard-table display nowrap">
             <thead><tr><th>Rank</th><th>Tier</th><th>Player</th><th>ELO</th><th>Games</th><th>Wins</th><th>WR</th><th>Peak</th><th>Last</th></tr></thead>
             <tbody>{table_rows}</tbody>
         </table>
     </div>
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-    <script>$(document).ready(function() {{ $('#leaderboard').DataTable({{"order": [[3, "desc"]], "pageLength": 50}}); }});</script>
+    <script>
+    $(document).ready(function() {{
+        $('#leaderboard').DataTable({{
+            "order": [[3, "desc"]], "pageLength": 50, "responsive": true,
+            "createdRow": function(row, data, dataIndex) {{
+                var rank = data[0]; var elo = parseInt(data[3]);
+                if (rank === "-") $(row).addClass('unranked');
+                else {{
+                    if (elo >= 1500) $(row).addClass('tier-bird');
+                    else if (elo >= 1400) $(row).addClass('tier-fox');
+                    else if (elo >= 1300) $(row).addClass('tier-rabbit');
+                    else if (elo >= 1200) $(row).addClass('tier-mouse');
+                }}
+            }}
+        }});
+    }});
+    </script>
 </body>
 </html>
 """
 with open("index.html", "w", encoding="utf-8") as f: f.write(html_content)
 
-# --- 9. HTML: matches.html ---
+# --- 9. HTML: matches.html (Match Archive) ---
 df_matches = pd.DataFrame(match_history_data).sort_values(by='ELO_Sum', ascending=False)
 df_matches.insert(0, 'Rank', range(1, len(df_matches) + 1))
 
 match_rows = ""
 for _, row in df_matches.iterrows():
-    def clean(n): return ", ".join([x.strip().split('+')[0].split('#')[0] for x in n.split(',')])
+    def clean(n): return ", ".join([x.strip().split('+')[0].split('#')[0] for x in str(n).split(',')])
     lineup = f'<span style="color:#f7eb5b;font-weight:bold;">{clean(row["Winner"])}</span>, <span style="color:#888;">{clean(row["Other Players"])}</span>'
-    match_rows += f"<tr><td>{row['Rank']}</td><td style='color:#4a90e2;font-weight:bold;'>{row['ELO_Sum']}</td><td>{row['Date']}</td><td style='text-align:left;'>{lineup}</td><td><a href='https://rootleague.pliskin.dev/match/{row['MatchID']}/' target='_blank' style='color:#666;'>{row['MatchID']} ↗</a></td></tr>"
+    match_rows += f"<tr><td>{row['Rank']}</td><td style='color:#4a90e2;font-weight:bold;'>{row['ELO_Sum']}</td><td>{row['Date']}</td><td style='text-align:left;'>{lineup}</td><td><a href='https://rootleague.pliskin.dev/match/{row['MatchID']}/' target='_blank' style='color:#666;text-decoration:none;'>{row['MatchID']} ↗</a></td></tr>"
 
 matches_html = f"""
 <!DOCTYPE html>
 <html lang="en">
-<head><meta charset="UTF-8"><title>Match Archive</title><link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css"><style>body{{background:#121212;color:#eee;font-family:sans-serif;}} .container{{width:95%;max-width:1100px;margin:auto;background:#1e1e1e;padding:20px;border-radius:12px;}} nav{{margin-bottom:20px;border-bottom:1px solid #333;padding:10px;}} nav a{{color:#4a90e2;text-decoration:none;margin:0 15px;font-weight:bold;}} table{{width:100% !important;}}</style></head>
+<head><meta charset="UTF-8"><title>Match Archive</title><link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css"><style>
+body{{background:#121212;color:#eee;font-family:sans-serif;padding:20px;}} .container{{width:95%;max-width:1100px;margin:auto;background:#1e1e1e;padding:20px;border-radius:12px;}} nav{{margin-bottom:20px;border-bottom:1px solid #333;padding-bottom:15px;}} nav a{{color:#4a90e2;text-decoration:none;margin:0 15px;font-weight:bold;}} table{{width:100% !important;}} th{{background:#252525 !important;color:#4a90e2 !important;}}
+</style></head>
 <body>
     <div class="container">
-        <nav><a href="index.html">Leaderboard</a><a href="matches.html" style="border-bottom: 2px solid #4a90e2;">Match Archive</a><a href="trends.html">Player Trends</a></nav>
+        <nav><a href="index.html">Leaderboard</a><a href="matches.html" style="border-bottom: 2px solid #4a90e2; padding-bottom:5px;">Match Archive</a><a href="trends.html">Player Trends</a></nav>
         <h1>Match Archive</h1>
-        <table id="mTable"><thead><tr><th>Rank</th><th>ELO Sum</th><th>Date</th><th style='text-align:left;'>Lineup</th><th>ID</th></tr></thead><tbody>{match_rows}</tbody></table>
+        <table id="mTable"><thead><tr><th>Rank</th><th>ELO Sum</th><th>Date</th><th style='text-align:left;'>Lineup (Winner first)</th><th>ID</th></tr></thead><tbody>{match_rows}</tbody></table>
     </div>
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
@@ -219,7 +241,8 @@ matches_html = f"""
 """
 with open("matches.html", "w", encoding="utf-8") as f: f.write(matches_html)
 
-# --- 11. HTML: trends.html ---
+# --- 10. HTML: trends.html (Player Trends) ---
+import json
 clean_history = {k.split('+')[0].split('#')[0]: v for k, v in player_history.items()}
 history_json = json.dumps(clean_history)
 p_names = sorted(list(clean_history.keys()))
@@ -227,13 +250,16 @@ p_names = sorted(list(clean_history.keys()))
 trends_html = f"""
 <!DOCTYPE html>
 <html lang="en">
-<head><meta charset="UTF-8"><title>Trends</title><script src="https://cdn.jsdelivr.net/npm/chart.js"></script><style>body{{background:#121212;color:#eee;font-family:sans-serif;}} .container{{width:95%;max-width:900px;margin:auto;background:#1e1e1e;padding:30px;border-radius:12px;}} nav{{margin-bottom:20px;border-bottom:1px solid #333;padding:10px;}} nav a{{color:#4a90e2;text-decoration:none;margin:0 15px;font-weight:bold;}} input{{background:#252525;color:#fff;padding:10px;width:300px;}}</style></head>
+<head><meta charset="UTF-8"><title>Player Trends</title><script src="https://cdn.jsdelivr.net/npm/chart.js"></script><style>
+body{{background:#121212;color:#eee;font-family:sans-serif;padding:20px;}} .container{{width:95%;max-width:900px;margin:auto;background:#1e1e1e;padding:30px;border-radius:12px;}} nav{{margin-bottom:20px;border-bottom:1px solid #333;padding-bottom:15px;}} nav a{{color:#4a90e2;text-decoration:none;margin:0 15px;font-weight:bold;}} input{{background:#252525;color:#fff;padding:12px;width:300px;border:1px solid #444;border-radius:6px;}}
+</style></head>
 <body>
     <div class="container">
-        <nav><a href="index.html">Leaderboard</a><a href="matches.html">Match Archive</a><a href="trends.html" style="border-bottom: 2px solid #4a90e2;">Player Trends</a></nav>
+        <nav><a href="index.html">Leaderboard</a><a href="matches.html">Match Archive</a><a href="trends.html" style="border-bottom: 2px solid #4a90e2; padding-bottom:5px;">Player Trends</a></nav>
         <h1>Player Progression</h1>
-        <input list="pList" id="pName" placeholder="Search Player..." oninput="updateChart()"><datalist id="pList">{''.join([f'<option value="{n}">' for n in p_names])}</datalist>
-        <div style="height:400px; margin-top:20px;"><canvas id="pChart"></canvas></div>
+        <p style="color:#888;">Type your name to see your ELO journey.</p>
+        <input list="pList" id="pName" placeholder="Search for a player..." oninput="updateChart()"><datalist id="pList">{''.join([f'<option value="{n}">' for n in p_names])}</datalist>
+        <div style="height:450px; margin-top:30px; background:#1a1a1a; padding:15px; border-radius:8px;"><canvas id="pChart"></canvas></div>
     </div>
     <script>
         const allData = {history_json}; let chart;
@@ -244,8 +270,11 @@ trends_html = f"""
                 if (chart) chart.destroy();
                 chart = new Chart(ctx, {{
                     type: 'line',
-                    data: {{ labels: allData[name].map(d=>d[0]), datasets: [{{ label: name, data: allData[name].map(d=>d[1]), borderColor: '#4a90e2', tension:0.2 }}] }},
-                    options: {{ responsive:true, maintainAspectRatio:false, scales:{{ y:{{ grid:{{color:'#333'}}}} }} }}
+                    data: {{ 
+                        labels: allData[name].map(d=>d[0]), 
+                        datasets: [{{ label: name + ' ELO', data: allData[name].map(d=>d[1]), borderColor: '#4a90e2', backgroundColor: 'rgba(74,144,226,0.1)', fill: true, tension:0.2 }}] 
+                    }},
+                    options: {{ responsive:true, maintainAspectRatio:false, scales:{{ y:{{ grid:{{color:'#333'}}, ticks:{{color:'#aaa'}} }}, x:{{ grid:{{display:false}}, ticks:{{color:'#aaa', maxRotation:45}} }} }}, plugins:{{ legend:{{display:false}} }} }}
                 }});
             }}
         }}
