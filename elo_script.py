@@ -326,8 +326,8 @@ html_content = f"""
             "responsive": true,
             "pageLength": 50,
             "columnDefs": [
-                { "targets": 2, "className": "player-name-cell" }, // Target index 2 (Player column)
-                { "responsivePriority": 1, "targets": [0, 2, 3] }
+                {{ "targets": 2, "className": "player-name-cell" }}, // Target index 2 (Player column)
+                {{ "responsivePriority": 1, "targets": [0, 2, 3] }}
             ],
             "createdRow": function(row, data, dataIndex) {{
                 var rank = data[0];         
@@ -350,7 +350,7 @@ html_content = f"""
 
 with open("index.html", "w", encoding="utf-8") as f:
     f.write(html_content)
-
+    
 # --- 9. Best Matches Calculation ---
 
 df_best_matches = pd.DataFrame(match_history_data)
