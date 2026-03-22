@@ -196,7 +196,7 @@ for _, row in final_df.iterrows():
     <tr>
         <td>{row['Rank']}</td>
         <td>{icon_tag}</td>
-        <td>{display_name}</td>
+        <td class="player-name-cell">{display_name}</td>
         <td>{row['ELO']}</td>
         <td>{row['Games']}</td>
         <td>{row['Wins']}</td>
@@ -285,6 +285,11 @@ html_content = f"""
         .footer {{ margin-top: 30px; font-size: 0.75em; color: #777; border-top: 1px solid #333; padding-top: 15px; line-height: 2; }}
         .footer-tier-item {{ display: inline-block; margin: 0 10px; vertical-align: middle; }}
         .footer-tier-item img {{ height: 18px; width: auto; vertical-align: middle; margin-right: 4px; }}
+        .player-name-cell {{
+            text-align: left !important; 
+            padding-left: 15px !important; 
+            font-weight: 500; 
+        }}
     </style>
 </head>
 <body>
@@ -321,7 +326,7 @@ html_content = f"""
             "responsive": true,
             "pageLength": 50,
             "columnDefs": [
-                {{ "type": "rank", "targets": 0 }},
+                {{ "targets": 2, "className": "player-name-cell" }}, // Target index 2 (Player column)
                 {{ "responsivePriority": 1, "targets": [0, 2, 3] }}
             ],
             "createdRow": function(row, data, dataIndex) {{
@@ -345,7 +350,7 @@ html_content = f"""
 
 with open("index.html", "w", encoding="utf-8") as f:
     f.write(html_content)
-
+    
 # --- 9. Best Matches Calculation ---
 
 df_best_matches = pd.DataFrame(match_history_data)
@@ -397,58 +402,44 @@ matches_html_content = f"""
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
     <style>
         body {{ font-family: 'Segoe UI', sans-serif; background-color: #121212; color: #eee; text-align: center; padding: 20px 5px; }}
-        .container {{ width: 95%; max-width: 1100px; margin: auto; background: #1e1e1e; padding: 25px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.5); }}
+        .container {{ width: 95%; max-width: 1100px; margin: auto; background: #1e1e1e; padding: 15px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.5); overflow: hidden; }}
         
-        /* Unified Navigation CSS */
-        nav {{ 
-            margin-bottom: 30px; 
-            border-bottom: 1px solid #333; 
-            padding-bottom: 15px; 
-            display: flex; 
-            justify-content: center; 
-            gap: 10px;
-            flex-wrap: wrap; 
-        }}
-        nav a {{ 
-            color: #888; 
-            text-decoration: none; 
-            font-weight: bold; 
-            text-transform: uppercase; 
-            font-size: 0.85em; 
-            padding: 8px 16px;
-            border-radius: 6px;
-            transition: all 0.3s ease;
-            border: 1px solid transparent;
-        }}
+        /* Unified Navigation */
+        nav {{ margin-bottom: 20px; border-bottom: 1px solid #333; padding-bottom: 15px; display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }}
+        nav a {{ color: #888; text-decoration: none; font-weight: bold; text-transform: uppercase; font-size: 0.8em; padding: 8px 12px; border-radius: 6px; transition: 0.3s; border: 1px solid transparent; }}
         nav a:hover {{ color: #4a90e2; background: rgba(74,144,226,0.05); }}
-        nav a.active {{ color: #fff; background: #4a90e2; border: 1px solid #4a90e2; box-shadow: 0 4px 12px rgba(74,144,226,0.3); }}
+        nav a.active {{ color: #fff; background: #4a90e2; border: 1px solid #4a90e2; }}
         
-        h1 {{ color: #4a90e2; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }}
-        .search-hint {{ color: #aaa; font-size: 0.85em; margin-bottom: 30px; background: #252525; display: inline-block; padding: 10px 20px; border-radius: 30px; border: 1px solid #333; }}
+        h1 {{ color: #4a90e2; text-transform: uppercase; letter-spacing: 1px; font-size: 1.4em; margin-bottom: 10px; }}
         
-        /* DataTables Custom Theme */
+        /* Table Tweaks */
         .dataTables_wrapper {{ color: #eee !important; }}
-        .dataTables_filter input {{ background: #252525; color: #fff; border: 1px solid #444; border-radius: 6px; padding: 8px; width: 250px; margin-left: 10px; }}
-        
-        table.dataTable {{ width: 100% !important; border-collapse: collapse; margin-top: 20px !important; background: #1e1e1e; }}
-        table.dataTable thead th {{ background-color: #252525 !important; color: #4a90e2 !important; border-bottom: 2px solid #333 !important; text-transform: uppercase; font-size: 0.75em; padding: 15px; }}
-        table.dataTable td {{ border-bottom: 1px solid #2a2a2a; padding: 12px; font-size: 0.95em; vertical-align: middle; }}
-        
-        /* ID Link Hover Effect */
-        table.dataTable td a:hover {{ background: #333; color: #4a90e2 !important; border-color: #4a90e2 !important; }}
-        
-        .dataTables_info, .dataTables_paginate {{ color: #777 !important; font-size: 0.8em; margin-top: 20px; }}
+        table.dataTable {{ width: 100% !important; margin-top: 10px !important; background: #1e1e1e; border-collapse: collapse !important; }}
+        table.dataTable thead th {{ background-color: #252525 !important; color: #4a90e2 !important; font-size: 0.7em; padding: 10px 5px !important; text-transform: uppercase; }}
+        table.dataTable td {{ border-bottom: 1px solid #2a2a2a; padding: 10px 5px; font-size: 0.85em; vertical-align: middle; }}
 
-        /* Mobile Optimizations */
+        /* The Lineup Fix: Force wrapping and prevent overflow */
+        .lineup-cell {{ 
+            white-space: normal !important; 
+            word-wrap: break-word; 
+            overflow-wrap: break-word; 
+            min-width: 120px; 
+            max-width: 250px; 
+            line-height: 1.4;
+            text-align: left;
+        }}
+
+        /* Responsive Child Row Styling (The "Details" view) */
+        table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {{
+            background-color: #4a90e2 !important; /* Make the + button blue */
+        }}
+        table.dataTable > tbody > tr.child ul.dtr-details {{ width: 100%; background: #252525; }}
+        table.dataTable > tbody > tr.child span.dtr-title {{ color: #4a90e2; font-weight: bold; }}
+
         @media (max-width: 600px) {{
-            h1 {{ font-size: 1.2em; }}
-            .search-hint {{ font-size: 0.75em; padding: 8px 15px; width: 90%; }}
-            table.dataTable thead th {{ padding: 10px 5px; font-size: 0.65em; }}
-            table.dataTable td {{ padding: 8px 4px; font-size: 0.85em; }}
-    
-        /* Hide the "Rank" column on very small screens to save space */
-            table.dataTable td:nth-child(1), 
-            table.dataTable th:nth-child(1) {{ display: none; }}
+            .container {{ padding: 10px; }}
+            .dataTables_filter input {{ width: 150px !important; }}
+            table.dataTable td {{ font-size: 0.75em; }}
         }}
     </style>
 </head>
@@ -461,18 +452,15 @@ matches_html_content = f"""
         </nav>
         
         <h1>Match Archive</h1>
-        <div class="search-hint">
-            🔍 <strong>Filter:</strong> Search by <b>Name</b>, <b>Date</b>, or <b>ID</b>. Click an ID to view the official summary.
-        </div>
 
-        <table id="matchesTable" class="display nowrap">
+        <table id="matchesTable" class="display nowrap responsive" style="width:100%">
             <thead>
                 <tr>
                     <th>Rank</th>
-                    <th>ELO Sum</th>
+                    <th>ELO</th>
                     <th>Date</th>
-                    <th style="text-align: left; padding-left: 20px;">Lineup (Winner in Yellow)</th>
-                    <th>Game ID</th>
+                    <th>Lineup (Winner First)</th>
+                    <th>ID</th>
                 </tr>
             </thead>
             <tbody>
@@ -488,19 +476,21 @@ matches_html_content = f"""
     $(document).ready(function() {{
         $('#matchesTable').DataTable({{
             "order": [[1, "desc"]], 
-            "responsive": true,
-            "pageLength": 50,
+            "responsive": {{
+                details: {{
+                    type: 'column',
+                    target: 0 // Clicking the "Rank" column will now expand the details
+                }}
+            }},
+            "pageLength": 25,
             "columnDefs": [
-                // Priority 1 stays visible, higher numbers hide first
-                {{ "responsivePriority": 1, "targets": [1, 3] }}, // ELO Sum and Lineup
-                {{ "responsivePriority": 2, "targets": 2 }},    // Date
-                {{ "responsivePriority": 3, "targets": 4 }},    // Game ID
-                {{ "responsivePriority": 4, "targets": 0 }}     // Rank
-            ],
-            "language": {{
-                "search": "",
-                "searchPlaceholder": "Search..."
-            }}
+                {{ "className": "dtr-control", "targets": 0 }}, // Adds the plus icon to Rank
+                {{ "width": "40px", "targets": [0, 1] }},      // Force Rank and ELO to stay small
+                {{ "className": "lineup-cell", "targets": 3 }}, // Apply the wrapping fix to Lineup
+                {{ "responsivePriority": 1, "targets": [1, 3] }}, // Always show ELO and Lineup
+                {{ "responsivePriority": 2, "targets": 2 }},      // Date next
+                {{ "responsivePriority": 3, "targets": 4 }}       // Game ID hides first
+            ]
         }});
     }});
     </script>
