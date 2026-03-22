@@ -42,178 +42,7 @@ except Exception as e:
     print(f"ℹ️ Note: No corrections loaded (File empty or missing): {e}")
 
 # =========================================================================
-# --- 3. FETCH & PROCESS CURRENT SEASON ---
-# =========================================================================
-all_matches = []
-next_url = f"https://rootleague.pliskin.dev/api/match/?format=json&limit=500&tournament={TOURNAMENT_ID}"
-
-print(f"🌐 Fetching LH02 data (Tournament {TOURNAMENT_ID})...")
-while next_url:
-    try:
-        res = requests.get(next_url, headers=HEADERS)
-        res.raise_for_status()
-        data = res.json()
-        all_matches.extend(data.get('results', []))
-        next_url = data.get('next')
-    except Exception as e:
-        print(f"⚠️ API connection notice: {e}")
-        break
-
-raw_data = [] 
-for m in all_matches:
-    participants = m.get('participants', [])
-    if len(participants) == 4:
-        for p in participants:
-            raw_data.append({
-                'GameID': m['id'],
-                'Player': p.get('player'),
-                'Score': float(p.get('tournament_score', 0.0)), 
-                'Date_Closed': m.get('date_closed')
-            })
-
-# Convert to DataFrame
-df = pd.DataFrame(raw_data)
-
-if not df.empty:
-    df['Date_Closed'] = pd.to_datetime(df['Date_Closed'], format='ISO8601', utc=True)
-
-    # Apply manual date corrections for LH02 if the file exists
-    try:
-        if not game_id_mapping.empty:
-            mask = df['GameID'].isin(game_id_mapping.index)
-            if mask.any():
-                original_times = df.loc[mask, 'Date_Closed'].dt.strftime('%H:%M:%S.%f')
-                new_dates = df.loc[mask, 'GameID'].map(game_id_mapping).dt.strftime('%Y-%m-%d')
-                df.loc[mask, 'Date_Closed'] = pd.to_datetime(new_dates + ' ' + original_times, utc=True)
-                print(f"🔧 Applied {mask.sum() // 4} manual corrections for LH02.")
-    except Exception as e:
-        print(f"Correction mapping error: {e}")
-
-    # Filter: Only matches closed before today
-    df = df[df['Date_Closed'].dt.date < today].copy()
-    df = df.sort_values(by='Date_Closed').reset_index(drop=True)
-
-
-# =========================================================================
-# --- 4. ELO CALCULATION (INHERITING FROM LH01) ---
-# =========================================================================
-
-# Step 1: Initialize ELO with LH01 final ratings
-elo_ratings = {}
-if not archive_final_df.empty:
-    for _, row in archive_final_df.iterrows():
-        p_name = str(row['Player'])
-        # Start with their LH01 closing ELO, fallback to 1200
-        elo_ratings[p_name] = float(row.get('ELO', 1200))
-    print(f"📈 Inherited {len(elo_ratings)} player ratings from Season LH01.")
-
-# Step 2: Add any brand new LH02 players at 1200
-if not df.empty:
-    for player in df['Player'].unique():
-        if player not in elo_ratings:
-            elo_ratings[player] = 1200.0
-
-# Initialize tracking dictionaries for all players
-peak_elo = {p: rating for p, rating in elo_ratings.items()}
-last_diff = {p: 0 for p in elo_ratings}
-player_stats = {p: {'games': 0, 'wins': 0.0} for p in elo_ratings}
-player_history = {p: [["LH01 Final", round(rating)]] for p, rating in elo_ratings.items()}
-match_history_data = []
-
-# Step 3: Run the ELO chain for LH02 matches
-if not df.empty:
-    for game_id, group in df.groupby('GameID', sort=False):
-        match_participants = group.to_dict('records')
-        current_match_sum = sum([elo_ratings[p['Player']] for p in match_participants])
-        current_date = pd.to_datetime(match_participants[0]['Date_Closed']).strftime('%Y-%m-%d')
-        
-        # Prepare Match History Table Data
-        solo_winners = [p['Player'] for p in match_participants if p['Score'] == 1.0]
-        co_winners = [p['Player'] for p in match_participants if p['Score'] == 0.5]
-        others = [p['Player'] for p in match_participants if p['Score'] == 0.0]
-        
-        match_history_data.append({
-            'MatchID': game_id,
-            'Date': current_date,
-            'Winner': ", ".join(solo_winners + co_winners),
-            'Other Players': ", ".join(others),
-            'ELO_Sum': round(current_match_sum)
-        })
-
-        # Multi-player ELO Formula
-        total_q = sum([10**(elo_ratings[p['Player']]/400) for p in match_participants])
-        for p in match_participants:
-            name = p['Player']
-            actual = p['Score']
-            expected = (10**(elo_ratings[name]/400)) / total_q
-            
-            player_stats[name]['games'] += 1
-            player_stats[name]['wins'] += actual
-            
-            # Dynamic K-Factor
-            g = player_stats[name]['games']
-            k = 80 if g <= 10 else (40 if g <= 50 else 20)
-                
-            change = k * (actual - expected)
-            elo_ratings[name] += change
-            last_diff[name] = change
-            
-            if elo_ratings[name] > peak_elo[name]: 
-                peak_elo[name] = elo_ratings[name]
-            player_history[name].append([current_date, round(elo_ratings[name])])
-            
-# =========================================================================
-# --- 5. PREPARE CURRENT SEASON DATAFRAMES ---
-# =========================================================================
-
-leaderboard_results = []
-# Loop through EVERY player (LH01 veterans + LH02 newcomers)
-for p_name, rating in elo_ratings.items():
-    stats = player_stats.get(p_name, {'wins': 0, 'games': 0})
-    w = stats['wins']
-    g = stats['games']
-    diff = round(last_diff.get(p_name, 0))
-    
-    # Qualification: Min 10 games played IN LH02 and rating >= 1200
-    is_qual = (g >= 10 and rating >= 1200)
-    
-    leaderboard_results.append({
-        'Rank': 0, 
-        'Player': p_name, 
-        'ELO': round(rating), 
-        'Games': g, 
-        'Wins': int(w) if w % 1 == 0 else round(w, 1),
-        'Win Rate': f"{(w/g):.1%}" if g > 0 else "0.0%", 
-        'Peak': round(peak_elo.get(p_name, rating)),
-        'Last': f"+{diff}" if diff > 0 else str(diff), 
-        'Qualified': is_qual
-    })
-
-# Sort by ELO descending
-current_final_df = pd.DataFrame(leaderboard_results).sort_values(by='ELO', ascending=False)
-
-# Assign Ranks (Only for Qualified players)
-rank_val = 1
-ranks = []
-for _, row in current_final_df.iterrows():
-    if row['Qualified']:
-        ranks.append(rank_val)
-        rank_val += 1
-    else:
-        ranks.append("-")
-current_final_df['Rank'] = ranks
-
-# Matches Dataframe
-current_matches_df = pd.DataFrame(match_history_data)
-if not current_matches_df.empty:
-    current_matches_df = current_matches_df.sort_values(by='ELO_Sum', ascending=False).reset_index(drop=True)
-    current_matches_df.insert(0, 'Rank', range(1, len(current_matches_df) + 1))
-
-# Trends Dictionary (Cleaning names for Chart.js)
-current_history = {k.split('+')[0].split('#')[0]: v for k, v in player_history.items()}
-
-# =========================================================================
-# --- 6. LOAD ARCHIVE DATA (LH01) ---
+# --- 3. LOAD ARCHIVE DATA (LH01) ---
 # =========================================================================
 
 ARCHIVE_LEADERBOARD_FILE = "data/lh01_final_ratings.csv"
@@ -241,6 +70,128 @@ try:
 except Exception as e:
     print(f"Error loading archive files: {e}")
 
+# =========================================================================
+# --- 4. FETCH & PROCESS CURRENT SEASON ---
+# =========================================================================
+
+all_matches = []
+# Ensure the ID is an integer
+T_ID = int(TOURNAMENT_ID)
+next_url = f"https://rootleague.pliskin.dev/api/match/?format=json&limit=500&tournament={T_ID}"
+
+print(f"🌐 Requesting data for Tournament {T_ID}...")
+while next_url:
+    try:
+        res = requests.get(next_url, headers=HEADERS)
+        if res.status_code == 400:
+            print(f"ℹ️ Tournament {T_ID} not yet active on API. Proceeding with empty data.")
+            break
+        res.raise_for_status()
+        data = res.json()
+        all_matches.extend(data.get('results', []))
+        next_url = data.get('next')
+    except Exception as e:
+        print(f"📡 API Note: {e}")
+        break
+
+raw_data = [] 
+for m in all_matches:
+    participants = m.get('participants', [])
+    if len(participants) == 4:
+        for p in participants:
+            raw_data.append({
+                'GameID': m['id'],
+                'Player': p.get('player'),
+                'Score': float(p.get('tournament_score', 0.0)), 
+                'Date_Closed': m.get('date_closed')
+            })
+
+df = pd.DataFrame(raw_data)
+# Create empty columns if df is empty to prevent crashes later
+if df.empty:
+    print("Empty season detected. Initializing with inherited ratings only.")
+    df = pd.DataFrame(columns=['GameID', 'Player', 'Score', 'Date_Closed'])
+else:
+    df['Date_Closed'] = pd.to_datetime(df['Date_Closed'], format='ISO8601', utc=True)
+    df = df[df['Date_Closed'].dt.date < today].copy()
+    df = df.sort_values(by='Date_Closed').reset_index(drop=True)
+
+# =========================================================================
+# --- 5. ELO CALCULATION & INHERITANCE ---
+# =========================================================================
+elo_ratings = {}
+
+# Inherit from LH01
+if not archive_final_df.empty:
+    for _, row in archive_final_df.iterrows():
+        p_name = str(row['Player'])
+        elo_ratings[p_name] = float(row.get('ELO', 1200))
+
+# Add new LH02 players
+for player in df['Player'].unique():
+    if player not in elo_ratings:
+        elo_ratings[player] = 1200.0
+
+# Stats tracking
+peak_elo = {p: r for p, r in elo_ratings.items()}
+last_diff = {p: 0 for p in elo_ratings}
+player_stats = {p: {'games': 0, 'wins': 0.0} for p in elo_ratings}
+player_history = {p: [["LH01 Final", round(r)]] for p, r in elo_ratings.items()}
+match_history_data = []
+
+# Process LH02 Matches if any
+if not df.empty:
+    for game_id, group in df.groupby('GameID', sort=False):
+        match_participants = group.to_dict('records')
+        current_match_sum = sum([elo_ratings[p['Player']] for p in match_participants])
+        current_date = pd.to_datetime(match_participants[0]['Date_Closed']).strftime('%Y-%m-%d')
+        
+        # Rankings logic... (same as before)
+        winners = [p['Player'] for p in match_participants if p['Score'] >= 0.5]
+        others = [p['Player'] for p in match_participants if p['Score'] == 0.0]
+        match_history_data.append({
+            'MatchID': game_id, 'Date': current_date, 'Winner': ", ".join(winners),
+            'Other Players': ", ".join(others), 'ELO_Sum': round(current_match_sum)
+        })
+
+        total_q = sum([10**(elo_ratings[p['Player']]/400) for p in match_participants])
+        for p in match_participants:
+            name = p['Player']
+            expected = (10**(elo_ratings[name]/400)) / total_q
+            player_stats[name]['games'] += 1
+            player_stats[name]['wins'] += p['Score']
+            k = 80 if player_stats[name]['games'] <= 10 else (40 if player_stats[name]['games'] <= 50 else 20)
+            change = k * (p['Score'] - expected)
+            elo_ratings[name] += change
+            last_diff[name] = change
+            if elo_ratings[name] > peak_elo[name]: peak_elo[name] = elo_ratings[name]
+            player_history[name].append([current_date, round(elo_ratings[name])])
+
+# =========================================================================
+# --- 6. FINAL LEADERBOARD GENERATION ---
+# =========================================================================
+results = []
+for p_name, rating in elo_ratings.items():
+    s = player_stats.get(p_name, {'wins': 0, 'games': 0})
+    diff = round(last_diff.get(p_name, 0))
+    results.append({
+        'Rank': 0, 'Player': p_name, 'ELO': round(rating), 'Games': s['games'],
+        'Wins': s['wins'], 'Win Rate': f"{(s['wins']/s['games']):.1%}" if s['games'] > 0 else "0.0%",
+        'Peak': round(peak_elo.get(p_name, rating)), 
+        'Last': f"+{diff}" if diff > 0 else str(diff),
+        'Qualified': (s['games'] >= 10 and rating >= 1200)
+    })
+
+current_final_df = pd.DataFrame(results).sort_values(by='ELO', ascending=False)
+# Assigning ranks
+rank_counter = 1
+ranks = []
+for _, row in current_final_df.iterrows():
+    if row['Qualified']:
+        ranks.append(rank_counter)
+        rank_counter += 1
+    else: ranks.append("-")
+current_final_df['Rank'] = ranks
 
 # =========================================================================
 # --- 7. HTML SKELETON (MATRIX NAVIGATION) ---
