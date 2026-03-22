@@ -325,19 +325,18 @@ def generate_page_html(title, page_heading, current_page, content, custom_css=""
 # =========================================================================
 
 def build_leaderboard_page(df, filename, title, heading, subtitle):
-    if df.empty: return # Skip if no data
-    
     table_rows = ""
-    for _, row in df.iterrows():
-        icon_path, _ = get_tier_icon(row['ELO'], row['Games'])
-        icon_tag = f'<div class="tier-icon-container"><img src="{icon_path}"></div>' if icon_path else ""
-        display_name = str(row['Player']).split('+')[0].split('#')[0]
-        table_rows += f"""
-        <tr>
-            <td>{row['Rank']}</td><td>{icon_tag}</td><td class="player-name-cell">{display_name}</td>
-            <td>{row['ELO']}</td><td>{row['Games']}</td><td>{row['Wins']}</td>
-            <td>{row['Win Rate']}</td><td>{row['Peak']}</td><td>{row['Last']}</td>
-        </tr>"""
+    if not df.empty:
+        for _, row in df.iterrows():
+            icon_path, _ = get_tier_icon(row['ELO'], row['Games'])
+            icon_tag = f'<div class="tier-icon-container"><img src="{icon_path}"></div>' if icon_path else ""
+            display_name = str(row['Player']).split('+')[0].split('#')[0]
+            table_rows += f"""
+            <tr>
+                <td>{row['Rank']}</td><td>{icon_tag}</td><td class="player-name-cell">{display_name}</td>
+                <td>{row['ELO']}</td><td>{row['Games']}</td><td>{row['Wins']}</td>
+                <td>{row['Win Rate']}</td><td>{row['Peak']}</td><td>{row['Last']}</td>
+            </tr>"""
 
     content = f"""
         <h3>{subtitle}</h3>
@@ -499,20 +498,35 @@ def build_trends_page(history_dict, filename, title, heading):
     with open(filename, "w", encoding="utf-8") as f:
         f.write(generate_page_html(title, heading, filename, content, css, js, extra_head))
 
+# =========================================================================
+# --- 9. DATA PREPARATION (DISPLAY FILTERS) ---
+# =========================================================================
+
+# Rule: To be displayed on the leaderboard, a player needs at least 1 win.
+
+# Filter Current Season (LH02)
+display_current_df = pd.DataFrame()
+if not current_final_df.empty:
+    display_current_df = current_final_df[current_final_df['Wins'].astype(float) >= 1].copy()
+
+# Filter Archive Season (LH01)
+display_archive_df = pd.DataFrame()
+if not archive_final_df.empty:
+    display_archive_df = archive_final_df[archive_final_df['Wins'].astype(float) >= 1].copy()
 
 # =========================================================================
-# --- 9. EXECUTE GENERATION ---
+# --- 10. EXECUTE GENERATION ---
 # =========================================================================
 
 # A. Generate Current Season Pages (Live API Data)
 print("Generating Current Season pages...")
-build_leaderboard_page(current_final_df, "index.html", "Leaderboard • Root League", "Current Season", f"Alternative ELO Leaderboard • Data until {CUTOFF_DATE}")
+build_leaderboard_page(display_current_df, "index.html", "Leaderboard • Root League", "Current Season", f"Alternative ELO Leaderboard • Data until {CUTOFF_DATE}")
 build_matches_page(current_matches_df, "matches.html", "Match Archive • Root League", "Match Archive")
 build_trends_page(current_history, "trends.html", "Player Progression • Root League", "Player Progression")
 
 # B. Generate Archive LH01 Pages (Loaded Data)
 print("Generating Archive LH01 pages...")
-build_leaderboard_page(archive_final_df, "index_lh01.html", "Archive LH01 Leaderboard", "Season LH01 Archive", "Final Standings • Season LH01")
+build_leaderboard_page(display_archive_df, "index_lh01.html", "Archive LH01 Leaderboard", "Season LH01 Archive", "Final Standings • Season LH01")
 build_matches_page(archive_matches_df, "matches_lh01.html", "Archive LH01 Matches", "Match Archive • Season LH01")
 build_trends_page(archive_history, "trends_lh01.html", "Archive LH01 Trends", "Player Progression • Season LH01")
 
