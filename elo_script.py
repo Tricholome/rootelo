@@ -320,13 +320,13 @@ with open("index.html", "w", encoding="utf-8") as f:
 with open("index.html", "w", encoding="utf-8") as f:
     f.write(html_content)
 
-# --- 9. Best Matches Calculation (From Colab) ---
+# --- 9. Best Matches Calculation ---
 
 df_best_matches = pd.DataFrame(match_history_data)
 df_best_matches = df_best_matches.sort_values(by='ELO_Sum', ascending=False).reset_index(drop=True)
 df_best_matches.insert(0, 'Rank', range(1, len(df_best_matches) + 1))
 
-# --- 10. Generate matches.html (Searchable Archive) ---
+# --- 10. Generate matches.html (Searchable Archive with Links) ---
 
 match_rows = ""
 for _, row in df_best_matches.iterrows():
@@ -339,10 +339,13 @@ for _, row in df_best_matches.iterrows():
     cleaned_winner = clean_names(row["Winner"])
     cleaned_others = clean_names(row["Other Players"])
 
-    # Color-coded participants: Winner in Gold, Others in Muted Grey
+    # Color-coded participants
     winner_html = f'<span style="color: #f7eb5b; font-weight: bold;">{cleaned_winner}</span>'
     others_html = f'<span style="color: #888;">{cleaned_others}</span>'
     lineup_html = f"{winner_html}, {others_html}"
+    
+    # Create the link to the official website
+    match_url = f"https://rootleague.pliskin.dev/match/{row['MatchID']}/"
     
     match_rows += f"""
     <tr>
@@ -350,7 +353,11 @@ for _, row in df_best_matches.iterrows():
         <td style="font-weight:bold; color:#4a90e2;">{row['ELO_Sum']}</td>
         <td>{row['Date']}</td>
         <td style="text-align: left; padding-left: 20px;">{lineup_html}</td>
-        <td style="font-family: monospace; font-size: 0.85em; color: #555;">{row['MatchID']}</td>
+        <td>
+            <a href="{match_url}" target="_blank" style="color: #666; text-decoration: none; font-family: monospace; font-size: 0.9em; border: 1px solid #333; padding: 2px 6px; border-radius: 4px; transition: 0.3s;">
+                {row['MatchID']} ↗
+            </a>
+        </td>
     </tr>"""
 
 matches_html_content = f"""
@@ -372,12 +379,17 @@ matches_html_content = f"""
         h1 {{ color: #4a90e2; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }}
         .search-hint {{ color: #aaa; font-size: 0.85em; margin-bottom: 30px; background: #252525; display: inline-block; padding: 10px 20px; border-radius: 30px; border: 1px solid #333; }}
         
-        /* DataTables Styling */
+        /* DataTables Custom Theme */
         .dataTables_wrapper {{ color: #eee !important; }}
         .dataTables_filter input {{ background: #252525; color: #fff; border: 1px solid #444; border-radius: 6px; padding: 8px; width: 250px; margin-left: 10px; }}
+        
         table.dataTable {{ width: 100% !important; border-collapse: collapse; margin-top: 20px !important; background: #1e1e1e; }}
         table.dataTable thead th {{ background-color: #252525 !important; color: #4a90e2 !important; border-bottom: 2px solid #333 !important; text-transform: uppercase; font-size: 0.75em; padding: 15px; }}
-        table.dataTable td {{ border-bottom: 1px solid #2a2a2a; padding: 12px; font-size: 0.95em; }}
+        table.dataTable td {{ border-bottom: 1px solid #2a2a2a; padding: 12px; font-size: 0.95em; vertical-align: middle; }}
+        
+        /* ID Link Hover Effect */
+        table.dataTable td a:hover {{ background: #333; color: #4a90e2 !important; border-color: #4a90e2 !important; }}
+        
         .dataTables_info, .dataTables_paginate {{ color: #777 !important; font-size: 0.8em; margin-top: 20px; }}
     </style>
 </head>
@@ -390,7 +402,7 @@ matches_html_content = f"""
         
         <h1>Match Archive</h1>
         <div class="search-hint">
-            🔍 <strong>Filter:</strong> Search by <b>Name</b>, <b>Date (YYYY-MM-DD)</b>, or <b>Game ID</b>
+            🔍 <strong>Filter:</strong> Search by <b>Name</b>, <b>Date</b>, or <b>ID</b>. Click an ID to view the official summary.
         </div>
 
         <table id="matchesTable" class="display nowrap">
