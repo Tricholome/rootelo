@@ -175,10 +175,10 @@ current_history = {k.split('+')[0].split('#')[0]: v for k, v in player_history.i
 # =========================================================================
 # --- 6. LOAD ARCHIVE DATA (LH01) ---
 # =========================================================================
-# Assure-toi que ces noms de fichiers correspondent à ceux que tu as générés !
-ARCHIVE_LEADERBOARD_FILE = "archive_lh01_leaderboard.csv"
-ARCHIVE_MATCHES_FILE = "archive_lh01_matches.csv"
-ARCHIVE_TRENDS_FILE = "archive_lh01_trends.json"
+
+ARCHIVE_LEADERBOARD_FILE = "lh01_final_ratings.csv"
+ARCHIVE_MATCHES_FILE = "lh01_matches_fixed.csv"
+ARCHIVE_TRENDS_FILE = "lh01_history_full.json"
 
 archive_final_df = pd.DataFrame()
 archive_matches_df = pd.DataFrame()
@@ -187,31 +187,34 @@ archive_history = {}
 try:
     if os.path.exists(ARCHIVE_LEADERBOARD_FILE):
         archive_final_df = pd.read_csv(ARCHIVE_LEADERBOARD_FILE)
+        # Nettoyage si les colonnes Tier/Qualified manquent dans le CSV
+        if 'Tier' not in archive_final_df.columns:
+            archive_final_df['Tier'] = None 
+    
     if os.path.exists(ARCHIVE_MATCHES_FILE):
         archive_matches_df = pd.read_csv(ARCHIVE_MATCHES_FILE)
+    
     if os.path.exists(ARCHIVE_TRENDS_FILE):
         with open(ARCHIVE_TRENDS_FILE, "r", encoding="utf-8") as f:
             archive_history = json.load(f)
-    print("Archive data loaded successfully.")
+    print("Archive LH01 loaded successfully.")
 except Exception as e:
-    print(f"Could not load some archive data. Empty tables will be generated. Error: {e}")
+    print(f"Error loading archive files: {e}")
 
 
 # =========================================================================
 # --- 7. HTML SKELETON (MATRIX NAVIGATION) ---
 # =========================================================================
 def generate_page_html(title, page_heading, current_page, content, custom_css="", custom_js="", extra_head=""):
-    # Matrix Detection
-    is_archive_lh01 = "_lh01" in current_page
-    suffix = "_lh01.html" if is_archive_lh01 else ".html"
+    is_archive = "_lh01.html" in current_page
     
     # 1. Main Navigation (Adapts to selected season)
-    nav_links = {"index": "Leaderboard", "matches": "Match Archive", "trends": "Player Trends"}
+    nav_links = [("index", "Leaderboard"), ("matches", "Match Archive"), ("trends", "Player Trends")]
     nav_html = ""
-    for base_name, label in nav_links.items():
-        target_url = f"{base_name}{suffix}"
-        is_active = current_page.startswith(base_name)
-        nav_html += f'<a href="{target_url}" class="{"active" if is_active else ""}">{label}</a>'
+    for base, label in nav_links:
+        target = f"{base}_lh01.html" if is_archive else f"{base}.html"
+        active = "active" if current_page.startswith(base) else ""
+        nav_html += f'<a href="{target}" class="{active}">{label}</a>'
 
     # 2. Sub Navigation (Season Selector)
     current_prefix = current_page.replace("_lh01.html", "").replace(".html", "")
