@@ -437,11 +437,15 @@ def build_matches_page(df, filename, title, heading):
     js = """<script>
     $(document).ready(function() {
         $('#matchesTable').DataTable({
-            "order": [[1, "desc"]], "responsive": { details: { type: 'column', target: 0 } }, "pageLength": 25,
+            "order": [[1, "desc"]], 
+            "responsive": true, 
+            "pageLength": 25,
             "columnDefs": [
-                { "className": "dtr-control", "targets": 0 }, { "width": "40px", "targets": [0, 1] },
-                { "className": "lineup-cell", "targets": 3 }, { "responsivePriority": 1, "targets": [1, 3] },
-                { "responsivePriority": 2, "targets": 2 }, { "responsivePriority": 3, "targets": 4 }
+                { "width": "40px", "targets": [0, 1] },
+                { "className": "lineup-cell", "targets": 3 }, 
+                { "responsivePriority": 1, "targets": [0, 1, 3] },
+                { "responsivePriority": 2, "targets": 2 }, 
+                { "responsivePriority": 3, "targets": 4 }
             ]
         });
     });
