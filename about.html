@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Match Archive • Root League</title>
+    <title>Codex • Root League</title>
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
     
@@ -25,39 +25,39 @@
         table.dataTable thead th { background-color: #252525 !important; color: #4a90e2 !important; font-size: 0.75em; text-transform: uppercase; padding: 12px; border-bottom: none; }
         table.dataTable td { border-bottom: 1px solid #2a2a2a; padding: 10px; font-size: 0.9em; text-align: center; vertical-align: middle; }
         @media (max-width: 600px) { .container { padding: 10px; } .dataTables_filter input { width: 150px !important; } table.dataTable td { font-size: 0.75em; } }
-    
-        .lineup-cell { white-space: normal !important; word-wrap: break-word; overflow-wrap: break-word; min-width: 120px; max-width: 250px; line-height: 1.4; text-align: left; }
-        table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before { background-color: #4a90e2 !important; }
-        table.dataTable > tbody > tr.child ul.dtr-details { width: 100%; background: #252525; }
-        table.dataTable > tbody > tr.child span.dtr-title { color: #4a90e2; font-weight: bold; }
     </style>
 </head>
 <body>
     <div class="container">
-        <nav><a href="index.html" class="">Leaderboard</a><a href="matches.html" class="active">Top Tables</a><a href="trends.html" class="">Player's Journey</a><a href="about.html" class="">Codex</a></nav>
-        <div class="sub-nav-container"><a href="matches.html" class="sub-nav-item active">Current Season</a><a href="matches_lh01.html" class="sub-nav-item ">Season LH01</a></div>
-        <h1>Match Archive</h1>
+        <nav><a href="index.html" class="">Leaderboard</a><a href="matches.html" class="">Top Tables</a><a href="trends.html" class="">Player's Journey</a><a href="about.html" class="active">Codex</a></nav>
+        <div class="sub-nav-container"><a href="about.html" class="sub-nav-item active">Current Season</a><a href="about_lh01.html" class="sub-nav-item ">Season LH01</a></div>
+        <h1>The Woodland Codex</h1>
         
-        <table id="matchesTable" class="display nowrap responsive" style="width:100%">
-            <thead><tr><th>Rank</th><th>ELO</th><th>Date</th><th>Lineup (Winner First)</th><th>ID</th></tr></thead>
-            <tbody></tbody>
-        </table>
+    <div style="text-align: left; max-width: 800px; margin: 40px auto; line-height: 1.6; color: #ccc;">
+        <h2 style="color: #4a90e2;">The ELO System</h2>
+        <p>Our ranking is based on the ELO algorithm, adjusted for 4-player matches. 
+        Points are gained or lost based on the probability of victory against your opponents.</p>
+        
+        <h2 style="color: #4a90e2;">The Tiers</h2>
+        <ul>
+            <li><strong>Bird:</strong> 1500+ (Elite level)</li>
+            <li><strong>Fox:</strong> 1400+ (Expert)</li>
+            <li><strong>Rabbit:</strong> 1300+ (Advanced)</li>
+            <li><strong>Mouse:</strong> 1200+ (Learner)</li>
+        </ul>
+        
+        <h2 style="color: #4a90e2;">Top Tables</h2>
+        <p>This section ranks matches by their <strong>ELO Sum</strong>. This represents the total skill 
+        density of the table. The higher the sum, the more "elite" the match was.</p>
+        
+        <p style="margin-top: 50px; font-size: 0.8em; color: #555;">
+        Last updated: 2026-03-22</p>
+    </div>
     
     </div>
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
-    <script>
-    $(document).ready(function() {
-        $('#matchesTable').DataTable({
-            "order": [[1, "desc"]], "responsive": { details: { type: 'column', target: 0 } }, "pageLength": 25,
-            "columnDefs": [
-                { "className": "dtr-control", "targets": 0 }, { "width": "40px", "targets": [0, 1] },
-                { "className": "lineup-cell", "targets": 3 }, { "responsivePriority": 1, "targets": [1, 3] },
-                { "responsivePriority": 2, "targets": 2 }, { "responsivePriority": 3, "targets": 4 }
-            ]
-        });
-    });
-    </script>
+    
 </body>
 </html>
