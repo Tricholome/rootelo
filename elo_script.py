@@ -66,6 +66,7 @@ try:
     if os.path.exists(ARCHIVE_TRENDS_FILE):
         with open(ARCHIVE_TRENDS_FILE, "r", encoding="utf-8") as f:
             archive_history = json.load(f)
+            archive_history = {k.split('+')[0].split('#')[0]: v for k, v in raw_archive.items()}
     print("Archive LH01 loaded successfully.")
 except Exception as e:
     print(f"Error loading archive files: {e}")
