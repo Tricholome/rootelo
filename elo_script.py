@@ -176,9 +176,9 @@ current_history = {k.split('+')[0].split('#')[0]: v for k, v in player_history.i
 # --- 6. LOAD ARCHIVE DATA (LH01) ---
 # =========================================================================
 
-ARCHIVE_LEADERBOARD_FILE = "lh01_final_ratings.csv"
-ARCHIVE_MATCHES_FILE = "lh01_matches_fixed.csv"
-ARCHIVE_TRENDS_FILE = "lh01_history_full.json"
+ARCHIVE_LEADERBOARD_FILE = "data/lh01_final_ratings.csv"
+ARCHIVE_MATCHES_FILE = "data/lh01_matches_fixed.csv"
+ARCHIVE_TRENDS_FILE = "data/lh01_history_full.json"
 
 archive_final_df = pd.DataFrame()
 archive_matches_df = pd.DataFrame()
