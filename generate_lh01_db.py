@@ -11,11 +11,9 @@ TOURNAMENT_ID = 24  # Season LH01 Tournament ID
 
 CUTOFF_DATE = datetime.strptime("2026-03-31", "%Y-%m-%d").date()
 
-# On enlève le dossier 'data/' pour que les fichiers soient à la racine 
-# (plus simple pour ton script d'affichage actuel)
-OUTPUT_RATINGS = "lh01_final_ratings.csv"
-OUTPUT_HISTORY = "lh01_history_full.json"
-OUTPUT_MATCHES = "lh01_matches_fixed.csv"
+OUTPUT_RATINGS = "data/lh01_final_ratings.csv"
+OUTPUT_HISTORY = "data/lh01_history_full.json"
+OUTPUT_MATCHES = "data/lh01_matches_fixed.csv"
 
 # --- 2. Load Correction File ---
 CORRECTIONS_PATH = 'Root_Elo_LH01_Corrected_Dates.xlsx'
