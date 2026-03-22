@@ -1,96 +1,61 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Root League Leaderboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Leaderboard • Root League</title>
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
+    
     <style>
-        body { font-family: 'Segoe UI', Helvetica, Arial, sans-serif; background-color: #121212; color: #eee; text-align: center; padding: 20px 5px; }
-        .container { width: 95%; max-width: 1100px; margin: auto; background: #1e1e1e; padding: 20px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.6); }
+        
+        body { font-family: 'Segoe UI', Helvetica, Arial, sans-serif; background-color: #121212; color: #eee; text-align: center; padding: 20px 5px; margin: 0; overflow-x: hidden; }
+        .container { width: 95%; max-width: 1100px; margin: auto; background: #1e1e1e; padding: 20px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.6); box-sizing: border-box; }
         h1 { color: #4a90e2; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px; font-size: 1.5em; }
         h3 { color: #777; font-weight: 400; font-size: 0.85em; margin-bottom: 20px; }
-
-        /* Unified Navigation CSS */
-        nav { 
-            margin-bottom: 30px; 
-            border-bottom: 1px solid #333; 
-            padding-bottom: 15px; 
-            display: flex; 
-            justify-content: center; 
-            gap: 10px;
-            flex-wrap: wrap; 
-        }
-        nav a { 
-            color: #888; 
-            text-decoration: none; 
-            font-weight: bold; 
-            text-transform: uppercase; 
-            font-size: 0.85em; 
-            padding: 8px 16px;
-            border-radius: 6px;
-            transition: all 0.3s ease;
-            border: 1px solid transparent;
-        }
+        nav { margin-bottom: 30px; border-bottom: 1px solid #333; padding-bottom: 15px; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+        nav a { color: #888; text-decoration: none; font-weight: bold; text-transform: uppercase; font-size: 0.85em; padding: 8px 16px; border-radius: 6px; transition: all 0.3s ease; border: 1px solid transparent; }
         nav a:hover { color: #4a90e2; background: rgba(74,144,226,0.05); }
         nav a.active { color: #fff; background: #4a90e2; border: 1px solid #4a90e2; box-shadow: 0 4px 12px rgba(74,144,226,0.3); }
-
-        .leaderboard-table { width: 100% !important; border-collapse: collapse; margin-top: 15px; background: #1e1e1e; }
-        .leaderboard-table th { background-color: #252525 !important; color: #4a90e2 !important; font-size: 0.75em; text-transform: uppercase; padding: 12px; }
-        .leaderboard-table td { border-bottom: 1px solid #2a2a2a; padding: 10px; font-size: 0.9em; text-align: center; vertical-align: middle; }
-
-        .tier-icon-container { width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; margin: 0 auto; }
-        .tier-icon-container img { max-width: 100%; max-height: 100%; object-fit: contain; }
-
-        .tier-bird   { background-color: rgba(103, 192, 199, 0.1) !important; border-left: 4px solid #67c0c7 !important; }
-        .tier-fox    { background-color: rgba(230, 55, 45, 0.1) !important; border-left: 4px solid #e6372d !important; }
-        .tier-rabbit { background-color: rgba(247, 235, 91, 0.1) !important; border-left: 4px solid #f7eb5b !important; }
-        .tier-mouse  { background-color: rgba(242, 144, 87, 0.1) !important; border-left: 4px solid #f29057 !important; }
+        .dataTables_wrapper { color: #eee !important; text-align: left; }
+        table.dataTable { width: 100% !important; border-collapse: collapse !important; margin-top: 15px !important; background: #1e1e1e; }
+        table.dataTable thead th { background-color: #252525 !important; color: #4a90e2 !important; font-size: 0.75em; text-transform: uppercase; padding: 12px; border-bottom: none; }
+        table.dataTable td { border-bottom: 1px solid #2a2a2a; padding: 10px; font-size: 0.9em; text-align: center; vertical-align: middle; }
+        @media (max-width: 600px) { .container { padding: 10px; } .dataTables_filter input { width: 150px !important; } table.dataTable td { font-size: 0.75em; } }
+    
         
-        .tier-bird td:nth-child(3), .tier-bird td:nth-child(4)   { color: #67c0c7; font-weight: bold; }
-        .tier-fox td:nth-child(3), .tier-fox td:nth-child(4)     { color: #e6372d; font-weight: bold; }
-        .tier-rabbit td:nth-child(3), .tier-rabbit td:nth-child(4) { color: #f7eb5b; font-weight: bold; }
-        .tier-mouse td:nth-child(3), .tier-mouse td:nth-child(4)  { color: #f29057; font-weight: bold; }
+    .tier-icon-container { width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; margin: 0 auto; }
+    .tier-icon-container img { max-width: 100%; max-height: 100%; object-fit: contain; }
+    .tier-bird   { background-color: rgba(103, 192, 199, 0.1) !important; border-left: 4px solid #67c0c7 !important; }
+    .tier-fox    { background-color: rgba(230, 55, 45, 0.1) !important; border-left: 4px solid #e6372d !important; }
+    .tier-rabbit { background-color: rgba(247, 235, 91, 0.1) !important; border-left: 4px solid #f7eb5b !important; }
+    .tier-mouse  { background-color: rgba(242, 144, 87, 0.1) !important; border-left: 4px solid #f29057 !important; }
+    .tier-bird td:nth-child(3), .tier-bird td:nth-child(4)   { color: #67c0c7; font-weight: bold; }
+    .tier-fox td:nth-child(3), .tier-fox td:nth-child(4)     { color: #e6372d; font-weight: bold; }
+    .tier-rabbit td:nth-child(3), .tier-rabbit td:nth-child(4) { color: #f7eb5b; font-weight: bold; }
+    .tier-mouse td:nth-child(3), .tier-mouse td:nth-child(4)  { color: #f29057; font-weight: bold; }
+    .unranked { opacity: 0.5; font-style: italic; }
+    .footer { margin-top: 30px; font-size: 0.75em; color: #777; border-top: 1px solid #333; padding-top: 15px; line-height: 2; }
+    .footer-tier-item { display: inline-block; margin: 0 10px; vertical-align: middle; }
+    .footer-tier-item img { height: 18px; width: auto; vertical-align: middle; margin-right: 4px; }
+    .player-name-cell { text-align: left !important; padding-left: 15px !important; font-weight: 500; }
 
-        .unranked { opacity: 0.5; font-style: italic; }
-        .footer { margin-top: 30px; font-size: 0.75em; color: #777; border-top: 1px solid #333; padding-top: 15px; line-height: 2; }
-        .footer-tier-item { display: inline-block; margin: 0 10px; vertical-align: middle; }
-        .footer-tier-item img { height: 18px; width: auto; vertical-align: middle; margin-right: 4px; }
-        .player-name-cell {
-            text-align: left !important; 
-            padding-left: 15px !important; 
-            font-weight: 500; 
-        }
     </style>
 </head>
 <body>
     <div class="container">
-        <nav>
-            <a href="index.html" class="active">Leaderboard</a>
-            <a href="matches.html">Match Archive</a>
-            <a href="trends.html">Player Trends</a>
-        </nav>
+        <nav><a href="index.html" class="active">Leaderboard</a><a href="matches.html" class="">Match Archive</a><a href="trends.html" class="">Player Trends</a></nav>
         <h1>Root Digital League • Season LH01</h1>
-        <h3>Alternative ELO Leaderboard • Data until 2026-03-21</h3>
         
-<table id="leaderboard" class="leaderboard-table display nowrap">
-    <thead>
-        <tr>
-            <th>Rank</th>
-            <th>Tier</th>
-            <th>Player</th>
-            <th>ELO</th>
-            <th>Games</th>
-            <th>Wins</th>
-            <th>Win Rate</th>
-            <th>Peak</th>
-            <th>Last</th>
-        </tr>
-    </thead>
-    <tbody>
-        
+    <h3>Alternative ELO Leaderboard • Data until 2026-03-21</h3>
+    <table id="leaderboard" class="display nowrap">
+        <thead>
+            <tr>
+                <th>Rank</th><th>Tier</th><th>Player</th><th>ELO</th><th>Games</th>
+                <th>Wins</th><th>Win Rate</th><th>Peak</th><th>Last</th>
+            </tr>
+        </thead>
+        <tbody>
     <tr>
         <td>-</td>
         <td></td>
@@ -1927,50 +1892,41 @@
         <td>2.2%</td>
         <td>1200</td>
         <td>-2</td>
-    </tr>
-    </tbody>
-</table>
-        <div class="footer">
-            <strong>Tier System</strong> (min 10 games):<br>
-            <span class="footer-tier-item"><img src="assets/icons/bird.png"> 1500+</span>
-            <span class="footer-tier-item"><img src="assets/icons/fox.png"> 1400+</span>
-            <span class="footer-tier-item"><img src="assets/icons/rabbit.png"> 1300+</span>
-            <span class="footer-tier-item"><img src="assets/icons/mouse.png"> 1200+</span>
-            <br>
-            Generated on 2026-03-22 12:26 UTC
-        </div>
+    </tr></tbody>
+    </table>
+    <div class="footer">
+        <strong>Tier System</strong> (min 10 games):<br>
+        <span class="footer-tier-item"><img src="assets/icons/bird.png"> 1500+</span>
+        <span class="footer-tier-item"><img src="assets/icons/fox.png"> 1400+</span>
+        <span class="footer-tier-item"><img src="assets/icons/rabbit.png"> 1300+</span>
+        <span class="footer-tier-item"><img src="assets/icons/mouse.png"> 1200+</span><br>
+        Generated on 2026-03-22 14:48 UTC
+    </div>
+
     </div>
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
     <script>
-    $(document).ready(function() {
-        $.extend($.fn.dataTable.ext.type.order, {
-            "rank-pre": function (d) { return d === "-" ? 9999 : parseInt(d); }
-        });
-
-        $('#leaderboard').DataTable({
-            "order": [[3, "desc"]],
-            "responsive": true,
-            "pageLength": 50,
-            "columnDefs": [
-                { "targets": 2, "className": "player-name-cell" }, // Target index 2 (Player column)
-                { "responsivePriority": 1, "targets": [0, 2, 3] }
-            ],
-            "createdRow": function(row, data, dataIndex) {
-                var rank = data[0];         
-                var elo = parseInt(data[3]); 
-                if (rank === "-") {
-                    $(row).addClass('unranked');
-                } else {
-                    if (elo >= 1500) $(row).addClass('tier-bird');
-                    else if (elo >= 1400) $(row).addClass('tier-fox');
-                    else if (elo >= 1300) $(row).addClass('tier-rabbit');
-                    else if (elo >= 1200) $(row).addClass('tier-mouse');
-                }
+$(document).ready(function() {
+    $.extend($.fn.dataTable.ext.type.order, { "rank-pre": function (d) { return d === "-" ? 9999 : parseInt(d); } });
+    $('#leaderboard').DataTable({
+        "order": [[3, "desc"]], "responsive": true, "pageLength": 50,
+        "columnDefs": [
+            { "targets": 2, "className": "player-name-cell" },
+            { "responsivePriority": 1, "targets": [0, 2, 3] }
+        ],
+        "createdRow": function(row, data, dataIndex) {
+            var rank = data[0]; var elo = parseInt(data[3]); 
+            if (rank === "-") { $(row).addClass('unranked'); } else {
+                if (elo >= 1500) $(row).addClass('tier-bird');
+                else if (elo >= 1400) $(row).addClass('tier-fox');
+                else if (elo >= 1300) $(row).addClass('tier-rabbit');
+                else if (elo >= 1200) $(row).addClass('tier-mouse');
             }
-        });
+        }
     });
-    </script>
+});
+</script>
 </body>
 </html>
