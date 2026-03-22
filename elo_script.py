@@ -266,9 +266,9 @@ html_content = f"""
 <body>
     <div class="container">
         <nav>
-            <a href="index.html">Leaderboard</a>
+            <a href="index.html" class="active">Leaderboard</a>
             <a href="matches.html">Match Archive</a>
-            <a href="trends.html" style="border-bottom: 2px solid #4a90e2; padding-bottom: 5px;">Player Trends</a>
+            <a href="trends.html">Player Trends</a>
         </nav>
         <h1>Root Digital League • Season LH01</h1>
         <h3>Alternative ELO Leaderboard • Data until {CUTOFF_DATE}</h3>
@@ -344,7 +344,7 @@ for _, row in df_best_matches.iterrows():
     # Color-coded participants
     winner_html = f'<span style="color: #f7eb5b; font-weight: bold;">{cleaned_winner}</span>'
     others_html = f'<span style="color: #888;">{cleaned_others}</span>'
-    lineup_html = f"{winner_html}, {others_html}"
+    lineup_html = f'<div style="white-space: normal; min-width: 150px;">{winner_html}, {others_html}</div>'
     
     # Create the link to the official website
     match_url = f"https://rootleague.pliskin.dev/match/{row['MatchID']}/"
@@ -375,8 +375,36 @@ matches_html_content = f"""
         body {{ font-family: 'Segoe UI', sans-serif; background-color: #121212; color: #eee; text-align: center; padding: 20px 5px; }}
         .container {{ width: 95%; max-width: 1100px; margin: auto; background: #1e1e1e; padding: 25px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.5); }}
         
-        nav {{ margin-bottom: 25px; border-bottom: 1px solid #333; padding-bottom: 15px; }}
-        nav a {{ color: #4a90e2; text-decoration: none; margin: 0 15px; font-weight: bold; font-size: 0.9em; text-transform: uppercase; }}
+        nav { 
+            margin-bottom: 30px; 
+            border-bottom: 1px solid #333; 
+            padding-bottom: 15px; 
+            display: flex; 
+            justify-content: center; 
+            gap: 10px;
+            flex-wrap: wrap; /* Critical for mobile: wraps buttons if screen is too narrow */
+        }
+        nav a { 
+            color: #888; 
+            text-decoration: none; 
+            font-weight: bold; 
+            text-transform: uppercase; 
+            font-size: 0.85em; 
+            padding: 8px 16px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+        nav a:hover { 
+            color: #4a90e2; 
+            background: rgba(74,144,226,0.05); 
+        }
+        nav a.active { 
+            color: #fff; 
+            background: #4a90e2; 
+            border: 1px solid #4a90e2;
+            box-shadow: 0 4px 12px rgba(74,144,226,0.3);
+        }
         
         h1 {{ color: #4a90e2; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }}
         .search-hint {{ color: #aaa; font-size: 0.85em; margin-bottom: 30px; background: #252525; display: inline-block; padding: 10px 20px; border-radius: 30px; border: 1px solid #333; }}
@@ -393,14 +421,26 @@ matches_html_content = f"""
         table.dataTable td a:hover {{ background: #333; color: #4a90e2 !important; border-color: #4a90e2 !important; }}
         
         .dataTables_info, .dataTables_paginate {{ color: #777 !important; font-size: 0.8em; margin-top: 20px; }}
+
+        /* Mobile Optimizations */
+        @media (max-width: 600px) {{
+            h1 {{ font-size: 1.2em; }}
+            .search-hint {{ font-size: 0.75em; padding: 8px 15px; width: 90%; }}
+            table.dataTable thead th {{ padding: 10px 5px; font-size: 0.65em; }}
+            table.dataTable td {{ padding: 8px 4px; font-size: 0.85em; }}
+    
+        /* Hide the "Rank" column on very small screens to save space */
+            table.dataTable td:nth-child(1), 
+            table.dataTable th:nth-child(1) {{ display: none; }}
+        }}
     </style>
 </head>
 <body>
     <div class="container">
         <nav>
             <a href="index.html">Leaderboard</a>
-            <a href="matches.html">Match Archive</a>
-            <a href="trends.html" style="border-bottom: 2px solid #4a90e2; padding-bottom: 5px;">Player Trends</a>
+            <a href="matches.html" class="active">Match Archive</a>
+            <a href="trends.html">Player Trends</a>
         </nav>
         
         <h1>Match Archive</h1>
@@ -433,12 +473,18 @@ matches_html_content = f"""
             "order": [[1, "desc"]], 
             "responsive": true,
             "pageLength": 50,
+            "columnDefs": [
+                // Priority 1 stays visible, higher numbers hide first
+                {{ "responsivePriority": 1, "targets": [1, 3] }}, // ELO Sum and Lineup
+                {{ "responsivePriority": 2, "targets": 2 }},    // Date
+                {{ "responsivePriority": 3, "targets": 4 }},    // Game ID
+                {{ "responsivePriority": 4, "targets": 0 }}     // Rank
+            ],
             "language": {{
                 "search": "",
-                "searchPlaceholder": "Search names, dates, or IDs..."
+                "searchPlaceholder": "Search..."
             }}
         }});
-    }});
     </script>
 </body>
 </html>
@@ -468,8 +514,36 @@ trends_html = f"""
     <style>
         body {{ font-family: 'Segoe UI', sans-serif; background-color: #121212; color: #eee; text-align: center; padding: 20px; }}
         .container {{ width: 95%; max-width: 1000px; margin: auto; background: #1e1e1e; padding: 30px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.5); }}
-        nav {{ margin-bottom: 30px; border-bottom: 1px solid #333; padding-bottom: 15px; }}
-        nav a {{ color: #4a90e2; text-decoration: none; margin: 0 15px; font-weight: bold; text-transform: uppercase; font-size: 0.9em; }}
+        nav { 
+            margin-bottom: 30px; 
+            border-bottom: 1px solid #333; 
+            padding-bottom: 15px; 
+            display: flex; 
+            justify-content: center; 
+            gap: 10px;
+            flex-wrap: wrap; /* Critical for mobile: wraps buttons if screen is too narrow */
+        }
+        nav a { 
+            color: #888; 
+            text-decoration: none; 
+            font-weight: bold; 
+            text-transform: uppercase; 
+            font-size: 0.85em; 
+            padding: 8px 16px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+        nav a:hover { 
+            color: #4a90e2; 
+            background: rgba(74,144,226,0.05); 
+        }
+        nav a.active { 
+            color: #fff; 
+            background: #4a90e2; 
+            border: 1px solid #4a90e2;
+            box-shadow: 0 4px 12px rgba(74,144,226,0.3);
+        }
         h1 {{ color: #4a90e2; margin-bottom: 10px; }}
         
         .search-box {{ margin: 20px 0; }}
@@ -484,7 +558,7 @@ trends_html = f"""
         <nav>
             <a href="index.html">Leaderboard</a>
             <a href="matches.html">Match Archive</a>
-            <a href="trends.html" style="border-bottom: 2px solid #4a90e2; padding-bottom: 5px;">Player Trends</a>
+            <a href="trends.html" class="active">Player Trends</a>
         </nav>
 
         <h1>Player Progression</h1>
