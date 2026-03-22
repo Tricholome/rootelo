@@ -11,11 +11,9 @@ TOURNAMENT_ID = 24  # Season LH01 Tournament ID
 
 CUTOFF_DATE = datetime.strptime("2026-03-31", "%Y-%m-%d").date()
 
-# On enlève le dossier 'data/' pour que les fichiers soient à la racine 
-# (plus simple pour ton script d'affichage actuel)
-OUTPUT_RATINGS = "lh01_final_ratings.csv"
-OUTPUT_HISTORY = "lh01_history_full.json"
-OUTPUT_MATCHES = "lh01_matches_fixed.csv"
+OUTPUT_RATINGS = "data/lh01_final_ratings.csv"
+OUTPUT_HISTORY = "data/lh01_history_full.json"
+OUTPUT_MATCHES = "data/lh01_matches_fixed.csv"
 
 # --- 2. Load Correction File ---
 CORRECTIONS_PATH = 'Root_Elo_LH01_Corrected_Dates.xlsx'
@@ -138,9 +136,22 @@ for _, row in final_df.iterrows():
 final_df['Rank'] = ranks
 
 # --- 6. Final Exports ---
+
+# A. Sauvegarde du Leaderboard (Déjà correct)
 final_df.to_csv(OUTPUT_RATINGS, index=False)
-pd.DataFrame(archive_matches_list).to_csv(OUTPUT_MATCHES, index=False)
+
+# B. Sauvegarde des Matchs (CORRIGÉ : On ajoute le Rank ici)
+df_archive_matches = pd.DataFrame(archive_matches_list)
+
+# On trie par ELO_Sum décroissant et on ajoute la colonne Rank
+df_archive_matches = df_archive_matches.sort_values(by='ELO_Sum', ascending=False).reset_index(drop=True)
+df_archive_matches.insert(0, 'Rank', range(1, len(df_archive_matches) + 1))
+
+# Exportation avec la colonne Rank désormais présente
+df_archive_matches.to_csv(OUTPUT_MATCHES, index=False)
+
+# C. Sauvegarde de l'historique
 with open(OUTPUT_HISTORY, 'w', encoding='utf-8') as f:
     json.dump(player_history, f)
 
-print(f"✨ ARCHIVES LH01 GÉNÉRÉES AVEC SUCCÈS.")
+print(f"✨ ARCHIVES LH01 GÉNÉRÉES AVEC SUCCÈS (avec colonne Rank).")
