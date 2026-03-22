@@ -244,6 +244,10 @@ html_content = f"""
 </head>
 <body>
     <div class="container">
+        <nav style="margin-bottom: 20px; border-bottom: 1px solid #333; padding-bottom: 15px;">
+            <a href="index.html" style="color: #4a90e2; margin: 0 15px; text-decoration: none; font-weight: bold; border-bottom: 2px solid #4a90e2; padding-bottom: 5px;">Leaderboard</a>
+            <a href="matches.html" style="color: #4a90e2; margin: 0 15px; text-decoration: none; font-weight: bold;">Best Matches</a>
+        </nav>
         <h1>Root Digital League • Season LH01</h1>
         <h3>Alternative ELO Leaderboard • Data until {CUTOFF_DATE}</h3>
         {html_table}
@@ -298,3 +302,124 @@ with open("index.html", "w", encoding="utf-8") as f:
 
 with open("index.html", "w", encoding="utf-8") as f:
     f.write(html_content)
+
+# --- 9. Best Matches Calculation (From Colab) ---
+
+# Initialize for chronological processing - CHANGED df_filtered to df
+elo_ratings_dynamic = {player: 1200 for player in df['Player'].unique()}
+stats_dynamic = {player: {'games': 0, 'wins': 0.0} for player in df['Player'].unique()}
+all_matches_elo_data = []
+
+# Group and process matches - CHANGED df_filtered to df
+for game_id, group in df.groupby('GameID', sort=False):
+    players_in_game = group.to_dict('records')
+    if len(players_in_game) != 4:
+        continue 
+
+    current_match_elo_sum = 0.0
+    solo_winners = []
+    coalition_winners = []
+    others = []
+
+    for p in players_in_game:
+        name = p['Player']
+        current_match_elo_sum += elo_ratings_dynamic.get(name, 1200)
+        
+        # CHANGED 'Tournament Score' to 'Score' to match your Section 4
+        score = float(p.get('Score', 0.0))
+        if score == 1.0: solo_winners.append(name)
+        elif score == 0.5: coalition_winners.append(name)
+        else: others.append(name)
+
+    winner_str = ', '.join(solo_winners + coalition_winners)
+    other_str = ', '.join(others)
+
+    all_matches_elo_data.append({
+        'MatchID': game_id,
+        'Date': pd.to_datetime(players_in_game[0]['Date_Closed']).strftime('%Y-%m-%d'),
+        'Winner': winner_str,
+        'Other Players': other_str,
+        'ELO_Sum': round(current_match_elo_sum)
+    })
+
+    # Update ELO ratings for next match in loop
+    q_values = [10**(elo_ratings_dynamic.get(p['Player'], 1200)/400) for p in players_in_game]
+    total_q = sum(q_values)
+    
+    for i, p in enumerate(players_in_game):
+        name = p['Player']
+        stats_dynamic[name]['games'] += 1
+        
+        # Using the same K-factor logic as your main script
+        if stats_dynamic[name]['games'] <= 10: k = 80
+        elif stats_dynamic[name]['games'] <= 50: k = 40
+        else: k = 20
+        
+        # Again, changed to 'Score'
+        elo_ratings_dynamic[name] += k * (p['Score'] - (q_values[i] / total_q))
+
+# Create the top 50 DataFrame
+df_best_matches = pd.DataFrame(all_matches_elo_data)
+df_best_matches = df_best_matches.sort_values(by='ELO_Sum', ascending=False).head(50).reset_index(drop=True)
+df_best_matches.insert(0, 'Rank', range(1, len(df_best_matches) + 1))
+
+# --- 10. Generate matches.html ---
+
+match_rows = ""
+for _, row in df_best_matches.iterrows():
+    match_rows += f"""
+    <tr>
+        <td>{row['Rank']}</td>
+        <td style="font-weight:bold; color:#4a90e2;">{row['ELO_Sum']}</td>
+        <td>{row['Date']}</td>
+        <td style="color:#f7eb5b;">{row['Winner']}</td>
+        <td style="font-size:0.85em; color:#bbb;">{row['Other Players']}</td>
+        <td><small style="color:#555;">{row['MatchID']}</small></td>
+    </tr>"""
+
+matches_html_content = f"""
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Top 50 Best Matches</title>
+    <style>
+        body {{ font-family: 'Segoe UI', sans-serif; background-color: #121212; color: #eee; text-align: center; padding: 20px 5px; }}
+        .container {{ width: 95%; max-width: 1000px; margin: auto; background: #1e1e1e; padding: 20px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.4); }}
+        nav {{ margin-bottom: 20px; border-bottom: 1px solid #333; padding-bottom: 15px; }}
+        nav a {{ color: #4a90e2; text-decoration: none; margin: 0 15px; font-weight: bold; font-size: 0.9em; text-transform: uppercase; }}
+        h1 {{ color: #4a90e2; text-transform: uppercase; letter-spacing: 1px; }}
+        table {{ width: 100%; border-collapse: collapse; margin-top: 20px; }}
+        th {{ background: #252525; color: #4a90e2; padding: 12px; font-size: 0.75em; text-transform: uppercase; border-bottom: 2px solid #333; }}
+        td {{ padding: 12px; border-bottom: 1px solid #2a2a2a; font-size: 0.9em; }}
+        tr:hover {{ background: #252525; }}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav>
+            <a href="index.html">Leaderboard</a>
+            <a href="matches.html" style="border-bottom: 2px solid #4a90e2; padding-bottom: 5px;">Best Matches</a>
+        </nav>
+        <h1>Top 50 Heaviest Matches</h1>
+        <p style="color:#777; font-size: 0.85em;">Ranked by the combined ELO of all players at the time of the match.</p>
+        <table>
+            <thead>
+                <tr>
+                    <th>Rank</th><th>ELO Sum</th><th>Date</th><th>Winner(s)</th><th>Others</th><th>Match ID</th>
+                </tr>
+            </thead>
+            <tbody>
+                {match_rows}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
+"""
+
+with open("matches.html", "w", encoding="utf-8") as f:
+    f.write(matches_html_content)
+
+print("Both index.html and matches.html generated successfully!")
