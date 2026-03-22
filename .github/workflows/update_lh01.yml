@@ -1,0 +1,32 @@
+name: Update LH01 Database
+
+on:
+  workflow_dispatch: # Permet de lancer le script manuellement depuis l'onglet Actions
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          pip install pandas openpyxl requests
+
+      - name: Run LH01 Script
+        run: python generate_lh01_db.py
+
+      - name: Commit and Push changes
+        run: |
+          git config --global user.name "GitHub Action"
+          git config --global user.email "action@github.com"
+          git add data/lh01_final_ratings.csv data/lh01_history_full.json data/lh01_matches_fixed.csv
+          git commit -m "Update LH01 static database" || echo "No changes to commit"
+          git push
