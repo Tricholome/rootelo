@@ -1,0 +1,74 @@
+/* --- Global Styles --- */
+body { 
+    font-family: 'Segoe UI', Helvetica, Arial, sans-serif; 
+    background-color: #121212; 
+    color: #eee; 
+    text-align: center; 
+    padding: 20px 5px; 
+    margin: 0;
+}
+
+.container { 
+    width: 95%; 
+    max-width: 1100px; 
+    margin: auto; 
+    background: #1e1e1e; 
+    padding: 20px; 
+    border-radius: 12px; 
+    box-shadow: 0 8px 32px rgba(0,0,0,0.6); 
+}
+
+h1 { color: #4a90e2; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px; font-size: 1.5em; }
+h3 { color: #777; font-weight: 400; font-size: 0.85em; margin-bottom: 20px; }
+
+/* --- Navigation --- */
+nav { 
+    margin-bottom: 30px; 
+    border-bottom: 1px solid #333; 
+    padding-bottom: 15px; 
+    display: flex; 
+    justify-content: center; 
+    gap: 10px;
+    flex-wrap: wrap; 
+}
+nav a { 
+    color: #888; 
+    text-decoration: none; 
+    font-weight: bold; 
+    text-transform: uppercase; 
+    font-size: 0.85em; 
+    padding: 8px 16px;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
+}
+nav a:hover { color: #4a90e2; background: rgba(74,144,226,0.05); }
+nav a.active { color: #fff; background: #4a90e2; border: 1px solid #4a90e2; box-shadow: 0 4px 12px rgba(74,144,226,0.3); }
+
+/* --- Table Styles --- */
+.leaderboard-table { width: 100% !important; border-collapse: collapse; margin-top: 15px; background: #1e1e1e; }
+.leaderboard-table th { background-color: #252525 !important; color: #4a90e2 !important; font-size: 0.75em; text-transform: uppercase; padding: 12px; }
+.leaderboard-table td { border-bottom: 1px solid #2a2a2a; padding: 10px; font-size: 0.9em; text-align: center; vertical-align: middle; }
+
+.player-name-cell { text-align: left !important; padding-left: 15px !important; font-weight: 500; }
+
+/* --- Tier Icons & Colors --- */
+.tier-icon-container { width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; margin: 0 auto; }
+.tier-icon-container img { max-width: 100%; max-height: 100%; object-fit: contain; }
+
+.tier-bird   { background-color: rgba(103, 192, 199, 0.1) !important; border-left: 4px solid #67c0c7 !important; }
+.tier-fox    { background-color: rgba(230, 55, 45, 0.1) !important; border-left: 4px solid #e6372d !important; }
+.tier-rabbit { background-color: rgba(247, 235, 91, 0.1) !important; border-left: 4px solid #f7eb5b !important; }
+.tier-mouse  { background-color: rgba(242, 144, 87, 0.1) !important; border-left: 4px solid #f29057 !important; }
+
+.tier-bird td:nth-child(3), .tier-bird td:nth-child(4)   { color: #67c0c7; font-weight: bold; }
+.tier-fox td:nth-child(3), .tier-fox td:nth-child(4)     { color: #e6372d; font-weight: bold; }
+.tier-rabbit td:nth-child(3), .tier-rabbit td:nth-child(4) { color: #f7eb5b; font-weight: bold; }
+.tier-mouse td:nth-child(3), .tier-mouse td:nth-child(4)  { color: #f29057; font-weight: bold; }
+
+.unranked { opacity: 0.5; font-style: italic; }
+
+/* --- Footer --- */
+.footer { margin-top: 30px; font-size: 0.75em; color: #777; border-top: 1px solid #333; padding-top: 15px; line-height: 2; }
+.footer-tier-item { display: inline-block; margin: 0 10px; vertical-align: middle; }
+.footer-tier-item img { height: 18px; width: auto; vertical-align: middle; margin-right: 4px; }
