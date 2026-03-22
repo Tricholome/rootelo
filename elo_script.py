@@ -305,13 +305,13 @@ with open("index.html", "w", encoding="utf-8") as f:
 
 # --- 9. Best Matches Calculation (From Colab) ---
 
-# Initialize for chronological processing
-elo_ratings_dynamic = {player: 1200 for player in df_filtered['Player'].unique()}
-stats_dynamic = {player: {'games': 0, 'wins': 0.0} for player in df_filtered['Player'].unique()}
+# Initialize for chronological processing - CHANGED df_filtered to df
+elo_ratings_dynamic = {player: 1200 for player in df['Player'].unique()}
+stats_dynamic = {player: {'games': 0, 'wins': 0.0} for player in df['Player'].unique()}
 all_matches_elo_data = []
 
-# Group and process matches
-for game_id, group in df_filtered.groupby('GameID', sort=False):
+# Group and process matches - CHANGED df_filtered to df
+for game_id, group in df.groupby('GameID', sort=False):
     players_in_game = group.to_dict('records')
     if len(players_in_game) != 4:
         continue 
@@ -325,7 +325,8 @@ for game_id, group in df_filtered.groupby('GameID', sort=False):
         name = p['Player']
         current_match_elo_sum += elo_ratings_dynamic.get(name, 1200)
         
-        score = float(p.get('Tournament Score', 0.0))
+        # CHANGED 'Tournament Score' to 'Score' to match your Section 4
+        score = float(p.get('Score', 0.0))
         if score == 1.0: solo_winners.append(name)
         elif score == 0.5: coalition_winners.append(name)
         else: others.append(name)
@@ -348,8 +349,14 @@ for game_id, group in df_filtered.groupby('GameID', sort=False):
     for i, p in enumerate(players_in_game):
         name = p['Player']
         stats_dynamic[name]['games'] += 1
-        k = 80 if stats_dynamic[name]['games'] <= 10 else (40 if stats_dynamic[name]['games'] <= 50 else 30)
-        elo_ratings_dynamic[name] += k * (p['Tournament Score'] - (q_values[i] / total_q))
+        
+        # Using the same K-factor logic as your main script
+        if stats_dynamic[name]['games'] <= 10: k = 80
+        elif stats_dynamic[name]['games'] <= 50: k = 40
+        else: k = 20
+        
+        # Again, changed to 'Score'
+        elo_ratings_dynamic[name] += k * (p['Score'] - (q_values[i] / total_q))
 
 # Create the top 50 DataFrame
 df_best_matches = pd.DataFrame(all_matches_elo_data)
@@ -379,10 +386,10 @@ matches_html_content = f"""
     <title>Top 50 Best Matches</title>
     <style>
         body {{ font-family: 'Segoe UI', sans-serif; background-color: #121212; color: #eee; text-align: center; padding: 20px 5px; }}
-        .container {{ width: 95%; max-width: 1000px; margin: auto; background: #1e1e1e; padding: 20px; border-radius: 12px; }}
-        nav {{ margin-bottom: 20px; border-bottom: 1px solid #333; padding-bottom: 10px; }}
-        nav a {{ color: #4a90e2; text-decoration: none; margin: 0 15px; font-weight: bold; }}
-        h1 {{ color: #4a90e2; text-transform: uppercase; }}
+        .container {{ width: 95%; max-width: 1000px; margin: auto; background: #1e1e1e; padding: 20px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.4); }}
+        nav {{ margin-bottom: 20px; border-bottom: 1px solid #333; padding-bottom: 15px; }}
+        nav a {{ color: #4a90e2; text-decoration: none; margin: 0 15px; font-weight: bold; font-size: 0.9em; text-transform: uppercase; }}
+        h1 {{ color: #4a90e2; text-transform: uppercase; letter-spacing: 1px; }}
         table {{ width: 100%; border-collapse: collapse; margin-top: 20px; }}
         th {{ background: #252525; color: #4a90e2; padding: 12px; font-size: 0.75em; text-transform: uppercase; border-bottom: 2px solid #333; }}
         td {{ padding: 12px; border-bottom: 1px solid #2a2a2a; font-size: 0.9em; }}
@@ -393,10 +400,10 @@ matches_html_content = f"""
     <div class="container">
         <nav>
             <a href="index.html">Leaderboard</a>
-            <a href="matches.html" style="border-bottom: 2px solid #4a90e2;">Best Matches</a>
+            <a href="matches.html" style="border-bottom: 2px solid #4a90e2; padding-bottom: 5px;">Best Matches</a>
         </nav>
         <h1>Top 50 Heaviest Matches</h1>
-        <p style="color:#777;">Ranked by the combined ELO of all players at the time of the match.</p>
+        <p style="color:#777; font-size: 0.85em;">Ranked by the combined ELO of all players at the time of the match.</p>
         <table>
             <thead>
                 <tr>
