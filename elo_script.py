@@ -285,11 +285,11 @@ html_content = f"""
         .footer {{ margin-top: 30px; font-size: 0.75em; color: #777; border-top: 1px solid #333; padding-top: 15px; line-height: 2; }}
         .footer-tier-item {{ display: inline-block; margin: 0 10px; vertical-align: middle; }}
         .footer-tier-item img {{ height: 18px; width: auto; vertical-align: middle; margin-right: 4px; }}
-        .player-name-cell { 
+        .player-name-cell {{
             text-align: left !important; 
             padding-left: 15px !important; 
             font-weight: 500; 
-        }
+        }}
     </style>
 </head>
 <body>
