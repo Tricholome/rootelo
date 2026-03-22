@@ -84,7 +84,7 @@ elo_ratings = {player: 1200 for player in df['Player'].unique()}
 peak_elo = {player: 1200 for player in df['Player'].unique()}
 last_diff = {player: 0 for player in df['Player'].unique()}
 player_stats = {player: {'games': 0, 'wins': 0.0} for player in df['Player'].unique()}
-player_history = {player: [1200] for player in df['Player'].unique()}
+player_history = {player: [["Start", 1200]] for player in df['Player'].unique()}
 
 match_history_data = []
 
@@ -92,7 +92,6 @@ for game_id, group in df.groupby('GameID', sort=False):
     match_participants = group.to_dict('records')
     if len(match_participants) != 4: continue
     
-    # A. MEMORIZE: Calculate the ELO sum BEFORE the match updates
     current_match_sum = sum([elo_ratings.get(p['Player'], 1200) for p in match_participants])
     
     solo_winners = [p['Player'] for p in match_participants if p['Score'] == 1.0]
@@ -108,6 +107,8 @@ for game_id, group in df.groupby('GameID', sort=False):
     })
     
     total_q = sum([10**(elo_ratings[p['Player']]/400) for p in match_participants])
+    
+    current_date = pd.to_datetime(match_participants[0]['Date_Closed']).strftime('%Y-%m-%d')
     
     for p in match_participants:
         name = p['Player']
@@ -128,7 +129,7 @@ for game_id, group in df.groupby('GameID', sort=False):
         if elo_ratings[name] > peak_elo[name]:
             peak_elo[name] = elo_ratings[name]
 
-        player_history[name].append(round(elo_ratings[name]))
+        player_history[p['Player']].append([current_date, round(elo_ratings[p['Player']])])
 
 # --- 7. Final Leaderboard Preparation ---
 def get_tier_icon(rating, games):
@@ -445,15 +446,16 @@ matches_html_content = f"""
 </body>
 </html>
 """
-# --- 11. Generate trends ---
+# --- 11. Prepare Trends Data ---
 import json
-
-# Clean the keys (remove +123, #456) so the search matches the leaderboard names
+# Clean names and prepare JSON
 clean_history = {k.split('+')[0].split('#')[0]: v for k, v in player_history.items()}
-
-# Convert the Python dictionary into a JSON string for JavaScript to use
 history_json = json.dumps(clean_history)
 
+# Create a list of player names for the autocomplete dropdown
+player_names_list = sorted(list(clean_history.keys()))
+
+# --- 12. Generate trends.html ---
 trends_html = f"""
 <!DOCTYPE html>
 <html lang="en">
@@ -461,15 +463,20 @@ trends_html = f"""
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Player Progression • Root League</title>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {{ font-family: 'Segoe UI', sans-serif; background-color: #121212; color: #eee; text-align: center; padding: 20px; }}
-        .container {{ width: 95%; max-width: 900px; margin: auto; background: #1e1e1e; padding: 30px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.5); }}
+        .container {{ width: 95%; max-width: 1000px; margin: auto; background: #1e1e1e; padding: 30px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.5); }}
         nav {{ margin-bottom: 30px; border-bottom: 1px solid #333; padding-bottom: 15px; }}
         nav a {{ color: #4a90e2; text-decoration: none; margin: 0 15px; font-weight: bold; text-transform: uppercase; font-size: 0.9em; }}
-        h1 {{ color: #4a90e2; }}
-        input {{ background: #252525; color: #fff; border: 1px solid #444; padding: 12px; border-radius: 6px; width: 300px; font-size: 1em; margin-bottom: 20px; }}
-        .chart-container {{ position: relative; height: 400px; width: 100%; margin-top: 20px; }}
+        h1 {{ color: #4a90e2; margin-bottom: 10px; }}
+        
+        .search-box {{ margin: 20px 0; }}
+        input {{ background: #252525; color: #fff; border: 1px solid #444; padding: 12px; border-radius: 6px; width: 350px; font-size: 1em; outline: none; }}
+        input:focus {{ border-color: #4a90e2; }}
+        
+        .chart-container {{ position: relative; height: 500px; width: 100%; margin-top: 30px; background: #1a1a1a; padding: 15px; border-radius: 8px; }}
     </style>
 </head>
 <body>
@@ -481,9 +488,14 @@ trends_html = f"""
         </nav>
 
         <h1>Player Progression</h1>
-        <p style="color: #888;">Type your name to see your ELO journey over time.</p>
+        <p style="color: #888;">Select a player to visualize their ELO journey across dates.</p>
         
-        <input type="text" id="playerName" placeholder="Enter Player Name..." oninput="updateChart()">
+        <div class="search-box">
+            <input list="playerList" id="playerName" placeholder="Search for a player..." oninput="updateChart()">
+            <datalist id="playerList">
+                {''.join([f'<option value="{name}">' for name in player_names_list])}
+            </datalist>
+        </div>
         
         <div class="chart-container">
             <canvas id="progressionChart"></canvas>
@@ -495,12 +507,13 @@ trends_html = f"""
         let myChart;
 
         function updateChart() {{
-            const name = document.getElementById('playerName').value.trim();
+            const name = document.getElementById('playerName').value;
             const ctx = document.getElementById('progressionChart').getContext('2d');
             
             if (allData[name]) {{
-                const dataPoints = allData[name];
-                const labels = dataPoints.map((_, i) => i === 0 ? "Start" : "Match " + i);
+                const rawData = allData[name]; // Array of [Date, ELO]
+                const labels = rawData.map(d => d[0]);
+                const eloScores = rawData.map(d => d[1]);
 
                 if (myChart) myChart.destroy();
 
@@ -509,26 +522,43 @@ trends_html = f"""
                     data: {{
                         labels: labels,
                         datasets: [{{
-                            label: name + ' ELO Progression',
-                            data: dataPoints,
+                            label: name + ' ELO Journey',
+                            data: eloScores,
                             borderColor: '#4a90e2',
                             backgroundColor: 'rgba(74, 144, 226, 0.1)',
                             borderWidth: 3,
                             fill: true,
-                            tension: 0.3,
-                            pointRadius: 4,
-                            pointHoverRadius: 8
+                            tension: 0.2,
+                            pointRadius: 3,
+                            pointHoverRadius: 10,
+                            pointHitRadius: 20
                         }}]
                     }},
                     options: {{
                         responsive: true,
                         maintainAspectRatio: false,
+                        interaction: {{ intersect: false, mode: 'index' }},
                         scales: {{
-                            y: {{ grid: {{ color: '#333' }}, ticks: {{ color: '#aaa' }} }},
-                            x: {{ grid: {{ display: false }}, ticks: {{ color: '#aaa' }} }}
+                            y: {{ 
+                                grid: {{ color: '#333' }}, 
+                                ticks: {{ color: '#aaa' }},
+                                title: {{ display: true, text: 'ELO Rating', color: '#777' }}
+                            }},
+                            x: {{ 
+                                grid: {{ display: false }}, 
+                                ticks: {{ color: '#aaa', maxRotation: 45, minRotation: 45 }} 
+                            }}
                         }},
                         plugins: {{
-                            legend: {{ labels: {{ color: '#fff' }} }}
+                            legend: {{ display: false }},
+                            tooltip: {{
+                                backgroundColor: '#252525',
+                                titleColor: '#4a90e2',
+                                bodyColor: '#fff',
+                                borderColor: '#444',
+                                borderWidth: 1,
+                                displayColors: false
+                            }}
                         }}
                     }}
                 }});
@@ -541,6 +571,3 @@ trends_html = f"""
 
 with open("trends.html", "w", encoding="utf-8") as f:
     f.write(trends_html)
-
-with open("matches.html", "w", encoding="utf-8") as f:
-    f.write(matches_html_content)
