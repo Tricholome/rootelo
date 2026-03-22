@@ -509,58 +509,56 @@ history_json = json.dumps(clean_history)
 # Create a list of player names for the autocomplete dropdown
 player_names_list = sorted(list(clean_history.keys()))
 
-# --- 12. Generate trends.html (Mobile-Optimized) ---
+# --- 12. Generate trends.html (Fully Responsive + Orientation Tip) ---
 trends_html = f"""
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Player Progression • Root League</title>
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        body {{ font-family: 'Segoe UI', sans-serif; background-color: #121212; color: #eee; text-align: center; padding: 15px 5px; margin: 0; }}
-        .container {{ width: 95%; max-width: 1000px; margin: auto; background: #1e1e1e; padding: 20px 10px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.5); }}
+        body {{ font-family: 'Segoe UI', sans-serif; background-color: #121212; color: #eee; text-align: center; padding: 10px 0; margin: 0; overflow-x: hidden; }}
+        .container {{ width: 100%; max-width: 1000px; margin: auto; background: #1e1e1e; padding: 15px 10px; border-radius: 0; box-sizing: border-box; }}
         
+        @media (min-width: 600px) {{
+            .container {{ width: 95%; border-radius: 12px; padding: 25px; }}
+        }}
+
         /* Unified Navigation */
-        nav {{ margin-bottom: 25px; border-bottom: 1px solid #333; padding-bottom: 15px; display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }}
-        nav a {{ color: #888; text-decoration: none; font-weight: bold; text-transform: uppercase; font-size: 0.8em; padding: 8px 12px; border-radius: 6px; transition: 0.3s; }}
+        nav {{ margin-bottom: 20px; border-bottom: 1px solid #333; padding-bottom: 15px; display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }}
+        nav a {{ color: #888; text-decoration: none; font-weight: bold; text-transform: uppercase; font-size: 0.75em; padding: 8px 12px; border-radius: 6px; }}
         nav a.active {{ color: #fff; background: #4a90e2; }}
 
-        h1 {{ color: #4a90e2; font-size: 1.5em; margin-bottom: 5px; }}
-        
-        .search-box {{ margin: 15px 0; width: 100%; }}
+        .search-box {{ margin: 10px 0; }}
         input {{ 
-            background: #252525; 
-            color: #fff; 
-            border: 1px solid #444; 
-            padding: 12px; 
-            border-radius: 8px; 
-            width: 90%; 
-            max-width: 400px; 
-            font-size: 16px; /* Prevents iOS zoom on focus */
-            outline: none; 
-            box-sizing: border-box;
+            background: #252525; color: #fff; border: 1px solid #444; padding: 12px; border-radius: 8px; 
+            width: 90%; max-width: 400px; font-size: 16px; box-sizing: border-box;
         }}
 
-        /* Chart Container - Fixed height on mobile for better scrolling */
+        /* Orientation Hint */
+        .landscape-hint {{ 
+            display: none; color: #666; font-size: 0.7em; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px;
+        }}
+
+        /* Chart Wrapper: Force 100% width, no overflow */
+        .chart-wrapper {{
+            width: 100%;
+            padding: 0 5px;
+            box-sizing: border-box;
+        }}
         .chart-container {{ 
             position: relative; 
-            height: 60vh; /* Uses 60% of screen height */
-            min-height: 300px;
-            width: 100%; 
-            margin-top: 10px; 
+            width: 100%;
+            height: 50vh; /* Fixed height relative to screen */
             background: #1a1a1a; 
-            padding: 10px; 
-            border-radius: 8px; 
-            box-sizing: border-box;
+            border-radius: 8px;
         }}
 
-        @media (max-width: 600px) {{
-            h1 {{ font-size: 1.2em; }}
-            .container {{ padding: 15px 5px; }}
-            nav a {{ padding: 6px 10px; font-size: 0.75em; }}
+        @media (max-width: 768px) and (orientation: portrait) {{
+            .landscape-hint {{ display: block; }}
         }}
     </style>
 </head>
@@ -572,17 +570,19 @@ trends_html = f"""
             <a href="trends.html" class="active">Player Trends</a>
         </nav>
 
-        <h1>Player Progression</h1>
-        
         <div class="search-box">
-            <input list="playerList" id="playerName" placeholder="Tap to search player..." oninput="updateChart()">
+            <input list="playerList" id="playerName" placeholder="Search Player..." oninput="updateChart()">
             <datalist id="playerList">
                 {''.join([f'<option value="{name}">' for name in player_names_list])}
             </datalist>
         </div>
-        
-        <div class="chart-container">
-            <canvas id="progressionChart"></canvas>
+
+        <div class="landscape-hint">🔄 Rotate phone for detail</div>
+
+        <div class="chart-wrapper">
+            <div class="chart-container">
+                <canvas id="progressionChart"></canvas>
+            </div>
         </div>
     </div>
 
@@ -606,45 +606,41 @@ trends_html = f"""
                     data: {{
                         labels: labels,
                         datasets: [{{
-                            label: 'ELO',
                             data: eloScores,
                             borderColor: '#4a90e2',
                             backgroundColor: 'rgba(74, 144, 226, 0.1)',
                             borderWidth: 2,
                             fill: true,
                             tension: 0.3,
-                            pointRadius: labels.length > 20 ? 0 : 4, // Hide points if too many games
-                            pointHitRadius: 25 // Easier to tap on mobile
+                            pointRadius: 2,
+                            pointHitRadius: 20
                         }}]
                     }},
                     options: {{
                         responsive: true,
-                        maintainAspectRatio: false,
-                        scales: {{
-                            y: {{ 
-                                grid: {{ color: '#2a2a2a' }}, 
-                                ticks: {{ color: '#888', font: {{ size: 10 }} }}
-                            }},
-                            x: {{ 
-                                grid: {{ display: false }}, 
-                                ticks: {{ 
-                                    color: '#888', 
-                                    font: {{ size: 10 }},
-                                    maxRotation: 45, 
-                                    autoSkip: true,
-                                    maxTicksLimit: 8 // Prevents date overlapping
-                                }} 
-                            }}
-                        }},
+                        maintainAspectRatio: false, // This forces it to fit the container width
                         plugins: {{
                             legend: {{ display: false }},
                             tooltip: {{
                                 enabled: true,
                                 mode: 'index',
                                 intersect: false,
-                                backgroundColor: '#333',
-                                titleColor: '#4a90e2',
-                                bodyFont: {{ size: 14 }}
+                                backgroundColor: '#222'
+                            }}
+                        }},
+                        scales: {{
+                            y: {{ 
+                                grid: {{ color: '#252525' }}, 
+                                ticks: {{ color: '#666', font: {{ size: 9 }} }} 
+                            }},
+                            x: {{ 
+                                grid: {{ display: false }}, 
+                                ticks: {{ 
+                                    color: '#666', 
+                                    font: {{ size: 9 }},
+                                    maxTicksLimit: 6, // Keeps it clean on small screens
+                                    maxRotation: 0 
+                                }} 
                             }}
                         }}
                     }}

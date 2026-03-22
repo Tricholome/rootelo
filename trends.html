@@ -3,52 +3,50 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Player Progression • Root League</title>
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background-color: #121212; color: #eee; text-align: center; padding: 15px 5px; margin: 0; }
-        .container { width: 95%; max-width: 1000px; margin: auto; background: #1e1e1e; padding: 20px 10px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.5); }
+        body { font-family: 'Segoe UI', sans-serif; background-color: #121212; color: #eee; text-align: center; padding: 10px 0; margin: 0; overflow-x: hidden; }
+        .container { width: 100%; max-width: 1000px; margin: auto; background: #1e1e1e; padding: 15px 10px; border-radius: 0; box-sizing: border-box; }
         
+        @media (min-width: 600px) {
+            .container { width: 95%; border-radius: 12px; padding: 25px; }
+        }
+
         /* Unified Navigation */
-        nav { margin-bottom: 25px; border-bottom: 1px solid #333; padding-bottom: 15px; display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }
-        nav a { color: #888; text-decoration: none; font-weight: bold; text-transform: uppercase; font-size: 0.8em; padding: 8px 12px; border-radius: 6px; transition: 0.3s; }
+        nav { margin-bottom: 20px; border-bottom: 1px solid #333; padding-bottom: 15px; display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }
+        nav a { color: #888; text-decoration: none; font-weight: bold; text-transform: uppercase; font-size: 0.75em; padding: 8px 12px; border-radius: 6px; }
         nav a.active { color: #fff; background: #4a90e2; }
 
-        h1 { color: #4a90e2; font-size: 1.5em; margin-bottom: 5px; }
-        
-        .search-box { margin: 15px 0; width: 100%; }
+        .search-box { margin: 10px 0; }
         input { 
-            background: #252525; 
-            color: #fff; 
-            border: 1px solid #444; 
-            padding: 12px; 
-            border-radius: 8px; 
-            width: 90%; 
-            max-width: 400px; 
-            font-size: 16px; /* Prevents iOS zoom on focus */
-            outline: none; 
-            box-sizing: border-box;
+            background: #252525; color: #fff; border: 1px solid #444; padding: 12px; border-radius: 8px; 
+            width: 90%; max-width: 400px; font-size: 16px; box-sizing: border-box;
         }
 
-        /* Chart Container - Fixed height on mobile for better scrolling */
+        /* Orientation Hint */
+        .landscape-hint { 
+            display: none; color: #666; font-size: 0.7em; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px;
+        }
+
+        /* Chart Wrapper: Force 100% width, no overflow */
+        .chart-wrapper {
+            width: 100%;
+            padding: 0 5px;
+            box-sizing: border-box;
+        }
         .chart-container { 
             position: relative; 
-            height: 60vh; /* Uses 60% of screen height */
-            min-height: 300px;
-            width: 100%; 
-            margin-top: 10px; 
+            width: 100%;
+            height: 50vh; /* Fixed height relative to screen */
             background: #1a1a1a; 
-            padding: 10px; 
-            border-radius: 8px; 
-            box-sizing: border-box;
+            border-radius: 8px;
         }
 
-        @media (max-width: 600px) {
-            h1 { font-size: 1.2em; }
-            .container { padding: 15px 5px; }
-            nav a { padding: 6px 10px; font-size: 0.75em; }
+        @media (max-width: 768px) and (orientation: portrait) {
+            .landscape-hint { display: block; }
         }
     </style>
 </head>
@@ -60,17 +58,19 @@
             <a href="trends.html" class="active">Player Trends</a>
         </nav>
 
-        <h1>Player Progression</h1>
-        
         <div class="search-box">
-            <input list="playerList" id="playerName" placeholder="Tap to search player..." oninput="updateChart()">
+            <input list="playerList" id="playerName" placeholder="Search Player..." oninput="updateChart()">
             <datalist id="playerList">
                 <option value="100pctskillz"><option value="1coolguy"><option value="AERotters"><option value="AJIJIi"><option value="Acecreamsundae"><option value="Acelet"><option value="Aceosd"><option value="Actionman2222"><option value="Akayami"><option value="Aleph"><option value="Alexispc"><option value="Antiproject"><option value="Awesem"><option value="AxlPrototype"><option value="Axolatal"><option value="BMPerJMPer"><option value="BaconBoy"><option value="BadScra"><option value="BaliHoo"><option value="Banzai7000"><option value="Bapgo"><option value="Baradhas"><option value="BareGammon"><option value="Bengal3"><option value="Biggins96"><option value="Bitto"><option value="BjarkeHuse"><option value="Bjoda"><option value="Blank"><option value="Blurr"><option value="BoMa85"><option value="Bodnamax"><option value="BuckeyeNation"><option value="BugMuff44"><option value="BuliBaka"><option value="Cabbage0642"><option value="Cheesecake271"><option value="Cheetah32"><option value="ChippZamoose"><option value="ChusGG"><option value="Clink"><option value="Cloudere"><option value="CodPieceZ"><option value="ConeMan"><option value="Cookies"><option value="CowOnAPlane"><option value="CoxyNormus"><option value="CptAlex"><option value="CroCroCro"><option value="Ctfox"><option value="Cuagodking"><option value="Dandel"><option value="DanielDandaniel"><option value="DanzigMF"><option value="Darkwonderer"><option value="DarthOblivius"><option value="DarthPuniceus"><option value="DawnDiVito"><option value="DegenerateIan"><option value="DelSol"><option value="DemaRogue"><option value="Demand"><option value="Dizzz"><option value="Doordecat"><option value="DrCheeseFiend"><option value="Dramsss"><option value="Drinken"><option value="Dumbledore"><option value="EdacM"><option value="Elijah"><option value="EmbryoticDeth"><option value="Emperia"><option value="Excitedteapot"><option value="FVMLion"><option value="FakeSki"><option value="FalconBird"><option value="FatBoyyy"><option value="FausDav"><option value="FavorOfTheRabbits"><option value="Fearteiler"><option value="FireFox"><option value="ForkMaster"><option value="FrancescoBr"><option value="FungusMouse"><option value="Furry0329"><option value="Gaborever"><option value="Gagneto"><option value="GameProfit"><option value="GamerTower"><option value="Gibbs"><option value="GlisteningGeetus"><option value="Gregoola"><option value="Hadjiya"><option value="Harriet"><option value="Hiyoshi"><option value="HobGungan"><option value="HoosierDaddy"><option value="Hossain2020"><option value="HungryJeff"><option value="Hurple"><option value="Hydro033"><option value="IMPERATOR"><option value="ImEpy"><option value="ImJustExisting"><option value="IndifferentFish"><option value="Intraceptor"><option value="Ironic"><option value="Jasiuńcio"><option value="Jboooooooooooooooooooom"><option value="Jerry"><option value="Julien"><option value="KFull"><option value="Karcher"><option value="KargDemiau"><option value="KarmaBurn"><option value="Killerstorm17"><option value="Klishu"><option value="Kmahussier"><option value="Komasan"><option value="Krooter"><option value="KuperMeister"><option value="KyloBot"><option value="LHlegend"><option value="Lambo"><option value="Lante"><option value="Led_Slash"><option value="Lex25"><option value="Libitina114"><option value="Ljaz7"><option value="Ljazz7"><option value="Lobster"><option value="Lokfok"><option value="LucianTheFak"><option value="LutherStr"><option value="Lynxtek"><option value="MangoBlade11"><option value="Marcus"><option value="Mati92"><option value="McMayo"><option value="Mcauthor"><option value="Mindger"><option value="Mohammad"><option value="Mossfusion"><option value="Mouseman"><option value="MrDrouf"><option value="MrRiceGuy"><option value="Munchking"><option value="Musicalwoofy"><option value="MylesMoose"><option value="Nadav253"><option value="NadtyLite"><option value="Napalminthebirdsong"><option value="NattyKash"><option value="NaySmith"><option value="Nefkano"><option value="NonStInc."><option value="Nudraxon"><option value="Nuttsy"><option value="Nymmer"><option value="OUSlaughter"><option value="Octavius"><option value="Odinius"><option value="Olymp"><option value="Oppapi"><option value="Oriol"><option value="Pandapapst"><option value="Peppy"><option value="Perdita"><option value="Pi314"><option value="Piechu"><option value="PlagueCarrier"><option value="Plasma"><option value="Pliskin"><option value="Plush2"><option value="Podge0303"><option value="PokerFace126"><option value="PsychologicalBox"><option value="Ptitmxz"><option value="QuixArtagnan"><option value="RFMerlo"><option value="Rabbi"><option value="Rabbitwarlord"><option value="Rachel997"><option value="Raineweather05"><option value="RangerEpic"><option value="Raybit"><option value="ReoWulf"><option value="RexCow"><option value="Riverman"><option value="SMenefee"><option value="SSR_Mike"><option value="Schkitz"><option value="Sebby"><option value="Seiza"><option value="Shadyferret"><option value="Sharkskln"><option value="ShowStopperW"><option value="ShuShuBana"><option value="Shuuhey"><option value="Silver"><option value="Sirius"><option value="Sjepeal"><option value="Soluna"><option value="StarhardFishrinse"><option value="StatzoryTheMad"><option value="StoneOfShame"><option value="TAKSpx"><option value="Tad604"><option value="TempExtremal"><option value="TheDolphinman"><option value="TheFourthJesse"><option value="TheIndustrialRevoloution"><option value="TheRedViper"><option value="TheSillyBilly"><option value="TheWiseFox"><option value="ThoseTeeff"><option value="TimidTailwind"><option value="ToasterTrash"><option value="Tolfan"><option value="TonyDeloreanESQ"><option value="Tricholome"><option value="Trumpet"><option value="TurkeyNoNo"><option value="Valzaan"><option value="VanKaiserman"><option value="WWren"><option value="Whats02"><option value="Wolvane"><option value="Wrestler"><option value="Wriggleroom"><option value="Wubba"><option value="WyvernElement"><option value="Xar149"><option value="Xman1997"><option value="XxD4RK_W0LFxX"><option value="Youdge"><option value="Yragael"><option value="ZachB"><option value="Zeldamon"><option value="aelisheneithlon"><option value="alevGO"><option value="benruff"><option value="benssoon"><option value="bigcathedral"><option value="bootle"><option value="brrrlinguist"><option value="buurn"><option value="byzeke"><option value="catscat"><option value="chosennuttso"><option value="cjahwon"><option value="cliuless"><option value="clp10033"><option value="complexartichoke"><option value="cringelordirl"><option value="darkcat"><option value="deejaythink"><option value="deriokle"><option value="dindane"><option value="doejurko"><option value="ellbelle"><option value="ermactually"><option value="evancomposer"><option value="fadingnovel"><option value="goodgamepat"><option value="gord20"><option value="hakoo"><option value="hanban"><option value="hauntedpebbles2"><option value="idk123"><option value="kaiser"><option value="kayajam"><option value="lazarus210"><option value="lgtw3450"><option value="lumpyprol"><option value="marksoz00"><option value="matemato"><option value="metalnooze"><option value="micherin"><option value="mishaelh1"><option value="mkcy3"><option value="mouseinabox"><option value="mwcrabtree"><option value="mysti"><option value="nikkan"><option value="ninjacat536"><option value="optimusprawn"><option value="oshwott2844"><option value="pashatherussian"><option value="pikeline"><option value="pooge"><option value="pwarren8590"><option value="radiantchaos"><option value="re_al_"><option value="residentevil"><option value="sda1611"><option value="secretpaths"><option value="sedlak87"><option value="shurgs"><option value="silverfox"><option value="sleepylabone"><option value="sparrowhawk"><option value="swiftsusan"><option value="themikeman"><option value="time2orush"><option value="tippop"><option value="tjudge"><option value="tofuwater"><option value="tubaking"><option value="tunnndz"><option value="udon66"><option value="uwtron"><option value="vanillapoppy"><option value="vinnie"><option value="voltigeur"><option value="weirdone">
             </datalist>
         </div>
-        
-        <div class="chart-container">
-            <canvas id="progressionChart"></canvas>
+
+        <div class="landscape-hint">🔄 Rotate phone for detail</div>
+
+        <div class="chart-wrapper">
+            <div class="chart-container">
+                <canvas id="progressionChart"></canvas>
+            </div>
         </div>
     </div>
 
@@ -94,45 +94,41 @@
                     data: {
                         labels: labels,
                         datasets: [{
-                            label: 'ELO',
                             data: eloScores,
                             borderColor: '#4a90e2',
                             backgroundColor: 'rgba(74, 144, 226, 0.1)',
                             borderWidth: 2,
                             fill: true,
                             tension: 0.3,
-                            pointRadius: labels.length > 20 ? 0 : 4, // Hide points if too many games
-                            pointHitRadius: 25 // Easier to tap on mobile
+                            pointRadius: 2,
+                            pointHitRadius: 20
                         }]
                     },
                     options: {
                         responsive: true,
-                        maintainAspectRatio: false,
-                        scales: {
-                            y: { 
-                                grid: { color: '#2a2a2a' }, 
-                                ticks: { color: '#888', font: { size: 10 } }
-                            },
-                            x: { 
-                                grid: { display: false }, 
-                                ticks: { 
-                                    color: '#888', 
-                                    font: { size: 10 },
-                                    maxRotation: 45, 
-                                    autoSkip: true,
-                                    maxTicksLimit: 8 // Prevents date overlapping
-                                } 
-                            }
-                        },
+                        maintainAspectRatio: false, // This forces it to fit the container width
                         plugins: {
                             legend: { display: false },
                             tooltip: {
                                 enabled: true,
                                 mode: 'index',
                                 intersect: false,
-                                backgroundColor: '#333',
-                                titleColor: '#4a90e2',
-                                bodyFont: { size: 14 }
+                                backgroundColor: '#222'
+                            }
+                        },
+                        scales: {
+                            y: { 
+                                grid: { color: '#252525' }, 
+                                ticks: { color: '#666', font: { size: 9 } } 
+                            },
+                            x: { 
+                                grid: { display: false }, 
+                                ticks: { 
+                                    color: '#666', 
+                                    font: { size: 9 },
+                                    maxTicksLimit: 6, // Keeps it clean on small screens
+                                    maxRotation: 0 
+                                } 
                             }
                         }
                     }
