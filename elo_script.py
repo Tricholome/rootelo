@@ -358,9 +358,9 @@ for game_id, group in df.groupby('GameID', sort=False):
         # Again, changed to 'Score'
         elo_ratings_dynamic[name] += k * (p['Score'] - (q_values[i] / total_q))
 
-# Create the top 50 DataFrame
+# Create the DataFrame
 df_best_matches = pd.DataFrame(all_matches_elo_data)
-df_best_matches = df_best_matches.sort_values(by='ELO_Sum', ascending=False).head(50).reset_index(drop=True)
+df_best_matches = df_best_matches.sort_values(by='ELO_Sum', ascending=False).reset_index(drop=True)
 df_best_matches.insert(0, 'Rank', range(1, len(df_best_matches) + 1))
 
 # --- 10. Generate matches.html ---
@@ -383,31 +383,48 @@ matches_html_content = f"""
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Top 50 Best Matches</title>
+    <title>Match Archive • Root League</title>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
     <style>
         body {{ font-family: 'Segoe UI', sans-serif; background-color: #121212; color: #eee; text-align: center; padding: 20px 5px; }}
-        .container {{ width: 95%; max-width: 1000px; margin: auto; background: #1e1e1e; padding: 20px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.4); }}
+        .container {{ width: 95%; max-width: 1100px; margin: auto; background: #1e1e1e; padding: 20px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.4); }}
         nav {{ margin-bottom: 20px; border-bottom: 1px solid #333; padding-bottom: 15px; }}
         nav a {{ color: #4a90e2; text-decoration: none; margin: 0 15px; font-weight: bold; font-size: 0.9em; text-transform: uppercase; }}
-        h1 {{ color: #4a90e2; text-transform: uppercase; letter-spacing: 1px; }}
-        table {{ width: 100%; border-collapse: collapse; margin-top: 20px; }}
-        th {{ background: #252525; color: #4a90e2; padding: 12px; font-size: 0.75em; text-transform: uppercase; border-bottom: 2px solid #333; }}
-        td {{ padding: 12px; border-bottom: 1px solid #2a2a2a; font-size: 0.9em; }}
-        tr:hover {{ background: #252525; }}
+        h1 {{ color: #4a90e2; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }}
+        
+        /* DataTables Custom Dark Mode Styling */
+        .dataTables_wrapper {{ color: #eee !important; padding: 10px; }}
+        .dataTables_filter input {{ background: #252525; color: #fff; border: 1px solid #444; border-radius: 4px; padding: 5px; }}
+        .dataTables_length select {{ background: #252525; color: #fff; border: 1px solid #444; }}
+        
+        table.dataTable {{ width: 100% !important; border-collapse: collapse; margin-top: 20px !important; background: #1e1e1e; }}
+        table.dataTable thead th {{ background-color: #252525 !important; color: #4a90e2 !important; border-bottom: 2px solid #333 !important; text-transform: uppercase; font-size: 0.75em; }}
+        table.dataTable td {{ border-bottom: 1px solid #2a2a2a; padding: 12px; font-size: 0.9em; }}
+        .dataTables_info, .dataTables_paginate {{ color: #777 !important; font-size: 0.8em; margin-top: 15px; }}
     </style>
 </head>
 <body>
     <div class="container">
         <nav>
             <a href="index.html">Leaderboard</a>
-            <a href="matches.html" style="border-bottom: 2px solid #4a90e2; padding-bottom: 5px;">Best Matches</a>
+            <a href="matches.html" style="border-bottom: 2px solid #4a90e2; padding-bottom: 5px;">Match Archive</a>
         </nav>
-        <h1>Top 50 Heaviest Matches</h1>
-        <p style="color:#777; font-size: 0.85em;">Ranked by the combined ELO of all players at the time of the match.</p>
-        <table>
+        
+        <h1>Match Archive</h1>
+        <p style="color:#777; font-size: 0.85em; margin-bottom: 20px;">
+            Search for a player name to see their heaviest matches. Sorted by ELO Sum.
+        </p>
+
+        <table id="matchesTable" class="display nowrap">
             <thead>
                 <tr>
-                    <th>Rank</th><th>ELO Sum</th><th>Date</th><th>Winner(s)</th><th>Others</th><th>Match ID</th>
+                    <th>Rank</th>
+                    <th>ELO Sum</th>
+                    <th>Date</th>
+                    <th>Winner(s)</th>
+                    <th>Other Players</th>
+                    <th>ID</th>
                 </tr>
             </thead>
             <tbody>
@@ -415,6 +432,22 @@ matches_html_content = f"""
             </tbody>
         </table>
     </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+    <script>
+    $(document).ready(function() {{
+        $('#matchesTable').DataTable({{
+            "order": [[1, "desc"]], // Default sort by ELO Sum
+            "responsive": true,
+            "pageLength": 25,
+            "language": {{
+                "search": "Search Player:"
+            }}
+        }});
+    }});
+    </script>
 </body>
 </html>
 """
