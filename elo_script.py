@@ -536,8 +536,10 @@ def build_about_page(filename, title, heading):
         f.write(generate_page_html(title, heading, filename, codex_text))
 
 # =========================================================================
-# --- 9. DATA PREPARATION (DISPLAY FILTERS) ---
+# --- 9. DATA PREPARATION ---
 # =========================================================================
+# Cleaning of the archive
+archive_history = {k.split('+')[0].split('#')[0]: v for k, v in archive_history.items()}
 
 # Rule: To be displayed on the leaderboard, a player needs at least 1 win.
 
