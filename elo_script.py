@@ -509,7 +509,7 @@ history_json = json.dumps(clean_history)
 # Create a list of player names for the autocomplete dropdown
 player_names_list = sorted(list(clean_history.keys()))
 
-# --- 12. Generate trends.html ---
+# --- 12. Generate trends.html (Mobile-Optimized) ---
 trends_html = f"""
 <!DOCTYPE html>
 <html lang="en">
@@ -517,43 +517,51 @@ trends_html = f"""
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Player Progression • Root League</title>
-    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        body {{ font-family: 'Segoe UI', sans-serif; background-color: #121212; color: #eee; text-align: center; padding: 20px; }}
-        .container {{ width: 95%; max-width: 1000px; margin: auto; background: #1e1e1e; padding: 30px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.5); }}
+        body {{ font-family: 'Segoe UI', sans-serif; background-color: #121212; color: #eee; text-align: center; padding: 15px 5px; margin: 0; }}
+        .container {{ width: 95%; max-width: 1000px; margin: auto; background: #1e1e1e; padding: 20px 10px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.5); }}
         
-        /* Unified Navigation CSS */
-        nav {{ 
-            margin-bottom: 30px; 
-            border-bottom: 1px solid #333; 
-            padding-bottom: 15px; 
-            display: flex; 
-            justify-content: center; 
-            gap: 10px;
-            flex-wrap: wrap; 
-        }}
-        nav a {{ 
-            color: #888; 
-            text-decoration: none; 
-            font-weight: bold; 
-            text-transform: uppercase; 
-            font-size: 0.85em; 
-            padding: 8px 16px;
-            border-radius: 6px;
-            transition: all 0.3s ease;
-            border: 1px solid transparent;
-        }}
-        nav a:hover {{ color: #4a90e2; background: rgba(74,144,226,0.05); }}
-        nav a.active {{ color: #fff; background: #4a90e2; border: 1px solid #4a90e2; box-shadow: 0 4px 12px rgba(74,144,226,0.3); }}
+        /* Unified Navigation */
+        nav {{ margin-bottom: 25px; border-bottom: 1px solid #333; padding-bottom: 15px; display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }}
+        nav a {{ color: #888; text-decoration: none; font-weight: bold; text-transform: uppercase; font-size: 0.8em; padding: 8px 12px; border-radius: 6px; transition: 0.3s; }}
+        nav a.active {{ color: #fff; background: #4a90e2; }}
 
-        h1 {{ color: #4a90e2; margin-bottom: 10px; }}
+        h1 {{ color: #4a90e2; font-size: 1.5em; margin-bottom: 5px; }}
         
-        .search-box {{ margin: 20px 0; }}
-        input {{ background: #252525; color: #fff; border: 1px solid #444; padding: 12px; border-radius: 6px; width: 350px; font-size: 1em; outline: none; }}
-        input:focus {{ border-color: #4a90e2; }}
-        
-        .chart-container {{ position: relative; height: 500px; width: 100%; margin-top: 30px; background: #1a1a1a; padding: 15px; border-radius: 8px; }}
+        .search-box {{ margin: 15px 0; width: 100%; }}
+        input {{ 
+            background: #252525; 
+            color: #fff; 
+            border: 1px solid #444; 
+            padding: 12px; 
+            border-radius: 8px; 
+            width: 90%; 
+            max-width: 400px; 
+            font-size: 16px; /* Prevents iOS zoom on focus */
+            outline: none; 
+            box-sizing: border-box;
+        }}
+
+        /* Chart Container - Fixed height on mobile for better scrolling */
+        .chart-container {{ 
+            position: relative; 
+            height: 60vh; /* Uses 60% of screen height */
+            min-height: 300px;
+            width: 100%; 
+            margin-top: 10px; 
+            background: #1a1a1a; 
+            padding: 10px; 
+            border-radius: 8px; 
+            box-sizing: border-box;
+        }}
+
+        @media (max-width: 600px) {{
+            h1 {{ font-size: 1.2em; }}
+            .container {{ padding: 15px 5px; }}
+            nav a {{ padding: 6px 10px; font-size: 0.75em; }}
+        }}
     </style>
 </head>
 <body>
@@ -565,10 +573,9 @@ trends_html = f"""
         </nav>
 
         <h1>Player Progression</h1>
-        <p style="color: #888;">Select a player to visualize their ELO journey across dates.</p>
         
         <div class="search-box">
-            <input list="playerList" id="playerName" placeholder="Search for a player..." oninput="updateChart()">
+            <input list="playerList" id="playerName" placeholder="Tap to search player..." oninput="updateChart()">
             <datalist id="playerList">
                 {''.join([f'<option value="{name}">' for name in player_names_list])}
             </datalist>
@@ -588,7 +595,7 @@ trends_html = f"""
             const ctx = document.getElementById('progressionChart').getContext('2d');
             
             if (allData[name]) {{
-                const rawData = allData[name]; // Array of [Date, ELO]
+                const rawData = allData[name];
                 const labels = rawData.map(d => d[0]);
                 const eloScores = rawData.map(d => d[1]);
 
@@ -599,42 +606,45 @@ trends_html = f"""
                     data: {{
                         labels: labels,
                         datasets: [{{
-                            label: name + ' ELO Journey',
+                            label: 'ELO',
                             data: eloScores,
                             borderColor: '#4a90e2',
                             backgroundColor: 'rgba(74, 144, 226, 0.1)',
-                            borderWidth: 3,
+                            borderWidth: 2,
                             fill: true,
-                            tension: 0.2,
-                            pointRadius: 3,
-                            pointHoverRadius: 10,
-                            pointHitRadius: 20
+                            tension: 0.3,
+                            pointRadius: labels.length > 20 ? 0 : 4, // Hide points if too many games
+                            pointHitRadius: 25 // Easier to tap on mobile
                         }}]
                     }},
                     options: {{
                         responsive: true,
                         maintainAspectRatio: false,
-                        interaction: {{ intersect: false, mode: 'index' }},
                         scales: {{
                             y: {{ 
-                                grid: {{ color: '#333' }}, 
-                                ticks: {{ color: '#aaa' }},
-                                title: {{ display: true, text: 'ELO Rating', color: '#777' }}
+                                grid: {{ color: '#2a2a2a' }}, 
+                                ticks: {{ color: '#888', font: {{ size: 10 }} }}
                             }},
                             x: {{ 
                                 grid: {{ display: false }}, 
-                                ticks: {{ color: '#aaa', maxRotation: 45, minRotation: 45 }} 
+                                ticks: {{ 
+                                    color: '#888', 
+                                    font: {{ size: 10 }},
+                                    maxRotation: 45, 
+                                    autoSkip: true,
+                                    maxTicksLimit: 8 // Prevents date overlapping
+                                }} 
                             }}
                         }},
                         plugins: {{
                             legend: {{ display: false }},
                             tooltip: {{
-                                backgroundColor: '#252525',
+                                enabled: true,
+                                mode: 'index',
+                                intersect: false,
+                                backgroundColor: '#333',
                                 titleColor: '#4a90e2',
-                                bodyColor: '#fff',
-                                borderColor: '#444',
-                                borderWidth: 1,
-                                displayColors: false
+                                bodyFont: {{ size: 14 }}
                             }}
                         }}
                     }}
@@ -645,6 +655,5 @@ trends_html = f"""
 </body>
 </html>
 """
-
 with open("trends.html", "w", encoding="utf-8") as f:
     f.write(trends_html)
