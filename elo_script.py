@@ -289,63 +289,68 @@ def generate_page_html(title, page_heading, current_page, content, subtitle="", 
         active_suit = "default"
 
     def get_base_css(suit="default"):
-        color = SUIT_COLORS.get(suit, "#d4a76a")
-        
-        return f"""
-        body {{ font-family: 'Segoe UI', Helvetica, Arial, sans-serif; background: #121212; color: #eee; text-align: center; padding: 20px 5px; margin: 0; overflow-x: hidden; }}
-        .container {{ width: 95%; max-width: 1100px; margin: auto; background: #1e1e1e; padding: 20px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.6); box-sizing: border-box; }}
-        
-        :root {{
-            --main-color: {color};
-        }}
-        
-        /* --- DYNAMIC INTERACTIVE BANNER --- */
-        .site-header {{ margin-bottom: 50px; padding-top: 20px; }}
-        .banner-container {{ display: flex; align-items: center; justify-content: center; gap: 40px; }}
-        .banner-icons {{ display: flex; gap: 20px; }}
-        
-        .banner-icons img {{ 
-            width: 85px; height: 85px; 
-            object-fit: contain; 
-            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.6)); 
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-            cursor: pointer;
-        }}
+    # On définit la couleur en amont pour l'injecter proprement
+    color = SUIT_COLORS.get(suit, "#d4a76a")
+    
+    return f"""
+    body {{ font-family: 'Segoe UI', Helvetica, Arial, sans-serif; background: #121212; color: #eee; text-align: center; padding: 20px 5px; margin: 0; overflow-x: hidden; }}
+    .container {{ width: 95%; max-width: 1100px; margin: auto; background: #1e1e1e; padding: 20px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.6); box-sizing: border-box; }}
+    
+    :root {{
+        --main-color: {color};
+    }}
+    
+    /* --- DYNAMIC INTERACTIVE BANNER --- */
+    .site-header {{ margin-bottom: 50px; padding-top: 20px; }}
+    .banner-container {{ display: flex; align-items: center; justify-content: center; gap: 40px; }}
+    .banner-icons {{ display: flex; gap: 20px; }}
+    
+    .banner-icons img {{ 
+        width: 85px; height: 85px; 
+        object-fit: contain; 
+        filter: drop-shadow(0 4px 6px rgba(0,0,0,0.6)); 
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+        cursor: pointer;
+    }}
 
-        .banner-icons img:hover {{ 
-            width: 150px; height: 150px; 
-            transform: translateY(-20px) scale(1.2);
-            z-index: 100;
-        }}
+    .banner-icons img:hover {{ 
+        width: 150px; height: 150px; 
+        transform: translateY(-20px) scale(1.2);
+        filter: drop-shadow(0 10px 15px rgba(0,0,0,0.8));
+        z-index: 100;
+    }}
 
-        .banner-icons.left img:hover {{ transform: translateY(-20px) scale(1.2) rotate(-8deg); }}
-        .banner-icons.right img:hover {{ transform: translateY(-20px) scale(1.2) rotate(8deg); }}
+    .banner-icons.left img:hover {{ transform: translateY(-20px) scale(1.2) rotate(-8deg); }}
+    .banner-icons.right img:hover {{ transform: translateY(-20px) scale(1.2) rotate(8deg); }}
 
-        .site-title { color: #eee; font-size: 3.5em; letter-spacing: 5px; text-transform: uppercase; }
-        .site-subtitle {{ font-family: "Luminari", serif; color: #d4a76a; font-size: 1.3em; margin-top: 10px; }}
-        
-        /* Navigation & Tabs */
-        nav {{ margin: 25px 0; border-bottom: 1px solid #333; padding-bottom: 20px; display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }}
-        nav a {{ color: #888; text-decoration: none; font-weight: bold; text-transform: uppercase; font-size: 0.8em; padding: 8px 16px; border-radius: 6px; transition: 0.3s; border: 1px solid transparent; }}
-        nav a:hover {{ color: var(--main-color); background: rgba(255,255,255,0.05); }}
-        nav a.active { color: {color}; border-bottom: 2px solid {color}; }
-        
-        /* Season Selector */
-        .season-btn.active { background-color: {color}; color: #000; border-color: {color}; }
-        .season-btn:hover {{ border-color: var(--main-color); color: #eee; }}
+    /* Titre principal neutre */
+    .site-title {{ color: #eee; font-size: 3.5em; letter-spacing: 5px; text-transform: uppercase; }}
+    .site-subtitle {{ font-family: "Luminari", serif; color: #d4a76a; font-size: 1.3em; margin-top: 10px; }}
+    
+    /* Navigation & Tabs - Réparé avec doubles accolades */
+    nav {{ margin: 25px 0; border-bottom: 1px solid #333; padding-bottom: 20px; display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }}
+    nav a {{ color: #888; text-decoration: none; font-weight: bold; text-transform: uppercase; font-size: 0.8em; padding: 8px 16px; border-radius: 6px; transition: 0.3s; border: 1px solid transparent; }}
+    nav a:hover {{ color: var(--main-color); background: rgba(255,255,255,0.05); }}
+    nav a.active {{ color: {color}; border-bottom: 2px solid {color}; }}
+    
+    /* Season Selector - Réparé avec doubles accolades */
+    .season-btn.active {{ background-color: {color}; color: #000; border-color: {color}; }}
+    .season-btn:hover {{ border-color: var(--main-color); color: #eee; }}
 
-        /* Tables & Content */
-        .page-intro h3 {{ color: var(--main-color); font-size: 1em; font-weight: 500; }}
-        table.dataTable thead th {{ background: #252525 !important; color: var(--main-color) !important; font-size: 0.75em; text-transform: uppercase; padding: 12px; border: none; }}
-        
-        /* Responsive */
-        @media (max-width: 900px) {{
-            .banner-container {{ gap: 15px; }}
-            .banner-icons img {{ width: 60px; height: 60px; }}
-            .banner-icons img:hover {{ width: 80px; height: 80px; }}
-            .site-title {{ font-size: 2.2em; }}
-        }}
-        """
+    /* Page Heading Dynamique */
+    .page-intro h3 {{ color: var(--main-color); font-size: 1.2em; text-transform: uppercase; font-weight: bold; border-bottom: 1px solid var(--main-color); display: inline-block; padding-bottom: 5px; }}
+    
+    /* Tables */
+    table.dataTable thead th {{ background: #252525 !important; color: var(--main-color) !important; font-size: 0.75em; text-transform: uppercase; padding: 12px; border: none; }}
+    
+    /* Responsive */
+    @media (max-width: 900px) {{
+        .banner-container {{ gap: 15px; }}
+        .banner-icons img {{ width: 60px; height: 60px; }}
+        .banner-icons img:hover {{ width: 80px; height: 80px; }}
+        .site-title {{ font-size: 2.2em; }}
+    }}
+    """
 
     # On appelle la fonction pour générer le CSS
     base_css = get_base_css(active_suit)
