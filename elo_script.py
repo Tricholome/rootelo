@@ -256,13 +256,10 @@ def generate_page_html(title, page_heading, current_page, content, subtitle="", 
         body {{ font-family: 'Segoe UI', Helvetica, Arial, sans-serif; background: #121212; color: #eee; text-align: center; padding: 20px 5px; margin: 0; overflow-x: hidden; }}
         .container {{ width: 95%; max-width: 1100px; margin: auto; background: #1e1e1e; padding: 20px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.6); box-sizing: border-box; }}
         
-        /* BANNER DESKTOP */
-        .banner-container {{ display: flex; align-items: center; justify-content: center; gap: 40px; margin-bottom: 20px; flex-wrap: nowrap; }}
-        .banner-center {{ order: 2; }}
-        .banner-icons.left {{ order: 1; }}
-        .banner-icons.right {{ order: 3; }}
+        /* BANNER BASE */
+        .banner-container {{ display: flex; align-items: center; justify-content: center; gap: 40px; margin-bottom: 20px; }}
+        .banner-icons {{ display: flex; gap: 15px; align-items: center; justify-content: center; }}
         
-        .banner-icons {{ display: flex; gap: 15px; align-items: center; }}
         .banner-icons img {{ 
             width: 60px; height: 60px; object-fit: contain; 
             filter: drop-shadow(0 4px 6px rgba(0,0,0,0.6)); 
@@ -271,22 +268,22 @@ def generate_page_html(title, page_heading, current_page, content, subtitle="", 
         }}
 
         .banner-icons img:hover {{ 
-            width: 110px; height: 110px; 
+            width: 105px; height: 105px; 
             filter: drop-shadow(0 15px 25px rgba(0,0,0,0.9));
-            transform: translateY(-10px) scale(1.15);
+            transform: translateY(-8px) scale(1.1);
             z-index: 100;
         }}
-        .banner-icons.left img:hover {{ transform: translateY(-10px) scale(1.15) rotate(-8deg); }}
-        .banner-icons.right img:hover {{ transform: translateY(-10px) scale(1.15) rotate(8deg); }}
 
         .site-title {{ color: #eee; font-size: 2.2em; margin: 0; letter-spacing: 3px; text-transform: uppercase; font-weight: 900; }}
         .site-subtitle {{ font-style: italic; color: #777; font-size: 0.85em; margin: 5px 0 0; letter-spacing: 1px; }}
         
+        /* NAVIGATION */
         nav {{ margin: 25px 0; border-bottom: 1px solid #333; padding-bottom: 20px; display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }}
         nav a {{ color: #888; text-decoration: none; font-weight: bold; text-transform: uppercase; font-size: 0.8em; padding: 8px 16px; border-radius: 6px; transition: 0.3s; }}
         nav a:hover {{ color: {main_color}; background: rgba(255,255,255,0.05); }}
         nav a.active {{ color: #fff; background: {main_color}; box-shadow: 0 4px 12px rgba(0,0,0,0.4); }}
         
+        /* SEASON SELECTOR */
         .season-selector {{ display: flex; align-items: center; justify-content: center; gap: 12px; margin: 0 auto 30px; background: rgba(255,255,255,0.03); padding: 8px 18px; border-radius: 50px; width: fit-content; border: 1px solid #333; }}
         .season-btn {{ text-decoration: none; font-size: 0.75em; font-weight: bold; color: #777; padding: 5px 14px; border-radius: 20px; border: 1px solid #444; transition: 0.2s; }}
         .season-btn.active {{ background: {main_color} !important; color: #111 !important; border-color: {main_color} !important; font-weight: 900; }}
@@ -296,40 +293,20 @@ def generate_page_html(title, page_heading, current_page, content, subtitle="", 
 
         /* --- MOBILE PORTRAIT (Titre HAUT, 4 Icones BAS) --- */
         @media (max-width: 768px) and (orientation: portrait) {{
-            .banner-container {{ 
-                flex-wrap: wrap; 
-                flex-direction: column;
-                gap: 15px; 
-            }}
-            .banner-center {{ order: 1; width: 100%; }}
-            .banner-icons.left {{ order: 2; }}
-            .banner-icons.right {{ order: 3; }}
-            
-            .banner-icons {{ 
-                display: inline-flex; 
-                gap: 10px;
-                justify-content: center;
-            }}
-            /* Réduction de la marge entre les deux blocs d'icones pour l'illusion d'une ligne */
-            .banner-icons.left {{ margin-right: -15px; }}
-            
+            .banner-container {{ flex-direction: column; gap: 15px; }}
+            .banner-center {{ order: 1; }}
+            .banner-icons {{ order: 2; gap: 10px; width: 100%; }}
             .banner-icons img {{ width: 42px; height: 42px; }}
-            .banner-icons img:hover {{ width: 70px; height: 70px; transform: translateY(-5px) scale(1.1); }}
             .site-title {{ font-size: 1.8em; }}
         }}
 
-        /* --- MOBILE LANDSCAPE (Look PC Restauré) --- */
+        /* --- MOBILE LANDSCAPE (Icônes CÔTÉS) --- */
         @media (max-width: 950px) and (orientation: landscape) {{
-            .banner-container {{ 
-                flex-direction: row; 
-                gap: 25px; 
-                flex-wrap: nowrap;
-            }}
-            .banner-center {{ order: 2; width: auto; }}
+            .banner-container {{ flex-direction: row; gap: 25px; }}
             .banner-icons.left {{ order: 1; }}
+            .banner-center {{ order: 2; }}
             .banner-icons.right {{ order: 3; }}
             .banner-icons img {{ width: 45px; height: 45px; }}
-            .site-title {{ font-size: 1.6em; }}
         }}
     """
     
@@ -342,8 +319,8 @@ def generate_page_html(title, page_heading, current_page, content, subtitle="", 
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
     <style>
-        {{base_css}}
-        {{custom_css}}
+        {base_css}
+        {custom_css}
     </style>
     {extra_head}
 </head>
