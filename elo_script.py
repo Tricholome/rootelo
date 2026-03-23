@@ -229,6 +229,7 @@ current_history = {k.split('+')[0].split('#')[0]: v for k, v in player_history.i
 # =========================================================================
 # --- 7. HTML SKELETON (MATRIX NAVIGATION) ---
 # =========================================================================
+
 def generate_page_html(title, page_heading, current_page, content, subtitle="", page_description="", custom_css="", custom_js="", extra_head=""):
     is_archive = "_lh01.html" in current_page
     
@@ -266,73 +267,89 @@ def generate_page_html(title, page_heading, current_page, content, subtitle="", 
         </div>
         """
 
-    base_css = """
-        body { font-family: 'Segoe UI', Helvetica, Arial, sans-serif; background: #121212; color: #eee; text-align: center; padding: 20px 5px; margin: 0; overflow-x: hidden; }
-        .container { width: 95%; max-width: 1100px; margin: auto; background: #1e1e1e; padding: 20px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.6); box-sizing: border-box; }
+    # --- DYNAMIC COLOR LOGIC ADDED HERE ---
+    SUIT_COLORS = {
+        "bird":   "#67c0c7",
+        "fox":    "#e6372d",
+        "rabbit": "#f7eb5b",
+        "mouse":  "#f29057",
+        "default": "#d4a76a"  
+    }
+
+    # On associe automatiquement la couleur selon le nom du fichier
+    if current_page.startswith("index"):
+        active_suit = "bird"
+    elif current_page.startswith("matches"):
+        active_suit = "fox"
+    elif current_page.startswith("trends"):
+        active_suit = "rabbit"
+    elif current_page.startswith("about"):
+        active_suit = "mouse"
+    else:
+        active_suit = "default"
+
+    def get_base_css(suit="default"):
+        color = SUIT_COLORS.get(suit, SUIT_COLORS["default"])
         
-       /* --- DYNAMIC INTERACTIVE BANNER --- */
-        .site-header { margin-bottom: 50px; padding-top: 20px; }
-        .banner-container { display: flex; align-items: center; justify-content: center; gap: 40px; }
-        .banner-icons { display: flex; gap: 20px; }
+        return f"""
+        body {{ font-family: 'Segoe UI', Helvetica, Arial, sans-serif; background: #121212; color: #eee; text-align: center; padding: 20px 5px; margin: 0; overflow-x: hidden; }}
+        .container {{ width: 95%; max-width: 1100px; margin: auto; background: #1e1e1e; padding: 20px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.6); box-sizing: border-box; }}
         
-        .banner-icons img { 
+        :root {{
+            --main-color: {color};
+        }}
+        
+        /* --- DYNAMIC INTERACTIVE BANNER --- */
+        .site-header {{ margin-bottom: 50px; padding-top: 20px; }}
+        .banner-container {{ display: flex; align-items: center; justify-content: center; gap: 40px; }}
+        .banner-icons {{ display: flex; gap: 20px; }}
+        
+        .banner-icons img {{ 
             width: 85px; height: 85px; 
             object-fit: contain; 
             filter: drop-shadow(0 4px 6px rgba(0,0,0,0.6)); 
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
             cursor: pointer;
-        }
+        }}
 
-        /* Effet de zoom commun */
-        .banner-icons img:hover { 
+        .banner-icons img:hover {{ 
             width: 150px; height: 150px; 
-            filter: drop-shadow(0 20px 35px rgba(0,0,0,0.9));
+            filter: drop-shadow(0 20px 35px var(--main-color)); /* Halo de la couleur de faction */
             transform: translateY(-20px) scale(1.2);
             z-index: 100;
-        }
+        }}
 
-        /* Rotation différenciée : Les icônes de gauche pivotent vers la gauche, les droites vers la droite */
-        .banner-icons.left img:hover { transform: translateY(-20px) scale(1.2) rotate(-8deg); }
-        .banner-icons.right img:hover { transform: translateY(-20px) scale(1.2) rotate(8deg); }
+        .banner-icons.left img:hover {{ transform: translateY(-20px) scale(1.2) rotate(-8deg); }}
+        .banner-icons.right img:hover {{ transform: translateY(-20px) scale(1.2) rotate(8deg); }}
 
-        .site-title { color: #4a90e2; font-size: 3.5em; margin: 0; letter-spacing: 5px; text-transform: uppercase; font-weight: 900; }
-        .site-subtitle { font-family: "Luminari", serif; color: #d4a76a; font-size: 1.3em; margin-top: 10px; }
+        .site-title {{ color: var(--main-color); font-size: 3.5em; margin: 0; letter-spacing: 5px; text-transform: uppercase; font-weight: 900; transition: color 0.4s; }}
+        .site-subtitle {{ font-family: "Luminari", serif; color: #d4a76a; font-size: 1.3em; margin-top: 10px; }}
         
         /* Navigation & Tabs */
-        nav { margin: 25px 0; border-bottom: 1px solid #333; padding-bottom: 20px; display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }
-        nav a { color: #888; text-decoration: none; font-weight: bold; text-transform: uppercase; font-size: 0.8em; padding: 8px 16px; border-radius: 6px; transition: 0.3s; border: 1px solid transparent; }
-        nav a:hover { color: #4a90e2; background: rgba(74,144,226,0.05); }
-        nav a.active { color: #fff; background: #4a90e2; box-shadow: 0 4px 12px rgba(74,144,226,0.3); }
+        nav {{ margin: 25px 0; border-bottom: 1px solid #333; padding-bottom: 20px; display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }}
+        nav a {{ color: #888; text-decoration: none; font-weight: bold; text-transform: uppercase; font-size: 0.8em; padding: 8px 16px; border-radius: 6px; transition: 0.3s; border: 1px solid transparent; }}
+        nav a:hover {{ color: var(--main-color); background: rgba(255,255,255,0.05); }}
+        nav a.active {{ color: #fff; background: var(--main-color); box-shadow: 0 4px 12px {color}66; }}
         
         /* Season Selector */
-        .season-selector { display: flex; align-items: center; justify-content: center; gap: 12px; margin: 0 auto 30px; background: rgba(255,255,255,0.03); padding: 8px 18px; border-radius: 50px; width: fit-content; border: 1px solid #333; }
-        .season-label { font-size: 0.7em; text-transform: uppercase; color: #555; letter-spacing: 1.2px; font-weight: bold; }
-        .season-btn { text-decoration: none; font-size: 0.75em; font-weight: bold; color: #777; padding: 5px 14px; border-radius: 20px; border: 1px solid #444; transition: 0.2s; }
-        .season-btn:hover { border-color: #4a90e2; color: #eee; }
-        .season-btn.active { background: #4a90e2; color: #fff; border-color: #4a90e2; box-shadow: 0 0 12px rgba(74,144,226,0.2); }
+        .season-btn.active {{ background: var(--main-color); color: #fff; border-color: var(--main-color); box-shadow: 0 0 12px {color}33; }}
+        .season-btn:hover {{ border-color: var(--main-color); color: #eee; }}
 
         /* Tables & Content */
-        .page-intro { margin-bottom: 35px; display: flex; flex-direction: column; align-items: center; gap: 6px; }
-        .page-intro h2 { margin: 0; text-transform: uppercase; color: #eee; font-size: 1.3em; }
-        .page-intro h3 { margin: 0; color: #4a90e2; font-size: 1em; font-weight: 500; }
-        .page-intro p { margin: 0; color: #888; font-size: 0.85em; max-width: 600px; line-height: 1.4; }
-        .dataTables_wrapper { color: #eee !important; text-align: left; }
-        table.dataTable { width: 100% !important; border-collapse: collapse !important; margin-top: 15px !important; background: #1e1e1e; }
-        table.dataTable thead th { background: #252525 !important; color: #4a90e2 !important; font-size: 0.75em; text-transform: uppercase; padding: 12px; border: none; }
-        table.dataTable td { border-bottom: 1px solid #2a2a2a; padding: 10px; font-size: 0.9em; text-align: center; vertical-align: middle; }
+        .page-intro h3 {{ color: var(--main-color); font-size: 1em; font-weight: 500; }}
+        table.dataTable thead th {{ background: #252525 !important; color: var(--main-color) !important; font-size: 0.75em; text-transform: uppercase; padding: 12px; border: none; }}
         
         /* Responsive */
-        @media (max-width: 900px) {
-            .banner-container { gap: 15px; }
-            .banner-icons img { width: 60px; height: 60px; }
-            .banner-icons img:hover { width: 80px; height: 80px; }
-            .site-title { font-size: 2.2em; }
-        }
-        @media (max-width: 600px) { 
-            .banner-icons { display: none; } 
-            .site-title { font-size: 1.8em; } 
-        }
-    """
+        @media (max-width: 900px) {{
+            .banner-container {{ gap: 15px; }}
+            .banner-icons img {{ width: 60px; height: 60px; }}
+            .banner-icons img:hover {{ width: 80px; height: 80px; }}
+            .site-title {{ font-size: 2.2em; }}
+        }}
+        """
+
+    # On appelle la fonction pour générer le CSS
+    base_css = get_base_css(active_suit)
     
     return f"""<!DOCTYPE html>
 <html lang="en">
@@ -347,7 +364,7 @@ def generate_page_html(title, page_heading, current_page, content, subtitle="", 
         {base_css}
         /* Style pour le titre fixe */
         .site-header {{ margin-bottom: 20px; }}
-        .site-title {{ color: #4a90e2; font-size: 2.5em; margin-bottom: 0; letter-spacing: 3px; }}
+        .site-title {{ color: var(--main-color); font-size: 2.5em; margin-bottom: 0; letter-spacing: 3px; }}
         .site-subtitle {{ font-style: italic; color: #777; font-size: 0.9em; margin-top: 5px; letter-spacing: 1px; }}
         .page-heading {{ color: #eee; text-transform: uppercase; font-size: 1.2em; margin-top: 30px; border-bottom: 1px solid #333; display: inline-block; padding-bottom: 5px; }}
         {custom_css}
@@ -495,9 +512,9 @@ def build_matches_page(df, filename, title, heading, subtitle, description):
     """
     css = """
         .lineup-cell { white-space: normal !important; word-wrap: break-word; overflow-wrap: break-word; min-width: 120px; max-width: 250px; line-height: 1.4; text-align: left; }
-        table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before { background-color: #4a90e2 !important; }
+        table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before { background-color: var(--main-color) !important; }
         table.dataTable > tbody > tr.child ul.dtr-details { width: 100%; background: #252525; }
-        table.dataTable > tbody > tr.child span.dtr-title { color: #4a90e2; font-weight: bold; }
+        table.dataTable > tbody > tr.child span.dtr-title { color: var(--main-color); font-weight: bold; }
     """
     js = """<script>
     $(document).ready(function() {
@@ -551,6 +568,10 @@ def build_trends_page(history_dict, filename, title, heading, subtitle, descript
         function updateChart() {{
             const name = document.getElementById('playerName').value;
             const ctx = document.getElementById('progressionChart').getContext('2d');
+            
+            // On récupère la couleur active de la page (le lapin) pour le graphique !
+            const activeColor = getComputedStyle(document.documentElement).getPropertyValue('--main-color').trim() || '#4a90e2';
+            
             if (allData[name]) {{
                 const rawData = allData[name];
                 const labels = rawData.map(d => d[0]);
@@ -558,7 +579,7 @@ def build_trends_page(history_dict, filename, title, heading, subtitle, descript
                 if (myChart) myChart.destroy();
                 myChart = new Chart(ctx, {{
                     type: 'line',
-                    data: {{ labels: labels, datasets: [{{ data: eloScores, borderColor: '#4a90e2', backgroundColor: 'rgba(74, 144, 226, 0.1)', borderWidth: 2, fill: true, tension: 0.3, pointRadius: 2, pointHitRadius: 20 }}] }},
+                    data: {{ labels: labels, datasets: [{{ data: eloScores, borderColor: activeColor, backgroundColor: activeColor + '1a', borderWidth: 2, fill: true, tension: 0.3, pointRadius: 2, pointHitRadius: 20 }}] }},
                     options: {{
                         responsive: true, maintainAspectRatio: false,
                         plugins: {{ legend: {{ display: false }}, tooltip: {{ enabled: true, mode: 'index', intersect: false, backgroundColor: '#222' }} }},
@@ -592,15 +613,15 @@ def build_about_page(filename, title, heading):
         .tier-mouse {{ border-color: #f29057; }}
         .k-table {{ width: 100%; border-collapse: collapse; background: #1a1a1a; margin-top: 10px; }}
         .k-table td {{ padding: 12px; border-bottom: 1px solid #333; }}
-        .k-val {{ color: #4a90e2; font-weight: bold; font-family: monospace; font-size: 1.1em; }}
+        .k-val {{ color: var(--main-color); font-weight: bold; font-family: monospace; font-size: 1.1em; }}
     </style>
 
     <div class="codex-section">
-        <h2 style="color: #4a90e2; border-bottom: 1px solid #333; padding-bottom: 10px;">How does this system work?</h2>
+        <h2 style="color: var(--main-color); border-bottom: 1px solid #333; padding-bottom: 10px;">How does this system work?</h2>
         <p>To ensure fairness in a 4-player format, this leaderboard uses a <strong> multi-player Elo model</strong>.</p>
         <p>Unlike a simple win-count, it calculates your score based on the <em>"Strength of Schedule"</em>. If you beat high-ranked players, you gain more. If you lose as the favorite, you drop more.</p>
 
-        <h2 style="color: #4a90e2; margin-top: 40px;">The Tier System</h2>
+        <h2 style="color: var(--main-color); margin-top: 40px;">The Tier System</h2>
         <p>After your 10-game calibration phase, you officially join the ranks and unlock your tier icon:</p>
         
         <div class="tier-list">
@@ -622,7 +643,7 @@ def build_about_page(filename, title, heading):
             </div>
         </div>
 
-        <h2 style="color: #4a90e2; margin-top: 40px;">Dynamic K-Factor</h2>
+        <h2 style="color: var(--main-color); margin-top: 40px;">Dynamic K-Factor</h2>
         <p>Your score's volatility changes as you play more games to ensure stability:</p>
         <table class="k-table">
             <tr>
@@ -648,6 +669,7 @@ def build_about_page(filename, title, heading):
         </p>
     </div>
     """
+    
     with open(filename, "w", encoding="utf-8") as f:
         f.write(generate_page_html(title, heading, filename, codex_text))
 
