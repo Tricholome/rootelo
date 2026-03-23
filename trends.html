@@ -7,74 +7,8 @@
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
     <style>
-        
-        body { font-family: 'Segoe UI', Helvetica, Arial, sans-serif; background: #121212; color: #eee; text-align: center; padding: 20px 5px; margin: 0; overflow-x: hidden; }
-        .container { width: 95%; max-width: 1100px; margin: auto; background: #1e1e1e; padding: 20px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.6); box-sizing: border-box; }
-        
-        .banner-container { display: flex; align-items: center; justify-content: center; gap: 40px; margin-bottom: 20px; }
-        .banner-icons { display: flex; gap: 15px; align-items: center; }
-        
-        .banner-icons img { 
-            width: 60px; height: 60px; object-fit: contain; 
-            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.6)); 
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-            cursor: pointer;
-        }
-
-        .banner-icons img:hover { 
-            width: 110px; height: 110px; 
-            filter: drop-shadow(0 15px 25px rgba(0,0,0,0.9));
-            transform: translateY(-10px) scale(1.15);
-            z-index: 100;
-        }
-        .banner-icons.left img:hover { transform: translateY(-10px) scale(1.15) rotate(-8deg); }
-        .banner-icons.right img:hover { transform: translateY(-10px) scale(1.15) rotate(8deg); }
-
-        .site-title { color: #eee; font-size: 2.2em; margin: 0; letter-spacing: 3px; text-transform: uppercase; font-weight: 900; }
-        .site-subtitle { font-style: italic; color: #777; font-size: 0.85em; margin: 5px 0 0; letter-spacing: 1px; }
-        
-        nav { margin: 25px 0; border-bottom: 1px solid #333; padding-bottom: 20px; display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }
-        nav a { color: #888; text-decoration: none; font-weight: bold; text-transform: uppercase; font-size: 0.8em; padding: 8px 16px; border-radius: 6px; transition: 0.3s; }
-        nav a:hover { color: #f7eb5b; background: rgba(255,255,255,0.05); }
-        nav a.active { color: #fff; background: #f7eb5b; box-shadow: 0 4px 12px rgba(0,0,0,0.4); }
-        
-        .season-selector { display: flex; align-items: center; justify-content: center; gap: 12px; margin: 0 auto 30px; background: rgba(255,255,255,0.03); padding: 8px 18px; border-radius: 50px; width: fit-content; border: 1px solid #333; }
-        .season-btn { text-decoration: none; font-size: 0.75em; font-weight: bold; color: #777; padding: 5px 14px; border-radius: 20px; border: 1px solid #444; transition: 0.2s; }
-        .season-btn.active { background: #f7eb5b !important; color: #111 !important; border-color: #f7eb5b !important; font-weight: 900; }
-
-        .page-intro h3 { margin: 0; color: #f7eb5b; font-size: 1.1em; font-weight: bold; text-transform: uppercase; border-bottom: 2px solid #f7eb5b; padding-bottom: 4px; display: inline-block; }
-        table.dataTable thead th { background: #252525 !important; color: #f7eb5b !important; font-size: 0.75em; text-transform: uppercase; padding: 12px; }
-
-        /* --- MOBILE PORTRAIT (FIX : Titre en haut, 4 icônes sur UNE SEULE ligne en bas) --- */
-        @media (max-width: 768px) and (orientation: portrait) {
-            .banner-container { 
-                display: block; /* On casse le flex parent pour gérer l'empilement manuellement */
-            }
-            .banner-center { 
-                margin-bottom: 15px; 
-            }
-            .banner-icons { 
-                display: inline-flex; /* Permet aux deux blocs de se toucher */
-                gap: 10px;
-                vertical-align: middle;
-            }
-            .banner-icons img { width: 42px; height: 42px; }
-            .site-title { font-size: 1.8em; }
-        }
-
-        @media (max-width: 950px) and (orientation: landscape) {
-            .banner-container { display: flex; flex-direction: row; gap: 20px; }
-            .banner-icons img { width: 45px; height: 45px; }
-        }
-    
-        
-        .search-box { margin: 10px 0; }
-        input { background: #252525; color: #fff; border: 1px solid #444; padding: 12px; border-radius: 8px; width: 90%; max-width: 400px; font-size: 16px; box-sizing: border-box; }
-        .landscape-hint { display: none; color: #666; font-size: 0.7em; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
-        .chart-wrapper { width: 100%; padding: 0 5px; box-sizing: border-box; }
-        .chart-container { position: relative; width: 100%; height: 50vh; background: #1a1a1a; border-radius: 8px; }
-        @media (max-width: 768px) and (orientation: portrait) { .landscape-hint { display: block; } }
-    
+        {base_css}
+        {custom_css}
     </style>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
@@ -82,13 +16,13 @@
     <div class="container">
         <header class="site-header">
             <div class="banner-container">
-                <div class="banner-center">
-                    <h1 class="site-title">ROOTELO</h1>
-                    <p class="site-subtitle">A Metric of Woodland Skill and Will</p>
-                </div>
                 <div class="banner-icons left">
                     <img src="assets/icons/bird.png">
                     <img src="assets/icons/fox.png">
+                </div>
+                <div class="banner-center">
+                    <h1 class="site-title">ROOTELO</h1>
+                    <p class="site-subtitle">A Metric of Woodland Skill and Will</p>
                 </div>
                 <div class="banner-icons right">
                     <img src="assets/icons/rabbit.png">
