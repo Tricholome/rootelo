@@ -248,38 +248,48 @@ def generate_page_html(title, page_heading, current_page, content, subtitle="", 
         sub_nav_html = ""
     else:
         current_prefix = current_page.replace("_lh01.html", "").replace(".html", "")
-        sub_links = {
-            f"{current_prefix}.html": "Current Season (LH02)",
-            f"{current_prefix}_lh01.html": "LH01"
-        }
-        sub_items_html = "".join([
-            f'<a href="{url}" class="sub-nav-item {"active" if url == current_page else ""}">{name}</a>'
-            for url, name in sub_links.items()
-        ])
-        sub_nav_html = f'<div class="sub-nav-container">{sub_items_html}</div>'
+        
+        seasons = [
+            ("LH02", f"{current_prefix}.html"),
+            ("LH01", f"{current_prefix}_lh01.html")
+        ]
+        
+        buttons_html = ""
+        for name, url in seasons:
+            is_active = "active" if url == current_page else ""
+            buttons_html += f'<a href="{url}" class="season-btn {is_active}">{name}</a>'
+        
+        sub_nav_html = f"""
+        <div class="season-selector">
+            <span class="season-label">Select Season</span>
+            {buttons_html}
+        </div>
+        """
 
     base_css = """
-        body { font-family: 'Segoe UI', Helvetica, Arial, sans-serif; background-color: #121212; color: #eee; text-align: center; padding: 20px 5px; margin: 0; overflow-x: hidden; }
+        body { font-family: 'Segoe UI', Helvetica, Arial, sans-serif; background: #121212; color: #eee; text-align: center; padding: 20px 5px; margin: 0; overflow-x: hidden; }
         .container { width: 95%; max-width: 1100px; margin: auto; background: #1e1e1e; padding: 20px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.6); box-sizing: border-box; }
-        h1 { color: #4a90e2; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px; font-size: 1.5em; }
-        h3 { color: #777; font-weight: 400; font-size: 0.85em; margin-bottom: 20px; }
-        nav { margin-bottom: 20px; border-bottom: 1px solid #333; padding-bottom: 15px; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
-        nav a { color: #888; text-decoration: none; font-weight: bold; text-transform: uppercase; font-size: 0.85em; padding: 8px 16px; border-radius: 6px; transition: all 0.3s ease; border: 1px solid transparent; }
+        .site-header { margin-bottom: 20px; }
+        .site-title { color: #4a90e2; font-size: 2.2em; margin: 0; letter-spacing: 3px; text-transform: uppercase; }
+        .site-subtitle { font-style: italic; color: #555; font-size: 0.85em; margin: 5px 0 0; letter-spacing: 1px; }
+        nav { margin: 20px 0; border-bottom: 1px solid #333; padding-bottom: 15px; display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }
+        nav a { color: #888; text-decoration: none; font-weight: bold; text-transform: uppercase; font-size: 0.8em; padding: 8px 16px; border-radius: 6px; transition: 0.3s; border: 1px solid transparent; }
         nav a:hover { color: #4a90e2; background: rgba(74,144,226,0.05); }
-        nav a.active { color: #fff; background: #4a90e2; border: 1px solid #4a90e2; box-shadow: 0 4px 12px rgba(74,144,226,0.3); }
-        .sub-nav-container { display: flex; justify-content: center; gap: 10px; margin-bottom: 30px; margin-top: -5px; }
-        .sub-nav-item { font-size: 0.75em; text-decoration: none; color: #666; padding: 5px 15px; border-radius: 20px; border: 1px solid #333; transition: 0.3s; font-weight: 500; }
-        .sub-nav-item:hover { color: #aaa; border-color: #555; }
-        .sub-nav-item.active { background: #2a2a2a; color: #4a90e2; border-color: #4a90e2; }
+        nav a.active { color: #fff; background: #4a90e2; box-shadow: 0 4px 12px rgba(74,144,226,0.3); }
+        .season-selector { display: flex; align-items: center; justify-content: center; gap: 12px; margin: 0 auto 30px; background: rgba(255,255,255,0.03); padding: 8px 18px; border-radius: 50px; width: fit-content; border: 1px solid #333; }
+        .season-label { font-size: 0.7em; text-transform: uppercase; color: #555; letter-spacing: 1.2px; font-weight: bold; }
+        .season-btn { text-decoration: none; font-size: 0.75em; font-weight: bold; color: #777; padding: 5px 14px; border-radius: 20px; border: 1px solid #444; transition: 0.2s; }
+        .season-btn:hover { border-color: #4a90e2; color: #eee; }
+        .season-btn.active { background: #4a90e2; color: #fff; border-color: #4a90e2; box-shadow: 0 0 12px rgba(74,144,226,0.2); }
+        .page-intro { margin-bottom: 35px; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+        .page-intro h2 { margin: 0; text-transform: uppercase; color: #eee; font-size: 1.3em; }
+        .page-intro h3 { margin: 0; color: #4a90e2; font-size: 1em; font-weight: 500; }
+        .page-intro p { margin: 0; color: #888; font-size: 0.85em; max-width: 600px; line-height: 1.4; }
         .dataTables_wrapper { color: #eee !important; text-align: left; }
         table.dataTable { width: 100% !important; border-collapse: collapse !important; margin-top: 15px !important; background: #1e1e1e; }
-        table.dataTable thead th { background-color: #252525 !important; color: #4a90e2 !important; font-size: 0.75em; text-transform: uppercase; padding: 12px; border-bottom: none; }
+        table.dataTable thead th { background: #252525 !important; color: #4a90e2 !important; font-size: 0.75em; text-transform: uppercase; padding: 12px; border: none; }
         table.dataTable td { border-bottom: 1px solid #2a2a2a; padding: 10px; font-size: 0.9em; text-align: center; vertical-align: middle; }
-        @media (max-width: 600px) { .container { padding: 10px; } .dataTables_filter input { width: 150px !important; } table.dataTable td { font-size: 0.75em; } }
-        .page-intro {margin-bottom: 40px; display: flex; flex-direction: column; align-items: center; gap: 8px; }
-        .page-intro h2 { margin: 0; text-transform: uppercase; color: #eee; }
-        .page-intro h3 { margin: 0; color: #777; font-size: 1.1em; font-weight: 500; }
-        .page-intro p { margin: 0; color: #888; font-size: 0.9em; max-width: 650px; line-height: 1.5; }
+        @media (max-width: 600px) { .container { padding: 10px; } .site-title { font-size: 1.6em; } .dataTables_filter input { width: 120px !important; } table.dataTable td { font-size: 0.75em; } }
     """
 
     return f"""<!DOCTYPE html>
