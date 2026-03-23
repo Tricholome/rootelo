@@ -293,8 +293,8 @@ def generate_page_html(title, page_heading, current_page, content, subtitle="", 
         .banner-icons.left img:hover {{ transform: translateY(-20px) scale(1.2) rotate(-8deg); }}
         .banner-icons.right img:hover {{ transform: translateY(-20px) scale(1.2) rotate(8deg); }}
 
-        .site-title {{ color: #d4a76a; font-size: 3.5em; margin: 0; letter-spacing: 5px; text-transform: uppercase; font-weight: 900; line-height: 1; }}
-        .site-subtitle {{ font-family: "Luminari", serif; color: #d4a76a; font-size: 1.25em; margin: 10px 0 0; letter-spacing: 1.5px; }}
+        .site-title {{ color: #555; font-size: 2.2em; margin: 0; letter-spacing: 3px; text-transform: uppercase; }}
+        .site-subtitle {{ font-style: italic; color: #555; font-size: 0.85em; margin: 5px 0 0; letter-spacing: 1px; }}
         
         /* Navigation : L'élément actif prend la couleur */
         nav {{ margin: 25px 0; border-bottom: 1px solid #333; padding-bottom: 20px; display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }}
