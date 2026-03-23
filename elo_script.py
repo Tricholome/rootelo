@@ -366,7 +366,7 @@ def generate_page_html(title, page_heading, current_page, content, subtitle="", 
                     <p class="site-subtitle">A Metric of Woodland Skill and Will</p>
                 </div>
                 <div class="banner-icons right">
-                    <img src="assets/icons/rabbit.png" title="Rabbit Tier: 1300+ ELO">
+                    <img src="assets/icons/mouse_3.webp" title="Rabbit Tier: 1300+ ELO">
                     <img src="assets/icons/mouse_2.webp" title="Mouse Tier: 1200+ ELO">
                 </div>
             </div>
