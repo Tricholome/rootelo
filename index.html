@@ -26,6 +26,10 @@
         table.dataTable thead th { background-color: #252525 !important; color: #4a90e2 !important; font-size: 0.75em; text-transform: uppercase; padding: 12px; border-bottom: none; }
         table.dataTable td { border-bottom: 1px solid #2a2a2a; padding: 10px; font-size: 0.9em; text-align: center; vertical-align: middle; }
         @media (max-width: 600px) { .container { padding: 10px; } .dataTables_filter input { width: 150px !important; } table.dataTable td { font-size: 0.75em; } }
+        .page-intro {margin-bottom: 40px; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+        .page-intro h2 { margin: 0; text-transform: uppercase; color: #eee; }
+        .page-intro h3 { margin: 0; color: #777; font-size: 1.1em; font-weight: 500; }
+        .page-intro p { margin: 0; color: #888; font-size: 0.9em; max-width: 650px; line-height: 1.5; }
     
         /* Style pour le titre fixe */
         .site-header { margin-bottom: 20px; }
@@ -60,16 +64,15 @@
 
         <nav><a href="index.html" class="active">Leaderboard</a><a href="matches.html" class="">Top Tables</a><a href="trends.html" class="">Player's Journey</a><a href="about.html" class="">Codex</a></nav>
         <div class="sub-nav-container"><a href="index.html" class="sub-nav-item active">Current Season (LH02)</a><a href="index_lh01.html" class="sub-nav-item ">LH01</a></div>
-        
-        <h2 class="page-heading">Alternative ELO Leaderboard</h2>
 
-        <h3>Current Season Rankings</h3>
+        <header class="page-intro">
+            <h2>Alternative ELO Leaderboard</h2>
+            <h3>Current Season Rankings</h3>
+            <p>The official power rankings for the current competitive season. Data tracked until 2026-03-22.</p>
+        </header>
     
-        <p style="color: #888; font-size: 0.9em; margin-bottom: 30px;">
-            The official power rankings for the current competitive season. Data tracked until 2026-03-22.
-        </p>
-        
-        
+        <main>
+            
         <table id="leaderboard" class="display nowrap">
             <thead>
                 <tr><th>Rank</th><th>Tier</th><th>Player</th><th>ELO</th><th>Games</th><th>Wins</th><th>Win Rate</th><th>Peak</th><th>Last</th></tr>
@@ -82,9 +85,10 @@
             <span class="footer-tier-item"><img src="assets/icons/fox.png"> 1400+</span>
             <span class="footer-tier-item"><img src="assets/icons/rabbit.png"> 1300+</span>
             <span class="footer-tier-item"><img src="assets/icons/mouse.png"> 1200+</span><br>
-            Generated on 2026-03-23 15:19 UTC
+            Generated on 2026-03-23 15:28 UTC
         </div>
     
+        </main>
     </div>
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>

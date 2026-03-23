@@ -276,6 +276,10 @@ def generate_page_html(title, page_heading, current_page, content, subtitle="", 
         table.dataTable thead th { background-color: #252525 !important; color: #4a90e2 !important; font-size: 0.75em; text-transform: uppercase; padding: 12px; border-bottom: none; }
         table.dataTable td { border-bottom: 1px solid #2a2a2a; padding: 10px; font-size: 0.9em; text-align: center; vertical-align: middle; }
         @media (max-width: 600px) { .container { padding: 10px; } .dataTables_filter input { width: 150px !important; } table.dataTable td { font-size: 0.75em; } }
+        .page-intro {margin-bottom: 40px; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+        .page-intro h2 { margin: 0; text-transform: uppercase; color: #eee; }
+        .page-intro h3 { margin: 0; color: #777; font-size: 1.1em; font-weight: 500; }
+        .page-intro p { margin: 0; color: #888; font-size: 0.9em; max-width: 650px; line-height: 1.5; }
     """
 
     return f"""<!DOCTYPE html>
@@ -306,16 +310,16 @@ def generate_page_html(title, page_heading, current_page, content, subtitle="", 
 
         <nav>{nav_html}</nav>
         {sub_nav_html}
-        
-        <h2 class="page-heading">{page_heading}</h2>
 
-        {"<h3>" + subtitle + "</h3>" if subtitle else ""}
+        <header class="page-intro">
+            <h2>{page_heading}</h2>
+            {f"<h3>{subtitle}</h3>" if subtitle else ""}
+            {f"<p>{page_description}</p>" if page_description else ""}
+        </header>
     
-        <p style="color: #888; font-size: 0.9em; margin-bottom: 30px;">
-            {page_description}
-        </p>
-        
-        {content}
+        <main>
+            {content}
+        </main>
     </div>
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
