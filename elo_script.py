@@ -607,7 +607,7 @@ build_leaderboard_page(
     "index.html", 
     "Leaderboard • Rootelo", 
     "Alternative ELO Leaderboard", 
-    f"The official power rankings for the current competitive season. Data tracked until {CUTOFF_DATE}."
+    description=f"The official power rankings for the current competitive season. Data tracked until {CUTOFF_DATE}."
 )
 build_matches_page(current_matches_df, "matches.html", "Match Archive • Root League", "Match Archive")
 build_trends_page(current_history, "trends.html", "Player Progression • Root League", "Player Progression")
