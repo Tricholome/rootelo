@@ -310,13 +310,28 @@ def generate_page_html(title, page_heading, current_page, content, custom_css=""
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
     {extra_head}
-    <style>{base_css}{custom_css}</style>
+    <style>
+        {base_css}
+        /* Style pour le titre fixe */
+        .site-header {{ margin-bottom: 20px; }}
+        .site-title {{ color: #4a90e2; font-size: 2.5em; margin-bottom: 0; letter-spacing: 3px; }}
+        .site-subtitle {{ font-style: italic; color: #777; font-size: 0.9em; margin-top: 5px; letter-spacing: 1px; }}
+        .page-heading {{ color: #eee; text-transform: uppercase; font-size: 1.2em; margin-top: 30px; border-bottom: 1px solid #333; display: inline-block; padding-bottom: 5px; }}
+        {custom_css}
+    </style>
 </head>
 <body>
     <div class="container">
+        <div class="site-header">
+            <h1 class="site-title">ROOTELO</h1>
+            <p class="site-subtitle">A Metric of Woodland Skill and Will</p>
+        </div>
+
         <nav>{nav_html}</nav>
         {sub_nav_html}
-        <h1>{page_heading}</h1>
+        
+        <h2 class="page-heading">{page_heading}</h2>
+        
         {content}
     </div>
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>

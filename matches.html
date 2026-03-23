@@ -8,6 +8,7 @@
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
     
     <style>
+        
         body { font-family: 'Segoe UI', Helvetica, Arial, sans-serif; background-color: #121212; color: #eee; text-align: center; padding: 20px 5px; margin: 0; overflow-x: hidden; }
         .container { width: 95%; max-width: 1100px; margin: auto; background: #1e1e1e; padding: 20px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.6); box-sizing: border-box; }
         h1 { color: #4a90e2; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px; font-size: 1.5em; }
@@ -26,17 +27,31 @@
         table.dataTable td { border-bottom: 1px solid #2a2a2a; padding: 10px; font-size: 0.9em; text-align: center; vertical-align: middle; }
         @media (max-width: 600px) { .container { padding: 10px; } .dataTables_filter input { width: 150px !important; } table.dataTable td { font-size: 0.75em; } }
     
+        /* Style pour le titre fixe */
+        .site-header { margin-bottom: 20px; }
+        .site-title { color: #4a90e2; font-size: 2.5em; margin-bottom: 0; letter-spacing: 3px; }
+        .site-subtitle { font-style: italic; color: #777; font-size: 0.9em; margin-top: 5px; letter-spacing: 1px; }
+        .page-heading { color: #eee; text-transform: uppercase; font-size: 1.2em; margin-top: 30px; border-bottom: 1px solid #333; display: inline-block; padding-bottom: 5px; }
+        
         .lineup-cell { white-space: normal !important; word-wrap: break-word; overflow-wrap: break-word; min-width: 120px; max-width: 250px; line-height: 1.4; text-align: left; }
         table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before { background-color: #4a90e2 !important; }
         table.dataTable > tbody > tr.child ul.dtr-details { width: 100%; background: #252525; }
         table.dataTable > tbody > tr.child span.dtr-title { color: #4a90e2; font-weight: bold; }
+    
     </style>
 </head>
 <body>
     <div class="container">
+        <div class="site-header">
+            <h1 class="site-title">ROOTELO</h1>
+            <p class="site-subtitle">A Metric of Woodland Skill and Will</p>
+        </div>
+
         <nav><a href="index.html" class="">Leaderboard</a><a href="matches.html" class="active">Top Tables</a><a href="trends.html" class="">Player's Journey</a><a href="about.html" class="">Codex</a></nav>
         <div class="sub-nav-container"><a href="matches.html" class="sub-nav-item active">Current Season (LH02)</a><a href="matches_lh01.html" class="sub-nav-item ">LH01</a></div>
-        <h1>Match Archive</h1>
+        
+        <h2 class="page-heading">Match Archive</h2>
+        
         
         <table id="matchesTable" class="display nowrap responsive" style="width:100%">
             <thead><tr><th>Rank</th><th>ELO</th><th>Date</th><th>Lineup (Winner First)</th><th>ID</th></tr></thead>
