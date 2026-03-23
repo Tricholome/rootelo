@@ -229,7 +229,7 @@ current_history = {k.split('+')[0].split('#')[0]: v for k, v in player_history.i
 # =========================================================================
 # --- 7. HTML SKELETON (MATRIX NAVIGATION) ---
 # =========================================================================
-def generate_page_html(title, page_heading, current_page, content, custom_css="", custom_js="", extra_head=""):
+def generate_page_html(title, page_heading, current_page, content, page_description="", custom_css="", custom_js="", extra_head=""):
     is_archive = "_lh01.html" in current_page
     
     # 1. Main Navigation (Adapts to selected season)
@@ -308,6 +308,9 @@ def generate_page_html(title, page_heading, current_page, content, custom_css=""
         {sub_nav_html}
         
         <h2 class="page-heading">{page_heading}</h2>
+        <p style="color: #888; font-size: 0.9em; margin-top: -20px; margin-bottom: 30px; max-width: 600px; margin-left: auto; margin-right: auto;">
+        {page_description}
+        </p>
         
         {content}
     </div>
@@ -390,8 +393,7 @@ def build_leaderboard_page(df, filename, title, heading, subtitle):
     });
     </script>"""
     with open(filename, "w", encoding="utf-8") as f:
-        f.write(generate_page_html(title, heading, filename, content, css, js))
-
+        f.write(generate_page_html(title, heading, filename, content, page_description=description, custom_css=css, custom_js=js))
 
 def build_matches_page(df, filename, title, heading):
     match_rows = ""
@@ -444,8 +446,7 @@ def build_matches_page(df, filename, title, heading):
     });
     </script>"""
     with open(filename, "w", encoding="utf-8") as f:
-        f.write(generate_page_html(title, heading, filename, content, css, js))
-
+        f.write(generate_page_html(title, heading, filename, content, page_description=description, custom_css=css, custom_js=js))
 
 def build_trends_page(history_dict, filename, title, heading):
     if not history_dict: return
@@ -498,8 +499,8 @@ def build_trends_page(history_dict, filename, title, heading):
         }}
     </script>"""
     with open(filename, "w", encoding="utf-8") as f:
-        f.write(generate_page_html(title, heading, filename, content, css, js, extra_head))
-
+        f.write(generate_page_html(title, heading, filename, content, page_description=description, custom_css=css, custom_js=js, extra_head=extra_head))
+        
 def build_about_page(filename, title, heading):
     codex_text = f"""
     <style>
