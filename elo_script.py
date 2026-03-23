@@ -268,19 +268,12 @@ def generate_page_html(title, page_heading, current_page, content, subtitle="", 
         """
 
     # --- CSS ---
-    base_css = f"""
+   base_css = f"""
         body {{ font-family: 'Segoe UI', Helvetica, Arial, sans-serif; background: #121212; color: #eee; text-align: center; padding: 20px 5px; margin: 0; overflow-x: hidden; }}
         .container {{ width: 95%; max-width: 1100px; margin: auto; background: #1e1e1e; padding: 20px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.6); box-sizing: border-box; }}
         
-        /* BANNER - Desktop & Mobile Horizontal */
-        .banner-container {{ 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            gap: 40px; 
-            transition: all 0.3s ease;
-        }}
-        
+        /* BANNER */
+        .banner-container {{ display: flex; align-items: center; justify-content: center; gap: 40px; }}
         .banner-icons {{ display: flex; gap: 15px; align-items: center; }}
         
         .banner-icons img {{ 
@@ -302,44 +295,46 @@ def generate_page_html(title, page_heading, current_page, content, subtitle="", 
         .site-title {{ color: #eee; font-size: 2.2em; margin: 10px 0 0; letter-spacing: 3px; text-transform: uppercase; }}
         .site-subtitle {{ font-style: italic; color: #777; font-size: 0.85em; margin: 5px 0 0; letter-spacing: 1px; }}
         
+        /* NAVIGATION */
         nav {{ margin: 25px 0; border-bottom: 1px solid #333; padding-bottom: 20px; display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }}
         nav a {{ color: #888; text-decoration: none; font-weight: bold; text-transform: uppercase; font-size: 0.8em; padding: 8px 16px; border-radius: 6px; transition: 0.3s; border: 1px solid transparent; }}
         nav a:hover {{ color: {main_color}; background: rgba(255,255,255,0.05); }}
         nav a.active {{ color: #fff; background: {main_color}; box-shadow: 0 4px 12px rgba(0,0,0,0.4); }}
         
+        /* SEASON SELECTOR (FIXED) */
         .season-selector {{ display: flex; align-items: center; justify-content: center; gap: 12px; margin: 0 auto 30px; background: rgba(255,255,255,0.03); padding: 8px 18px; border-radius: 50px; width: fit-content; border: 1px solid #333; }}
-        .season-btn.active {{ background: {main_color}; color: #111 !important; border-color: {main_color}; font-weight: 900; }}
+        .season-label {{ font-size: 0.7em; text-transform: uppercase; color: #555; letter-spacing: 1.2px; font-weight: bold; }}
+        .season-btn {{ text-decoration: none; font-size: 0.75em; font-weight: bold; color: #777; padding: 5px 14px; border-radius: 20px; border: 1px solid #444; transition: 0.2s; }}
+        .season-btn:hover {{ border-color: {main_color}; color: #eee; }}
+        .season-btn.active {{ background: {main_color} !important; color: #111 !important; border-color: {main_color} !important; font-weight: 900; }}
 
         .page-intro h3 {{ margin: 0; color: {main_color}; font-size: 1.1em; font-weight: bold; text-transform: uppercase; border-bottom: 1px solid {main_color}; padding-bottom: 4px; display: inline-block; }}
         
         table.dataTable thead th {{ background: #252525 !important; color: {main_color} !important; font-size: 0.75em; text-transform: uppercase; padding: 12px; }}
 
-        /* --- MOBILE VERTICAL (Portrait) --- */
+        /* --- MOBILE PORTRAIT (Icones sur UNE ligne au dessus) --- */
         @media (max-width: 768px) and (orientation: portrait) {{
             .banner-container {{ 
                 flex-direction: column; 
-                gap: 10px; 
+                gap: 15px; 
             }}
-            /* On regroupe visuellement les deux blocs d'icônes pour faire une seule ligne */
-            .banner-icons.left, .banner-icons.right {{ 
+            /* Force les deux groupes d'icones à se comporter comme un seul bloc en ligne */
+            .banner-icons {{ 
                 order: -1; 
-                display: inline-flex;
+                gap: 10px; 
+                display: flex; 
+                flex-direction: row; 
+                justify-content: center;
+                width: 100%;
             }}
-            /* Réduction du gap entre les deux groupes pour simuler une seule ligne */
-            .banner-container {{ gap: 5px; }}
-            
             .banner-icons img {{ width: 45px; height: 45px; }}
             .site-title {{ font-size: 1.7em; }}
         }}
 
-        /* --- MOBILE HORIZONTAL (Landscape) --- */
+        /* --- MOBILE LANDSCAPE (Mode PC) --- */
         @media (max-width: 950px) and (orientation: landscape) {{
-            .banner-container {{ 
-                flex-direction: row; /* On force le mode PC */
-                gap: 20px; 
-            }}
-            .banner-icons img {{ width: 50px; height: 50px; }}
-            .site-title {{ font-size: 1.8em; }}
+            .banner-container {{ flex-direction: row; gap: 20px; }}
+            .banner-icons img {{ width: 45px; height: 45px; }}
         }}
     """
     
