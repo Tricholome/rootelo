@@ -232,25 +232,26 @@ current_history = {k.split('+')[0].split('#')[0]: v for k, v in player_history.i
 def generate_page_html(title, page_heading, current_page, content, subtitle="", page_description="", custom_css="", custom_js="", extra_head=""):
     is_archive = "_lh01.html" in current_page
     
-    # --- LOGIQUE DES COULEURS (Identité de Faction) ---
+    # --- LOGIQUE DES COULEURS ---
     if "index" in current_page: main_color = "#67c0c7"    # Bird
     elif "matches" in current_page: main_color = "#e6372d" # Fox
     elif "trends" in current_page: main_color = "#f7eb5b"  # Rabbit
     elif "about" in current_page: main_color = "#f29057"   # Mouse
-    else: main_color = "#d4a76a"                         # Default Gold
+    else: main_color = "#d4a76a"                         # Default
 
     # 1. Navigation Principale
     nav_links = [("index", "Leaderboard"), ("matches", "Top Tables"), ("trends", "Player's Journey"), ("about", "Codex")]
-    nav_html = "".join([
-        f'<a href="{"about.html" if b=="about" else (f"{b}_lh01.html" if is_archive else f"{b}.html")}" class="{"active" if current_page.startswith(b) else ""}">{l}</a>'
-        for b, l in nav_links
-    ])
+    nav_html = ""
+    for base, label in nav_links:
+        target = "about.html" if base == "about" else (f"{base}_lh01.html" if is_archive else f"{base}.html")
+        active = "active" if current_page.startswith(base) else ""
+        nav_html += f'<a href="{target}" class="{active}">{label}</a>'
 
     # 2. Sélecteur de Saison
     sub_nav_html = ""
     if current_page != "about.html":
-        current_prefix = current_page.replace("_lh01.html", "").replace(".html", "")
-        seasons = [("LH01", f"{current_prefix}_lh01.html"), ("LH02", f"{current_prefix}.html")]
+        prefix = current_page.replace("_lh01.html", "").replace(".html", "")
+        seasons = [("LH01", f"{prefix}_lh01.html"), ("LH02", f"{prefix}.html")]
         btns = "".join([f'<a href="{u}" class="season-btn {"active" if u==current_page else ""}">{n}</a>' for n, u in seasons])
         sub_nav_html = f'<div class="season-selector"><span class="season-label">Season</span>{btns}</div>'
 
@@ -259,12 +260,12 @@ def generate_page_html(title, page_heading, current_page, content, subtitle="", 
         body {{ font-family: 'Segoe UI', Helvetica, Arial, sans-serif; background: #121212; color: #eee; text-align: center; padding: 20px 5px; margin: 0; overflow-x: hidden; }}
         .container {{ width: 95%; max-width: 1100px; margin: auto; background: #1e1e1e; padding: 20px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.6); box-sizing: border-box; }}
         
-        /* BANNER (Layout PC / Mobile Paysage) */
-        .banner-container {{ display: flex; align-items: center; justify-content: center; gap: 40px; margin-bottom: 20px; }}
-        .banner-icons {{ display: flex; gap: 15px; align-items: center; justify-content: center; }}
+        /* BANNER LOGIC */
+        .banner-container {{ display: flex; align-items: center; justify-content: center; gap: 40px; margin-bottom: 20px; flex-wrap: nowrap; }}
+        .banner-icons {{ display: flex; gap: 15px; align-items: center; }}
         
         .banner-icons img {{ 
-            width: 65px; height: 65px; object-fit: contain; 
+            width: 60px; height: 60px; object-fit: contain; 
             filter: drop-shadow(0 4px 6px rgba(0,0,0,0.6)); 
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
             cursor: pointer;
@@ -288,35 +289,40 @@ def generate_page_html(title, page_heading, current_page, content, subtitle="", 
         nav a:hover {{ color: {main_color}; background: rgba(255,255,255,0.05); }}
         nav a.active {{ color: #fff; background: {main_color}; box-shadow: 0 4px 12px rgba(0,0,0,0.4); }}
         
-        /* SEASON SELECTOR */
+        /* SEASON SELECTOR (RESTORED) */
         .season-selector {{ display: flex; align-items: center; justify-content: center; gap: 12px; margin: 0 auto 30px; background: rgba(255,255,255,0.03); padding: 8px 18px; border-radius: 50px; width: fit-content; border: 1px solid #333; }}
         .season-label {{ font-size: 0.7em; text-transform: uppercase; color: #555; letter-spacing: 1.2px; font-weight: bold; }}
         .season-btn {{ text-decoration: none; font-size: 0.75em; font-weight: bold; color: #777; padding: 5px 14px; border-radius: 20px; border: 1px solid #444; transition: 0.2s; }}
         .season-btn:hover {{ border-color: {main_color}; color: #eee; }}
         .season-btn.active {{ background: {main_color} !important; color: #111 !important; border-color: {main_color} !important; font-weight: 900; }}
 
-        /* TITLES */
-        .page-intro {{ margin-bottom: 35px; }}
-        .page-intro h2 {{ margin-bottom: 5px; text-transform: uppercase; color: #eee; font-size: 1.3em; }}
         .page-intro h3 {{ margin: 0; color: {main_color}; font-size: 1.1em; font-weight: bold; text-transform: uppercase; border-bottom: 2px solid {main_color}; padding-bottom: 4px; display: inline-block; }}
-        
-        /* DATA TABLES */
-        table.dataTable thead th {{ background: #252525 !important; color: {main_color} !important; font-size: 0.75em; text-transform: uppercase; padding: 12px; border-bottom: 2px solid #333 !important; }}
+        table.dataTable thead th {{ background: #252525 !important; color: {main_color} !important; font-size: 0.75em; text-transform: uppercase; padding: 12px; }}
 
-        /* --- MOBILE PORTRAIT (Icones en ligne tout en haut) --- */
+        /* --- MOBILE PORTRAIT (THE FIX) --- */
         @media (max-width: 768px) and (orientation: portrait) {{
-            .banner-container {{ flex-direction: column; gap: 10px; }}
-            .banner-icons {{ order: -1; gap: 10px; width: 100%; display: flex; justify-content: center; }}
-            .banner-icons img {{ width: 48px; height: 48px; }}
-            .banner-icons img:hover {{ width: 75px; height: 75px; transform: translateY(-5px) scale(1.1); }}
+            .banner-container {{ 
+                flex-wrap: wrap; 
+                gap: 10px; 
+            }}
+            .banner-icons {{ 
+                order: 1; /* Les deux groupes d'icones montent en haut */
+                gap: 10px;
+            }}
+            .banner-center {{ 
+                order: 2; 
+                width: 100%; /* Force le titre à passer à la ligne suivante */
+                margin-top: 10px;
+            }}
+            .banner-icons img {{ width: 45px; height: 45px; }}
+            .banner-icons img:hover {{ width: 70px; height: 70px; transform: translateY(-5px) scale(1.1); }}
             .site-title {{ font-size: 1.8em; }}
         }}
 
-        /* --- MOBILE LANDSCAPE (Retour au mode PC) --- */
+        /* --- MOBILE LANDSCAPE (PC LOOK) --- */
         @media (max-width: 950px) and (orientation: landscape) {{
-            .banner-container {{ flex-direction: row; gap: 20px; }}
+            .banner-container {{ flex-direction: row; gap: 20px; flex-wrap: nowrap; }}
             .banner-icons img {{ width: 45px; height: 45px; }}
-            .site-title {{ font-size: 1.7em; }}
         }}
     """
     
