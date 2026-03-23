@@ -270,44 +270,55 @@ def generate_page_html(title, page_heading, current_page, content, subtitle="", 
         body { font-family: 'Segoe UI', Helvetica, Arial, sans-serif; background: #121212; color: #eee; text-align: center; padding: 20px 5px; margin: 0; overflow-x: hidden; }
         .container { width: 95%; max-width: 1100px; margin: auto; background: #1e1e1e; padding: 20px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.6); box-sizing: border-box; }
         
-        /* Banner & Header */
-        .site-header { margin-bottom: 30px; }
-        .banner-container { display: flex; align-items: center; justify-content: center; gap: 25px; padding: 10px; }
-        .banner-icons { display: flex; gap: 15px; }
-        .banner-icons img { width: 65px; height: 65px; object-fit: contain; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.4)); transition: 0.3s; }
-        .banner-icons img:hover { transform: scale(1.2) rotate(5deg); }
-        .site-title { color: #4a90e2; font-size: 2.8em; margin: 0; letter-spacing: 4px; text-transform: uppercase; font-weight: 900; }
-        .site-subtitle { font-family: "Luminari", "Apple Chancery", "Palatino", serif; color: #d4a76a; font-size: 1.1em; margin: 5px 0 0; letter-spacing: 1px; }
+        /* --- MEGA BANNER STYLES --- */
+        .site-header { margin-bottom: 40px; }
+        .banner-container { display: flex; align-items: center; justify-content: center; gap: 40px; padding: 20px; }
+        .banner-icons { display: flex; gap: 20px; }
+        .banner-icons img { 
+            width: 110px;    /* --- TAILLE X2 --- */
+            height: 110px;   /* --- TAILLE X2 --- */
+            object-fit: contain; 
+            filter: drop-shadow(0 6px 12px rgba(0,0,0,0.5)); 
+            transition: 0.3s ease-out; 
+        }
+        .banner-icons img:hover { transform: scale(1.1) rotate(5deg); }
+        .site-title { color: #4a90e2; font-size: 3.5em; margin: 0; letter-spacing: 5px; text-transform: uppercase; font-weight: 900; line-height: 1; }
+        .site-subtitle { font-family: "Luminari", serif; color: #d4a76a; font-size: 1.25em; margin: 10px 0 0; letter-spacing: 1.5px; }
         
         /* Navigation */
-        nav { margin: 20px 0; border-bottom: 1px solid #333; padding-bottom: 15px; display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }
+        nav { margin: 25px 0; border-bottom: 1px solid #333; padding-bottom: 20px; display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }
         nav a { color: #888; text-decoration: none; font-weight: bold; text-transform: uppercase; font-size: 0.8em; padding: 8px 16px; border-radius: 6px; transition: 0.3s; border: 1px solid transparent; }
         nav a:hover { color: #4a90e2; background: rgba(74,144,226,0.05); }
         nav a.active { color: #fff; background: #4a90e2; box-shadow: 0 4px 12px rgba(74,144,226,0.3); }
         
-        /* Season Selector */
+        /* Season Selector & Intro */
         .season-selector { display: flex; align-items: center; justify-content: center; gap: 12px; margin: 0 auto 30px; background: rgba(255,255,255,0.03); padding: 8px 18px; border-radius: 50px; width: fit-content; border: 1px solid #333; }
         .season-label { font-size: 0.7em; text-transform: uppercase; color: #555; letter-spacing: 1.2px; font-weight: bold; }
         .season-btn { text-decoration: none; font-size: 0.75em; font-weight: bold; color: #777; padding: 5px 14px; border-radius: 20px; border: 1px solid #444; transition: 0.2s; }
         .season-btn:hover { border-color: #4a90e2; color: #eee; }
         .season-btn.active { background: #4a90e2; color: #fff; border-color: #4a90e2; box-shadow: 0 0 12px rgba(74,144,226,0.2); }
-        
-        /* Intro & Tables */
         .page-intro { margin-bottom: 35px; display: flex; flex-direction: column; align-items: center; gap: 6px; }
         .page-intro h2 { margin: 0; text-transform: uppercase; color: #eee; font-size: 1.3em; }
         .page-intro h3 { margin: 0; color: #4a90e2; font-size: 1em; font-weight: 500; }
         .page-intro p { margin: 0; color: #888; font-size: 0.85em; max-width: 600px; line-height: 1.4; }
+        
+        /* DataTables (unchanged) */
         .dataTables_wrapper { color: #eee !important; text-align: left; }
         table.dataTable { width: 100% !important; border-collapse: collapse !important; margin-top: 15px !important; background: #1e1e1e; }
         table.dataTable thead th { background: #252525 !important; color: #4a90e2 !important; font-size: 0.75em; text-transform: uppercase; padding: 12px; border: none; }
         table.dataTable td { border-bottom: 1px solid #2a2a2a; padding: 10px; font-size: 0.9em; text-align: center; vertical-align: middle; }
         
-        /* Responsive */
-        @media (max-width: 850px) { .banner-icons img { width: 45px; height: 45px; } .site-title { font-size: 2em; } }
+        /* --- RESPONSIVE ADJUSTMENTS --- */
+        @media (max-width: 1000px) {
+            .banner-container { flex-direction: column; gap: 20px; } /* Empile Oiseau/Renard, Titre, Lapin/Souris */
+            .banner-icons img { width: 80px; height: 80px; }
+            .site-title { font-size: 3em; }
+        }
+        
         @media (max-width: 600px) { 
             .container { padding: 10px; } 
-            .banner-icons { display: none; } /* On cache les icônes sur petit mobile pour le texte */
-            .site-title { font-size: 1.8em; } 
+            .banner-icons { display: none; } /* On cache les icônes sur mobile portrait pour le texte */
+            .site-title { font-size: 2em; } 
             .dataTables_filter input { width: 120px !important; } 
             table.dataTable td { font-size: 0.75em; } 
         }
