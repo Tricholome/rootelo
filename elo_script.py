@@ -230,109 +230,119 @@ current_history = {k.split('+')[0].split('#')[0]: v for k, v in player_history.i
 # --- 7. HTML SKELETON (MATRIX NAVIGATION) ---
 # =========================================================================
 
-def get_base_css(suit="default"):
-        # Indentation corrigée ici !
-        color = SUIT_COLORS.get(suit, "#d4a76a")
-        
-        # On définit --main-color dans le :root pour que les variables fonctionnent,
-        # et on unifie tout le CSS dans une seule grande chaîne (f-string).
+def generate_page_html(title, page_heading, current_page, content, subtitle="", page_description="", custom_css="", custom_js="", extra_head=""):
+    """Génère la structure HTML complète commune à toutes les pages."""
+    
+    # 1. Détection de la saison (Archive LH01 ou Saison Actuelle)
+    is_archive = "_lh01.html" in current_page
+    
+    # 2. Configuration des couleurs par "Suit" (Faction)
+    SUIT_COLORS = {
+        "bird":    "#67c0c7", # Bleu/Cyan
+        "fox":     "#e6372d", # Rouge
+        "rabbit":  "#f7eb5b", # Jaune
+        "mouse":   "#f29057", # Orange
+        "default": "#d4a76a"  # Doré
+    }
+
+    # Déterminer quelle couleur utiliser selon la page
+    if "index" in current_page: active_suit = "bird"
+    elif "matches" in current_page: active_suit = "fox"
+    elif "trends" in current_page: active_suit = "rabbit"
+    elif "about" in current_page: active_suit = "mouse"
+    else: active_suit = "default"
+
+    # 3. Fonction interne pour générer le CSS de base
+    def get_base_css(suit="default"):
+        main_color = SUIT_COLORS.get(suit, "#d4a76a")
         return f"""
         :root {{
-            --main-color: {color};
+            --main-color: {main_color};
         }}
         
         body {{ 
-            font-family: 'Segoe UI', Helvetica, Arial, sans-serif; 
-            background: #121212; 
-            color: #eee; 
-            text-align: center; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: #121212; color: #eee; text-align: center; margin: 0; padding: 20px;
         }}
+
+        .container {{ max-width: 1100px; margin: auto; }}
+
+        /* Titres */
+        .site-title {{ font-size: 3.5em; letter-spacing: 8px; text-transform: uppercase; margin: 0; color: #eee; }}
+        .site-subtitle {{ font-family: "Luminari", serif; color: #d4a76a; font-size: 1.2em; margin-bottom: 25px; opacity: 0.8; }}
         
-        .site-title {{ 
-            color: #eee !important; 
-            font-size: 3.5em; 
-            letter-spacing: 5px; 
-            text-transform: uppercase; 
-        }}
-        .site-subtitle {{ font-family: "Luminari", serif; color: #d4a76a; font-size: 1.3em; margin-top: 10px; }}
-
-        .page-intro h3 {{ 
-            color: var(--main-color); 
-            font-size: 1.2em; 
-            text-transform: uppercase; 
-            border-bottom: 1px solid var(--main-color); 
-            display: inline-block; 
-            padding-bottom: 5px; 
-            font-weight: bold;
-        }}
-
-        .banner-icons img:hover {{ 
-            transform: translateY(-20px) scale(1.2);
-            filter: drop-shadow(0 10px 15px rgba(0,0,0,0.8));
-            z-index: 100;
-        }}
-        .banner-icons.left img:hover {{ transform: translateY(-20px) scale(1.2) rotate(-8deg); }}
-        .banner-icons.right img:hover {{ transform: translateY(-20px) scale(1.2) rotate(8deg); }}
-
-        /* Navigation & Tabs */
-        nav {{ margin: 25px 0; border-bottom: 1px solid #333; padding-bottom: 20px; display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }}
-        nav a {{ color: #888; text-decoration: none; font-weight: bold; text-transform: uppercase; font-size: 0.8em; padding: 8px 16px; border-radius: 6px; transition: 0.3s; border: 1px solid transparent; }}
-        nav a:hover {{ color: var(--main-color); background: rgba(255,255,255,0.05); }}
+        /* Navigation Principale */
+        nav {{ margin-bottom: 25px; border-bottom: 1px solid #333; padding-bottom: 15px; display: flex; justify-content: center; gap: 10px; }}
+        nav a {{ color: #777; text-decoration: none; font-weight: bold; text-transform: uppercase; font-size: 0.85em; padding: 10px 15px; transition: 0.3s; }}
+        nav a:hover {{ color: var(--main-color); }}
         nav a.active {{ color: var(--main-color); border-bottom: 2px solid var(--main-color); }}
+
+        /* Sélecteur de Saison */
+        .season-selector {{ margin-bottom: 30px; display: flex; justify-content: center; align-items: center; gap: 15px; }}
+        .season-btn {{ background: #222; color: #888; padding: 6px 15px; text-decoration: none; border-radius: 5px; border: 1px solid #333; font-size: 0.8em; transition: 0.3s; }}
+        .season-btn.active {{ background: var(--main-color) !important; color: #111 !important; font-weight: bold; border-color: var(--main-color); }}
+
+        /* En-tête de page */
+        .page-intro h2 {{ text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px; }}
+        .page-intro h3 {{ color: var(--main-color); font-size: 1.1em; text-transform: uppercase; border-bottom: 1px solid var(--main-color); display: inline-block; padding-bottom: 3px; }}
+
+        /* Tableaux DataTable */
+        .dataTables_wrapper {{ background: #1a1a1a; padding: 15px; border-radius: 10px; border: 1px solid #252525; }}
+        table.dataTable thead th {{ background: #252525 !important; color: var(--main-color) !important; text-transform: uppercase; font-size: 0.75em; padding: 12px; }}
         
-        /* Season Selector */
-        .season-btn.active {{ background-color: var(--main-color) !important; color: #000 !important; border-color: var(--main-color) !important; }}
-        .season-btn:hover {{ border-color: var(--main-color); color: #eee; }}
-        
-        /* Tables */
-        table.dataTable thead th {{ background: #252525 !important; color: var(--main-color) !important; font-size: 0.75em; text-transform: uppercase; padding: 12px; border: none; }}
-        
-        /* Responsive */
-        @media (max-width: 900px) {{
-            .banner-container {{ gap: 15px; }}
-            .banner-icons img {{ width: 60px; height: 60px; }}
-            .banner-icons img:hover {{ width: 80px; height: 80px; }}
-            .site-title {{ font-size: 2.2em; }}
-        }}
+        /* Bannière Icons */
+        .banner-icons img {{ width: 60px; height: 60px; transition: 0.4s ease; filter: grayscale(30%); cursor: help; }}
+        .banner-icons img:hover {{ transform: translateY(-10px) scale(1.2); filter: grayscale(0%) drop-shadow(0 5px 15px var(--main-color)); }}
         """
-    base_css = get_base_css(active_suit)
-    
+
+    # 4. Construction de la Navigation (Liens)
+    nav_links = [("index", "Leaderboard"), ("matches", "Top Tables"), ("trends", "Player's Journey"), ("about", "Codex")]
+    nav_html = ""
+    for base, label in nav_links:
+        if base == "about":
+            target = "about.html"
+        else:
+            target = f"{base}_lh01.html" if is_archive else f"{base}.html"
+        active_class = "active" if current_page.startswith(base) else ""
+        nav_html += f'<a href="{target}" class="{active_class}">{label}</a>'
+
+    # 5. Construction du Sélecteur de Saison
+    sub_nav_html = ""
+    if current_page != "about.html":
+        current_prefix = current_page.replace("_lh01.html", "").replace(".html", "")
+        seasons = [("LH01 - Winter 25", f"{current_prefix}_lh01.html"), ("LH02 - Spring 26", f"{current_prefix}.html")]
+        btns = ""
+        for name, url in seasons:
+            is_active = "active" if url == current_page else ""
+            btns += f'<a href="{url}" class="season-btn {is_active}">{name}</a>'
+        sub_nav_html = f'<div class="season-selector">{btns}</div>'
+
+    # 6. Assemblage final du CSS
+    base_style = get_base_css(active_suit)
+
+    # 7. Rendu du template HTML final
     return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{title}</title>
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
-    {extra_head}
     <style>
-        {base_css}
-        /* Style pour le titre fixe */
-        .site-header {{ margin-bottom: 20px; }}
-        .site-title {{ color: var(--main-color); font-size: 2.5em; margin-bottom: 0; letter-spacing: 3px; }}
-        .site-subtitle {{ font-style: italic; color: #777; font-size: 0.9em; margin-top: 5px; letter-spacing: 1px; }}
-        .page-heading { color: {color} !important; text-transform: uppercase; font-size: 1.2em; border-bottom: 1px solid {color}; display: inline-block; }
+        {base_style}
         {custom_css}
     </style>
+    {extra_head}
 </head>
 <body>
     <div class="container">
-        <div class="site-header">
-            <div class="banner-container">
-                <div class="banner-icons left">
-                    <img src="assets/icons/bird.png" title="Bird Tier: 1500+ ELO">
-                    <img src="assets/icons/fox.png" title="Fox Tier: 1400+ ELO">
-                </div>
-                <div class="banner-center">
-                    <h1 class="site-title">ROOTELO</h1>
-                    <p class="site-subtitle">A Metric of Woodland Skill and Will</p>
-                </div>
-                <div class="banner-icons right">
-                    <img src="assets/icons/mouse_3.webp" title="Rabbit Tier: 1300+ ELO">
-                    <img src="assets/icons/mouse_2.webp" title="Mouse Tier: 1200+ ELO">
-                </div>
+        <div class="banner-container" style="display:flex; align-items:center; justify-content:center; gap:40px; margin-top:20px;">
+            <div class="banner-icons"><img src="assets/icons/bird.png"> <img src="assets/icons/fox.png"></div>
+            <div class="banner-center">
+                <h1 class="site-title">ROOTELO</h1>
+                <p class="site-subtitle">A Metric of Woodland Skill</p>
             </div>
+            <div class="banner-icons"><img src="assets/icons/rabbit.png"> <img src="assets/icons/mouse_2.webp"></div>
         </div>
 
         <nav>{nav_html}</nav>
@@ -341,20 +351,21 @@ def get_base_css(suit="default"):
         <header class="page-intro">
             <h2>{page_heading}</h2>
             {f"<h3>{subtitle}</h3>" if subtitle else ""}
-            {f"<p>{page_description}</p>" if page_description else ""}
+            {f"<p style='color:#777; font-size:0.9em;'>{page_description}</p>" if page_description else ""}
         </header>
-    
-        <main>
-            {content}
-        </main>
+
+        <main>{content}</main>
+        
+        <footer style="margin-top:50px; padding:20px; color:#444; font-size:0.8em; border-top:1px solid #222;">
+            RootElo System &copy; 2026 | Woodland War Room
+        </footer>
     </div>
+
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
     {custom_js}
 </body>
 </html>"""
-
 
 # =========================================================================
 # --- 8. PAGE BUILDERS (REUSABLE COMPONENTS) ---
