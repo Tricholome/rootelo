@@ -308,9 +308,6 @@ def generate_page_html(title, page_heading, current_page, content, page_descript
         {sub_nav_html}
         
         <h2 class="page-heading">{page_heading}</h2>
-        <p style="color: #888; font-size: 0.9em; margin-top: -20px; margin-bottom: 30px; max-width: 600px; margin-left: auto; margin-right: auto;">
-        {page_description}
-        </p>
         
         {content}
     </div>
@@ -342,6 +339,9 @@ def build_leaderboard_page(df, filename, title, heading, subtitle, description):
 
     content = f"""
         <h3>{subtitle}</h3>
+        <p style="color: #888; font-size: 0.9em; margin-top: -15px; margin-bottom: 30px; max-width: 600px; margin-left: auto; margin-right: auto;">
+            {description}
+        </p>
         <table id="leaderboard" class="display nowrap">
             <thead>
                 <tr><th>Rank</th><th>Tier</th><th>Player</th><th>ELO</th><th>Games</th><th>Wins</th><th>Win Rate</th><th>Peak</th><th>Last</th></tr>
@@ -419,6 +419,9 @@ def build_matches_page(df, filename, title, heading, subtitle, description):
 
     content = f"""
         <h3>{subtitle}</h3>
+        <p style="color: #888; font-size: 0.9em; margin-top: -15px; margin-bottom: 30px; max-width: 600px; margin-left: auto; margin-right: auto;">
+            {description}
+        </p>
         <table id="matchesTable" class="display nowrap responsive" style="width:100%">
             <thead><tr><th>Rank</th><th>ELO</th><th>Date</th><th>Lineup (Winner First)</th><th>ID</th></tr></thead>
             <tbody>{match_rows}</tbody>
@@ -457,6 +460,9 @@ def build_trends_page(history_dict, filename, title, heading, subtitle, descript
 
     content = f"""
         <h3>{subtitle}</h3>
+        <p style="color: #888; font-size: 0.9em; margin-top: -15px; margin-bottom: 30px; max-width: 600px; margin-left: auto; margin-right: auto;">
+            {description}
+        </p>
         <div class="search-box">
             <input list="playerList" id="playerName" placeholder="Search Player..." oninput="updateChart()">
             <datalist id="playerList">
