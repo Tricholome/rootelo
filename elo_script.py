@@ -21,7 +21,7 @@ def get_tier_icon(rating, games):
     if r >= 1500: return "assets/icons/bird.png", "suit-bird"
     if r >= 1400: return "assets/icons/fox.png", "suit-fox"
     if r >= 1300: return "assets/icons/rabbit.png", "suit-rabbit"
-    if r >= 1200: return "assets/icons/mouse.png", "suit-mouse"
+    if r >= 1200: return "assets/icons/mouse_2.webp", "suit-mouse"
     return None, "unranked"
 
 # =========================================================================
