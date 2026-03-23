@@ -250,8 +250,8 @@ def generate_page_html(title, page_heading, current_page, content, subtitle="", 
         current_prefix = current_page.replace("_lh01.html", "").replace(".html", "")
         
         seasons = [
-            ("LH02", f"{current_prefix}.html"),
-            ("LH01", f"{current_prefix}_lh01.html")
+            ("LH01", f"{current_prefix}_lh01.html"),
+            ("LH02", f"{current_prefix}.html")
         ]
         
         buttons_html = ""
@@ -622,9 +622,9 @@ build_leaderboard_page(
     display_current_df, 
     "index.html", 
     "Leaderboard • Rootelo", 
-    "Alternative ELO Leaderboard", 
-    "Current Season Rankings", 
-    f"The official power rankings for the current competitive season. Data tracked until {CUTOFF_DATE}."
+    "Leaderboard", 
+    "LH02 • Apr – Jun 2026", 
+    f"Only players with at least 1 win are shown. 10 games required for rank and tier. Use the search bar to find a specific player. Data tracked until {CUTOFF_DATE}."
 )
 build_matches_page(
     current_matches_df, 
@@ -648,10 +648,10 @@ print("Generating Archive LH01 pages...")
 build_leaderboard_page(
     display_archive_df, 
     "index_lh01.html", 
-    "Archive LH01 Leaderboard", 
-    "Season LH01 Archive", 
-    "Final Standings • Season LH01", 
-    "Historical rankings from the previous woodland season."
+    "Leaderboard • Rootelo", 
+    "Leaderboard", 
+    "LH01 • Jan – Mar 2026", 
+    f"Only players with at least 1 win are shown. 10 games required for rank and tier. Use the search bar to find a specific player. Data tracked until 2026-03-31."
 )
 build_matches_page(
     archive_matches_df, 
