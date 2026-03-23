@@ -230,143 +230,71 @@ current_history = {k.split('+')[0].split('#')[0]: v for k, v in player_history.i
 # --- 7. HTML SKELETON (MATRIX NAVIGATION) ---
 # =========================================================================
 
-def generate_page_html(title, page_heading, current_page, content, subtitle="", page_description="", custom_css="", custom_js="", extra_head=""):
-    is_archive = "_lh01.html" in current_page
-    
-    # 1. Main Navigation (Adapts to selected season)
-    nav_links = [("index", "Leaderboard"), ("matches", "Top Tables"), ("trends", "Player's Journey"), ("about", "Codex")]
-    nav_html = ""
-    for base, label in nav_links:
-        if base == "about":
-            target = "about.html"
-        else:
-            target = f"{base}_lh01.html" if is_archive else f"{base}.html"
-        active = "active" if current_page.startswith(base) else ""
-        nav_html += f'<a href="{target}" class="{active}">{label}</a>'
+def get_base_css(suit="default"):
+        # Indentation corrigée ici !
+        color = SUIT_COLORS.get(suit, "#d4a76a")
+        
+        # On définit --main-color dans le :root pour que les variables fonctionnent,
+        # et on unifie tout le CSS dans une seule grande chaîne (f-string).
+        return f"""
+        :root {{
+            --main-color: {color};
+        }}
+        
+        body {{ 
+            font-family: 'Segoe UI', Helvetica, Arial, sans-serif; 
+            background: #121212; 
+            color: #eee; 
+            text-align: center; 
+        }}
+        
+        .site-title {{ 
+            color: #eee !important; 
+            font-size: 3.5em; 
+            letter-spacing: 5px; 
+            text-transform: uppercase; 
+        }}
+        .site-subtitle {{ font-family: "Luminari", serif; color: #d4a76a; font-size: 1.3em; margin-top: 10px; }}
 
-    # 2. Sub Navigation (Season Selector)
-    if current_page == "about.html":
-        sub_nav_html = ""
-    else:
-        current_prefix = current_page.replace("_lh01.html", "").replace(".html", "")
+        .page-intro h3 {{ 
+            color: var(--main-color); 
+            font-size: 1.2em; 
+            text-transform: uppercase; 
+            border-bottom: 1px solid var(--main-color); 
+            display: inline-block; 
+            padding-bottom: 5px; 
+            font-weight: bold;
+        }}
+
+        .banner-icons img:hover {{ 
+            transform: translateY(-20px) scale(1.2);
+            filter: drop-shadow(0 10px 15px rgba(0,0,0,0.8));
+            z-index: 100;
+        }}
+        .banner-icons.left img:hover {{ transform: translateY(-20px) scale(1.2) rotate(-8deg); }}
+        .banner-icons.right img:hover {{ transform: translateY(-20px) scale(1.2) rotate(8deg); }}
+
+        /* Navigation & Tabs */
+        nav {{ margin: 25px 0; border-bottom: 1px solid #333; padding-bottom: 20px; display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }}
+        nav a {{ color: #888; text-decoration: none; font-weight: bold; text-transform: uppercase; font-size: 0.8em; padding: 8px 16px; border-radius: 6px; transition: 0.3s; border: 1px solid transparent; }}
+        nav a:hover {{ color: var(--main-color); background: rgba(255,255,255,0.05); }}
+        nav a.active {{ color: var(--main-color); border-bottom: 2px solid var(--main-color); }}
         
-        seasons = [
-            ("LH01", f"{current_prefix}_lh01.html"),
-            ("LH02", f"{current_prefix}.html")
-        ]
+        /* Season Selector */
+        .season-btn.active {{ background-color: var(--main-color) !important; color: #000 !important; border-color: var(--main-color) !important; }}
+        .season-btn:hover {{ border-color: var(--main-color); color: #eee; }}
         
-        buttons_html = ""
-        for name, url in seasons:
-            is_active = "active" if url == current_page else ""
-            buttons_html += f'<a href="{url}" class="season-btn {is_active}">{name}</a>'
+        /* Tables */
+        table.dataTable thead th {{ background: #252525 !important; color: var(--main-color) !important; font-size: 0.75em; text-transform: uppercase; padding: 12px; border: none; }}
         
-        sub_nav_html = f"""
-        <div class="season-selector">
-            <span class="season-label">Select Season</span>
-            {buttons_html}
-        </div>
+        /* Responsive */
+        @media (max-width: 900px) {{
+            .banner-container {{ gap: 15px; }}
+            .banner-icons img {{ width: 60px; height: 60px; }}
+            .banner-icons img:hover {{ width: 80px; height: 80px; }}
+            .site-title {{ font-size: 2.2em; }}
+        }}
         """
-
-    # --- DYNAMIC COLOR LOGIC ADDED HERE ---
-    SUIT_COLORS = {
-        "bird":   "#67c0c7",
-        "fox":    "#e6372d",
-        "rabbit": "#f7eb5b",
-        "mouse":  "#f29057",
-        "default": "#d4a76a"  
-    }
-
-    # On associe automatiquement la couleur selon le nom du fichier
-    if current_page.startswith("index"):
-        active_suit = "bird"
-    elif current_page.startswith("matches"):
-        active_suit = "fox"
-    elif current_page.startswith("trends"):
-        active_suit = "rabbit"
-    elif current_page.startswith("about"):
-        active_suit = "mouse"
-    else:
-        active_suit = "default"
-
-    def get_base_css(suit="default"):
-    # Ces lignes DOIVENT avoir 4 espaces d'indentation au début
-    color = SUIT_COLORS.get(suit, "#d4a76a")
-    
-    return f"""
-    body {{ 
-        font-family: 'Segoe UI', Helvetica, Arial, sans-serif; 
-        background: #121212; 
-        color: #eee; 
-        text-align: center; 
-    }}
-    
-    .site-title {{ 
-        color: #eee !important; 
-        font-size: 3.5em; 
-        letter-spacing: 5px; 
-        text-transform: uppercase; 
-    }}
-
-    .page-intro h3 {{ 
-        color: {color}; 
-        font-size: 1.2em; 
-        text-transform: uppercase; 
-        border-bottom: 1px solid {color}; 
-        display: inline-block; 
-        padding-bottom: 5px; 
-    }}
-
-    .banner-icons img:hover {{ 
-        transform: translateY(-20px) scale(1.2);
-        filter: drop-shadow(0 10px 15px rgba(0,0,0,0.8));
-        z-index: 100;
-    }}
-
-    nav a.active {{ 
-        color: {color}; 
-        border-bottom: 2px solid {color}; 
-    }}
-
-    .season-btn.active {{ 
-        background-color: {color} !important; 
-        color: #000 !important; 
-        border-color: {color} !important; 
-    }}
-    """
-
-    .banner-icons.left img:hover {{ transform: translateY(-20px) scale(1.2) rotate(-8deg); }}
-    .banner-icons.right img:hover {{ transform: translateY(-20px) scale(1.2) rotate(8deg); }}
-
-    /* Titre principal neutre */
-    .site-title {{ color: #eee; font-size: 3.5em; letter-spacing: 5px; text-transform: uppercase; }}
-    .site-subtitle {{ font-family: "Luminari", serif; color: #d4a76a; font-size: 1.3em; margin-top: 10px; }}
-    
-    /* Navigation & Tabs - Réparé avec doubles accolades */
-    nav {{ margin: 25px 0; border-bottom: 1px solid #333; padding-bottom: 20px; display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }}
-    nav a {{ color: #888; text-decoration: none; font-weight: bold; text-transform: uppercase; font-size: 0.8em; padding: 8px 16px; border-radius: 6px; transition: 0.3s; border: 1px solid transparent; }}
-    nav a:hover {{ color: var(--main-color); background: rgba(255,255,255,0.05); }}
-    nav a.active {{ color: {color}; border-bottom: 2px solid {color}; }}
-    
-    /* Season Selector - Réparé avec doubles accolades */
-    .season-btn.active {{ background-color: {color}; color: #000; border-color: {color}; }}
-    .season-btn:hover {{ border-color: var(--main-color); color: #eee; }}
-
-    /* Page Heading Dynamique */
-    .page-intro h3 {{ color: var(--main-color); font-size: 1.2em; text-transform: uppercase; font-weight: bold; border-bottom: 1px solid var(--main-color); display: inline-block; padding-bottom: 5px; }}
-    
-    /* Tables */
-    table.dataTable thead th {{ background: #252525 !important; color: var(--main-color) !important; font-size: 0.75em; text-transform: uppercase; padding: 12px; border: none; }}
-    
-    /* Responsive */
-    @media (max-width: 900px) {{
-        .banner-container {{ gap: 15px; }}
-        .banner-icons img {{ width: 60px; height: 60px; }}
-        .banner-icons img:hover {{ width: 80px; height: 80px; }}
-        .site-title {{ font-size: 2.2em; }}
-    }}
-    """
-
-    # On appelle la fonction pour générer le CSS
     base_css = get_base_css(active_suit)
     
     return f"""<!DOCTYPE html>
