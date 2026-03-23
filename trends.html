@@ -18,32 +18,44 @@
 
         .container { max-width: 1100px; margin: auto; }
 
-        /* Titres */
-        .site-title { font-size: 3.5em; letter-spacing: 8px; text-transform: uppercase; margin: 0; color: #eee; }
+        /* Titre ROOTELO : Reste NEUTRE */
+        .site-title { 
+            font-size: 3.5em; letter-spacing: 8px; text-transform: uppercase; margin: 0; 
+            color: #eee !important; 
+        }
+        
         .site-subtitle { font-family: "Luminari", serif; color: #d4a76a; font-size: 1.2em; margin-bottom: 25px; opacity: 0.8; }
         
         /* Navigation Principale */
         nav { margin-bottom: 25px; border-bottom: 1px solid #333; padding-bottom: 15px; display: flex; justify-content: center; gap: 10px; }
         nav a { color: #777; text-decoration: none; font-weight: bold; text-transform: uppercase; font-size: 0.85em; padding: 10px 15px; transition: 0.3s; }
         nav a:hover { color: var(--main-color); }
-        nav a.active { color: var(--main-color); border-bottom: 2px solid var(--main-color); }
+        nav a.active { color: #f7eb5b !important; border-bottom: 2px solid #f7eb5b; }
 
         /* Sélecteur de Saison */
         .season-selector { margin-bottom: 30px; display: flex; justify-content: center; align-items: center; gap: 15px; }
         .season-btn { background: #222; color: #888; padding: 6px 15px; text-decoration: none; border-radius: 5px; border: 1px solid #333; font-size: 0.8em; transition: 0.3s; }
-        .season-btn.active { background: var(--main-color) !important; color: #111 !important; font-weight: bold; border-color: var(--main-color); }
+        .season-btn.active { background-color: #f7eb5b !important; color: #111 !important; font-weight: bold; border-color: #f7eb5b !important; }
 
-        /* En-tête de page */
-        .page-intro h2 { text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px; }
-        .page-intro h3 { color: var(--main-color); font-size: 1.1em; text-transform: uppercase; border-bottom: 1px solid var(--main-color); display: inline-block; padding-bottom: 3px; }
+        /* En-tête de page : Le titre de section prend la couleur */
+        .page-intro h2 { text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px; color: #eee; }
+        .page-intro h3 { 
+            color: #f7eb5b !important; 
+            font-size: 1.1em; text-transform: uppercase; 
+            border-bottom: 1px solid #f7eb5b; 
+            display: inline-block; padding-bottom: 3px; 
+        }
 
         /* Tableaux DataTable */
-        .dataTables_wrapper { background: #1a1a1a; padding: 15px; border-radius: 10px; border: 1px solid #252525; }
-        table.dataTable thead th { background: #252525 !important; color: var(--main-color) !important; text-transform: uppercase; font-size: 0.75em; padding: 12px; }
+        .dataTables_wrapper { background: #1a1a1a; padding: 15px; border-radius: 10px; border: 1px solid #252525; text-align: left; }
+        table.dataTable thead th { background: #252525 !important; color: #f7eb5b !important; text-transform: uppercase; font-size: 0.75em; padding: 12px; }
         
-        /* Bannière Icons */
-        .banner-icons img { width: 60px; height: 60px; transition: 0.4s ease; filter: grayscale(30%); cursor: help; }
-        .banner-icons img:hover { transform: translateY(-10px) scale(1.2); filter: grayscale(0%) drop-shadow(0 5px 15px var(--main-color)); }
+        /* Bannière Icons : SANS LUEUR COLORÉE */
+        .banner-icons img { width: 60px; height: 60px; transition: 0.4s ease; filter: grayscale(20%); cursor: pointer; }
+        .banner-icons img:hover { 
+            transform: translateY(-10px) scale(1.2); 
+            filter: grayscale(0%) drop-shadow(0 10px 15px rgba(0,0,0,0.8)); 
+        }
         
         
         .search-box { margin: 10px 0; }
@@ -73,10 +85,10 @@
         <header class="page-intro">
             <h2>Player's Journey</h2>
             <h3>LH02 • Apr–Jun 2026</h3>
-            <p style='color:#777; font-size:0.9em;'>Search for a player to see their ELO evolution over the season.</p>
+            <p style='color:#777; font-size:0.9em; max-width:700px; margin: 10px auto;'>Search for a player to see their ELO evolution over the season.</p>
         </header>
 
-        <main>
+        <main style="margin-top:30px;">
         <div class="search-box">
             <input list="playerList" id="playerName" placeholder="Search Player..." oninput="updateChart()">
             <datalist id="playerList">
@@ -89,8 +101,8 @@
         </div>
     </main>
         
-        <footer style="margin-top:50px; padding:20px; color:#444; font-size:0.8em; border-top:1px solid #222;">
-            RootElo System &copy; 2026 | Woodland War Room
+        <footer style="margin-top:80px; padding:30px; color:#444; font-size:0.8em; border-top:1px solid #222;">
+            RootElo System &copy; 2026 | Woodland War Room | Non-official Fan Tool
         </footer>
     </div>
 
