@@ -229,7 +229,7 @@ current_history = {k.split('+')[0].split('#')[0]: v for k, v in player_history.i
 # =========================================================================
 # --- 7. HTML SKELETON (MATRIX NAVIGATION) ---
 # =========================================================================
-def generate_page_html(title, page_heading, current_page, content, page_description="", custom_css="", custom_js="", extra_head=""):
+def generate_page_html(title, page_heading, current_page, content, subtitle="", page_description="", custom_css="", custom_js="", extra_head=""):
     is_archive = "_lh01.html" in current_page
     
     # 1. Main Navigation (Adapts to selected season)
@@ -308,6 +308,12 @@ def generate_page_html(title, page_heading, current_page, content, page_descript
         {sub_nav_html}
         
         <h2 class="page-heading">{page_heading}</h2>
+
+        {"<h3>" + subtitle + "</h3>" if subtitle else ""}
+    
+        <p style="color: #888; font-size: 0.9em; margin-bottom: 30px;">
+            {page_description}
+        </p>
         
         {content}
     </div>
@@ -338,10 +344,6 @@ def build_leaderboard_page(df, filename, title, heading, subtitle, description):
             </tr>"""
 
     content = f"""
-        <h3>{subtitle}</h3>
-        <p style="color: #888; font-size: 0.9em; margin-top: -15px; margin-bottom: 30px; max-width: 600px; margin-left: auto; margin-right: auto;">
-            {description}
-        </p>
         <table id="leaderboard" class="display nowrap">
             <thead>
                 <tr><th>Rank</th><th>Tier</th><th>Player</th><th>ELO</th><th>Games</th><th>Wins</th><th>Win Rate</th><th>Peak</th><th>Last</th></tr>
@@ -393,7 +395,7 @@ def build_leaderboard_page(df, filename, title, heading, subtitle, description):
     });
     </script>"""
     with open(filename, "w", encoding="utf-8") as f:
-        f.write(generate_page_html(title, heading, filename, content, page_description=description, custom_css=css, custom_js=js))
+        f.write(generate_page_html(title, heading, filename, content, subtitle=subtitle, page_description=description, custom_css=css, custom_js=js))
 
 def build_matches_page(df, filename, title, heading, subtitle, description):
     match_rows = ""
@@ -418,10 +420,6 @@ def build_matches_page(df, filename, title, heading, subtitle, description):
             </tr>"""
 
     content = f"""
-        <h3>{subtitle}</h3>
-        <p style="color: #888; font-size: 0.9em; margin-top: -15px; margin-bottom: 30px; max-width: 600px; margin-left: auto; margin-right: auto;">
-            {description}
-        </p>
         <table id="matchesTable" class="display nowrap responsive" style="width:100%">
             <thead><tr><th>Rank</th><th>ELO</th><th>Date</th><th>Lineup (Winner First)</th><th>ID</th></tr></thead>
             <tbody>{match_rows}</tbody>
@@ -450,7 +448,7 @@ def build_matches_page(df, filename, title, heading, subtitle, description):
     });
     </script>"""
     with open(filename, "w", encoding="utf-8") as f:
-        f.write(generate_page_html(title, heading, filename, content, page_description=description, custom_css=css, custom_js=js))
+        f.write(generate_page_html(title, heading, filename, content, subtitle=subtitle, page_description=description, custom_css=css, custom_js=js))
 
 def build_trends_page(history_dict, filename, title, heading, subtitle, description):
     if not history_dict: return
@@ -459,10 +457,6 @@ def build_trends_page(history_dict, filename, title, heading, subtitle, descript
     player_names_list = sorted(list(history_dict.keys()))
 
     content = f"""
-        <h3>{subtitle}</h3>
-        <p style="color: #888; font-size: 0.9em; margin-top: -15px; margin-bottom: 30px; max-width: 600px; margin-left: auto; margin-right: auto;">
-            {description}
-        </p>
         <div class="search-box">
             <input list="playerList" id="playerName" placeholder="Search Player..." oninput="updateChart()">
             <datalist id="playerList">
@@ -507,7 +501,7 @@ def build_trends_page(history_dict, filename, title, heading, subtitle, descript
         }}
     </script>"""
     with open(filename, "w", encoding="utf-8") as f:
-        f.write(generate_page_html(title, heading, filename, content, page_description=description, custom_css=css, custom_js=js, extra_head=extra_head))
+        f.write(generate_page_html(title, heading, filename, content, subtitle=subtitle, page_description=description, custom_css=css, custom_js=js, extra_head=extra_head))
         
 def build_about_page(filename, title, heading):
     codex_text = f"""
