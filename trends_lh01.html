@@ -11,8 +11,8 @@
         body { font-family: 'Segoe UI', Helvetica, Arial, sans-serif; background: #121212; color: #eee; text-align: center; padding: 20px 5px; margin: 0; overflow-x: hidden; }
         .container { width: 95%; max-width: 1100px; margin: auto; background: #1e1e1e; padding: 20px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.6); box-sizing: border-box; }
         
-        /* BANNER LOGIC */
-        .banner-container { display: flex; align-items: center; justify-content: center; gap: 40px; margin-bottom: 20px; flex-wrap: nowrap; }
+        /* BANNER */
+        .banner-container { display: flex; align-items: center; justify-content: center; gap: 40px; margin-bottom: 20px; }
         .banner-icons { display: flex; gap: 15px; align-items: center; }
         
         .banner-icons img { 
@@ -40,7 +40,7 @@
         nav a:hover { color: #f7eb5b; background: rgba(255,255,255,0.05); }
         nav a.active { color: #fff; background: #f7eb5b; box-shadow: 0 4px 12px rgba(0,0,0,0.4); }
         
-        /* SEASON SELECTOR (RESTORED) */
+        /* SEASON SELECTOR */
         .season-selector { display: flex; align-items: center; justify-content: center; gap: 12px; margin: 0 auto 30px; background: rgba(255,255,255,0.03); padding: 8px 18px; border-radius: 50px; width: fit-content; border: 1px solid #333; }
         .season-label { font-size: 0.7em; text-transform: uppercase; color: #555; letter-spacing: 1.2px; font-weight: bold; }
         .season-btn { text-decoration: none; font-size: 0.75em; font-weight: bold; color: #777; padding: 5px 14px; border-radius: 20px; border: 1px solid #444; transition: 0.2s; }
@@ -50,27 +50,30 @@
         .page-intro h3 { margin: 0; color: #f7eb5b; font-size: 1.1em; font-weight: bold; text-transform: uppercase; border-bottom: 2px solid #f7eb5b; padding-bottom: 4px; display: inline-block; }
         table.dataTable thead th { background: #252525 !important; color: #f7eb5b !important; font-size: 0.75em; text-transform: uppercase; padding: 12px; }
 
-        /* --- MOBILE PORTRAIT (THE FIX) --- */
+        /* --- MOBILE PORTRAIT (Icones SOUS le titre) --- */
         @media (max-width: 768px) and (orientation: portrait) {
             .banner-container { 
                 flex-wrap: wrap; 
-                gap: 10px; 
-            }
-            .banner-icons { 
-                order: 1; /* Les deux groupes d'icones montent en haut */
-                gap: 10px;
+                flex-direction: column;
+                gap: 15px; 
             }
             .banner-center { 
-                order: 2; 
-                width: 100%; /* Force le titre à passer à la ligne suivante */
-                margin-top: 10px;
+                order: 1; /* Le titre monte en premier */
+                width: 100%;
+            }
+            .banner-icons { 
+                order: 2; /* Les icones descendent en dessous */
+                gap: 10px;
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
             }
             .banner-icons img { width: 45px; height: 45px; }
             .banner-icons img:hover { width: 70px; height: 70px; transform: translateY(-5px) scale(1.1); }
             .site-title { font-size: 1.8em; }
         }
 
-        /* --- MOBILE LANDSCAPE (PC LOOK) --- */
+        /* --- MOBILE LANDSCAPE (Mode PC) --- */
         @media (max-width: 950px) and (orientation: landscape) {
             .banner-container { flex-direction: row; gap: 20px; flex-wrap: nowrap; }
             .banner-icons img { width: 45px; height: 45px; }
