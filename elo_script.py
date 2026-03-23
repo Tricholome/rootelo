@@ -267,11 +267,11 @@ def generate_page_html(title, page_heading, current_page, content, subtitle="", 
             {buttons_html}
         </div>
         """
-    base_css = f"""
+   base_css = f"""
         body {{ font-family: 'Segoe UI', Helvetica, Arial, sans-serif; background: #121212; color: #eee; text-align: center; padding: 20px 5px; margin: 0; overflow-x: hidden; }}
         .container {{ width: 95%; max-width: 1100px; margin: auto; background: #1e1e1e; padding: 20px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.6); box-sizing: border-box; }}
         
-        /* --- BANNER (ADAPTIVE) --- */
+        /* --- BANNER --- */
         .banner-container {{ 
             display: flex; 
             align-items: center; 
@@ -279,28 +279,33 @@ def generate_page_html(title, page_heading, current_page, content, subtitle="", 
             gap: 40px; 
             flex-wrap: wrap; 
         }}
-        .banner-icons {{ display: flex; gap: 20px; }}
+        
+        /* Force les icônes à rester en ligne horizontale */
+        .banner-icons {{ 
+            display: flex; 
+            gap: 15px; 
+            justify-content: center;
+            align-items: center;
+        }}
         
         .banner-icons img {{ 
-            width: 65px; height: 65px; object-fit: contain; 
+            width: 60px; height: 60px; object-fit: contain; 
             filter: drop-shadow(0 4px 6px rgba(0,0,0,0.6)); 
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
             cursor: pointer;
         }}
 
-        /* Effet de zoom uniquement sur Desktop (souris) */
-        @media (hover: hover) {{
-            .banner-icons img:hover {{ 
-                width: 130px; height: 130px; 
-                filter: drop-shadow(0 15px 25px rgba(0,0,0,0.9));
-                transform: translateY(-20px) scale(1.1);
-                z-index: 100;
-            }}
-            .banner-icons.left img:hover {{ transform: translateY(-20px) scale(1.1) rotate(-8deg); }}
-            .banner-icons.right img:hover {{ transform: translateY(-20px) scale(1.1) rotate(8deg); }}
+        /* Effet de zoom maintenu */
+        .banner-icons img:hover {{ 
+            width: 110px; height: 110px; 
+            filter: drop-shadow(0 15px 25px rgba(0,0,0,0.9));
+            transform: translateY(-10px) scale(1.15);
+            z-index: 100;
         }}
+        .banner-icons.left img:hover {{ transform: translateY(-10px) scale(1.15) rotate(-8deg); }}
+        .banner-icons.right img:hover {{ transform: translateY(-10px) scale(1.15) rotate(8deg); }}
 
-        .site-title {{ color: #eee; font-size: 2.2em; margin: 0; letter-spacing: 3px; text-transform: uppercase; }}
+        .site-title {{ color: #eee; font-size: 2.2em; margin: 10px 0 0; letter-spacing: 3px; text-transform: uppercase; }}
         .site-subtitle {{ font-style: italic; color: #777; font-size: 0.85em; margin: 5px 0 0; letter-spacing: 1px; }}
         
         /* Navigation */
@@ -325,27 +330,31 @@ def generate_page_html(title, page_heading, current_page, content, subtitle="", 
         table.dataTable thead th {{ background: #252525 !important; color: {main_color} !important; font-size: 0.75em; text-transform: uppercase; padding: 12px; }}
         table.dataTable td {{ border-bottom: 1px solid #2a2a2a; padding: 10px; font-size: 0.9em; color: #ccc; }}
         
-        /* --- RESPONSIVE / MOBILE PORTRAIT --- */
+        /* --- MOBILE (Vertical / Portrait) --- */
         @media (max-width: 768px) {{
             .banner-container {{ 
                 flex-direction: column; 
-                gap: 15px; 
+                gap: 5px; 
             }}
+            
+            /* On regroupe les deux blocs d'icônes en un seul conteneur visuel */
             .banner-icons {{
-                order: -1; /* Les icônes passent au-dessus du titre */
-                gap: 10px;
+                order: -1; 
+                gap: 8px;
             }}
+
             .banner-icons img {{ 
-                width: 50px; height: 50px; 
+                width: 45px; height: 45px; 
             }}
-            /* Statique sur mobile : on ignore les hovers */
-            .banner-icons img:hover {{
-                width: 50px !important;
-                height: 50px !important;
-                transform: none !important;
-                filter: drop-shadow(0 4px 6px rgba(0,0,0,0.6)) !important;
+            
+            /* Ajustement du zoom sur mobile pour pas qu'il sorte de l'écran */
+            .banner-icons img:hover {{ 
+                width: 70px; height: 70px; 
+                transform: translateY(-5px) scale(1.1); 
             }}
-            .site-title {{ font-size: 1.8em; }}
+
+            .site-title {{ font-size: 1.7em; letter-spacing: 2px; }}
+            .site-subtitle {{ font-size: 0.75em; }}
         }}
     """
     
