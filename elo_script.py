@@ -602,7 +602,13 @@ if not archive_final_df.empty:
 
 # A. Generate Current Season Pages (Live API Data)
 print("Generating Current Season pages...")
-build_leaderboard_page(display_current_df, "index.html", "Leaderboard • Root League", "Current Season", f"Alternative ELO Leaderboard • Data until {CUTOFF_DATE}")
+build_leaderboard_page(
+    display_current_df, 
+    "index.html", 
+    "Leaderboard • Rootelo", 
+    "Alternative ELO Leaderboard", 
+    f"The official power rankings for the current competitive season. Data tracked until {CUTOFF_DATE}."
+)
 build_matches_page(current_matches_df, "matches.html", "Match Archive • Root League", "Match Archive")
 build_trends_page(current_history, "trends.html", "Player Progression • Root League", "Player Progression")
 
