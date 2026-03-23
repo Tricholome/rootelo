@@ -256,9 +256,13 @@ def generate_page_html(title, page_heading, current_page, content, subtitle="", 
         body {{ font-family: 'Segoe UI', Helvetica, Arial, sans-serif; background: #121212; color: #eee; text-align: center; padding: 20px 5px; margin: 0; overflow-x: hidden; }}
         .container {{ width: 95%; max-width: 1100px; margin: auto; background: #1e1e1e; padding: 20px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.6); box-sizing: border-box; }}
         
-        .banner-container {{ display: flex; align-items: center; justify-content: center; gap: 40px; margin-bottom: 20px; }}
-        .banner-icons {{ display: flex; gap: 15px; align-items: center; }}
+        /* BANNER DESKTOP */
+        .banner-container {{ display: flex; align-items: center; justify-content: center; gap: 40px; margin-bottom: 20px; flex-wrap: nowrap; }}
+        .banner-center {{ order: 2; }}
+        .banner-icons.left {{ order: 1; }}
+        .banner-icons.right {{ order: 3; }}
         
+        .banner-icons {{ display: flex; gap: 15px; align-items: center; }}
         .banner-icons img {{ 
             width: 60px; height: 60px; object-fit: contain; 
             filter: drop-shadow(0 4px 6px rgba(0,0,0,0.6)); 
@@ -290,26 +294,42 @@ def generate_page_html(title, page_heading, current_page, content, subtitle="", 
         .page-intro h3 {{ margin: 0; color: {main_color}; font-size: 1.1em; font-weight: bold; text-transform: uppercase; border-bottom: 2px solid {main_color}; padding-bottom: 4px; display: inline-block; }}
         table.dataTable thead th {{ background: #252525 !important; color: {main_color} !important; font-size: 0.75em; text-transform: uppercase; padding: 12px; }}
 
-        /* --- MOBILE PORTRAIT (FIX : Titre en haut, 4 icônes sur UNE SEULE ligne en bas) --- */
+        /* --- MOBILE PORTRAIT (Titre HAUT, 4 Icones BAS) --- */
         @media (max-width: 768px) and (orientation: portrait) {{
             .banner-container {{ 
-                display: block; /* On casse le flex parent pour gérer l'empilement manuellement */
+                flex-wrap: wrap; 
+                flex-direction: column;
+                gap: 15px; 
             }}
-            .banner-center {{ 
-                margin-bottom: 15px; 
-            }}
+            .banner-center {{ order: 1; width: 100%; }}
+            .banner-icons.left {{ order: 2; }}
+            .banner-icons.right {{ order: 3; }}
+            
             .banner-icons {{ 
-                display: inline-flex; /* Permet aux deux blocs de se toucher */
+                display: inline-flex; 
                 gap: 10px;
-                vertical-align: middle;
+                justify-content: center;
             }}
+            /* Réduction de la marge entre les deux blocs d'icones pour l'illusion d'une ligne */
+            .banner-icons.left {{ margin-right: -15px; }}
+            
             .banner-icons img {{ width: 42px; height: 42px; }}
+            .banner-icons img:hover {{ width: 70px; height: 70px; transform: translateY(-5px) scale(1.1); }}
             .site-title {{ font-size: 1.8em; }}
         }}
 
+        /* --- MOBILE LANDSCAPE (Look PC Restauré) --- */
         @media (max-width: 950px) and (orientation: landscape) {{
-            .banner-container {{ display: flex; flex-direction: row; gap: 20px; }}
+            .banner-container {{ 
+                flex-direction: row; 
+                gap: 25px; 
+                flex-wrap: nowrap;
+            }}
+            .banner-center {{ order: 2; width: auto; }}
+            .banner-icons.left {{ order: 1; }}
+            .banner-icons.right {{ order: 3; }}
             .banner-icons img {{ width: 45px; height: 45px; }}
+            .site-title {{ font-size: 1.6em; }}
         }}
     """
     
@@ -322,8 +342,8 @@ def generate_page_html(title, page_heading, current_page, content, subtitle="", 
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
     <style>
-        {base_css}
-        {custom_css}
+        {{base_css}}
+        {{custom_css}}
     </style>
     {extra_head}
 </head>
@@ -331,13 +351,13 @@ def generate_page_html(title, page_heading, current_page, content, subtitle="", 
     <div class="container">
         <header class="site-header">
             <div class="banner-container">
-                <div class="banner-center">
-                    <h1 class="site-title">ROOTELO</h1>
-                    <p class="site-subtitle">A Metric of Woodland Skill and Will</p>
-                </div>
                 <div class="banner-icons left">
                     <img src="assets/icons/bird.png">
                     <img src="assets/icons/fox.png">
+                </div>
+                <div class="banner-center">
+                    <h1 class="site-title">ROOTELO</h1>
+                    <p class="site-subtitle">A Metric of Woodland Skill and Will</p>
                 </div>
                 <div class="banner-icons right">
                     <img src="assets/icons/rabbit.png">
