@@ -271,22 +271,8 @@ def generate_page_html(title, page_heading, current_page, content, subtitle="", 
         body {{ font-family: 'Segoe UI', Helvetica, Arial, sans-serif; background: #121212; color: #eee; text-align: center; padding: 20px 5px; margin: 0; overflow-x: hidden; }}
         .container {{ width: 95%; max-width: 1100px; margin: auto; background: #1e1e1e; padding: 20px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.6); box-sizing: border-box; }}
         
-        /* --- BANNER --- */
-        .banner-container {{ 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            gap: 40px; 
-            flex-wrap: wrap; 
-        }}
-        
-        /* Force les icônes à rester en ligne horizontale */
-        .banner-icons {{ 
-            display: flex; 
-            gap: 15px; 
-            justify-content: center;
-            align-items: center;
-        }}
+        .banner-container {{ display: flex; align-items: center; justify-content: center; gap: 40px; flex-wrap: wrap; }}
+        .banner-icons {{ display: flex; gap: 15px; justify-content: center; align-items: center; }}
         
         .banner-icons img {{ 
             width: 60px; height: 60px; object-fit: contain; 
@@ -295,7 +281,6 @@ def generate_page_html(title, page_heading, current_page, content, subtitle="", 
             cursor: pointer;
         }}
 
-        /* Effet de zoom maintenu */
         .banner-icons img:hover {{ 
             width: 110px; height: 110px; 
             filter: drop-shadow(0 15px 25px rgba(0,0,0,0.9));
@@ -308,53 +293,23 @@ def generate_page_html(title, page_heading, current_page, content, subtitle="", 
         .site-title {{ color: #eee; font-size: 2.2em; margin: 10px 0 0; letter-spacing: 3px; text-transform: uppercase; }}
         .site-subtitle {{ font-style: italic; color: #777; font-size: 0.85em; margin: 5px 0 0; letter-spacing: 1px; }}
         
-        /* Navigation */
         nav {{ margin: 25px 0; border-bottom: 1px solid #333; padding-bottom: 20px; display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }}
         nav a {{ color: #888; text-decoration: none; font-weight: bold; text-transform: uppercase; font-size: 0.8em; padding: 8px 16px; border-radius: 6px; transition: 0.3s; border: 1px solid transparent; }}
         nav a:hover {{ color: {main_color}; background: rgba(255,255,255,0.05); }}
         nav a.active {{ color: #fff; background: {main_color}; box-shadow: 0 4px 12px rgba(0,0,0,0.4); }}
         
-        /* Season Selector */
         .season-selector {{ display: flex; align-items: center; justify-content: center; gap: 12px; margin: 0 auto 30px; background: rgba(255,255,255,0.03); padding: 8px 18px; border-radius: 50px; width: fit-content; border: 1px solid #333; }}
-        .season-label {{ font-size: 0.7em; text-transform: uppercase; color: #555; letter-spacing: 1.2px; font-weight: bold; }}
-        .season-btn {{ text-decoration: none; font-size: 0.75em; font-weight: bold; color: #777; padding: 5px 14px; border-radius: 20px; border: 1px solid #444; transition: 0.2s; }}
-        .season-btn:hover {{ border-color: {main_color}; color: #eee; }}
         .season-btn.active {{ background: {main_color}; color: #111 !important; border-color: {main_color}; font-weight: 900; }}
 
-        /* Page Titles */
-        .page-intro {{ margin-bottom: 35px; display: flex; flex-direction: column; align-items: center; gap: 6px; }}
-        .page-intro h2 {{ margin: 0; text-transform: uppercase; color: #eee; font-size: 1.3em; }}
         .page-intro h3 {{ margin: 0; color: {main_color}; font-size: 1.1em; font-weight: bold; text-transform: uppercase; border-bottom: 1px solid {main_color}; padding-bottom: 4px; }}
         
-        /* Tables */
         table.dataTable thead th {{ background: #252525 !important; color: {main_color} !important; font-size: 0.75em; text-transform: uppercase; padding: 12px; }}
-        table.dataTable td {{ border-bottom: 1px solid #2a2a2a; padding: 10px; font-size: 0.9em; color: #ccc; }}
-        
-        /* --- MOBILE (Vertical / Portrait) --- */
+
         @media (max-width: 768px) {{
-            .banner-container {{ 
-                flex-direction: column; 
-                gap: 5px; 
-            }}
-            
-            /* On regroupe les deux blocs d'icônes en un seul conteneur visuel */
-            .banner-icons {{
-                order: -1; 
-                gap: 8px;
-            }}
-
-            .banner-icons img {{ 
-                width: 45px; height: 45px; 
-            }}
-            
-            /* Ajustement du zoom sur mobile pour pas qu'il sorte de l'écran */
-            .banner-icons img:hover {{ 
-                width: 70px; height: 70px; 
-                transform: translateY(-5px) scale(1.1); 
-            }}
-
-            .site-title {{ font-size: 1.7em; letter-spacing: 2px; }}
-            .site-subtitle {{ font-size: 0.75em; }}
+            .banner-container {{ flex-direction: column; gap: 5px; }}
+            .banner-icons {{ order: -1; gap: 8px; }}
+            .banner-icons img {{ width: 45px; height: 45px; }}
+            .site-title {{ font-size: 1.7em; }}
         }}
     """
     
