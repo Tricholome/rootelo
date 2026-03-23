@@ -66,7 +66,7 @@ try:
     if os.path.exists(ARCHIVE_TRENDS_FILE):
         with open(ARCHIVE_TRENDS_FILE, "r", encoding="utf-8") as f:
             archive_history = json.load(f)
-            archive_history = {k.split('+')[0].split('#')[0]: v for k, v in raw_archive.items()}
+            archive_history = {k.split('+')[0].split('#')[0]: v for k, v in archive_history.items()}
     print("Archive LH01 loaded successfully.")
 except Exception as e:
     print(f"Error loading archive files: {e}")
@@ -315,7 +315,7 @@ def generate_page_html(title, page_heading, current_page, content, custom_css=""
         /* Style pour le titre fixe */
         .site-header {{ margin-bottom: 20px; }}
         .site-title {{ color: #4a90e2; font-size: 2.5em; margin-bottom: 0; letter-spacing: 3px; }}
-        .site-subtitle {{ font-family: "Luminari", "Apple Chancery", "Palatino", serif; color: #777; font-size: 0.9em; margin-top: 5px; letter-spacing: 1px; }}
+        .site-subtitle {{ font-style: italic; color: #777; font-size: 0.9em; margin-top: 5px; letter-spacing: 1px; }}
         .page-heading {{ color: #eee; text-transform: uppercase; font-size: 1.2em; margin-top: 30px; border-bottom: 1px solid #333; display: inline-block; padding-bottom: 5px; }}
         {custom_css}
     </style>
@@ -551,12 +551,8 @@ def build_about_page(filename, title, heading):
         f.write(generate_page_html(title, heading, filename, codex_text))
 
 # =========================================================================
-# --- 9. DATA PREPARATION ---
-# =========================================================================
-# Cleaning of the archive
-if archive_history:
-    archive_history = {str(k).split('+')[0].split('#')[0]: v for k, v in archive_history.items()}
-    
+# --- 9. FILTERS ---
+# ========================================================================
 # Rule: To be displayed on the leaderboard, a player needs at least 1 win.
 
 # Filter Current Season (LH02)
