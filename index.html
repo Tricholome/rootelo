@@ -2,46 +2,63 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Leaderboard • Rootelo</title>
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
     <style>
         
         body { font-family: 'Segoe UI', Helvetica, Arial, sans-serif; background: #121212; color: #eee; text-align: center; padding: 20px 5px; margin: 0; overflow-x: hidden; }
         .container { width: 95%; max-width: 1100px; margin: auto; background: #1e1e1e; padding: 20px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.6); box-sizing: border-box; }
         
-        .banner-container { display: flex; align-items: center; justify-content: center; gap: 40px; margin-bottom: 20px; }
+        .banner-container { display: flex; align-items: center; justify-content: center; gap: 40px; }
         .banner-icons { display: flex; gap: 20px; }
         
         .banner-icons img { 
             width: 85px; height: 85px; object-fit: contain; 
             filter: drop-shadow(0 4px 6px rgba(0,0,0,0.6)); 
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            cursor: pointer;
         }
 
-        /* This class will be toggled by JavaScript */
-        .icon-highlight { 
-            width: 150px !important; height: 150px !important; 
-            filter: drop-shadow(0 15px 25px rgba(0,0,0,0.9)) !important;
+        .banner-icons img:hover { 
+            width: 150px; height: 150px; 
+            filter: drop-shadow(0 15px 25px rgba(0,0,0,0.9));
+            transform: translateY(-20px) scale(1.2);
             z-index: 100;
         }
-        .icon-highlight.left { transform: translateY(-20px) scale(1.2) rotate(-8deg); }
-        .icon-highlight.right { transform: translateY(-20px) scale(1.2) rotate(8deg); }
 
+        .banner-icons.left img:hover { transform: translateY(-20px) scale(1.2) rotate(-8deg); }
+        .banner-icons.right img:hover { transform: translateY(-20px) scale(1.2) rotate(8deg); }
+
+        /* ROOTELO reste neutre */
         .site-title { color: #eee; font-size: 3.5em; margin: 0; letter-spacing: 5px; text-transform: uppercase; font-weight: 900; }
         .site-subtitle { font-family: "Luminari", serif; color: #d4a76a; font-size: 1.3em; margin-top: 10px; }
         
+        /* Navigation : L'élément actif prend la couleur */
         nav { margin: 25px 0; border-bottom: 1px solid #333; padding-bottom: 20px; display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }
         nav a { color: #888; text-decoration: none; font-weight: bold; text-transform: uppercase; font-size: 0.8em; padding: 8px 16px; border-radius: 6px; transition: 0.3s; border: 1px solid transparent; }
         nav a:hover { color: #67c0c7; background: rgba(255,255,255,0.05); }
         nav a.active { color: #fff; background: #67c0c7; box-shadow: 0 4px 12px rgba(0,0,0,0.4); }
         
+        /* Season Selector : Le bouton actif prend la couleur */
         .season-selector { display: flex; align-items: center; justify-content: center; gap: 12px; margin: 0 auto 30px; background: rgba(255,255,255,0.03); padding: 8px 18px; border-radius: 50px; width: fit-content; border: 1px solid #333; }
+        .season-label { font-size: 0.7em; text-transform: uppercase; color: #555; letter-spacing: 1.2px; font-weight: bold; }
+        .season-btn { text-decoration: none; font-size: 0.75em; font-weight: bold; color: #777; padding: 5px 14px; border-radius: 20px; border: 1px solid #444; transition: 0.2s; }
+        .season-btn:hover { border-color: #67c0c7; color: #eee; }
         .season-btn.active { background: #67c0c7; color: #111 !important; border-color: #67c0c7; font-weight: 900; }
 
-        .page-intro h3 { color: #67c0c7; font-size: 1.1em; font-weight: bold; text-transform: uppercase; border-bottom: 1px solid #67c0c7; padding-bottom: 4px; display: inline-block; }
+        /* Titre de la page prend la couleur */
+        .page-intro { margin-bottom: 35px; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+        .page-intro h2 { margin: 0; text-transform: uppercase; color: #eee; font-size: 1.3em; }
+        .page-intro h3 { margin: 0; color: #67c0c7; font-size: 1.1em; font-weight: bold; text-transform: uppercase; border-bottom: 1px solid #67c0c7; padding-bottom: 4px; }
+        
+        /* Tables */
+        table.dataTable thead th { background: #252525 !important; color: #67c0c7 !important; font-size: 0.75em; text-transform: uppercase; padding: 12px; }
+        table.dataTable td { border-bottom: 1px solid #2a2a2a; padding: 10px; font-size: 0.9em; color: #ccc; }
         
         @media (max-width: 900px) {
+            .banner-container { gap: 15px; }
             .banner-icons img { width: 60px; height: 60px; }
             .site-title { font-size: 2.2em; }
         }
@@ -68,23 +85,30 @@
 </head>
 <body>
     <div class="container">
-        <div class="banner-container">
-            <div class="banner-icons left">
-                <img src="assets/icons/bird.png" id="icon-bird">
-                <img src="assets/icons/fox.png" id="icon-fox">
-            </div>
-            <div class="banner-center">
-                <h1 class="site-title">ROOTELO</h1>
-                <p class="site-subtitle">A Metric of Woodland Skill and Will</p>
-            </div>
-            <div class="banner-icons right">
-                <img src="assets/icons/rabbit.png" id="icon-rabbit">
-                <img src="assets/icons/mouse_2.webp" id="icon-mouse">
+        <div class="site-header">
+            <div class="banner-container">
+                <div class="banner-icons left">
+                    <img src="assets/icons/bird.png" title="Bird Tier">
+                    <img src="assets/icons/fox.png" title="Fox Tier">
+                </div>
+                <div class="banner-center">
+                    <h1 class="site-title">ROOTELO</h1>
+                    <p class="site-subtitle">A Metric of Woodland Skill and Will</p>
+                </div>
+                <div class="banner-icons right">
+                    <img src="assets/icons/rabbit.png" title="Rabbit Tier">
+                    <img src="assets/icons/mouse_new.webp" title="Mouse Tier">
+                </div>
             </div>
         </div>
 
-        <nav id="main-nav"><a href="index.html" class="active" data-faction="bird">Leaderboard</a><a href="matches.html" class="" data-faction="fox">Top Tables</a><a href="trends.html" class="" data-faction="rabbit">Player's Journey</a><a href="about.html" class="" data-faction="mouse">Codex</a></nav>
-        <div class="season-selector"><span class="season-label">Select Season</span><a href="index_lh01.html" class="season-btn ">LH01</a><a href="index.html" class="season-btn active">LH02</a></div>
+        <nav><a href="index.html" class="active">Leaderboard</a><a href="matches.html" class="">Top Tables</a><a href="trends.html" class="">Player's Journey</a><a href="about.html" class="">Codex</a></nav>
+        
+        <div class="season-selector">
+            <span class="season-label">Select Season</span>
+            <a href="index_lh01.html" class="season-btn ">LH01</a><a href="index.html" class="season-btn active">LH02</a>
+        </div>
+        
 
         <header class="page-intro">
             <h2>Leaderboard</h2>
@@ -105,37 +129,13 @@
             <span class="footer-tier-item"><img src="assets/icons/fox.png"> 1400+</span>
             <span class="footer-tier-item"><img src="assets/icons/rabbit.png"> 1300+</span>
             <span class="footer-tier-item"><img src="assets/icons/mouse.png"> 1200+</span><br>
-            Generated on 2026-03-23 21:17 UTC
+            Generated on 2026-03-23 21:23 UTC
         </div>
     </main>
     </div>
-
-    <script>
-        // Synchronize Nav Hover with Banner Icons
-        const navLinks = document.querySelectorAll('#main-nav a');
-        
-        navLinks.forEach(link => {
-            link.addEventListener('mouseenter', () => {
-                const faction = link.getAttribute('data-faction');
-                const icon = document.getElementById('icon-' + faction);
-                if (icon) {
-                    const sideClass = icon.closest('.banner-icons').classList.contains('left') ? 'left' : 'right';
-                    icon.classList.add('icon-highlight', sideClass);
-                }
-            });
-            
-            link.addEventListener('mouseleave', () => {
-                const faction = link.getAttribute('data-faction');
-                const icon = document.getElementById('icon-' + faction);
-                if (icon) {
-                    icon.classList.remove('icon-highlight', 'left', 'right');
-                }
-            });
-        });
-    </script>
-
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
     <script>
     $(document).ready(function() {
         $.extend($.fn.dataTable.ext.type.order, { "rank-pre": function (d) { return d === "-" ? 9999 : parseInt(d); } });

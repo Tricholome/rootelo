@@ -2,46 +2,63 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Player's Journey • Rootelo</title>
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
     <style>
         
         body { font-family: 'Segoe UI', Helvetica, Arial, sans-serif; background: #121212; color: #eee; text-align: center; padding: 20px 5px; margin: 0; overflow-x: hidden; }
         .container { width: 95%; max-width: 1100px; margin: auto; background: #1e1e1e; padding: 20px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.6); box-sizing: border-box; }
         
-        .banner-container { display: flex; align-items: center; justify-content: center; gap: 40px; margin-bottom: 20px; }
+        .banner-container { display: flex; align-items: center; justify-content: center; gap: 40px; }
         .banner-icons { display: flex; gap: 20px; }
         
         .banner-icons img { 
             width: 85px; height: 85px; object-fit: contain; 
             filter: drop-shadow(0 4px 6px rgba(0,0,0,0.6)); 
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            cursor: pointer;
         }
 
-        /* This class will be toggled by JavaScript */
-        .icon-highlight { 
-            width: 150px !important; height: 150px !important; 
-            filter: drop-shadow(0 15px 25px rgba(0,0,0,0.9)) !important;
+        .banner-icons img:hover { 
+            width: 150px; height: 150px; 
+            filter: drop-shadow(0 15px 25px rgba(0,0,0,0.9));
+            transform: translateY(-20px) scale(1.2);
             z-index: 100;
         }
-        .icon-highlight.left { transform: translateY(-20px) scale(1.2) rotate(-8deg); }
-        .icon-highlight.right { transform: translateY(-20px) scale(1.2) rotate(8deg); }
 
+        .banner-icons.left img:hover { transform: translateY(-20px) scale(1.2) rotate(-8deg); }
+        .banner-icons.right img:hover { transform: translateY(-20px) scale(1.2) rotate(8deg); }
+
+        /* ROOTELO reste neutre */
         .site-title { color: #eee; font-size: 3.5em; margin: 0; letter-spacing: 5px; text-transform: uppercase; font-weight: 900; }
         .site-subtitle { font-family: "Luminari", serif; color: #d4a76a; font-size: 1.3em; margin-top: 10px; }
         
+        /* Navigation : L'élément actif prend la couleur */
         nav { margin: 25px 0; border-bottom: 1px solid #333; padding-bottom: 20px; display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }
         nav a { color: #888; text-decoration: none; font-weight: bold; text-transform: uppercase; font-size: 0.8em; padding: 8px 16px; border-radius: 6px; transition: 0.3s; border: 1px solid transparent; }
         nav a:hover { color: #f7eb5b; background: rgba(255,255,255,0.05); }
         nav a.active { color: #fff; background: #f7eb5b; box-shadow: 0 4px 12px rgba(0,0,0,0.4); }
         
+        /* Season Selector : Le bouton actif prend la couleur */
         .season-selector { display: flex; align-items: center; justify-content: center; gap: 12px; margin: 0 auto 30px; background: rgba(255,255,255,0.03); padding: 8px 18px; border-radius: 50px; width: fit-content; border: 1px solid #333; }
+        .season-label { font-size: 0.7em; text-transform: uppercase; color: #555; letter-spacing: 1.2px; font-weight: bold; }
+        .season-btn { text-decoration: none; font-size: 0.75em; font-weight: bold; color: #777; padding: 5px 14px; border-radius: 20px; border: 1px solid #444; transition: 0.2s; }
+        .season-btn:hover { border-color: #f7eb5b; color: #eee; }
         .season-btn.active { background: #f7eb5b; color: #111 !important; border-color: #f7eb5b; font-weight: 900; }
 
-        .page-intro h3 { color: #f7eb5b; font-size: 1.1em; font-weight: bold; text-transform: uppercase; border-bottom: 1px solid #f7eb5b; padding-bottom: 4px; display: inline-block; }
+        /* Titre de la page prend la couleur */
+        .page-intro { margin-bottom: 35px; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+        .page-intro h2 { margin: 0; text-transform: uppercase; color: #eee; font-size: 1.3em; }
+        .page-intro h3 { margin: 0; color: #f7eb5b; font-size: 1.1em; font-weight: bold; text-transform: uppercase; border-bottom: 1px solid #f7eb5b; padding-bottom: 4px; }
+        
+        /* Tables */
+        table.dataTable thead th { background: #252525 !important; color: #f7eb5b !important; font-size: 0.75em; text-transform: uppercase; padding: 12px; }
+        table.dataTable td { border-bottom: 1px solid #2a2a2a; padding: 10px; font-size: 0.9em; color: #ccc; }
         
         @media (max-width: 900px) {
+            .banner-container { gap: 15px; }
             .banner-icons img { width: 60px; height: 60px; }
             .site-title { font-size: 2.2em; }
         }
@@ -59,23 +76,30 @@
 </head>
 <body>
     <div class="container">
-        <div class="banner-container">
-            <div class="banner-icons left">
-                <img src="assets/icons/bird.png" id="icon-bird">
-                <img src="assets/icons/fox.png" id="icon-fox">
-            </div>
-            <div class="banner-center">
-                <h1 class="site-title">ROOTELO</h1>
-                <p class="site-subtitle">A Metric of Woodland Skill and Will</p>
-            </div>
-            <div class="banner-icons right">
-                <img src="assets/icons/rabbit.png" id="icon-rabbit">
-                <img src="assets/icons/mouse_2.webp" id="icon-mouse">
+        <div class="site-header">
+            <div class="banner-container">
+                <div class="banner-icons left">
+                    <img src="assets/icons/bird.png" title="Bird Tier">
+                    <img src="assets/icons/fox.png" title="Fox Tier">
+                </div>
+                <div class="banner-center">
+                    <h1 class="site-title">ROOTELO</h1>
+                    <p class="site-subtitle">A Metric of Woodland Skill and Will</p>
+                </div>
+                <div class="banner-icons right">
+                    <img src="assets/icons/rabbit.png" title="Rabbit Tier">
+                    <img src="assets/icons/mouse_new.webp" title="Mouse Tier">
+                </div>
             </div>
         </div>
 
-        <nav id="main-nav"><a href="index.html" class="" data-faction="bird">Leaderboard</a><a href="matches.html" class="" data-faction="fox">Top Tables</a><a href="trends.html" class="active" data-faction="rabbit">Player's Journey</a><a href="about.html" class="" data-faction="mouse">Codex</a></nav>
-        <div class="season-selector"><span class="season-label">Select Season</span><a href="trends_lh01.html" class="season-btn ">LH01</a><a href="trends.html" class="season-btn active">LH02</a></div>
+        <nav><a href="index.html" class="">Leaderboard</a><a href="matches.html" class="">Top Tables</a><a href="trends.html" class="active">Player's Journey</a><a href="about.html" class="">Codex</a></nav>
+        
+        <div class="season-selector">
+            <span class="season-label">Select Season</span>
+            <a href="trends_lh01.html" class="season-btn ">LH01</a><a href="trends.html" class="season-btn active">LH02</a>
+        </div>
+        
 
         <header class="page-intro">
             <h2>Player's Journey</h2>
@@ -96,33 +120,9 @@
         </div>
     </main>
     </div>
-
-    <script>
-        // Synchronize Nav Hover with Banner Icons
-        const navLinks = document.querySelectorAll('#main-nav a');
-        
-        navLinks.forEach(link => {
-            link.addEventListener('mouseenter', () => {
-                const faction = link.getAttribute('data-faction');
-                const icon = document.getElementById('icon-' + faction);
-                if (icon) {
-                    const sideClass = icon.closest('.banner-icons').classList.contains('left') ? 'left' : 'right';
-                    icon.classList.add('icon-highlight', sideClass);
-                }
-            });
-            
-            link.addEventListener('mouseleave', () => {
-                const faction = link.getAttribute('data-faction');
-                const icon = document.getElementById('icon-' + faction);
-                if (icon) {
-                    icon.classList.remove('icon-highlight', 'left', 'right');
-                }
-            });
-        });
-    </script>
-
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
     <script>
         const allData = {"doejurko": [["LH01 Final", 1556]], "Nadav253": [["LH01 Final", 1506]], "Led_Slash": [["LH01 Final", 1492]], "tofuwater": [["LH01 Final", 1482]], "Killerstorm17": [["LH01 Final", 1480]], "kayajam": [["LH01 Final", 1463]], "Mouseman": [["LH01 Final", 1437]], "ShuShuBana": [["LH01 Final", 1436]], "Ctfox": [["LH01 Final", 1435]], "swiftsusan": [["LH01 Final", 1424]], "matemato": [["LH01 Final", 1396]], "Antiproject": [["LH01 Final", 1395]], "Xar149": [["LH01 Final", 1388]], "Tad604": [["LH01 Final", 1375]], "DarthPuniceus": [["LH01 Final", 1375]], "Nefkano": [["LH01 Final", 1363]], "Tricholome": [["LH01 Final", 1361]], "tippop": [["LH01 Final", 1360]], "Seiza": [["LH01 Final", 1352]], "FrancescoBr": [["LH01 Final", 1351]], "Bapgo": [["LH01 Final", 1345]], "Kmahussier": [["LH01 Final", 1342]], "Pliskin": [["LH01 Final", 1342]], "FavorOfTheRabbits": [["LH01 Final", 1342]], "BareGammon": [["LH01 Final", 1335]], "ChippZamoose": [["LH01 Final", 1333]], "KFull": [["LH01 Final", 1332]], "Rabbitwarlord": [["LH01 Final", 1331]], "Bitto": [["LH01 Final", 1321]], "TurkeyNoNo": [["LH01 Final", 1320]], "PokerFace126": [["LH01 Final", 1316]], "TimidTailwind": [["LH01 Final", 1316]], "ninjacat536": [["LH01 Final", 1314]], "time2orush": [["LH01 Final", 1311]], "IMPERATOR": [["LH01 Final", 1310]], "gord20": [["LH01 Final", 1305]], "complexartichoke": [["LH01 Final", 1305]], "Mossfusion": [["LH01 Final", 1304]], "Silver": [["LH01 Final", 1304]], "vinnie": [["LH01 Final", 1300]], "VanKaiserman": [["LH01 Final", 1299]], "Aleph": [["LH01 Final", 1298]], "Blurr": [["LH01 Final", 1296]], "mishaelh1": [["LH01 Final", 1286]], "pooge": [["LH01 Final", 1286]], "dindane": [["LH01 Final", 1286]], "AxlPrototype": [["LH01 Final", 1278]], "Tolfan": [["LH01 Final", 1276]], "Nudraxon": [["LH01 Final", 1273]], "bootle": [["LH01 Final", 1272]], "cliuless": [["LH01 Final", 1270]], "Cookies": [["LH01 Final", 1269]], "Intraceptor": [["LH01 Final", 1264]], "Dramsss": [["LH01 Final", 1264]], "Bengal3": [["LH01 Final", 1263]], "LucianTheFak": [["LH01 Final", 1263]], "lazarus210": [["LH01 Final", 1262]], "Oriol": [["LH01 Final", 1262]], "Cabbage0642": [["LH01 Final", 1262]], "tjudge": [["LH01 Final", 1260]], "ShowStopperW": [["LH01 Final", 1258]], "1coolguy": [["LH01 Final", 1253]], "Mindger": [["LH01 Final", 1253]], "MrDrouf": [["LH01 Final", 1251]], "kaiser": [["LH01 Final", 1249]], "Schkitz": [["LH01 Final", 1249]], "ermactually": [["LH01 Final", 1244]], "pwarren8590": [["LH01 Final", 1241]], "KarmaBurn": [["LH01 Final", 1239]], "ToasterTrash": [["LH01 Final", 1239]], "cringelordirl": [["LH01 Final", 1237]], "Pandapapst": [["LH01 Final", 1236]], "Mohammad": [["LH01 Final", 1235]], "Napalminthebirdsong": [["LH01 Final", 1234]], "Furry0329": [["LH01 Final", 1234]], "Hydro033": [["LH01 Final", 1230]], "Octavius": [["LH01 Final", 1228]], "Nymmer": [["LH01 Final", 1227]], "udon66": [["LH01 Final", 1225]], "Karcher": [["LH01 Final", 1225]], "deejaythink": [["LH01 Final", 1222]], "hakoo": [["LH01 Final", 1221]], "LutherStr": [["LH01 Final", 1220]], "TAKSpx": [["LH01 Final", 1218]], "ImJustExisting": [["LH01 Final", 1218]], "Mcauthor": [["LH01 Final", 1218]], "BuliBaka": [["LH01 Final", 1218]], "Ptitmxz": [["LH01 Final", 1218]], "uwtron": [["LH01 Final", 1217]], "Awesem": [["LH01 Final", 1217]], "GlisteningGeetus": [["LH01 Final", 1216]], "Acecreamsundae": [["LH01 Final", 1216]], "Perdita": [["LH01 Final", 1216]], "TheDolphinman": [["LH01 Final", 1216]], "Sjepeal": [["LH01 Final", 1215]], "Emperia": [["LH01 Final", 1214]], "DemaRogue": [["LH01 Final", 1211]], "fadingnovel": [["LH01 Final", 1210]], "NadtyLite": [["LH01 Final", 1209]], "Bodnamax": [["LH01 Final", 1209]], "KuperMeister": [["LH01 Final", 1207]], "Sirius": [["LH01 Final", 1205]], "BjarkeHuse": [["LH01 Final", 1204]], "AERotters": [["LH01 Final", 1198]], "BMPerJMPer": [["LH01 Final", 1197]], "XxD4RK_W0LFxX": [["LH01 Final", 1189]], "sda1611": [["LH01 Final", 1189]], "Peppy": [["LH01 Final", 1189]], "Axolatal": [["LH01 Final", 1188]], "micherin": [["LH01 Final", 1188]], "Ljaz7": [["LH01 Final", 1187]], "SMenefee": [["LH01 Final", 1187]], "lumpyprol": [["LH01 Final", 1187]], "FausDav": [["LH01 Final", 1187]], "deriokle": [["LH01 Final", 1187]], "NaySmith": [["LH01 Final", 1186]], "Rabbi": [["LH01 Final", 1186]], "Olymp": [["LH01 Final", 1186]], "IndifferentFish": [["LH01 Final", 1186]], "ConeMan": [["LH01 Final", 1186]], "Mati92": [["LH01 Final", 1185]], "GameProfit": [["LH01 Final", 1185]], "bigcathedral": [["LH01 Final", 1185]], "ChusGG": [["LH01 Final", 1185]], "Plush2": [["LH01 Final", 1185]], "GamerTower": [["LH01 Final", 1185]], "sedlak87": [["LH01 Final", 1184]], "shurgs": [["LH01 Final", 1184]], "vanillapoppy": [["LH01 Final", 1184]], "StatzoryTheMad": [["LH01 Final", 1184]], "Lynxtek": [["LH01 Final", 1183]], "Youdge": [["LH01 Final", 1183]], "Gregoola": [["LH01 Final", 1183]], "Shadyferret": [["LH01 Final", 1183]], "clp10033": [["LH01 Final", 1183]], "Shuuhey": [["LH01 Final", 1183]], "evancomposer": [["LH01 Final", 1182]], "KyloBot": [["LH01 Final", 1182]], "BadScra": [["LH01 Final", 1182]], "Libitina114": [["LH01 Final", 1182]], "mwcrabtree": [["LH01 Final", 1181]], "oshwott2844": [["LH01 Final", 1181]], "mysti": [["LH01 Final", 1181]], "Raineweather05": [["LH01 Final", 1181]], "mouseinabox": [["LH01 Final", 1180]], "QuixArtagnan": [["LH01 Final", 1180]], "lgtw3450": [["LH01 Final", 1180]], "HoosierDaddy": [["LH01 Final", 1180]], "tubaking": [["LH01 Final", 1180]], "Akayami": [["LH01 Final", 1180]], "Clink": [["LH01 Final", 1180]], "Demand": [["LH01 Final", 1180]], "DegenerateIan": [["LH01 Final", 1180]], "chosennuttso": [["LH01 Final", 1180]], "Pi314": [["LH01 Final", 1180]], "Nuttsy": [["LH01 Final", 1180]], "Julien": [["LH01 Final", 1180]], "ThoseTeeff": [["LH01 Final", 1180]], "FireFox": [["LH01 Final", 1179]], "AJIJIi": [["LH01 Final", 1179]], "CroCroCro": [["LH01 Final", 1179]], "DanielDandaniel": [["LH01 Final", 1179]], "FungusMouse": [["LH01 Final", 1179]], "pikeline": [["LH01 Final", 1179]], "Wolvane": [["LH01 Final", 1179]], "Whats02": [["LH01 Final", 1179]], "catscat": [["LH01 Final", 1178]], "DelSol": [["LH01 Final", 1178]], "ForkMaster": [["LH01 Final", 1178]], "ZachB": [["LH01 Final", 1178]], "aelisheneithlon": [["LH01 Final", 1178]], "Rachel997": [["LH01 Final", 1177]], "Sebby": [["LH01 Final", 1177]], "idk123": [["LH01 Final", 1177]], "Plasma": [["LH01 Final", 1177]], "WWren": [["LH01 Final", 1177]], "Actionman2222": [["LH01 Final", 1176]], "Gibbs": [["LH01 Final", 1176]], "TheSillyBilly": [["LH01 Final", 1176]], "alevGO": [["LH01 Final", 1175]], "BuckeyeNation": [["LH01 Final", 1175]], "Jasiu\u0144cio": [["LH01 Final", 1174]], "themikeman": [["LH01 Final", 1174]], "Cuagodking": [["LH01 Final", 1173]], "MrRiceGuy": [["LH01 Final", 1173]], "EmbryoticDeth": [["LH01 Final", 1173]], "CptAlex": [["LH01 Final", 1173]], "RFMerlo": [["LH01 Final", 1172]], "StoneOfShame": [["LH01 Final", 1170]], "benruff": [["LH01 Final", 1168]], "goodgamepat": [["LH01 Final", 1167]], "Ljazz7": [["LH01 Final", 1167]], "Komasan": [["LH01 Final", 1166]], "Lante": [["LH01 Final", 1166]], "ImEpy": [["LH01 Final", 1166]], "Lobster": [["LH01 Final", 1165]], "CowOnAPlane": [["LH01 Final", 1164]], "hauntedpebbles2": [["LH01 Final", 1164]], "MylesMoose": [["LH01 Final", 1164]], "Fearteiler": [["LH01 Final", 1164]], "byzeke": [["LH01 Final", 1164]], "Bjoda": [["LH01 Final", 1163]], "Riverman": [["LH01 Final", 1163]], "PsychologicalBox": [["LH01 Final", 1163]], "EdacM": [["LH01 Final", 1162]], "Excitedteapot": [["LH01 Final", 1162]], "Zeldamon": [["LH01 Final", 1162]], "residentevil": [["LH01 Final", 1160]], "Yragael": [["LH01 Final", 1160]], "brrrlinguist": [["LH01 Final", 1160]], "TheRedViper": [["LH01 Final", 1159]], "OUSlaughter": [["LH01 Final", 1159]], "Musicalwoofy": [["LH01 Final", 1159]], "FalconBird": [["LH01 Final", 1159]], "LHlegend": [["LH01 Final", 1158]], "Drinken": [["LH01 Final", 1158]], "StarhardFishrinse": [["LH01 Final", 1158]], "optimusprawn": [["LH01 Final", 1157]], "HungryJeff": [["LH01 Final", 1156]], "metalnooze": [["LH01 Final", 1156]], "SSR_Mike": [["LH01 Final", 1156]], "RexCow": [["LH01 Final", 1156]], "Cheetah32": [["LH01 Final", 1156]], "Marcus": [["LH01 Final", 1156]], "Biggins96": [["LH01 Final", 1155]], "MangoBlade11": [["LH01 Final", 1155]], "Lambo": [["LH01 Final", 1154]], "Hiyoshi": [["LH01 Final", 1153]], "Baradhas": [["LH01 Final", 1151]], "Podge0303": [["LH01 Final", 1151]], "pashatherussian": [["LH01 Final", 1150]], "weirdone": [["LH01 Final", 1150]], "secretpaths": [["LH01 Final", 1150]], "Dumbledore": [["LH01 Final", 1150]], "silverfox": [["LH01 Final", 1149]], "TonyDeloreanESQ": [["LH01 Final", 1148]], "FVMLion": [["LH01 Final", 1148]], "DanzigMF": [["LH01 Final", 1147]], "Cloudere": [["LH01 Final", 1147]], "Xman1997": [["LH01 Final", 1147]], "darkcat": [["LH01 Final", 1146]], "Alexispc": [["LH01 Final", 1146]], "BugMuff44": [["LH01 Final", 1144]], "Sharkskln": [["LH01 Final", 1144]], "TheIndustrialRevoloution": [["LH01 Final", 1142]], "Jerry": [["LH01 Final", 1141]], "McMayo": [["LH01 Final", 1140]], "FatBoyyy": [["LH01 Final", 1140]], "sleepylabone": [["LH01 Final", 1139]], "PlagueCarrier": [["LH01 Final", 1139]], "Blank": [["LH01 Final", 1139]], "RangerEpic": [["LH01 Final", 1139]], "Harriet": [["LH01 Final", 1138]], "Soluna": [["LH01 Final", 1138]], "Lokfok": [["LH01 Final", 1136]], "CoxyNormus": [["LH01 Final", 1136]], "BoMa85": [["LH01 Final", 1136]], "Wrestler": [["LH01 Final", 1136]], "Banzai7000": [["LH01 Final", 1136]], "NattyKash": [["LH01 Final", 1135]], "KargDemiau": [["LH01 Final", 1135]], "Valzaan": [["LH01 Final", 1135]], "Ironic": [["LH01 Final", 1134]], "TheFourthJesse": [["LH01 Final", 1133]], "marksoz00": [["LH01 Final", 1133]], "Gaborever": [["LH01 Final", 1132]], "benssoon": [["LH01 Final", 1132]], "Odinius": [["LH01 Final", 1131]], "Hadjiya": [["LH01 Final", 1131]], "HobGungan": [["LH01 Final", 1130]], "Krooter": [["LH01 Final", 1129]], "Gagneto": [["LH01 Final", 1127]], "BaconBoy": [["LH01 Final", 1127]], "Trumpet": [["LH01 Final", 1126]], "ReoWulf": [["LH01 Final", 1123]], "Hossain2020": [["LH01 Final", 1123]], "voltigeur": [["LH01 Final", 1122]], "radiantchaos": [["LH01 Final", 1121]], "FakeSki": [["LH01 Final", 1119]], "TempExtremal": [["LH01 Final", 1118]], "mkcy3": [["LH01 Final", 1118]], "CodPieceZ": [["LH01 Final", 1117]], "Hurple": [["LH01 Final", 1116]], "Wubba": [["LH01 Final", 1116]], "Dandel": [["LH01 Final", 1113]], "sparrowhawk": [["LH01 Final", 1111]], "nikkan": [["LH01 Final", 1111]], "TheWiseFox": [["LH01 Final", 1111]], "NonStInc.": [["LH01 Final", 1109]], "Darkwonderer": [["LH01 Final", 1108]], "WyvernElement": [["LH01 Final", 1106]], "Acelet": [["LH01 Final", 1102]], "ellbelle": [["LH01 Final", 1102]], "Jboooooooooooooooooooom": [["LH01 Final", 1101]], "Oppapi": [["LH01 Final", 1099]], "Cheesecake271": [["LH01 Final", 1099]], "Elijah": [["LH01 Final", 1097]], "re_al_": [["LH01 Final", 1096]], "tunnndz": [["LH01 Final", 1088]], "Piechu": [["LH01 Final", 1082]], "Klishu": [["LH01 Final", 1079]], "Doordecat": [["LH01 Final", 1061]], "100pctskillz": [["LH01 Final", 1060]], "Dizzz": [["LH01 Final", 1059]], "Aceosd": [["LH01 Final", 1058]], "DawnDiVito": [["LH01 Final", 1058]], "Raybit": [["LH01 Final", 1057]], "DrCheeseFiend": [["LH01 Final", 1056]], "hanban": [["LH01 Final", 1055]], "BaliHoo": [["LH01 Final", 1041]], "Lex25": [["LH01 Final", 1040]], "Wriggleroom": [["LH01 Final", 1039]], "buurn": [["LH01 Final", 1033]], "cjahwon": [["LH01 Final", 1030]], "Munchking": [["LH01 Final", 1023]], "DarthOblivius": [["LH01 Final", 1011]]};
         let myChart;
