@@ -12,31 +12,33 @@
         body { font-family: 'Segoe UI', Helvetica, Arial, sans-serif; background: #121212; color: #eee; text-align: center; padding: 20px 5px; margin: 0; overflow-x: hidden; }
         .container { width: 95%; max-width: 1100px; margin: auto; background: #1e1e1e; padding: 20px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.6); box-sizing: border-box; }
         
-        /* --- DYNAMIC INTERACTIVE BANNER --- */
-        .site-header { margin-bottom: 40px; padding-top: 20px; }
-        .banner-container { display: flex; align-items: center; justify-content: center; gap: 35px; }
-        
+       /* --- DYNAMIC INTERACTIVE BANNER --- */
+        .site-header { margin-bottom: 50px; padding-top: 20px; }
+        .banner-container { display: flex; align-items: center; justify-content: center; gap: 40px; }
         .banner-icons { display: flex; gap: 20px; }
+        
         .banner-icons img { 
-            width: 85px; 
-            height: 85px; 
+            width: 85px; height: 85px; 
             object-fit: contain; 
             filter: drop-shadow(0 4px 6px rgba(0,0,0,0.6)); 
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Effet rebondi */
-            cursor: help;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            cursor: pointer;
         }
 
-        /* L'effet "Gros Plan" au survol */
+        /* Effet de zoom commun */
         .banner-icons img:hover { 
-            width: 125px; 
-            height: 125px; 
-            filter: drop-shadow(0 15px 25px rgba(0,0,0,0.8));
-            transform: translateY(-10px) scale(1.1);
-            z-index: 10;
+            width: 150px; height: 150px; 
+            filter: drop-shadow(0 20px 35px rgba(0,0,0,0.9));
+            transform: translateY(-20px) scale(1.2);
+            z-index: 100;
         }
 
-        .site-title { color: #4a90e2; font-size: 3.2em; margin: 0; letter-spacing: 5px; text-transform: uppercase; font-weight: 900; }
-        .site-subtitle { font-family: "Luminari", serif; color: #d4a76a; font-size: 1.2em; margin: 8px 0 0; letter-spacing: 1.5px; }
+        /* Rotation différenciée : Les icônes de gauche pivotent vers la gauche, les droites vers la droite */
+        .banner-icons.left img:hover { transform: translateY(-20px) scale(1.2) rotate(-8deg); }
+        .banner-icons.right img:hover { transform: translateY(-20px) scale(1.2) rotate(8deg); }
+
+        .site-title { color: #4a90e2; font-size: 3.5em; margin: 0; letter-spacing: 5px; text-transform: uppercase; font-weight: 900; }
+        .site-subtitle { font-family: "Luminari", serif; color: #d4a76a; font-size: 1.3em; margin-top: 10px; }
         
         /* Navigation & Tabs */
         nav { margin: 25px 0; border-bottom: 1px solid #333; padding-bottom: 20px; display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }
@@ -102,18 +104,16 @@
         <div class="site-header">
             <div class="banner-container">
                 <div class="banner-icons left">
-                    <img src="assets/icons/bird.png" alt="Bird">
-                    <img src="assets/icons/fox.png" alt="Fox">
+                    <img src="assets/icons/bird.png" title="Bird Tier: 1500+ ELO">
+                    <img src="assets/icons/fox.png" title="Fox Tier: 1400+ ELO">
                 </div>
-                
                 <div class="banner-center">
                     <h1 class="site-title">ROOTELO</h1>
                     <p class="site-subtitle">A Metric of Woodland Skill and Will</p>
                 </div>
-                
                 <div class="banner-icons right">
-                    <img src="assets/icons/rabbit.png" alt="Rabbit">
-                    <img src="assets/icons/mouse_2.webp" alt="Mouse">
+                    <img src="assets/icons/rabbit.png" title="Rabbit Tier: 1300+ ELO">
+                    <img src="assets/icons/mouse_2.webp" title="Mouse Tier: 1200+ ELO">
                 </div>
             </div>
         </div>
@@ -981,7 +981,7 @@
             <span class="footer-tier-item"><img src="assets/icons/fox.png"> 1400+</span>
             <span class="footer-tier-item"><img src="assets/icons/rabbit.png"> 1300+</span>
             <span class="footer-tier-item"><img src="assets/icons/mouse.png"> 1200+</span><br>
-            Generated on 2026-03-23 18:48 UTC
+            Generated on 2026-03-23 18:57 UTC
         </div>
     
         </main>
