@@ -229,7 +229,7 @@ current_history = {k.split('+')[0].split('#')[0]: v for k, v in player_history.i
 # =========================================================================
 # --- 7. HTML SKELETON (MATRIX NAVIGATION) ---
 # =========================================================================
-def generate_page_html(title, page_heading, current_page, content, custom_css="", custom_js="", extra_head=""):
+def generate_page_html(title, page_heading, current_page, content, page_description="", custom_css="", custom_js="", extra_head=""):
     is_archive = "_lh01.html" in current_page
     
     # 1. Main Navigation (Adapts to selected season)
@@ -308,6 +308,9 @@ def generate_page_html(title, page_heading, current_page, content, custom_css=""
         {sub_nav_html}
         
         <h2 class="page-heading">{page_heading}</h2>
+        <p style="color: #888; font-size: 0.9em; margin-top: -20px; margin-bottom: 30px; max-width: 600px; margin-left: auto; margin-right: auto;">
+        {page_description}
+        </p>
         
         {content}
     </div>
@@ -323,7 +326,7 @@ def generate_page_html(title, page_heading, current_page, content, custom_css=""
 # --- 8. PAGE BUILDERS (REUSABLE COMPONENTS) ---
 # =========================================================================
 
-def build_leaderboard_page(df, filename, title, heading, subtitle):
+def build_leaderboard_page(df, filename, title, heading, subtitle, description):
     table_rows = ""
     if not df.empty:
         for _, row in df.iterrows():
@@ -390,10 +393,9 @@ def build_leaderboard_page(df, filename, title, heading, subtitle):
     });
     </script>"""
     with open(filename, "w", encoding="utf-8") as f:
-        f.write(generate_page_html(title, heading, filename, content, css, js))
+        f.write(generate_page_html(title, heading, filename, content, page_description=description, custom_css=css, custom_js=js))
 
-
-def build_matches_page(df, filename, title, heading):
+def build_matches_page(df, filename, title, heading, subtitle, description):
     match_rows = ""
     if not df.empty:
         for _, row in df.iterrows():
@@ -416,6 +418,7 @@ def build_matches_page(df, filename, title, heading):
             </tr>"""
 
     content = f"""
+        <h3>{subtitle}</h3>
         <table id="matchesTable" class="display nowrap responsive" style="width:100%">
             <thead><tr><th>Rank</th><th>ELO</th><th>Date</th><th>Lineup (Winner First)</th><th>ID</th></tr></thead>
             <tbody>{match_rows}</tbody>
@@ -444,16 +447,16 @@ def build_matches_page(df, filename, title, heading):
     });
     </script>"""
     with open(filename, "w", encoding="utf-8") as f:
-        f.write(generate_page_html(title, heading, filename, content, css, js))
+        f.write(generate_page_html(title, heading, filename, content, page_description=description, custom_css=css, custom_js=js))
 
-
-def build_trends_page(history_dict, filename, title, heading):
+def build_trends_page(history_dict, filename, title, heading, subtitle, description):
     if not history_dict: return
     
     history_json = json.dumps(history_dict)
     player_names_list = sorted(list(history_dict.keys()))
 
     content = f"""
+        <h3>{subtitle}</h3>
         <div class="search-box">
             <input list="playerList" id="playerName" placeholder="Search Player..." oninput="updateChart()">
             <datalist id="playerList">
@@ -498,8 +501,8 @@ def build_trends_page(history_dict, filename, title, heading):
         }}
     </script>"""
     with open(filename, "w", encoding="utf-8") as f:
-        f.write(generate_page_html(title, heading, filename, content, css, js, extra_head))
-
+        f.write(generate_page_html(title, heading, filename, content, page_description=description, custom_css=css, custom_js=js, extra_head=extra_head))
+        
 def build_about_page(filename, title, heading):
     codex_text = f"""
     <style>
@@ -601,15 +604,57 @@ if not archive_final_df.empty:
 
 # A. Generate Current Season Pages (Live API Data)
 print("Generating Current Season pages...")
-build_leaderboard_page(display_current_df, "index.html", "Leaderboard • Root League", "Current Season", f"Alternative ELO Leaderboard • Data until {CUTOFF_DATE}")
-build_matches_page(current_matches_df, "matches.html", "Match Archive • Root League", "Match Archive")
-build_trends_page(current_history, "trends.html", "Player Progression • Root League", "Player Progression")
+build_leaderboard_page(
+    display_current_df, 
+    "index.html", 
+    "Leaderboard • Rootelo", 
+    "Alternative ELO Leaderboard", 
+    "Current Season Rankings", 
+    f"The official power rankings for the current competitive season. Data tracked until {CUTOFF_DATE}."
+)
+build_matches_page(
+    current_matches_df, 
+    "matches.html", 
+    "Match Archive • Root League", 
+    "Match Archive", 
+    "Top ELO Sum Tables", 
+    "Matches sorted by total ELO to highlight high-level play."
+)
+build_trends_page(
+    current_history, 
+    "trends.html", 
+    "Player Progression • Root League", 
+    "Player Progression", 
+    "Follow the Journey", 
+    "Search for a player to see their ELO evolution over the season."
+)
 
 # B. Generate Archive LH01 Pages (Loaded Data)
 print("Generating Archive LH01 pages...")
-build_leaderboard_page(display_archive_df, "index_lh01.html", "Archive LH01 Leaderboard", "Season LH01 Archive", "Final Standings • Season LH01")
-build_matches_page(archive_matches_df, "matches_lh01.html", "Archive LH01 Matches", "Match Archive • Season LH01")
-build_trends_page(archive_history, "trends_lh01.html", "Archive LH01 Trends", "Player Progression • Season LH01")
+build_leaderboard_page(
+    display_archive_df, 
+    "index_lh01.html", 
+    "Archive LH01 Leaderboard", 
+    "Season LH01 Archive", 
+    "Final Standings • Season LH01", 
+    "Historical rankings from the previous woodland season."
+)
+build_matches_page(
+    archive_matches_df, 
+    "matches_lh01.html", 
+    "Archive LH01 Matches", 
+    "Match Archive • Season LH01", 
+    "Archived Matches", 
+    "Historical match records from LH01."
+)
+build_trends_page(
+    archive_history, 
+    "trends_lh01.html", 
+    "Archive LH01 Trends", 
+    "Player Progression • Season LH01", 
+    "Historical Progression", 
+    "Look back at how players evolved during LH01."
+)
 
 # C. Generate Codex Page
 build_about_page("about.html", "Codex • Root League", "The Woodland Codex")
