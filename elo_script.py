@@ -623,23 +623,23 @@ build_leaderboard_page(
     "index.html", 
     "Leaderboard • Rootelo", 
     "Leaderboard", 
-    "LH02 • Apr – Jun 2026", 
-    f"Only players with at least 1 win are shown. 10 games required for rank and tier. Use the search bar to find a specific player. Data tracked until {CUTOFF_DATE}."
+    "LH02 • Apr–Jun 2026", 
+    f"Minimum 1 win required for display. Data tracked until {CUTOFF_DATE}. Use the search bar to find a specific player."
 )
 build_matches_page(
     current_matches_df, 
     "matches.html", 
-    "Match Archive • Root League", 
-    "Match Archive", 
-    "Top ELO Sum Tables", 
-    "Matches sorted by total ELO to highlight high-level play."
+    "Top Tables • Rootelo", 
+    "Top Tables", 
+    "LH02 • Apr–Jun 2026",
+    f"Games ranked by total ELO. Search by player or date. Click a Game ID to view full match details on the League website."
 )
 build_trends_page(
     current_history, 
     "trends.html", 
-    "Player Progression • Root League", 
-    "Player Progression", 
-    "Follow the Journey", 
+    "Player's Journey • Rootelo", 
+    "Player's Journey", 
+    "LH02 • Apr–Jun 2026",
     "Search for a player to see their ELO evolution over the season."
 )
 
@@ -650,24 +650,24 @@ build_leaderboard_page(
     "index_lh01.html", 
     "Leaderboard • Rootelo", 
     "Leaderboard", 
-    "LH01 • Jan – Mar 2026", 
-    f"Only players with at least 1 win are shown. 10 games required for rank and tier. Use the search bar to find a specific player. Data tracked until 2026-03-31."
+    "LH01 • Jan–Mar 2026", 
+    f"Minimum 1 win required for display. Data tracked until 2026-03-31. Use the search bar to find a specific player."
 )
 build_matches_page(
     archive_matches_df, 
     "matches_lh01.html", 
-    "Archive LH01 Matches", 
-    "Match Archive • Season LH01", 
-    "Archived Matches", 
-    "Historical match records from LH01."
+    "Top Tables • Rootelo", 
+    "Top Tables",
+    "LH01 • Jan–Mar 2026",
+    f"Games ranked by total ELO. Search by player or date. Click a Game ID to view full match details on the League website."
 )
 build_trends_page(
     archive_history, 
     "trends_lh01.html", 
-    "Archive LH01 Trends", 
-    "Player Progression • Season LH01", 
-    "Historical Progression", 
-    "Look back at how players evolved during LH01."
+    "Player's Journey • Rootelo", 
+    "Player's Journey", 
+    "LH01 • Jan–Mar 2026",
+    "Search for a player to see their ELO evolution over the season."
 )
 
 # C. Generate Codex Page
