@@ -289,36 +289,50 @@ def generate_page_html(title, page_heading, current_page, content, subtitle="", 
         active_suit = "default"
 
     def get_base_css(suit="default"):
-    # On définit la couleur en amont pour l'injecter proprement
+    # Ces lignes DOIVENT avoir 4 espaces d'indentation au début
     color = SUIT_COLORS.get(suit, "#d4a76a")
     
     return f"""
-    body {{ font-family: 'Segoe UI', Helvetica, Arial, sans-serif; background: #121212; color: #eee; text-align: center; padding: 20px 5px; margin: 0; overflow-x: hidden; }}
-    .container {{ width: 95%; max-width: 1100px; margin: auto; background: #1e1e1e; padding: 20px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.6); box-sizing: border-box; }}
-    
-    :root {{
-        --main-color: {color};
+    body {{ 
+        font-family: 'Segoe UI', Helvetica, Arial, sans-serif; 
+        background: #121212; 
+        color: #eee; 
+        text-align: center; 
     }}
     
-    /* --- DYNAMIC INTERACTIVE BANNER --- */
-    .site-header {{ margin-bottom: 50px; padding-top: 20px; }}
-    .banner-container {{ display: flex; align-items: center; justify-content: center; gap: 40px; }}
-    .banner-icons {{ display: flex; gap: 20px; }}
-    
-    .banner-icons img {{ 
-        width: 85px; height: 85px; 
-        object-fit: contain; 
-        filter: drop-shadow(0 4px 6px rgba(0,0,0,0.6)); 
-        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-        cursor: pointer;
+    .site-title {{ 
+        color: #eee !important; 
+        font-size: 3.5em; 
+        letter-spacing: 5px; 
+        text-transform: uppercase; 
+    }}
+
+    .page-intro h3 {{ 
+        color: {color}; 
+        font-size: 1.2em; 
+        text-transform: uppercase; 
+        border-bottom: 1px solid {color}; 
+        display: inline-block; 
+        padding-bottom: 5px; 
     }}
 
     .banner-icons img:hover {{ 
-        width: 150px; height: 150px; 
         transform: translateY(-20px) scale(1.2);
         filter: drop-shadow(0 10px 15px rgba(0,0,0,0.8));
         z-index: 100;
     }}
+
+    nav a.active {{ 
+        color: {color}; 
+        border-bottom: 2px solid {color}; 
+    }}
+
+    .season-btn.active {{ 
+        background-color: {color} !important; 
+        color: #000 !important; 
+        border-color: {color} !important; 
+    }}
+    """
 
     .banner-icons.left img:hover {{ transform: translateY(-20px) scale(1.2) rotate(-8deg); }}
     .banner-icons.right img:hover {{ transform: translateY(-20px) scale(1.2) rotate(8deg); }}
