@@ -326,7 +326,7 @@ def generate_page_html(title, page_heading, current_page, content, page_descript
 # --- 8. PAGE BUILDERS (REUSABLE COMPONENTS) ---
 # =========================================================================
 
-def build_leaderboard_page(df, filename, title, heading, description):
+def build_leaderboard_page(df, filename, title, heading, subtitle, description):
     table_rows = ""
     if not df.empty:
         for _, row in df.iterrows():
@@ -394,8 +394,8 @@ def build_leaderboard_page(df, filename, title, heading, description):
     </script>"""
     with open(filename, "w", encoding="utf-8") as f:
         f.write(generate_page_html(title, heading, filename, content, page_description=description, custom_css=css, custom_js=js))
-
-def build_matches_page(df, filename, title, heading, description):
+        
+def build_matches_page(df, filename, title, heading, subtitle, description):
     match_rows = ""
     if not df.empty:
         for _, row in df.iterrows():
@@ -418,6 +418,7 @@ def build_matches_page(df, filename, title, heading, description):
             </tr>"""
 
     content = f"""
+        <h3>{subtitle}</h3>
         <table id="matchesTable" class="display nowrap responsive" style="width:100%">
             <thead><tr><th>Rank</th><th>ELO</th><th>Date</th><th>Lineup (Winner First)</th><th>ID</th></tr></thead>
             <tbody>{match_rows}</tbody>
@@ -448,13 +449,14 @@ def build_matches_page(df, filename, title, heading, description):
     with open(filename, "w", encoding="utf-8") as f:
         f.write(generate_page_html(title, heading, filename, content, page_description=description, custom_css=css, custom_js=js))
 
-def build_trends_page(history_dict, filename, title, heading, description):
+def build_trends_page(history_dict, filename, title, heading, subtitle, description):
     if not history_dict: return
     
     history_json = json.dumps(history_dict)
     player_names_list = sorted(list(history_dict.keys()))
 
     content = f"""
+        <h3>{subtitle}</h3>
         <div class="search-box">
             <input list="playerList" id="playerName" placeholder="Search Player..." oninput="updateChart()">
             <datalist id="playerList">
