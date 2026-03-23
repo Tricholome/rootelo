@@ -428,8 +428,22 @@ def build_leaderboard_page(df, filename, title, heading, subtitle, description):
         </div>
     """
     css = """
-        .tier-icon-container { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; margin: 0 auto; }
-        .tier-icon-container img { max-width: 100%; max-height: 100%; object-fit: contain; }
+        .tier-icon-container { 
+            width: 45px;      /* Augmenté de 24px à 45px */
+            height: 45px;     /* Augmenté de 24px à 45px */
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            margin: 0 auto; 
+            transition: transform 0.2s ease; /* Petit effet de survol ici aussi */
+        }
+        .tier-icon-container img { 
+            max-width: 100%; 
+            max-height: 100%; 
+            object-fit: contain; 
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+        }
+        .tier-icon-container:hover { transform: scale(1.3); }
         .tier-bird   { background-color: rgba(103, 192, 199, 0.1) !important; border-left: 4px solid #67c0c7 !important; }
         .tier-fox    { background-color: rgba(230, 55, 45, 0.1) !important; border-left: 4px solid #e6372d !important; }
         .tier-rabbit { background-color: rgba(247, 235, 91, 0.1) !important; border-left: 4px solid #f7eb5b !important; }
