@@ -393,7 +393,7 @@ def build_leaderboard_page(df, filename, title, heading, subtitle):
     });
     </script>"""
     with open(filename, "w", encoding="utf-8") as f:
-        f.write(generate_page_html(title, heading, filename, content, page_description=description, custom_css=css, custom_js=js))
+        f.write(generate_page_html(title, heading, filename, content, description, css, js))
 
 def build_matches_page(df, filename, title, heading):
     match_rows = ""
@@ -446,7 +446,7 @@ def build_matches_page(df, filename, title, heading):
     });
     </script>"""
     with open(filename, "w", encoding="utf-8") as f:
-        f.write(generate_page_html(title, heading, filename, content, page_description=description, custom_css=css, custom_js=js))
+        f.write(generate_page_html(title, heading, filename, content, description, css, js))
 
 def build_trends_page(history_dict, filename, title, heading):
     if not history_dict: return
@@ -499,7 +499,7 @@ def build_trends_page(history_dict, filename, title, heading):
         }}
     </script>"""
     with open(filename, "w", encoding="utf-8") as f:
-        f.write(generate_page_html(title, heading, filename, content, page_description=description, custom_css=css, custom_js=js, extra_head=extra_head))
+        f.write(generate_page_html(title, heading, filename, content, description, css, js, extra_head))
         
 def build_about_page(filename, title, heading):
     codex_text = f"""
@@ -607,7 +607,7 @@ build_leaderboard_page(
     "index.html", 
     "Leaderboard • Rootelo", 
     "Alternative ELO Leaderboard", 
-    description=f"The official power rankings for the current competitive season. Data tracked until {CUTOFF_DATE}."
+    f"The official power rankings for the current competitive season. Data tracked until {CUTOFF_DATE}."
 )
 build_matches_page(current_matches_df, "matches.html", "Match Archive • Root League", "Match Archive")
 build_trends_page(current_history, "trends.html", "Player Progression • Root League", "Player Progression")
