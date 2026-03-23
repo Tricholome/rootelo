@@ -315,7 +315,7 @@ def generate_page_html(title, page_heading, current_page, content, custom_css=""
         /* Style pour le titre fixe */
         .site-header {{ margin-bottom: 20px; }}
         .site-title {{ color: #4a90e2; font-size: 2.5em; margin-bottom: 0; letter-spacing: 3px; }}
-        .site-subtitle {{ font-family: "Luminari", "Apple Chancery", "Palatino", serif; color: #777; font-size: 0.9em; margin-top: 5px; letter-spacing: 1px; }}
+        .site-subtitle {{ font-style: italic; color: #777; font-size: 0.9em; margin-top: 5px; letter-spacing: 1px; }}
         .page-heading {{ color: #eee; text-transform: uppercase; font-size: 1.2em; margin-top: 30px; border-bottom: 1px solid #333; display: inline-block; padding-bottom: 5px; }}
         {custom_css}
     </style>
