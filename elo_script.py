@@ -233,13 +233,13 @@ def generate_page_html(title, page_heading, current_page, content, subtitle="", 
     is_archive = "_lh01.html" in current_page
     
     # --- LOGIQUE DES COULEURS ---
-    if "index" in current_page: main_color = "#67c0c7"    # Bird (Bleu)
-    elif "matches" in current_page: main_color = "#e6372d" # Fox (Rouge)
-    elif "trends" in current_page: main_color = "#f7eb5b"  # Rabbit (Jaune)
-    elif "about" in current_page: main_color = "#f29057"   # Mouse (Orange)
-    else: main_color = "#d4a76a"                         # Default (Or)
+    if "index" in current_page: main_color = "#67c0c7"    # Bird
+    elif "matches" in current_page: main_color = "#e6372d" # Fox
+    elif "trends" in current_page: main_color = "#f7eb5b"  # Rabbit
+    elif "about" in current_page: main_color = "#f29057"   # Mouse
+    else: main_color = "#d4a76a"                         # Default
 
-    # 1. Main Navigation (Adapts to selected season)
+    # 1. Main Navigation
     nav_links = [("index", "Leaderboard"), ("matches", "Top Tables"), ("trends", "Player's Journey"), ("about", "Codex")]
     nav_html = ""
     for base, label in nav_links:
@@ -251,26 +251,28 @@ def generate_page_html(title, page_heading, current_page, content, subtitle="", 
         nav_html += f'<a href="{target}" class="{active}">{label}</a>'
 
     # 2. Sub Navigation (Season Selector)
-    if current_page == "about.html":
-        sub_nav_html = ""
-    else:
+    sub_nav_html = ""
+    if current_page != "about.html":
         current_prefix = current_page.replace("_lh01.html", "").replace(".html", "")
         seasons = [("LH01", f"{current_prefix}_lh01.html"), ("LH02", f"{current_prefix}.html")]
-        buttons_html = ""
+        btns = ""
         for name, url in seasons:
-            is_active = "active" if url == current_page else ""
-            buttons_html += f'<a href="{url}" class="season-btn {is_active}">{name}</a>'
+            active_class = "active" if url == current_page else ""
+            btns += f'<a href="{url}" class="season-btn {active_class}">{name}</a>'
         
         sub_nav_html = f"""
         <div class="season-selector">
             <span class="season-label">Select Season</span>
-            {buttons_html}
+            {btns}
         </div>
         """
-   base_css = f"""
+
+    # --- CSS ---
+    base_css = f"""
         body {{ font-family: 'Segoe UI', Helvetica, Arial, sans-serif; background: #121212; color: #eee; text-align: center; padding: 20px 5px; margin: 0; overflow-x: hidden; }}
         .container {{ width: 95%; max-width: 1100px; margin: auto; background: #1e1e1e; padding: 20px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.6); box-sizing: border-box; }}
         
+        /* BANNER */
         .banner-container {{ display: flex; align-items: center; justify-content: center; gap: 40px; flex-wrap: wrap; }}
         .banner-icons {{ display: flex; gap: 15px; justify-content: center; align-items: center; }}
         
@@ -293,22 +295,27 @@ def generate_page_html(title, page_heading, current_page, content, subtitle="", 
         .site-title {{ color: #eee; font-size: 2.2em; margin: 10px 0 0; letter-spacing: 3px; text-transform: uppercase; }}
         .site-subtitle {{ font-style: italic; color: #777; font-size: 0.85em; margin: 5px 0 0; letter-spacing: 1px; }}
         
+        /* NAV */
         nav {{ margin: 25px 0; border-bottom: 1px solid #333; padding-bottom: 20px; display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }}
         nav a {{ color: #888; text-decoration: none; font-weight: bold; text-transform: uppercase; font-size: 0.8em; padding: 8px 16px; border-radius: 6px; transition: 0.3s; border: 1px solid transparent; }}
         nav a:hover {{ color: {main_color}; background: rgba(255,255,255,0.05); }}
         nav a.active {{ color: #fff; background: {main_color}; box-shadow: 0 4px 12px rgba(0,0,0,0.4); }}
         
         .season-selector {{ display: flex; align-items: center; justify-content: center; gap: 12px; margin: 0 auto 30px; background: rgba(255,255,255,0.03); padding: 8px 18px; border-radius: 50px; width: fit-content; border: 1px solid #333; }}
+        .season-label {{ font-size: 0.7em; text-transform: uppercase; color: #555; letter-spacing: 1.2px; font-weight: bold; }}
+        .season-btn {{ text-decoration: none; font-size: 0.75em; font-weight: bold; color: #777; padding: 5px 14px; border-radius: 20px; border: 1px solid #444; transition: 0.2s; }}
         .season-btn.active {{ background: {main_color}; color: #111 !important; border-color: {main_color}; font-weight: 900; }}
 
-        .page-intro h3 {{ margin: 0; color: {main_color}; font-size: 1.1em; font-weight: bold; text-transform: uppercase; border-bottom: 1px solid {main_color}; padding-bottom: 4px; }}
+        .page-intro h3 {{ margin: 0; color: {main_color}; font-size: 1.1em; font-weight: bold; text-transform: uppercase; border-bottom: 1px solid {main_color}; padding-bottom: 4px; display: inline-block; }}
         
         table.dataTable thead th {{ background: #252525 !important; color: {main_color} !important; font-size: 0.75em; text-transform: uppercase; padding: 12px; }}
 
+        /* MOBILE */
         @media (max-width: 768px) {{
             .banner-container {{ flex-direction: column; gap: 5px; }}
             .banner-icons {{ order: -1; gap: 8px; }}
             .banner-icons img {{ width: 45px; height: 45px; }}
+            .banner-icons img:hover {{ width: 70px; height: 70px; transform: translateY(-5px) scale(1.1); }}
             .site-title {{ font-size: 1.7em; }}
         }}
     """
