@@ -531,7 +531,7 @@ def build_about_page(filename, title, heading):
             border-radius: 8px;
             border-left: 4px solid #333;
         }}
-        .tier-item img {{ height: 32px; width: auto; margin-right: 15px; }}
+        .tier-item img {{ height: 70px; width: auto; margin-right: 15px; }}
         .tier-bird {{ border-color: #67c0c7; }}
         .tier-fox {{ border-color: #e6372d; }}
         .tier-rabbit {{ border-color: #f7eb5b; }}
@@ -563,7 +563,7 @@ def build_about_page(filename, title, heading):
                 <div><strong style="color: #f7eb5b;">Rabbit (1300+)</strong> – High-level competitors.</div>
             </div>
             <div class="tier-item tier-mouse">
-                <img src="assets/icons/mouse.png">
+                <img src="assets/icons/mouse_2.webp">
                 <div><strong style="color: #f29057;">Mouse (1200+)</strong> – Established consistent players.</div>
             </div>
         </div>
