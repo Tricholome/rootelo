@@ -289,7 +289,7 @@ def generate_page_html(title, page_heading, current_page, content, subtitle="", 
         active_suit = "default"
 
     def get_base_css(suit="default"):
-        color = SUIT_COLORS.get(suit, SUIT_COLORS["default"])
+        color = SUIT_COLORS.get(suit, "#d4a76a")
         
         return f"""
         body {{ font-family: 'Segoe UI', Helvetica, Arial, sans-serif; background: #121212; color: #eee; text-align: center; padding: 20px 5px; margin: 0; overflow-x: hidden; }}
@@ -314,7 +314,6 @@ def generate_page_html(title, page_heading, current_page, content, subtitle="", 
 
         .banner-icons img:hover {{ 
             width: 150px; height: 150px; 
-            filter: drop-shadow(0 20px 35px var(--main-color)); /* Halo de la couleur de faction */
             transform: translateY(-20px) scale(1.2);
             z-index: 100;
         }}
@@ -322,17 +321,17 @@ def generate_page_html(title, page_heading, current_page, content, subtitle="", 
         .banner-icons.left img:hover {{ transform: translateY(-20px) scale(1.2) rotate(-8deg); }}
         .banner-icons.right img:hover {{ transform: translateY(-20px) scale(1.2) rotate(8deg); }}
 
-        .site-title {{ color: var(--main-color); font-size: 3.5em; margin: 0; letter-spacing: 5px; text-transform: uppercase; font-weight: 900; transition: color 0.4s; }}
+        .site-title { color: #eee; font-size: 3.5em; letter-spacing: 5px; text-transform: uppercase; }
         .site-subtitle {{ font-family: "Luminari", serif; color: #d4a76a; font-size: 1.3em; margin-top: 10px; }}
         
         /* Navigation & Tabs */
         nav {{ margin: 25px 0; border-bottom: 1px solid #333; padding-bottom: 20px; display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }}
         nav a {{ color: #888; text-decoration: none; font-weight: bold; text-transform: uppercase; font-size: 0.8em; padding: 8px 16px; border-radius: 6px; transition: 0.3s; border: 1px solid transparent; }}
         nav a:hover {{ color: var(--main-color); background: rgba(255,255,255,0.05); }}
-        nav a.active {{ color: #fff; background: var(--main-color); box-shadow: 0 4px 12px {color}66; }}
+        nav a.active { color: {color}; border-bottom: 2px solid {color}; }
         
         /* Season Selector */
-        .season-btn.active {{ background: var(--main-color); color: #fff; border-color: var(--main-color); box-shadow: 0 0 12px {color}33; }}
+        .season-btn.active { background-color: {color}; color: #000; border-color: {color}; }
         .season-btn:hover {{ border-color: var(--main-color); color: #eee; }}
 
         /* Tables & Content */
@@ -366,7 +365,7 @@ def generate_page_html(title, page_heading, current_page, content, subtitle="", 
         .site-header {{ margin-bottom: 20px; }}
         .site-title {{ color: var(--main-color); font-size: 2.5em; margin-bottom: 0; letter-spacing: 3px; }}
         .site-subtitle {{ font-style: italic; color: #777; font-size: 0.9em; margin-top: 5px; letter-spacing: 1px; }}
-        .page-heading {{ color: #eee; text-transform: uppercase; font-size: 1.2em; margin-top: 30px; border-bottom: 1px solid #333; display: inline-block; padding-bottom: 5px; }}
+        .page-heading { color: {color} !important; text-transform: uppercase; font-size: 1.2em; border-bottom: 1px solid {color}; display: inline-block; }
         {custom_css}
     </style>
 </head>
