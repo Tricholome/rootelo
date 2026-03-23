@@ -192,7 +192,10 @@ if not current_matches_df.empty:
     current_matches_df = current_matches_df.sort_values(by='ELO_Sum', ascending=False).reset_index(drop=True)
     current_matches_df.insert(0, 'Rank', range(1, len(current_matches_df) + 1))
 
-# Create current_final_df (Leaderboard) for ALL players
+# =========================================================================
+# --- 6. FINAL LEADERBOARD GENERATION ---
+# =========================================================================
+
 leaderboard_list = []
 for p_name, rating in elo_ratings.items():
     s = player_stats.get(p_name, {'wins': 0, 'games': 0})
@@ -222,32 +225,6 @@ current_final_df['Rank'] = ranks
 
 # Trends Dictionary (Cleaning names for Chart.js)
 current_history = {k.split('+')[0].split('#')[0]: v for k, v in player_history.items()}
-
-# =========================================================================
-# --- 6. FINAL LEADERBOARD GENERATION ---
-# =========================================================================
-results = []
-for p_name, rating in elo_ratings.items():
-    s = player_stats.get(p_name, {'wins': 0, 'games': 0})
-    diff = round(last_diff.get(p_name, 0))
-    results.append({
-        'Rank': 0, 'Player': p_name, 'ELO': round(rating), 'Games': s['games'],
-        'Wins': s['wins'], 'Win Rate': f"{(s['wins']/s['games']):.1%}" if s['games'] > 0 else "0.0%",
-        'Peak': round(peak_elo.get(p_name, rating)), 
-        'Last': f"+{diff}" if diff > 0 else str(diff),
-        'Qualified': (s['games'] >= 10 and rating >= 1200)
-    })
-
-current_final_df = pd.DataFrame(results).sort_values(by='ELO', ascending=False)
-# Assigning ranks
-rank_counter = 1
-ranks = []
-for _, row in current_final_df.iterrows():
-    if row['Qualified']:
-        ranks.append(rank_counter)
-        rank_counter += 1
-    else: ranks.append("-")
-current_final_df['Rank'] = ranks
 
 # =========================================================================
 # --- 7. HTML SKELETON (MATRIX NAVIGATION) ---
