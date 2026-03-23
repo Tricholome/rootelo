@@ -48,25 +48,79 @@
         <h2 class="page-heading">The Woodland Codex</h2>
         
         
-    <div style="text-align: left; max-width: 800px; margin: 40px auto; line-height: 1.6; color: #ccc;">
-        <h2 style="color: #4a90e2;">The ELO System</h2>
-        <p>Our ranking is based on the ELO algorithm, adjusted for 4-player matches. 
-        Points are gained or lost based on the probability of victory against your opponents.</p>
+    <style>
+        .codex-section { margin-bottom: 40px; text-align: left; max-width: 800px; margin-left: auto; margin-right: auto; line-height: 1.7; color: #ccc; }
+        .tier-list { list-style: none; padding: 0; }
+        .tier-item { 
+            display: flex; 
+            align-items: center; 
+            margin-bottom: 15px; 
+            background: #252525; 
+            padding: 12px; 
+            border-radius: 8px;
+            border-left: 4px solid #333;
+        }
+        .tier-item img { height: 32px; width: auto; margin-right: 15px; }
+        .tier-bird { border-color: #67c0c7; }
+        .tier-fox { border-color: #e6372d; }
+        .tier-rabbit { border-color: #f7eb5b; }
+        .tier-mouse { border-color: #f29057; }
+        .k-table { width: 100%; border-collapse: collapse; background: #1a1a1a; margin-top: 10px; }
+        .k-table td { padding: 12px; border-bottom: 1px solid #333; }
+        .k-val { color: #4a90e2; font-weight: bold; font-family: monospace; font-size: 1.1em; }
+    </style>
+
+    <div class="codex-section">
+        <h2 style="color: #4a90e2; border-bottom: 1px solid #333; padding-bottom: 10px;">How does this system work?</h2>
+        <p>To ensure fairness in a 4-player format, this leaderboard uses a <strong> multi-player Elo model</strong>.</p>
+        <p>Unlike a simple win-count, it calculates your score based on the <em>"Strength of Schedule"</em>. If you beat high-ranked players, you gain more. If you lose as the favorite, you drop more.</p>
+
+        <h2 style="color: #4a90e2; margin-top: 40px;">The Tier System</h2>
+        <p>After your 10-game calibration phase, you officially join the ranks and unlock your tier icon:</p>
         
-        <h2 style="color: #4a90e2;">The Tiers</h2>
-        <ul>
-            <li><strong>Bird:</strong> 1500+ (Elite level)</li>
-            <li><strong>Fox:</strong> 1400+ (Expert)</li>
-            <li><strong>Rabbit:</strong> 1300+ (Advanced)</li>
-            <li><strong>Mouse:</strong> 1200+ (Learner)</li>
-        </ul>
-        
-        <h2 style="color: #4a90e2;">Top Tables</h2>
-        <p>This section ranks matches by their <strong>ELO Sum</strong>. This represents the total skill 
-        density of the table. The higher the sum, the more "elite" the match was.</p>
-        
-        <p style="margin-top: 50px; font-size: 0.8em; color: #555;">
-        Last updated: 2026-03-23</p>
+        <div class="tier-list">
+            <div class="tier-item tier-bird">
+                <img src="assets/icons/bird.png">
+                <div><strong style="color: #67c0c7;">Bird (1500+)</strong> – The Grandmasters.</div>
+            </div>
+            <div class="tier-item tier-fox">
+                <img src="assets/icons/fox.png">
+                <div><strong style="color: #e6372d;">Fox (1400+)</strong> – The top predators.</div>
+            </div>
+            <div class="tier-item tier-rabbit">
+                <img src="assets/icons/rabbit.png">
+                <div><strong style="color: #f7eb5b;">Rabbit (1300+)</strong> – High-level competitors.</div>
+            </div>
+            <div class="tier-item tier-mouse">
+                <img src="assets/icons/mouse.png">
+                <div><strong style="color: #f29057;">Mouse (1200+)</strong> – Established consistent players.</div>
+            </div>
+        </div>
+
+        <h2 style="color: #4a90e2; margin-top: 40px;">Dynamic K-Factor</h2>
+        <p>Your score's volatility changes as you play more games to ensure stability:</p>
+        <table class="k-table">
+            <tr>
+                <td><strong>Calibration</strong> (0-10 games)</td>
+                <td class="k-val">K = 80</td>
+                <td style="font-size: 0.85em; color: #888;">Find your rank quickly.</td>
+            </tr>
+            <tr>
+                <td><strong>Active</strong> (11-50 games)</td>
+                <td class="k-val">K = 40</td>
+                <td style="font-size: 0.85em; color: #888;">Competitive weighting.</td>
+            </tr>
+            <tr>
+                <td style="border:none;"><strong>Veteran</strong> (50+ games)</td>
+                <td class="k-val" style="border:none;">K = 20</td>
+                <td style="font-size: 0.85em; color: #888; border:none;">Long-term stability.</td>
+            </tr>
+        </table>
+
+        <p style="margin-top: 60px; font-size: 0.8em; color: #555; text-align: center; border-top: 1px solid #333; padding-top: 20px;">
+            Every player starts the season with a base score of 1200.<br>
+            Generated on 2026-03-23
+        </p>
     </div>
     
     </div>
