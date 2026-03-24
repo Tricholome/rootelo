@@ -374,15 +374,17 @@ render_page(
     player_names=sorted(list(archive_history.keys()))
 )
 
-# C. Génération de la page Codex
-# Note : tu créeras un fichier 'about.html' dans ton dossier templates
-# render_page(
-#    "about.html",
-#    "about.html",
-#    title="Codex • Rootelo",
-#    page_id="about",
-#    main_color=COLORS["bird"],
-#    page_heading="The Woodland Codex"
-# )
+# C. Génération de la page About (Commune)
+render_page(
+    "about.html", 
+    "about.html",
+    title="Codex • Rootelo",
+    page_id="about",
+    is_archive=False,
+    page_heading="Codex",
+    subtitle="Rules & Ranking System",
+    description="Understanding the mechanics of Rootelo.",
+    generation_date=datetime.now(timezone.utc).strftime('%Y-%m-%d')
+)
 
 print("Génération terminée avec succès !")
