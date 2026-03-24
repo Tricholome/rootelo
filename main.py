@@ -105,7 +105,7 @@ def render_page(template_name, output_name, **kwargs):
 # =========================================================================
 # --- 2. LOAD CORRECTIONS ---
 # =========================================================================
-excel_file_path = 'Root_Elo_LH02_Corrections.xlsx'
+excel_file_path = 'Root_Elo_LH01_Corrections.xlsx'
 game_id_mapping = pd.Series(dtype='datetime64[ns]')
 
 try:
