@@ -253,7 +253,7 @@
         
         
 <style>
-    /* --- STRUCTURE GLOBALE (Alignement gauche strict) --- */
+    /* --- STRUCTURE GLOBALE --- */
     .codex-section { 
         display: block;
         text-align: left !important;
@@ -280,7 +280,7 @@
         text-align: left !important;
     }
 
-    /* --- TIER LIST (Grosse icône + Texte à gauche) --- */
+    /* --- TIER LIST --- */
     .tier-list { 
         list-style: none; 
         padding: 0; 
@@ -295,11 +295,10 @@
         padding: 25px; 
         border-radius: 12px;
         border: 1px solid var(--border-soft);
-        border-left: 6px solid #333; /* Bordure plus épaisse */
+        border-left: 6px solid #333;
         max-width: 800px;
     }
 
-    /* Icônes beaucoup plus grandes */
     .tier-icon { 
         height: 100px; 
         width: 100px; 
@@ -314,16 +313,27 @@
         text-align: left !important;
     }
 
-    /* Titre : Seule la première partie est colorée */
+    /* --- GESTION DU TITRE (Nom, Tiret, Sous-titre) --- */
     .tier-header {
         font-size: 1.15em;
-        font-weight: 800;
         margin-bottom: 8px;
-        color: var(--text-main); /* Couleur par défaut pour le suffixe */
+        line-height: 1.3;
     }
 
     .tier-name {
-        /* La couleur sera injectée par le style inline */
+        font-weight: 800;
+        /* La couleur est injectée par le style inline */
+    }
+
+    .tier-separator {
+        font-weight: 400; /* Le tiret n'est plus en gras */
+        color: var(--text-muted); /* Adoucit le tiret */
+        margin: 0 6px;
+    }
+
+    .tier-subtitle {
+        font-weight: 500; /* Moins agressif que le nom */
+        color: var(--text-main);
     }
 
     .tier-desc {
@@ -363,9 +373,28 @@
         font-size: 1.1em;
     }
 
+    /* --- RESPONSIVE MOBILE --- */
     @media (max-width: 600px) {
-        .tier-item { flex-direction: column; align-items: flex-start; }
-        .tier-icon { height: 80px; width: 80px; margin-bottom: 15px; }
+        .tier-item { 
+            flex-direction: column; 
+            align-items: flex-start; 
+        }
+        .tier-icon { 
+            height: 80px; 
+            width: 80px; 
+            margin-bottom: 15px; 
+        }
+        
+        /* Magie pour le titre sur mobile */
+        .tier-separator { 
+            display: none; /* Disparition du tiret */
+        }
+        .tier-subtitle { 
+            display: block; /* Force le passage à la ligne */
+            margin-top: 4px; 
+            font-size: 0.95em;
+            color: var(--text-muted); /* Un peu plus discret sur mobile pour mettre en valeur le rang */
+        }
     }
 </style>
 
@@ -439,7 +468,7 @@
             <img src="assets/icons/bird.png" class="tier-icon">
             <div class="tier-content">
                 <div class="tier-header">
-                    <span class="tier-name" style="color: #4A6FA5;">Bird (1500+)</span> — The Zenith Grandmasters
+                    <span class="tier-name" style="color: #4A6FA5;">Bird (1500+)</span><span class="tier-separator">—</span><span class="tier-subtitle">The Zenith Grandmasters</span>
                 </div>
                 <p class="tier-desc">The absolute peak. There’s rarely more than one at a time, and staying here is a constant battle against gravity. It’s a fleeting, prestigious throne reserved for those who can maintain perfection under the highest pressure.</p>
             </div>
@@ -449,7 +478,7 @@
             <img src="assets/icons/fox_new.webp" class="tier-icon">
             <div class="tier-content">
                 <div class="tier-header">
-                    <span class="tier-name" style="color: #C0392B;">Fox (1400+)</span> — The Cunning Tacticians
+                    <span class="tier-name" style="color: #C0392B;">Fox (1400+)</span><span class="tier-separator">—</span><span class="tier-subtitle">The Cunning Tacticians</span>
                 </div>
                 <p class="tier-desc">The ones everyone is chasing. They’ve got a trick for every turn and a plan for every disaster. They play with a mischievous grin, consistently outmaneuvering the field to prove they belong among the forest's elite.</p>
             </div>
@@ -459,7 +488,7 @@
             <img src="assets/icons/rabbit_new.webp" class="tier-icon">
             <div class="tier-content">
                 <div class="tier-header">
-                    <span class="tier-name" style="color: #D4AF37;">Rabbit (1300+)</span> — The Agile Contenders
+                    <span class="tier-name" style="color: #D4AF37;">Rabbit (1300+)</span><span class="tier-separator">—</span><span class="tier-subtitle">The Agile Contenders</span>
                 </div>
                 <p class="tier-desc">The true engine of the higher rankings. Their climb is built on speed and adaptability, moving well past the basics to dictate the pace of the game. They are the ones driving the competition forward, always looking for the next opening to move up.</p>
             </div>
@@ -469,7 +498,7 @@
             <img src="assets/icons/mouse_new.webp" class="tier-icon">
             <div class="tier-content">
                 <div class="tier-header">
-                    <span class="tier-name" style="color: #E7A16F;">Mouse (1200+)</span> — The Steady Foragers
+                    <span class="tier-name" style="color: #E7A16F;">Mouse (1200+)</span><span class="tier-separator">—</span><span class="tier-subtitle">The Steady Foragers</span>
                 </div>
                 <p class="tier-desc">The foundation of the leaderboard. Securing a spot here is a genuine milestone, proving a level of skill that has already outpaced the standard player. These are the <strong>consistent</strong> and resilient competitors who provide the first true test for anyone looking to climb the ranks.</p>
             </div>
