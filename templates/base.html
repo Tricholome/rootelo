@@ -88,7 +88,9 @@
 
         <nav>
             {% for item in nav_items %}
-            <a href="{{ item.url }}" class="{{ 'active' if page_id == item.id }}">{{ item.label }}</a>
+            <a href="{{ item.url }}" class="{{ 'active' if page_id == item.id }}">
+                {{ item.label }}
+            </a>
             {% endfor %}
         </nav>
 
