@@ -246,31 +246,38 @@
         
         
 <style>
-    /* --- SECTION LAYOUT --- */
+    /* --- RESET & ALIGNEMENT --- */
     .codex-section { 
+        display: block !important;
+        text-align: left !important;
+        /* On force le bloc à ne pas se centrer même si le parent le veut */
+        margin-left: 0 !important;
+        margin-right: auto !important;
         margin-top: 20px;
-        text-align: left; 
-        width: 100%; /* Occupe toute la place disponible */
+        width: 100%;
+        max-width: 100% !important;
         line-height: 1.6; 
         color: var(--text-main); 
     }
 
-    /* Titres sobres, petits et alignés */
+    /* Titres sobres, petits et alignés à gauche */
     .codex-section h2 {
         color: var(--main-color); 
         border-bottom: 1px solid var(--border-soft); 
         padding-bottom: 8px;
-        margin: 40px 0 20px 0;
-        font-size: 1.15em; 
+        margin: 40px 0 20px 0 !important;
+        font-size: 1.1em; /* Très discret pour ne pas jurer */
         font-weight: 700;
+        text-align: left !important;
     }
 
     .codex-section p {
         margin-bottom: 15px;
         color: var(--text-muted);
+        text-align: left !important;
     }
 
-    /* --- TIER LIST (Style conservé) --- */
+    /* --- TIER LIST (Le style que tu aimais) --- */
     .tier-list { list-style: none; padding: 0; margin: 25px 0; }
     
     .tier-item { 
@@ -278,17 +285,18 @@
         align-items: center; 
         margin-bottom: 12px; 
         background: var(--bg-container); 
-        padding: 18px; 
+        padding: 15px; 
         border-radius: 8px;
         border: 1px solid var(--border-soft);
         border-left: 5px solid #333;
         transition: transform 0.2s ease;
+        max-width: 600px; /* On limite seulement la largeur des cartes pour le look */
     }
     
     .tier-item:hover { transform: translateX(5px); }
-    .tier-item img { height: 65px; width: auto; margin-right: 20px; }
+    .tier-item img { height: 60px; width: auto; margin-right: 20px; }
     
-    /* Bordures colorées des Tiers */
+    /* Couleurs de bordure des Tiers */
     .tier-bird   { border-left-color: #67c0c7 !important; }
     .tier-fox    { border-left-color: #e6372d !important; }
     .tier-rabbit { border-left-color: #f7eb5b !important; }
@@ -296,26 +304,25 @@
 
     /* --- K-FACTOR TABLE --- */
     .k-table { 
-        width: 100%; /* S'adapte à la largeur de la page */
-        max-width: 700px; /* Uniquement pour ne pas avoir un tableau immense sur 4K */
+        width: 100%; 
+        max-width: 600px;
         border-collapse: collapse; 
         margin: 20px 0;
         background: var(--bg-container);
         border: 1px solid var(--border-soft);
-        border-radius: 4px;
     }
 
     .k-table td { 
         padding: 12px 15px; 
         border-bottom: 1px solid var(--border-soft); 
         color: var(--text-muted);
+        text-align: left !important;
     }
 
     .k-val { 
         color: var(--main-color); 
         font-weight: bold; 
         font-family: monospace; 
-        font-size: 1.1em; 
     }
     
     .footer-note { 
@@ -324,11 +331,12 @@
         color: #555; 
         border-top: 1px solid var(--border-soft); 
         padding-top: 20px; 
+        text-align: left !important;
     }
 
     @media (max-width: 600px) {
-        .tier-item { padding: 12px; }
-        .tier-item img { height: 50px; margin-right: 15px; }
+        .tier-item { flex-direction: row; padding: 10px; }
+        .tier-item img { height: 45px; margin-right: 15px; }
     }
 </style>
 
