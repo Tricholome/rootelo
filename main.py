@@ -196,7 +196,7 @@ current_matches_df = pd.DataFrame()
 current_history = {}
 match_history_data = []
 
-# elo_ratings = {}
+elo_ratings = {}
 # if not archive_final_df.empty:
 #     for _, row in archive_final_df.iterrows():
 #         p_name = str(row['Player'])
