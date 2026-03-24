@@ -275,18 +275,17 @@
             {% endfor %}
         </nav>
 
-        {% if page_id != 'about' %}
-        <div class="season-selector">
-            <span class="season-label">Season</span>
-            <a href="{{ page_id }}_lh01.html" class="season-btn {{ 'active' if is_archive else '' }}">LH01</a>
-            <a href="{{ page_id }}.html" class="season-btn {{ '' if is_archive else 'active' }}">LH02</a>
-        </div>
-        {% endif %}
-
         <header class="page-intro">
             <h2>{{ page_heading }}</h2>
             {% if subtitle %}<h3>{{ subtitle }}</h3>{% endif %}
             {% if description %}<p>{{ description }}</p>{% endif %}
+            {% if page_id != 'about' %}
+            <div class="season-selector">
+                <span class="season-label">Season</span>
+                <a href="{{ page_id }}_lh01.html" class="season-btn {{ 'active' if is_archive else '' }}">LH01</a>
+                <a href="{{ page_id }}.html" class="season-btn {{ '' if is_archive else 'active' }}">LH02</a>
+            </div>
+            {% endif %}
         </header>
     
         <main>
