@@ -87,25 +87,25 @@
     .tier-icon-container { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; margin: 0 auto; }
     .tier-icon-container img { max-width: 100%; max-height: 100%; object-fit: contain; }
     
-    /* Couleurs des rangs (Tiers) */
-    .tier-bird   { background-color: rgba(103, 192, 199, 0.1) !important; border-left: 4px solid #67c0c7 !important; }
-    .tier-fox    { background-color: rgba(230, 55, 45, 0.1) !important; border-left: 4px solid #e6372d !important; }
-    .tier-rabbit { background-color: rgba(247, 235, 91, 0.1) !important; border-left: 4px solid #f7eb5b !important; }
-    .tier-mouse  { background-color: rgba(242, 144, 87, 0.1) !important; border-left: 4px solid #f29057 !important; }
+    /* Couleurs des rangs (Tiers) via variables CSS */
+    .tier-bird   { background-color: rgba(103, 192, 199, 0.07) !important; border-left: 4px solid var(--color-bird) !important; }
+    .tier-fox    { background-color: rgba(230, 55, 45, 0.07) !important; border-left: 4px solid var(--color-fox) !important; }
+    .tier-rabbit { background-color: rgba(247, 235, 91, 0.07) !important; border-left: 4px solid var(--color-rabbit) !important; }
+    .tier-mouse  { background-color: rgba(242, 144, 87, 0.07) !important; border-left: 4px solid var(--color-mouse) !important; }
     
-    /* Coloration du texte des noms et ELO selon le Tier */
-    .tier-bird td:nth-child(3), .tier-bird td:nth-child(4)   { color: #67c0c7; font-weight: bold; }
-    .tier-fox td:nth-child(3), .tier-fox td:nth-child(4)     { color: #e6372d; font-weight: bold; }
-    .tier-rabbit td:nth-child(3), .tier-rabbit td:nth-child(4) { color: #f7eb5b; font-weight: bold; }
-    .tier-mouse td:nth-child(3), .tier-mouse td:nth-child(4)  { color: #f29057; font-weight: bold; }
+    /* Coloration dynamique du texte selon le Tier */
+    .tier-bird td:nth-child(3),   .tier-bird td:nth-child(4)   { color: var(--color-bird); font-weight: bold; }
+    .tier-fox td:nth-child(3),    .tier-fox td:nth-child(4)    { color: var(--color-fox); font-weight: bold; }
+    .tier-rabbit td:nth-child(3), .tier-rabbit td:nth-child(4) { color: var(--color-rabbit); font-weight: bold; }
+    .tier-mouse td:nth-child(3),  .tier-mouse td:nth-child(4)  { color: var(--color-mouse); font-weight: bold; }
     
     .unranked { opacity: 0.5; font-style: italic; }
     .player-name-cell { text-align: left !important; padding-left: 15px !important; font-weight: 500; }
 
     /* Footer du tableau */
     .footer { margin-top: 30px; font-size: 0.75em; color: #777; border-top: 1px solid #333; padding-top: 15px; line-height: 2; text-align: center; }
-    .footer-tier-item { display: inline-block; margin: 0 10px; vertical-align: middle; }
-    .footer-tier-item img { height: 18px; width: auto; vertical-align: middle; margin-right: 4px; }
+    .footer-tier-item { display: inline-block; margin: 0 15px; vertical-align: middle; }
+    .footer-tier-item img { height: 20px; width: auto; vertical-align: middle; margin-right: 6px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); }
 
     </style>
     
@@ -192,12 +192,12 @@
     </table>
 
     <div class="footer">
-        <strong>Tier System</strong> (min 10 games):<br>
+        <strong>Woodland Tier System</strong> (min 10 games):<br>
         <span class="footer-tier-item"><img src="assets/icons/bird.png"> 1500+</span>
         <span class="footer-tier-item"><img src="assets/icons/fox.png"> 1400+</span>
-        <span class="footer-tier-item"><img src="assets/icons/rabbit.png"> 1300+</span>
-        <span class="footer-tier-item"><img src="assets/icons/mouse.png"> 1200+</span><br>
-        Generated on 2026-03-24 10:03 UTC
+        <span class="footer-tier-item"><img src="assets/icons/rabbit_new.webp"> 1300+</span>
+        <span class="footer-tier-item"><img src="assets/icons/mouse_new.webp"> 1200+</span><br>
+        Generated on 2026-03-24 10:11 UTC
     </div>
 
         </main>
@@ -217,13 +217,14 @@ $(document).ready(function() {
         "responsive": true, 
         "pageLength": 50,
         "columnDefs": [ 
+            { "targets": 0, "type": "rank" },
             { "targets": 2, "className": "player-name-cell" }, 
             { "responsivePriority": 1, "targets": [0, 2, 3] } 
         ],
         "createdRow": function(row, data) {
             var rank = data[0]; 
             var elo = parseInt(data[3]); 
-            // Ajout des classes de Tier pour le styling CSS
+            // On s'assure que le style s'applique correctement
             if (rank === "-") { 
                 $(row).addClass('unranked'); 
             } else {
