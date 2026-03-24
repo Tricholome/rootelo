@@ -6,10 +6,26 @@ import json
 from jinja2 import Environment, FileSystemLoader
 
 # =========================================================================
-# --- 0. CONFIGURATION JINJA2 & THEME ---
+# --- 0. PATH CONFIGURATION (EXTERNAL FILES) ---
 # =========================================================================
+# Define base data directory and specific season folders
+DATA_DIR = "data"
+
+# Correction file path
+CORRECTIONS_FILE = os.path.join(DATA_DIR, "lh01_corrections.csv")
+
+# LH01 Archive files
+ARCHIVE_LEADERBOARD_FILE = os.path.join(DATA_DIR, "lh01_final_ratings.csv")
+ARCHIVE_MATCHES_FILE     = os.path.join(DATA_DIR, "lh01_matches_fixed.csv")
+ARCHIVE_TRENDS_FILE      = os.path.join(DATA_DIR, "lh01_history_full.json")
+
+# =========================================================================
+# --- 1. JINJA2 & NAVIGATION SETUP ---
+# =========================================================================
+# Initialize Jinja2 environment for HTML template rendering
 env = Environment(loader=FileSystemLoader('templates'))
 
+# Define menu structure for the website header
 NAV_ITEMS = [
     {'id': 'index', 'url': 'index.html', 'label': 'Leaderboard'},
     {'id': 'matches', 'url': 'matches.html', 'label': 'Top Tables'},
@@ -18,7 +34,7 @@ NAV_ITEMS = [
 ]
 
 # =========================================================================
-# --- 1. CONFIGURATION API & HELPERS ---
+# --- 2. API & HELPER UTILITIES ---
 # =========================================================================
 API_TOKEN = os.getenv('API_TOKEN')
 HEADERS = {'Authorization': f'Token {API_TOKEN}'} if API_TOKEN else {}
@@ -57,13 +73,11 @@ def prepare_leaderboard_data(df):
     return players_list
 
 def prepare_matches_data(df):
-    """Reprend exactement ta logique de nettoyage des noms"""
     prepared = []
     if df.empty: return []
 
     def clean_names(name_str):
         if pd.isna(name_str) or not str(name_str).strip(): return ""
-        # Ton ancienne logique : split sur ',' puis sur '+' et '#'
         parts = [str(n).strip().split('+')[0].split('#')[0] for n in str(name_str).split(',')]
         return ", ".join(parts)
 
@@ -80,7 +94,6 @@ def prepare_matches_data(df):
     return prepared
 
 def prepare_trends_data(history_dict):
-    """Prépare les variables pour Jinja2"""
     if not history_dict:
         return {"history_json": "{}", "player_names": []}
     
@@ -90,7 +103,6 @@ def prepare_trends_data(history_dict):
     }
 
 def render_page(template_name, output_name, **kwargs):
-    """Compile un template HTML avec les variables fournies"""
     template = env.get_template(template_name)
     full_vars = {
         "nav_items": NAV_ITEMS,
@@ -103,27 +115,22 @@ def render_page(template_name, output_name, **kwargs):
     print(f"  > {output_name} généré.")
 
 # =========================================================================
-# --- 2. LOAD CORRECTIONS ---
+# --- 3. LOAD CORRECTIONS ---
 # =========================================================================
-excel_file_path = 'Root_Elo_LH01_Corrections.xlsx'
 game_id_mapping = pd.Series(dtype='datetime64[ns]')
 
 try:
-    if os.path.exists(excel_file_path):
-        df_updates = pd.read_excel(excel_file_path, engine='openpyxl')
+    if os.path.exists(CORRECTIONS_FILE):
+        df_updates = pd.read_csv(CORRECTIONS_FILE, parse_dates=['New_Date'])
         if not df_updates.empty and 'GameID' in df_updates.columns:
             game_id_mapping = df_updates.set_index('GameID')['New_Date']
-            print(f"✅ Loaded corrections from {excel_file_path}")
+            print(f"✅ Loaded corrections from {CORRECTIONS_FILE}")
 except Exception as e:
-    print(f"ℹ️ Note: No corrections loaded (File empty or missing): {e}")
+    print(f"ℹ️ Note: No corrections loaded: {e}")
 
 # =========================================================================
-# --- 3. LOAD ARCHIVE DATA (LH01) ---
+# --- 4. LOAD ARCHIVE DATA (LH01) ---
 # =========================================================================
-ARCHIVE_LEADERBOARD_FILE = "data/lh01_final_ratings.csv"
-ARCHIVE_MATCHES_FILE = "data/lh01_matches_fixed.csv"
-ARCHIVE_TRENDS_FILE = "data/lh01_history_full.json"
-
 archive_final_df = pd.DataFrame()
 archive_matches_df = pd.DataFrame()
 archive_history = {}
@@ -146,7 +153,7 @@ except Exception as e:
     print(f"Error loading archive files: {e}")
 
 # =========================================================================
-# --- 4. FETCH & PROCESS CURRENT SEASON ---
+# --- 5. FETCH & PROCESS CURRENT SEASON ---
 # =========================================================================
 all_matches = []
 T_ID = int(TOURNAMENT_ID)
@@ -189,7 +196,7 @@ else:
     df = df.sort_values(by='Date_Closed').reset_index(drop=True)
 
 # =========================================================================
-# --- 5. ELO CALCULATION & STANDINGS ---
+# --- 6. ELO CALCULATION & STANDINGS ---
 # =========================================================================
 current_final_df = pd.DataFrame()
 current_matches_df = pd.DataFrame()
@@ -252,7 +259,7 @@ if not current_matches_df.empty:
     current_matches_df.insert(0, 'Rank', range(1, len(current_matches_df) + 1))
 
 # =========================================================================
-# --- 6. FINAL LEADERBOARD GENERATION ---
+# --- 7. FINAL LEADERBOARD GENERATION ---
 # =========================================================================
 leaderboard_list = []
 for p_name, rating in elo_ratings.items():
@@ -283,7 +290,7 @@ current_final_df['Rank'] = ranks
 current_history = {k.split('+')[0].split('#')[0]: v for k, v in player_history.items()}
 
 # =========================================================================
-# --- 7. FILTERS & HTML GENERATION (JINJA2) ---
+# --- 8. FILTERS & HTML GENERATION (JINJA2) ---
 # =========================================================================
 print("\n=== GÉNÉRATION DU SITE ===")
 
