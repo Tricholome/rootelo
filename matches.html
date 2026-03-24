@@ -83,25 +83,37 @@
         }
 
         
-    /* On reprend tes styles CSS exacts */
+    /* --- Styles CSS exacts conservés --- */
     .lineup-cell { 
-        white-space: normal !important; 
+        white-space: normal !important; /* Force le retour à la ligne */
         word-wrap: break-word; 
         overflow-wrap: break-word; 
-        min-width: 150px; 
-        max-content: 350px; 
+        min-width: 150px; /* Conserve une largeur minimale */
+        max-width: 350px; /* Empêche de prendre trop de place sur grand écran */
         line-height: 1.4; 
         text-align: left !important; 
         padding-left: 20px !important;
     }
     
-    /* Utilisation de var(--main-color) pour les contrôles responsive */
+    /* Utilisation de var(--main-color) pour les contrôles responsive (le petit '+') */
     table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before { 
         background-color: var(--main-color) !important; 
     }
-    table.dataTable > tbody > tr.child ul.dtr-details { width: 100%; background: #252525; }
-    table.dataTable > tbody > tr.child span.dtr-title { color: var(--main-color); font-weight: bold; }
     
+    /* Styles pour les détails responsive (quand on clique sur le '+') */
+    table.dataTable > tbody > tr.child ul.dtr-details { 
+        width: 100%; 
+        background: #252525; 
+        border-radius: 8px;
+        padding: 10px;
+    }
+    table.dataTable > tbody > tr.child span.dtr-title { 
+        color: var(--main-color); 
+        font-weight: bold; 
+        margin-right: 10px;
+    }
+    
+    /* Style de l'ID du match */
     .match-id-link {
         color: #666; 
         text-decoration: none; 
@@ -113,6 +125,15 @@
         transition: 0.2s;
     }
     .match-id-link:hover { border-color: var(--main-color); color: #eee; }
+
+    /* --- AJOUT SPÉCIFIQUE POUR LE MOBILE --- */
+    @media (max-width: 768px) {
+        .lineup-cell {
+            min-width: 120px; /* On réduit un peu la largeur minimale sur mobile */
+            font-size: 0.9em; /* On réduit légèrement la police pour gagner de la place */
+            padding-left: 10px !important; /* On réduit le padding */
+        }
+    }
 
     </style>
     
@@ -186,7 +207,7 @@
                 <th>ELO</th>
                 <th>Date</th>
                 <th>Lineup (Winner First)</th>
-                <th>ID</th>
+                <th>Game ID</th>
             </tr>
         </thead>
         <tbody>
@@ -210,7 +231,11 @@ $(document).ready(function() {
         "columnDefs": [
             { "width": "40px", "targets": [0, 1] },
             { "className": "lineup-cell", "targets": 3 }, 
+            
+            /* --- CORRECTION ICI : Priorité maximale pour Rank, ELO et Lineup --- */
             { "responsivePriority": 1, "targets": [0, 1, 3] },
+            
+            /* Priorités secondaires pour Date et ID */
             { "responsivePriority": 2, "targets": 2 }, 
             { "responsivePriority": 3, "targets": 4 }
         ]
