@@ -20,7 +20,7 @@ def get_tier_icon(rating, games):
     r = round(rating)
     if r >= 1500: return "assets/icons/bird.png", "suit-bird"
     if r >= 1400: return "assets/icons/fox.png", "suit-fox"
-    if r >= 1300: return "assets/icons/rabbit.png", "suit-rabbit"
+    if r >= 1300: return "assets/icons/rabbit_new.webp", "suit-rabbit"
     if r >= 1200: return "assets/icons/mouse_new.webp", "suit-mouse"
     return None, "unranked"
 
@@ -353,7 +353,7 @@ def generate_page_html(title, page_heading, current_page, content, subtitle="", 
                     <p class="site-subtitle">A Metric of Woodland Skill and Will</p>
                 </div>
                 <div class="banner-icons right">
-                    <img src="assets/icons/rabbit.png">
+                    <img src="assets/icons/rabbit_new.webp">
                     <img src="assets/icons/mouse_new.webp">
                 </div>
             </div>
@@ -601,7 +601,7 @@ def build_about_page(filename, title, heading):
                 <div><strong style="color: #e6372d;">Fox (1400+)</strong> – The top predators.</div>
             </div>
             <div class="tier-item tier-rabbit">
-                <img src="assets/icons/rabbit.png">
+                <img src="assets/icons/rabbit_new.webp">
                 <div><strong style="color: #f7eb5b;">Rabbit (1300+)</strong> – High-level competitors.</div>
             </div>
             <div class="tier-item tier-mouse">
