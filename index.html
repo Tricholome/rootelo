@@ -242,8 +242,21 @@
         /* =========================================================================
            --- 6. GLOBAL FOOTER ---
            ========================================================================= */
-        .site-footer { margin-top: 50px; padding: 30px 20px; text-align: center; border-top: 1px solid var(--border-soft); color: var(--text-muted); font-family: var(--font-ui); font-size: 0.8em; }
-        .footer-credits { display: flex; align-items: center; justify-content: center; margin-bottom: 8px; }
+        .site-footer { 
+            margin-top: 50px; 
+            padding: 30px 20px; 
+            text-align: center; 
+            border-top: 1px solid var(--border-soft); 
+            color: var(--text-muted); 
+            font-family: var(--font-ui); 
+            font-size: 0.8em; 
+        }
+        .footer-credits { 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            margin-bottom: 8px; 
+        }
         .footer-credits span:not(.footer-separator) { flex: 1; }
         .footer-credits span:first-child { text-align: right; }
         .footer-credits span:last-child { text-align: left; }
@@ -255,31 +268,61 @@
            --- 7. MOBILE RESPONSIVE ---
            ========================================================================= */
         @media (max-width: 768px) and (orientation: portrait) {
-            .banner-container { flex-wrap: wrap; gap: 10px; }
-            .banner-center { order: 1; width: 100%; margin-bottom: 10px; }
-            .banner-icons { order: 2; gap: 5px; display: flex; flex-wrap: nowrap; }
+            .banner-container { 
+                flex-wrap: wrap; 
+                gap: 10px; 
+                justify-content: center; 
+            }
+            .banner-center { 
+                order: 1; 
+                width: 100%; 
+                margin-bottom: 10px; 
+            }
+            /* Utilisation de nowrap pour forcer UNE SEULE LIGNE */
+            .banner-icons { 
+                order: 2; 
+                display: flex; 
+                flex-wrap: nowrap; 
+                gap: 5px; 
+                justify-content: center;
+            }
             
-            /* Ajustements des liens/images pour mobile */
-            .banner-icons a.tooltip-link, .banner-icons a.tooltip-link.expanded { margin: 0; }
-            .banner-icons a.tooltip-link img { width: 60px !important; height: 60px !important; transition: all 0.3s ease; }
+            .banner-icons a.tooltip-link, 
+            .banner-icons a.tooltip-link.expanded { 
+                margin: 0; 
+                display: inline-block;
+            }
+            .banner-icons a.tooltip-link img { 
+                width: 60px !important; 
+                height: 60px !important; 
+                transition: all 0.3s ease; 
+            }
             
-            /* Comportement quand "tapé" (Expanded) sur mobile */
+            /* L'effet de pivot (rotation) que tu avais */
             .banner-icons.left a.tooltip-link.expanded img { transform: translateY(-8px) scale(1.4) rotate(-8deg) !important; z-index: 100; position: relative; }
             .banner-icons.right a.tooltip-link.expanded img { transform: translateY(-8px) scale(1.4) rotate(8deg) !important; z-index: 100; position: relative; }
             
-            /* On garde le Tooltip sur mobile quand activé, mais on l'affiche différemment */
-            .tooltip-text { display: none; } /* Caché par défaut */
+            /* Tooltip mobile avec retour à la ligne automatique */
+            .tooltip-text { display: none; } 
             .banner-icons a.tooltip-link.expanded .tooltip-text { 
                 display: block !important;
                 opacity: 1;
                 bottom: 115%;
                 transform: none;
-                left: auto;
+                width: 140px;           /* Largeur fixe pour forcer le wrap */
+                white-space: normal;    /* Autorise le retour à la ligne */
+                text-align: center;
+                z-index: 101;
+                padding: 8px;
             }
 
+            /* On remet tes ancres left/right */
             .banner-icons.left a.tooltip-link.expanded .tooltip-text { left: 0; }
             .banner-icons.right a.tooltip-link.expanded .tooltip-text { right: 0; left: auto; }
             
+            /* Le nom du rang prend toute la largeur pour forcer le wrap du texte */
+            .tooltip-text strong { display: block; margin-bottom: 2px; }
+
             .site-title { font-size: 2em; }
             .footer-credits span { display: block; margin: 5px 0; text-align: center !important; }
             .footer-separator { display: none !important; }
@@ -3041,7 +3084,7 @@
                     <span>Art by <strong>𝕩𝕝𝕦𝕖𝕧𝕚</strong></span>
                 </div>
                 <div class="footer-date">
-                    Updated on 2026-03-24 23:06
+                    Updated on 2026-03-24 23:08
                 </div>
             </div>
         </footer>
