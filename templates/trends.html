@@ -1,1 +1,125 @@
+{% extends "base.html" %}
 
+{% block extra_head %}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Ta mise en page exacte */
+    .search-box { margin: 20px 0; text-align: center; }
+    input { 
+        background: #252525; color: #fff; border: 1px solid #444; 
+        padding: 12px; border-radius: 8px; width: 95%; max-width: 450px; 
+        font-size: 16px; box-sizing: border-box; outline: none;
+    }
+    input:focus { border-color: var(--main-color); }
+
+    .landscape-hint { 
+        display: none; color: #666; font-size: 0.7em; 
+        margin-bottom: 10px; text-transform: uppercase; 
+        letter-spacing: 1px; text-align: center;
+    }
+    .chart-wrapper { width: 100%; padding: 0 5px; box-sizing: border-box; }
+    .chart-container { 
+        position: relative; width: 100%; height: 55vh; 
+        background: #1a1a1a; border-radius: 12px; 
+        border: 1px solid #252525; padding: 15px;
+    }
+
+    @media (max-width: 768px) and (orientation: portrait) { 
+        .landscape-hint { display: block; } 
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+    <div class="search-box">
+        <input list="playerList" id="playerName" placeholder="Search Player..." oninput="updateChart()">
+        <datalist id="playerList">
+            {% for name in player_names %}
+                <option value="{{ name }}">
+            {% endfor %}
+        </datalist>
+    </div>
+
+    <div class="landscape-hint">🔄 Rotate phone for detail</div>
+    
+    <div class="chart-wrapper">
+        <div class="chart-container">
+            <canvas id="progressionChart"></canvas>
+        </div>
+    </div>
+{% endblock %}
+
+{% block custom_js %}
+<script>
+    // Injection sécurisée du dictionnaire Python vers JS
+    const allData = {{ history_json | safe }};
+    let myChart;
+
+    function updateChart() {
+        const name = document.getElementById('playerName').value;
+        const canvas = document.getElementById('progressionChart');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        
+        // Ta logique de récupération de la couleur dynamique (Lapin = Cyan)
+        const activeColor = getComputedStyle(document.documentElement)
+                            .getPropertyValue('--main-color').trim() || '#4a90e2';
+        
+        if (allData[name]) {
+            const rawData = allData[name];
+            const labels = rawData.map(d => d[0]);
+            const eloScores = rawData.map(d => d[1]);
+
+            if (myChart) myChart.destroy();
+            
+            myChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: eloScores,
+                        borderColor: activeColor,
+                        backgroundColor: activeColor + '1a', // 1a = transparence
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.3,
+                        pointRadius: 2,
+                        pointHitRadius: 20
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { 
+                            enabled: true, 
+                            mode: 'index', 
+                            intersect: false, 
+                            backgroundColor: '#222',
+                            titleColor: activeColor,
+                            bodyColor: '#eee'
+                        }
+                    },
+                    scales: {
+                        y: { 
+                            grid: { color: '#252525' }, 
+                            ticks: { color: '#666', font: { size: 10 } } 
+                        },
+                        x: { 
+                            grid: { display: false }, 
+                            ticks: { color: '#666', font: { size: 10 }, maxTicksLimit: 8, maxRotation: 0 } 
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+    // Petit plus : Si un nom est déjà dans l'input (retour arrière), on charge le chart
+    window.onload = updateChart;
+</script>
+{% endblock %}
