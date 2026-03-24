@@ -2,103 +2,83 @@
 
 {% block extra_css %}
 <style>
-    /* --- SECTION LAYOUT --- */
     .codex-section { 
-        margin-bottom: 60px; 
+        margin: 40px 0; 
         text-align: left; 
-        max-width: 800px; 
-        margin-left: auto; 
-        margin-right: auto; 
-        line-height: 1.8; 
+        max-width: 900px; 
+        line-height: 1.6; 
         color: var(--text-main); 
-        font-family: var(--font-ui);
-    }
-
-    .codex-section p {
-        margin-bottom: 20px;
-        color: var(--text-muted);
     }
 
     .codex-section h2 {
         color: var(--main-color); 
         border-bottom: 1px solid var(--border-soft); 
-        padding-bottom: 12px;
-        margin-top: 50px;
-        font-weight: 800;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        font-size: 1.4em;
+        padding-bottom: 8px;
+        margin: 40px 0 20px 0;
+        font-size: 1.5em;
+        font-weight: bold;
     }
 
-    /* --- TIER LIST STYLES --- */
-    .tier-list { list-style: none; padding: 0; margin-top: 30px; }
+    .codex-section p {
+        margin-bottom: 15px;
+        color: var(--text-muted);
+    }
+
+    /* --- TIER LIST --- */
+    .tier-list { list-style: none; padding: 0; margin: 25px 0; }
     
     .tier-item { 
         display: flex; 
         align-items: center; 
-        margin-bottom: 15px; 
+        margin-bottom: 12px; 
         background: var(--bg-container); 
-        padding: 20px; 
-        border-radius: 12px;
-        border-left: 5px solid var(--border-soft);
-        transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        padding: 15px; 
+        border-radius: 8px;
         border: 1px solid var(--border-soft);
-        border-left-width: 6px;
+        border-left: 4px solid #333; /* Fallback */
     }
     
-    .tier-item:hover { transform: translateX(8px); background: var(--bg-hover); }
-    .tier-item img { height: 70px; width: auto; margin-right: 25px; filter: drop-shadow(0 0 10px rgba(0,0,0,0.5)); }
+    .tier-item img { height: 60px; width: auto; margin-right: 20px; }
     
-    /* Couleurs dynamiques basées sur ton dictionnaire Python */
+    /* Couleurs de bordure dynamiques */
     .tier-bird   { border-left-color: {{ colors['bird'] }} !important; }
     .tier-fox    { border-left-color: {{ colors['fox'] }} !important; }
     .tier-rabbit { border-left-color: {{ colors['rabbit'] }} !important; }
     .tier-mouse  { border-left-color: {{ colors['mouse'] }} !important; }
 
     /* --- K-FACTOR TABLE --- */
-    .k-table-container {
-        overflow-x: auto;
-        border-radius: 8px;
-        border: 1px solid var(--border-soft);
-        margin-top: 25px;
-    }
-
     .k-table { 
         width: 100%; 
+        max-width: 600px;
         border-collapse: collapse; 
-        background: var(--bg-container); 
+        margin: 20px 0;
+        background: var(--bg-container);
+        border-radius: 4px;
     }
 
     .k-table td { 
-        padding: 18px; 
+        padding: 12px 15px; 
         border-bottom: 1px solid var(--border-soft); 
-        color: var(--text-muted);
     }
 
     .k-val { 
         color: var(--main-color); 
-        font-weight: 900; 
+        font-weight: bold; 
         font-family: monospace; 
-        font-size: 1.3em; 
+        font-size: 1.1em; 
     }
     
-    /* --- FOOTER NOTE --- */
     .footer-note { 
-        margin-top: 80px; 
+        margin-top: 60px; 
         font-size: 0.85em; 
-        color: var(--text-muted); 
-        text-align: center; 
+        color: #555; 
         border-top: 1px solid var(--border-soft); 
-        padding-top: 40px; 
-        opacity: 0.6;
+        padding-top: 20px; 
     }
 
-    /* --- MOBILE ADAPTATION --- */
     @media (max-width: 600px) {
-        .tier-item { padding: 15px; }
-        .tier-item img { height: 50px; margin-right: 15px; }
-        .tier-item div { font-size: 0.9em; }
-        .k-table td { padding: 12px; font-size: 0.85em; }
+        .tier-item { flex-direction: row; padding: 10px; }
+        .tier-item img { height: 45px; margin-right: 15px; }
     }
 </style>
 {% endblock %}
@@ -114,52 +94,50 @@
     
     <div class="tier-list">
         <div class="tier-item tier-bird">
-            <img src="{{ icons['bird'] }}" alt="Bird">
-            <div><strong style="color: {{ colors['bird'] }}; font-size: 1.1em;">Bird (1500+)</strong><br>The Grandmasters.</div>
+            <img src="{{ icons['bird'] }}">
+            <div><strong style="color: {{ colors['bird'] }};">Bird (1500+)</strong> – The Grandmasters.</div>
         </div>
     
         <div class="tier-item tier-fox">
-            <img src="{{ icons['fox'] }}" alt="Fox">
-            <div><strong style="color: {{ colors['fox'] }}; font-size: 1.1em;">Fox (1400+)</strong><br>The top predators.</div>
+            <img src="{{ icons['fox'] }}">
+            <div><strong style="color: {{ colors['fox'] }};">Fox (1400+)</strong> – The top predators.</div>
         </div>
     
         <div class="tier-item tier-rabbit">
-            <img src="{{ icons['rabbit'] }}" alt="Rabbit">
-            <div><strong style="color: {{ colors['rabbit'] }}; font-size: 1.1em;">Rabbit (1300+)</strong><br>High-level competitors.</div>
+            <img src="{{ icons['rabbit'] }}">
+            <div><strong style="color: {{ colors['rabbit'] }};">Rabbit (1300+)</strong> – High-level competitors.</div>
         </div>
     
         <div class="tier-item tier-mouse">
-            <img src="{{ icons['mouse'] }}" alt="Mouse">
-            <div><strong style="color: {{ colors['mouse'] }}; font-size: 1.1em;">Mouse (1200+)</strong><br>Established consistent players.</div>
+            <img src="{{ icons['mouse'] }}">
+            <div><strong style="color: {{ colors['mouse'] }};">Mouse (1200+)</strong> – Established consistent players.</div>
         </div>
     </div>
 
     <h2>Dynamic K-Factor</h2>
     <p>Your score's volatility changes as you play more games to ensure stability:</p>
     
-    <div class="k-table-container">
-        <table class="k-table">
-            <tr>
-                <td><strong>Calibration</strong> (0-10 games)</td>
-                <td class="k-val">K = 80</td>
-                <td style="font-size: 0.9em;">Find your rank quickly.</td>
-            </tr>
-            <tr>
-                <td><strong>Active</strong> (11-50 games)</td>
-                <td class="k-val">K = 40</td>
-                <td style="font-size: 0.9em;">Competitive weighting.</td>
-            </tr>
-            <tr>
-                <td style="border:none;"><strong>Veteran</strong> (50+ games)</td>
-                <td class="k-val" style="border:none;">K = 20</td>
-                <td style="font-size: 0.9em; border:none;">Long-term stability.</td>
-            </tr>
-        </table>
-    </div>
+    <table class="k-table">
+        <tr>
+            <td><strong>Calibration</strong> (0-10 games)</td>
+            <td class="k-val">K = 80</td>
+            <td style="font-size: 0.85em; color: #888;">Find your rank quickly.</td>
+        </tr>
+        <tr>
+            <td><strong>Active</strong> (11-50 games)</td>
+            <td class="k-val">K = 40</td>
+            <td style="font-size: 0.85em; color: #888;">Competitive weighting.</td>
+        </tr>
+        <tr>
+            <td style="border:none;"><strong>Veteran</strong> (50+ games)</td>
+            <td class="k-val" style="border:none;">K = 20</td>
+            <td style="font-size: 0.85em; color: #888; border:none;">Long-term stability.</td>
+        </tr>
+    </table>
 
     <p class="footer-note">
         Every player starts the season with a base score of 1200.<br>
-        Codex generated on {{ generation_date }}
+        Generated on {{ generation_date }}
     </p>
 </div>
 {% endblock %}
