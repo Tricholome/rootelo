@@ -29,12 +29,12 @@ CUTOFF_DATE = today - timedelta(days=1)
 print(f"Update started. Filtering matches closed before: {today}")
 
 def get_tier_icon(rating, games):
-    if games < 10: return None, "unranked"
+    if games < 10: return None, "unranked"  
     r = round(rating)
-    if r >= 1500: return "assets/icons/bird.png", "suit-bird"
-    if r >= 1400: return "assets/icons/fox.png", "suit-fox"
-    if r >= 1300: return "assets/icons/rabbit_new.webp", "suit-rabbit"
-    if r >= 1200: return "assets/icons/mouse_new.webp", "suit-mouse"
+    if r >= 1500: return None, "bird"
+    if r >= 1400: return None, "fox"
+    if r >= 1300: return None, "rabbit"
+    if r >= 1200: return None, "mouse"
     return None, "unranked"
 
 def prepare_leaderboard_data(df):
