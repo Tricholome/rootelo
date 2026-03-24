@@ -1113,7 +1113,7 @@
                     <span>Art by <strong>𝕩𝕝𝕦𝕖𝕧𝕚</strong></span>
                 </div>
                 <div class="footer-date">
-                    Updated on 2026-03-24 23:13
+                    Updated on 2026-03-24 23:17
                 </div>
             </div>
         </footer>
@@ -1161,16 +1161,19 @@
     let myChart;
 
     function updateChart() {
-        const name = document.getElementById('playerName').value;
+        const input = document.getElementById('playerName');
+        const name = input.value;
         const canvas = document.getElementById('progressionChart');
         if (!canvas) return;
         const ctx = canvas.getContext('2d');
         
-        // On récupère explicitement la couleur Rabbit définie dans ton root
         const rabbitColor = getComputedStyle(document.documentElement)
                             .getPropertyValue('--color-rabbit').trim() || '#E0B634';
         
         if (allData[name]) {
+            // SAUVEGARDE : On mémorise le nom du joueur
+            localStorage.setItem('selectedPlayer', name);
+
             const rawData = allData[name];
             const labels = rawData.map(d => d[0]);
             const eloScores = rawData.map(d => d[1]);
@@ -1184,7 +1187,7 @@
                     datasets: [{
                         data: eloScores,
                         borderColor: rabbitColor,
-                        backgroundColor: rabbitColor + '22', // Transparence légère (22 hex)
+                        backgroundColor: rabbitColor + '22',
                         borderWidth: 3,
                         fill: true,
                         tension: 0.3,
@@ -1196,38 +1199,37 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    layout: {
-                        padding: { left: 5, right: 15, top: 10, bottom: 5 }
-                    },
                     plugins: {
                         legend: { display: false },
                         tooltip: { 
                             enabled: true, 
-                            mode: 'index', 
-                            intersect: false, 
                             backgroundColor: '#222',
-                            titleColor: rabbitColor,
-                            bodyColor: '#eee',
-                            borderColor: '#444',
-                            borderWidth: 1
+                            titleColor: rabbitColor
                         }
                     },
                     scales: {
-                        y: { 
-                            grid: { color: '#252525' }, 
-                            ticks: { color: '#888', font: { size: 11 } } 
-                        },
-                        x: { 
-                            grid: { display: false }, 
-                            ticks: { color: '#888', font: { size: 10 }, maxTicksLimit: 6 } 
-                        }
+                        y: { grid: { color: '#252525' }, ticks: { color: '#888' } },
+                        x: { grid: { display: false }, ticks: { color: '#888', maxTicksLimit: 6 } }
                     }
                 }
             });
         }
     }
 
-    window.onload = updateChart;
+    // CHARGEMENT : Au chargement de la page
+    window.onload = function() {
+        const savedPlayer = localStorage.getItem('selectedPlayer');
+        const input = document.getElementById('playerName');
+
+        // Si on a un joueur en mémoire ET qu'il existe dans les données de cette saison
+        if (savedPlayer && allData[savedPlayer]) {
+            input.value = savedPlayer;
+            updateChart();
+        } else {
+            // Optionnel : Si le joueur n'existe pas dans cette saison, on peut vider le champ
+            // input.value = "";
+        }
+    };
 </script>
 
 </body>
