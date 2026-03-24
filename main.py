@@ -79,6 +79,16 @@ def prepare_matches_data(df):
         })
     return prepared
 
+def prepare_trends_data(history_dict):
+    """Prépare les variables pour Jinja2"""
+    if not history_dict:
+        return {"history_json": "{}", "player_names": []}
+    
+    return {
+        "history_json": json.dumps(history_dict),
+        "player_names": sorted(list(history_dict.keys()))
+    }
+
 def render_page(template_name, output_name, **kwargs):
     """Compile un template HTML avec les variables fournies"""
     template = env.get_template(template_name)
@@ -312,6 +322,19 @@ render_page(
     matches=prepare_matches_data(current_matches_df)
 )
 
+render_page(
+    "trends.html", 
+    "trends.html",
+    title="Player's Journey • Rootelo",
+    page_id="trends",
+    is_archive=False,
+    page_heading="Player's Journey",
+    subtitle="LH02 • Apr–Jun 2026",
+    description="Search for a player to see their ELO evolution over the season.",
+    history_json=json.dumps(current_history),
+    player_names=sorted(list(current_history.keys()))
+)
+
 # B. Génération des pages Archives (LH01)
 render_page(
     "leaderboard.html", 
@@ -336,6 +359,19 @@ render_page(
     subtitle="LH01 • Jan–Mar 2026",
     description="Games ranked by total ELO. Click a Game ID to view full match details.",
     matches=prepare_matches_data(archive_matches_df)
+)
+
+render_page(
+    "trends.html", 
+    "trends_lh01.html",
+    title="Player's Journey • Rootelo",
+    page_id="trends",
+    is_archive=True,
+    page_heading="Player's Journey",
+    subtitle="LH01 • Jan–Mar 2026",
+    description="Search for a player to see their ELO evolution over the season.",
+    history_json=json.dumps(archive_history),
+    player_names=sorted(list(archive_history.keys()))
 )
 
 # C. Génération de la page Codex

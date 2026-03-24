@@ -1,0 +1,915 @@
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Player's Journey • Rootelo</title>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
+    <style>
+        /* --- CONFIGURATION DES VARIABLES --- */
+        :root {
+            --color-bird: #67c0c7;
+            --color-fox: #e6372d;
+            --color-rabbit: #f7eb5b;
+            --color-mouse: #f29057;
+        }
+
+        /* --- GESTION DYNAMIQUE DU THÈME --- */
+        body[data-page="index"]   { --main-color: var(--color-bird); }
+        body[data-page="matches"] { --main-color: var(--color-fox); }
+        body[data-page="trends"]  { --main-color: var(--color-rabbit); }
+        body[data-page="about"]   { --main-color: var(--color-mouse); }
+        body { --main-color: #d4a76a; }
+
+        /* --- STYLES DE BASE --- */
+        body { font-family: 'Segoe UI', Helvetica, Arial, sans-serif; background: #121212; color: #eee; text-align: center; padding: 20px 5px; margin: 0; overflow-x: hidden; }
+        .container { width: 95%; max-width: 1100px; margin: auto; background: #1e1e1e; padding: 20px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.6); box-sizing: border-box; }
+        
+        /* --- BANNER LOGIC --- */
+        .banner-container { display: flex; align-items: center; justify-content: center; gap: 40px; margin-bottom: 20px; flex-wrap: nowrap; }
+        .banner-icons { display: flex; gap: 15px; align-items: center; }
+        .banner-icons img { 
+            width: 60px; height: 60px; object-fit: contain; 
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.6)); 
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            cursor: pointer;
+        }
+        .banner-icons img:hover { 
+            width: 110px; height: 110px; 
+            filter: drop-shadow(0 15px 25px rgba(0,0,0,0.9));
+            transform: translateY(-10px) scale(1.15);
+            z-index: 100;
+        }
+        .banner-icons.left img:hover { transform: translateY(-10px) scale(1.15) rotate(-8deg); }
+        .banner-icons.right img:hover { transform: translateY(-10px) scale(1.15) rotate(8deg); }
+
+        .site-title { color: #eee; font-size: 2.2em; margin: 0; letter-spacing: 3px; text-transform: uppercase; font-weight: 900; }
+        .site-subtitle { font-style: italic; color: #777; font-size: 0.85em; margin: 5px 0 0; letter-spacing: 1px; }
+        
+        /* --- NAVIGATION PRINCIPALE --- */
+        nav { margin: 25px 0; border-bottom: 1px solid #333; padding-bottom: 20px; display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }
+        nav a { color: #888; text-decoration: none; font-weight: bold; text-transform: uppercase; font-size: 0.8em; padding: 8px 16px; border-radius: 6px; transition: 0.3s; }
+        nav a:hover { color: var(--main-color); background: rgba(255,255,255,0.05); }
+        nav a.active { color: #fff; background: var(--main-color); box-shadow: 0 4px 12px rgba(0,0,0,0.4); }
+        
+        /* --- SÉLECTEUR DE SAISON --- */
+        .season-selector { display: flex; align-items: center; justify-content: center; gap: 12px; margin: 0 auto 30px; background: rgba(255,255,255,0.03); padding: 8px 18px; border-radius: 50px; width: fit-content; border: 1px solid #333; }
+        .season-label { font-size: 0.7em; text-transform: uppercase; color: #555; letter-spacing: 1.2px; font-weight: bold; }
+        .season-btn { text-decoration: none; font-size: 0.75em; font-weight: bold; color: #777; padding: 5px 14px; border-radius: 20px; border: 1px solid #444; transition: 0.2s; }
+        .season-btn:hover { border-color: var(--main-color); color: #eee; }
+        .season-btn.active { background: var(--main-color) !important; color: #111 !important; border-color: var(--main-color) !important; font-weight: 900; }
+
+        /* --- CONTENU SPÉCIFIQUE --- */
+        .page-intro h3 { margin: 0; color: var(--main-color); font-size: 1.1em; font-weight: bold; text-transform: uppercase; border-bottom: 2px solid var(--main-color); padding-bottom: 4px; display: inline-block; }
+        table.dataTable thead th { background: #252525 !important; color: var(--main-color) !important; font-size: 0.75em; text-transform: uppercase; padding: 12px; }
+
+        /* --- RESPONSIVE MOBILE --- */
+        @media (max-width: 768px) and (orientation: portrait) {
+            .banner-container { flex-wrap: wrap; gap: 10px; }
+            .banner-center { order: 1; width: 100%; margin-bottom: 10px; }
+            .banner-icons { order: 2; gap: 10px; }
+            .banner-icons img { width: 45px; height: 45px; }
+            .banner-icons img:hover { width: 70px; height: 70px; transform: translateY(-5px) scale(1.1); }
+            .site-title { font-size: 1.8em; }
+        }
+        @media (max-width: 950px) and (orientation: landscape) {
+            .banner-container { flex-direction: row; gap: 20px; flex-wrap: nowrap; }
+            .banner-icons img { width: 45px; height: 45px; }
+        }
+
+        
+<style>
+    /* Ta mise en page exacte */
+    .search-box { margin: 20px 0; text-align: center; }
+    input { 
+        background: #252525; color: #fff; border: 1px solid #444; 
+        padding: 12px; border-radius: 8px; width: 95%; max-width: 450px; 
+        font-size: 16px; box-sizing: border-box; outline: none;
+    }
+    input:focus { border-color: var(--main-color); }
+
+    .landscape-hint { 
+        display: none; color: #666; font-size: 0.7em; 
+        margin-bottom: 10px; text-transform: uppercase; 
+        letter-spacing: 1px; text-align: center;
+    }
+    .chart-wrapper { width: 100%; padding: 0 5px; box-sizing: border-box; }
+    .chart-container { 
+        position: relative; width: 100%; height: 55vh; 
+        background: #1a1a1a; border-radius: 12px; 
+        border: 1px solid #252525; padding: 15px;
+    }
+
+    @media (max-width: 768px) and (orientation: portrait) { 
+        .landscape-hint { display: block; } 
+    }
+</style>
+
+    </style>
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+
+<body data-page="trends">
+    <div class="container">
+        
+        <header class="site-header">
+            <div class="banner-container">
+                <div class="banner-icons left">
+                    <img src="assets/icons/bird.png" alt="Bird">
+                    <img src="assets/icons/fox.png" alt="Fox">
+                </div>
+                <div class="banner-center">
+                    <h1 class="site-title">ROOTELO</h1>
+                    <p class="site-subtitle">A Metric of Woodland Skill and Will</p>
+                </div>
+                <div class="banner-icons right">
+                    <img src="assets/icons/rabbit_new.webp" alt="Rabbit">
+                    <img src="assets/icons/mouse_new.webp" alt="Mouse">
+                </div>
+            </div>
+        </header>
+
+        <nav>
+            
+            
+                
+                    
+                
+                <a href="index.html" class="">Leaderboard</a>
+            
+                
+                    
+                
+                <a href="matches.html" class="">Top Tables</a>
+            
+                
+                    
+                
+                <a href="trends.html" class="active">Player's Journey</a>
+            
+                
+                    
+                
+                <a href="about.html" class="">Codex</a>
+            
+        </nav>
+
+        
+        <div class="season-selector">
+            <span class="season-label">Season</span>
+            <a href="trends_lh01.html" class="season-btn ">LH01</a>
+            <a href="trends.html" class="season-btn active">LH02</a>
+        </div>
+        
+
+        <header class="page-intro">
+            <h2>Player's Journey</h2>
+            <h3>LH02 • Apr–Jun 2026</h3>
+            <p>Search for a player to see their ELO evolution over the season.</p>
+        </header>
+    
+        <main>
+            
+    <div class="search-box">
+        <input list="playerList" id="playerName" placeholder="Search Player..." oninput="updateChart()">
+        <datalist id="playerList">
+            
+                <option value="100pctskillz">
+            
+                <option value="1coolguy">
+            
+                <option value="AERotters">
+            
+                <option value="AJIJIi">
+            
+                <option value="Acecreamsundae">
+            
+                <option value="Acelet">
+            
+                <option value="Aceosd">
+            
+                <option value="Actionman2222">
+            
+                <option value="Akayami">
+            
+                <option value="Aleph">
+            
+                <option value="Alexispc">
+            
+                <option value="Antiproject">
+            
+                <option value="Awesem">
+            
+                <option value="AxlPrototype">
+            
+                <option value="Axolatal">
+            
+                <option value="BMPerJMPer">
+            
+                <option value="BaconBoy">
+            
+                <option value="BadScra">
+            
+                <option value="BaliHoo">
+            
+                <option value="Banzai7000">
+            
+                <option value="Bapgo">
+            
+                <option value="Baradhas">
+            
+                <option value="BareGammon">
+            
+                <option value="Bengal3">
+            
+                <option value="Biggins96">
+            
+                <option value="Bitto">
+            
+                <option value="BjarkeHuse">
+            
+                <option value="Bjoda">
+            
+                <option value="Blank">
+            
+                <option value="Blurr">
+            
+                <option value="BoMa85">
+            
+                <option value="Bodnamax">
+            
+                <option value="BuckeyeNation">
+            
+                <option value="BugMuff44">
+            
+                <option value="BuliBaka">
+            
+                <option value="Cabbage0642">
+            
+                <option value="Cheesecake271">
+            
+                <option value="Cheetah32">
+            
+                <option value="ChippZamoose">
+            
+                <option value="ChusGG">
+            
+                <option value="Clink">
+            
+                <option value="Cloudere">
+            
+                <option value="CodPieceZ">
+            
+                <option value="ConeMan">
+            
+                <option value="Cookies">
+            
+                <option value="CowOnAPlane">
+            
+                <option value="CoxyNormus">
+            
+                <option value="CptAlex">
+            
+                <option value="CroCroCro">
+            
+                <option value="Ctfox">
+            
+                <option value="Cuagodking">
+            
+                <option value="Dandel">
+            
+                <option value="DanielDandaniel">
+            
+                <option value="DanielJeun">
+            
+                <option value="DanzigMF">
+            
+                <option value="Darkwonderer">
+            
+                <option value="DarthOblivius">
+            
+                <option value="DarthPuniceus">
+            
+                <option value="DawnDiVito">
+            
+                <option value="DegenerateIan">
+            
+                <option value="DelSol">
+            
+                <option value="DemaRogue">
+            
+                <option value="Demand">
+            
+                <option value="Dizzz">
+            
+                <option value="Doordecat">
+            
+                <option value="DrCheeseFiend">
+            
+                <option value="Dramsss">
+            
+                <option value="Drinken">
+            
+                <option value="Dumbledore">
+            
+                <option value="EdacM">
+            
+                <option value="Elijah">
+            
+                <option value="EmbryoticDeth">
+            
+                <option value="Emperia">
+            
+                <option value="Excitedteapot">
+            
+                <option value="FVMLion">
+            
+                <option value="FakeSki">
+            
+                <option value="FalconBird">
+            
+                <option value="FatBoyyy">
+            
+                <option value="FausDav">
+            
+                <option value="FavorOfTheRabbits">
+            
+                <option value="Fearteiler">
+            
+                <option value="FireFox">
+            
+                <option value="ForkMaster">
+            
+                <option value="FrancescoBr">
+            
+                <option value="FungusMouse">
+            
+                <option value="Furry0329">
+            
+                <option value="Gaborever">
+            
+                <option value="Gagneto">
+            
+                <option value="GameProfit">
+            
+                <option value="GamerTower">
+            
+                <option value="Gibbs">
+            
+                <option value="GlisteningGeetus">
+            
+                <option value="Gregoola">
+            
+                <option value="Hadjiya">
+            
+                <option value="Harriet">
+            
+                <option value="Hiyoshi">
+            
+                <option value="HobGungan">
+            
+                <option value="HoosierDaddy">
+            
+                <option value="Hossain2020">
+            
+                <option value="HungryJeff">
+            
+                <option value="Hurple">
+            
+                <option value="Hydro033">
+            
+                <option value="IMPERATOR">
+            
+                <option value="ImEpy">
+            
+                <option value="ImJustExisting">
+            
+                <option value="IndifferentFish">
+            
+                <option value="Intraceptor">
+            
+                <option value="Ironic">
+            
+                <option value="Jasiuńcio">
+            
+                <option value="Jboooooooooooooooooooom">
+            
+                <option value="Jerry">
+            
+                <option value="Julien">
+            
+                <option value="KFull">
+            
+                <option value="Karcher">
+            
+                <option value="KargDemiau">
+            
+                <option value="KarmaBurn">
+            
+                <option value="Killerstorm17">
+            
+                <option value="Klishu">
+            
+                <option value="Kmahussier">
+            
+                <option value="Komasan">
+            
+                <option value="Krooter">
+            
+                <option value="KuperMeister">
+            
+                <option value="KyloBot">
+            
+                <option value="LHlegend">
+            
+                <option value="Lambo">
+            
+                <option value="Lante">
+            
+                <option value="Led_Slash">
+            
+                <option value="Lex25">
+            
+                <option value="Libitina114">
+            
+                <option value="Ljaz7">
+            
+                <option value="Ljazz7">
+            
+                <option value="Lobster">
+            
+                <option value="Lokfok">
+            
+                <option value="Lucat">
+            
+                <option value="LucianTheFak">
+            
+                <option value="LutherStr">
+            
+                <option value="Lynxtek">
+            
+                <option value="MangoBlade11">
+            
+                <option value="Marcus">
+            
+                <option value="Mati92">
+            
+                <option value="McMayo">
+            
+                <option value="Mcauthor">
+            
+                <option value="Mindger">
+            
+                <option value="Mohammad">
+            
+                <option value="Mossfusion">
+            
+                <option value="Mouseman">
+            
+                <option value="MrDrouf">
+            
+                <option value="MrRiceGuy">
+            
+                <option value="Munchking">
+            
+                <option value="Musicalwoofy">
+            
+                <option value="MylesMoose">
+            
+                <option value="Nadav253">
+            
+                <option value="NadtyLite">
+            
+                <option value="Napalminthebirdsong">
+            
+                <option value="NattyKash">
+            
+                <option value="NaySmith">
+            
+                <option value="Nefkano">
+            
+                <option value="NonStInc.">
+            
+                <option value="Nudraxon">
+            
+                <option value="Nuttsy">
+            
+                <option value="Nymmer">
+            
+                <option value="OUSlaughter">
+            
+                <option value="Octavius">
+            
+                <option value="Odinius">
+            
+                <option value="Olymp">
+            
+                <option value="Oppapi">
+            
+                <option value="Oriol">
+            
+                <option value="Pandapapst">
+            
+                <option value="Peppy">
+            
+                <option value="Perdita">
+            
+                <option value="Pi314">
+            
+                <option value="Piechu">
+            
+                <option value="PlagueCarrier">
+            
+                <option value="Plasma">
+            
+                <option value="Pliskin">
+            
+                <option value="Plush2">
+            
+                <option value="Podge0303">
+            
+                <option value="PokerFace126">
+            
+                <option value="PsychologicalBox">
+            
+                <option value="Ptitmxz">
+            
+                <option value="QuixArtagnan">
+            
+                <option value="RFMerlo">
+            
+                <option value="Rabbi">
+            
+                <option value="Rabbitwarlord">
+            
+                <option value="Rachel997">
+            
+                <option value="Raineweather05">
+            
+                <option value="RangerEpic">
+            
+                <option value="Raybit">
+            
+                <option value="ReoWulf">
+            
+                <option value="RexCow">
+            
+                <option value="Riverman">
+            
+                <option value="SMenefee">
+            
+                <option value="SSR_Mike">
+            
+                <option value="Schkitz">
+            
+                <option value="Sebby">
+            
+                <option value="Seiza">
+            
+                <option value="Shadyferret">
+            
+                <option value="Sharkskln">
+            
+                <option value="ShowStopperW">
+            
+                <option value="ShuShuBana">
+            
+                <option value="Shuuhey">
+            
+                <option value="Silver">
+            
+                <option value="Sirius">
+            
+                <option value="Sjepeal">
+            
+                <option value="Snivylover12">
+            
+                <option value="Soluna">
+            
+                <option value="StarhardFishrinse">
+            
+                <option value="StatzoryTheMad">
+            
+                <option value="StoneOfShame">
+            
+                <option value="TAKSpx">
+            
+                <option value="Tad604">
+            
+                <option value="TempExtremal">
+            
+                <option value="TheDolphinman">
+            
+                <option value="TheFourthJesse">
+            
+                <option value="TheIndustrialRevoloution">
+            
+                <option value="TheRedViper">
+            
+                <option value="TheSillyBilly">
+            
+                <option value="TheWiseFox">
+            
+                <option value="ThoseTeeff">
+            
+                <option value="TimidTailwind">
+            
+                <option value="ToasterTrash">
+            
+                <option value="Tolfan">
+            
+                <option value="TonyDeloreanESQ">
+            
+                <option value="Tricholome">
+            
+                <option value="Trumpet">
+            
+                <option value="TurkeyNoNo">
+            
+                <option value="Valzaan">
+            
+                <option value="VanKaiserman">
+            
+                <option value="WWren">
+            
+                <option value="Whats02">
+            
+                <option value="Wolvane">
+            
+                <option value="Wrestler">
+            
+                <option value="Wriggleroom">
+            
+                <option value="Wubba">
+            
+                <option value="WyvernElement">
+            
+                <option value="Xar149">
+            
+                <option value="Xman1997">
+            
+                <option value="XxD4RK_W0LFxX">
+            
+                <option value="Youdge">
+            
+                <option value="Yragael">
+            
+                <option value="ZachB">
+            
+                <option value="Zeldamon">
+            
+                <option value="aelisheneithlon">
+            
+                <option value="alevGO">
+            
+                <option value="benruff">
+            
+                <option value="benssoon">
+            
+                <option value="bigcathedral">
+            
+                <option value="bootle">
+            
+                <option value="brrrlinguist">
+            
+                <option value="buurn">
+            
+                <option value="byzeke">
+            
+                <option value="catscat">
+            
+                <option value="chosennuttso">
+            
+                <option value="cjahwon">
+            
+                <option value="cliuless">
+            
+                <option value="clp10033">
+            
+                <option value="complexartichoke">
+            
+                <option value="cringelordirl">
+            
+                <option value="darkcat">
+            
+                <option value="deejaythink">
+            
+                <option value="deriokle">
+            
+                <option value="dindane">
+            
+                <option value="doejurko">
+            
+                <option value="ellbelle">
+            
+                <option value="ermactually">
+            
+                <option value="evancomposer">
+            
+                <option value="fadingnovel">
+            
+                <option value="goodgamepat">
+            
+                <option value="gord20">
+            
+                <option value="hakoo">
+            
+                <option value="hanban">
+            
+                <option value="hauntedpebbles2">
+            
+                <option value="idk123">
+            
+                <option value="kaiser">
+            
+                <option value="kayajam">
+            
+                <option value="lazarus210">
+            
+                <option value="lgtw3450">
+            
+                <option value="lumpyprol">
+            
+                <option value="marksoz00">
+            
+                <option value="matemato">
+            
+                <option value="metalnooze">
+            
+                <option value="micherin">
+            
+                <option value="mishaelh1">
+            
+                <option value="mkcy3">
+            
+                <option value="mouseinabox">
+            
+                <option value="mwcrabtree">
+            
+                <option value="mysti">
+            
+                <option value="nikkan">
+            
+                <option value="ninjacat536">
+            
+                <option value="optimusprawn">
+            
+                <option value="oshwott2844">
+            
+                <option value="pashatherussian">
+            
+                <option value="pikeline">
+            
+                <option value="pooge">
+            
+                <option value="pwarren8590">
+            
+                <option value="radiantchaos">
+            
+                <option value="re_al_">
+            
+                <option value="residentevil">
+            
+                <option value="saintstonet">
+            
+                <option value="sda1611">
+            
+                <option value="secretpaths">
+            
+                <option value="sedlak87">
+            
+                <option value="shurgs">
+            
+                <option value="silverfox">
+            
+                <option value="sleepylabone">
+            
+                <option value="sparrowhawk">
+            
+                <option value="swiftsusan">
+            
+                <option value="themikeman">
+            
+                <option value="time2orush">
+            
+                <option value="tippop">
+            
+                <option value="tjudge">
+            
+                <option value="tofuwater">
+            
+                <option value="trollone1993">
+            
+                <option value="tubaking">
+            
+                <option value="tunnndz">
+            
+                <option value="udon66">
+            
+                <option value="uwtron">
+            
+                <option value="vanillapoppy">
+            
+                <option value="vinnie">
+            
+                <option value="voltigeur">
+            
+                <option value="weirdone">
+            
+        </datalist>
+    </div>
+
+    <div class="landscape-hint">🔄 Rotate phone for detail</div>
+    
+    <div class="chart-wrapper">
+        <div class="chart-container">
+            <canvas id="progressionChart"></canvas>
+        </div>
+    </div>
+
+        </main>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+    
+<script>
+    // Injection sécurisée du dictionnaire Python vers JS
+    const allData = {"doejurko": [["LH01 Final", 1556], ["2026-01-01", 1575], ["2026-01-09", 1603], ["2026-01-10", 1620], ["2026-01-11", 1645], ["2026-01-12", 1666], ["2026-01-16", 1690], ["2026-01-17", 1697], ["2026-01-31", 1728]], "Nadav253": [["LH01 Final", 1506], ["2026-01-02", 1447], ["2026-01-09", 1490], ["2026-01-09", 1434], ["2026-01-10", 1397], ["2026-01-14", 1460], ["2026-01-14", 1494], ["2026-02-17", 1520], ["2026-02-17", 1554], ["2026-03-05", 1585], ["2026-03-13", 1522], ["2026-03-15", 1535], ["2026-03-15", 1549], ["2026-03-15", 1557], ["2026-03-17", 1566], ["2026-03-21", 1577], ["2026-03-21", 1588], ["2026-03-22", 1558]], "Led_Slash": [["LH01 Final", 1492], ["2026-01-03", 1440], ["2026-01-04", 1407], ["2026-01-04", 1367], ["2026-01-05", 1334], ["2026-01-06", 1388], ["2026-01-11", 1362], ["2026-01-14", 1410], ["2026-01-14", 1442], ["2026-01-15", 1483], ["2026-01-15", 1425], ["2026-01-16", 1418], ["2026-01-18", 1401], ["2026-01-18", 1420], ["2026-01-18", 1432], ["2026-01-20", 1423], ["2026-01-21", 1407], ["2026-01-21", 1385], ["2026-01-24", 1416], ["2026-01-24", 1401], ["2026-01-24", 1391], ["2026-01-25", 1378], ["2026-01-27", 1367], ["2026-01-29", 1352], ["2026-01-29", 1341], ["2026-01-31", 1318], ["2026-01-31", 1302], ["2026-02-01", 1292], ["2026-02-01", 1284], ["2026-02-01", 1269], ["2026-02-01", 1250], ["2026-02-04", 1240], ["2026-02-05", 1231], ["2026-02-05", 1226], ["2026-02-06", 1217], ["2026-02-06", 1205], ["2026-02-07", 1200], ["2026-02-08", 1195], ["2026-02-09", 1183], ["2026-02-09", 1178], ["2026-02-10", 1170], ["2026-02-11", 1167], ["2026-02-11", 1163], ["2026-02-12", 1160], ["2026-02-13", 1157], ["2026-02-15", 1152], ["2026-02-15", 1149], ["2026-02-15", 1140], ["2026-02-15", 1136], ["2026-02-18", 1133], ["2026-02-18", 1129], ["2026-02-19", 1127], ["2026-02-19", 1124], ["2026-02-20", 1122], ["2026-02-20", 1121], ["2026-02-22", 1138], ["2026-02-24", 1135], ["2026-02-26", 1134], ["2026-02-27", 1132], ["2026-03-01", 1150], ["2026-03-02", 1168], ["2026-03-02", 1185], ["2026-03-02", 1200], ["2026-03-03", 1214], ["2026-03-03", 1212], ["2026-03-05", 1208], ["2026-03-05", 1205], ["2026-03-06", 1202], ["2026-03-07", 1220], ["2026-03-07", 1231], ["2026-03-07", 1246], ["2026-03-07", 1262], ["2026-03-07", 1277], ["2026-03-08", 1274], ["2026-03-08", 1287], ["2026-03-08", 1297], ["2026-03-08", 1312], ["2026-03-08", 1323], ["2026-03-08", 1337], ["2026-03-08", 1351], ["2026-03-08", 1365], ["2026-03-08", 1376], ["2026-03-08", 1385], ["2026-03-08", 1395], ["2026-03-08", 1408], ["2026-03-08", 1420], ["2026-03-08", 1429], ["2026-03-08", 1443], ["2026-03-08", 1456], ["2026-03-09", 1465], ["2026-03-09", 1475], ["2026-03-09", 1482], ["2026-03-09", 1493], ["2026-03-09", 1502], ["2026-03-09", 1512], ["2026-03-09", 1521], ["2026-03-09", 1528], ["2026-03-09", 1518], ["2026-03-09", 1525], ["2026-03-09", 1533], ["2026-03-09", 1543], ["2026-03-09", 1548], ["2026-03-09", 1554], ["2026-03-10", 1563], ["2026-03-10", 1570], ["2026-03-10", 1576], ["2026-03-10", 1584], ["2026-03-10", 1589], ["2026-03-10", 1596], ["2026-03-10", 1599], ["2026-03-10", 1603], ["2026-03-10", 1608], ["2026-03-10", 1611], ["2026-03-11", 1616], ["2026-03-11", 1625], ["2026-03-11", 1629], ["2026-03-11", 1633], ["2026-03-11", 1641], ["2026-03-11", 1645], ["2026-03-11", 1650], ["2026-03-11", 1653], ["2026-03-11", 1654], ["2026-03-11", 1660], ["2026-03-11", 1664], ["2026-03-11", 1668], ["2026-03-11", 1670], ["2026-03-11", 1672], ["2026-03-11", 1676], ["2026-03-11", 1679], ["2026-03-11", 1682], ["2026-03-11", 1685], ["2026-03-11", 1690], ["2026-03-11", 1692], ["2026-03-11", 1698], ["2026-03-11", 1703], ["2026-03-11", 1706], ["2026-03-11", 1708], ["2026-03-11", 1712], ["2026-03-12", 1715], ["2026-03-12", 1719], ["2026-03-14", 1703], ["2026-03-15", 1689], ["2026-03-15", 1694], ["2026-03-15", 1700], ["2026-03-16", 1705], ["2026-03-18", 1689], ["2026-03-18", 1677], ["2026-03-19", 1663], ["2026-03-19", 1650], ["2026-03-20", 1634], ["2026-03-23", 1618], ["2026-03-23", 1622], ["2026-03-23", 1631], ["2026-03-23", 1635], ["2026-03-23", 1622]], "tofuwater": [["LH01 Final", 1482], ["2026-02-20", 1507], ["2026-03-10", 1531], ["2026-03-11", 1476], ["2026-03-12", 1511], ["2026-03-13", 1535], ["2026-03-13", 1579], ["2026-03-19", 1526], ["2026-03-19", 1470], ["2026-03-20", 1510], ["2026-03-21", 1542], ["2026-03-21", 1552], ["2026-03-22", 1563], ["2026-03-23", 1571], ["2026-03-23", 1576]], "Killerstorm17": [["LH01 Final", 1480], ["2026-01-02", 1503], ["2026-01-03", 1464], ["2026-01-07", 1500], ["2026-01-07", 1530], ["2026-01-07", 1556], ["2026-01-09", 1580], ["2026-01-10", 1597], ["2026-01-10", 1537], ["2026-01-10", 1569], ["2026-01-11", 1595], ["2026-01-13", 1607], ["2026-01-14", 1579], ["2026-01-17", 1589], ["2026-01-18", 1595], ["2026-01-20", 1612], ["2026-01-21", 1624], ["2026-01-25", 1635], ["2026-01-31", 1602], ["2026-02-06", 1576], ["2026-02-10", 1554]], "kayajam": [["LH01 Final", 1463], ["2026-01-02", 1490], ["2026-01-03", 1513], ["2026-01-04", 1459], ["2026-01-06", 1410], ["2026-01-08", 1365], ["2026-01-09", 1409], ["2026-01-09", 1445], ["2026-01-13", 1480], ["2026-01-13", 1506], ["2026-01-17", 1532], ["2026-01-20", 1541], ["2026-01-22", 1549], ["2026-01-24", 1525], ["2026-01-24", 1545], ["2026-01-26", 1554], ["2026-01-29", 1536], ["2026-01-30", 1552], ["2026-02-01", 1528], ["2026-02-02", 1539], ["2026-02-06", 1517], ["2026-02-09", 1489], ["2026-02-10", 1501], ["2026-02-13", 1474], ["2026-02-15", 1498], ["2026-02-16", 1515], ["2026-02-16", 1490], ["2026-02-18", 1508], ["2026-02-19", 1517], ["2026-02-23", 1537], ["2026-03-03", 1517], ["2026-03-08", 1497], ["2026-03-15", 1488]], "Mouseman": [["LH01 Final", 1437], ["2026-01-02", 1394], ["2026-01-05", 1448], ["2026-01-06", 1413], ["2026-01-07", 1446], ["2026-01-22", 1473], ["2026-01-23", 1511], ["2026-01-23", 1526], ["2026-01-27", 1557], ["2026-01-28", 1582], ["2026-02-07", 1527], ["2026-03-02", 1499], ["2026-03-07", 1471], ["2026-03-08", 1452], ["2026-03-17", 1464], ["2026-03-23", 1455]], "ShuShuBana": [["LH01 Final", 1436], ["2026-01-16", 1389], ["2026-01-17", 1424], ["2026-01-19", 1384], ["2026-01-23", 1420], ["2026-01-24", 1455], ["2026-01-24", 1490], ["2026-01-24", 1536], ["2026-01-24", 1568], ["2026-01-25", 1599], ["2026-01-27", 1543], ["2026-01-28", 1520], ["2026-01-28", 1504], ["2026-01-29", 1490], ["2026-01-30", 1512], ["2026-01-30", 1534], ["2026-01-30", 1553], ["2026-01-31", 1573], ["2026-01-31", 1561], ["2026-02-01", 1540], ["2026-02-01", 1561], ["2026-02-01", 1575], ["2026-02-02", 1543], ["2026-02-03", 1523], ["2026-02-04", 1536], ["2026-02-07", 1511], ["2026-02-08", 1522], ["2026-02-08", 1529], ["2026-02-09", 1544], ["2026-02-09", 1566], ["2026-02-09", 1534], ["2026-02-10", 1548], ["2026-02-11", 1521], ["2026-02-11", 1531], ["2026-02-12", 1503], ["2026-02-13", 1479], ["2026-02-14", 1494], ["2026-02-14", 1475], ["2026-02-15", 1459], ["2026-02-15", 1441], ["2026-02-16", 1423], ["2026-02-18", 1408], ["2026-02-18", 1427], ["2026-02-18", 1449], ["2026-02-19", 1434], ["2026-02-19", 1414], ["2026-02-22", 1427], ["2026-02-23", 1414], ["2026-02-24", 1436], ["2026-02-25", 1422], ["2026-02-26", 1448], ["2026-03-02", 1460], ["2026-03-02", 1474], ["2026-03-03", 1487], ["2026-03-06", 1479], ["2026-03-09", 1472], ["2026-03-09", 1482], ["2026-03-11", 1478]], "Ctfox": [["LH01 Final", 1435], ["2026-01-08", 1405], ["2026-01-16", 1381], ["2026-01-27", 1409], ["2026-02-12", 1437], ["2026-03-01", 1456], ["2026-03-03", 1397], ["2026-03-05", 1419], ["2026-03-13", 1450], ["2026-03-13", 1482], ["2026-03-14", 1516], ["2026-03-15", 1506], ["2026-03-18", 1497], ["2026-03-19", 1487], ["2026-03-20", 1501], ["2026-03-21", 1510]], "swiftsusan": [["LH01 Final", 1424], ["2026-01-09", 1402], ["2026-01-21", 1377], ["2026-01-21", 1432], ["2026-01-21", 1476], ["2026-01-24", 1435], ["2026-01-27", 1476], ["2026-01-28", 1445], ["2026-01-30", 1417], ["2026-01-30", 1392], ["2026-02-02", 1440], ["2026-02-02", 1461], ["2026-02-02", 1473], ["2026-02-09", 1448], ["2026-02-12", 1420], ["2026-02-15", 1395], ["2026-02-17", 1411], ["2026-02-17", 1426], ["2026-02-17", 1441], ["2026-02-23", 1453], ["2026-02-25", 1466], ["2026-03-13", 1483]], "matemato": [["LH01 Final", 1396], ["2026-01-08", 1372], ["2026-01-09", 1416], ["2026-01-11", 1399], ["2026-01-11", 1352], ["2026-01-12", 1396], ["2026-01-15", 1368], ["2026-01-16", 1411], ["2026-01-17", 1375], ["2026-01-18", 1420], ["2026-01-19", 1452], ["2026-01-19", 1464], ["2026-01-23", 1475], ["2026-01-23", 1446], ["2026-01-25", 1433], ["2026-01-28", 1422], ["2026-01-28", 1441], ["2026-01-29", 1422], ["2026-02-01", 1410], ["2026-02-02", 1429], ["2026-02-03", 1407], ["2026-02-04", 1383], ["2026-02-13", 1364], ["2026-02-16", 1348], ["2026-02-16", 1339], ["2026-02-16", 1367], ["2026-02-16", 1395], ["2026-02-19", 1376], ["2026-02-20", 1398], ["2026-02-22", 1374], ["2026-02-22", 1357], ["2026-02-24", 1337], ["2026-02-24", 1321], ["2026-02-24", 1310], ["2026-03-02", 1338], ["2026-03-03", 1325], ["2026-03-05", 1347], ["2026-03-05", 1372], ["2026-03-06", 1361], ["2026-03-06", 1348], ["2026-03-08", 1336], ["2026-03-10", 1329], ["2026-03-10", 1352], ["2026-03-14", 1341], ["2026-03-14", 1325], ["2026-03-14", 1316], ["2026-03-15", 1313], ["2026-03-17", 1341], ["2026-03-17", 1364], ["2026-03-18", 1384], ["2026-03-21", 1407], ["2026-03-21", 1418]], "Antiproject": [["LH01 Final", 1395], ["2026-01-01", 1443], ["2026-01-09", 1401], ["2026-01-12", 1435], ["2026-01-15", 1394], ["2026-01-21", 1370], ["2026-01-28", 1353], ["2026-01-28", 1334], ["2026-01-28", 1308], ["2026-01-28", 1294], ["2026-01-30", 1362], ["2026-01-30", 1393], ["2026-02-07", 1417], ["2026-02-12", 1436], ["2026-02-12", 1461], ["2026-02-19", 1474], ["2026-03-06", 1495], ["2026-03-09", 1479]], "Xar149": [["LH01 Final", 1388], ["2026-02-12", 1441], ["2026-02-13", 1466], ["2026-02-15", 1498], ["2026-02-15", 1526], ["2026-02-17", 1547], ["2026-02-17", 1566], ["2026-02-20", 1583], ["2026-03-11", 1526], ["2026-03-11", 1502], ["2026-03-13", 1472]], "Tad604": [["LH01 Final", 1375], ["2026-01-08", 1434], ["2026-01-12", 1392], ["2026-01-12", 1379], ["2026-01-12", 1421], ["2026-01-13", 1375], ["2026-01-15", 1349], ["2026-01-16", 1380], ["2026-01-24", 1362], ["2026-01-27", 1336], ["2026-01-30", 1392], ["2026-01-30", 1376], ["2026-01-30", 1400], ["2026-01-31", 1379], ["2026-02-02", 1364], ["2026-02-02", 1352], ["2026-02-09", 1343], ["2026-02-10", 1321], ["2026-02-12", 1307], ["2026-02-14", 1298], ["2026-02-19", 1322], ["2026-02-19", 1345], ["2026-02-25", 1332], ["2026-02-27", 1314], ["2026-02-27", 1301], ["2026-03-03", 1277], ["2026-03-05", 1305], ["2026-03-05", 1292], ["2026-03-06", 1313], ["2026-03-08", 1306], ["2026-03-08", 1297], ["2026-03-08", 1292], ["2026-03-09", 1285], ["2026-03-09", 1278], ["2026-03-10", 1273], ["2026-03-10", 1293], ["2026-03-12", 1322], ["2026-03-13", 1348], ["2026-03-13", 1379], ["2026-03-14", 1367], ["2026-03-17", 1350], ["2026-03-17", 1377], ["2026-03-17", 1395], ["2026-03-23", 1388]], "DarthPuniceus": [["LH01 Final", 1375], ["2026-01-06", 1352], ["2026-01-08", 1308], ["2026-01-09", 1277], ["2026-01-14", 1324], ["2026-01-15", 1286], ["2026-01-15", 1253], ["2026-01-16", 1247], ["2026-01-17", 1302], ["2026-01-17", 1285], ["2026-01-21", 1264], ["2026-01-24", 1259], ["2026-01-24", 1255], ["2026-01-25", 1249], ["2026-01-26", 1275], ["2026-01-26", 1305], ["2026-01-28", 1294], ["2026-01-28", 1284], ["2026-01-30", 1267], ["2026-01-30", 1296], ["2026-01-30", 1286], ["2026-01-31", 1270], ["2026-02-03", 1256], ["2026-02-03", 1288], ["2026-02-05", 1279], ["2026-02-08", 1307], ["2026-02-09", 1299], ["2026-02-13", 1292], ["2026-02-14", 1286], ["2026-02-15", 1311], ["2026-02-15", 1337], ["2026-02-16", 1326], ["2026-02-18", 1317], ["2026-02-19", 1302], ["2026-02-23", 1296], ["2026-02-23", 1327], ["2026-02-25", 1311], ["2026-02-26", 1335], ["2026-02-27", 1318], ["2026-02-27", 1306], ["2026-03-06", 1333], ["2026-03-07", 1360], ["2026-03-08", 1350], ["2026-03-09", 1342], ["2026-03-10", 1324], ["2026-03-14", 1352], ["2026-03-14", 1376], ["2026-03-14", 1404], ["2026-03-15", 1391], ["2026-03-18", 1426], ["2026-03-20", 1407]], "Nefkano": [["LH01 Final", 1363], ["2026-01-30", 1416], ["2026-02-02", 1376], ["2026-02-04", 1354], ["2026-02-04", 1403], ["2026-02-05", 1363], ["2026-02-05", 1330], ["2026-02-06", 1296], ["2026-02-06", 1264], ["2026-02-06", 1324], ["2026-02-07", 1385], ["2026-02-07", 1415], ["2026-02-08", 1398], ["2026-02-08", 1422], ["2026-02-08", 1403], ["2026-02-09", 1387], ["2026-02-09", 1376], ["2026-02-09", 1362], ["2026-02-10", 1346], ["2026-02-12", 1367], ["2026-02-13", 1348], ["2026-02-13", 1338], ["2026-02-14", 1363], ["2026-02-14", 1342], ["2026-02-14", 1363], ["2026-02-14", 1342], ["2026-02-15", 1367], ["2026-02-15", 1387], ["2026-02-16", 1413], ["2026-02-16", 1392], ["2026-02-18", 1417], ["2026-02-18", 1396], ["2026-02-19", 1376], ["2026-02-19", 1401], ["2026-02-19", 1418], ["2026-02-20", 1394], ["2026-02-21", 1373], ["2026-02-23", 1354], ["2026-02-25", 1338], ["2026-02-27", 1366], ["2026-02-27", 1390], ["2026-02-27", 1371], ["2026-03-01", 1400], ["2026-03-01", 1424], ["2026-03-04", 1405], ["2026-03-06", 1379], ["2026-03-06", 1402], ["2026-03-09", 1422], ["2026-03-09", 1411], ["2026-03-09", 1399], ["2026-03-09", 1388], ["2026-03-09", 1383], ["2026-03-10", 1373], ["2026-03-10", 1369], ["2026-03-10", 1380], ["2026-03-10", 1393], ["2026-03-11", 1405], ["2026-03-12", 1415], ["2026-03-12", 1426], ["2026-03-12", 1416], ["2026-03-13", 1404], ["2026-03-15", 1394], ["2026-03-15", 1386], ["2026-03-15", 1378], ["2026-03-17", 1372], ["2026-03-17", 1384], ["2026-03-17", 1396], ["2026-03-18", 1387], ["2026-03-18", 1379], ["2026-03-19", 1370], ["2026-03-20", 1381], ["2026-03-21", 1372], ["2026-03-23", 1369]], "Tricholome": [["LH01 Final", 1361], ["2026-01-02", 1323], ["2026-01-06", 1289], ["2026-01-08", 1273], ["2026-01-10", 1263], ["2026-01-13", 1229], ["2026-01-15", 1217], ["2026-01-15", 1285], ["2026-01-16", 1328], ["2026-01-17", 1390], ["2026-01-18", 1426], ["2026-01-20", 1413], ["2026-01-22", 1429], ["2026-01-22", 1409], ["2026-01-22", 1396], ["2026-01-23", 1380], ["2026-01-28", 1372], ["2026-01-29", 1396], ["2026-01-30", 1385], ["2026-01-31", 1378], ["2026-01-31", 1365], ["2026-02-01", 1393], ["2026-02-02", 1378], ["2026-02-02", 1358], ["2026-02-03", 1344], ["2026-02-05", 1331], ["2026-02-06", 1342], ["2026-02-06", 1374], ["2026-02-06", 1394], ["2026-02-07", 1378], ["2026-02-08", 1399], ["2026-02-09", 1423], ["2026-02-09", 1403], ["2026-02-13", 1384], ["2026-02-15", 1362], ["2026-02-15", 1350], ["2026-02-16", 1341], ["2026-02-17", 1324], ["2026-02-17", 1306], ["2026-02-19", 1330], ["2026-02-21", 1359], ["2026-02-21", 1338], ["2026-02-23", 1363], ["2026-02-24", 1344], ["2026-02-24", 1367], ["2026-02-25", 1391], ["2026-02-27", 1379], ["2026-03-01", 1364], ["2026-03-02", 1353], ["2026-03-02", 1369], ["2026-03-05", 1349], ["2026-03-05", 1360], ["2026-03-05", 1351], ["2026-03-06", 1362], ["2026-03-06", 1373], ["2026-03-06", 1369], ["2026-03-06", 1363], ["2026-03-08", 1356], ["2026-03-09", 1352], ["2026-03-10", 1348], ["2026-03-10", 1345], ["2026-03-10", 1336], ["2026-03-11", 1326], ["2026-03-11", 1338], ["2026-03-11", 1336], ["2026-03-11", 1333], ["2026-03-11", 1332], ["2026-03-13", 1321], ["2026-03-13", 1315], ["2026-03-15", 1334], ["2026-03-15", 1348], ["2026-03-15", 1337], ["2026-03-15", 1335], ["2026-03-16", 1326], ["2026-03-16", 1340], ["2026-03-16", 1350], ["2026-03-17", 1365], ["2026-03-17", 1359], ["2026-03-20", 1370], ["2026-03-23", 1376]], "tippop": [["LH01 Final", 1360], ["2026-01-08", 1336], ["2026-01-09", 1394], ["2026-01-20", 1453], ["2026-02-03", 1484], ["2026-02-12", 1445], ["2026-02-20", 1481], ["2026-03-11", 1461], ["2026-03-11", 1442]], "Seiza": [["LH01 Final", 1352], ["2026-03-03", 1324], ["2026-03-03", 1285], ["2026-03-04", 1258], ["2026-03-05", 1227], ["2026-03-05", 1289], ["2026-03-06", 1272], ["2026-03-06", 1251], ["2026-03-07", 1305], ["2026-03-11", 1299], ["2026-03-11", 1293], ["2026-03-12", 1321], ["2026-03-12", 1351], ["2026-03-13", 1337], ["2026-03-14", 1334], ["2026-03-14", 1364], ["2026-03-15", 1349], ["2026-03-15", 1340], ["2026-03-16", 1336], ["2026-03-17", 1324], ["2026-03-17", 1309], ["2026-03-18", 1338], ["2026-03-18", 1324], ["2026-03-18", 1353], ["2026-03-19", 1378], ["2026-03-20", 1362], ["2026-03-20", 1385], ["2026-03-21", 1400], ["2026-03-22", 1384], ["2026-03-23", 1363], ["2026-03-23", 1348]], "FrancescoBr": [["LH01 Final", 1351], ["2026-01-25", 1385], ["2026-01-27", 1345], ["2026-01-27", 1392], ["2026-01-28", 1355], ["2026-02-09", 1336], ["2026-02-10", 1388], ["2026-02-11", 1339], ["2026-02-16", 1298], ["2026-02-18", 1343], ["2026-02-18", 1297], ["2026-02-19", 1325], ["2026-02-19", 1309], ["2026-02-19", 1300], ["2026-02-20", 1321], ["2026-02-20", 1302], ["2026-02-22", 1289], ["2026-02-24", 1318], ["2026-02-25", 1334], ["2026-03-01", 1364], ["2026-03-06", 1381], ["2026-03-08", 1366], ["2026-03-11", 1360]], "Bapgo": [["LH01 Final", 1345], ["2026-01-03", 1395], ["2026-01-05", 1369], ["2026-01-07", 1403], ["2026-01-11", 1448], ["2026-01-16", 1396], ["2026-01-31", 1448], ["2026-02-09", 1495], ["2026-02-10", 1534], ["2026-03-02", 1499], ["2026-03-05", 1450], ["2026-03-06", 1477], ["2026-03-13", 1460], ["2026-03-14", 1435], ["2026-03-14", 1418], ["2026-03-16", 1412], ["2026-03-22", 1431]], "Kmahussier": [["LH01 Final", 1342], ["2026-01-03", 1381], ["2026-01-12", 1429], ["2026-01-25", 1381], ["2026-01-26", 1345], ["2026-01-27", 1312], ["2026-01-29", 1278], ["2026-01-30", 1255], ["2026-01-30", 1235], ["2026-02-06", 1289], ["2026-02-08", 1264], ["2026-02-08", 1297], ["2026-02-12", 1285], ["2026-02-16", 1277], ["2026-02-20", 1302], ["2026-02-21", 1292], ["2026-02-24", 1319], ["2026-02-27", 1305], ["2026-03-01", 1296], ["2026-03-04", 1277], ["2026-03-05", 1306], ["2026-03-08", 1289], ["2026-03-09", 1274], ["2026-03-11", 1271], ["2026-03-12", 1297], ["2026-03-14", 1334], ["2026-03-15", 1365], ["2026-03-16", 1350], ["2026-03-19", 1335], ["2026-03-19", 1322], ["2026-03-19", 1342], ["2026-03-21", 1365], ["2026-03-22", 1349], ["2026-03-23", 1344]], "Pliskin": [["LH01 Final", 1342], ["2026-01-09", 1326], ["2026-01-11", 1303], ["2026-01-12", 1363], ["2026-01-15", 1416], ["2026-01-15", 1383], ["2026-01-22", 1441], ["2026-01-28", 1392], ["2026-02-01", 1363], ["2026-02-02", 1418], ["2026-02-05", 1460], ["2026-02-06", 1440], ["2026-02-09", 1465], ["2026-02-10", 1440], ["2026-02-27", 1423], ["2026-03-01", 1401], ["2026-03-14", 1385], ["2026-03-17", 1411], ["2026-03-19", 1405], ["2026-03-23", 1421], ["2026-03-23", 1396]], "FavorOfTheRabbits": [["LH01 Final", 1342], ["2026-01-16", 1300], ["2026-01-17", 1281], ["2026-01-27", 1241], ["2026-01-27", 1227], ["2026-01-28", 1210], ["2026-01-29", 1265], ["2026-02-03", 1255], ["2026-02-06", 1313], ["2026-02-06", 1379], ["2026-02-08", 1335], ["2026-02-11", 1367], ["2026-02-11", 1386], ["2026-02-15", 1375], ["2026-02-17", 1392], ["2026-02-18", 1376], ["2026-02-24", 1358], ["2026-02-26", 1388], ["2026-03-15", 1412], ["2026-03-17", 1394], ["2026-03-18", 1388]], "BareGammon": [["LH01 Final", 1335], ["2026-01-03", 1400], ["2026-01-06", 1450], ["2026-01-07", 1406], ["2026-01-07", 1367], ["2026-01-09", 1322], ["2026-01-10", 1303], ["2026-01-10", 1372], ["2026-01-10", 1409], ["2026-01-23", 1435], ["2026-01-23", 1390]], "ChippZamoose": [["LH01 Final", 1333], ["2026-01-04", 1395], ["2026-01-05", 1440], ["2026-01-11", 1405], ["2026-01-15", 1455], ["2026-01-16", 1483], ["2026-01-17", 1437], ["2026-01-18", 1391], ["2026-01-19", 1350], ["2026-01-19", 1380], ["2026-01-21", 1353], ["2026-01-24", 1345], ["2026-01-24", 1367], ["2026-01-24", 1359], ["2026-01-30", 1383], ["2026-01-31", 1400], ["2026-01-31", 1419], ["2026-02-01", 1400], ["2026-02-05", 1423], ["2026-02-06", 1407], ["2026-02-08", 1385], ["2026-02-09", 1369], ["2026-02-14", 1360], ["2026-02-19", 1387], ["2026-02-24", 1407], ["2026-02-25", 1389], ["2026-03-05", 1369], ["2026-03-09", 1388], ["2026-03-09", 1377], ["2026-03-10", 1369], ["2026-03-12", 1394], ["2026-03-15", 1372], ["2026-03-17", 1354]], "KFull": [["LH01 Final", 1332], ["2026-01-05", 1314], ["2026-01-06", 1378], ["2026-01-07", 1334], ["2026-01-07", 1300], ["2026-01-14", 1269], ["2026-01-15", 1323], ["2026-01-15", 1362], ["2026-01-15", 1405], ["2026-01-15", 1442], ["2026-01-16", 1413], ["2026-01-17", 1429], ["2026-01-17", 1410], ["2026-01-24", 1398], ["2026-01-27", 1429], ["2026-01-27", 1441], ["2026-01-28", 1470], ["2026-01-29", 1485], ["2026-01-30", 1469], ["2026-01-31", 1445], ["2026-02-01", 1470], ["2026-02-01", 1497], ["2026-02-01", 1483], ["2026-02-03", 1508], ["2026-02-03", 1526], ["2026-02-04", 1503], ["2026-02-05", 1513], ["2026-02-05", 1520], ["2026-02-05", 1531], ["2026-02-05", 1501], ["2026-02-06", 1481], ["2026-02-06", 1487], ["2026-02-09", 1474], ["2026-02-09", 1456], ["2026-02-10", 1485], ["2026-02-13", 1460], ["2026-02-18", 1440], ["2026-02-19", 1420], ["2026-02-24", 1397], ["2026-02-24", 1417], ["2026-02-24", 1433], ["2026-02-24", 1458], ["2026-02-24", 1469], ["2026-02-24", 1484], ["2026-02-24", 1499], ["2026-02-26", 1478], ["2026-02-26", 1456], ["2026-03-01", 1438], ["2026-03-01", 1419], ["2026-03-04", 1394], ["2026-03-05", 1380], ["2026-03-07", 1369], ["2026-03-08", 1361], ["2026-03-08", 1354], ["2026-03-09", 1349], ["2026-03-10", 1345], ["2026-03-11", 1343], ["2026-03-11", 1337], ["2026-03-12", 1330], ["2026-03-14", 1324], ["2026-03-14", 1319], ["2026-03-15", 1317], ["2026-03-15", 1312], ["2026-03-19", 1306]], "Rabbitwarlord": [["LH01 Final", 1331], ["2026-01-16", 1395], ["2026-01-22", 1371], ["2026-01-23", 1348], ["2026-01-27", 1302], ["2026-01-27", 1353], ["2026-02-05", 1308], ["2026-02-06", 1291], ["2026-02-11", 1334], ["2026-02-17", 1308], ["2026-02-27", 1373], ["2026-03-05", 1357], ["2026-03-09", 1347], ["2026-03-15", 1367], ["2026-03-17", 1355], ["2026-03-20", 1382], ["2026-03-22", 1405]], "Bitto": [["LH01 Final", 1321], ["2026-02-12", 1292], ["2026-02-14", 1360], ["2026-03-04", 1414], ["2026-03-06", 1462], ["2026-03-13", 1418], ["2026-03-13", 1393], ["2026-03-23", 1358]], "TurkeyNoNo": [["LH01 Final", 1320], ["2026-01-03", 1294], ["2026-01-04", 1280], ["2026-01-10", 1246], ["2026-01-13", 1303], ["2026-01-15", 1265], ["2026-01-16", 1313], ["2026-01-16", 1274], ["2026-01-17", 1338], ["2026-01-20", 1392], ["2026-01-21", 1448], ["2026-01-25", 1469], ["2026-01-28", 1495], ["2026-01-28", 1513], ["2026-01-28", 1483], ["2026-01-30", 1466], ["2026-01-30", 1449], ["2026-02-01", 1434], ["2026-02-01", 1455], ["2026-02-04", 1478], ["2026-02-06", 1484], ["2026-02-07", 1461], ["2026-02-13", 1441], ["2026-02-14", 1461], ["2026-02-18", 1433], ["2026-02-19", 1412], ["2026-02-23", 1394], ["2026-02-24", 1377], ["2026-02-25", 1407], ["2026-02-27", 1388], ["2026-03-05", 1370], ["2026-03-05", 1353], ["2026-03-06", 1338], ["2026-03-07", 1325], ["2026-03-08", 1357], ["2026-03-08", 1347], ["2026-03-09", 1340], ["2026-03-11", 1334], ["2026-03-11", 1329], ["2026-03-12", 1318], ["2026-03-20", 1353], ["2026-03-22", 1330]], "PokerFace126": [["LH01 Final", 1316], ["2026-01-02", 1356], ["2026-01-03", 1397], ["2026-01-06", 1360], ["2026-01-09", 1338], ["2026-01-17", 1385]], "TimidTailwind": [["LH01 Final", 1316], ["2026-01-07", 1297], ["2026-01-07", 1282], ["2026-01-09", 1252], ["2026-01-10", 1319], ["2026-01-11", 1364], ["2026-01-11", 1347], ["2026-01-16", 1313], ["2026-02-07", 1373], ["2026-02-14", 1345], ["2026-02-18", 1383]], "ninjacat536": [["LH01 Final", 1314], ["2026-01-12", 1292], ["2026-01-15", 1258], ["2026-01-23", 1228], ["2026-01-26", 1201], ["2026-01-27", 1259], ["2026-01-31", 1235], ["2026-01-31", 1299], ["2026-02-01", 1290], ["2026-02-08", 1353], ["2026-02-08", 1398], ["2026-02-09", 1385], ["2026-02-10", 1374]], "time2orush": [["LH01 Final", 1311], ["2026-01-01", 1357], ["2026-01-03", 1400], ["2026-01-03", 1378], ["2026-01-04", 1412], ["2026-01-06", 1380], ["2026-01-08", 1418], ["2026-01-08", 1364]], "IMPERATOR": [["LH01 Final", 1310], ["2026-03-21", 1347], ["2026-03-22", 1392], ["2026-03-22", 1434], ["2026-03-23", 1429]], "gord20": [["LH01 Final", 1305], ["2026-01-08", 1342], ["2026-01-08", 1373]], "complexartichoke": [["LH01 Final", 1305], ["2026-02-18", 1287], ["2026-02-22", 1339], ["2026-02-22", 1392]], "Mossfusion": [["LH01 Final", 1304], ["2026-02-24", 1352], ["2026-03-06", 1327], ["2026-03-06", 1298], ["2026-03-07", 1276], ["2026-03-10", 1324], ["2026-03-11", 1317], ["2026-03-15", 1301], ["2026-03-16", 1271], ["2026-03-17", 1328], ["2026-03-17", 1304], ["2026-03-18", 1291], ["2026-03-19", 1328], ["2026-03-19", 1355], ["2026-03-22", 1342]], "Silver": [["LH01 Final", 1304], ["2026-01-02", 1360], ["2026-01-03", 1406], ["2026-01-08", 1455], ["2026-01-11", 1486], ["2026-01-17", 1432], ["2026-01-18", 1396], ["2026-01-23", 1443], ["2026-01-30", 1418], ["2026-02-03", 1365], ["2026-02-09", 1353]], "vinnie": [["LH01 Final", 1300], ["2026-01-07", 1261], ["2026-01-11", 1311], ["2026-01-17", 1371]], "VanKaiserman": [["LH01 Final", 1299], ["2026-01-02", 1346], ["2026-01-05", 1319], ["2026-01-08", 1374], ["2026-01-20", 1341], ["2026-01-30", 1388], ["2026-01-30", 1368], ["2026-02-08", 1340], ["2026-02-15", 1310], ["2026-02-16", 1287], ["2026-02-21", 1326], ["2026-03-01", 1304], ["2026-03-16", 1328]], "Aleph": [["LH01 Final", 1298], ["2026-01-03", 1272], ["2026-01-04", 1320], ["2026-01-05", 1365]], "Blurr": [["LH01 Final", 1296], ["2026-01-07", 1337], ["2026-01-14", 1382], ["2026-01-25", 1368]], "mishaelh1": [["LH01 Final", 1286], ["2026-02-07", 1251], ["2026-02-08", 1231], ["2026-02-16", 1201], ["2026-02-18", 1176], ["2026-02-18", 1239], ["2026-02-21", 1224], ["2026-02-21", 1271], ["2026-02-23", 1320]], "pooge": [["LH01 Final", 1286], ["2026-01-04", 1272], ["2026-01-04", 1339], ["2026-01-10", 1306], ["2026-01-10", 1349], ["2026-01-11", 1315], ["2026-01-13", 1355], ["2026-01-14", 1325], ["2026-02-05", 1377], ["2026-02-05", 1426], ["2026-02-05", 1448], ["2026-02-15", 1469], ["2026-02-19", 1452], ["2026-02-22", 1427], ["2026-03-02", 1418], ["2026-03-02", 1393], ["2026-03-05", 1379], ["2026-03-08", 1366], ["2026-03-11", 1361], ["2026-03-12", 1339], ["2026-03-17", 1321], ["2026-03-19", 1317]], "dindane": [["LH01 Final", 1286], ["2026-02-04", 1340], ["2026-02-06", 1328], ["2026-02-10", 1317], ["2026-02-21", 1360], ["2026-03-10", 1346]], "AxlPrototype": [["LH01 Final", 1278], ["2026-01-03", 1243], ["2026-01-03", 1231], ["2026-01-05", 1200], ["2026-01-06", 1257], ["2026-01-06", 1228], ["2026-01-07", 1296], ["2026-01-07", 1355], ["2026-01-07", 1317]], "Tolfan": [["LH01 Final", 1276], ["2026-01-04", 1246], ["2026-01-09", 1222], ["2026-01-10", 1214], ["2026-01-11", 1285], ["2026-01-12", 1259], ["2026-01-16", 1319], ["2026-01-20", 1309], ["2026-02-01", 1352], ["2026-02-01", 1417], ["2026-02-03", 1372], ["2026-02-05", 1353], ["2026-02-06", 1382], ["2026-02-06", 1375], ["2026-02-07", 1394], ["2026-02-07", 1378], ["2026-02-08", 1398], ["2026-02-12", 1383], ["2026-02-13", 1366], ["2026-02-15", 1389], ["2026-02-19", 1365], ["2026-02-19", 1346], ["2026-02-19", 1328], ["2026-02-19", 1352], ["2026-02-21", 1378], ["2026-02-21", 1393], ["2026-02-23", 1378], ["2026-02-23", 1394], ["2026-02-23", 1407], ["2026-02-24", 1386], ["2026-02-25", 1375], ["2026-02-27", 1353], ["2026-02-28", 1335], ["2026-03-02", 1359], ["2026-03-03", 1376], ["2026-03-04", 1355], ["2026-03-07", 1341], ["2026-03-08", 1357], ["2026-03-08", 1338], ["2026-03-09", 1321], ["2026-03-11", 1308], ["2026-03-11", 1302], ["2026-03-12", 1294], ["2026-03-13", 1289], ["2026-03-14", 1274], ["2026-03-14", 1267], ["2026-03-15", 1259], ["2026-03-16", 1287], ["2026-03-17", 1270], ["2026-03-19", 1303], ["2026-03-20", 1296], ["2026-03-22", 1289], ["2026-03-23", 1280]], "Nudraxon": [["LH01 Final", 1273], ["2026-03-05", 1335]], "bootle": [["LH01 Final", 1272], ["2026-01-02", 1255], ["2026-01-04", 1239], ["2026-01-13", 1225], ["2026-01-18", 1210], ["2026-02-03", 1277], ["2026-02-03", 1337]], "cliuless": [["LH01 Final", 1270], ["2026-01-01", 1313], ["2026-01-01", 1293], ["2026-01-02", 1263], ["2026-01-02", 1315], ["2026-01-02", 1289], ["2026-01-05", 1348], ["2026-01-05", 1315], ["2026-01-06", 1294], ["2026-01-06", 1337], ["2026-01-06", 1297], ["2026-01-06", 1281], ["2026-01-07", 1270], ["2026-01-08", 1260], ["2026-01-08", 1250], ["2026-01-09", 1234], ["2026-01-10", 1230], ["2026-01-11", 1227], ["2026-01-12", 1216], ["2026-01-13", 1213], ["2026-01-13", 1246], ["2026-01-15", 1273], ["2026-01-16", 1258], ["2026-01-17", 1245], ["2026-01-17", 1278], ["2026-01-19", 1267], ["2026-01-20", 1259], ["2026-01-21", 1248], ["2026-01-23", 1237], ["2026-01-23", 1227], ["2026-01-24", 1220], ["2026-01-24", 1216], ["2026-01-28", 1208], ["2026-01-29", 1246], ["2026-01-30", 1238], ["2026-01-31", 1232], ["2026-02-01", 1218], ["2026-02-02", 1206], ["2026-02-03", 1197], ["2026-02-03", 1185], ["2026-02-05", 1216], ["2026-02-09", 1205], ["2026-02-11", 1194], ["2026-02-12", 1227], ["2026-02-12", 1219], ["2026-02-12", 1254], ["2026-02-13", 1284], ["2026-02-13", 1273], ["2026-02-14", 1263], ["2026-02-14", 1256], ["2026-02-15", 1251], ["2026-02-15", 1264], ["2026-02-16", 1257], ["2026-02-16", 1273], ["2026-02-19", 1289], ["2026-02-19", 1304], ["2026-02-20", 1299], ["2026-02-21", 1292], ["2026-02-22", 1285], ["2026-02-22", 1276], ["2026-02-22", 1270], ["2026-02-23", 1263], ["2026-02-23", 1276], ["2026-02-24", 1270], ["2026-02-26", 1263], ["2026-02-27", 1279], ["2026-03-01", 1275], ["2026-03-03", 1280], ["2026-03-03", 1294], ["2026-03-04", 1308], ["2026-03-04", 1320], ["2026-03-05", 1312], ["2026-03-07", 1304], ["2026-03-09", 1322], ["2026-03-09", 1314], ["2026-03-09", 1304], ["2026-03-09", 1299], ["2026-03-09", 1316], ["2026-03-10", 1328], ["2026-03-11", 1326], ["2026-03-12", 1319], ["2026-03-12", 1311], ["2026-03-12", 1324], ["2026-03-12", 1318], ["2026-03-12", 1312], ["2026-03-12", 1326], ["2026-03-12", 1325], ["2026-03-13", 1319], ["2026-03-13", 1310], ["2026-03-14", 1325], ["2026-03-17", 1320], ["2026-03-17", 1314], ["2026-03-17", 1309], ["2026-03-17", 1303], ["2026-03-18", 1296], ["2026-03-18", 1291], ["2026-03-20", 1304], ["2026-03-20", 1300], ["2026-03-21", 1292], ["2026-03-21", 1287], ["2026-03-23", 1301], ["2026-03-23", 1299]], "Cookies": [["LH01 Final", 1269], ["2026-01-09", 1245], ["2026-01-09", 1303], ["2026-01-10", 1267], ["2026-01-14", 1322], ["2026-01-21", 1296], ["2026-02-05", 1352], ["2026-02-13", 1322], ["2026-02-27", 1283], ["2026-03-11", 1262], ["2026-03-11", 1333], ["2026-03-11", 1329], ["2026-03-15", 1353], ["2026-03-15", 1344], ["2026-03-19", 1337]], "Intraceptor": [["LH01 Final", 1264], ["2026-03-05", 1255], ["2026-03-10", 1305], ["2026-03-10", 1286], ["2026-03-11", 1345], ["2026-03-20", 1309]], "Dramsss": [["LH01 Final", 1264], ["2026-02-15", 1233], ["2026-02-16", 1283], ["2026-02-17", 1252], ["2026-02-18", 1225], ["2026-02-21", 1211], ["2026-02-21", 1184], ["2026-02-25", 1164], ["2026-03-01", 1152], ["2026-03-01", 1216], ["2026-03-02", 1202], ["2026-03-04", 1234], ["2026-03-05", 1230], ["2026-03-06", 1264], ["2026-03-07", 1286], ["2026-03-07", 1266], ["2026-03-10", 1256], ["2026-03-13", 1251], ["2026-03-13", 1244], ["2026-03-15", 1238], ["2026-03-15", 1269], ["2026-03-15", 1297], ["2026-03-19", 1286], ["2026-03-19", 1312], ["2026-03-20", 1298], ["2026-03-20", 1290], ["2026-03-21", 1284], ["2026-03-21", 1305], ["2026-03-21", 1299], ["2026-03-21", 1289], ["2026-03-22", 1279], ["2026-03-22", 1269], ["2026-03-22", 1264]], "Bengal3": [["LH01 Final", 1263], ["2026-02-18", 1248], ["2026-02-21", 1234], ["2026-02-25", 1207], ["2026-02-26", 1255], ["2026-02-27", 1313], ["2026-03-03", 1275], ["2026-03-09", 1330], ["2026-03-11", 1321], ["2026-03-13", 1298]], "LucianTheFak": [["LH01 Final", 1263], ["2026-01-19", 1232], ["2026-01-21", 1212], ["2026-01-22", 1197], ["2026-01-23", 1175], ["2026-01-23", 1165], ["2026-01-24", 1157], ["2026-01-26", 1140], ["2026-01-28", 1132], ["2026-01-30", 1128], ["2026-01-30", 1114], ["2026-01-30", 1108], ["2026-01-31", 1102], ["2026-01-31", 1099], ["2026-01-31", 1138], ["2026-02-01", 1136], ["2026-02-01", 1169], ["2026-02-03", 1199], ["2026-02-03", 1230], ["2026-02-03", 1223], ["2026-02-03", 1220], ["2026-02-04", 1215], ["2026-02-06", 1207], ["2026-02-10", 1196], ["2026-02-11", 1181], ["2026-02-12", 1214], ["2026-02-12", 1207], ["2026-02-14", 1201], ["2026-02-14", 1232], ["2026-02-15", 1219], ["2026-02-15", 1210], ["2026-02-16", 1201], ["2026-02-16", 1195], ["2026-02-19", 1190], ["2026-02-19", 1175], ["2026-02-20", 1169], ["2026-02-21", 1202], ["2026-02-21", 1232], ["2026-02-21", 1217], ["2026-02-22", 1208], ["2026-02-23", 1197], ["2026-02-23", 1228], ["2026-02-23", 1218], ["2026-02-23", 1244], ["2026-02-23", 1225], ["2026-02-24", 1258], ["2026-02-25", 1244], ["2026-02-25", 1271], ["2026-02-25", 1293], ["2026-02-27", 1319], ["2026-02-27", 1307], ["2026-03-01", 1303], ["2026-03-01", 1318], ["2026-03-02", 1328], ["2026-03-03", 1331], ["2026-03-03", 1323], ["2026-03-06", 1319], ["2026-03-06", 1329], ["2026-03-07", 1343], ["2026-03-09", 1338], ["2026-03-09", 1331], ["2026-03-09", 1328], ["2026-03-09", 1319], ["2026-03-10", 1329], ["2026-03-10", 1341], ["2026-03-10", 1338], ["2026-03-11", 1331], ["2026-03-12", 1323], ["2026-03-12", 1321], ["2026-03-12", 1315], ["2026-03-12", 1307], ["2026-03-14", 1301], ["2026-03-17", 1315], ["2026-03-18", 1307], ["2026-03-18", 1300], ["2026-03-18", 1295], ["2026-03-20", 1289], ["2026-03-21", 1284]], "lazarus210": [["LH01 Final", 1262], ["2026-02-14", 1319]], "Oriol": [["LH01 Final", 1262], ["2026-03-17", 1319]], "Cabbage0642": [["LH01 Final", 1262], ["2026-01-07", 1320]], "tjudge": [["LH01 Final", 1260], ["2026-01-17", 1306], ["2026-01-27", 1272], ["2026-02-14", 1248], ["2026-02-24", 1311], ["2026-02-26", 1271], ["2026-02-28", 1329], ["2026-03-05", 1315], ["2026-03-07", 1296], ["2026-03-09", 1257], ["2026-03-11", 1325], ["2026-03-17", 1344], ["2026-03-17", 1326], ["2026-03-18", 1310], ["2026-03-20", 1302], ["2026-03-20", 1286], ["2026-03-23", 1310]], "ShowStopperW": [["LH01 Final", 1258], ["2026-01-04", 1311]], "1coolguy": [["LH01 Final", 1253], ["2026-01-13", 1229], ["2026-01-15", 1297], ["2026-01-20", 1346], ["2026-01-28", 1334], ["2026-02-01", 1323], ["2026-02-02", 1291], ["2026-02-03", 1337], ["2026-02-17", 1321], ["2026-02-17", 1366], ["2026-02-21", 1399], ["2026-02-26", 1370], ["2026-03-02", 1353], ["2026-03-05", 1337], ["2026-03-09", 1327], ["2026-03-13", 1312], ["2026-03-13", 1302]], "Mindger": [["LH01 Final", 1253], ["2026-01-02", 1313], ["2026-01-03", 1287], ["2026-01-06", 1339], ["2026-01-10", 1324], ["2026-01-13", 1312]], "MrDrouf": [["LH01 Final", 1251], ["2026-01-01", 1219], ["2026-01-01", 1274], ["2026-01-01", 1258], ["2026-01-03", 1315], ["2026-01-03", 1367], ["2026-01-04", 1323], ["2026-01-05", 1277], ["2026-01-05", 1245], ["2026-01-05", 1222], ["2026-01-06", 1271], ["2026-01-07", 1263], ["2026-01-07", 1286], ["2026-01-08", 1275], ["2026-01-10", 1259], ["2026-01-10", 1248], ["2026-01-12", 1238], ["2026-01-13", 1224], ["2026-01-13", 1218], ["2026-01-14", 1213], ["2026-01-15", 1199], ["2026-01-15", 1187], ["2026-01-15", 1177], ["2026-01-15", 1173], ["2026-01-16", 1208], ["2026-01-16", 1206], ["2026-01-16", 1235], ["2026-01-18", 1228], ["2026-01-18", 1220], ["2026-01-22", 1249], ["2026-01-22", 1276], ["2026-01-23", 1258], ["2026-01-23", 1242], ["2026-01-25", 1270], ["2026-01-29", 1262], ["2026-01-31", 1290], ["2026-01-31", 1279], ["2026-02-01", 1309], ["2026-02-04", 1297], ["2026-02-05", 1287], ["2026-02-05", 1277], ["2026-02-05", 1269], ["2026-02-05", 1254], ["2026-02-06", 1249], ["2026-02-09", 1244], ["2026-02-09", 1278], ["2026-02-15", 1263], ["2026-02-15", 1251], ["2026-02-19", 1280], ["2026-03-05", 1270], ["2026-03-09", 1265]], "kaiser": [["LH01 Final", 1249], ["2026-01-02", 1303], ["2026-01-09", 1272], ["2026-01-09", 1259], ["2026-01-21", 1320], ["2026-01-21", 1310], ["2026-01-30", 1272], ["2026-02-01", 1335], ["2026-02-01", 1306], ["2026-02-02", 1359], ["2026-02-03", 1341], ["2026-02-04", 1360], ["2026-02-05", 1340], ["2026-02-06", 1330], ["2026-02-06", 1311], ["2026-02-06", 1346], ["2026-02-08", 1363], ["2026-02-10", 1388], ["2026-02-12", 1364], ["2026-02-14", 1388], ["2026-02-14", 1413], ["2026-02-15", 1391], ["2026-02-16", 1412], ["2026-02-21", 1394], ["2026-02-23", 1418], ["2026-02-24", 1405], ["2026-02-25", 1379], ["2026-02-25", 1357], ["2026-03-01", 1379], ["2026-03-01", 1359], ["2026-03-05", 1380], ["2026-03-07", 1366], ["2026-03-07", 1351], ["2026-03-08", 1339], ["2026-03-10", 1320], ["2026-03-11", 1316], ["2026-03-12", 1302], ["2026-03-14", 1285], ["2026-03-16", 1269], ["2026-03-21", 1263], ["2026-03-21", 1257]], "Schkitz": [["LH01 Final", 1249], ["2026-01-03", 1229], ["2026-01-10", 1278], ["2026-01-12", 1249], ["2026-01-12", 1234], ["2026-01-15", 1287], ["2026-01-19", 1270], ["2026-01-22", 1254], ["2026-01-22", 1226], ["2026-01-23", 1287], ["2026-01-28", 1274], ["2026-01-30", 1299], ["2026-01-30", 1288], ["2026-01-31", 1314], ["2026-01-31", 1311], ["2026-02-01", 1304], ["2026-02-01", 1298], ["2026-02-01", 1290], ["2026-02-02", 1279], ["2026-02-05", 1271], ["2026-02-05", 1299], ["2026-02-05", 1327], ["2026-02-06", 1313], ["2026-02-08", 1303], ["2026-02-10", 1297], ["2026-02-11", 1318], ["2026-02-11", 1337], ["2026-02-12", 1321], ["2026-02-13", 1346], ["2026-02-14", 1331], ["2026-02-15", 1317], ["2026-02-15", 1302], ["2026-02-16", 1290], ["2026-02-16", 1320], ["2026-02-16", 1338], ["2026-02-16", 1328], ["2026-02-16", 1317], ["2026-02-18", 1308], ["2026-02-19", 1335], ["2026-02-19", 1316], ["2026-02-20", 1303], ["2026-02-21", 1331], ["2026-02-22", 1313], ["2026-02-23", 1303], ["2026-02-24", 1289], ["2026-02-24", 1283], ["2026-02-25", 1273], ["2026-02-27", 1264], ["2026-02-27", 1249], ["2026-02-27", 1280], ["2026-02-27", 1270], ["2026-03-01", 1267], ["2026-03-01", 1262], ["2026-03-02", 1255], ["2026-03-02", 1246], ["2026-03-03", 1241], ["2026-03-03", 1233], ["2026-03-03", 1231], ["2026-03-03", 1243], ["2026-03-03", 1256], ["2026-03-05", 1268], ["2026-03-05", 1265], ["2026-03-08", 1261], ["2026-03-09", 1259], ["2026-03-09", 1256], ["2026-03-10", 1252], ["2026-03-10", 1250], ["2026-03-10", 1248], ["2026-03-10", 1243], ["2026-03-11", 1241], ["2026-03-11", 1240], ["2026-03-11", 1237], ["2026-03-12", 1231], ["2026-03-12", 1227], ["2026-03-12", 1224], ["2026-03-15", 1219], ["2026-03-15", 1214], ["2026-03-15", 1211], ["2026-03-16", 1226], ["2026-03-16", 1240], ["2026-03-18", 1256], ["2026-03-18", 1271], ["2026-03-19", 1266], ["2026-03-19", 1261], ["2026-03-20", 1256]], "ermactually": [["LH01 Final", 1244], ["2026-01-06", 1232], ["2026-03-04", 1285]], "pwarren8590": [["LH01 Final", 1241], ["2026-01-20", 1297], ["2026-01-31", 1359], ["2026-02-04", 1339], ["2026-02-07", 1325], ["2026-02-09", 1379], ["2026-02-18", 1334], ["2026-02-19", 1299], ["2026-03-08", 1279], ["2026-03-09", 1266]], "KarmaBurn": [["LH01 Final", 1239], ["2026-02-01", 1214], ["2026-02-16", 1262]], "ToasterTrash": [["LH01 Final", 1239], ["2026-01-05", 1223], ["2026-01-08", 1208], ["2026-01-09", 1187], ["2026-01-09", 1172], ["2026-01-09", 1158], ["2026-01-09", 1224], ["2026-01-12", 1278], ["2026-01-15", 1262]], "cringelordirl": [["LH01 Final", 1237], ["2026-01-11", 1223], ["2026-01-12", 1218], ["2026-01-13", 1204], ["2026-01-15", 1194], ["2026-01-25", 1175], ["2026-01-27", 1166], ["2026-02-02", 1240], ["2026-02-02", 1227], ["2026-02-02", 1215], ["2026-02-02", 1192], ["2026-02-03", 1221], ["2026-02-05", 1215], ["2026-02-10", 1249], ["2026-02-13", 1283], ["2026-02-16", 1275], ["2026-02-17", 1270], ["2026-02-18", 1261], ["2026-02-22", 1290], ["2026-02-24", 1279], ["2026-02-25", 1274], ["2026-02-27", 1265], ["2026-03-03", 1292], ["2026-03-07", 1278], ["2026-03-07", 1265], ["2026-03-09", 1254], ["2026-03-09", 1246], ["2026-03-09", 1236], ["2026-03-11", 1227], ["2026-03-11", 1224], ["2026-03-11", 1222], ["2026-03-11", 1220], ["2026-03-12", 1218], ["2026-03-13", 1207], ["2026-03-14", 1241], ["2026-03-14", 1272], ["2026-03-17", 1265], ["2026-03-17", 1256], ["2026-03-17", 1247], ["2026-03-19", 1236], ["2026-03-20", 1269]], "Pandapapst": [["LH01 Final", 1236], ["2026-01-02", 1222], ["2026-01-03", 1209], ["2026-01-03", 1190], ["2026-01-04", 1179], ["2026-01-05", 1150], ["2026-01-06", 1137], ["2026-01-06", 1125], ["2026-01-07", 1114], ["2026-01-09", 1105], ["2026-01-09", 1170], ["2026-01-10", 1161], ["2026-01-10", 1191], ["2026-01-10", 1224], ["2026-01-11", 1216], ["2026-01-11", 1205], ["2026-01-12", 1197], ["2026-01-13", 1188], ["2026-01-13", 1183], ["2026-01-13", 1213], ["2026-01-15", 1202], ["2026-01-16", 1236], ["2026-01-16", 1263], ["2026-01-16", 1253], ["2026-01-18", 1244], ["2026-01-19", 1270], ["2026-01-21", 1298], ["2026-01-21", 1290], ["2026-01-22", 1321], ["2026-01-23", 1344], ["2026-01-26", 1325], ["2026-01-27", 1308], ["2026-01-27", 1338], ["2026-01-28", 1362], ["2026-01-29", 1356], ["2026-01-30", 1347], ["2026-01-30", 1340], ["2026-01-31", 1334], ["2026-02-01", 1317], ["2026-02-01", 1307], ["2026-02-01", 1291], ["2026-02-02", 1283], ["2026-02-04", 1317], ["2026-02-05", 1304], ["2026-02-06", 1298], ["2026-02-08", 1286], ["2026-02-08", 1266], ["2026-02-08", 1259], ["2026-02-09", 1293], ["2026-02-11", 1272], ["2026-02-13", 1265], ["2026-02-13", 1280], ["2026-02-13", 1271], ["2026-02-15", 1282], ["2026-02-16", 1279], ["2026-02-17", 1293], ["2026-02-17", 1288], ["2026-02-19", 1281], ["2026-02-21", 1292], ["2026-02-24", 1301], ["2026-02-24", 1295], ["2026-02-24", 1290], ["2026-02-25", 1285], ["2026-02-25", 1300], ["2026-02-26", 1289], ["2026-03-02", 1286], ["2026-03-03", 1281], ["2026-03-03", 1273], ["2026-03-05", 1288], ["2026-03-05", 1283], ["2026-03-06", 1276], ["2026-03-06", 1274], ["2026-03-08", 1270], ["2026-03-08", 1265], ["2026-03-08", 1262], ["2026-03-10", 1259], ["2026-03-10", 1257], ["2026-03-11", 1256], ["2026-03-13", 1252], ["2026-03-14", 1248], ["2026-03-14", 1244], ["2026-03-15", 1236], ["2026-03-16", 1251], ["2026-03-16", 1245]], "Mohammad": [["LH01 Final", 1235], ["2026-01-02", 1288], ["2026-01-03", 1260]], "Napalminthebirdsong": [["LH01 Final", 1234], ["2026-01-09", 1218], ["2026-01-09", 1188], ["2026-01-10", 1165], ["2026-01-15", 1228], ["2026-01-16", 1202], ["2026-01-16", 1262]], "Furry0329": [["LH01 Final", 1234], ["2026-02-14", 1222], ["2026-03-09", 1214], ["2026-03-09", 1207], ["2026-03-21", 1270]], "Hydro033": [["LH01 Final", 1230], ["2026-01-02", 1206], ["2026-01-04", 1197], ["2026-01-07", 1182], ["2026-01-10", 1242], ["2026-01-13", 1216], ["2026-01-15", 1268], ["2026-01-15", 1255], ["2026-01-19", 1240], ["2026-01-20", 1285], ["2026-01-21", 1276], ["2026-01-24", 1268], ["2026-02-04", 1262]], "Octavius": [["LH01 Final", 1228], ["2026-01-03", 1279], ["2026-01-05", 1242]], "Nymmer": [["LH01 Final", 1227], ["2026-02-11", 1209], ["2026-02-14", 1271], ["2026-02-19", 1249], ["2026-02-21", 1227], ["2026-02-25", 1290], ["2026-03-08", 1269], ["2026-03-08", 1254], ["2026-03-11", 1248], ["2026-03-12", 1243], ["2026-03-23", 1219]], "udon66": [["LH01 Final", 1225], ["2026-03-13", 1214], ["2026-03-19", 1288], ["2026-03-21", 1274], ["2026-03-22", 1262]], "Karcher": [["LH01 Final", 1225], ["2026-02-13", 1214], ["2026-02-24", 1276], ["2026-03-16", 1249]], "deejaythink": [["LH01 Final", 1222], ["2026-02-21", 1201], ["2026-02-27", 1262], ["2026-02-27", 1239], ["2026-03-05", 1219], ["2026-03-06", 1203], ["2026-03-13", 1189], ["2026-03-17", 1249], ["2026-03-19", 1245]], "hakoo": [["LH01 Final", 1221], ["2026-01-26", 1282], ["2026-02-08", 1250], ["2026-03-11", 1243]], "LutherStr": [["LH01 Final", 1220], ["2026-01-23", 1195], ["2026-01-24", 1185], ["2026-01-26", 1165], ["2026-01-28", 1156], ["2026-01-30", 1140], ["2026-01-30", 1205], ["2026-01-31", 1186], ["2026-02-01", 1169], ["2026-02-03", 1148], ["2026-02-03", 1134], ["2026-02-03", 1131], ["2026-02-03", 1129], ["2026-02-04", 1126], ["2026-02-06", 1123], ["2026-02-10", 1156], ["2026-02-12", 1153], ["2026-02-15", 1147], ["2026-02-16", 1181], ["2026-02-16", 1175], ["2026-02-21", 1164], ["2026-02-23", 1196], ["2026-02-23", 1187], ["2026-02-23", 1178], ["2026-02-24", 1172], ["2026-02-25", 1203], ["2026-02-25", 1194], ["2026-02-25", 1226], ["2026-03-01", 1258], ["2026-03-01", 1251], ["2026-03-01", 1243], ["2026-03-04", 1233], ["2026-03-07", 1227], ["2026-03-09", 1221], ["2026-03-09", 1212], ["2026-03-10", 1201], ["2026-03-10", 1193], ["2026-03-10", 1191], ["2026-03-11", 1224], ["2026-03-12", 1214], ["2026-03-14", 1207], ["2026-03-21", 1241], ["2026-03-23", 1278]], "TAKSpx": [["LH01 Final", 1218], ["2026-01-06", 1196], ["2026-01-06", 1243], ["2026-01-06", 1214], ["2026-01-07", 1257], ["2026-01-07", 1243], ["2026-01-07", 1232]], "ImJustExisting": [["LH01 Final", 1218], ["2026-01-20", 1197], ["2026-01-26", 1256], ["2026-01-27", 1277], ["2026-02-03", 1318], ["2026-02-04", 1304], ["2026-02-07", 1285], ["2026-02-09", 1277], ["2026-02-12", 1239], ["2026-02-12", 1227], ["2026-02-18", 1293], ["2026-02-22", 1313], ["2026-02-22", 1294], ["2026-02-24", 1277], ["2026-02-28", 1265], ["2026-03-08", 1256], ["2026-03-11", 1253]], "Mcauthor": [["LH01 Final", 1218], ["2026-01-30", 1205], ["2026-02-01", 1260], ["2026-02-09", 1249], ["2026-02-10", 1239]], "BuliBaka": [["LH01 Final", 1218], ["2026-01-03", 1203], ["2026-01-18", 1189], ["2026-02-05", 1251], ["2026-02-07", 1243]], "Ptitmxz": [["LH01 Final", 1218], ["2026-02-15", 1278], ["2026-02-19", 1335], ["2026-02-23", 1290], ["2026-02-25", 1264], ["2026-03-01", 1300], ["2026-03-03", 1332], ["2026-03-05", 1298], ["2026-03-06", 1273], ["2026-03-07", 1248], ["2026-03-09", 1227], ["2026-03-11", 1224], ["2026-03-14", 1218], ["2026-03-14", 1212], ["2026-03-15", 1246], ["2026-03-16", 1238], ["2026-03-21", 1229], ["2026-03-22", 1262], ["2026-03-23", 1258]], "uwtron": [["LH01 Final", 1217], ["2026-01-01", 1188], ["2026-01-01", 1167], ["2026-01-02", 1151], ["2026-01-02", 1136], ["2026-01-02", 1116], ["2026-01-03", 1176], ["2026-01-03", 1164], ["2026-01-03", 1224], ["2026-01-04", 1285], ["2026-01-06", 1252], ["2026-01-09", 1239], ["2026-01-11", 1266], ["2026-01-12", 1295], ["2026-01-14", 1280], ["2026-01-14", 1263], ["2026-01-14", 1255], ["2026-01-15", 1243], ["2026-01-15", 1234], ["2026-01-22", 1222]], "Awesem": [["LH01 Final", 1217], ["2026-01-01", 1188], ["2026-01-10", 1245], ["2026-01-26", 1228]], "GlisteningGeetus": [["LH01 Final", 1216], ["2026-01-07", 1279], ["2026-01-07", 1334], ["2026-01-09", 1305], ["2026-01-12", 1280], ["2026-01-14", 1253]], "Acecreamsundae": [["LH01 Final", 1216], ["2026-01-05", 1188], ["2026-01-05", 1246], ["2026-01-12", 1220]], "Perdita": [["LH01 Final", 1216], ["2026-01-02", 1194], ["2026-01-06", 1174], ["2026-01-08", 1232], ["2026-01-08", 1282], ["2026-01-09", 1248], ["2026-01-09", 1302], ["2026-01-09", 1273], ["2026-01-09", 1248], ["2026-01-12", 1228], ["2026-01-14", 1210], ["2026-01-15", 1196], ["2026-01-15", 1187], ["2026-01-16", 1181], ["2026-01-16", 1210], ["2026-01-16", 1237], ["2026-01-16", 1225], ["2026-01-16", 1251], ["2026-01-16", 1238], ["2026-01-17", 1228], ["2026-01-17", 1224], ["2026-01-20", 1212], ["2026-01-20", 1203], ["2026-01-20", 1193], ["2026-01-23", 1228]], "TheDolphinman": [["LH01 Final", 1216], ["2026-01-03", 1190], ["2026-01-03", 1261], ["2026-01-08", 1240], ["2026-01-10", 1215], ["2026-01-10", 1207], ["2026-01-13", 1185], ["2026-01-17", 1178], ["2026-01-18", 1248], ["2026-01-18", 1218], ["2026-01-18", 1211], ["2026-01-20", 1200], ["2026-01-20", 1191], ["2026-01-27", 1222], ["2026-01-28", 1247], ["2026-01-31", 1244], ["2026-02-01", 1272], ["2026-02-03", 1254], ["2026-02-04", 1243], ["2026-02-09", 1238], ["2026-02-13", 1273], ["2026-02-13", 1264], ["2026-02-14", 1255], ["2026-02-22", 1241], ["2026-03-09", 1236], ["2026-03-10", 1232]], "Sjepeal": [["LH01 Final", 1215], ["2026-01-03", 1198], ["2026-01-19", 1184], ["2026-01-31", 1173], ["2026-02-07", 1234]], "Emperia": [["LH01 Final", 1214], ["2026-03-10", 1259], ["2026-03-14", 1244], ["2026-03-14", 1295], ["2026-03-14", 1261], ["2026-03-14", 1236], ["2026-03-14", 1213], ["2026-03-14", 1204], ["2026-03-15", 1187], ["2026-03-15", 1252], ["2026-03-15", 1229], ["2026-03-17", 1223], ["2026-03-19", 1256], ["2026-03-19", 1247], ["2026-03-20", 1232], ["2026-03-20", 1224], ["2026-03-21", 1217], ["2026-03-22", 1210], ["2026-03-23", 1207], ["2026-03-23", 1200]], "DemaRogue": [["LH01 Final", 1211], ["2026-02-10", 1266], ["2026-02-12", 1252], ["2026-02-12", 1222], ["2026-02-14", 1276], ["2026-02-14", 1251], ["2026-02-14", 1296], ["2026-02-15", 1278], ["2026-02-15", 1263], ["2026-02-16", 1227], ["2026-02-17", 1210], ["2026-02-17", 1200], ["2026-02-18", 1228], ["2026-02-18", 1212], ["2026-02-18", 1248], ["2026-02-19", 1243], ["2026-02-20", 1268], ["2026-02-21", 1291], ["2026-02-22", 1277], ["2026-02-22", 1260], ["2026-02-22", 1242], ["2026-02-23", 1236], ["2026-02-23", 1216], ["2026-02-23", 1204], ["2026-02-24", 1194], ["2026-02-25", 1227], ["2026-02-26", 1255], ["2026-02-26", 1277], ["2026-02-28", 1265], ["2026-02-28", 1294], ["2026-03-01", 1282], ["2026-03-02", 1270], ["2026-03-04", 1298], ["2026-03-05", 1286], ["2026-03-07", 1273], ["2026-03-08", 1261], ["2026-03-08", 1242], ["2026-03-09", 1233], ["2026-03-09", 1264], ["2026-03-09", 1259], ["2026-03-10", 1244], ["2026-03-10", 1235], ["2026-03-10", 1225], ["2026-03-11", 1223], ["2026-03-14", 1213], ["2026-03-14", 1242], ["2026-03-14", 1270], ["2026-03-14", 1257], ["2026-03-15", 1246], ["2026-03-15", 1239], ["2026-03-16", 1229], ["2026-03-17", 1220], ["2026-03-19", 1218], ["2026-03-21", 1214], ["2026-03-23", 1228], ["2026-03-23", 1225], ["2026-03-23", 1241]], "fadingnovel": [["LH01 Final", 1210], ["2026-01-01", 1182], ["2026-01-02", 1252], ["2026-01-02", 1308], ["2026-01-05", 1282], ["2026-01-06", 1253], ["2026-01-07", 1233], ["2026-01-11", 1209], ["2026-01-15", 1194], ["2026-01-16", 1173], ["2026-01-17", 1164], ["2026-01-17", 1163], ["2026-01-24", 1158], ["2026-01-26", 1149], ["2026-01-26", 1181], ["2026-01-28", 1216], ["2026-01-30", 1213], ["2026-02-03", 1199], ["2026-02-09", 1194], ["2026-02-11", 1187], ["2026-02-12", 1183], ["2026-02-21", 1175], ["2026-02-21", 1205], ["2026-02-23", 1195], ["2026-02-23", 1226], ["2026-02-25", 1214], ["2026-03-01", 1206], ["2026-03-03", 1199], ["2026-03-09", 1193], ["2026-03-09", 1225], ["2026-03-11", 1217], ["2026-03-12", 1210], ["2026-03-12", 1241], ["2026-03-17", 1233]], "NadtyLite": [["LH01 Final", 1209], ["2026-01-01", 1198], ["2026-01-02", 1179], ["2026-01-02", 1169], ["2026-01-05", 1157], ["2026-01-06", 1136], ["2026-01-06", 1130], ["2026-01-07", 1120], ["2026-01-08", 1108], ["2026-01-08", 1103], ["2026-01-08", 1088], ["2026-01-09", 1082], ["2026-01-09", 1078], ["2026-01-10", 1073], ["2026-01-10", 1067], ["2026-01-11", 1062], ["2026-01-12", 1098], ["2026-01-12", 1097], ["2026-01-12", 1091], ["2026-01-13", 1084], ["2026-01-14", 1120], ["2026-01-14", 1153], ["2026-01-15", 1143], ["2026-01-15", 1176], ["2026-01-15", 1168], ["2026-01-15", 1163], ["2026-01-16", 1157], ["2026-01-16", 1150], ["2026-01-19", 1186], ["2026-01-20", 1180], ["2026-01-22", 1176], ["2026-01-23", 1167], ["2026-01-23", 1157], ["2026-01-23", 1153], ["2026-01-23", 1147], ["2026-01-24", 1144], ["2026-01-25", 1137], ["2026-01-27", 1132], ["2026-01-27", 1163], ["2026-01-28", 1161], ["2026-01-28", 1157], ["2026-01-29", 1182], ["2026-01-29", 1172], ["2026-01-30", 1166], ["2026-01-30", 1163], ["2026-01-30", 1195], ["2026-01-30", 1185], ["2026-01-30", 1180], ["2026-01-31", 1211], ["2026-01-31", 1202], ["2026-01-31", 1232], ["2026-02-01", 1229], ["2026-02-01", 1224], ["2026-02-01", 1217], ["2026-02-05", 1214], ["2026-02-05", 1210], ["2026-02-05", 1228], ["2026-02-06", 1226], ["2026-02-06", 1240], ["2026-02-06", 1236], ["2026-02-08", 1250], ["2026-02-09", 1267], ["2026-02-09", 1262], ["2026-02-10", 1259], ["2026-02-10", 1252], ["2026-02-12", 1248], ["2026-02-13", 1243], ["2026-02-13", 1260], ["2026-02-14", 1256], ["2026-02-14", 1253], ["2026-02-15", 1247], ["2026-02-15", 1264], ["2026-02-15", 1279], ["2026-02-15", 1273], ["2026-02-16", 1269], ["2026-02-16", 1265], ["2026-02-17", 1259], ["2026-02-17", 1253], ["2026-02-18", 1269], ["2026-02-18", 1266], ["2026-02-19", 1257], ["2026-02-19", 1253], ["2026-02-19", 1248], ["2026-02-21", 1242], ["2026-02-22", 1237], ["2026-02-22", 1254], ["2026-02-22", 1268], ["2026-02-23", 1262], ["2026-02-23", 1255], ["2026-02-23", 1248], ["2026-02-24", 1243], ["2026-02-24", 1239], ["2026-02-24", 1253], ["2026-02-24", 1249], ["2026-02-24", 1246], ["2026-02-25", 1240], ["2026-02-27", 1237], ["2026-02-27", 1250], ["2026-02-27", 1266], ["2026-03-01", 1262], ["2026-03-02", 1255], ["2026-03-02", 1247], ["2026-03-02", 1241], ["2026-03-03", 1235], ["2026-03-03", 1231], ["2026-03-04", 1226], ["2026-03-04", 1221], ["2026-03-04", 1218], ["2026-03-05", 1216], ["2026-03-05", 1233], ["2026-03-07", 1228], ["2026-03-07", 1243], ["2026-03-08", 1256], ["2026-03-08", 1253], ["2026-03-09", 1268], ["2026-03-09", 1262], ["2026-03-09", 1275], ["2026-03-09", 1290], ["2026-03-10", 1284], ["2026-03-10", 1282], ["2026-03-10", 1295], ["2026-03-10", 1290], ["2026-03-11", 1285], ["2026-03-11", 1279], ["2026-03-11", 1275], ["2026-03-12", 1269], ["2026-03-12", 1264], ["2026-03-12", 1261], ["2026-03-12", 1256], ["2026-03-12", 1253], ["2026-03-13", 1268], ["2026-03-15", 1283], ["2026-03-16", 1275], ["2026-03-17", 1271], ["2026-03-17", 1267], ["2026-03-18", 1261], ["2026-03-18", 1256], ["2026-03-18", 1255], ["2026-03-18", 1251], ["2026-03-18", 1242], ["2026-03-18", 1238], ["2026-03-19", 1234], ["2026-03-19", 1251], ["2026-03-20", 1246], ["2026-03-20", 1241], ["2026-03-20", 1238], ["2026-03-20", 1234], ["2026-03-21", 1228], ["2026-03-21", 1225], ["2026-03-23", 1223], ["2026-03-23", 1222], ["2026-03-23", 1241]], "Bodnamax": [["LH01 Final", 1209], ["2026-01-02", 1179], ["2026-01-03", 1166], ["2026-01-03", 1146], ["2026-01-06", 1211]], "KuperMeister": [["LH01 Final", 1207], ["2026-01-02", 1184], ["2026-01-05", 1243], ["2026-01-05", 1217], ["2026-01-06", 1189], ["2026-01-06", 1249], ["2026-01-07", 1238], ["2026-01-16", 1209], ["2026-01-16", 1183], ["2026-01-16", 1246], ["2026-01-17", 1215], ["2026-01-23", 1208]], "Sirius": [["LH01 Final", 1205], ["2026-03-04", 1182], ["2026-03-04", 1235], ["2026-03-05", 1193], ["2026-03-10", 1184], ["2026-03-17", 1151], ["2026-03-17", 1139], ["2026-03-20", 1206]], "BjarkeHuse": [["LH01 Final", 1204], ["2026-02-16", 1265], ["2026-02-16", 1306], ["2026-02-17", 1288], ["2026-02-18", 1248], ["2026-02-20", 1219], ["2026-03-15", 1205]], "AERotters": [["LH01 Final", 1198], ["2026-01-12", 1187], ["2026-01-12", 1166], ["2026-01-16", 1156], ["2026-01-18", 1229], ["2026-01-19", 1274], ["2026-01-20", 1313], ["2026-01-20", 1292], ["2026-01-20", 1253], ["2026-01-22", 1226], ["2026-01-23", 1281], ["2026-01-23", 1268], ["2026-01-23", 1248], ["2026-01-23", 1237], ["2026-01-25", 1229], ["2026-01-27", 1217], ["2026-01-28", 1253], ["2026-01-29", 1281], ["2026-01-29", 1314], ["2026-01-30", 1299], ["2026-01-30", 1290], ["2026-01-31", 1282], ["2026-02-01", 1309], ["2026-02-02", 1296], ["2026-02-02", 1284], ["2026-02-02", 1271], ["2026-02-02", 1264], ["2026-02-03", 1250], ["2026-02-04", 1240], ["2026-02-04", 1232], ["2026-02-06", 1219], ["2026-02-08", 1252], ["2026-02-08", 1245], ["2026-02-09", 1270], ["2026-02-09", 1301], ["2026-02-09", 1290], ["2026-02-09", 1274], ["2026-02-10", 1265], ["2026-02-10", 1248], ["2026-02-12", 1237], ["2026-02-12", 1225], ["2026-02-12", 1252], ["2026-02-15", 1247], ["2026-02-15", 1235], ["2026-02-15", 1229], ["2026-02-16", 1218], ["2026-02-17", 1248], ["2026-02-19", 1238], ["2026-02-20", 1223], ["2026-02-22", 1252], ["2026-02-22", 1278], ["2026-02-25", 1289], ["2026-02-25", 1280], ["2026-02-26", 1290], ["2026-02-27", 1285], ["2026-03-05", 1280], ["2026-03-06", 1276], ["2026-03-08", 1270], ["2026-03-08", 1265], ["2026-03-09", 1261], ["2026-03-09", 1255], ["2026-03-09", 1252], ["2026-03-09", 1249], ["2026-03-09", 1247], ["2026-03-09", 1244], ["2026-03-09", 1239], ["2026-03-10", 1234], ["2026-03-10", 1249], ["2026-03-10", 1246], ["2026-03-11", 1244], ["2026-03-11", 1242], ["2026-03-11", 1241], ["2026-03-15", 1236], ["2026-03-19", 1227], ["2026-03-20", 1222]], "BMPerJMPer": [["LH01 Final", 1197], ["2026-01-04", 1265], ["2026-01-07", 1323], ["2026-01-09", 1295], ["2026-01-11", 1350], ["2026-01-18", 1397], ["2026-01-20", 1444], ["2026-01-20", 1416], ["2026-01-27", 1379], ["2026-01-30", 1348], ["2026-01-31", 1336], ["2026-02-02", 1363], ["2026-02-03", 1348], ["2026-02-06", 1340], ["2026-02-06", 1333], ["2026-02-09", 1325], ["2026-02-10", 1313], ["2026-02-13", 1300], ["2026-02-15", 1329], ["2026-02-17", 1316], ["2026-02-18", 1303], ["2026-02-21", 1286], ["2026-02-24", 1272], ["2026-02-25", 1262], ["2026-03-03", 1248], ["2026-03-05", 1273], ["2026-03-05", 1261], ["2026-03-08", 1252], ["2026-03-08", 1237], ["2026-03-11", 1234], ["2026-03-14", 1233], ["2026-03-14", 1225], ["2026-03-23", 1223]], "XxD4RK_W0LFxX": [["LH01 Final", 1189], ["2026-01-21", 1181]], "sda1611": [["LH01 Final", 1189], ["2026-02-09", 1179]], "Peppy": [["LH01 Final", 1189], ["2026-01-02", 1259], ["2026-01-02", 1241], ["2026-01-05", 1230], ["2026-01-07", 1221], ["2026-01-09", 1282], ["2026-01-18", 1258], ["2026-01-18", 1240], ["2026-01-28", 1231], ["2026-01-30", 1217], ["2026-02-03", 1205], ["2026-02-10", 1199], ["2026-02-15", 1190], ["2026-02-17", 1187], ["2026-03-02", 1183], ["2026-03-13", 1214], ["2026-03-13", 1207], ["2026-03-15", 1203], ["2026-03-16", 1194], ["2026-03-20", 1223]], "Axolatal": [["LH01 Final", 1188], ["2026-01-10", 1182]], "micherin": [["LH01 Final", 1188], ["2026-02-22", 1171], ["2026-02-25", 1161], ["2026-03-01", 1151], ["2026-03-03", 1133], ["2026-03-04", 1123], ["2026-03-05", 1112], ["2026-03-05", 1103], ["2026-03-12", 1092], ["2026-03-12", 1164]], "Ljaz7": [["LH01 Final", 1187], ["2026-03-16", 1176]], "SMenefee": [["LH01 Final", 1187], ["2026-03-13", 1178]], "lumpyprol": [["LH01 Final", 1187], ["2026-01-06", 1170], ["2026-01-09", 1230], ["2026-01-09", 1290], ["2026-01-12", 1259], ["2026-01-15", 1245], ["2026-01-15", 1228], ["2026-01-17", 1215], ["2026-01-18", 1200], ["2026-01-20", 1189], ["2026-01-22", 1176], ["2026-01-30", 1171], ["2026-02-01", 1162], ["2026-02-02", 1156], ["2026-02-02", 1152], ["2026-02-05", 1146], ["2026-02-10", 1138], ["2026-02-10", 1169], ["2026-02-10", 1162], ["2026-02-13", 1196], ["2026-02-19", 1233], ["2026-02-19", 1225], ["2026-02-19", 1215], ["2026-02-21", 1205], ["2026-02-21", 1231], ["2026-02-22", 1220], ["2026-02-23", 1206], ["2026-03-02", 1202], ["2026-03-05", 1194], ["2026-03-06", 1183], ["2026-03-09", 1179], ["2026-03-11", 1177], ["2026-03-11", 1175], ["2026-03-11", 1174], ["2026-03-11", 1172], ["2026-03-11", 1170], ["2026-03-15", 1203], ["2026-03-15", 1231], ["2026-03-17", 1221], ["2026-03-17", 1214], ["2026-03-20", 1206], ["2026-03-20", 1201], ["2026-03-21", 1195]], "FausDav": [["LH01 Final", 1187], ["2026-01-08", 1164], ["2026-01-10", 1227], ["2026-01-10", 1215], ["2026-01-14", 1198], ["2026-01-21", 1193]], "deriokle": [["LH01 Final", 1187], ["2026-03-21", 1176]], "NaySmith": [["LH01 Final", 1186], ["2026-02-24", 1174]], "Rabbi": [["LH01 Final", 1186], ["2026-03-12", 1178]], "Olymp": [["LH01 Final", 1186], ["2026-01-20", 1178]], "IndifferentFish": [["LH01 Final", 1186], ["2026-02-22", 1175]], "ConeMan": [["LH01 Final", 1186], ["2026-03-11", 1174]], "Mati92": [["LH01 Final", 1185], ["2026-01-02", 1171], ["2026-01-03", 1225], ["2026-01-03", 1206], ["2026-01-08", 1196], ["2026-01-11", 1185]], "GameProfit": [["LH01 Final", 1185], ["2026-01-18", 1173]], "bigcathedral": [["LH01 Final", 1185], ["2026-02-01", 1173]], "ChusGG": [["LH01 Final", 1185], ["2026-02-08", 1173]], "Plush2": [["LH01 Final", 1185], ["2026-03-02", 1177]], "GamerTower": [["LH01 Final", 1185], ["2026-03-02", 1171]], "sedlak87": [["LH01 Final", 1184], ["2026-01-02", 1172]], "shurgs": [["LH01 Final", 1184], ["2026-03-08", 1166]], "vanillapoppy": [["LH01 Final", 1184], ["2026-02-08", 1171]], "StatzoryTheMad": [["LH01 Final", 1184], ["2026-01-17", 1171]], "Lynxtek": [["LH01 Final", 1183], ["2026-03-14", 1166]], "Youdge": [["LH01 Final", 1183], ["2026-01-05", 1173], ["2026-01-09", 1164], ["2026-01-11", 1152], ["2026-01-11", 1143], ["2026-01-12", 1134], ["2026-01-14", 1125], ["2026-01-17", 1116], ["2026-01-22", 1104], ["2026-02-05", 1096], ["2026-02-11", 1162], ["2026-03-13", 1198]], "Gregoola": [["LH01 Final", 1183], ["2026-02-13", 1170]], "Shadyferret": [["LH01 Final", 1183], ["2026-01-09", 1175]], "clp10033": [["LH01 Final", 1183], ["2026-02-06", 1170]], "Shuuhey": [["LH01 Final", 1183], ["2026-01-08", 1170]], "evancomposer": [["LH01 Final", 1182], ["2026-01-03", 1170]], "KyloBot": [["LH01 Final", 1182], ["2026-02-14", 1167]], "BadScra": [["LH01 Final", 1182], ["2026-03-14", 1245], ["2026-03-14", 1216], ["2026-03-14", 1277], ["2026-03-14", 1327], ["2026-03-15", 1293], ["2026-03-15", 1264], ["2026-03-17", 1253], ["2026-03-20", 1229], ["2026-03-20", 1195], ["2026-03-21", 1188], ["2026-03-21", 1178], ["2026-03-22", 1172]], "Libitina114": [["LH01 Final", 1182], ["2026-01-19", 1170]], "mwcrabtree": [["LH01 Final", 1181], ["2026-01-30", 1168]], "oshwott2844": [["LH01 Final", 1181], ["2026-03-14", 1164]], "mysti": [["LH01 Final", 1181], ["2026-01-03", 1167]], "Raineweather05": [["LH01 Final", 1181], ["2026-01-27", 1165]], "mouseinabox": [["LH01 Final", 1180], ["2026-01-01", 1237], ["2026-01-04", 1200], ["2026-01-07", 1163], ["2026-01-07", 1152], ["2026-01-09", 1219], ["2026-01-09", 1201], ["2026-01-11", 1192], ["2026-01-14", 1176], ["2026-01-16", 1158], ["2026-01-16", 1146], ["2026-01-16", 1138], ["2026-01-16", 1130], ["2026-01-17", 1162], ["2026-01-18", 1157], ["2026-01-18", 1152], ["2026-01-20", 1184], ["2026-01-21", 1178], ["2026-01-23", 1174], ["2026-01-23", 1167], ["2026-01-24", 1162], ["2026-01-26", 1152], ["2026-01-29", 1148], ["2026-01-30", 1141], ["2026-02-03", 1132], ["2026-02-06", 1130], ["2026-02-07", 1125], ["2026-02-07", 1122], ["2026-02-09", 1114], ["2026-02-09", 1108], ["2026-02-10", 1138], ["2026-02-11", 1131], ["2026-02-11", 1128], ["2026-02-12", 1120], ["2026-02-13", 1156], ["2026-02-14", 1144], ["2026-02-14", 1135], ["2026-02-16", 1125], ["2026-02-19", 1156], ["2026-02-20", 1153], ["2026-02-20", 1188], ["2026-02-20", 1176], ["2026-02-20", 1166], ["2026-02-21", 1157], ["2026-02-21", 1146], ["2026-02-22", 1179], ["2026-02-24", 1172], ["2026-02-24", 1167], ["2026-02-26", 1164], ["2026-02-26", 1153], ["2026-02-27", 1146], ["2026-03-05", 1143], ["2026-03-08", 1139], ["2026-03-08", 1156], ["2026-03-08", 1152], ["2026-03-08", 1148], ["2026-03-08", 1143], ["2026-03-08", 1140], ["2026-03-08", 1138], ["2026-03-09", 1154], ["2026-03-09", 1152], ["2026-03-09", 1149], ["2026-03-10", 1145], ["2026-03-10", 1142], ["2026-03-11", 1159], ["2026-03-11", 1158], ["2026-03-12", 1157], ["2026-03-14", 1155], ["2026-03-16", 1169], ["2026-03-18", 1161], ["2026-03-20", 1178], ["2026-03-20", 1177], ["2026-03-21", 1175], ["2026-03-22", 1171], ["2026-03-23", 1166], ["2026-03-23", 1163], ["2026-03-23", 1160]], "QuixArtagnan": [["LH01 Final", 1180], ["2026-02-08", 1163]], "lgtw3450": [["LH01 Final", 1180], ["2026-01-20", 1163]], "HoosierDaddy": [["LH01 Final", 1180], ["2026-01-22", 1162]], "tubaking": [["LH01 Final", 1180], ["2026-01-26", 1161]], "Akayami": [["LH01 Final", 1180], ["2026-01-16", 1162]], "Clink": [["LH01 Final", 1180], ["2026-01-11", 1164]], "Demand": [["LH01 Final", 1180], ["2026-01-11", 1164]], "DegenerateIan": [["LH01 Final", 1180], ["2026-01-07", 1168]], "chosennuttso": [["LH01 Final", 1180], ["2026-02-24", 1164]], "Pi314": [["LH01 Final", 1180], ["2026-03-01", 1172], ["2026-03-11", 1168]], "Nuttsy": [["LH01 Final", 1180], ["2026-02-24", 1164]], "Julien": [["LH01 Final", 1180], ["2026-02-24", 1164]], "ThoseTeeff": [["LH01 Final", 1180], ["2026-01-02", 1163]], "FireFox": [["LH01 Final", 1179], ["2026-02-24", 1162]], "AJIJIi": [["LH01 Final", 1179], ["2026-01-20", 1161]], "CroCroCro": [["LH01 Final", 1179], ["2026-01-06", 1160]], "DanielDandaniel": [["LH01 Final", 1179], ["2026-01-09", 1164]], "FungusMouse": [["LH01 Final", 1179], ["2026-01-16", 1158]], "pikeline": [["LH01 Final", 1179], ["2026-01-17", 1158]], "Wolvane": [["LH01 Final", 1179], ["2026-01-03", 1157]], "Whats02": [["LH01 Final", 1179], ["2026-03-21", 1159], ["2026-03-22", 1149], ["2026-03-22", 1144], ["2026-03-23", 1128]], "catscat": [["LH01 Final", 1178], ["2026-01-08", 1156]], "DelSol": [["LH01 Final", 1178], ["2026-01-02", 1163], ["2026-01-16", 1151], ["2026-01-16", 1217], ["2026-01-17", 1208], ["2026-01-21", 1197], ["2026-01-22", 1185], ["2026-01-24", 1158], ["2026-01-24", 1232], ["2026-02-04", 1223], ["2026-02-09", 1211], ["2026-02-24", 1202], ["2026-03-03", 1192]], "ForkMaster": [["LH01 Final", 1178], ["2026-01-17", 1157]], "ZachB": [["LH01 Final", 1178], ["2026-01-17", 1161]], "aelisheneithlon": [["LH01 Final", 1178], ["2026-03-21", 1171], ["2026-03-22", 1164]], "Rachel997": [["LH01 Final", 1177], ["2026-03-09", 1157]], "Sebby": [["LH01 Final", 1177], ["2026-01-03", 1164], ["2026-02-11", 1146], ["2026-02-14", 1204], ["2026-02-15", 1194], ["2026-02-15", 1185], ["2026-02-15", 1232], ["2026-02-15", 1276], ["2026-02-15", 1242], ["2026-02-16", 1205], ["2026-02-16", 1192], ["2026-02-16", 1180], ["2026-02-16", 1164], ["2026-02-16", 1194], ["2026-02-17", 1189], ["2026-02-17", 1185], ["2026-02-17", 1216], ["2026-02-18", 1203], ["2026-02-18", 1193], ["2026-02-18", 1222], ["2026-02-19", 1206], ["2026-02-19", 1198], ["2026-02-22", 1187], ["2026-02-22", 1172]], "idk123": [["LH01 Final", 1177], ["2026-03-20", 1157], ["2026-03-23", 1141]], "Plasma": [["LH01 Final", 1177], ["2026-01-05", 1152]], "WWren": [["LH01 Final", 1177], ["2026-01-08", 1154]], "Actionman2222": [["LH01 Final", 1176], ["2026-03-03", 1159]], "Gibbs": [["LH01 Final", 1176], ["2026-03-03", 1159]], "TheSillyBilly": [["LH01 Final", 1176], ["2026-03-07", 1167], ["2026-03-20", 1154]], "alevGO": [["LH01 Final", 1175], ["2026-01-01", 1168], ["2026-02-09", 1239], ["2026-03-10", 1228], ["2026-03-12", 1217], ["2026-03-13", 1211], ["2026-03-19", 1202], ["2026-03-20", 1193], ["2026-03-23", 1186]], "BuckeyeNation": [["LH01 Final", 1175], ["2026-03-16", 1149]], "Jasiu\u0144cio": [["LH01 Final", 1174], ["2026-01-01", 1167], ["2026-01-17", 1156], ["2026-01-25", 1226], ["2026-03-07", 1204], ["2026-03-07", 1187], ["2026-03-17", 1177], ["2026-03-23", 1247]], "themikeman": [["LH01 Final", 1174], ["2026-02-16", 1149]], "Cuagodking": [["LH01 Final", 1173], ["2026-03-11", 1166], ["2026-03-15", 1159]], "MrRiceGuy": [["LH01 Final", 1173], ["2026-01-20", 1149]], "EmbryoticDeth": [["LH01 Final", 1173], ["2026-01-26", 1155], ["2026-03-08", 1150]], "CptAlex": [["LH01 Final", 1173], ["2026-03-19", 1162], ["2026-03-20", 1151]], "RFMerlo": [["LH01 Final", 1172], ["2026-02-02", 1164], ["2026-02-10", 1153], ["2026-02-12", 1141], ["2026-02-12", 1130], ["2026-02-12", 1190], ["2026-02-14", 1174], ["2026-02-15", 1158], ["2026-02-16", 1134], ["2026-02-19", 1126], ["2026-02-22", 1104], ["2026-02-25", 1141], ["2026-03-02", 1174], ["2026-03-06", 1166], ["2026-03-10", 1164]], "StoneOfShame": [["LH01 Final", 1170], ["2026-01-29", 1139], ["2026-01-31", 1127], ["2026-02-07", 1203], ["2026-02-12", 1173], ["2026-02-15", 1157], ["2026-03-10", 1152]], "benruff": [["LH01 Final", 1168], ["2026-02-10", 1162], ["2026-02-21", 1142]], "goodgamepat": [["LH01 Final", 1167], ["2026-02-03", 1161], ["2026-02-10", 1142]], "Ljazz7": [["LH01 Final", 1167], ["2026-01-11", 1149], ["2026-03-19", 1141]], "Komasan": [["LH01 Final", 1166], ["2026-02-13", 1155], ["2026-03-08", 1145]], "Lante": [["LH01 Final", 1166], ["2026-01-10", 1154], ["2026-03-17", 1142]], "ImEpy": [["LH01 Final", 1166], ["2026-01-03", 1147], ["2026-01-03", 1139]], "Lobster": [["LH01 Final", 1165], ["2026-01-25", 1149], ["2026-01-30", 1144], ["2026-02-01", 1137], ["2026-02-02", 1208], ["2026-02-09", 1200], ["2026-02-14", 1189], ["2026-02-14", 1174], ["2026-02-17", 1159]], "CowOnAPlane": [["LH01 Final", 1164], ["2026-03-21", 1157], ["2026-03-21", 1152], ["2026-03-22", 1141]], "hauntedpebbles2": [["LH01 Final", 1164], ["2026-03-15", 1158], ["2026-03-20", 1144], ["2026-03-21", 1139]], "MylesMoose": [["LH01 Final", 1164], ["2026-01-13", 1159], ["2026-01-15", 1151], ["2026-01-16", 1142], ["2026-01-20", 1205], ["2026-01-22", 1258], ["2026-01-26", 1225], ["2026-01-31", 1196], ["2026-02-02", 1182], ["2026-02-02", 1163], ["2026-02-05", 1154], ["2026-02-05", 1149], ["2026-02-06", 1143], ["2026-02-10", 1139], ["2026-02-19", 1170], ["2026-02-21", 1161], ["2026-02-28", 1145], ["2026-03-05", 1180], ["2026-03-09", 1176], ["2026-03-09", 1208], ["2026-03-10", 1200], ["2026-03-11", 1198], ["2026-03-12", 1192], ["2026-03-15", 1191], ["2026-03-18", 1178], ["2026-03-19", 1165]], "Fearteiler": [["LH01 Final", 1164], ["2026-02-05", 1157], ["2026-02-09", 1149], ["2026-03-20", 1138]], "byzeke": [["LH01 Final", 1164], ["2026-01-01", 1149], ["2026-01-02", 1133]], "Bjoda": [["LH01 Final", 1163], ["2026-01-12", 1151], ["2026-03-17", 1140]], "Riverman": [["LH01 Final", 1163], ["2026-01-03", 1145], ["2026-01-04", 1133]], "PsychologicalBox": [["LH01 Final", 1163], ["2026-02-22", 1153], ["2026-02-25", 1135]], "EdacM": [["LH01 Final", 1162], ["2026-02-13", 1151], ["2026-03-09", 1145], ["2026-03-09", 1138]], "Excitedteapot": [["LH01 Final", 1162], ["2026-01-28", 1150], ["2026-02-05", 1221], ["2026-02-07", 1210], ["2026-02-09", 1199], ["2026-02-09", 1186], ["2026-02-09", 1259], ["2026-02-12", 1231], ["2026-02-24", 1215], ["2026-02-27", 1184], ["2026-03-06", 1173], ["2026-03-11", 1172], ["2026-03-21", 1158]], "Zeldamon": [["LH01 Final", 1162], ["2026-03-03", 1147], ["2026-03-03", 1137]], "residentevil": [["LH01 Final", 1160], ["2026-01-01", 1142], ["2026-01-04", 1127]], "Yragael": [["LH01 Final", 1160], ["2026-02-17", 1146], ["2026-02-22", 1127]], "brrrlinguist": [["LH01 Final", 1160], ["2026-01-05", 1139], ["2026-01-05", 1205], ["2026-01-07", 1193], ["2026-01-09", 1183], ["2026-01-10", 1168], ["2026-01-10", 1152]], "TheRedViper": [["LH01 Final", 1159], ["2026-01-11", 1142], ["2026-01-27", 1137], ["2026-03-08", 1127]], "OUSlaughter": [["LH01 Final", 1159], ["2026-01-23", 1146], ["2026-01-26", 1129]], "Musicalwoofy": [["LH01 Final", 1159], ["2026-01-05", 1137], ["2026-01-06", 1122]], "FalconBird": [["LH01 Final", 1159], ["2026-02-14", 1141], ["2026-02-23", 1126]], "LHlegend": [["LH01 Final", 1158], ["2026-01-01", 1219], ["2026-01-01", 1199], ["2026-01-04", 1178], ["2026-01-05", 1157], ["2026-01-10", 1144], ["2026-01-14", 1141], ["2026-01-15", 1123], ["2026-01-16", 1108], ["2026-01-16", 1097], ["2026-01-17", 1083], ["2026-01-18", 1072], ["2026-01-19", 1069], ["2026-01-22", 1100], ["2026-01-23", 1097], ["2026-01-27", 1093], ["2026-02-03", 1086], ["2026-02-15", 1113], ["2026-02-15", 1102], ["2026-02-16", 1095], ["2026-02-19", 1091], ["2026-02-26", 1086], ["2026-03-04", 1078], ["2026-03-05", 1115], ["2026-03-13", 1153], ["2026-03-15", 1149]], "Drinken": [["LH01 Final", 1158], ["2026-01-04", 1143], ["2026-01-05", 1123], ["2026-01-06", 1102], ["2026-01-16", 1088], ["2026-01-16", 1075], ["2026-01-18", 1068], ["2026-02-11", 1133]], "StarhardFishrinse": [["LH01 Final", 1158], ["2026-01-02", 1142], ["2026-01-02", 1128]], "optimusprawn": [["LH01 Final", 1157], ["2026-03-19", 1141], ["2026-03-20", 1120]], "HungryJeff": [["LH01 Final", 1156], ["2026-03-13", 1149], ["2026-03-13", 1138], ["2026-03-15", 1126]], "metalnooze": [["LH01 Final", 1156], ["2026-01-01", 1137], ["2026-01-09", 1132], ["2026-03-02", 1123]], "SSR_Mike": [["LH01 Final", 1156], ["2026-02-22", 1140], ["2026-03-07", 1122]], "RexCow": [["LH01 Final", 1156], ["2026-01-22", 1141], ["2026-02-24", 1131], ["2026-03-13", 1122]], "Cheetah32": [["LH01 Final", 1156], ["2026-02-07", 1121], ["2026-02-08", 1109]], "Marcus": [["LH01 Final", 1156], ["2026-02-14", 1143], ["2026-02-23", 1123]], "Biggins96": [["LH01 Final", 1155], ["2026-01-02", 1146], ["2026-01-03", 1129], ["2026-01-03", 1119], ["2026-01-04", 1109], ["2026-01-06", 1102], ["2026-01-07", 1093], ["2026-01-18", 1081], ["2026-01-18", 1077], ["2026-01-18", 1136]], "MangoBlade11": [["LH01 Final", 1155], ["2026-01-20", 1151], ["2026-01-25", 1137], ["2026-01-25", 1123]], "Lambo": [["LH01 Final", 1154], ["2026-01-31", 1129], ["2026-03-07", 1118], ["2026-03-12", 1111]], "Hiyoshi": [["LH01 Final", 1153], ["2026-01-10", 1148], ["2026-01-16", 1132], ["2026-01-21", 1125]], "Baradhas": [["LH01 Final", 1151], ["2026-02-16", 1128], ["2026-02-16", 1111], ["2026-02-18", 1096], ["2026-02-18", 1161], ["2026-02-19", 1150], ["2026-02-19", 1138], ["2026-02-21", 1123]], "Podge0303": [["LH01 Final", 1151], ["2026-01-06", 1132], ["2026-01-07", 1126], ["2026-01-07", 1116], ["2026-01-07", 1102], ["2026-01-08", 1088], ["2026-01-09", 1081], ["2026-01-16", 1072], ["2026-01-17", 1067], ["2026-01-20", 1063], ["2026-01-20", 1050], ["2026-01-22", 1048], ["2026-01-27", 1084], ["2026-01-29", 1081], ["2026-02-11", 1075], ["2026-02-12", 1112], ["2026-02-19", 1147], ["2026-02-21", 1140], ["2026-02-22", 1132], ["2026-02-22", 1126], ["2026-03-02", 1121], ["2026-03-07", 1116], ["2026-03-10", 1114], ["2026-03-11", 1113], ["2026-03-21", 1143]], "pashatherussian": [["LH01 Final", 1150], ["2026-01-01", 1133], ["2026-01-03", 1122], ["2026-01-14", 1115]], "weirdone": [["LH01 Final", 1150], ["2026-01-05", 1140], ["2026-01-21", 1129], ["2026-03-03", 1117]], "secretpaths": [["LH01 Final", 1150], ["2026-01-01", 1144], ["2026-01-09", 1140], ["2026-01-14", 1131], ["2026-01-24", 1191], ["2026-01-29", 1180], ["2026-02-02", 1169], ["2026-02-05", 1152], ["2026-02-12", 1142], ["2026-02-12", 1137], ["2026-02-13", 1130], ["2026-02-15", 1164], ["2026-02-15", 1198], ["2026-02-17", 1190], ["2026-02-17", 1183], ["2026-02-17", 1177], ["2026-02-20", 1172], ["2026-02-20", 1168], ["2026-02-23", 1162], ["2026-02-25", 1157]], "Dumbledore": [["LH01 Final", 1150], ["2026-03-16", 1137], ["2026-03-17", 1123], ["2026-03-17", 1109], ["2026-03-23", 1097]], "silverfox": [["LH01 Final", 1149], ["2026-03-17", 1126], ["2026-03-18", 1103], ["2026-03-23", 1091]], "TonyDeloreanESQ": [["LH01 Final", 1148], ["2026-01-10", 1143], ["2026-01-11", 1128], ["2026-01-15", 1119], ["2026-01-19", 1111], ["2026-01-23", 1104], ["2026-01-26", 1094], ["2026-01-27", 1086], ["2026-01-27", 1082], ["2026-01-31", 1149], ["2026-02-04", 1137], ["2026-02-08", 1134], ["2026-02-09", 1167], ["2026-02-10", 1162], ["2026-02-10", 1158], ["2026-02-16", 1150], ["2026-02-16", 1147], ["2026-02-18", 1143], ["2026-02-18", 1137], ["2026-02-19", 1131], ["2026-02-21", 1127], ["2026-02-22", 1123], ["2026-02-22", 1117], ["2026-02-24", 1113], ["2026-02-24", 1110], ["2026-02-27", 1105], ["2026-02-27", 1097], ["2026-03-02", 1093], ["2026-03-02", 1088], ["2026-03-05", 1084], ["2026-03-06", 1080], ["2026-03-08", 1075], ["2026-03-09", 1073], ["2026-03-10", 1109], ["2026-03-11", 1108], ["2026-03-11", 1106], ["2026-03-13", 1143], ["2026-03-15", 1135], ["2026-03-15", 1129], ["2026-03-18", 1128], ["2026-03-19", 1167], ["2026-03-19", 1160], ["2026-03-21", 1153], ["2026-03-22", 1149], ["2026-03-23", 1144]], "FVMLion": [["LH01 Final", 1148], ["2026-01-22", 1133], ["2026-01-22", 1107], ["2026-01-23", 1173], ["2026-01-23", 1154], ["2026-01-25", 1140], ["2026-01-25", 1205], ["2026-01-25", 1200], ["2026-01-26", 1179], ["2026-01-27", 1207], ["2026-01-28", 1179], ["2026-01-29", 1164], ["2026-02-03", 1190], ["2026-02-03", 1177], ["2026-02-07", 1168], ["2026-02-11", 1161], ["2026-02-15", 1155], ["2026-02-17", 1149], ["2026-02-17", 1144], ["2026-02-20", 1140], ["2026-02-23", 1135]], "DanzigMF": [["LH01 Final", 1147], ["2026-02-04", 1122], ["2026-02-06", 1111], ["2026-02-07", 1106], ["2026-02-10", 1102], ["2026-02-12", 1094], ["2026-02-12", 1085], ["2026-02-13", 1077], ["2026-02-16", 1066], ["2026-02-16", 1142], ["2026-02-19", 1126], ["2026-02-19", 1122], ["2026-02-21", 1117], ["2026-02-21", 1113], ["2026-02-22", 1148], ["2026-02-22", 1142], ["2026-02-23", 1134], ["2026-02-24", 1169], ["2026-02-24", 1164], ["2026-02-25", 1195], ["2026-02-26", 1186], ["2026-02-26", 1182], ["2026-02-27", 1173], ["2026-03-02", 1202], ["2026-03-03", 1195], ["2026-03-05", 1184], ["2026-03-05", 1220], ["2026-03-05", 1214], ["2026-03-06", 1203], ["2026-03-07", 1193], ["2026-03-10", 1183], ["2026-03-11", 1175], ["2026-03-11", 1172], ["2026-03-11", 1170], ["2026-03-12", 1162], ["2026-03-12", 1157], ["2026-03-16", 1149], ["2026-03-16", 1142], ["2026-03-18", 1176], ["2026-03-18", 1170], ["2026-03-19", 1164], ["2026-03-21", 1158], ["2026-03-21", 1151], ["2026-03-23", 1146]], "Cloudere": [["LH01 Final", 1147], ["2026-01-27", 1134], ["2026-01-31", 1122], ["2026-02-05", 1110]], "Xman1997": [["LH01 Final", 1147], ["2026-01-27", 1143], ["2026-01-29", 1136], ["2026-02-06", 1123], ["2026-03-02", 1111]], "darkcat": [["LH01 Final", 1146], ["2026-01-02", 1131], ["2026-01-03", 1111], ["2026-01-06", 1184], ["2026-01-09", 1172], ["2026-01-10", 1234], ["2026-01-10", 1207], ["2026-01-10", 1181], ["2026-01-10", 1159], ["2026-01-13", 1150], ["2026-01-14", 1137], ["2026-01-14", 1132], ["2026-01-16", 1126], ["2026-01-19", 1121], ["2026-01-26", 1117], ["2026-01-27", 1111], ["2026-01-27", 1106], ["2026-02-01", 1140]], "Alexispc": [["LH01 Final", 1146], ["2026-01-05", 1138], ["2026-01-06", 1125], ["2026-01-20", 1107]], "BugMuff44": [["LH01 Final", 1144], ["2026-01-03", 1207], ["2026-01-03", 1181], ["2026-01-05", 1158], ["2026-01-05", 1140], ["2026-01-06", 1120], ["2026-01-09", 1109]], "Sharkskln": [["LH01 Final", 1144], ["2026-02-05", 1134], ["2026-02-16", 1114], ["2026-02-18", 1087], ["2026-02-19", 1075], ["2026-02-22", 1143], ["2026-02-27", 1131], ["2026-03-06", 1120], ["2026-03-15", 1113]], "TheIndustrialRevoloution": [["LH01 Final", 1142], ["2026-01-09", 1132], ["2026-01-12", 1120], ["2026-01-21", 1112], ["2026-03-02", 1098]], "Jerry": [["LH01 Final", 1141], ["2026-01-06", 1123], ["2026-01-07", 1113], ["2026-01-09", 1097]], "McMayo": [["LH01 Final", 1140], ["2026-01-16", 1131], ["2026-01-19", 1122], ["2026-01-26", 1111], ["2026-02-03", 1102]], "FatBoyyy": [["LH01 Final", 1140], ["2026-02-15", 1119], ["2026-02-18", 1106], ["2026-02-18", 1094]], "sleepylabone": [["LH01 Final", 1139], ["2026-01-14", 1135], ["2026-03-11", 1130], ["2026-03-14", 1123], ["2026-03-15", 1114], ["2026-03-17", 1102]], "PlagueCarrier": [["LH01 Final", 1139], ["2026-01-09", 1122], ["2026-01-15", 1108], ["2026-01-15", 1095], ["2026-01-16", 1084], ["2026-01-16", 1073], ["2026-01-22", 1063], ["2026-01-27", 1055], ["2026-02-08", 1051], ["2026-02-15", 1035], ["2026-02-18", 1030], ["2026-02-23", 1027], ["2026-02-23", 1064], ["2026-02-23", 1097], ["2026-03-02", 1092], ["2026-03-02", 1087], ["2026-03-03", 1077], ["2026-03-06", 1075], ["2026-03-06", 1072], ["2026-03-07", 1066], ["2026-03-09", 1064], ["2026-03-10", 1061], ["2026-03-11", 1060], ["2026-03-17", 1058], ["2026-03-18", 1092], ["2026-03-18", 1128], ["2026-03-22", 1124]], "Blank": [["LH01 Final", 1139], ["2026-01-09", 1127], ["2026-01-24", 1108], ["2026-03-12", 1102], ["2026-03-17", 1093]], "RangerEpic": [["LH01 Final", 1139], ["2026-01-10", 1120], ["2026-01-27", 1112], ["2026-03-07", 1105], ["2026-03-08", 1094]], "Harriet": [["LH01 Final", 1138], ["2026-01-17", 1132], ["2026-01-29", 1116], ["2026-02-05", 1107], ["2026-03-09", 1100]], "Soluna": [["LH01 Final", 1138], ["2026-01-08", 1121], ["2026-01-08", 1108], ["2026-02-05", 1101], ["2026-02-13", 1096]], "Lokfok": [["LH01 Final", 1136], ["2026-02-21", 1118], ["2026-02-23", 1108], ["2026-03-03", 1091], ["2026-03-11", 1089]], "CoxyNormus": [["LH01 Final", 1136], ["2026-01-02", 1128], ["2026-01-04", 1117], ["2026-01-18", 1091]], "BoMa85": [["LH01 Final", 1136], ["2026-01-09", 1117], ["2026-01-23", 1111], ["2026-02-02", 1103], ["2026-03-16", 1093]], "Wrestler": [["LH01 Final", 1136], ["2026-01-02", 1124], ["2026-01-02", 1111], ["2026-01-05", 1183], ["2026-01-07", 1163], ["2026-01-08", 1141], ["2026-01-09", 1126], ["2026-01-09", 1119], ["2026-01-10", 1105], ["2026-01-12", 1094], ["2026-01-12", 1086], ["2026-01-16", 1080], ["2026-01-17", 1078], ["2026-01-17", 1075], ["2026-01-18", 1073], ["2026-01-18", 1070], ["2026-01-19", 1063], ["2026-01-20", 1056], ["2026-01-21", 1093], ["2026-01-23", 1090], ["2026-01-23", 1124], ["2026-01-23", 1156], ["2026-01-23", 1151], ["2026-01-24", 1145], ["2026-01-27", 1175], ["2026-01-29", 1165], ["2026-02-01", 1155], ["2026-02-02", 1151], ["2026-02-02", 1145], ["2026-02-02", 1177], ["2026-02-06", 1170], ["2026-02-08", 1166], ["2026-02-12", 1160], ["2026-02-12", 1152], ["2026-02-13", 1149], ["2026-02-15", 1144], ["2026-02-17", 1139], ["2026-02-19", 1133], ["2026-02-24", 1128], ["2026-02-25", 1124], ["2026-03-03", 1160], ["2026-03-04", 1191], ["2026-03-10", 1181], ["2026-03-12", 1175], ["2026-03-18", 1168], ["2026-03-18", 1163], ["2026-03-19", 1155], ["2026-03-20", 1151], ["2026-03-20", 1147]], "Banzai7000": [["LH01 Final", 1136], ["2026-02-21", 1118], ["2026-02-23", 1107], ["2026-03-01", 1099], ["2026-03-02", 1085], ["2026-03-03", 1070], ["2026-03-05", 1058], ["2026-03-11", 1056], ["2026-03-12", 1051], ["2026-03-13", 1122], ["2026-03-13", 1118], ["2026-03-17", 1107]], "NattyKash": [["LH01 Final", 1135], ["2026-02-28", 1125], ["2026-02-28", 1115], ["2026-03-10", 1099], ["2026-03-13", 1091]], "KargDemiau": [["LH01 Final", 1135], ["2026-01-20", 1123], ["2026-01-28", 1118], ["2026-02-01", 1113], ["2026-02-03", 1101], ["2026-03-20", 1093]], "Valzaan": [["LH01 Final", 1135], ["2026-03-10", 1113], ["2026-03-14", 1101], ["2026-03-15", 1092], ["2026-03-15", 1085], ["2026-03-17", 1079], ["2026-03-17", 1064], ["2026-03-18", 1128], ["2026-03-18", 1119], ["2026-03-21", 1112], ["2026-03-22", 1104], ["2026-03-23", 1101]], "Ironic": [["LH01 Final", 1134], ["2026-01-01", 1117], ["2026-01-02", 1110], ["2026-01-07", 1101], ["2026-02-22", 1094]], "TheFourthJesse": [["LH01 Final", 1133], ["2026-02-02", 1128], ["2026-02-05", 1121], ["2026-02-17", 1193], ["2026-02-25", 1182], ["2026-02-26", 1176], ["2026-03-04", 1163], ["2026-03-11", 1160], ["2026-03-12", 1148], ["2026-03-13", 1134], ["2026-03-13", 1124], ["2026-03-14", 1121], ["2026-03-16", 1115], ["2026-03-23", 1113]], "marksoz00": [["LH01 Final", 1133], ["2026-01-03", 1112], ["2026-01-04", 1102], ["2026-01-06", 1163], ["2026-01-10", 1145], ["2026-01-15", 1135], ["2026-01-22", 1126], ["2026-02-08", 1119], ["2026-03-02", 1105], ["2026-03-07", 1087]], "Gaborever": [["LH01 Final", 1132], ["2026-02-03", 1123], ["2026-02-06", 1112], ["2026-02-08", 1100], ["2026-03-11", 1097], ["2026-03-13", 1092]], "benssoon": [["LH01 Final", 1132], ["2026-01-11", 1122], ["2026-01-12", 1115], ["2026-01-16", 1108], ["2026-01-29", 1097], ["2026-02-03", 1091], ["2026-02-08", 1083], ["2026-02-15", 1144], ["2026-02-16", 1122], ["2026-02-19", 1114], ["2026-02-22", 1105], ["2026-02-26", 1138], ["2026-02-26", 1127], ["2026-03-01", 1122], ["2026-03-09", 1117]], "Odinius": [["LH01 Final", 1131], ["2026-01-01", 1114], ["2026-01-03", 1096], ["2026-01-05", 1158], ["2026-01-07", 1144], ["2026-01-08", 1211], ["2026-01-15", 1188], ["2026-01-16", 1176], ["2026-01-16", 1158], ["2026-01-17", 1146], ["2026-01-21", 1140], ["2026-01-22", 1131], ["2026-01-26", 1143], ["2026-01-27", 1135], ["2026-01-27", 1125], ["2026-01-28", 1123], ["2026-01-28", 1113], ["2026-01-28", 1109], ["2026-01-29", 1104], ["2026-01-30", 1100], ["2026-01-30", 1098], ["2026-01-30", 1096], ["2026-01-31", 1089], ["2026-01-31", 1084], ["2026-02-01", 1117], ["2026-02-02", 1152], ["2026-02-03", 1143], ["2026-02-05", 1140], ["2026-02-09", 1137], ["2026-02-12", 1132], ["2026-02-12", 1124], ["2026-02-15", 1117], ["2026-02-15", 1111], ["2026-02-15", 1109], ["2026-02-16", 1140], ["2026-02-18", 1174], ["2026-02-19", 1167], ["2026-02-19", 1154], ["2026-02-20", 1146], ["2026-02-21", 1136], ["2026-02-23", 1128], ["2026-02-26", 1120], ["2026-02-27", 1151], ["2026-03-06", 1145], ["2026-03-08", 1133], ["2026-03-08", 1128], ["2026-03-09", 1123], ["2026-03-10", 1117], ["2026-03-10", 1112], ["2026-03-12", 1147], ["2026-03-17", 1134], ["2026-03-19", 1131]], "Hadjiya": [["LH01 Final", 1131], ["2026-02-10", 1109], ["2026-02-11", 1099], ["2026-02-13", 1091], ["2026-02-14", 1075], ["2026-02-14", 1068], ["2026-02-14", 1064], ["2026-02-14", 1052], ["2026-02-15", 1047], ["2026-02-15", 1043], ["2026-02-15", 1023], ["2026-02-15", 1016], ["2026-02-15", 1011], ["2026-02-15", 1009], ["2026-02-15", 1005], ["2026-02-16", 1040], ["2026-02-16", 1075], ["2026-02-16", 1108], ["2026-02-16", 1097], ["2026-02-16", 1091], ["2026-02-17", 1088], ["2026-02-17", 1086], ["2026-02-17", 1081], ["2026-02-18", 1115], ["2026-02-18", 1107], ["2026-02-18", 1099], ["2026-02-18", 1094], ["2026-02-19", 1087], ["2026-02-19", 1123], ["2026-02-19", 1118], ["2026-02-20", 1113], ["2026-02-20", 1106], ["2026-02-20", 1139], ["2026-02-21", 1133], ["2026-02-22", 1125], ["2026-02-22", 1118], ["2026-02-22", 1107], ["2026-02-23", 1105], ["2026-02-23", 1100], ["2026-02-23", 1095], ["2026-02-25", 1090], ["2026-02-25", 1086], ["2026-02-25", 1080], ["2026-02-26", 1075], ["2026-02-26", 1068], ["2026-02-26", 1062], ["2026-02-26", 1098], ["2026-02-27", 1134], ["2026-03-03", 1161], ["2026-03-04", 1152], ["2026-03-04", 1141], ["2026-03-05", 1138], ["2026-03-07", 1135], ["2026-03-12", 1132], ["2026-03-14", 1129], ["2026-03-16", 1126]], "HobGungan": [["LH01 Final", 1130], ["2026-01-03", 1118], ["2026-01-05", 1098], ["2026-01-06", 1163], ["2026-01-10", 1147], ["2026-01-11", 1216], ["2026-01-11", 1204], ["2026-01-13", 1192], ["2026-01-13", 1160], ["2026-01-14", 1149], ["2026-01-15", 1132], ["2026-01-16", 1125], ["2026-01-16", 1121], ["2026-01-17", 1116], ["2026-01-19", 1152], ["2026-01-19", 1144], ["2026-01-20", 1140], ["2026-01-22", 1131], ["2026-01-26", 1128], ["2026-01-26", 1140], ["2026-01-27", 1134], ["2026-01-27", 1123], ["2026-01-27", 1154], ["2026-01-28", 1142], ["2026-01-28", 1178], ["2026-01-29", 1203], ["2026-01-31", 1190], ["2026-01-31", 1188], ["2026-01-31", 1172], ["2026-02-01", 1170], ["2026-02-01", 1163], ["2026-02-01", 1152], ["2026-02-02", 1148], ["2026-02-03", 1144], ["2026-02-03", 1178], ["2026-02-04", 1163], ["2026-02-05", 1158], ["2026-02-07", 1155], ["2026-02-08", 1151], ["2026-02-08", 1148], ["2026-02-08", 1142], ["2026-02-08", 1137], ["2026-02-08", 1169], ["2026-02-09", 1165], ["2026-02-10", 1160], ["2026-02-11", 1151], ["2026-02-11", 1140], ["2026-02-13", 1131], ["2026-02-14", 1126], ["2026-02-15", 1113], ["2026-02-15", 1107], ["2026-02-16", 1102], ["2026-02-16", 1098], ["2026-02-19", 1114], ["2026-02-19", 1112], ["2026-02-21", 1108], ["2026-02-22", 1104], ["2026-02-22", 1102], ["2026-02-23", 1117], ["2026-02-23", 1113], ["2026-02-23", 1110], ["2026-02-25", 1108], ["2026-02-25", 1105], ["2026-02-26", 1101], ["2026-02-26", 1097], ["2026-02-27", 1093], ["2026-02-28", 1108], ["2026-03-01", 1106], ["2026-03-01", 1102], ["2026-03-01", 1099], ["2026-03-02", 1098], ["2026-03-03", 1116], ["2026-03-03", 1110], ["2026-03-04", 1107], ["2026-03-06", 1105], ["2026-03-07", 1121], ["2026-03-08", 1117], ["2026-03-08", 1132], ["2026-03-09", 1131], ["2026-03-12", 1128], ["2026-03-21", 1123], ["2026-03-22", 1121]], "Krooter": [["LH01 Final", 1129], ["2026-02-11", 1114], ["2026-02-12", 1104], ["2026-02-12", 1097], ["2026-02-15", 1084], ["2026-02-18", 1078]], "Gagneto": [["LH01 Final", 1127], ["2026-01-19", 1108], ["2026-01-23", 1098], ["2026-01-31", 1089], ["2026-02-05", 1083], ["2026-02-14", 1075], ["2026-02-16", 1069], ["2026-02-21", 1141], ["2026-02-24", 1122], ["2026-03-04", 1112], ["2026-03-09", 1102], ["2026-03-09", 1100], ["2026-03-18", 1096]], "BaconBoy": [["LH01 Final", 1127], ["2026-01-03", 1192], ["2026-01-03", 1180], ["2026-01-06", 1169], ["2026-01-08", 1148], ["2026-01-08", 1208], ["2026-01-12", 1268], ["2026-01-16", 1257], ["2026-01-17", 1236], ["2026-01-18", 1289], ["2026-01-21", 1266], ["2026-01-22", 1291], ["2026-01-24", 1278], ["2026-01-25", 1262], ["2026-01-30", 1254], ["2026-01-31", 1245], ["2026-02-01", 1237], ["2026-02-03", 1220], ["2026-02-03", 1214], ["2026-02-04", 1204], ["2026-02-06", 1235], ["2026-02-07", 1225], ["2026-02-08", 1220], ["2026-02-10", 1206], ["2026-02-10", 1201], ["2026-02-11", 1196], ["2026-02-14", 1190], ["2026-02-14", 1179], ["2026-02-16", 1168], ["2026-02-17", 1164], ["2026-02-17", 1161], ["2026-02-18", 1151], ["2026-02-18", 1141], ["2026-02-20", 1138], ["2026-02-21", 1132], ["2026-02-21", 1163], ["2026-02-23", 1157], ["2026-02-25", 1151], ["2026-02-27", 1145], ["2026-02-28", 1139], ["2026-03-02", 1134], ["2026-03-03", 1127], ["2026-03-03", 1118], ["2026-03-05", 1114], ["2026-03-06", 1108], ["2026-03-06", 1102], ["2026-03-07", 1095], ["2026-03-07", 1087], ["2026-03-08", 1120], ["2026-03-08", 1117], ["2026-03-10", 1115], ["2026-03-10", 1111], ["2026-03-13", 1109], ["2026-03-17", 1127], ["2026-03-21", 1124]], "Trumpet": [["LH01 Final", 1126], ["2026-02-16", 1114], ["2026-03-16", 1096], ["2026-03-17", 1084], ["2026-03-21", 1072], ["2026-03-23", 1062]], "ReoWulf": [["LH01 Final", 1123], ["2026-01-23", 1179], ["2026-01-23", 1240], ["2026-01-25", 1215], ["2026-01-26", 1206], ["2026-01-27", 1177], ["2026-01-27", 1167], ["2026-01-30", 1151], ["2026-01-31", 1139], ["2026-02-01", 1127], ["2026-02-03", 1111], ["2026-02-12", 1145], ["2026-02-13", 1137], ["2026-02-16", 1126], ["2026-02-16", 1118], ["2026-02-19", 1113], ["2026-02-23", 1107], ["2026-03-10", 1105], ["2026-03-11", 1103], ["2026-03-11", 1102]], "Hossain2020": [["LH01 Final", 1123], ["2026-01-03", 1107], ["2026-01-06", 1088], ["2026-01-08", 1076], ["2026-01-08", 1065]], "voltigeur": [["LH01 Final", 1122], ["2026-01-07", 1113], ["2026-01-10", 1109], ["2026-02-08", 1101], ["2026-03-08", 1089], ["2026-03-16", 1078], ["2026-03-23", 1072]], "radiantchaos": [["LH01 Final", 1121], ["2026-01-05", 1186], ["2026-01-06", 1161], ["2026-01-10", 1141], ["2026-01-13", 1197], ["2026-01-14", 1176], ["2026-01-14", 1157], ["2026-01-14", 1146], ["2026-01-15", 1132], ["2026-01-19", 1118], ["2026-01-22", 1102], ["2026-01-23", 1098], ["2026-01-23", 1095], ["2026-01-25", 1091], ["2026-01-27", 1087], ["2026-01-28", 1124], ["2026-01-31", 1121], ["2026-02-03", 1110], ["2026-02-03", 1142], ["2026-02-03", 1133], ["2026-02-04", 1168], ["2026-02-05", 1164], ["2026-02-10", 1146], ["2026-02-10", 1144], ["2026-02-18", 1139], ["2026-02-21", 1131], ["2026-02-24", 1126], ["2026-02-25", 1118], ["2026-03-10", 1116], ["2026-03-17", 1105], ["2026-03-22", 1140]], "FakeSki": [["LH01 Final", 1119], ["2026-01-06", 1182], ["2026-01-09", 1243], ["2026-01-09", 1221], ["2026-01-12", 1209], ["2026-01-16", 1196], ["2026-01-17", 1186], ["2026-01-20", 1179], ["2026-01-22", 1172], ["2026-01-23", 1165], ["2026-01-24", 1160], ["2026-01-27", 1151], ["2026-01-27", 1140], ["2026-02-02", 1138], ["2026-02-05", 1134], ["2026-02-06", 1151], ["2026-02-10", 1144], ["2026-02-27", 1140], ["2026-03-05", 1134], ["2026-03-08", 1130], ["2026-03-09", 1127], ["2026-03-09", 1125], ["2026-03-17", 1122], ["2026-03-23", 1120]], "TempExtremal": [["LH01 Final", 1118], ["2026-02-08", 1109], ["2026-02-08", 1095], ["2026-02-15", 1074], ["2026-02-17", 1069], ["2026-02-19", 1064]], "mkcy3": [["LH01 Final", 1118], ["2026-02-09", 1111], ["2026-02-16", 1173], ["2026-02-18", 1152], ["2026-02-20", 1146], ["2026-02-20", 1136], ["2026-02-21", 1124], ["2026-02-21", 1109], ["2026-02-21", 1102], ["2026-02-21", 1085], ["2026-02-22", 1075], ["2026-02-24", 1110], ["2026-02-24", 1106], ["2026-03-08", 1097], ["2026-03-10", 1093], ["2026-03-11", 1091], ["2026-03-15", 1088]], "CodPieceZ": [["LH01 Final", 1117], ["2026-01-01", 1101], ["2026-01-05", 1091], ["2026-01-05", 1077], ["2026-01-06", 1067], ["2026-01-18", 1060]], "Hurple": [["LH01 Final", 1116], ["2026-01-02", 1109], ["2026-01-07", 1095], ["2026-01-07", 1082], ["2026-01-08", 1075], ["2026-02-08", 1067], ["2026-02-11", 1057], ["2026-02-11", 1130], ["2026-02-16", 1110], ["2026-02-16", 1095], ["2026-03-11", 1093], ["2026-03-14", 1087], ["2026-03-14", 1082]], "Wubba": [["LH01 Final", 1116], ["2026-01-26", 1101], ["2026-02-01", 1091], ["2026-02-02", 1085], ["2026-02-03", 1073], ["2026-02-04", 1056], ["2026-02-10", 1037], ["2026-02-13", 1108], ["2026-02-16", 1090], ["2026-02-22", 1082], ["2026-02-22", 1073], ["2026-03-05", 1070], ["2026-03-06", 1106], ["2026-03-07", 1099], ["2026-03-07", 1094], ["2026-03-11", 1093], ["2026-03-17", 1089], ["2026-03-21", 1086], ["2026-03-23", 1084]], "Dandel": [["LH01 Final", 1113], ["2026-01-02", 1096], ["2026-01-03", 1078], ["2026-01-03", 1066], ["2026-01-04", 1057], ["2026-01-05", 1047], ["2026-01-10", 1036], ["2026-01-15", 1106], ["2026-02-16", 1092], ["2026-03-04", 1080], ["2026-03-04", 1065], ["2026-03-05", 1057], ["2026-03-10", 1050], ["2026-03-10", 1048], ["2026-03-17", 1080], ["2026-03-17", 1076]], "sparrowhawk": [["LH01 Final", 1111], ["2026-02-15", 1103], ["2026-02-20", 1093], ["2026-02-21", 1082], ["2026-02-21", 1069], ["2026-02-24", 1064], ["2026-02-24", 1058], ["2026-03-11", 1056]], "nikkan": [["LH01 Final", 1111], ["2026-03-13", 1107], ["2026-03-14", 1096], ["2026-03-14", 1086], ["2026-03-14", 1076], ["2026-03-15", 1072], ["2026-03-15", 1068], ["2026-03-20", 1055]], "TheWiseFox": [["LH01 Final", 1111], ["2026-01-03", 1105], ["2026-01-06", 1089], ["2026-01-12", 1082], ["2026-01-13", 1076], ["2026-01-15", 1070], ["2026-01-15", 1061]], "NonStInc.": [["LH01 Final", 1109], ["2026-01-02", 1103], ["2026-01-05", 1088], ["2026-01-10", 1078], ["2026-01-14", 1067], ["2026-01-31", 1051]], "Darkwonderer": [["LH01 Final", 1108], ["2026-03-17", 1096], ["2026-03-17", 1076], ["2026-03-17", 1072], ["2026-03-21", 1061], ["2026-03-21", 1058], ["2026-03-21", 1048]], "WyvernElement": [["LH01 Final", 1106], ["2026-01-28", 1168], ["2026-01-30", 1152], ["2026-02-04", 1142], ["2026-02-05", 1128], ["2026-02-10", 1121], ["2026-02-15", 1109], ["2026-02-21", 1093], ["2026-02-27", 1085], ["2026-03-05", 1073], ["2026-03-05", 1067], ["2026-03-07", 1103], ["2026-03-08", 1094], ["2026-03-11", 1089], ["2026-03-11", 1087], ["2026-03-11", 1086], ["2026-03-11", 1085], ["2026-03-13", 1080], ["2026-03-15", 1075], ["2026-03-22", 1072]], "Acelet": [["LH01 Final", 1102], ["2026-01-16", 1088], ["2026-01-17", 1080], ["2026-01-17", 1068], ["2026-01-18", 1058], ["2026-01-23", 1051], ["2026-02-11", 1038]], "ellbelle": [["LH01 Final", 1102], ["2026-01-23", 1093], ["2026-01-23", 1081], ["2026-01-24", 1066], ["2026-01-24", 1063], ["2026-01-25", 1060], ["2026-01-27", 1048], ["2026-01-27", 1042], ["2026-01-29", 1037], ["2026-02-02", 1032], ["2026-02-08", 1025], ["2026-02-12", 1062], ["2026-02-17", 1059], ["2026-02-25", 1056]], "Jboooooooooooooooooooom": [["LH01 Final", 1101], ["2026-02-03", 1081], ["2026-02-03", 1069], ["2026-02-03", 1063], ["2026-02-08", 1053], ["2026-02-10", 1043], ["2026-02-13", 1038]], "Oppapi": [["LH01 Final", 1099], ["2026-01-03", 1087], ["2026-01-04", 1071], ["2026-01-04", 1063], ["2026-01-05", 1054], ["2026-01-05", 1122], ["2026-01-06", 1101], ["2026-01-06", 1088], ["2026-01-06", 1074], ["2026-01-07", 1057], ["2026-01-07", 1120], ["2026-01-07", 1113], ["2026-01-07", 1106], ["2026-01-08", 1099], ["2026-01-08", 1092], ["2026-01-09", 1087], ["2026-01-09", 1124], ["2026-01-10", 1117], ["2026-01-10", 1151], ["2026-01-11", 1144], ["2026-01-11", 1142], ["2026-01-12", 1136], ["2026-01-12", 1131], ["2026-01-13", 1124], ["2026-01-14", 1119], ["2026-01-14", 1114], ["2026-01-16", 1106], ["2026-01-17", 1105], ["2026-01-18", 1100], ["2026-01-23", 1094], ["2026-01-23", 1084]], "Cheesecake271": [["LH01 Final", 1099], ["2026-02-07", 1093], ["2026-02-09", 1088], ["2026-02-23", 1077], ["2026-02-25", 1067], ["2026-02-25", 1057], ["2026-03-10", 1048], ["2026-03-12", 1041]], "Elijah": [["LH01 Final", 1097], ["2026-01-25", 1092], ["2026-01-27", 1076], ["2026-01-31", 1070], ["2026-02-01", 1058], ["2026-02-02", 1052], ["2026-02-05", 1047], ["2026-02-22", 1039], ["2026-03-11", 1037]], "re_al_": [["LH01 Final", 1096], ["2026-02-16", 1080], ["2026-02-25", 1070], ["2026-03-02", 1060], ["2026-03-04", 1053], ["2026-03-10", 1044], ["2026-03-10", 1038], ["2026-03-11", 1032]], "tunnndz": [["LH01 Final", 1088], ["2026-01-04", 1153], ["2026-01-11", 1148], ["2026-01-17", 1143], ["2026-01-23", 1126], ["2026-01-23", 1115], ["2026-01-28", 1099], ["2026-02-01", 1088], ["2026-02-01", 1082], ["2026-02-03", 1150], ["2026-02-04", 1136], ["2026-02-05", 1131], ["2026-02-06", 1125], ["2026-02-07", 1120], ["2026-02-10", 1110], ["2026-02-11", 1102], ["2026-02-12", 1095], ["2026-02-14", 1089], ["2026-02-15", 1086], ["2026-02-20", 1079], ["2026-02-22", 1073], ["2026-02-24", 1070], ["2026-02-26", 1064], ["2026-03-07", 1058], ["2026-03-11", 1057], ["2026-03-23", 1052]], "Piechu": [["LH01 Final", 1082], ["2026-02-10", 1065], ["2026-02-12", 1134], ["2026-02-12", 1113], ["2026-02-13", 1106], ["2026-02-14", 1088], ["2026-02-14", 1080], ["2026-02-14", 1067], ["2026-02-15", 1056], ["2026-02-15", 1050], ["2026-02-15", 1029], ["2026-02-15", 1022], ["2026-02-15", 1058], ["2026-02-16", 1052], ["2026-02-16", 1049], ["2026-02-16", 1044], ["2026-02-16", 1076], ["2026-02-17", 1073], ["2026-02-18", 1068], ["2026-02-18", 1098], ["2026-02-19", 1094], ["2026-02-19", 1087], ["2026-02-19", 1083], ["2026-02-21", 1078], ["2026-02-22", 1072], ["2026-02-22", 1107], ["2026-02-24", 1103], ["2026-02-24", 1100], ["2026-02-27", 1096], ["2026-03-01", 1092], ["2026-03-03", 1085], ["2026-03-03", 1081], ["2026-03-05", 1075], ["2026-03-07", 1073], ["2026-03-08", 1068], ["2026-03-08", 1064], ["2026-03-10", 1063], ["2026-03-11", 1062], ["2026-03-12", 1059], ["2026-03-14", 1055], ["2026-03-14", 1050], ["2026-03-15", 1047], ["2026-03-16", 1041], ["2026-03-16", 1038], ["2026-03-17", 1035], ["2026-03-17", 1033], ["2026-03-17", 1031], ["2026-03-20", 1065]], "Klishu": [["LH01 Final", 1079], ["2026-01-02", 1071], ["2026-01-02", 1066], ["2026-01-03", 1052], ["2026-01-03", 1046], ["2026-01-05", 1033], ["2026-01-07", 1104], ["2026-01-08", 1094], ["2026-01-09", 1086], ["2026-01-11", 1084], ["2026-01-13", 1072], ["2026-01-13", 1069], ["2026-01-15", 1104], ["2026-01-17", 1099], ["2026-01-22", 1093], ["2026-01-23", 1130], ["2026-01-24", 1128], ["2026-01-25", 1126], ["2026-01-27", 1120], ["2026-01-30", 1118], ["2026-01-31", 1112], ["2026-01-31", 1111], ["2026-02-01", 1110], ["2026-02-01", 1103], ["2026-02-15", 1098], ["2026-02-19", 1095], ["2026-02-19", 1091], ["2026-02-24", 1088], ["2026-02-27", 1085], ["2026-03-05", 1082], ["2026-03-06", 1076], ["2026-03-09", 1075], ["2026-03-09", 1073]], "Doordecat": [["LH01 Final", 1061], ["2026-01-15", 1052], ["2026-01-15", 1043], ["2026-01-22", 1040], ["2026-01-24", 1033], ["2026-01-27", 1031], ["2026-01-28", 1027], ["2026-02-05", 1023], ["2026-02-15", 1018], ["2026-02-17", 1013], ["2026-02-17", 1008], ["2026-02-23", 1002], ["2026-02-23", 1000], ["2026-03-02", 997], ["2026-03-09", 994]], "100pctskillz": [["LH01 Final", 1060], ["2026-01-01", 1049], ["2026-01-01", 1118], ["2026-01-01", 1107], ["2026-01-02", 1096], ["2026-01-02", 1083], ["2026-01-02", 1078], ["2026-01-02", 1068], ["2026-01-02", 1135], ["2026-01-03", 1113], ["2026-01-03", 1109], ["2026-01-03", 1102], ["2026-01-03", 1097], ["2026-01-04", 1091], ["2026-01-05", 1085], ["2026-01-05", 1118], ["2026-01-05", 1113], ["2026-01-05", 1145], ["2026-01-05", 1136], ["2026-01-06", 1125], ["2026-01-06", 1118], ["2026-01-06", 1115], ["2026-01-06", 1108], ["2026-01-06", 1143], ["2026-01-07", 1139], ["2026-01-07", 1135], ["2026-01-07", 1130], ["2026-01-07", 1122], ["2026-01-07", 1115], ["2026-01-08", 1110], ["2026-01-09", 1145], ["2026-01-09", 1141], ["2026-01-10", 1131], ["2026-01-10", 1124], ["2026-01-10", 1122], ["2026-01-10", 1117], ["2026-01-10", 1109], ["2026-01-11", 1106], ["2026-01-15", 1100], ["2026-01-15", 1094], ["2026-01-15", 1089], ["2026-01-16", 1083], ["2026-01-16", 1078], ["2026-01-19", 1074], ["2026-01-22", 1065], ["2026-01-27", 1061], ["2026-02-03", 1055]], "Dizzz": [["LH01 Final", 1059], ["2026-01-04", 1046], ["2026-01-05", 1036], ["2026-01-06", 1028], ["2026-01-06", 1016], ["2026-01-07", 1004], ["2026-01-07", 992], ["2026-01-09", 986], ["2026-01-10", 980], ["2026-01-10", 978], ["2026-01-28", 971]], "Aceosd": [["LH01 Final", 1058], ["2026-01-17", 1054], ["2026-01-19", 1041], ["2026-01-19", 1033], ["2026-01-22", 1029], ["2026-01-26", 1026], ["2026-01-28", 1024], ["2026-02-01", 1021], ["2026-02-05", 1016], ["2026-02-17", 1010], ["2026-02-19", 1006], ["2026-02-23", 1001], ["2026-02-24", 999], ["2026-03-01", 996], ["2026-03-03", 992], ["2026-03-10", 991]], "DawnDiVito": [["LH01 Final", 1058], ["2026-01-01", 1046], ["2026-01-01", 1035], ["2026-01-05", 1026], ["2026-01-09", 1024], ["2026-01-09", 1019], ["2026-01-13", 1007], ["2026-01-14", 1000], ["2026-01-19", 993], ["2026-01-20", 985], ["2026-01-20", 978], ["2026-01-25", 976], ["2026-01-27", 973], ["2026-01-28", 972], ["2026-01-29", 967], ["2026-01-29", 962], ["2026-01-30", 961], ["2026-02-02", 960], ["2026-02-03", 955], ["2026-02-03", 952], ["2026-02-03", 950], ["2026-02-04", 948], ["2026-02-04", 946], ["2026-02-04", 982], ["2026-02-06", 979], ["2026-02-07", 1013], ["2026-02-07", 1011], ["2026-02-08", 1010], ["2026-02-08", 1007], ["2026-02-10", 1040], ["2026-02-18", 1038], ["2026-02-18", 1029], ["2026-02-21", 1025], ["2026-02-24", 1023], ["2026-02-24", 1018], ["2026-02-24", 1016], ["2026-02-26", 1010], ["2026-02-27", 1007], ["2026-02-28", 1001], ["2026-03-03", 997], ["2026-03-07", 993], ["2026-03-08", 989], ["2026-03-08", 988], ["2026-03-10", 987], ["2026-03-10", 986], ["2026-03-11", 985], ["2026-03-11", 984], ["2026-03-11", 984], ["2026-03-17", 1019], ["2026-03-20", 1018], ["2026-03-22", 1014]], "Raybit": [["LH01 Final", 1057], ["2026-02-07", 1037], ["2026-02-08", 1028], ["2026-02-08", 1022], ["2026-02-12", 1016], ["2026-02-16", 1008], ["2026-02-23", 1004], ["2026-02-25", 996], ["2026-03-03", 984], ["2026-03-21", 975]], "DrCheeseFiend": [["LH01 Final", 1056], ["2026-01-17", 1045], ["2026-01-22", 1029], ["2026-01-23", 1020], ["2026-02-01", 1013], ["2026-02-05", 1009], ["2026-02-07", 1002], ["2026-02-11", 997], ["2026-02-12", 987], ["2026-02-19", 984], ["2026-03-01", 978], ["2026-03-08", 976], ["2026-03-11", 975]], "hanban": [["LH01 Final", 1055], ["2026-01-06", 1041], ["2026-01-07", 1027], ["2026-01-07", 1013], ["2026-01-07", 1010], ["2026-01-07", 1007], ["2026-01-08", 999], ["2026-01-08", 992], ["2026-01-08", 988], ["2026-01-18", 986], ["2026-01-18", 973]], "BaliHoo": [["LH01 Final", 1041], ["2026-01-08", 1036], ["2026-01-09", 1026], ["2026-01-13", 1019], ["2026-01-18", 1013], ["2026-01-23", 1009], ["2026-01-23", 997], ["2026-01-29", 986], ["2026-01-30", 984], ["2026-02-07", 971], ["2026-02-10", 960], ["2026-02-11", 957], ["2026-02-11", 956], ["2026-02-13", 954], ["2026-02-15", 948], ["2026-02-16", 947], ["2026-02-21", 944], ["2026-02-22", 980], ["2026-02-26", 977], ["2026-02-26", 974], ["2026-03-01", 972], ["2026-03-01", 968], ["2026-03-03", 966], ["2026-03-05", 1001], ["2026-03-05", 999], ["2026-03-06", 997], ["2026-03-07", 995], ["2026-03-11", 994], ["2026-03-13", 992], ["2026-03-17", 987], ["2026-03-17", 984], ["2026-03-19", 983], ["2026-03-23", 981]], "Lex25": [["LH01 Final", 1040], ["2026-02-15", 1035], ["2026-02-15", 1023], ["2026-02-16", 1012], ["2026-02-16", 1000], ["2026-02-16", 992], ["2026-02-17", 989], ["2026-02-18", 981], ["2026-02-18", 976], ["2026-02-18", 970], ["2026-02-19", 962], ["2026-02-20", 959], ["2026-03-03", 956], ["2026-03-18", 954]], "Wriggleroom": [["LH01 Final", 1039], ["2026-01-01", 1029], ["2026-01-03", 1025], ["2026-01-06", 1021], ["2026-01-06", 1015], ["2026-01-09", 1013], ["2026-01-11", 1008], ["2026-01-13", 997], ["2026-01-15", 989], ["2026-01-15", 986], ["2026-01-16", 980], ["2026-01-19", 977], ["2026-01-20", 973], ["2026-01-22", 971], ["2026-01-23", 969], ["2026-01-29", 964], ["2026-01-31", 961], ["2026-01-31", 997], ["2026-02-01", 993], ["2026-02-10", 1030], ["2026-02-11", 1026], ["2026-02-13", 1064], ["2026-02-13", 1061], ["2026-02-14", 1059], ["2026-02-17", 1055], ["2026-02-18", 1052], ["2026-02-19", 1048], ["2026-02-22", 1045], ["2026-03-02", 1040], ["2026-03-05", 1037], ["2026-03-06", 1034], ["2026-03-07", 1031], ["2026-03-08", 1027], ["2026-03-08", 1023], ["2026-03-08", 1020], ["2026-03-08", 1016], ["2026-03-09", 1014], ["2026-03-10", 1013], ["2026-03-10", 1008], ["2026-03-11", 1007], ["2026-03-11", 1007], ["2026-03-15", 1006], ["2026-03-15", 1002], ["2026-03-16", 1000], ["2026-03-17", 998], ["2026-03-19", 993], ["2026-03-23", 990]], "buurn": [["LH01 Final", 1033], ["2026-01-03", 1026], ["2026-01-06", 1099], ["2026-01-06", 1084], ["2026-01-07", 1075], ["2026-01-08", 1148], ["2026-01-08", 1218], ["2026-01-09", 1199], ["2026-01-12", 1184], ["2026-01-12", 1164], ["2026-01-13", 1149], ["2026-01-13", 1181], ["2026-01-14", 1172], ["2026-01-15", 1164], ["2026-01-17", 1158], ["2026-01-18", 1153], ["2026-01-20", 1148], ["2026-01-20", 1140], ["2026-01-22", 1136], ["2026-01-23", 1127], ["2026-01-23", 1115], ["2026-01-27", 1112], ["2026-01-27", 1104], ["2026-01-28", 1095], ["2026-01-31", 1091], ["2026-02-01", 1086], ["2026-02-02", 1084], ["2026-02-02", 1081], ["2026-02-02", 1078], ["2026-02-03", 1074], ["2026-02-05", 1070], ["2026-02-09", 1065], ["2026-02-09", 1063], ["2026-02-10", 1058], ["2026-02-11", 1053], ["2026-02-12", 1048], ["2026-02-16", 1044], ["2026-02-16", 1042], ["2026-02-19", 1039], ["2026-02-19", 1037], ["2026-02-19", 1034], ["2026-02-19", 1032], ["2026-02-20", 1027], ["2026-02-20", 1025], ["2026-02-21", 1022], ["2026-02-23", 1018], ["2026-02-23", 1013], ["2026-02-24", 1011], ["2026-02-24", 1008], ["2026-02-24", 1006], ["2026-02-25", 1004], ["2026-02-26", 1002], ["2026-02-28", 999], ["2026-03-01", 997], ["2026-03-03", 995], ["2026-03-03", 993], ["2026-03-03", 992], ["2026-03-03", 1010], ["2026-03-03", 1029], ["2026-03-03", 1047], ["2026-03-03", 1044], ["2026-03-04", 1041], ["2026-03-04", 1040], ["2026-03-05", 1037], ["2026-03-05", 1035], ["2026-03-05", 1033], ["2026-03-06", 1031], ["2026-03-09", 1030], ["2026-03-09", 1028], ["2026-03-09", 1028], ["2026-03-09", 1026], ["2026-03-10", 1025], ["2026-03-10", 1023], ["2026-03-12", 1023], ["2026-03-13", 1022], ["2026-03-14", 1021], ["2026-03-15", 1020], ["2026-03-19", 1019], ["2026-03-19", 1036], ["2026-03-21", 1035]], "cjahwon": [["LH01 Final", 1030], ["2026-02-15", 1024], ["2026-02-17", 1018], ["2026-02-18", 1015], ["2026-02-19", 1011], ["2026-02-19", 1005], ["2026-02-21", 996], ["2026-02-23", 994], ["2026-02-23", 991], ["2026-02-24", 983], ["2026-02-25", 978], ["2026-02-25", 975], ["2026-02-25", 972], ["2026-02-25", 969], ["2026-02-26", 966], ["2026-02-26", 963], ["2026-03-03", 959], ["2026-03-04", 957], ["2026-03-05", 955], ["2026-03-09", 952], ["2026-03-10", 948], ["2026-03-10", 946], ["2026-03-11", 946], ["2026-03-11", 945], ["2026-03-11", 945], ["2026-03-15", 943], ["2026-03-16", 941], ["2026-03-17", 978], ["2026-03-18", 973], ["2026-03-18", 970], ["2026-03-20", 967], ["2026-03-21", 965], ["2026-03-23", 964]], "Munchking": [["LH01 Final", 1023], ["2026-02-18", 1014], ["2026-02-18", 999], ["2026-02-19", 994], ["2026-02-21", 988], ["2026-02-21", 983], ["2026-02-22", 978], ["2026-02-23", 973], ["2026-02-23", 964], ["2026-02-27", 960], ["2026-02-27", 955], ["2026-03-05", 953], ["2026-03-08", 950], ["2026-03-09", 948], ["2026-03-10", 945], ["2026-03-15", 943], ["2026-03-15", 943], ["2026-03-18", 940], ["2026-03-21", 939], ["2026-03-21", 936], ["2026-03-22", 935], ["2026-03-23", 935], ["2026-03-23", 932], ["2026-03-23", 931]], "DarthOblivius": [["LH01 Final", 1011], ["2026-01-04", 1008], ["2026-01-13", 1001], ["2026-01-15", 998], ["2026-01-16", 991], ["2026-01-17", 990], ["2026-01-23", 984], ["2026-01-23", 980], ["2026-01-25", 979], ["2026-01-27", 972], ["2026-01-31", 968], ["2026-02-01", 967], ["2026-02-04", 966], ["2026-02-05", 964], ["2026-02-05", 962], ["2026-02-05", 961], ["2026-02-06", 959], ["2026-02-09", 958], ["2026-02-12", 956], ["2026-02-14", 954], ["2026-02-17", 952], ["2026-02-18", 951], ["2026-02-20", 948], ["2026-02-21", 946], ["2026-02-22", 944], ["2026-02-24", 942], ["2026-02-24", 941], ["2026-02-27", 939], ["2026-03-04", 938], ["2026-03-05", 936], ["2026-03-05", 934], ["2026-03-06", 933], ["2026-03-06", 930], ["2026-03-08", 929], ["2026-03-09", 928], ["2026-03-10", 928], ["2026-03-10", 927], ["2026-03-10", 925], ["2026-03-12", 924], ["2026-03-13", 922], ["2026-03-13", 920], ["2026-03-16", 920], ["2026-03-17", 919], ["2026-03-18", 958], ["2026-03-20", 957], ["2026-03-20", 955], ["2026-03-23", 953], ["2026-03-23", 952]], "saintstonet": [["LH01 Final", 1200], ["2026-03-22", 1274]], "trollone1993": [["LH01 Final", 1200], ["2026-03-23", 1258]], "Lucat": [["LH01 Final", 1200], ["2026-03-23", 1178]], "Snivylover12": [["LH01 Final", 1200], ["2026-03-23", 1228]], "DanielJeun": [["LH01 Final", 1200], ["2026-03-23", 1192]]};
+    let myChart;
+
+    function updateChart() {
+        const name = document.getElementById('playerName').value;
+        const canvas = document.getElementById('progressionChart');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        
+        // Ta logique de récupération de la couleur dynamique (Lapin = Cyan)
+        const activeColor = getComputedStyle(document.documentElement)
+                            .getPropertyValue('--main-color').trim() || '#4a90e2';
+        
+        if (allData[name]) {
+            const rawData = allData[name];
+            const labels = rawData.map(d => d[0]);
+            const eloScores = rawData.map(d => d[1]);
+
+            if (myChart) myChart.destroy();
+            
+            myChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: eloScores,
+                        borderColor: activeColor,
+                        backgroundColor: activeColor + '1a', // 1a = transparence
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.3,
+                        pointRadius: 2,
+                        pointHitRadius: 20
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { 
+                            enabled: true, 
+                            mode: 'index', 
+                            intersect: false, 
+                            backgroundColor: '#222',
+                            titleColor: activeColor,
+                            bodyColor: '#eee'
+                        }
+                    },
+                    scales: {
+                        y: { 
+                            grid: { color: '#252525' }, 
+                            ticks: { color: '#666', font: { size: 10 } } 
+                        },
+                        x: { 
+                            grid: { display: false }, 
+                            ticks: { color: '#666', font: { size: 10 }, maxTicksLimit: 8, maxRotation: 0 } 
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+    // Petit plus : Si un nom est déjà dans l'input (retour arrière), on charge le chart
+    window.onload = updateChart;
+</script>
+
+</body>
+</html>
