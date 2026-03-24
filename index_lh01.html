@@ -18,35 +18,35 @@
     
     <style>
         /* =========================================================================
-           --- 1. PANNEAU DE CONFIGURATION (VARIABLES CSS) ---
+           --- 1. CONFIGURATION PANEL (CSS VARIABLES) ---
            ========================================================================= */
         :root {
-            /* Factions (Intouchées pour l'instant) */
+            /* Faction Colors */
             --color-bird: #67c0c7;
             --color-fox: #e6372d;
             --color-rabbit: #f7eb5b;
             --color-mouse: #f29057;
 
-            /* Typographie */
+            /* Typography */
             --font-title: 'Fraunces', serif;
             --font-ui: 'Inter', sans-serif;
 
-            /* Couleurs de fond */
+            /* Background Colors */
             --bg-page: #121212;
-            --bg-container: #1c1c1c; /* Légèrement plus clair que la page pour détacher la boîte */
-            --bg-surface: rgba(255, 255, 255, 0.03); /* Pour les boutons/fonds discrets */
+            --bg-container: #1c1c1c; 
+            --bg-surface: rgba(255, 255, 255, 0.03); 
             --bg-hover: rgba(255, 255, 255, 0.08);
 
-            /* Couleurs de texte */
-            --text-main: #E0E0E0; /* Gris très clair, moins agressif que le blanc pur */
+            /* Text Colors */
+            --text-main: #E0E0E0; 
             --text-muted: #888888;
-            --text-dark: #111111; /* Pour le texte sur fond très clair */
+            --text-dark: #111111; 
 
-            /* Bordures */
+            /* Borders */
             --border-soft: #333333;
         }
 
-        /* --- GESTION DYNAMIQUE DU THÈME --- */
+        /* --- DYNAMIC THEME MANAGEMENT --- */
         body[data-page="index"]   { --main-color: var(--color-bird); }
         body[data-page="matches"] { --main-color: var(--color-fox); }
         body[data-page="trends"]  { --main-color: var(--color-rabbit); }
@@ -54,7 +54,7 @@
         body { --main-color: #d4a76a; }
 
         /* =========================================================================
-           --- 2. STYLES GLOBAUX ---
+           --- 2. GLOBAL STYLES ---
            ========================================================================= */
         body { 
             font-family: var(--font-ui); 
@@ -71,14 +71,14 @@
             max-width: 1100px; 
             margin: auto; 
             background: var(--bg-container); 
-            padding: 20px 30px 40px; /* Un peu plus d'espace en bas */
+            padding: 20px 30px 20px; 
             border-radius: 12px; 
             box-shadow: 0 8px 32px rgba(0,0,0,0.6); 
             box-sizing: border-box; 
         }
         
         /* =========================================================================
-           --- 3. HEADER & BANNIÈRE ---
+           --- 3. HEADER & BANNER ---
            ========================================================================= */
         .banner-container { display: flex; align-items: center; justify-content: center; gap: 40px; margin-bottom: 20px; flex-wrap: nowrap; }
         .banner-icons { display: flex; gap: 15px; align-items: center; }
@@ -100,7 +100,7 @@
         .site-title { 
             font-family: var(--font-title);
             color: #ffffff; 
-            font-size: 2.8em; /* Légèrement plus gros */
+            font-size: 2.8em; 
             margin: 0; 
             letter-spacing: 4px; 
             text-transform: uppercase; 
@@ -117,7 +117,7 @@
         }
         
         /* =========================================================================
-           --- 4. NAVIGATION & BOUTONS ---
+           --- 4. NAVIGATION & BUTTONS ---
            ========================================================================= */
         nav { 
             margin: 25px 0; 
@@ -125,7 +125,7 @@
             padding-bottom: 20px; 
             display: flex; 
             justify-content: center; 
-            gap: 12px; /* Un peu plus espacé */
+            gap: 12px; 
             flex-wrap: wrap; 
         }
         
@@ -139,7 +139,7 @@
             padding: 8px 12px; 
             border-radius: 6px; 
             transition: 0.3s ease; 
-            border-bottom: 2px solid transparent; /* Prépare l'animation de bordure */
+            border-bottom: 2px solid transparent; 
         }
         
         nav a:hover { 
@@ -147,47 +147,59 @@
             background: var(--bg-hover); 
         }
         
-        /* Onglet Actif : Plus élégant, fini le gros bloc ! */
+        /* Active Tab */
         nav a.active { 
             color: var(--main-color); 
             border-bottom: 2px solid var(--main-color);
-            border-radius: 6px 6px 0 0; /* Arrondi en haut, plat en bas sur la ligne */
+            border-radius: 6px 6px 0 0; 
             background: linear-gradient(to top, rgba(255,255,255,0.03) 0%, transparent 100%);
         }
         
-        /* --- SÉLECTEUR DE SAISON --- */
+        /* --- SEASON SELECTOR (ANGULAR STYLE) --- */
         .season-selector { 
             display: flex; align-items: center; justify-content: center; gap: 8px; 
-            margin: 25px auto 10px; 
-            background: var(--bg-surface); 
-            padding: 6px 16px; 
-            border-radius: 4px; 
+            margin: 20px auto 10px; 
+            background: none; 
             width: fit-content; 
-            border: 1px solid var(--border-soft); 
         }
-        .season-label { font-size: 0.7em; text-transform: uppercase; color: var(--text-muted); letter-spacing: 1.2px; font-weight: bold; }
-        .season-btn { text-decoration: none; font-size: 0.75em; font-weight: 700; color: var(--text-muted); padding: 5px 14px; border-radius: 4px; border: 1px solid transparent; transition: 0.2s; }
+        .season-label { font-size: 0.7em; text-transform: uppercase; color: var(--text-muted); letter-spacing: 1.2px; font-weight: bold; margin-right: 5px;}
+        .season-btn { 
+            text-decoration: none; 
+            font-size: 0.75em; 
+            font-weight: 700; 
+            color: var(--text-muted); 
+            padding: 6px 14px; 
+            border-radius: 4px; /* Angular look */
+            background: var(--bg-surface);
+            border: 1px solid var(--border-soft); 
+            transition: 0.2s; 
+        }
         .season-btn:hover { color: var(--text-main); background: var(--bg-hover); }
-        .season-btn.active { background: var(--border-soft); color: var(--main-color); border-color: var(--main-color); }
+        .season-btn.active { 
+            background: transparent !important; 
+            color: var(--main-color) !important; 
+            border-color: var(--main-color) !important; 
+        }
 
         /* =========================================================================
-           --- 5. TITRES DE PAGES & DONNÉES ---
+           --- 5. PAGE TITLES & DATA ---
            ========================================================================= */
         .page-intro { margin-bottom: 30px; }
         .page-intro h2 { 
             font-family: var(--font-title);
             font-size: 2.2em;
-            margin: 0 0 10px 0;
+            margin: 0;
             color: var(--main-color);
         }
         .page-intro p {
             color: var(--text-muted);
+            font-family: var(--font-ui);
             font-size: 0.9em;
-            margin-top: 15px;
+            margin: 15px auto 0;
+            max-width: 700px;
         }
 
-        /* --- OVERRIDES DATATABLES GÉNÉRIQUES --- */
-        /* On prépare le terrain pour nettoyer tes tableaux dans les autres fichiers */
+        /* --- GENERIC DATATABLES OVERRIDES --- */
         table.dataTable { border-collapse: collapse !important; }
         table.dataTable thead th { 
             background: var(--bg-page) !important; 
@@ -200,9 +212,26 @@
         }
         table.dataTable tbody tr { background-color: transparent !important; }
         table.dataTable tbody td { border-bottom: 1px solid rgba(255,255,255,0.03); padding: 12px 10px; }
+        
+        /* =========================================================================
+           --- 6. GLOBAL FOOTER ---
+           ========================================================================= */
+        .site-footer {
+            margin-top: 50px;
+            padding: 30px 20px;
+            border-top: 1px solid var(--border-soft);
+            color: var(--text-muted);
+            font-family: var(--font-ui);
+            font-size: 0.8em;
+            text-align: center;
+        }
+        .footer-credits { margin-bottom: 8px; }
+        .footer-credits strong { color: var(--text-main); font-weight: 600; }
+        .footer-separator { margin: 0 10px; color: var(--border-soft); }
+        .footer-date { font-style: italic; opacity: 0.7; }
 
         /* =========================================================================
-           --- 6. RESPONSIVE MOBILE ---
+           --- 7. MOBILE RESPONSIVE ---
            ========================================================================= */
         @media (max-width: 768px) and (orientation: portrait) {
             .banner-container { flex-wrap: wrap; gap: 10px; }
@@ -211,12 +240,10 @@
             .banner-icons img { width: 45px; height: 45px; }
             .banner-icons img:hover { width: 70px; height: 70px; transform: translateY(-5px) scale(1.1); }
             .site-title { font-size: 2em; }
+            .footer-credits span { display: block; margin: 5px 0; }
+            .footer-separator { display: none; }
         }
-        @media (max-width: 950px) and (orientation: landscape) {
-            .banner-container { flex-direction: row; gap: 20px; flex-wrap: nowrap; }
-            .banner-icons img { width: 45px; height: 45px; }
-        }
-
+        
         
     /* --- 1. STRUCTURE DU TABLEAU --- */
     #leaderboard { 
@@ -2924,6 +2951,19 @@
     </table>
 
         </main>
+
+        <footer class="site-footer">
+            <div class="footer-content">
+                <div class="footer-credits">
+                    <span>Powered by <strong>Tricholome</strong></span>
+                    <span class="footer-separator">|</span>
+                    <span>Art by <strong>xluevi</strong></span>
+                </div>
+                <div class="footer-date">
+                    Updated on 2026-03-24 16:33
+                </div>
+            </div>
+        </footer>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
@@ -2946,6 +2986,7 @@ $(document).ready(function() {
             // Priorités de visibilité : Player et ELO sont indestructibles
             { "responsivePriority": 1, "targets": [2, 3] },
             { "responsivePriority": 2, "targets": 0 },
+            { "responsivePriority": 3, "targets": 1 },
             { "responsivePriority": 10, "targets": [4, 5, 6, 7, 8] }
         ],
         "createdRow": function(row, data, dataIndex) {
