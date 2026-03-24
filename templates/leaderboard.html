@@ -12,7 +12,7 @@
         padding-left: 15px !important; 
         font-family: var(--font-ui);
         font-weight: 600;
-        color: var(--text-main); /* Nom du joueur en blanc/gris clair */
+        color: var(--text-main);
     }
 
     .tier-icon-container { 
@@ -22,15 +22,13 @@
     }
     .tier-icon-container img { max-width: 100%; max-height: 100%; object-fit: contain; }
 
-    /* --- 2. COLORATION DES TIERS (Correction du bug de couleur) --- */
-    /* On cible les 'tr' avec plus de force pour écraser le défaut de DataTables */
+    /* --- 2. COLORATION DES TIERS --- */
     table.dataTable tbody tr.tier-bird   { background-color: rgba(103, 192, 199, 0.08) !important; border-left: 4px solid var(--color-bird) !important; }
     table.dataTable tbody tr.tier-fox    { background-color: rgba(230, 55, 45, 0.08) !important; border-left: 4px solid var(--color-fox) !important; }
     table.dataTable tbody tr.tier-rabbit { background-color: rgba(247, 235, 91, 0.08) !important; border-left: 4px solid var(--color-rabbit) !important; }
     table.dataTable tbody tr.tier-mouse  { background-color: rgba(242, 144, 87, 0.08) !important; border-left: 4px solid var(--color-mouse) !important; }
 
     /* --- 3. MISE EN VALEUR DE L'ELO --- */
-    /* On ne colore QUE la colonne ELO (4ème colonne) */
     .tier-bird td:nth-child(4)   { color: var(--color-bird) !important; font-weight: 800; font-size: 1.1em; }
     .tier-fox td:nth-child(4)    { color: var(--color-fox) !important; font-weight: 800; font-size: 1.1em; }
     .tier-rabbit td:nth-child(4) { color: var(--color-rabbit) !important; font-weight: 800; font-size: 1.1em; }
@@ -38,20 +36,27 @@
 
     .unranked { opacity: 0.4; font-style: italic; filter: grayscale(1); }
 
-    /* --- 4. FOOTER --- */
-    .footer { 
-        margin-top: 40px; 
-        font-size: 0.8em; 
-        color: var(--text-muted); 
-        border-top: 1px solid var(--border-soft); 
-        padding: 20px; 
-        line-height: 2.2; 
-        text-align: center;
-        font-family: var(--font-ui);
+    /* --- 4. OPTIMISATION MOBILE (ASTUCE MEDIA) --- */
+    @media (max-width: 600px) {
+        table.dataTable tbody td {
+            font-size: 0.85em;
+            padding: 8px 4px !important;
+        }
+        
+        .player-name-cell {
+            max-width: 110px; /* On limite la largeur du nom sur mobile */
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            padding-left: 8px !important;
+        }
+
+        /* On garantit que l'ELO reste lisible et ne se colle pas au bord */
+        table.dataTable td:nth-child(4) {
+            padding-right: 10px !important;
+            min-width: 55px;
+        }
     }
-    .footer strong { font-family: var(--font-title); color: var(--text-main); font-size: 1.1em; }
-    .footer-tier-item { display: inline-block; margin: 0 12px; font-weight: 600; }
-    .footer-tier-item img { height: 18px; vertical-align: middle; margin-right: 5px; }
 {% endblock %}
 
 {% block content %}
@@ -91,15 +96,6 @@
             {% endfor %}
         </tbody>
     </table>
-
-    <div class="footer">
-        <strong>Woodland Tier System</strong><br>
-        <span class="footer-tier-item"><img src="{{ icons.bird }}"> 1500+</span>
-        <span class="footer-tier-item"><img src="{{ icons.fox }}"> 1400+</span>
-        <span class="footer-tier-item"><img src="{{ icons.rabbit }}"> 1300+</span>
-        <span class="footer-tier-item"><img src="{{ icons.mouse }}"> 1200+</span><br>
-        <small>Minimum 10 games required for ranking • Generated on {{ generation_date }} UTC</small>
-    </div>
 {% endblock %}
 
 {% block custom_js %}
@@ -112,11 +108,14 @@ $(document).ready(function() {
         "order": [[3, "desc"]], 
         "responsive": true, 
         "pageLength": 50,
-        "dom": '<"top"f>rt<"bottom"ip><"clear">', // Nettoie l'interface (recherche en haut, info/page en bas)
+        "dom": '<"top"f>rt<"bottom"ip><"clear">',
         "columnDefs": [ 
             { "targets": 0, "type": "rank" },
             { "targets": 2, "className": "player-name-cell" }, 
-            { "responsivePriority": 1, "targets": [0, 2, 3] } 
+            // Priorités de visibilité : Player et ELO sont indestructibles
+            { "responsivePriority": 1, "targets": [2, 3] },
+            { "responsivePriority": 2, "targets": 0 },
+            { "responsivePriority": 10, "targets": [4, 5, 6, 7, 8] }
         ],
         "createdRow": function(row, data, dataIndex) {
             var rank = data[0]; 
