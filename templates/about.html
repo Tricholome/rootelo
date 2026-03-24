@@ -21,10 +21,10 @@
     .tier-item img { height: 80px; width: auto; margin-right: 20px; }
     
     /* Couleurs des bordures des Tiers */
-    .tier-bird { border-color: #67c0c7; }
-    .tier-fox { border-color: #e6372d; }
-    .tier-rabbit { border-color: #f7eb5b; }
-    .tier-mouse { border-color: #f29057; }
+    .tier-bird   { border-color: var(--bird-color) !important; }
+    .tier-fox    { border-color: var(--fox-color) !important; }
+    .tier-rabbit { border-color: var(--rabbit-color) !important; }
+    .tier-mouse  { border-color: var(--mouse-color) !important; }
 
     .k-table { width: 100%; border-collapse: collapse; background: #1a1a1a; margin-top: 20px; border-radius: 8px; overflow: hidden; }
     .k-table td { padding: 15px; border-bottom: 1px solid #333; }
@@ -49,19 +49,19 @@
     <div class="tier-list">
         <div class="tier-item tier-bird">
             <img src="{{ icons['bird'] }}">
-            <div><strong style="color: #67c0c7;">Bird (1500+)</strong> – The Grandmasters.</div>
+            <div><strong style="color: var(--bird-color);">Bird (1500+)</strong> – The Grandmasters.</div>
         </div>
         <div class="tier-item tier-fox">
             <img src="{{ icons['fox'] }}">
-            <div><strong style="color: #e6372d;">Fox (1400+)</strong> – The top predators.</div>
+            <div><strong style="color: var(--fox-color);">Fox (1400+)</strong> – The top predators.</div>
         </div>
         <div class="tier-item tier-rabbit">
             <img src="{{ icons['rabbit'] }}">
-            <div><strong style="color: #f7eb5b;">Rabbit (1300+)</strong> – High-level competitors.</div>
+            <div><strong style="color: var(--rabbit-color);">Rabbit (1300+)</strong> – High-level competitors.</div>
         </div>
         <div class="tier-item tier-mouse">
             <img src="{{ icons['mouse'] }}">
-            <div><strong style="color: #f29057;">Mouse (1200+)</strong> – Established consistent players.</div>
+            <div><strong style="color: var(--mouse-color);">Mouse (1200+)</strong> – Established consistent players.</div>
         </div>
     </div>
 
