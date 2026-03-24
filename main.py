@@ -187,14 +187,22 @@ for m in all_matches:
             })
 
 df = pd.DataFrame(raw_data)
-if df.empty:
-    print("Empty season detected. Initializing with inherited ratings only.")
-    df = pd.DataFrame(columns=['GameID', 'Player', 'Score', 'Date_Closed'])
-else:
-    df['Date_Closed'] = pd.to_datetime(df['Date_Closed'], format='ISO8601', utc=True)
+if not df.empty:
+    df['Date_Closed'] = df['Date_Closed'].astype(str)
+
+    if not game_id_mapping.empty:
+        for gid, new_date in game_id_mapping.items():
+            mask = df['GameID'] == gid
+            if mask.any():
+                df.loc[mask, 'Date_Closed'] = df.loc[mask, 'Date_Closed'].apply(
+                    lambda x: str(new_date) + x[10:]
+                )
+        print(f"🔧 {len(game_id_mapping)} potential matches updated in memory.")
+
+    df['Date_Closed'] = pd.to_datetime(df['Date_Closed'], utc=True)
     df = df[df['Date_Closed'].dt.date < today].copy()
     df = df.sort_values(by='Date_Closed').reset_index(drop=True)
-
+    
 # =========================================================================
 # --- 6. ELO CALCULATION & STANDINGS ---
 # =========================================================================
