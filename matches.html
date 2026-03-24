@@ -17,51 +17,94 @@
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
     
     <style>
+        /* =========================================================================
+           --- 1. CONFIGURATION PANEL (CSS VARIABLES) ---
+           ========================================================================= */
         :root {
+            /* Faction Colors */
             --color-bird: #82C0E7;
             --color-fox: #D34936;
             --color-rabbit: #E0B634;
             --color-mouse: #DF9356;
+
+            /* Typography */
             --font-title: 'Fraunces', serif;
             --font-ui: 'Inter', sans-serif;
+
+            /* Background Colors */
             --bg-page: #121212;
             --bg-container: #1c1c1c; 
             --bg-surface: rgba(255, 255, 255, 0.03); 
             --bg-hover: rgba(255, 255, 255, 0.08);
+
+            /* Text Colors */
             --text-main: #E0E0E0; 
             --text-muted: #888888;
+            --text-dark: #111111; 
+
+            /* Borders */
             --border-soft: #333333;
         }
 
+        /* --- DYNAMIC THEME MANAGEMENT --- */
         body[data-page="index"]   { --main-color: var(--color-bird); }
         body[data-page="matches"] { --main-color: var(--color-fox); }
         body[data-page="trends"]  { --main-color: var(--color-rabbit); }
         body[data-page="about"]   { --main-color: var(--color-mouse); }
         body { --main-color: #C9A675; }
 
-        html { scroll-behavior: smooth; }
-        body { font-family: var(--font-ui); background: var(--bg-page); color: var(--text-main); text-align: center; padding: 20px 5px; margin: 0; overflow-x: hidden; }
-        .container { width: 95%; max-width: 1100px; margin: auto; background: var(--bg-container); padding: 20px 30px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.6); box-sizing: border-box; }
-
-        /* --- HEADER & BANNER --- */
-        .banner-container { display: flex; align-items: center; justify-content: center; gap: 5px; margin-bottom: 20px; }
-        .banner-icons { display: flex; align-items: center; }
+        /* =========================================================================
+           --- 2. GLOBAL STYLES ---
+           ========================================================================= */
+        html {
+            scroll-behavior: smooth; /* Ajout du scroll fluide ici ! */
+        }
         
+        body { 
+            font-family: var(--font-ui); 
+            background: var(--bg-page); 
+            color: var(--text-main); 
+            text-align: center; 
+            padding: 20px 5px; 
+            margin: 0; 
+            overflow-x: hidden; 
+        }
+        
+        .container { 
+            width: 95%; 
+            max-width: 1100px; 
+            margin: auto; 
+            background: var(--bg-container); 
+            padding: 20px 30px 20px; 
+            border-radius: 12px; 
+            box-shadow: 0 8px 32px rgba(0,0,0,0.6); 
+            box-sizing: border-box; 
+        }
+        
+        /* =========================================================================
+           --- 3. HEADER & BANNER (AVEC TOOLTIPS & EXPANDED) ---
+           ========================================================================= */
+        .banner-container { display: flex; align-items: center; justify-content: center; gap: 5px; margin-bottom: 20px; flex-wrap: nowrap; }
+        .banner-icons { display: flex; gap: -10px; align-items: center; }
+        
+        /* Liens interactifs enveloppant les images */
         .banner-icons a.tooltip-link {
             position: relative;
             display: inline-block;
             margin: 0 -5px;
             z-index: 1;
             text-decoration: none;
-            -webkit-tap-highlight-color: transparent;
+            -webkit-tap-highlight-color: transparent; /* Retire le flash natif sur mobile */
             transition: margin 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         
+        /* Effets appliqués au survol (PC) ET au tap (Mobile via classe .expanded) */
         @media (hover: hover) {
             .banner-icons a.tooltip-link:hover { margin: 0 15px; z-index: 100; }
         }
         .banner-icons a.tooltip-link.expanded { margin: 0 15px; z-index: 100; }
 
+        /* Les images elles-mêmes */
         .banner-icons a.tooltip-link img { 
             width: 85px; height: 85px; object-fit: contain; 
             filter: drop-shadow(0 4px 6px rgba(0,0,0,0.6)); 
@@ -72,82 +115,333 @@
         @media (hover: hover) {
             .banner-icons a.tooltip-link:hover img { 
                 width: 140px; height: 140px; 
+                filter: drop-shadow(0 15px 25px rgba(0,0,0,0.9));
                 transform: translateY(-10px) scale(1.15);
             }
+            .banner-icons.left a.tooltip-link:hover img { transform: translateY(-10px) scale(1.15) rotate(-8deg); }
+            .banner-icons.right a.tooltip-link:hover img { transform: translateY(-10px) scale(1.15) rotate(8deg); }
         }
-        .banner-icons a.tooltip-link.expanded img { width: 140px; height: 140px; transform: translateY(-10px) scale(1.15); }
 
-        /* --- TOOLTIP SYSTEM (NEW WRAP LOGIC) --- */
+        /* Classe .expanded pour le JavaScript (Mobile) */
+        .banner-icons a.tooltip-link.expanded img { 
+            width: 140px; height: 140px; 
+            filter: drop-shadow(0 15px 25px rgba(0,0,0,0.9));
+            transform: translateY(-10px) scale(1.15);
+        }
+        .banner-icons.left a.tooltip-link.expanded img { transform: translateY(-10px) scale(1.15) rotate(-8deg); }
+        .banner-icons.right a.tooltip-link.expanded img { transform: translateY(-10px) scale(1.15) rotate(8deg); }
+
+        /* Le Tooltip (La petite bulle au-dessus) */
         .tooltip-text {
             position: absolute;
-            bottom: 100%;
+            bottom: 90%;
             left: 50%;
             transform: translateX(-50%) translateY(10px);
             background: var(--bg-container);
             border: 1px solid var(--border-soft);
             color: var(--text-muted);
-            padding: 10px;
-            border-radius: 8px;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-family: var(--font-ui);
             font-size: 0.75rem;
-            width: 150px;           /* Largeur fixe pour le wrap */
-            white-space: normal;    /* Autorise le retour à la ligne */
-            text-align: center;
+            white-space: nowrap;
             opacity: 0;
             pointer-events: none;
             transition: all 0.3s ease;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.6);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
             z-index: 101;
-            line-height: 1.4;
         }
 
-        .tooltip-text strong { 
-            display: block;         /* Force le titre sur sa propre ligne */
-            margin-bottom: 4px; 
-            font-weight: 800;
-            font-size: 0.85rem;
-        }
-
+        /* Apparition du tooltip */
         @media (hover: hover) {
-            .banner-icons a.tooltip-link:hover .tooltip-text { opacity: 1; transform: translateX(-50%) translateY(-15px); }
-        }
-        .banner-icons a.tooltip-link.expanded .tooltip-text { opacity: 1; transform: translateX(-50%) translateY(-15px); }
-
-        /* --- TITLES & NAV --- */
-        .site-title { font-family: var(--font-title); color: #ffffff; font-size: 2.8em; margin: 0; letter-spacing: 4px; text-transform: uppercase; font-weight: 900; }
-        .site-subtitle { font-family: var(--font-title); font-style: italic; color: var(--text-muted); font-size: 1em; margin: 5px 0 0; }
-        
-        nav { margin: 25px 0; border-bottom: 1px solid var(--border-soft); padding-bottom: 20px; display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
-        nav a { color: var(--text-muted); text-decoration: none; font-weight: 600; text-transform: uppercase; font-size: 0.85em; padding: 8px 12px; transition: 0.3s; }
-        nav a:hover { color: var(--text-main); background: var(--bg-hover); }
-        nav a.active { color: var(--main-color); border-bottom: 2px solid var(--main-color); }
-
-        /* --- RESPONSIVE MOBILE --- */
-        @media (max-width: 768px) and (orientation: portrait) {
-            .banner-container { flex-wrap: wrap; gap: 10px; }
-            .banner-center { order: 1; width: 100%; margin-bottom: 10px; }
-            .banner-icons { order: 2; justify-content: center; width: 100%; gap: 5px; }
-            
-            .banner-icons a.tooltip-link img { width: 60px !important; height: 60px !important; }
-            .banner-icons a.tooltip-link.expanded img { transform: translateY(-8px) scale(1.3) !important; }
-
-            .tooltip-text {
-                bottom: 125%;       /* Un peu plus haut sur mobile */
-                width: 140px;       /* Un poil plus étroit pour les petits écrans */
-                font-size: 0.7rem;
+            .banner-icons a.tooltip-link:hover .tooltip-text {
+                opacity: 1;
+                transform: translateX(-50%) translateY(-15px);
             }
-            .site-title { font-size: 2em; }
         }
+        .banner-icons a.tooltip-link.expanded .tooltip-text {
+            opacity: 1;
+            transform: translateX(-50%) translateY(-15px);
+        }
+
+        .tooltip-text strong { font-weight: 800; }
+
+        /* Titres centraux */
+        .site-title { 
+            font-family: var(--font-title);
+            color: #ffffff; 
+            font-size: 2.8em; 
+            margin: 0; 
+            letter-spacing: 4px; 
+            text-transform: uppercase; 
+            font-weight: 900; 
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+        .site-subtitle { 
+            font-family: var(--font-title);
+            font-style: italic; 
+            color: var(--text-muted); 
+            font-size: 1em; 
+            margin: 5px 0 0; 
+            letter-spacing: 1px; 
+        }
+        
+        /* =========================================================================
+           --- 4. NAVIGATION & BUTTONS ---
+           ========================================================================= */
+        nav { 
+            margin: 25px 0; 
+            border-bottom: 1px solid var(--border-soft); 
+            padding-bottom: 20px; 
+            display: flex; 
+            justify-content: center; 
+            gap: 12px; 
+            flex-wrap: wrap; 
+        }
+        
+        nav a { 
+            color: var(--text-muted); 
+            text-decoration: none; 
+            font-weight: 600; 
+            text-transform: uppercase; 
+            font-size: 0.85em; 
+            letter-spacing: 1px;
+            padding: 8px 12px; 
+            border-radius: 6px; 
+            transition: 0.3s ease; 
+            border-bottom: 2px solid transparent; 
+        }
+        
+        nav a:hover { color: var(--text-main); background: var(--bg-hover); }
+        
+        nav a.active { 
+            color: var(--main-color); 
+            border-bottom: 2px solid var(--main-color);
+            border-radius: 6px 6px 0 0; 
+            background: linear-gradient(to top, rgba(255,255,255,0.03) 0%, transparent 100%);
+        }
+        
+        .season-selector { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 20px auto 10px; background: none; width: fit-content; }
+        .season-label { font-size: 0.7em; text-transform: uppercase; color: var(--text-muted); letter-spacing: 1.2px; font-weight: bold; margin-right: 5px;}
+        .season-btn { text-decoration: none; font-size: 0.75em; font-weight: 700; color: var(--text-muted); padding: 6px 14px; border-radius: 4px; background: var(--bg-surface); border: 1px solid var(--border-soft); transition: 0.2s; }
+        .season-btn:hover { color: var(--text-main); background: var(--bg-hover); }
+        .season-btn.active { background: transparent !important; color: var(--main-color) !important; border-color: var(--main-color) !important; }
+
+        /* =========================================================================
+           --- 5. PAGE TITLES & DATA ---
+           ========================================================================= */
+        .page-intro { margin-bottom: 30px; }
+        .page-intro h2 { font-family: var(--font-title); font-size: 2.2em; margin: 0; color: var(--main-color); }
+        .page-intro p { color: var(--text-muted); font-family: var(--font-ui); font-size: 0.9em; margin: 15px auto 0; max-width: 700px; }
+
+        table.dataTable { border-collapse: collapse !important; }
+        table.dataTable thead th { background: var(--bg-page) !important; color: var(--text-muted) !important; font-size: 0.75em; letter-spacing: 1px; text-transform: uppercase; padding: 15px 10px !important; border-bottom: 1px solid var(--border-soft) !important; }
+        table.dataTable tbody tr { background-color: transparent !important; }
+        table.dataTable tbody td { border-bottom: 1px solid rgba(255,255,255,0.03); padding: 12px 10px; }
+        
+        /* =========================================================================
+           --- 6. GLOBAL FOOTER ---
+           ========================================================================= */
+        .site-footer { 
+            margin-top: 50px; 
+            padding: 30px 20px; 
+            text-align: center; 
+            border-top: 1px solid var(--border-soft); 
+            color: var(--text-muted); 
+            font-family: var(--font-ui); 
+            font-size: 0.8em; 
+        }
+
+        .footer-credits { 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            margin-bottom: 8px; 
+        }
+
+        .footer-credits span:not(.footer-separator) { flex: 1; }
+        .footer-credits span:first-child { text-align: right; }
+        .footer-credits span:last-child { text-align: left; }
+        .footer-credits strong { color: var(--text-main); font-weight: 600; }
+        .footer-separator { margin: 0 15px; color: var(--border-soft); opacity: 0.5; }
+        .footer-date { font-style: italic; opacity: 0.7; display: block; }
+
+        /* =========================================================================
+           --- 7. MOBILE RESPONSIVE ---
+           ========================================================================= */
+        @media (max-width: 768px) and (orientation: portrait) {
+            .banner-container { 
+                flex-wrap: wrap; 
+                gap: 10px; 
+            }
+
+            .banner-center { 
+                order: 1; 
+                width: 100%; 
+                margin-bottom: 10px; 
+            }
+
+            .banner-icons { 
+                order: 2; 
+                gap: 5px; 
+                display: flex; 
+                flex-wrap: nowrap; 
+                justify-content: center; 
+                width: 100%; 
+            }
+
+            .banner-icons a.tooltip-link, 
+            .banner-icons a.tooltip-link.expanded { 
+                margin: 0; 
+            }
+
+            .banner-icons a.tooltip-link img { 
+                width: 60px !important; 
+                height: 60px !important; 
+                transition: all 0.3s ease; 
+            }
+
+            .banner-icons a.tooltip-link.expanded img { 
+                transform: translateY(-8px) scale(1.35) !important; 
+                z-index: 100; 
+                position: relative; 
+            }
+
+            .tooltip-text { 
+                display: none; 
+            }
+
+            .banner-icons a.tooltip-link.expanded .tooltip-text { 
+                display: block !important;
+                opacity: 1;
+                bottom: 125%;
+                left: 50% !important;
+                transform: translateX(-50%) !important;
+                width: 150px;
+                white-space: normal;
+                padding: 8px 10px;
+                font-size: 0.7rem;
+                line-height: 1.3;
+                text-align: center;
+            }
+
+            .tooltip-text strong { 
+                display: block; 
+                margin-bottom: 3px; 
+            }
+
+            .site-title { font-size: 2em; }
+
+            .footer-credits span { 
+                display: block; 
+                margin: 5px 0; 
+                text-align: center !important; 
+            }
+
+            .footer-separator { display: none !important; }
+        }
+        
+        
+    /* --- TABLE STRUCTURE --- */
+    #matchesTable { 
+        margin-top: 20px !important;
+        border-collapse: collapse !important;
+    }
+
+    /* Prevent wrapping on technical columns */
+    #matchesTable th, 
+    #matchesTable td:nth-child(1), 
+    #matchesTable td:nth-child(2), 
+    #matchesTable td:nth-child(3) {
+        white-space: nowrap !important;
+    }
+
+    .lineup-cell { 
+        white-space: normal !important; /* ONLY this column can wrap */
+        word-wrap: break-word; 
+        min-width: 150px;
+        max-width: 400px; 
+        line-height: 1.4; 
+        text-align: left !important; 
+        padding-left: 25px !important;
+        font-family: var(--font-ui);
+    }
+
+    /* Winner & Others styling */
+    .winner-highlight { color: #ffffff; font-weight: 900; }
+    .others-text { color: var(--text-muted); font-size: 0.9em; }
+
+    /* ELO Sum column */
+    .elo-sum-cell {
+        font-weight: 800;
+        color: var(--main-color) !important;
+    }
+
+    /* --- THE "RED BUTTON" (DTR CONTROL) --- */
+    /* This appears when columns are hidden. Let's make it look better. */
+    table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control {
+        padding-left: 35px !important; /* Give space for the button */
+        position: relative;
+    }
+
+    table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before { 
+        top: 50% !important;
+        left: 10px !important;
+        height: 16px !important;
+        width: 16px !important;
+        margin-top: -9px !important;
+        display: block;
+        position: absolute;
+        color: white !important;
+        border: 1px solid white !important;
+        border-radius: 4px !important;
+        box-shadow: none !important;
+        background-color: var(--main-color) !important; /* Faction color (Red) */
+        font-weight: bold;
+        line-height: 15px !important;
+        text-align: center;
+        content: '+' !important;
+    }
+
+    /* Style for the expanded details */
+    table.dataTable > tbody > tr.child ul.dtr-details { 
+        background: var(--bg-container); 
+        border: 1px solid var(--border-soft);
+        border-radius: 8px;
+        padding: 15px;
+        list-style: none;
+    }
+    
+    .match-id-link {
+        color: var(--text-muted); 
+        text-decoration: none; 
+        font-size: 0.85em; 
+        border: 1px solid var(--border-soft); 
+        padding: 2px 6px; 
+        border-radius: 4px;
+    }
+
+    /* --- MOBILE OPTIMIZATION --- */
+    @media (max-width: 768px) {
+        .lineup-cell {
+            padding-left: 15px !important;
+            font-size: 0.85em;
+        }
+    }
+
     </style>
+    
 </head>
 
 <body data-page="matches">
     <div class="container">
+        
         <header class="site-header">
             <div class="banner-container">
                 <div class="banner-icons left">
                     <a href="about.html#tier-bird" class="tooltip-link js-double-tap">
                         <img src="assets/icons/bird_new.webp" alt="Bird">
-                        <span class="tooltip-text"><strong style="color: #82C0E7;">Bird (1500+)</strong> — The Zenith Grandmasters</span>
+                        <span class="tooltip-text"><strong style="color: #82C0E7;">Bird (1500+)</strong> — The Grandmasters</span>
                     </a>
                     <a href="about.html#tier-fox" class="tooltip-link js-double-tap">
                         <img src="assets/icons/fox_new.webp" alt="Fox">
@@ -175,14 +469,22 @@
             
             
                 
+                    
+                
                 <a href="index.html" class="">Leaderboard</a>
             
+                
+                    
                 
                 <a href="matches.html" class="active">Top Tables</a>
             
                 
+                    
+                
                 <a href="trends.html" class="">Player's Journey</a>
             
+                
+                    
                 
                 <a href="about.html" class="">Codex</a>
             
@@ -16696,7 +16998,9 @@
                     <span class="footer-separator">|</span>
                     <span>Art by <strong>𝕩𝕝𝕦𝕖𝕧𝕚</strong></span>
                 </div>
-                <div class="footer-date">Updated on 2026-03-24 22:44</div>
+                <div class="footer-date">
+                    Updated on 2026-03-24 22:53
+                </div>
             </div>
         </footer>
     </div>
@@ -16707,17 +17011,27 @@
     
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+            // Détection propre des appareils tactiles
+            const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (window.matchMedia("(hover: none)").matches);
+
             if (isTouchDevice) {
                 document.querySelectorAll('.js-double-tap').forEach(link => {
                     link.addEventListener('click', function(e) {
+                        // Si l'icône n'est pas encore "agrandie"
                         if (!this.classList.contains('expanded')) {
-                            e.preventDefault();
+                            e.preventDefault(); // On bloque l'envoi vers l'ancre au premier clic
+                            
+                            // On referme toutes les autres icônes
                             document.querySelectorAll('.js-double-tap').forEach(l => l.classList.remove('expanded'));
+                            
+                            // On agrandit celle-ci (ce qui lance le CSS et affiche le Tooltip)
                             this.classList.add('expanded');
                         }
+                        // Si l'élément a déjà la classe 'expanded', on ne fait rien, le lien <a> s'exécutera normalement.
                     });
                 });
+
+                // Optionnel : Refermer les icônes si on tapote ailleurs sur l'écran
                 document.addEventListener('click', function(e) {
                     if (!e.target.closest('.js-double-tap')) {
                         document.querySelectorAll('.js-double-tap').forEach(l => l.classList.remove('expanded'));
@@ -16726,5 +17040,33 @@
             }
         });
     </script>
+
+    
+<script>
+$(document).ready(function() {
+    $('#matchesTable').DataTable({
+        "order": [[1, "desc"]], 
+        "responsive": {
+            details: {
+                type: 'column',
+                target: 0 // The button will be on the first column (Rank)
+            }
+        },
+        "pageLength": 25,
+        "columnDefs": [
+            { "className": "dtr-control", "targets": 0 }, // Apply the button logic to Rank
+            { "className": "lineup-cell", "targets": 3 },
+            { "className": "elo-sum-cell", "targets": 1 },
+            
+            /* Responsive Priorities */
+            { "responsivePriority": 1, "targets": [0, 3] }, // Rank & Lineup stay
+            { "responsivePriority": 2, "targets": 1 },      // Elo stays if possible
+            { "responsivePriority": 3, "targets": 2 },      // Date is hidden first
+            { "responsivePriority": 4, "targets": 4 }       // ID is hidden first
+        ]
+    });
+});
+</script>
+
 </body>
 </html>
