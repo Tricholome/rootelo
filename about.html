@@ -363,7 +363,7 @@
         text-align: left !important;
     }
 
-    /* --- GESTION DU TITRE (Nom, Tiret, Sous-titre) --- */
+    /* --- GESTION DU TITRE --- */
     .tier-header {
         font-size: 1.15em;
         margin-bottom: 8px;
@@ -372,17 +372,16 @@
 
     .tier-name {
         font-weight: 800;
-        /* La couleur est injectée par le style inline */
     }
 
     .tier-separator {
-        font-weight: 400; /* Le tiret n'est plus en gras */
-        color: var(--text-muted); /* Adoucit le tiret */
+        font-weight: 400;
+        color: var(--text-muted);
         margin: 0 6px;
     }
 
     .tier-subtitle {
-        font-weight: 500; /* Moins agressif que le nom */
+        font-weight: 500;
         color: var(--text-main);
     }
 
@@ -434,16 +433,12 @@
             width: 80px; 
             margin-bottom: 15px; 
         }
-        
-        /* Magie pour le titre sur mobile */
-        .tier-separator { 
-            display: none; /* Disparition du tiret */
-        }
+        .tier-separator { display: none; }
         .tier-subtitle { 
-            display: block; /* Force le passage à la ligne */
+            display: block; 
             margin-top: 4px; 
             font-size: 0.95em;
-            color: var(--text-muted); /* Un peu plus discret sur mobile pour mettre en valeur le rang */
+            color: var(--text-muted); 
         }
     }
 </style>
@@ -526,48 +521,54 @@
     <p>After your 10-game calibration phase, you officially join the ranks and unlock your tier icon:</p>
     
     <div class="tier-list">
-        <div class="tier-item tier-bird">
-            <div class="tier-item tier-bird" id="tier-bird"> <img src="assets/icons/bird.png" class="tier-icon">
+        <div class="tier-item tier-bird" id="tier-bird"> 
+            <img src="assets/icons/bird.png" class="tier-icon">
             <div class="tier-content">
                 <div class="tier-header">
-                    <span class="tier-name" style="color: #4A6FA5;">Bird (1500+)</span><span class="tier-separator">—</span><span class="tier-subtitle">The Zenith Grandmasters</span>
+                    <span class="tier-name" style="color: #4A6FA5;">Bird (1500+)</span>
+                    <span class="tier-separator">—</span>
+                    <span class="tier-subtitle">The Grandmasters</span>
                 </div>
                 <p class="tier-desc">The absolute peak. There’s rarely more than one at a time, and staying here is a constant battle against gravity. It’s a fleeting, prestigious throne reserved for those who can maintain perfection under the highest pressure.</p>
             </div>
         </div>
-    
-        <div class="tier-item tier-fox">
-            <div class="tier-item tier-fox" id="tier-fox"> <img src="assets/icons/fox_new.webp" class="tier-icon">
+
+        <div class="tier-item tier-fox" id="tier-fox"> 
+            <img src="assets/icons/fox_new.webp" class="tier-icon">
             <div class="tier-content">
                 <div class="tier-header">
-                    <span class="tier-name" style="color: #C0392B;">Fox (1400+)</span><span class="tier-separator">—</span><span class="tier-subtitle">The Cunning Tacticians</span>
+                    <span class="tier-name" style="color: #C0392B;">Fox (1400+)</span>
+                    <span class="tier-separator">—</span>
+                    <span class="tier-subtitle">The Cunning Tacticians</span>
                 </div>
                 <p class="tier-desc">The ones everyone is chasing. They’ve got a trick for every turn and a plan for every disaster. They play with a mischievous grin, consistently outmaneuvering the field to prove they belong among the elite of the Woodland.</p>
             </div>
         </div>
-    
-        <div class="tier-item tier-rabbit">
-            <div class="tier-item tier-rabbit" id="tier-rabbit"> <img src="assets/icons/rabbit_new.webp" class="tier-icon">
+
+        <div class="tier-item tier-rabbit" id="tier-rabbit"> 
+            <img src="assets/icons/rabbit_new.webp" class="tier-icon">
             <div class="tier-content">
                 <div class="tier-header">
-                    <span class="tier-name" style="color: #D4AF37;">Rabbit (1300+)</span><span class="tier-separator">—</span><span class="tier-subtitle">The Agile Contenders</span>
+                    <span class="tier-name" style="color: #D4AF37;">Rabbit (1300+)</span>
+                    <span class="tier-separator">—</span>
+                    <span class="tier-subtitle">The Agile Contenders</span>
                 </div>
                 <p class="tier-desc">The true engine of the higher rankings. Their climb is built on speed and adaptability, moving well past the basics to dictate the pace of the game. They are the ones driving the competition forward, always looking for the next opening to move up.</p>
             </div>
         </div>
-    
-        <div class="tier-item tier-mouse">
-            <div class="tier-item tier-mouse" id="tier-mouse"> <img src="assets/icons/mouse_new.webp" class="tier-icon">
+
+        <div class="tier-item tier-mouse" id="tier-mouse"> 
+            <img src="assets/icons/mouse_new.webp" class="tier-icon">
             <div class="tier-content">
                 <div class="tier-header">
-                    <span class="tier-name" style="color: #E7A16F;">Mouse (1200+)</span><span class="tier-separator">—</span><span class="tier-subtitle">The Steady Foragers</span>
+                    <span class="tier-name" style="color: #E7A16F;">Mouse (1200+)</span>
+                    <span class="tier-separator">—</span>
+                    <span class="tier-subtitle">The Steady Foragers</span>
                 </div>
                 <p class="tier-desc">The foundation of the leaderboard. Securing a spot here is a genuine milestone, proving a level of skill that has already outpaced the standard player. These are the consistent and resilient competitors who provide the first true test for anyone looking to climb the ranks.</p>
             </div>
         </div>
-    </div>
-
-    <h2>Dynamic K-Factor</h2>
+    </div> <h2>Dynamic K-Factor</h2>
     <p>Your score's volatility changes as you play more games to ensure stability:</p>
     
     <table class="k-table">
