@@ -187,14 +187,20 @@ for m in all_matches:
             })
 
 df = pd.DataFrame(raw_data)
-if df.empty:
-    print("Empty season detected. Initializing with inherited ratings only.")
-    df = pd.DataFrame(columns=['GameID', 'Player', 'Score', 'Date_Closed'])
-else:
+if not df.empty:
     df['Date_Closed'] = pd.to_datetime(df['Date_Closed'], format='ISO8601', utc=True)
-    df = df[df['Date_Closed'].dt.date < today].copy()
-    df = df.sort_values(by='Date_Closed').reset_index(drop=True)
+    if not game_id_mapping.empty:
+        game_id_mapping.index = game_id_mapping.index.astype(int)
+        mask = df['GameID'].isin(game_id_mapping.index)
+        if mask.any():
+            original_times = df.loc[mask, 'Date_Closed'].dt.strftime('%H:%M:%S.%f')
+            new_dates = df.loc[mask, 'GameID'].map(game_id_mapping).dt.strftime('%Y-%m-%d')
+            df.loc[mask, 'Date_Closed'] = pd.to_datetime(new_dates + ' ' + original_times, utc=True)
+            print(f"🔧 Applied date corrections to {mask.sum()} entries.")
 
+    df = df[df['Date_Closed'].dt.date <= CUTOFF_DATE].copy()
+    df = df.sort_values(by='Date_Closed').reset_index(drop=True)
+    
 # =========================================================================
 # --- 6. ELO CALCULATION & STANDINGS ---
 # =========================================================================
