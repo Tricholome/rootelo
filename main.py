@@ -318,7 +318,6 @@ render_page(
     is_archive=False,
     current_page_base="index",
     page_heading="Leaderboard",
-    subtitle="LH02 • Apr–Jun 2026",
     description=f"Minimum 1 win required for display. Data tracked until {CUTOFF_DATE}.",
     players=prepare_leaderboard_data(display_current_df)
 )
@@ -330,7 +329,6 @@ render_page(
     page_id="matches",
     is_archive=False,
     page_heading="Top Tables",
-    subtitle="LH02 • Apr–Jun 2026",
     description="Games ranked by total ELO. Click a Game ID to view full match details.",
     matches=prepare_matches_data(current_matches_df)
 )
@@ -342,7 +340,6 @@ render_page(
     page_id="trends",
     is_archive=False,
     page_heading="Player's Journey",
-    subtitle="LH02 • Apr–Jun 2026",
     description="Search for a player to see their ELO evolution over the season.",
     history_json=json.dumps(current_history),
     player_names=sorted(list(current_history.keys()))
@@ -357,7 +354,6 @@ render_page(
     is_archive=True,
     current_page_base="index",
     page_heading="Leaderboard",
-    subtitle="LH01 • Jan–Mar 2026",
     description="Minimum 1 win required for display.",
     players=prepare_leaderboard_data(display_archive_df)
 )
@@ -369,7 +365,6 @@ render_page(
     page_id="matches",
     is_archive=True,
     page_heading="Top Tables",
-    subtitle="LH01 • Jan–Mar 2026",
     description="Games ranked by total ELO. Click a Game ID to view full match details.",
     matches=prepare_matches_data(archive_matches_df)
 )
@@ -381,7 +376,6 @@ render_page(
     page_id="trends",
     is_archive=True,
     page_heading="Player's Journey",
-    subtitle="LH01 • Jan–Mar 2026",
     description="Search for a player to see their ELO evolution over the season.",
     history_json=json.dumps(archive_history),
     player_names=sorted(list(archive_history.keys()))
@@ -395,7 +389,6 @@ render_page(
     page_id="about",
     is_archive=False,
     page_heading="Codex",
-    subtitle="Rules & Ranking System",
     description="Understanding the mechanics of Rootelo.",
     generation_date=datetime.now(timezone.utc).strftime('%Y-%m-%d')
 )
