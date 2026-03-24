@@ -188,19 +188,17 @@ for m in all_matches:
 
 df = pd.DataFrame(raw_data)
 if not df.empty:
-    df['Date_Closed'] = df['Date_Closed'].astype(str)
-
-    if not game_id_mapping.empty:
-        for gid, new_date in game_id_mapping.items():
-            mask = df['GameID'] == gid
-            if mask.any():
-                df.loc[mask, 'Date_Closed'] = df.loc[mask, 'Date_Closed'].apply(
-                    lambda x: str(new_date) + x[10:]
-                )
-        print(f"🔧 {len(game_id_mapping)} potential matches updated in memory.")
-
     df['Date_Closed'] = pd.to_datetime(df['Date_Closed'], format='ISO8601', utc=True)
-    df = df[df['Date_Closed'].dt.date < today].copy()
+    if not game_id_mapping.empty:
+        game_id_mapping.index = game_id_mapping.index.astype(int)
+        mask = df['GameID'].isin(game_id_mapping.index)
+        if mask.any():
+            original_times = df.loc[mask, 'Date_Closed'].dt.strftime('%H:%M:%S.%f')
+            new_dates = df.loc[mask, 'GameID'].map(game_id_mapping).dt.strftime('%Y-%m-%d')
+            df.loc[mask, 'Date_Closed'] = pd.to_datetime(new_dates + ' ' + original_times, utc=True)
+            print(f"🔧 Applied date corrections to {mask.sum()} entries.")
+
+    df = df[df['Date_Closed'].dt.date <= CUTOFF_DATE].copy()
     df = df.sort_values(by='Date_Closed').reset_index(drop=True)
     
 # =========================================================================
