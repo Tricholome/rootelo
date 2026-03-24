@@ -199,7 +199,7 @@ if not df.empty:
                 )
         print(f"🔧 {len(game_id_mapping)} potential matches updated in memory.")
 
-    df['Date_Closed'] = pd.to_datetime(df['Date_Closed'], utc=True)
+    df['Date_Closed'] = pd.to_datetime(df['Date_Closed'], format='ISO8601', utc=True)
     df = df[df['Date_Closed'].dt.date < today].copy()
     df = df.sort_values(by='Date_Closed').reset_index(drop=True)
     
