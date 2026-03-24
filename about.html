@@ -56,6 +56,10 @@
         /* =========================================================================
            --- 2. GLOBAL STYLES ---
            ========================================================================= */
+        html {
+            scroll-behavior: smooth; /* Ajout du scroll fluide ici ! */
+        }
+        
         body { 
             font-family: var(--font-ui); 
             background: var(--bg-page); 
@@ -78,7 +82,7 @@
         }
         
         /* =========================================================================
-           --- 3. HEADER & BANNER (AVEC TOOLTIPS) ---
+           --- 3. HEADER & BANNER (AVEC TOOLTIPS & EXPANDED) ---
            ========================================================================= */
         .banner-container { display: flex; align-items: center; justify-content: center; gap: 5px; margin-bottom: 20px; flex-wrap: nowrap; }
         .banner-icons { display: flex; gap: -10px; align-items: center; }
@@ -90,13 +94,15 @@
             margin: 0 -5px;
             z-index: 1;
             text-decoration: none;
+            -webkit-tap-highlight-color: transparent; /* Retire le flash natif sur mobile */
             transition: margin 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         
-        .banner-icons a.tooltip-link:hover {
-            margin: 0 15px;
-            z-index: 100;
+        /* Effets appliqués au survol (PC) ET au tap (Mobile via classe .expanded) */
+        @media (hover: hover) {
+            .banner-icons a.tooltip-link:hover { margin: 0 15px; z-index: 100; }
         }
+        .banner-icons a.tooltip-link.expanded { margin: 0 15px; z-index: 100; }
 
         /* Les images elles-mêmes */
         .banner-icons a.tooltip-link img { 
@@ -106,14 +112,24 @@
             display: block;
         }
 
-        .banner-icons a.tooltip-link:hover img { 
+        @media (hover: hover) {
+            .banner-icons a.tooltip-link:hover img { 
+                width: 140px; height: 140px; 
+                filter: drop-shadow(0 15px 25px rgba(0,0,0,0.9));
+                transform: translateY(-10px) scale(1.15);
+            }
+            .banner-icons.left a.tooltip-link:hover img { transform: translateY(-10px) scale(1.15) rotate(-8deg); }
+            .banner-icons.right a.tooltip-link:hover img { transform: translateY(-10px) scale(1.15) rotate(8deg); }
+        }
+
+        /* Classe .expanded pour le JavaScript (Mobile) */
+        .banner-icons a.tooltip-link.expanded img { 
             width: 140px; height: 140px; 
             filter: drop-shadow(0 15px 25px rgba(0,0,0,0.9));
             transform: translateY(-10px) scale(1.15);
         }
-        
-        .banner-icons.left a.tooltip-link:hover img { transform: translateY(-10px) scale(1.15) rotate(-8deg); }
-        .banner-icons.right a.tooltip-link:hover img { transform: translateY(-10px) scale(1.15) rotate(8deg); }
+        .banner-icons.left a.tooltip-link.expanded img { transform: translateY(-10px) scale(1.15) rotate(-8deg); }
+        .banner-icons.right a.tooltip-link.expanded img { transform: translateY(-10px) scale(1.15) rotate(8deg); }
 
         /* Le Tooltip (La petite bulle au-dessus) */
         .tooltip-text {
@@ -136,16 +152,19 @@
             z-index: 101;
         }
 
-        /* Apparition du tooltip au survol */
-        .banner-icons a.tooltip-link:hover .tooltip-text {
+        /* Apparition du tooltip */
+        @media (hover: hover) {
+            .banner-icons a.tooltip-link:hover .tooltip-text {
+                opacity: 1;
+                transform: translateX(-50%) translateY(-15px);
+            }
+        }
+        .banner-icons a.tooltip-link.expanded .tooltip-text {
             opacity: 1;
             transform: translateX(-50%) translateY(-15px);
         }
 
-        /* Style spécifique pour la couleur du rang dans le tooltip */
-        .tooltip-text strong {
-            font-weight: 800;
-        }
+        .tooltip-text strong { font-weight: 800; }
 
         /* Titres centraux */
         .site-title { 
@@ -193,10 +212,7 @@
             border-bottom: 2px solid transparent; 
         }
         
-        nav a:hover { 
-            color: var(--text-main); 
-            background: var(--bg-hover); 
-        }
+        nav a:hover { color: var(--text-main); background: var(--bg-hover); }
         
         nav a.active { 
             color: var(--main-color); 
@@ -205,70 +221,28 @@
             background: linear-gradient(to top, rgba(255,255,255,0.03) 0%, transparent 100%);
         }
         
-        .season-selector { 
-            display: flex; align-items: center; justify-content: center; gap: 8px; 
-            margin: 20px auto 10px; 
-            background: none; 
-            width: fit-content; 
-        }
+        .season-selector { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 20px auto 10px; background: none; width: fit-content; }
         .season-label { font-size: 0.7em; text-transform: uppercase; color: var(--text-muted); letter-spacing: 1.2px; font-weight: bold; margin-right: 5px;}
-        .season-btn { 
-            text-decoration: none; 
-            font-size: 0.75em; 
-            font-weight: 700; 
-            color: var(--text-muted); 
-            padding: 6px 14px; 
-            border-radius: 4px; 
-            background: var(--bg-surface);
-            border: 1px solid var(--border-soft); 
-            transition: 0.2s; 
-        }
+        .season-btn { text-decoration: none; font-size: 0.75em; font-weight: 700; color: var(--text-muted); padding: 6px 14px; border-radius: 4px; background: var(--bg-surface); border: 1px solid var(--border-soft); transition: 0.2s; }
         .season-btn:hover { color: var(--text-main); background: var(--bg-hover); }
-        .season-btn.active { 
-            background: transparent !important; 
-            color: var(--main-color) !important; 
-            border-color: var(--main-color) !important; 
-        }
+        .season-btn.active { background: transparent !important; color: var(--main-color) !important; border-color: var(--main-color) !important; }
 
         /* =========================================================================
            --- 5. PAGE TITLES & DATA ---
            ========================================================================= */
         .page-intro { margin-bottom: 30px; }
-        .page-intro h2 { 
-            font-family: var(--font-title);
-            font-size: 2.2em;
-            margin: 0;
-            color: var(--main-color);
-        }
-        .page-intro p {
-            color: var(--text-muted);
-            font-family: var(--font-ui);
-            font-size: 0.9em;
-            margin: 15px auto 0;
-            max-width: 700px;
-        }
+        .page-intro h2 { font-family: var(--font-title); font-size: 2.2em; margin: 0; color: var(--main-color); }
+        .page-intro p { color: var(--text-muted); font-family: var(--font-ui); font-size: 0.9em; margin: 15px auto 0; max-width: 700px; }
 
         table.dataTable { border-collapse: collapse !important; }
-        table.dataTable thead th { 
-            background: var(--bg-page) !important; 
-            color: var(--text-muted) !important; 
-            font-size: 0.75em; 
-            letter-spacing: 1px;
-            text-transform: uppercase; 
-            padding: 15px 10px !important; 
-            border-bottom: 1px solid var(--border-soft) !important;
-        }
+        table.dataTable thead th { background: var(--bg-page) !important; color: var(--text-muted) !important; font-size: 0.75em; letter-spacing: 1px; text-transform: uppercase; padding: 15px 10px !important; border-bottom: 1px solid var(--border-soft) !important; }
         table.dataTable tbody tr { background-color: transparent !important; }
         table.dataTable tbody td { border-bottom: 1px solid rgba(255,255,255,0.03); padding: 12px 10px; }
         
         /* =========================================================================
            --- 6. GLOBAL FOOTER ---
            ========================================================================= */
-        .site-footer { 
-            margin-top: 50px; padding: 30px 20px; text-align: center;
-            border-top: 1px solid var(--border-soft); color: var(--text-muted); 
-             font-family: var(--font-ui); font-size: 0.8em; 
-        }
+        .site-footer { margin-top: 50px; padding: 30px 20px; text-align: center; border-top: 1px solid var(--border-soft); color: var(--text-muted); font-family: var(--font-ui); font-size: 0.8em; }
         .footer-credits { display: flex; align-items: center; justify-content: center; margin-bottom: 8px; }
         .footer-credits span:not(.footer-separator) { flex: 1; }
         .footer-credits span:first-child { text-align: right; }
@@ -286,18 +260,23 @@
             .banner-icons { order: 2; gap: 5px; display: flex; flex-wrap: nowrap; }
             
             /* Ajustements des liens/images pour mobile */
-            .banner-icons a.tooltip-link { margin: 0; }
-            .banner-icons a.tooltip-link:hover { margin: 0; }
+            .banner-icons a.tooltip-link, .banner-icons a.tooltip-link.expanded { margin: 0; }
             .banner-icons a.tooltip-link img { width: 60px !important; height: 60px !important; transition: all 0.3s ease; }
             
-            .banner-icons.left a.tooltip-link:hover img { transform: translateY(-8px) scale(1.4) rotate(-8deg) !important; z-index: 100; position: relative; }
-            .banner-icons.right a.tooltip-link:hover img { transform: translateY(-8px) scale(1.4) rotate(8deg) !important; z-index: 100; position: relative; }
+            /* Comportement quand "tapé" (Expanded) sur mobile */
+            .banner-icons.left a.tooltip-link.expanded img { transform: translateY(-8px) scale(1.4) rotate(-8deg) !important; z-index: 100; position: relative; }
+            .banner-icons.right a.tooltip-link.expanded img { transform: translateY(-8px) scale(1.4) rotate(8deg) !important; z-index: 100; position: relative; }
             
-            /* On cache le tooltip sur mobile car le survol n'existe pas vraiment */
-            .tooltip-text { display: none !important; }
+            /* On garde le Tooltip sur mobile quand activé, mais on l'affiche différemment */
+            .tooltip-text { display: none; } /* Caché par défaut */
+            .banner-icons a.tooltip-link.expanded .tooltip-text { 
+                display: block !important;
+                bottom: 110%; /* Place le tooltip juste au dessus du doigt */
+                transform: translateX(-50%);
+            }
 
             .site-title { font-size: 2em; }
-            .footer-credits span { display: block; margin: 5px 0; }
+            .footer-credits span { display: block; margin: 5px 0; text-align: center !important; }
             .footer-separator { display: none !important; }
         }
         
@@ -453,11 +432,11 @@
         <header class="site-header">
             <div class="banner-container">
                 <div class="banner-icons left">
-                    <a href="about.html#tier-bird" class="tooltip-link">
+                    <a href="about.html#tier-bird" class="tooltip-link js-double-tap">
                         <img src="assets/icons/bird.png" alt="Bird">
                         <span class="tooltip-text"><strong style="color: #4A6FA5;">Bird (1500+)</strong> — The Zenith Grandmasters</span>
                     </a>
-                    <a href="about.html#tier-fox" class="tooltip-link">
+                    <a href="about.html#tier-fox" class="tooltip-link js-double-tap">
                         <img src="assets/icons/fox_new.webp" alt="Fox">
                         <span class="tooltip-text"><strong style="color: #C0392B;">Fox (1400+)</strong> — The Cunning Tacticians</span>
                     </a>
@@ -467,11 +446,11 @@
                     <p class="site-subtitle">A Metric of Woodland&nbsp;Skill&nbsp;and&nbsp;Will</p>
                 </div>
                 <div class="banner-icons right">
-                    <a href="about.html#tier-rabbit" class="tooltip-link">
+                    <a href="about.html#tier-rabbit" class="tooltip-link js-double-tap">
                         <img src="assets/icons/rabbit_new.webp" alt="Rabbit">
                         <span class="tooltip-text"><strong style="color: #D4AF37;">Rabbit (1300+)</strong> — The Agile Contenders</span>
                     </a>
-                    <a href="about.html#tier-mouse" class="tooltip-link">
+                    <a href="about.html#tier-mouse" class="tooltip-link js-double-tap">
                         <img src="assets/icons/mouse_new.webp" alt="Mouse">
                         <span class="tooltip-text"><strong style="color: #E7A16F;">Mouse (1200+)</strong> — The Steady Foragers</span>
                     </a>
@@ -614,6 +593,39 @@
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Détection propre des appareils tactiles
+            const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (window.matchMedia("(hover: none)").matches);
+
+            if (isTouchDevice) {
+                document.querySelectorAll('.js-double-tap').forEach(link => {
+                    link.addEventListener('click', function(e) {
+                        // Si l'icône n'est pas encore "agrandie"
+                        if (!this.classList.contains('expanded')) {
+                            e.preventDefault(); // On bloque l'envoi vers l'ancre au premier clic
+                            
+                            // On referme toutes les autres icônes
+                            document.querySelectorAll('.js-double-tap').forEach(l => l.classList.remove('expanded'));
+                            
+                            // On agrandit celle-ci (ce qui lance le CSS et affiche le Tooltip)
+                            this.classList.add('expanded');
+                        }
+                        // Si l'élément a déjà la classe 'expanded', on ne fait rien, le lien <a> s'exécutera normalement.
+                    });
+                });
+
+                // Optionnel : Refermer les icônes si on tapote ailleurs sur l'écran
+                document.addEventListener('click', function(e) {
+                    if (!e.target.closest('.js-double-tap')) {
+                        document.querySelectorAll('.js-double-tap').forEach(l => l.classList.remove('expanded'));
+                    }
+                });
+            }
+        });
+    </script>
+
     
 </body>
 </html>
