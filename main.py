@@ -1,0 +1,315 @@
+import os
+import requests
+import pandas as pd
+from datetime import datetime, timedelta, date, timezone
+import json
+from jinja2 import Environment, FileSystemLoader
+
+# =========================================================================
+# --- 0. CONFIGURATION JINJA2 & THEME ---
+# =========================================================================
+env = Environment(loader=FileSystemLoader('templates'))
+
+NAV_ITEMS = [
+    {'id': 'index', 'url': 'index.html', 'label': 'Leaderboard'},
+    {'id': 'matches', 'url': 'matches.html', 'label': 'Top Tables'},
+    {'id': 'trends', 'url': 'trends.html', 'label': "Player's Journey"},
+    {'id': 'about', 'url': 'about.html', 'label': 'Codex'}
+]
+
+COLORS = {
+    "bird": "#67c0c7",
+    "fox": "#e6372d",
+    "rabbit": "#f7eb5b",
+    "mouse": "#f29057"
+}
+
+# =========================================================================
+# --- 1. CONFIGURATION API & HELPERS ---
+# =========================================================================
+API_TOKEN = os.getenv('API_TOKEN')
+HEADERS = {'Authorization': f'Token {API_TOKEN}'} if API_TOKEN else {}
+TOURNAMENT_ID = 25
+
+today = date.today()
+CUTOFF_DATE = today - timedelta(days=1)
+print(f"Update started. Filtering matches closed before: {today}")
+
+def get_tier_icon(rating, games):
+    if games < 10: return None, "unranked"
+    r = round(rating)
+    if r >= 1500: return "assets/icons/bird.png", "suit-bird"
+    if r >= 1400: return "assets/icons/fox.png", "suit-fox"
+    if r >= 1300: return "assets/icons/rabbit_new.webp", "suit-rabbit"
+    if r >= 1200: return "assets/icons/mouse_new.webp", "suit-mouse"
+    return None, "unranked"
+
+def prepare_leaderboard_data(df):
+    """Transforme le DataFrame en liste de dictionnaires pour Jinja2"""
+    players_list = []
+    if df.empty: return []
+    
+    for _, row in df.iterrows():
+        icon_path, _ = get_tier_icon(row['ELO'], row['Games'])
+        players_list.append({
+            'Rank': row['Rank'],
+            'icon_path': icon_path,
+            'display_name': str(row['Player']).split('+')[0].split('#')[0],
+            'ELO': row['ELO'],
+            'Games': row['Games'],
+            'Wins': row['Wins'],
+            'Win_Rate': row['Win Rate'],
+            'Peak': row['Peak'],
+            'Last': row['Last']
+        })
+    return players_list
+
+def render_page(template_name, output_name, **kwargs):
+    """Compile un template HTML avec les variables fournies"""
+    template = env.get_template(template_name)
+    full_vars = {
+        "nav_items": NAV_ITEMS,
+        "generation_date": datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M'),
+        **kwargs
+    }
+    html_output = template.render(**full_vars)
+    with open(output_name, "w", encoding="utf-8") as f:
+        f.write(html_output)
+    print(f"  > {output_name} généré.")
+
+# =========================================================================
+# --- 2. LOAD CORRECTIONS ---
+# =========================================================================
+excel_file_path = 'Root_Elo_LH02_Corrections.xlsx'
+game_id_mapping = pd.Series(dtype='datetime64[ns]')
+
+try:
+    if os.path.exists(excel_file_path):
+        df_updates = pd.read_excel(excel_file_path, engine='openpyxl')
+        if not df_updates.empty and 'GameID' in df_updates.columns:
+            game_id_mapping = df_updates.set_index('GameID')['New_Date']
+            print(f"✅ Loaded corrections from {excel_file_path}")
+except Exception as e:
+    print(f"ℹ️ Note: No corrections loaded (File empty or missing): {e}")
+
+# =========================================================================
+# --- 3. LOAD ARCHIVE DATA (LH01) ---
+# =========================================================================
+ARCHIVE_LEADERBOARD_FILE = "data/lh01_final_ratings.csv"
+ARCHIVE_MATCHES_FILE = "data/lh01_matches_fixed.csv"
+ARCHIVE_TRENDS_FILE = "data/lh01_history_full.json"
+
+archive_final_df = pd.DataFrame()
+archive_matches_df = pd.DataFrame()
+archive_history = {}
+
+try:
+    if os.path.exists(ARCHIVE_LEADERBOARD_FILE):
+        archive_final_df = pd.read_csv(ARCHIVE_LEADERBOARD_FILE)
+        if 'Tier' not in archive_final_df.columns:
+            archive_final_df['Tier'] = None 
+    
+    if os.path.exists(ARCHIVE_MATCHES_FILE):
+        archive_matches_df = pd.read_csv(ARCHIVE_MATCHES_FILE)
+    
+    if os.path.exists(ARCHIVE_TRENDS_FILE):
+        with open(ARCHIVE_TRENDS_FILE, "r", encoding="utf-8") as f:
+            archive_history = json.load(f)
+            archive_history = {k.split('+')[0].split('#')[0]: v for k, v in archive_history.items()}
+    print("Archive LH01 loaded successfully.")
+except Exception as e:
+    print(f"Error loading archive files: {e}")
+
+# =========================================================================
+# --- 4. FETCH & PROCESS CURRENT SEASON ---
+# =========================================================================
+all_matches = []
+T_ID = int(TOURNAMENT_ID)
+next_url = f"https://rootleague.pliskin.dev/api/match/?format=json&limit=500&tournament={T_ID}"
+
+print(f"🌐 Requesting data for Tournament {T_ID}...")
+while next_url:
+    try:
+        res = requests.get(next_url, headers=HEADERS)
+        if res.status_code == 400:
+            print(f"ℹ️ Tournament {T_ID} not yet active on API. Proceeding with empty data.")
+            break
+        res.raise_for_status()
+        data = res.json()
+        all_matches.extend(data.get('results', []))
+        next_url = data.get('next')
+    except Exception as e:
+        print(f"📡 API Note: {e}")
+        break
+
+raw_data = [] 
+for m in all_matches:
+    participants = m.get('participants', [])
+    if len(participants) == 4:
+        for p in participants:
+            raw_data.append({
+                'GameID': m['id'],
+                'Player': p.get('player'),
+                'Score': float(p.get('tournament_score', 0.0)), 
+                'Date_Closed': m.get('date_closed')
+            })
+
+df = pd.DataFrame(raw_data)
+if df.empty:
+    print("Empty season detected. Initializing with inherited ratings only.")
+    df = pd.DataFrame(columns=['GameID', 'Player', 'Score', 'Date_Closed'])
+else:
+    df['Date_Closed'] = pd.to_datetime(df['Date_Closed'], format='ISO8601', utc=True)
+    df = df[df['Date_Closed'].dt.date < today].copy()
+    df = df.sort_values(by='Date_Closed').reset_index(drop=True)
+
+# =========================================================================
+# --- 5. ELO CALCULATION & STANDINGS ---
+# =========================================================================
+current_final_df = pd.DataFrame()
+current_matches_df = pd.DataFrame()
+current_history = {}
+match_history_data = []
+
+elo_ratings = {}
+if not archive_final_df.empty:
+    for _, row in archive_final_df.iterrows():
+        p_name = str(row['Player'])
+        elo_ratings[p_name] = float(row.get('ELO', 1200))
+    print(f"📊 Initialized {len(elo_ratings)} players from LH01 archive.")
+
+if not df.empty:
+    for player in df['Player'].unique():
+        if player not in elo_ratings:
+            elo_ratings[player] = 1200.0
+
+peak_elo = {p: r for p, r in elo_ratings.items()}
+last_diff = {p: 0 for p in elo_ratings}
+player_stats = {p: {'games': 0, 'wins': 0.0} for p in elo_ratings}
+player_history = {p: [["LH01 Final", round(r)]] for p, r in elo_ratings.items()}
+
+if not df.empty:
+    for game_id, group in df.groupby('GameID', sort=False):
+        match_participants = group.to_dict('records')
+        current_match_sum = sum([elo_ratings[p['Player']] for p in match_participants])
+        current_date = pd.to_datetime(match_participants[0]['Date_Closed']).strftime('%Y-%m-%d')
+        
+        winners = [p['Player'] for p in match_participants if p['Score'] >= 0.5]
+        others = [p['Player'] for p in match_participants if p['Score'] == 0.0]
+        
+        match_history_data.append({
+            'MatchID': game_id, 
+            'Date': current_date, 
+            'Winner': ", ".join(winners),
+            'Other Players': ", ".join(others), 
+            'ELO_Sum': round(current_match_sum)
+        })
+
+        total_q = sum([10**(elo_ratings[p['Player']]/400) for p in match_participants])
+        for p in match_participants:
+            name = p['Player']
+            expected = (10**(elo_ratings[name]/400)) / total_q
+            player_stats[name]['games'] += 1
+            player_stats[name]['wins'] += p['Score']
+            
+            k = 80 if player_stats[name]['games'] <= 10 else (40 if player_stats[name]['games'] <= 50 else 20)
+            change = k * (p['Score'] - expected)
+            
+            elo_ratings[name] += change
+            last_diff[name] = change
+            if elo_ratings[name] > peak_elo[name]: 
+                peak_elo[name] = elo_ratings[name]
+            player_history[name].append([current_date, round(elo_ratings[name])])
+
+current_matches_df = pd.DataFrame(match_history_data)
+if not current_matches_df.empty:
+    current_matches_df = current_matches_df.sort_values(by='ELO_Sum', ascending=False).reset_index(drop=True)
+    current_matches_df.insert(0, 'Rank', range(1, len(current_matches_df) + 1))
+
+# =========================================================================
+# --- 6. FINAL LEADERBOARD GENERATION ---
+# =========================================================================
+leaderboard_list = []
+for p_name, rating in elo_ratings.items():
+    s = player_stats.get(p_name, {'wins': 0, 'games': 0})
+    diff = round(last_diff.get(p_name, 0))
+    is_qual = (s['games'] >= 10 and rating >= 1200)
+    
+    leaderboard_list.append({
+        'Rank': 0, 'Player': p_name, 'ELO': round(rating), 'Games': s['games'],
+        'Wins': s['wins'], 'Win Rate': f"{(s['wins']/s['games']):.1%}" if s['games'] > 0 else "0.0%",
+        'Peak': round(peak_elo.get(p_name, rating)), 
+        'Last': f"+{diff}" if diff > 0 else str(diff),
+        'Qualified': is_qual
+    })
+
+current_final_df = pd.DataFrame(leaderboard_list).sort_values(by='ELO', ascending=False)
+
+rank_counter = 1
+ranks = []
+for _, row in current_final_df.iterrows():
+    if row['Qualified']:
+        ranks.append(rank_counter)
+        rank_counter += 1
+    else: 
+        ranks.append("-")
+current_final_df['Rank'] = ranks
+
+current_history = {k.split('+')[0].split('#')[0]: v for k, v in player_history.items()}
+
+# =========================================================================
+# --- 7. FILTERS & HTML GENERATION (JINJA2) ---
+# =========================================================================
+print("\n=== GÉNÉRATION DU SITE ===")
+
+# Application du filtre "Minimum 1 victoire" (Identique à ton ancien code)
+display_current_df = pd.DataFrame()
+if not current_final_df.empty:
+    display_current_df = current_final_df[current_final_df['Wins'].astype(float) >= 1].copy()
+
+display_archive_df = pd.DataFrame()
+if not archive_final_df.empty:
+    display_archive_df = archive_final_df[archive_final_df['Wins'].astype(float) >= 1].copy()
+
+# A. Génération des pages LH02 (Saison en cours)
+render_page(
+    "leaderboard.html", 
+    "index.html",
+    title="Leaderboard • Rootelo",
+    page_id="index",
+    is_archive=False,
+    current_page_base="index",
+    main_color=COLORS["rabbit"],
+    page_heading="Leaderboard",
+    subtitle="LH02 • Apr–Jun 2026",
+    description=f"Minimum 1 win required for display. Data tracked until {CUTOFF_DATE}.",
+    players=prepare_leaderboard_data(display_current_df)
+)
+
+# B. Génération des pages Archives (LH01)
+render_page(
+    "leaderboard.html", 
+    "index_lh01.html",
+    title="Leaderboard • Rootelo",
+    page_id="index",
+    is_archive=True,
+    current_page_base="index",
+    main_color=COLORS["fox"],
+    page_heading="Leaderboard",
+    subtitle="LH01 • Jan–Mar 2026",
+    description="Minimum 1 win required for display.",
+    players=prepare_leaderboard_data(display_archive_df)
+)
+
+# C. Génération de la page Codex
+# Note : tu créeras un fichier 'about.html' dans ton dossier templates
+# render_page(
+#    "about.html",
+#    "about.html",
+#    title="Codex • Rootelo",
+#    page_id="about",
+#    main_color=COLORS["bird"],
+#    page_heading="The Woodland Codex"
+# )
+
+print("Génération terminée avec succès !")
