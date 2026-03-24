@@ -1,3 +1,18 @@
+{% set colors = {
+    'bird': '#67c0c7',
+    'fox': '#e6372d',
+    'rabbit': '#f7eb5b',
+    'mouse': '#f29057',
+    'default': '#d4a76a'
+} %}
+
+{% set icons = {
+    'bird': 'assets/icons/bird.png',
+    'fox': 'assets/icons/fox.png',
+    'rabbit': 'assets/icons/rabbit_new.webp',
+    'mouse': 'assets/icons/mouse_new.webp'
+} %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,12 +22,20 @@
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
     <style>
-        /* --- GESTION DYNAMIQUE DES COULEURS --- */
-        body[data-page="index"]   { --main-color: #67c0c7; } /* Bird (Bleu) */
-        body[data-page="matches"] { --main-color: #e6372d; } /* Fox (Rouge) */
-        body[data-page="trends"]  { --main-color: #f7eb5b; } /* Rabbit (Jaune) */
-        body[data-page="about"]   { --main-color: #f29057; } /* Mouse (Orange) */
-        body { --main-color: #d4a76a; } /* Default fallback */
+        /* --- CONFIGURATION DES VARIABLES --- */
+        :root {
+            --color-bird: {{ colors.bird }};
+            --color-fox: {{ colors.fox }};
+            --color-rabbit: {{ colors.rabbit }};
+            --color-mouse: {{ colors.mouse }};
+        }
+
+        /* --- GESTION DYNAMIQUE DU THÈME --- */
+        body[data-page="index"]   { --main-color: var(--color-bird); }
+        body[data-page="matches"] { --main-color: var(--color-fox); }
+        body[data-page="trends"]  { --main-color: var(--color-rabbit); }
+        body[data-page="about"]   { --main-color: var(--color-mouse); }
+        body { --main-color: {{ colors.default }}; }
 
         /* --- STYLES DE BASE --- */
         body { font-family: 'Segoe UI', Helvetica, Arial, sans-serif; background: #121212; color: #eee; text-align: center; padding: 20px 5px; margin: 0; overflow-x: hidden; }
@@ -81,16 +104,16 @@
         <header class="site-header">
             <div class="banner-container">
                 <div class="banner-icons left">
-                    <img src="assets/icons/bird.png">
-                    <img src="assets/icons/fox.png">
+                    <img src="{{ icons.bird }}" alt="Bird">
+                    <img src="{{ icons.fox }}" alt="Fox">
                 </div>
                 <div class="banner-center">
                     <h1 class="site-title">ROOTELO</h1>
                     <p class="site-subtitle">A Metric of Woodland Skill and Will</p>
                 </div>
                 <div class="banner-icons right">
-                    <img src="assets/icons/rabbit_new.webp">
-                    <img src="assets/icons/mouse_new.webp">
+                    <img src="{{ icons.rabbit }}" alt="Rabbit">
+                    <img src="{{ icons.mouse }}" alt="Mouse">
                 </div>
             </div>
         </header>
