@@ -7,7 +7,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Leaderboard • Rootelo</title>
+    <title>Top Tables • Rootelo</title>
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
     <style>
@@ -83,35 +83,42 @@
         }
 
         
-    /* Styles spécifiques au Leaderboard */
-    .tier-icon-container { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; margin: 0 auto; }
-    .tier-icon-container img { max-width: 100%; max-height: 100%; object-fit: contain; }
+    /* On reprend tes styles CSS exacts */
+    .lineup-cell { 
+        white-space: normal !important; 
+        word-wrap: break-word; 
+        overflow-wrap: break-word; 
+        min-width: 150px; 
+        max-content: 350px; 
+        line-height: 1.4; 
+        text-align: left !important; 
+        padding-left: 20px !important;
+    }
     
-    /* Couleurs des rangs (Tiers) via variables CSS */
-    .tier-bird   { background-color: rgba(103, 192, 199, 0.07) !important; border-left: 4px solid var(--color-bird) !important; }
-    .tier-fox    { background-color: rgba(230, 55, 45, 0.07) !important; border-left: 4px solid var(--color-fox) !important; }
-    .tier-rabbit { background-color: rgba(247, 235, 91, 0.07) !important; border-left: 4px solid var(--color-rabbit) !important; }
-    .tier-mouse  { background-color: rgba(242, 144, 87, 0.07) !important; border-left: 4px solid var(--color-mouse) !important; }
+    /* Utilisation de var(--main-color) pour les contrôles responsive */
+    table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before { 
+        background-color: var(--main-color) !important; 
+    }
+    table.dataTable > tbody > tr.child ul.dtr-details { width: 100%; background: #252525; }
+    table.dataTable > tbody > tr.child span.dtr-title { color: var(--main-color); font-weight: bold; }
     
-    /* Coloration dynamique du texte selon le Tier */
-    .tier-bird td:nth-child(3),   .tier-bird td:nth-child(4)   { color: var(--color-bird); font-weight: bold; }
-    .tier-fox td:nth-child(3),    .tier-fox td:nth-child(4)    { color: var(--color-fox); font-weight: bold; }
-    .tier-rabbit td:nth-child(3), .tier-rabbit td:nth-child(4) { color: var(--color-rabbit); font-weight: bold; }
-    .tier-mouse td:nth-child(3),  .tier-mouse td:nth-child(4)  { color: var(--color-mouse); font-weight: bold; }
-    
-    .unranked { opacity: 0.5; font-style: italic; }
-    .player-name-cell { text-align: left !important; padding-left: 15px !important; font-weight: 500; }
-
-    /* Footer du tableau */
-    .footer { margin-top: 30px; font-size: 0.75em; color: #777; border-top: 1px solid #333; padding-top: 15px; line-height: 2; text-align: center; }
-    .footer-tier-item { display: inline-block; margin: 0 15px; vertical-align: middle; }
-    .footer-tier-item img { height: 20px; width: auto; vertical-align: middle; margin-right: 6px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); }
+    .match-id-link {
+        color: #666; 
+        text-decoration: none; 
+        font-family: monospace; 
+        font-size: 0.9em; 
+        border: 1px solid #333; 
+        padding: 2px 6px; 
+        border-radius: 4px;
+        transition: 0.2s;
+    }
+    .match-id-link:hover { border-color: var(--main-color); color: #eee; }
 
     </style>
     
 </head>
 
-<body data-page="index">
+<body data-page="matches">
     <div class="container">
         
         <header class="site-header">
@@ -137,12 +144,12 @@
                 
                     
                 
-                <a href="index.html" class="active">Leaderboard</a>
+                <a href="index.html" class="">Leaderboard</a>
             
                 
                     
                 
-                <a href="matches.html" class="">Top Tables</a>
+                <a href="matches.html" class="active">Top Tables</a>
             
                 
                     
@@ -159,46 +166,33 @@
         
         <div class="season-selector">
             <span class="season-label">Season</span>
-            <a href="index_lh01.html" class="season-btn ">LH01</a>
-            <a href="index.html" class="season-btn active">LH02</a>
+            <a href="matches_lh01.html" class="season-btn ">LH01</a>
+            <a href="matches.html" class="season-btn active">LH02</a>
         </div>
         
 
         <header class="page-intro">
-            <h2>Leaderboard</h2>
+            <h2>Top Tables</h2>
             <h3>LH02 • Apr–Jun 2026</h3>
-            <p>Minimum 1 win required for display. Data tracked until 2026-03-23.</p>
+            <p>Games ranked by total ELO. Click a Game ID to view full match details.</p>
         </header>
     
         <main>
             
-    <table id="leaderboard" class="display nowrap" style="width:100%">
+    <table id="matchesTable" class="display nowrap responsive" style="width:100%">
         <thead>
             <tr>
                 <th>Rank</th>
-                <th>Tier</th>
-                <th>Player</th>
                 <th>ELO</th>
-                <th>Games</th>
-                <th>Wins</th>
-                <th>Win Rate</th>
-                <th>Peak</th>
-                <th>Last</th>
+                <th>Date</th>
+                <th>Lineup (Winner First)</th>
+                <th>ID</th>
             </tr>
         </thead>
         <tbody>
             
         </tbody>
     </table>
-
-    <div class="footer">
-        <strong>Woodland Tier System</strong> (min 10 games):<br>
-        <span class="footer-tier-item"><img src="assets/icons/bird.png"> 1500+</span>
-        <span class="footer-tier-item"><img src="assets/icons/fox.png"> 1400+</span>
-        <span class="footer-tier-item"><img src="assets/icons/rabbit_new.webp"> 1300+</span>
-        <span class="footer-tier-item"><img src="assets/icons/mouse_new.webp"> 1200+</span><br>
-        Generated on 2026-03-24 10:53 UTC
-    </div>
 
         </main>
     </div>
@@ -209,31 +203,17 @@
     
 <script>
 $(document).ready(function() {
-    // Configuration pour que le tri ignore le "-" des unranked
-    $.extend($.fn.dataTable.ext.type.order, { "rank-pre": function (d) { return d === "-" ? 9999 : parseInt(d); } });
-
-    $('#leaderboard').DataTable({
-        "order": [[3, "desc"]], 
+    $('#matchesTable').DataTable({
+        "order": [[1, "desc"]], 
         "responsive": true, 
-        "pageLength": 50,
-        "columnDefs": [ 
-            { "targets": 0, "type": "rank" },
-            { "targets": 2, "className": "player-name-cell" }, 
-            { "responsivePriority": 1, "targets": [0, 2, 3] } 
-        ],
-        "createdRow": function(row, data) {
-            var rank = data[0]; 
-            var elo = parseInt(data[3]); 
-            // On s'assure que le style s'applique correctement
-            if (rank === "-") { 
-                $(row).addClass('unranked'); 
-            } else {
-                if (elo >= 1500) $(row).addClass('tier-bird');
-                else if (elo >= 1400) $(row).addClass('tier-fox');
-                else if (elo >= 1300) $(row).addClass('tier-rabbit');
-                else if (elo >= 1200) $(row).addClass('tier-mouse');
-            }
-        }
+        "pageLength": 25,
+        "columnDefs": [
+            { "width": "40px", "targets": [0, 1] },
+            { "className": "lineup-cell", "targets": 3 }, 
+            { "responsivePriority": 1, "targets": [0, 1, 3] },
+            { "responsivePriority": 2, "targets": 2 }, 
+            { "responsivePriority": 3, "targets": 4 }
+        ]
     });
 });
 </script>

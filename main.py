@@ -56,6 +56,29 @@ def prepare_leaderboard_data(df):
         })
     return players_list
 
+def prepare_matches_data(df):
+    """Reprend exactement ta logique de nettoyage des noms"""
+    prepared = []
+    if df.empty: return []
+
+    def clean_names(name_str):
+        if pd.isna(name_str) or not str(name_str).strip(): return ""
+        # Ton ancienne logique : split sur ',' puis sur '+' et '#'
+        parts = [str(n).strip().split('+')[0].split('#')[0] for n in str(name_str).split(',')]
+        return ", ".join(parts)
+
+    for _, row in df.iterrows():
+        prepared.append({
+            'rank': row['Rank'],
+            'elo_sum': row['ELO_Sum'],
+            'date': row['Date'],
+            'winner': clean_names(row.get("Winner", "")),
+            'others': clean_names(row.get("Other Players", "")),
+            'match_id': row['MatchID'],
+            'match_url': f"https://rootleague.pliskin.dev/match/{row['MatchID']}/"
+        })
+    return prepared
+
 def render_page(template_name, output_name, **kwargs):
     """Compile un template HTML avec les variables fournies"""
     template = env.get_template(template_name)
@@ -277,6 +300,18 @@ render_page(
     players=prepare_leaderboard_data(display_current_df)
 )
 
+render_page(
+    "matches.html", 
+    "matches.html",
+    title="Top Tables • Rootelo",
+    page_id="matches",
+    is_archive=False,
+    page_heading="Top Tables",
+    subtitle="LH02 • Apr–Jun 2026",
+    description="Games ranked by total ELO. Click a Game ID to view full match details.",
+    matches=prepare_matches_data(current_matches_df)
+)
+
 # B. Génération des pages Archives (LH01)
 render_page(
     "leaderboard.html", 
@@ -289,6 +324,18 @@ render_page(
     subtitle="LH01 • Jan–Mar 2026",
     description="Minimum 1 win required for display.",
     players=prepare_leaderboard_data(display_archive_df)
+)
+
+render_page(
+    "matches.html",
+    "matches_lh01.html", 
+    title="Top Tables • Rootelo",
+    page_id="matches",
+    is_archive=True,
+    page_heading="Top Tables",
+    subtitle="LH01 • Jan–Mar 2026",
+    description="Games ranked by total ELO. Click a Game ID to view full match details.",
+    matches=prepare_matches_data(archive_matches_df)
 )
 
 # C. Génération de la page Codex
