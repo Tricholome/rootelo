@@ -197,11 +197,11 @@ current_history = {}
 match_history_data = []
 
 elo_ratings = {}
-if not archive_final_df.empty:
-    for _, row in archive_final_df.iterrows():
-        p_name = str(row['Player'])
-        elo_ratings[p_name] = float(row.get('ELO', 1200))
-    print(f"📊 Initialized {len(elo_ratings)} players from LH01 archive.")
+# if not archive_final_df.empty:
+#     for _, row in archive_final_df.iterrows():
+#         p_name = str(row['Player'])
+#         elo_ratings[p_name] = float(row.get('ELO', 1200))
+#     print(f"📊 Initialized {len(elo_ratings)} players from LH01 archive.")
 
 if not df.empty:
     for player in df['Player'].unique():
