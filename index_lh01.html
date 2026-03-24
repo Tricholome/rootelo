@@ -22,10 +22,10 @@
            ========================================================================= */
         :root {
             /* Faction Colors */
-            --color-bird: #2980B9;
+            --color-bird: #546E7A;
             --color-fox: #C0392B;
             --color-rabbit: #D4AF37;
-            --color-mouse: #E67E22;
+            --color-mouse: #E7A16F;
 
             /* Typography */
             --font-title: 'Fraunces', serif;
@@ -219,19 +219,21 @@
         /* =========================================================================
            --- 6. GLOBAL FOOTER ---
            ========================================================================= */
-        .site-footer {
-            margin-top: 50px;
-            padding: 30px 20px;
-            border-top: 1px solid var(--border-soft);
-            color: var(--text-muted);
-            font-family: var(--font-ui);
-            font-size: 0.8em;
-            text-align: center;
+        .site-footer { 
+            margin-top: 50px; padding: 30px 20px; text-align: center;
+            border-top: 1px solid var(--border-soft); color: var(--text-muted); 
+             font-family: var(--font-ui); font-size: 0.8em; 
         }
-        .footer-credits { margin-bottom: 8px; }
+
+        .footer-credits { display: flex; align-items: center; justify-content: center; margin-bottom: 8px; }
+
+        .footer-credits span:not(.footer-separator) { flex: 1; }
+        .footer-credits span:first-child { text-align: right; }
+        .footer-credits span:last-child { text-align: left; }
+
         .footer-credits strong { color: var(--text-main); font-weight: 600; }
-        .footer-separator { margin: 0 10px; color: var(--border-soft); }
-        .footer-date { font-style: italic; opacity: 0.7; }
+        .footer-separator { margin: 0 15px; color: var(--border-soft); opacity: 0.5; }
+        .footer-date { font-style: italic; opacity: 0.7; display: block; }
 
         /* =========================================================================
            --- 7. MOBILE RESPONSIVE ---
@@ -2960,12 +2962,12 @@
         <footer class="site-footer">
             <div class="footer-content">
                 <div class="footer-credits">
-                    <span>Powered by <strong>Tricholome</strong></span>
+                    <span>Powered by <strong>Tʀɪᴄʜᴏʟᴏᴍᴇ</strong></span>
                     <span class="footer-separator">|</span>
                     <span>Art by <strong>𝕩𝕝𝕦𝕖𝕧𝕚</strong></span>
                 </div>
                 <div class="footer-date">
-                    Updated on 2026-03-24 20:39
+                    Updated on 2026-03-24 20:54
                 </div>
             </div>
         </footer>

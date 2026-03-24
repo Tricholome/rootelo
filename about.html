@@ -22,10 +22,10 @@
            ========================================================================= */
         :root {
             /* Faction Colors */
-            --color-bird: #2980B9;
+            --color-bird: #546E7A;
             --color-fox: #C0392B;
             --color-rabbit: #D4AF37;
-            --color-mouse: #E67E22;
+            --color-mouse: #E7A16F;
 
             /* Typography */
             --font-title: 'Fraunces', serif;
@@ -219,19 +219,21 @@
         /* =========================================================================
            --- 6. GLOBAL FOOTER ---
            ========================================================================= */
-        .site-footer {
-            margin-top: 50px;
-            padding: 30px 20px;
-            border-top: 1px solid var(--border-soft);
-            color: var(--text-muted);
-            font-family: var(--font-ui);
-            font-size: 0.8em;
-            text-align: center;
+        .site-footer { 
+            margin-top: 50px; padding: 30px 20px; text-align: center;
+            border-top: 1px solid var(--border-soft); color: var(--text-muted); 
+             font-family: var(--font-ui); font-size: 0.8em; 
         }
-        .footer-credits { margin-bottom: 8px; }
+
+        .footer-credits { display: flex; align-items: center; justify-content: center; margin-bottom: 8px; }
+
+        .footer-credits span:not(.footer-separator) { flex: 1; }
+        .footer-credits span:first-child { text-align: right; }
+        .footer-credits span:last-child { text-align: left; }
+
         .footer-credits strong { color: var(--text-main); font-weight: 600; }
-        .footer-separator { margin: 0 10px; color: var(--border-soft); }
-        .footer-date { font-style: italic; opacity: 0.7; }
+        .footer-separator { margin: 0 15px; color: var(--border-soft); opacity: 0.5; }
+        .footer-date { font-style: italic; opacity: 0.7; display: block; }
 
         /* =========================================================================
            --- 7. MOBILE RESPONSIVE ---
@@ -302,10 +304,10 @@
     .tier-item img { height: 60px; width: auto; margin-right: 20px; }
     
     /* Couleurs de bordure des Tiers */
-    .tier-bird   { border-left-color: #2980B9 !important; }
+    .tier-bird   { border-left-color: #546E7A !important; }
     .tier-fox    { border-left-color: #C0392B !important; }
     .tier-rabbit { border-left-color: #D4AF37 !important; }
-    .tier-mouse  { border-left-color: #E67E22 !important; }
+    .tier-mouse  { border-left-color: #E7A16F !important; }
 
     /* --- K-FACTOR TABLE --- */
     .k-table { 
@@ -413,7 +415,7 @@
     <div class="tier-list">
         <div class="tier-item tier-bird">
             <img src="assets/icons/bird.png">
-            <div><strong style="color: #2980B9;">Bird (1500+)</strong> – The Grandmasters.</div>
+            <div><strong style="color: #546E7A;">Bird (1500+)</strong> – The Grandmasters.</div>
         </div>
     
         <div class="tier-item tier-fox">
@@ -428,7 +430,7 @@
     
         <div class="tier-item tier-mouse">
             <img src="assets/icons/mouse_new.webp">
-            <div><strong style="color: #E67E22;">Mouse (1200+)</strong> – Established consistent players.</div>
+            <div><strong style="color: #E7A16F;">Mouse (1200+)</strong> – Established consistent players.</div>
         </div>
     </div>
 
@@ -464,7 +466,7 @@
         <footer class="site-footer">
             <div class="footer-content">
                 <div class="footer-credits">
-                    <span>Powered by <strong>Tricholome</strong></span>
+                    <span>Powered by <strong>Tʀɪᴄʜᴏʟᴏᴍᴇ</strong></span>
                     <span class="footer-separator">|</span>
                     <span>Art by <strong>𝕩𝕝𝕦𝕖𝕧𝕚</strong></span>
                 </div>
