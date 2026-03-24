@@ -2,29 +2,33 @@
 
 {% block extra_css %}
 <style>
+    /* --- SECTION LAYOUT --- */
     .codex-section { 
         margin: 40px 0; 
-        text-align: left; 
+        text-align: left; /* Alignement strict à gauche */
         max-width: 900px; 
         line-height: 1.6; 
         color: var(--text-main); 
     }
 
+    /* Titres plus petits et discrets en orange */
     .codex-section h2 {
         color: var(--main-color); 
         border-bottom: 1px solid var(--border-soft); 
-        padding-bottom: 8px;
-        margin: 40px 0 20px 0;
-        font-size: 1.5em;
-        font-weight: bold;
+        padding-bottom: 6px;
+        margin: 45px 0 15px 0;
+        font-size: 1.15em; /* Taille réduite pour l'équilibre */
+        font-weight: 700;
+        letter-spacing: 0.5px;
     }
 
     .codex-section p {
         margin-bottom: 15px;
         color: var(--text-muted);
+        max-width: 750px; /* Évite les lignes trop longues pour la lecture */
     }
 
-    /* --- TIER LIST --- */
+    /* --- TIER LIST (Style conservé) --- */
     .tier-list { list-style: none; padding: 0; margin: 25px 0; }
     
     .tier-item { 
@@ -32,13 +36,15 @@
         align-items: center; 
         margin-bottom: 12px; 
         background: var(--bg-container); 
-        padding: 15px; 
-        border-radius: 8px;
+        padding: 18px; 
+        border-radius: 10px;
         border: 1px solid var(--border-soft);
-        border-left: 4px solid #333; /* Fallback */
+        border-left-width: 5px;
+        transition: transform 0.2s ease;
     }
     
-    .tier-item img { height: 60px; width: auto; margin-right: 20px; }
+    .tier-item:hover { transform: translateX(5px); }
+    .tier-item img { height: 65px; width: auto; margin-right: 20px; }
     
     /* Couleurs de bordure dynamiques */
     .tier-bird   { border-left-color: {{ colors['bird'] }} !important; }
@@ -49,16 +55,19 @@
     /* --- K-FACTOR TABLE --- */
     .k-table { 
         width: 100%; 
-        max-width: 600px;
+        max-width: 650px;
         border-collapse: collapse; 
         margin: 20px 0;
         background: var(--bg-container);
-        border-radius: 4px;
+        border-radius: 6px;
+        overflow: hidden;
+        border: 1px solid var(--border-soft);
     }
 
     .k-table td { 
         padding: 12px 15px; 
         border-bottom: 1px solid var(--border-soft); 
+        color: var(--text-muted);
     }
 
     .k-val { 
@@ -70,15 +79,16 @@
     
     .footer-note { 
         margin-top: 60px; 
-        font-size: 0.85em; 
+        font-size: 0.8em; 
         color: #555; 
         border-top: 1px solid var(--border-soft); 
         padding-top: 20px; 
     }
 
     @media (max-width: 600px) {
-        .tier-item { flex-direction: row; padding: 10px; }
+        .tier-item { padding: 12px; }
         .tier-item img { height: 45px; margin-right: 15px; }
+        .k-table td { padding: 10px; font-size: 0.85em; }
     }
 </style>
 {% endblock %}
@@ -95,22 +105,22 @@
     <div class="tier-list">
         <div class="tier-item tier-bird">
             <img src="{{ icons['bird'] }}">
-            <div><strong style="color: {{ colors['bird'] }};">Bird (1500+)</strong> – The Grandmasters.</div>
+            <div><strong style="color: {{ colors['bird'] }}; font-size: 1.05em;">Bird (1500+)</strong> – The Grandmasters.</div>
         </div>
     
         <div class="tier-item tier-fox">
             <img src="{{ icons['fox'] }}">
-            <div><strong style="color: {{ colors['fox'] }};">Fox (1400+)</strong> – The top predators.</div>
+            <div><strong style="color: {{ colors['fox'] }}; font-size: 1.05em;">Fox (1400+)</strong> – The top predators.</div>
         </div>
     
         <div class="tier-item tier-rabbit">
             <img src="{{ icons['rabbit'] }}">
-            <div><strong style="color: {{ colors['rabbit'] }};">Rabbit (1300+)</strong> – High-level competitors.</div>
+            <div><strong style="color: {{ colors['rabbit'] }}; font-size: 1.05em;">Rabbit (1300+)</strong> – High-level competitors.</div>
         </div>
     
         <div class="tier-item tier-mouse">
             <img src="{{ icons['mouse'] }}">
-            <div><strong style="color: {{ colors['mouse'] }};">Mouse (1200+)</strong> – Established consistent players.</div>
+            <div><strong style="color: {{ colors['mouse'] }}; font-size: 1.05em;">Mouse (1200+)</strong> – Established consistent players.</div>
         </div>
     </div>
 
@@ -121,17 +131,17 @@
         <tr>
             <td><strong>Calibration</strong> (0-10 games)</td>
             <td class="k-val">K = 80</td>
-            <td style="font-size: 0.85em; color: #888;">Find your rank quickly.</td>
+            <td style="font-size: 0.85em;">Find your rank quickly.</td>
         </tr>
         <tr>
             <td><strong>Active</strong> (11-50 games)</td>
             <td class="k-val">K = 40</td>
-            <td style="font-size: 0.85em; color: #888;">Competitive weighting.</td>
+            <td style="font-size: 0.85em;">Competitive weighting.</td>
         </tr>
         <tr>
             <td style="border:none;"><strong>Veteran</strong> (50+ games)</td>
             <td class="k-val" style="border:none;">K = 20</td>
-            <td style="font-size: 0.85em; color: #888; border:none;">Long-term stability.</td>
+            <td style="font-size: 0.85em; border:none;">Long-term stability.</td>
         </tr>
     </table>
 
