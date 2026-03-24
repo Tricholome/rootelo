@@ -22,10 +22,10 @@
            ========================================================================= */
         :root {
             /* Faction Colors */
-            --color-bird: #67c0c7;
-            --color-fox: #e6372d;
-            --color-rabbit: #f7eb5b;
-            --color-mouse: #f29057;
+            --color-bird: #C68B59;
+            --color-fox: #A94A4A;
+            --color-rabbit: #BFA05D;
+            --color-mouse: #607D8B;
 
             /* Typography */
             --font-title: 'Fraunces', serif;
@@ -239,9 +239,9 @@
         @media (max-width: 768px) and (orientation: portrait) {
             .banner-container { flex-wrap: wrap; gap: 10px; }
             .banner-center { order: 1; width: 100%; margin-bottom: 10px; }
-            .banner-icons { order: 2; gap: 10px; }
-            .banner-icons img { width: 60px !important; height: 60px !important; }
-            .banner-icons img:hover { width: 75px; height: 75px; transform: translateY(-5px) scale(1.1); }
+            .banner-icons { order: 2; gap: 5px; display: flex; flex-wrap: nowrap; }
+            .banner-icons img { width: 60px !important; height: 60px !important; transition: all 0.3s ease; }
+            .banner-icons img:hover { transform: translateY(-8px) scale(1.3) !important; z-index: 100; position: relative; }
             .site-title { font-size: 2em; }
             .footer-credits span { display: block; margin: 5px 0; }
             .footer-separator { display: none !important; }
@@ -16890,10 +16890,10 @@
                 <div class="footer-credits">
                     <span>Powered by <strong>Tricholome</strong></span>
                     <span class="footer-separator">|</span>
-                    <span>Art by <strong>xluevi</strong></span>
+                    <span>Art by <strong>𝕩𝕝𝕦𝕖𝕧𝕚</strong></span>
                 </div>
                 <div class="footer-date">
-                    Updated on 2026-03-24 20:21
+                    Updated on 2026-03-24 20:29
                 </div>
             </div>
         </footer>
