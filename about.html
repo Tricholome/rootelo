@@ -8,15 +8,42 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Codex • Rootelo</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..900;1,9..144,400..900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
+    
     <style>
-        /* --- CONFIGURATION DES VARIABLES --- */
+        /* =========================================================================
+           --- 1. PANNEAU DE CONFIGURATION (VARIABLES CSS) ---
+           ========================================================================= */
         :root {
+            /* Factions (Intouchées pour l'instant) */
             --color-bird: #67c0c7;
             --color-fox: #e6372d;
             --color-rabbit: #f7eb5b;
             --color-mouse: #f29057;
+
+            /* Typographie */
+            --font-title: 'Fraunces', serif;
+            --font-ui: 'Inter', sans-serif;
+
+            /* Couleurs de fond */
+            --bg-page: #121212;
+            --bg-container: #1c1c1c; /* Légèrement plus clair que la page pour détacher la boîte */
+            --bg-surface: rgba(255, 255, 255, 0.03); /* Pour les boutons/fonds discrets */
+            --bg-hover: rgba(255, 255, 255, 0.08);
+
+            /* Couleurs de texte */
+            --text-main: #E0E0E0; /* Gris très clair, moins agressif que le blanc pur */
+            --text-muted: #888888;
+            --text-dark: #111111; /* Pour le texte sur fond très clair */
+
+            /* Bordures */
+            --border-soft: #333333;
         }
 
         /* --- GESTION DYNAMIQUE DU THÈME --- */
@@ -26,11 +53,33 @@
         body[data-page="about"]   { --main-color: var(--color-mouse); }
         body { --main-color: #d4a76a; }
 
-        /* --- STYLES DE BASE --- */
-        body { font-family: 'Segoe UI', Helvetica, Arial, sans-serif; background: #121212; color: #eee; text-align: center; padding: 20px 5px; margin: 0; overflow-x: hidden; }
-        .container { width: 95%; max-width: 1100px; margin: auto; background: #1e1e1e; padding: 20px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.6); box-sizing: border-box; }
+        /* =========================================================================
+           --- 2. STYLES GLOBAUX ---
+           ========================================================================= */
+        body { 
+            font-family: var(--font-ui); 
+            background: var(--bg-page); 
+            color: var(--text-main); 
+            text-align: center; 
+            padding: 20px 5px; 
+            margin: 0; 
+            overflow-x: hidden; 
+        }
         
-        /* --- BANNER LOGIC --- */
+        .container { 
+            width: 95%; 
+            max-width: 1100px; 
+            margin: auto; 
+            background: var(--bg-container); 
+            padding: 20px 30px 40px; /* Un peu plus d'espace en bas */
+            border-radius: 12px; 
+            box-shadow: 0 8px 32px rgba(0,0,0,0.6); 
+            box-sizing: border-box; 
+        }
+        
+        /* =========================================================================
+           --- 3. HEADER & BANNIÈRE ---
+           ========================================================================= */
         .banner-container { display: flex; align-items: center; justify-content: center; gap: 40px; margin-bottom: 20px; flex-wrap: nowrap; }
         .banner-icons { display: flex; gap: 15px; align-items: center; }
         .banner-icons img { 
@@ -48,34 +97,131 @@
         .banner-icons.left img:hover { transform: translateY(-10px) scale(1.15) rotate(-8deg); }
         .banner-icons.right img:hover { transform: translateY(-10px) scale(1.15) rotate(8deg); }
 
-        .site-title { color: #eee; font-size: 2.2em; margin: 0; letter-spacing: 3px; text-transform: uppercase; font-weight: 900; }
-        .site-subtitle { font-style: italic; color: #777; font-size: 0.85em; margin: 5px 0 0; letter-spacing: 1px; }
+        .site-title { 
+            font-family: var(--font-title);
+            color: #ffffff; 
+            font-size: 2.8em; /* Légèrement plus gros */
+            margin: 0; 
+            letter-spacing: 4px; 
+            text-transform: uppercase; 
+            font-weight: 900; 
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+        .site-subtitle { 
+            font-family: var(--font-title);
+            font-style: italic; 
+            color: var(--text-muted); 
+            font-size: 1em; 
+            margin: 5px 0 0; 
+            letter-spacing: 1px; 
+        }
         
-        /* --- NAVIGATION PRINCIPALE --- */
-        nav { margin: 25px 0; border-bottom: 1px solid #333; padding-bottom: 20px; display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }
-        nav a { color: #888; text-decoration: none; font-weight: bold; text-transform: uppercase; font-size: 0.8em; padding: 8px 16px; border-radius: 6px; transition: 0.3s; }
-        nav a:hover { color: var(--main-color); background: rgba(255,255,255,0.05); }
-        nav a.active { color: #fff; background: var(--main-color); box-shadow: 0 4px 12px rgba(0,0,0,0.4); }
+        /* =========================================================================
+           --- 4. NAVIGATION & BOUTONS ---
+           ========================================================================= */
+        nav { 
+            margin: 25px 0; 
+            border-bottom: 1px solid var(--border-soft); 
+            padding-bottom: 20px; 
+            display: flex; 
+            justify-content: center; 
+            gap: 12px; /* Un peu plus espacé */
+            flex-wrap: wrap; 
+        }
+        
+        nav a { 
+            color: var(--text-muted); 
+            text-decoration: none; 
+            font-weight: 600; 
+            text-transform: uppercase; 
+            font-size: 0.85em; 
+            letter-spacing: 1px;
+            padding: 8px 12px; 
+            border-radius: 6px; 
+            transition: 0.3s ease; 
+            border-bottom: 2px solid transparent; /* Prépare l'animation de bordure */
+        }
+        
+        nav a:hover { 
+            color: var(--text-main); 
+            background: var(--bg-hover); 
+        }
+        
+        /* Onglet Actif : Plus élégant, fini le gros bloc ! */
+        nav a.active { 
+            color: var(--main-color); 
+            border-bottom: 2px solid var(--main-color);
+            border-radius: 6px 6px 0 0; /* Arrondi en haut, plat en bas sur la ligne */
+            background: linear-gradient(to top, rgba(255,255,255,0.03) 0%, transparent 100%);
+        }
         
         /* --- SÉLECTEUR DE SAISON --- */
-        .season-selector { display: flex; align-items: center; justify-content: center; gap: 12px; margin: 0 auto 30px; background: rgba(255,255,255,0.03); padding: 8px 18px; border-radius: 50px; width: fit-content; border: 1px solid #333; }
-        .season-label { font-size: 0.7em; text-transform: uppercase; color: #555; letter-spacing: 1.2px; font-weight: bold; }
-        .season-btn { text-decoration: none; font-size: 0.75em; font-weight: bold; color: #777; padding: 5px 14px; border-radius: 20px; border: 1px solid #444; transition: 0.2s; }
-        .season-btn:hover { border-color: var(--main-color); color: #eee; }
-        .season-btn.active { background: var(--main-color) !important; color: #111 !important; border-color: var(--main-color) !important; font-weight: 900; }
+        .season-selector { 
+            display: flex; align-items: center; justify-content: center; gap: 12px; 
+            margin: 0 auto 30px; 
+            background: var(--bg-surface); 
+            padding: 6px 16px; 
+            border-radius: 50px; 
+            width: fit-content; 
+            border: 1px solid var(--border-soft); 
+        }
+        .season-label { font-size: 0.7em; text-transform: uppercase; color: var(--text-muted); letter-spacing: 1.2px; font-weight: bold; }
+        .season-btn { text-decoration: none; font-size: 0.75em; font-weight: 700; color: var(--text-muted); padding: 5px 14px; border-radius: 20px; border: 1px solid transparent; transition: 0.2s; }
+        .season-btn:hover { color: var(--text-main); background: var(--bg-hover); }
+        .season-btn.active { background: var(--border-soft); color: var(--text-main); border-color: var(--border-soft); }
 
-        /* --- CONTENU SPÉCIFIQUE --- */
-        .page-intro h3 { margin: 0; color: var(--main-color); font-size: 1.1em; font-weight: bold; text-transform: uppercase; border-bottom: 2px solid var(--main-color); padding-bottom: 4px; display: inline-block; }
-        table.dataTable thead th { background: #252525 !important; color: var(--main-color) !important; font-size: 0.75em; text-transform: uppercase; padding: 12px; }
+        /* =========================================================================
+           --- 5. TITRES DE PAGES & DONNÉES ---
+           ========================================================================= */
+        .page-intro { margin-bottom: 30px; }
+        .page-intro h2 { 
+            font-family: var(--font-title);
+            font-size: 2.2em;
+            margin: 0 0 10px 0;
+            color: #ffffff;
+        }
+        .page-intro h3 { 
+            margin: 0; 
+            color: var(--main-color); 
+            font-size: 1.1em; 
+            font-weight: 700; 
+            text-transform: uppercase; 
+            letter-spacing: 2px;
+            border-bottom: 1px solid var(--main-color); 
+            padding-bottom: 4px; 
+            display: inline-block; 
+        }
+        .page-intro p {
+            color: var(--text-muted);
+            font-size: 0.9em;
+            margin-top: 15px;
+        }
 
-        /* --- RESPONSIVE MOBILE --- */
+        /* --- OVERRIDES DATATABLES GÉNÉRIQUES --- */
+        /* On prépare le terrain pour nettoyer tes tableaux dans les autres fichiers */
+        table.dataTable { border-collapse: collapse !important; }
+        table.dataTable thead th { 
+            background: var(--bg-page) !important; 
+            color: var(--text-muted) !important; 
+            font-size: 0.75em; 
+            letter-spacing: 1px;
+            text-transform: uppercase; 
+            padding: 15px 10px !important; 
+            border-bottom: 1px solid var(--border-soft) !important;
+        }
+        table.dataTable tbody tr { background-color: transparent !important; }
+        table.dataTable tbody td { border-bottom: 1px solid rgba(255,255,255,0.03); padding: 12px 10px; }
+
+        /* =========================================================================
+           --- 6. RESPONSIVE MOBILE ---
+           ========================================================================= */
         @media (max-width: 768px) and (orientation: portrait) {
             .banner-container { flex-wrap: wrap; gap: 10px; }
             .banner-center { order: 1; width: 100%; margin-bottom: 10px; }
             .banner-icons { order: 2; gap: 10px; }
             .banner-icons img { width: 45px; height: 45px; }
             .banner-icons img:hover { width: 70px; height: 70px; transform: translateY(-5px) scale(1.1); }
-            .site-title { font-size: 1.8em; }
+            .site-title { font-size: 2em; }
         }
         @media (max-width: 950px) and (orientation: landscape) {
             .banner-container { flex-direction: row; gap: 20px; flex-wrap: nowrap; }
