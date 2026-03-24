@@ -17,13 +17,6 @@ NAV_ITEMS = [
     {'id': 'about', 'url': 'about.html', 'label': 'Codex'}
 ]
 
-COLORS = {
-    "bird": "#67c0c7",
-    "fox": "#e6372d",
-    "rabbit": "#f7eb5b",
-    "mouse": "#f29057"
-}
-
 # =========================================================================
 # --- 1. CONFIGURATION API & HELPERS ---
 # =========================================================================
@@ -279,7 +272,6 @@ render_page(
     page_id="index",
     is_archive=False,
     current_page_base="index",
-    main_color=COLORS["rabbit"],
     page_heading="Leaderboard",
     subtitle="LH02 • Apr–Jun 2026",
     description=f"Minimum 1 win required for display. Data tracked until {CUTOFF_DATE}.",
@@ -294,7 +286,6 @@ render_page(
     page_id="index",
     is_archive=True,
     current_page_base="index",
-    main_color=COLORS["fox"],
     page_heading="Leaderboard",
     subtitle="LH01 • Jan–Mar 2026",
     description="Minimum 1 win required for display.",
