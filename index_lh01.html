@@ -80,19 +80,22 @@
         /* =========================================================================
            --- 3. HEADER & BANNER ---
            ========================================================================= */
-        .banner-container { display: flex; align-items: center; justify-content: center; gap: 40px; margin-bottom: 20px; flex-wrap: nowrap; }
-        .banner-icons { display: flex; gap: 15px; align-items: center; }
+        .banner-container { display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 20px; flex-wrap: nowrap; }
+        .banner-icons { display: flex; gap: -10px; align-items: center; }
         .banner-icons img { 
             width: 85px; height: 85px; object-fit: contain; 
             filter: drop-shadow(0 4px 6px rgba(0,0,0,0.6)); 
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
             cursor: pointer;
+            margin: 0 -5px; 
+            position: relative;
         }
         .banner-icons img:hover { 
             width: 140px; height: 140px; 
             filter: drop-shadow(0 15px 25px rgba(0,0,0,0.9));
             transform: translateY(-10px) scale(1.15);
             z-index: 100;
+            margin: 0 15px;
         }
         .banner-icons.left img:hover { transform: translateY(-10px) scale(1.15) rotate(-8deg); }
         .banner-icons.right img:hover { transform: translateY(-10px) scale(1.15) rotate(8deg); }
@@ -2960,7 +2963,7 @@
                     <span>Art by <strong>xluevi</strong></span>
                 </div>
                 <div class="footer-date">
-                    Updated on 2026-03-24 19:30
+                    Updated on 2026-03-24 19:38
                 </div>
             </div>
         </footer>
