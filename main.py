@@ -38,15 +38,14 @@ def get_tier_icon(rating, games):
     return None, "unranked"
 
 def prepare_leaderboard_data(df):
-    """Transforme le DataFrame en liste de dictionnaires pour Jinja2"""
     players_list = []
     if df.empty: return []
     
     for _, row in df.iterrows():
-        icon_path, _ = get_tier_icon(row['ELO'], row['Games'])
+        _, tier_name = get_tier_icon(row['ELO'], row['Games'])
         players_list.append({
             'Rank': row['Rank'],
-            'icon_path': icon_path,
+            'tier': tier_name,
             'display_name': str(row['Player']).split('+')[0].split('#')[0],
             'ELO': row['ELO'],
             'Games': row['Games'],
