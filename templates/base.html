@@ -8,7 +8,7 @@
 
 {% set icons = {
     'bird': 'assets/icons/bird.png',
-    'fox': 'assets/icons/fox.png',
+    'fox': 'assets/icons/fox_new.webp.png',
     'rabbit': 'assets/icons/rabbit_new.webp',
     'mouse': 'assets/icons/mouse_new.webp'
 } %}
@@ -94,13 +94,13 @@
         .banner-container { display: flex; align-items: center; justify-content: center; gap: 40px; margin-bottom: 20px; flex-wrap: nowrap; }
         .banner-icons { display: flex; gap: 15px; align-items: center; }
         .banner-icons img { 
-            width: 60px; height: 60px; object-fit: contain; 
+            width: 85px; height: 85px; object-fit: contain; 
             filter: drop-shadow(0 4px 6px rgba(0,0,0,0.6)); 
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
             cursor: pointer;
         }
         .banner-icons img:hover { 
-            width: 110px; height: 110px; 
+            width: 140px; height: 140px; 
             filter: drop-shadow(0 15px 25px rgba(0,0,0,0.9));
             transform: translateY(-10px) scale(1.15);
             z-index: 100;
