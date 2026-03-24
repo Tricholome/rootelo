@@ -46,7 +46,7 @@
             <tr>
                 <td>{{ player.Rank }}</td>
                 <td>
-                    {% if player.tier %}
+                    {% if player.tier and player.tier != 'unranked' %}
                     <div class="tier-icon-container">
                         <img src="{{ icons[player.tier] }}" alt="{{ player.tier }}">
                     </div>
