@@ -593,7 +593,7 @@
         <main>
             
     <div class="search-box">
-        <input list="playerList" id="playerName" placeholder="Search Player..." oninput="updateChart()">
+        <input type="search" list="playerList" id="playerName" placeholder="Search Player..." oninput="updateChart()">
         <datalist id="playerList">
             
                 <option value="100pctskillz">
@@ -1263,7 +1263,7 @@
                     <span>Art by <strong>𝕩𝕝𝕦𝕖𝕧𝕚</strong></span>
                 </div>
                 <div class="footer-date">
-                    Updated on 2026-03-25 21:52
+                    Updated on 2026-03-25 21:59
                 </div>
             </div>
         </footer>
@@ -1333,6 +1333,11 @@
     function updateChart() {
         const input = document.getElementById('playerName');
         const name = input.value;
+        if (name === "") {
+            if (myChart) myChart.destroy();
+            localStorage.removeItem('selectedPlayer');
+            return;
+        }
         const canvas = document.getElementById('progressionChart');
         if (!canvas) return;
         const ctx = canvas.getContext('2d');

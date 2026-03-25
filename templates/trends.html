@@ -48,7 +48,7 @@
 
 {% block content %}
     <div class="search-box">
-        <input list="playerList" id="playerName" placeholder="Search Player..." oninput="updateChart()">
+        <input type="search" list="playerList" id="playerName" placeholder="Search Player..." oninput="updateChart()">
         <datalist id="playerList">
             {% for name in player_names %}
                 <option value="{{ name }}">
@@ -73,6 +73,11 @@
     function updateChart() {
         const input = document.getElementById('playerName');
         const name = input.value;
+        if (name === "") {
+            if (myChart) myChart.destroy();
+            localStorage.removeItem('selectedPlayer');
+            return;
+        }
         const canvas = document.getElementById('progressionChart');
         if (!canvas) return;
         const ctx = canvas.getContext('2d');
