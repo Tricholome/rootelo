@@ -485,10 +485,11 @@
 
         <nav>
             {% set nav_links = [('index', 'Leaderboard'), ('matches', 'Top Tables'), ('trends', "Player's Journey"), ('about', 'Codex')] %}
+            {% if page_id == 'cache' %}
+                {% set nav_links = nav_links + [('cache', 'Undergrowth')] %}
+            {% endif %}
             {% for base, label in nav_links %}
-                {% if base == 'about' %}
-                    {% set target = 'about.html' %}
-                {% elif is_archive %}
+                {% if has_seasons and is_archive %}
                     {% set target = base + '_lh01.html' %}
                 {% else %}
                     {% set target = base + '.html' %}
