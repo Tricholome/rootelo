@@ -80,9 +80,12 @@
                 <td>{{ player.Rank }}</td>
                 <td>
                     {% if player.tier and player.tier != 'unranked' %}
-                    <div class="tier-icon-container">
-                        <img src="{{ icons[player.tier] }}" alt="{{ player.tier }}">
-                    </div>
+                        {% set tier_page = 'cache.html' if player.tier == 'squirrel' else 'about.html' %}
+                        <a href="{{ tier_page }}#tier-{{ player.tier }}" class="tier-anchor-link">
+                            <div class="tier-icon-container">
+                                <img src="{{ icons[player.tier] }}" alt="{{ player.tier }}">
+                            </div>
+                        </a>
                     {% endif %}
                 </td>
                 <td class="player-name-cell">{{ player.display_name }}</td>
