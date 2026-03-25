@@ -98,13 +98,13 @@
     .tier-item { 
         display: flex; 
         align-items: flex-start; 
-        margin-bottom: 20px; 
+        margin: 0 auto 20px auto; 
         background: var(--bg-container); 
-        padding: 20px; /* Padding un peu plus serré */
+        padding: 20px;
         border-radius: 12px;
         border: 1px solid var(--border-soft);
         border-left: 6px solid #333;
-        width: 70%;
+        width: 85%;
         box-sizing: border-box;
     }
 
@@ -183,6 +183,7 @@
         .k-table br { display: block; }
         .k-table td:nth-child(3) { display: none; }
         .tier-item { 
+            width: 100%;
             flex-direction: column; 
             align-items: flex-start; 
         }
