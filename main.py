@@ -51,7 +51,7 @@ def get_tier_icon(rating, games):
     if r >= 1400: return None, "fox"
     if r >= 1300: return None, "rabbit"
     if r >= 1200: return None, "mouse"
-    return None, "unranked"
+    return None, "squirrel"
 
 def prepare_leaderboard_data(df):
     players_list = []
