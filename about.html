@@ -248,8 +248,10 @@
             gap: 20px;
         }
         .side-img {
-            height: 160px;
-            width: auto;
+            height: auto ;
+            width: clamp(180px, 25vw, 500px);
+            object-fit: contain;
+            flex-shrink: 0;
         }
         .page-intro p { color: var(--text-muted); font-family: var(--font-ui); font-size: 0.9em; margin: 15px auto 0; max-width: 700px; }
 
@@ -779,7 +781,7 @@
                     <span>Art by <strong>𝕩𝕝𝕦𝕖𝕧𝕚</strong></span>
                 </div>
                 <div class="footer-date">
-                    Updated on 2026-03-25 22:56
+                    Updated on 2026-03-25 23:01
                 </div>
             </div>
         </footer>
