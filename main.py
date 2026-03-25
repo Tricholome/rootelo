@@ -316,6 +316,7 @@ render_page(
     title="Leaderboard • Rootelo",
     page_id="index",
     is_archive=False,
+    has_seasons=True,
     current_page_base="index",
     page_heading="Leaderboard",
     description=f"Minimum 1 win required for display. Data tracked until {CUTOFF_DATE}.",
@@ -328,6 +329,7 @@ render_page(
     title="Top Tables • Rootelo",
     page_id="matches",
     is_archive=False,
+    has_seasons=True,
     page_heading="Top Tables",
     description="Games ranked by total ELO. Click a Game ID to view full match details.",
     matches=prepare_matches_data(current_matches_df)
@@ -339,6 +341,7 @@ render_page(
     title="Player's Journey • Rootelo",
     page_id="trends",
     is_archive=False,
+    has_seasons=True,
     page_heading="Player's Journey",
     description="Search for a player to see their ELO evolution over the season.",
     history_json=json.dumps(current_history),
@@ -352,6 +355,7 @@ render_page(
     title="Leaderboard • Rootelo",
     page_id="index",
     is_archive=True,
+    has_seasons=True,
     current_page_base="index",
     page_heading="Leaderboard",
     description="Minimum 1 win required for display.",
@@ -364,6 +368,7 @@ render_page(
     title="Top Tables • Rootelo",
     page_id="matches",
     is_archive=True,
+    has_seasons=True,
     page_heading="Top Tables",
     description="Games ranked by total ELO. Click a Game ID to view full match details.",
     matches=prepare_matches_data(archive_matches_df)
@@ -375,6 +380,7 @@ render_page(
     title="Player's Journey • Rootelo",
     page_id="trends",
     is_archive=True,
+    has_seasons=True,
     page_heading="Player's Journey",
     description="Search for a player to see their ELO evolution over the season.",
     history_json=json.dumps(archive_history),
@@ -388,6 +394,7 @@ render_page(
     title="Codex • Rootelo",
     page_id="about",
     is_archive=False,
+    has_seasons=False,
     page_heading="Codex",
     description="Understanding the mechanics of Rootelo.",
 )
@@ -398,6 +405,7 @@ render_page(
     title="Undergrowth • Rootelo",
     page_id="cache",
     is_archive=False,
+    has_seasons=False,
     page_heading="Undergrowth",
     description="Understanding the mechanics of Rootelo.",
 )
