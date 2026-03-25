@@ -407,7 +407,7 @@ render_page(
     is_archive=False,
     has_seasons=False,
     page_heading="Undergrowth",
-    description="Understanding the mechanics of Rootelo.",
+    description="No rank? No problem. We haven't forgotten you.",
 )
 
 print("Génération terminée avec succès !")
