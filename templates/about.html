@@ -140,6 +140,7 @@
     .k-table tr:last-child td {
         border-bottom: none;
     }
+    .k-table td:last-child { width: 55%; }
 
     .k-val { 
         color: var(--main-color) !important; 
@@ -148,6 +149,8 @@
         font-size: 1.1em;
         white-space: nowrap;
     }
+    
+    .k-table br { display: none; }
 
     /* --- LIGHTBOX OVERLAY --- */
     .lightbox-overlay {
@@ -177,6 +180,8 @@
 
     /* --- RESPONSIVE MOBILE --- */
     @media (max-width: 600px) {
+        .k-table br { display: block; }
+        .k-table td:first-child { white-space: nowrap; }
         .tier-item { 
             flex-direction: column; 
             align-items: flex-start; 
@@ -210,17 +215,17 @@
     
     <table class="k-table">
         <tr>
-            <td><strong>Calibration</strong> (0-10 games)</td>
+            <td><strong>Calibration</strong> <br>(0-10 games)</td>
             <td class="k-val">K = 80</td>
             <td>High volatility to find your true rank quickly.</td>
         </tr>
         <tr>
-            <td><strong>Active</strong> (11-50 games)</td>
+            <td><strong>Active</strong> <br>(11-50 games)</td>
             <td class="k-val">K = 40</td>
             <td>Balanced weighting to climb the ladder steadily.</td>
         </tr>
         <tr>
-            <td><strong>Veteran</strong> (50+ games)</td>
+            <td><strong>Veteran</strong> <br>(50+ games)</td>
             <td class="k-val">K = 20</td>
             <td>Solid stability to protect your long-term standing.</td>
         </tr>
