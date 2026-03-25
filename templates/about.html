@@ -181,9 +181,11 @@
 
 {% block content %}
 <div class="codex-section">
-    <h2>How does this system work?</h2>
-    <p>To ensure fairness in a 4-player format, this leaderboard uses a <strong>multi-player Elo model</strong>.</p>
-    <p>Unlike a simple win-count, it calculates your score based on the <em>"Strength of Schedule"</em>. If you beat high-ranked players, you gain more. If you lose as the favorite, you drop more.</p>
+    <h2>An Alternative Ladder</h2>
+    <p>This platform is an alternative ranking experience specifically designed for the **Root Digital League (RDL)**. It offers a distinct competitive lens through which to view player performance. For official standings, tournament rules, league updates, and subscription, please visit the <a href="https://rootleague.pliskin.dev/" style="color: var(--main-color); text-decoration: none; border-bottom: 1px solid;">Official RDL Website</a>.</p>
+
+    <h2>The Scoring Engine</h2>
+    <p>To ensure fairness in a 4-player format, this leaderboard uses a multi-player Elo model. Unlike a simple win-count, it calculates your rating based on your "Strength of Schedule". If you defeat high-ranked opponents, your rating climbs significantly. If you lose as the favorite, your score will reflect the upset.</p>
 
     <h2>The Tier System</h2>
     <p>After your 10-game calibration phase, you officially join the ranks and unlock your tier icon:</p>
@@ -238,7 +240,7 @@
         </div>
     </div>
 
-    <h2>Dynamic K-Factor</h2>
+    <h2>The Dynamic Phases</h2>
     <p>Your score's volatility changes as you play more games to ensure stability:</p>
     
     <table class="k-table">
@@ -259,9 +261,13 @@
         </tr>
     </table>
 
-    <h2>Transition</h2>
-    <p>Every player starts the season with a base score of 1200.</p>
+    <h2>The Seasonal Lifecycle</h2>
+    <p>At the start of every new season, the Woodland resets its focus but remembers its veterans. **New players** begin their journey with a base score of **1200**.</p>
+    <p>**Returning players** retain their exact Elo score from the previous season—your long-term progress is never lost. However, to keep the ladder fresh and accurate, **everyone starts back in the Calibration phase (K=80)** at the beginning of each season. You must complete **10 placement games** to reveal your rank and reclaim your Tier Icon.</p>
 
+    <h2>A Living Project</h2>
+    <p>This system is a living project and remains under active development. The formulas and features may evolve to better reflect the competitive reality of the game.</p>
+    <p>Your feedback is essential! If you have any questions, suggestions, or want to discuss the math behind the ranks, join the conversation on the <a href="https://discord.com/channels/476234833572397056/1477741957139791892" style="color: var(--main-color); text-decoration: none; border-bottom: 1px solid;">Discord Thread</a>.</p>
 </div>
 
 <div id="lightbox" class="lightbox-overlay" onclick="this.style.display='none'">
