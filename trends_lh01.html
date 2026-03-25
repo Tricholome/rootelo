@@ -237,7 +237,7 @@
         .season-btn.active { background: transparent !important; color: var(--main-color) !important; border-color: var(--main-color) !important; }
 
         /* =========================================================================
-           --- 5. PAGE TITLES & DATA ---
+           --- 5. PAGE TITLES & DATATABLES ---
            ========================================================================= */
         .page-intro { margin-bottom: 30px; }
         .page-intro h2 { font-family: var(--font-title); font-size: 2.2em; margin: 0; color: var(--main-color); }
@@ -257,6 +257,14 @@
             background-color: var(--text-muted);
             -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z'/></svg>") no-repeat 50% 50%;
             -webkit-mask-size: cover;
+        }
+
+        .dataTables_filter input::placeholder {
+            font-family: var(--font-ui);
+            font-style: italic;
+            font-size: 0.9em;
+            color: var(--text-muted);
+            opacity: 0.6;
         }
         
         .dataTables_info, .dataTables_paginate { color: var(--text-muted) !important; font-family: var(--font-ui); font-size: 0.8em; padding-top: 15px !important; }
@@ -1241,7 +1249,7 @@
                     <span>Art by <strong>𝕩𝕝𝕦𝕖𝕧𝕚</strong></span>
                 </div>
                 <div class="footer-date">
-                    Updated on 2026-03-25 21:42
+                    Updated on 2026-03-25 21:46
                 </div>
             </div>
         </footer>
