@@ -542,11 +542,12 @@
 
         <nav>
             {% set nav_links = [('index', 'Leaderboard'), ('matches', 'Top Tables'), ('trends', "Player's Journey"), ('about', 'Codex')] %}
+            {% set archivable_pages = ['index', 'matches', 'trends'] %}
             {% if page_id == 'cache' %}
                 {% set nav_links = nav_links + [('cache', 'Undergrowth')] %}
             {% endif %}
             {% for base, label in nav_links %}
-                {% if has_seasons and is_archive %}
+                {% if has_seasons and is_archive and base in archivable_pages %}
                     {% set target = base + '_lh01.html' %}
                 {% else %}
                     {% set target = base + '.html' %}
