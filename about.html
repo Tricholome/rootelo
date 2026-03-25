@@ -243,15 +243,16 @@
         .page-intro h2 { font-family: var(--font-title); font-size: 2.2em; margin: 0; color: var(--main-color); }
         .h2-wrapper {
             display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 20px;
+            align-items: center;      /* Centre tout verticalement */
+            justify-content: center;  /* Centre tout horizontalement */
+            gap: 40px;                /* L'espace entre le titre et les images */
+            margin: 40px 0;           /* On donne de l'air au-dessus et en-dessous */
         }
         .side-img {
-            height: auto ;
-            width: clamp(180px, 25vw, 500px);
+            height: clamp(120px, 15vw, 200px); 
+            width: auto;
             object-fit: contain;
-            flex-shrink: 0;
+            display: block;
         }
         .page-intro p { color: var(--text-muted); font-family: var(--font-ui); font-size: 0.9em; margin: 15px auto 0; max-width: 700px; }
 
@@ -500,6 +501,14 @@
             .site-title { font-size: 2em; }
             .footer-credits span { display: block; margin: 5px 0; text-align: center !important; }
             .footer-separator { display: none !important; }
+
+            /* Illustrations */
+            .h2-wrapper {
+                gap: 15px;
+            }
+            .side-img {
+                flex: 0 0 80px;
+            }
         }
         
         
@@ -781,7 +790,7 @@
                     <span>Art by <strong>𝕩𝕝𝕦𝕖𝕧𝕚</strong></span>
                 </div>
                 <div class="footer-date">
-                    Updated on 2026-03-25 23:01
+                    Updated on 2026-03-25 23:17
                 </div>
             </div>
         </footer>
