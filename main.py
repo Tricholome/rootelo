@@ -381,7 +381,7 @@ render_page(
     player_names=sorted(list(archive_history.keys()))
 )
 
-# C. Génération de la page About (Commune)
+# C. Génération des pages uniques
 render_page(
     "about.html", 
     "about.html",
@@ -390,7 +390,16 @@ render_page(
     is_archive=False,
     page_heading="Codex",
     description="Understanding the mechanics of Rootelo.",
-    generation_date=datetime.now(timezone.utc).strftime('%Y-%m-%d')
+)
+
+render_page(
+    "cache.html", 
+    "cache.html",
+    title="Undergrowth • Rootelo",
+    page_id="cache",
+    is_archive=False,
+    page_heading="Undergrowth",
+    description="Understanding the mechanics of Rootelo.",
 )
 
 print("Génération terminée avec succès !")
