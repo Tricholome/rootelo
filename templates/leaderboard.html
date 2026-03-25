@@ -60,6 +60,7 @@
                 <td class="{{ 'unranked' if player.Rank == '-' else '' }}">
                     {{ player.Rank }}
                 </td>
+                <td>
                     {% if player.tier and player.tier != 'unranked' %}
                         {% set tier_page = 'cache.html' if player.tier == 'squirrel' else 'about.html' %}
                         <a href="{{ tier_page }}#tier-{{ player.tier }}" class="tier-anchor-link">
