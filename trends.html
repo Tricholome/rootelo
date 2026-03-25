@@ -250,11 +250,33 @@
 
         /* Datatables utilities */
         .dataTables_filter label, .dataTables_length label { color: var(--text-muted); font-family: var(--font-ui); font-size: 0.8em; }
+
         .dataTables_filter input, .dataTables_length select { 
-            background: var(--bg-surface) !important; border: 1px solid var(--border-soft) !important; 
-            color: var(--text-main) !important; border-radius: 4px; padding: 4px 8px; outline: none; margin: 0 8px; 
+            background: var(--bg-surface) !important; 
+            border: 1px solid var(--border-soft) !important; 
+            color: var(--text-main) !important; 
+            border-radius: 4px; 
+            padding: 4px 8px; 
+            outline: none; 
+            margin: 0 8px; 
+            appearance: none; /* Supprime le style blanc Safari/Chrome */
+            -webkit-appearance: none;
+        }
+
+        /* Ajoute une flèche grise personnalisée pour le menu "Show entries" */
+        .dataTables_length select {
+            padding-right: 24px !important;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='gray' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") !important;
+            background-repeat: no-repeat !important;
+            background-position: right 8px center !important;
         }
         
+        /* Force le fond noir des options quand on clique dessus */
+        .dataTables_length select option {
+            background-color: var(--bg-surface);
+            color: var(--text-main);
+        }
+
         .dataTables_filter input::-webkit-search-cancel-button {
             -webkit-appearance: none; height: 13px; width: 13px; cursor: pointer;
             background-color: var(--text-muted);
@@ -472,15 +494,15 @@
 <style>
     .search-box { margin: 20px 0; text-align: center; }
     input { 
-        background: var(--bg-surface); /* Utilise ton gris d'interface */
-        color: var(--text-main); 
-        border: 1px solid var(--border-soft); 
+        appearance: none;
+        -webkit-appearance: none;
+        background: var(--bg-surface) !important; 
+        color: var(--text-main) !important; 
+        border: 1px solid var(--border-soft) !important; 
         padding: 12px; 
         border-radius: 8px; 
-        width: 95%; 
+        width: 100%; 
         max-width: 450px; 
-        font-size: 16px; 
-        box-sizing: border-box; 
         outline: none;
     }
     input:focus { border-color: var(--color-rabbit); } /* Focus couleur lapin */
@@ -1274,7 +1296,7 @@
                     <span>Art by <strong>𝕩𝕝𝕦𝕖𝕧𝕚</strong></span>
                 </div>
                 <div class="footer-date">
-                    Updated on 2026-03-25 22:09
+                    Updated on 2026-03-25 22:14
                 </div>
             </div>
         </footer>
