@@ -254,6 +254,16 @@
            ========================================================================= */
         .page-intro { margin-bottom: 30px; }
         .page-intro h2 { font-family: var(--font-title); font-size: 2.2em; margin: 0; color: var(--main-color); }
+        .h2-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
+        .side-img {
+            height: 40px; /* Taille à ajuster selon ton image */
+            width: auto;
+        }
         .page-intro p { color: var(--text-muted); font-family: var(--font-ui); font-size: 0.9em; margin: 15px auto 0; max-width: 700px; }
 
         table.dataTable { border-collapse: collapse !important; }
@@ -557,7 +567,11 @@
         </nav>
 
         <header class="page-intro">
-            <h2>{{ page_heading }}</h2>
+            <div class="h2-wrapper">
+                {% block page_decoration_left %}{% endblock %}
+                    <h2>{{ page_heading }}</h2>
+                {% block page_decoration_right %}{% endblock %}
+            </div>
             {% if has_seasons %}
             <div class="season-selector">
                 <span class="season-label">Season</span>
