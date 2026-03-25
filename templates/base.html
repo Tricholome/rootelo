@@ -527,11 +527,31 @@
         </footer>
     </div>
 
+    <div id="lightbox" class="lightbox-overlay" onclick="this.style.display='none'">
+        <img id="lightbox-img" src="" alt="Tier Icon Large">
+    </div>
+
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
     
     <script>
+        // Fonction globale pour ouvrir la lightbox
+        function openLightbox(src) {
+            const lb = document.getElementById('lightbox');
+            const lbImg = document.getElementById('lightbox-img');
+            lbImg.src = src;
+            lb.style.display = 'flex';
+        }
+
+        // Fermeture avec la touche Echap
+        document.addEventListener('keydown', function(e) {
+            if (e.key === "Escape") {
+                const lb = document.getElementById('lightbox');
+                if (lb) lb.style.display = 'none';
+            }
+        });
+        
         document.addEventListener("DOMContentLoaded", function() {
             // Détection propre des appareils tactiles
             const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (window.matchMedia("(hover: none)").matches);
