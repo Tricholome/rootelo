@@ -55,7 +55,7 @@
         </thead>
         <tbody>
             {% for player in players %}
-            <tr class="tier-{{ player.tier }} {{ 'unranked' if player.Rank == '-' else '' }}">
+            <tr class="tier-{{ player.tier }} {{ 'unranked' if player.tier == 'unranked' else '' }}">
                 <td>{{ player.Rank }}</td>
                 <td>
                     {% if player.tier and player.tier != 'unranked' %}
