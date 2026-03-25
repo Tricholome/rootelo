@@ -364,21 +364,22 @@
         font-family: var(--font-ui);
         font-size: 0.95em; /* Légèrement remonté pour la lecture de longs textes */
     }
-        
-    .codex-section a {
-        color: var(--main-color);
-        text-decoration: none;
-        transition: border-color 0.2s;
-        border-bottom: 1px solid transparent;
-    }
-
-    .codex-section a:hover {
-        border-bottom-color: var(--main-color);
-    }
 
     .codex-section strong {
         color: var(--text-main);
         font-weight: 700;
+    }
+        
+    .codex-section a {
+        color: var(--text-main);
+        text-decoration: none;
+        background: rgba(255, 255, 255, 0.05);
+        padding: 2px 4px;
+        border-radius: 4px;
+        transition: 0.2s;
+    }
+    .codex-section a:hover {
+        background: rgba(255, 255, 255, 0.15);
     }
 
     /* --- TIER LIST --- */
@@ -597,7 +598,7 @@
     <p>This platform is an alternative ranking experience specifically designed for the <strong>Root Digital League</strong>. It offers a distinct competitive lens through which to view player performance. For official standings, tournament rules, league updates, and subscription, please visit the <a href="https://rootleague.pliskin.dev/">Root Digital League</a>.</p>
 
     <h2>The Scoring Engine</h2>
-    <p>To ensure fairness in a 4-player format, this leaderboard uses a multi-player Elo model. Unlike a simple win-count, it calculates your rating based on your “strength of schedule”. If you defeat high-ranked opponents, your rating climbs significantly. If you lose as the favorite, your score will reflect the upset.</p>
+    <p>To ensure fairness in a 4-player format, this leaderboard uses a multi-player <strong>Elo model</strong>. Unlike a simple win-count, it calculates your rating based on your “strength of schedule”. If you defeat high-ranked opponents, your rating climbs significantly. If you lose as the favorite, your score will reflect the upset.</p>
 
     <h2>The Dynamic Phases</h2>
     <p>The <strong>K-Factor</strong> determines the maximum number of Elo points you can win or lose in a single match. As you play more games, your K-Factor decreases, protecting your hard-earned rank from wild swings and rewarding long-term consistency.</p>
@@ -621,7 +622,7 @@
     </table>
     
     <h2>The Tier System</h2>
-    <p>After your 10-game calibration phase, you officially join the ranks and unlock your Tier:</p>
+    <p>After your 10-game calibration phase, you officially join the ranks and unlock your <strong>Tier</strong>:</p>
     
     <div class="tier-list">
         <div class="tier-item tier-bird" id="tier-bird"> 
@@ -674,7 +675,7 @@
     </div>
 
     <h2>The Seasonal Lifecycle</h2>
-    <p>At the start of every new season, the League resets its focus but remembers its veterans. New players begin their journey with a base score of <strong>1200</strong>. Returning players retain their exact Elo score from the previous season. However, to keep the ladder fresh and accurate, everyone starts back in the calibration phase at the beginning of each season. You must complete 10 placement games to reveal your rank and reclaim your Tier.</p>
+    <p>At the start of every new season, the League resets its focus but remembers its veterans. New players begin their journey with a <strong>base score of 1200</strong>. Returning players retain their exact Elo score from the previous season. However, to keep the ladder fresh and accurate, everyone starts back in the calibration phase at the beginning of each season. You must complete 10 placement games to reveal your rank and reclaim your Tier.</p>
 
     <h2>A Living Project</h2>
     <p>This system is a living project and remains under active development. The formulas and features may evolve to better reflect the competitive reality of the game. If you have any questions, suggestions, or want to discuss the math behind the ranks, join the conversation on the <a href="https://discord.com/channels/476234833572397056/1477741957139791892">Woodland Warriors</a>.</p>
