@@ -28,6 +28,13 @@
             --color-mouse: #DF9356;
             --color-squirrel: #7DA05E;
 
+            /* Faction Backgrounds */
+            --color-bird-bg: #82C0E714;
+            --color-fox-bg: #D3493614;
+            --color-rabbit-bg: #E0B63414;
+            --color-mouse-bg: #DF935614;
+            --color-squirrel-bg: #7DA05E14;
+
             /* Typography */
             --font-title: 'Fraunces', serif;
             --font-ui: 'Inter', sans-serif;
@@ -434,61 +441,76 @@
         }
         
         
-    /* --- 1. STRUCTURE DU TABLEAU --- */
-    #leaderboard { 
-        margin-top: 20px !important; 
-        border-bottom: none !important;
-    }
+    /* --- 1. TABLE STRUCTURE --- */
+    #leaderboard { margin-top: 20px !important; border-bottom: none !important; }
     
     .player-name-cell { 
-        text-align: left !important; 
-        padding-left: 15px !important; 
-        font-family: var(--font-ui);
-        font-weight: 600;
-        color: var(--text-main);
+        text-align: left !important; padding-left: 15px !important; 
+        font-family: var(--font-ui); font-weight: 600; color: var(--text-main);
     }
 
     .tier-icon-container { 
-        width: 28px; height: 28px; 
-        display: flex; align-items: center; justify-content: center; 
-        margin: 0 auto; 
+        width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; margin: 0 auto; 
     }
     .tier-icon-container img { max-width: 100%; max-height: 100%; object-fit: contain; }
 
-    /* --- 2. COLORATION DES TIERS --- */
-    table.dataTable tbody tr.tier-bird   { background-color: rgba(103, 192, 199, 0.08) !important; border-left: 4px solid var(--color-bird) !important; }
-    table.dataTable tbody tr.tier-fox    { background-color: rgba(230, 55, 45, 0.08) !important; border-left: 4px solid var(--color-fox) !important; }
-    table.dataTable tbody tr.tier-rabbit { background-color: rgba(247, 235, 91, 0.08) !important; border-left: 4px solid var(--color-rabbit) !important; }
-    table.dataTable tbody tr.tier-mouse  { background-color: rgba(242, 144, 87, 0.08) !important; border-left: 4px solid var(--color-mouse) !important; }
+    /* --- 2. DYNAMIC TIER COLORATION --- */
+    /* Generates row styles and ELO highlights based on CSS variables defined in base.html */
+    
+    table.dataTable tbody tr.tier-bird { 
+        background-color: var(--color-bird-bg) !important; 
+        border-left: 4px solid var(--color-bird) !important; 
+    }
+    .tier-bird td:nth-child(4) { 
+        color: var(--color-bird) !important; 
+        font-weight: 800; font-size: 1.1em; 
+    }
+    
+    table.dataTable tbody tr.tier-fox { 
+        background-color: var(--color-fox-bg) !important; 
+        border-left: 4px solid var(--color-fox) !important; 
+    }
+    .tier-fox td:nth-child(4) { 
+        color: var(--color-fox) !important; 
+        font-weight: 800; font-size: 1.1em; 
+    }
+    
+    table.dataTable tbody tr.tier-rabbit { 
+        background-color: var(--color-rabbit-bg) !important; 
+        border-left: 4px solid var(--color-rabbit) !important; 
+    }
+    .tier-rabbit td:nth-child(4) { 
+        color: var(--color-rabbit) !important; 
+        font-weight: 800; font-size: 1.1em; 
+    }
+    
+    table.dataTable tbody tr.tier-mouse { 
+        background-color: var(--color-mouse-bg) !important; 
+        border-left: 4px solid var(--color-mouse) !important; 
+    }
+    .tier-mouse td:nth-child(4) { 
+        color: var(--color-mouse) !important; 
+        font-weight: 800; font-size: 1.1em; 
+    }
+    
+    table.dataTable tbody tr.tier-squirrel { 
+        background-color: var(--color-squirrel-bg) !important; 
+        border-left: 4px solid var(--color-squirrel) !important; 
+    }
+    .tier-squirrel td:nth-child(4) { 
+        color: var(--color-squirrel) !important; 
+        font-weight: 800; font-size: 1.1em; 
+    }
+    
 
-    /* --- 3. MISE EN VALEUR DE L'ELO --- */
-    .tier-bird td:nth-child(4)   { color: var(--color-bird) !important; font-weight: 800; font-size: 1.1em; }
-    .tier-fox td:nth-child(4)    { color: var(--color-fox) !important; font-weight: 800; font-size: 1.1em; }
-    .tier-rabbit td:nth-child(4) { color: var(--color-rabbit) !important; font-weight: 800; font-size: 1.1em; }
-    .tier-mouse td:nth-child(4)  { color: var(--color-mouse) !important; font-weight: 800; font-size: 1.1em; }
-
+    /* Faded style for players without the minimum game threshold */
     .unranked { opacity: 0.4; font-style: italic; filter: grayscale(1); }
 
-    /* --- 4. OPTIMISATION MOBILE (ASTUCE MEDIA) --- */
+    /* --- 3. MOBILE OPTIMIZATION --- */
     @media (max-width: 600px) {
-        table.dataTable tbody td {
-            font-size: 0.85em;
-            padding: 8px 4px !important;
-        }
-        
-        .player-name-cell {
-            max-width: 110px; /* On limite la largeur du nom sur mobile */
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            padding-left: 8px !important;
-        }
-
-        /* On garantit que l'ELO reste lisible et ne se colle pas au bord */
-        table.dataTable td:nth-child(4) {
-            padding-right: 10px !important;
-            min-width: 55px;
-        }
+        table.dataTable tbody td { font-size: 0.85em; padding: 8px 4px !important; }
+        .player-name-cell { max-width: 110px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        table.dataTable td:nth-child(4) { padding-right: 10px !important; min-width: 55px; }
     }
 
     </style>
@@ -583,7 +605,7 @@
         </thead>
         <tbody>
             
-            <tr>
+            <tr class="tier-unranked unranked">
                 <td>-</td>
                 <td>
                     
@@ -597,7 +619,7 @@
                 <td>45</td>
             </tr>
             
-            <tr>
+            <tr class="tier-bird ">
                 <td>1</td>
                 <td>
                     
@@ -618,7 +640,7 @@
                 <td>15</td>
             </tr>
             
-            <tr>
+            <tr class="tier-fox ">
                 <td>2</td>
                 <td>
                     
@@ -639,7 +661,7 @@
                 <td>-13</td>
             </tr>
             
-            <tr>
+            <tr class="tier-fox ">
                 <td>3</td>
                 <td>
                     
@@ -660,7 +682,7 @@
                 <td>14</td>
             </tr>
             
-            <tr>
+            <tr class="tier-fox ">
                 <td>4</td>
                 <td>
                     
@@ -681,7 +703,7 @@
                 <td>-21</td>
             </tr>
             
-            <tr>
+            <tr class="tier-fox ">
                 <td>5</td>
                 <td>
                     
@@ -702,7 +724,7 @@
                 <td>-14</td>
             </tr>
             
-            <tr>
+            <tr class="tier-fox ">
                 <td>6</td>
                 <td>
                     
@@ -723,7 +745,7 @@
                 <td>14</td>
             </tr>
             
-            <tr>
+            <tr class="tier-fox ">
                 <td>7</td>
                 <td>
                     
@@ -744,7 +766,7 @@
                 <td>10</td>
             </tr>
             
-            <tr>
+            <tr class="tier-fox ">
                 <td>8</td>
                 <td>
                     
@@ -765,7 +787,7 @@
                 <td>13</td>
             </tr>
             
-            <tr>
+            <tr class="tier-fox ">
                 <td>9</td>
                 <td>
                     
@@ -786,7 +808,7 @@
                 <td>20</td>
             </tr>
             
-            <tr>
+            <tr class="tier-rabbit ">
                 <td>10</td>
                 <td>
                     
@@ -807,7 +829,7 @@
                 <td>11</td>
             </tr>
             
-            <tr>
+            <tr class="tier-rabbit ">
                 <td>11</td>
                 <td>
                     
@@ -828,7 +850,7 @@
                 <td>-13</td>
             </tr>
             
-            <tr>
+            <tr class="tier-rabbit ">
                 <td>12</td>
                 <td>
                     
@@ -849,7 +871,7 @@
                 <td>-31</td>
             </tr>
             
-            <tr>
+            <tr class="tier-rabbit ">
                 <td>13</td>
                 <td>
                     
@@ -870,7 +892,7 @@
                 <td>19</td>
             </tr>
             
-            <tr>
+            <tr class="tier-rabbit ">
                 <td>14</td>
                 <td>
                     
@@ -891,7 +913,7 @@
                 <td>-18</td>
             </tr>
             
-            <tr>
+            <tr class="tier-rabbit ">
                 <td>15</td>
                 <td>
                     
@@ -912,7 +934,7 @@
                 <td>-9</td>
             </tr>
             
-            <tr>
+            <tr class="tier-rabbit ">
                 <td>16</td>
                 <td>
                     
@@ -933,7 +955,7 @@
                 <td>11</td>
             </tr>
             
-            <tr>
+            <tr class="tier-unranked unranked">
                 <td>-</td>
                 <td>
                     
@@ -947,7 +969,7 @@
                 <td>-23</td>
             </tr>
             
-            <tr>
+            <tr class="tier-rabbit ">
                 <td>17</td>
                 <td>
                     
@@ -968,7 +990,7 @@
                 <td>19</td>
             </tr>
             
-            <tr>
+            <tr class="tier-rabbit ">
                 <td>18</td>
                 <td>
                     
@@ -989,7 +1011,7 @@
                 <td>19</td>
             </tr>
             
-            <tr>
+            <tr class="tier-rabbit ">
                 <td>19</td>
                 <td>
                     
@@ -1010,7 +1032,7 @@
                 <td>-9</td>
             </tr>
             
-            <tr>
+            <tr class="tier-rabbit ">
                 <td>20</td>
                 <td>
                     
@@ -1031,7 +1053,7 @@
                 <td>24</td>
             </tr>
             
-            <tr>
+            <tr class="tier-rabbit ">
                 <td>21</td>
                 <td>
                     
@@ -1052,7 +1074,7 @@
                 <td>-8</td>
             </tr>
             
-            <tr>
+            <tr class="tier-rabbit ">
                 <td>22</td>
                 <td>
                     
@@ -1073,7 +1095,7 @@
                 <td>-8</td>
             </tr>
             
-            <tr>
+            <tr class="tier-rabbit ">
                 <td>23</td>
                 <td>
                     
@@ -1094,7 +1116,7 @@
                 <td>-41</td>
             </tr>
             
-            <tr>
+            <tr class="tier-rabbit ">
                 <td>24</td>
                 <td>
                     
@@ -1115,7 +1137,7 @@
                 <td>-17</td>
             </tr>
             
-            <tr>
+            <tr class="tier-rabbit ">
                 <td>25</td>
                 <td>
                     
@@ -1136,7 +1158,7 @@
                 <td>-8</td>
             </tr>
             
-            <tr>
+            <tr class="tier-rabbit ">
                 <td>26</td>
                 <td>
                     
@@ -1157,7 +1179,7 @@
                 <td>27</td>
             </tr>
             
-            <tr>
+            <tr class="tier-unranked unranked">
                 <td>-</td>
                 <td>
                     
@@ -1171,7 +1193,7 @@
                 <td>-22</td>
             </tr>
             
-            <tr>
+            <tr class="tier-rabbit ">
                 <td>27</td>
                 <td>
                     
@@ -1192,7 +1214,7 @@
                 <td>32</td>
             </tr>
             
-            <tr>
+            <tr class="tier-unranked unranked">
                 <td>-</td>
                 <td>
                     
@@ -1206,7 +1228,7 @@
                 <td>57</td>
             </tr>
             
-            <tr>
+            <tr class="tier-rabbit ">
                 <td>28</td>
                 <td>
                     
@@ -1227,7 +1249,7 @@
                 <td>49</td>
             </tr>
             
-            <tr>
+            <tr class="tier-rabbit ">
                 <td>29</td>
                 <td>
                     
@@ -1248,7 +1270,7 @@
                 <td>-11</td>
             </tr>
             
-            <tr>
+            <tr class="tier-unranked unranked">
                 <td>-</td>
                 <td>
                     
@@ -1262,7 +1284,7 @@
                 <td>-40</td>
             </tr>
             
-            <tr>
+            <tr class="tier-unranked unranked">
                 <td>-</td>
                 <td>
                     
@@ -1276,7 +1298,7 @@
                 <td>56</td>
             </tr>
             
-            <tr>
+            <tr class="tier-unranked unranked">
                 <td>-</td>
                 <td>
                     
@@ -1290,7 +1312,7 @@
                 <td>49</td>
             </tr>
             
-            <tr>
+            <tr class="tier-unranked unranked">
                 <td>-</td>
                 <td>
                     
@@ -1304,7 +1326,7 @@
                 <td>59</td>
             </tr>
             
-            <tr>
+            <tr class="tier-rabbit ">
                 <td>30</td>
                 <td>
                     
@@ -1325,7 +1347,7 @@
                 <td>29</td>
             </tr>
             
-            <tr>
+            <tr class="tier-rabbit ">
                 <td>31</td>
                 <td>
                     
@@ -1346,7 +1368,7 @@
                 <td>-12</td>
             </tr>
             
-            <tr>
+            <tr class="tier-unranked unranked">
                 <td>-</td>
                 <td>
                     
@@ -1360,7 +1382,7 @@
                 <td>61</td>
             </tr>
             
-            <tr>
+            <tr class="tier-mouse ">
                 <td>32</td>
                 <td>
                     
@@ -1381,7 +1403,7 @@
                 <td>26</td>
             </tr>
             
-            <tr>
+            <tr class="tier-unranked unranked">
                 <td>-</td>
                 <td>
                     
@@ -1395,7 +1417,7 @@
                 <td>55</td>
             </tr>
             
-            <tr>
+            <tr class="tier-unranked unranked">
                 <td>-</td>
                 <td>
                     
@@ -1409,7 +1431,7 @@
                 <td>-14</td>
             </tr>
             
-            <tr>
+            <tr class="tier-unranked unranked">
                 <td>-</td>
                 <td>
                     
@@ -1423,7 +1445,7 @@
                 <td>55</td>
             </tr>
             
-            <tr>
+            <tr class="tier-mouse ">
                 <td>33</td>
                 <td>
                     
@@ -1444,7 +1466,7 @@
                 <td>-6</td>
             </tr>
             
-            <tr>
+            <tr class="tier-unranked unranked">
                 <td>-</td>
                 <td>
                     
@@ -1458,7 +1480,7 @@
                 <td>54</td>
             </tr>
             
-            <tr>
+            <tr class="tier-unranked unranked">
                 <td>-</td>
                 <td>
                     
@@ -1472,7 +1494,7 @@
                 <td>-35</td>
             </tr>
             
-            <tr>
+            <tr class="tier-mouse ">
                 <td>34</td>
                 <td>
                     
@@ -1493,7 +1515,7 @@
                 <td>-7</td>
             </tr>
             
-            <tr>
+            <tr class="tier-unranked unranked">
                 <td>-</td>
                 <td>
                     
@@ -1507,7 +1529,7 @@
                 <td>73</td>
             </tr>
             
-            <tr>
+            <tr class="tier-unranked unranked">
                 <td>-</td>
                 <td>
                     
@@ -1521,7 +1543,7 @@
                 <td>64</td>
             </tr>
             
-            <tr>
+            <tr class="tier-mouse ">
                 <td>35</td>
                 <td>
                     
@@ -1542,7 +1564,7 @@
                 <td>-5</td>
             </tr>
             
-            <tr>
+            <tr class="tier-mouse ">
                 <td>36</td>
                 <td>
                     
@@ -1563,7 +1585,7 @@
                 <td>-8</td>
             </tr>
             
-            <tr>
+            <tr class="tier-unranked unranked">
                 <td>-</td>
                 <td>
                     
@@ -1577,7 +1599,7 @@
                 <td>-30</td>
             </tr>
             
-            <tr>
+            <tr class="tier-mouse ">
                 <td>37</td>
                 <td>
                     
@@ -1598,7 +1620,7 @@
                 <td>-10</td>
             </tr>
             
-            <tr>
+            <tr class="tier-unranked unranked">
                 <td>-</td>
                 <td>
                     
@@ -1612,7 +1634,7 @@
                 <td>-22</td>
             </tr>
             
-            <tr>
+            <tr class="tier-mouse ">
                 <td>38</td>
                 <td>
                     
@@ -1633,7 +1655,7 @@
                 <td>-5</td>
             </tr>
             
-            <tr>
+            <tr class="tier-unranked unranked">
                 <td>-</td>
                 <td>
                     
@@ -1647,7 +1669,7 @@
                 <td>62</td>
             </tr>
             
-            <tr>
+            <tr class="tier-unranked unranked">
                 <td>-</td>
                 <td>
                     
@@ -1661,7 +1683,7 @@
                 <td>62</td>
             </tr>
             
-            <tr>
+            <tr class="tier-unranked unranked">
                 <td>-</td>
                 <td>
                     
@@ -1675,7 +1697,7 @@
                 <td>62</td>
             </tr>
             
-            <tr>
+            <tr class="tier-mouse ">
                 <td>39</td>
                 <td>
                     
@@ -1696,7 +1718,7 @@
                 <td>-13</td>
             </tr>
             
-            <tr>
+            <tr class="tier-unranked unranked">
                 <td>-</td>
                 <td>
                     
@@ -1710,7 +1732,7 @@
                 <td>58</td>
             </tr>
             
-            <tr>
+            <tr class="tier-mouse ">
                 <td>40</td>
                 <td>
                     
@@ -1731,7 +1753,7 @@
                 <td>-9</td>
             </tr>
             
-            <tr>
+            <tr class="tier-unranked unranked">
                 <td>-</td>
                 <td>
                     
@@ -1745,7 +1767,7 @@
                 <td>-14</td>
             </tr>
             
-            <tr>
+            <tr class="tier-mouse ">
                 <td>41</td>
                 <td>
                     
@@ -1766,7 +1788,7 @@
                 <td>-11</td>
             </tr>
             
-            <tr>
+            <tr class="tier-mouse ">
                 <td>42</td>
                 <td>
                     
@@ -1787,7 +1809,7 @@
                 <td>-8</td>
             </tr>
             
-            <tr>
+            <tr class="tier-mouse ">
                 <td>43</td>
                 <td>
                     
@@ -1808,7 +1830,7 @@
                 <td>-5</td>
             </tr>
             
-            <tr>
+            <tr class="tier-unranked unranked">
                 <td>-</td>
                 <td>
                     
@@ -1822,7 +1844,7 @@
                 <td>59</td>
             </tr>
             
-            <tr>
+            <tr class="tier-unranked unranked">
                 <td>-</td>
                 <td>
                     
@@ -1836,7 +1858,7 @@
                 <td>-15</td>
             </tr>
             
-            <tr>
+            <tr class="tier-unranked unranked">
                 <td>-</td>
                 <td>
                     
@@ -1850,7 +1872,7 @@
                 <td>60</td>
             </tr>
             
-            <tr>
+            <tr class="tier-unranked unranked">
                 <td>-</td>
                 <td>
                     
@@ -1864,7 +1886,7 @@
                 <td>60</td>
             </tr>
             
-            <tr>
+            <tr class="tier-mouse ">
                 <td>44</td>
                 <td>
                     
@@ -1885,7 +1907,7 @@
                 <td>34</td>
             </tr>
             
-            <tr>
+            <tr class="tier-mouse ">
                 <td>45</td>
                 <td>
                     
@@ -1906,7 +1928,7 @@
                 <td>-5</td>
             </tr>
             
-            <tr>
+            <tr class="tier-unranked unranked">
                 <td>-</td>
                 <td>
                     
@@ -1920,7 +1942,7 @@
                 <td>-24</td>
             </tr>
             
-            <tr>
+            <tr class="tier-unranked unranked">
                 <td>-</td>
                 <td>
                     
@@ -1934,7 +1956,7 @@
                 <td>59</td>
             </tr>
             
-            <tr>
+            <tr class="tier-unranked unranked">
                 <td>-</td>
                 <td>
                     
@@ -1948,7 +1970,7 @@
                 <td>64</td>
             </tr>
             
-            <tr>
+            <tr class="tier-mouse ">
                 <td>46</td>
                 <td>
                     
@@ -1969,7 +1991,7 @@
                 <td>-7</td>
             </tr>
             
-            <tr>
+            <tr class="tier-unranked unranked">
                 <td>-</td>
                 <td>
                     
@@ -1983,7 +2005,7 @@
                 <td>-31</td>
             </tr>
             
-            <tr>
+            <tr class="tier-unranked unranked">
                 <td>-</td>
                 <td>
                     
@@ -1997,7 +2019,7 @@
                 <td>-9</td>
             </tr>
             
-            <tr>
+            <tr class="tier-unranked unranked">
                 <td>-</td>
                 <td>
                     
@@ -2011,7 +2033,7 @@
                 <td>-14</td>
             </tr>
             
-            <tr>
+            <tr class="tier-unranked unranked">
                 <td>-</td>
                 <td>
                     
@@ -2025,7 +2047,7 @@
                 <td>-25</td>
             </tr>
             
-            <tr>
+            <tr class="tier-unranked unranked">
                 <td>-</td>
                 <td>
                     
@@ -2039,7 +2061,7 @@
                 <td>-8</td>
             </tr>
             
-            <tr>
+            <tr class="tier-unranked unranked">
                 <td>-</td>
                 <td>
                     
@@ -2053,7 +2075,7 @@
                 <td>-11</td>
             </tr>
             
-            <tr>
+            <tr class="tier-mouse ">
                 <td>47</td>
                 <td>
                     
@@ -2074,7 +2096,7 @@
                 <td>34</td>
             </tr>
             
-            <tr>
+            <tr class="tier-unranked unranked">
                 <td>-</td>
                 <td>
                     
@@ -2088,7 +2110,7 @@
                 <td>-22</td>
             </tr>
             
-            <tr>
+            <tr class="tier-mouse ">
                 <td>48</td>
                 <td>
                     
@@ -2109,7 +2131,7 @@
                 <td>-9</td>
             </tr>
             
-            <tr>
+            <tr class="tier-unranked unranked">
                 <td>-</td>
                 <td>
                     
@@ -2123,7 +2145,7 @@
                 <td>-11</td>
             </tr>
             
-            <tr>
+            <tr class="tier-unranked unranked">
                 <td>-</td>
                 <td>
                     
@@ -2137,7 +2159,7 @@
                 <td>-11</td>
             </tr>
             
-            <tr>
+            <tr class="tier-mouse ">
                 <td>49</td>
                 <td>
                     
@@ -2158,7 +2180,7 @@
                 <td>-10</td>
             </tr>
             
-            <tr>
+            <tr class="tier-mouse ">
                 <td>50</td>
                 <td>
                     
@@ -2179,7 +2201,7 @@
                 <td>-11</td>
             </tr>
             
-            <tr>
+            <tr class="tier-unranked unranked">
                 <td>-</td>
                 <td>
                     
@@ -2193,7 +2215,7 @@
                 <td>-23</td>
             </tr>
             
-            <tr>
+            <tr class="tier-unranked unranked">
                 <td>-</td>
                 <td>
                     
@@ -2207,7 +2229,7 @@
                 <td>-31</td>
             </tr>
             
-            <tr>
+            <tr class="tier-unranked unranked">
                 <td>-</td>
                 <td>
                     
@@ -2221,7 +2243,7 @@
                 <td>-25</td>
             </tr>
             
-            <tr>
+            <tr class="tier-mouse ">
                 <td>51</td>
                 <td>
                     
@@ -2242,7 +2264,7 @@
                 <td>33</td>
             </tr>
             
-            <tr>
+            <tr class="tier-mouse ">
                 <td>52</td>
                 <td>
                     
@@ -2263,7 +2285,7 @@
                 <td>-13</td>
             </tr>
             
-            <tr>
+            <tr class="tier-unranked unranked">
                 <td>-</td>
                 <td>
                     
@@ -2277,7 +2299,7 @@
                 <td>62</td>
             </tr>
             
-            <tr>
+            <tr class="tier-mouse ">
                 <td>53</td>
                 <td>
                     
@@ -2298,7 +2320,7 @@
                 <td>-7</td>
             </tr>
             
-            <tr>
+            <tr class="tier-mouse ">
                 <td>54</td>
                 <td>
                     
@@ -2319,7 +2341,7 @@
                 <td>-4</td>
             </tr>
             
-            <tr>
+            <tr class="tier-mouse ">
                 <td>55</td>
                 <td>
                     
@@ -2340,7 +2362,7 @@
                 <td>-8</td>
             </tr>
             
-            <tr>
+            <tr class="tier-mouse ">
                 <td>56</td>
                 <td>
                     
@@ -2361,7 +2383,7 @@
                 <td>-3</td>
             </tr>
             
-            <tr>
+            <tr class="tier-unranked unranked">
                 <td>-</td>
                 <td>
                     
@@ -2375,7 +2397,7 @@
                 <td>66</td>
             </tr>
             
-            <tr>
+            <tr class="tier-mouse ">
                 <td>57</td>
                 <td>
                     
@@ -2396,7 +2418,7 @@
                 <td>-8</td>
             </tr>
             
-            <tr>
+            <tr class="tier-unranked unranked">
                 <td>-</td>
                 <td>
                     
@@ -2410,7 +2432,7 @@
                 <td>68</td>
             </tr>
             
-            <tr>
+            <tr class="tier-unranked unranked">
                 <td>-</td>
                 <td>
                     
@@ -2424,9 +2446,16 @@
                 <td>-14</td>
             </tr>
             
-            <tr>
+            <tr class="tier-squirrel unranked">
                 <td>-</td>
                 <td>
+                    
+                        
+                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
+                            <div class="tier-icon-container">
+                                <img src="assets/icons/squirrel.webp" alt="squirrel">
+                            </div>
+                        </a>
                     
                 </td>
                 <td class="player-name-cell">AERotters</td>
@@ -2438,9 +2467,16 @@
                 <td>-4</td>
             </tr>
             
-            <tr>
+            <tr class="tier-squirrel unranked">
                 <td>-</td>
                 <td>
+                    
+                        
+                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
+                            <div class="tier-icon-container">
+                                <img src="assets/icons/squirrel.webp" alt="squirrel">
+                            </div>
+                        </a>
                     
                 </td>
                 <td class="player-name-cell">BMPerJMPer</td>
@@ -2452,9 +2488,16 @@
                 <td>-6</td>
             </tr>
             
-            <tr>
+            <tr class="tier-squirrel unranked">
                 <td>-</td>
                 <td>
+                    
+                        
+                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
+                            <div class="tier-icon-container">
+                                <img src="assets/icons/squirrel.webp" alt="squirrel">
+                            </div>
+                        </a>
                     
                 </td>
                 <td class="player-name-cell">Peppy</td>
@@ -2466,7 +2509,7 @@
                 <td>31</td>
             </tr>
             
-            <tr>
+            <tr class="tier-unranked unranked">
                 <td>-</td>
                 <td>
                     
@@ -2480,9 +2523,16 @@
                 <td>70</td>
             </tr>
             
-            <tr>
+            <tr class="tier-squirrel unranked">
                 <td>-</td>
                 <td>
+                    
+                        
+                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
+                            <div class="tier-icon-container">
+                                <img src="assets/icons/squirrel.webp" alt="squirrel">
+                            </div>
+                        </a>
                     
                 </td>
                 <td class="player-name-cell">lumpyprol</td>
@@ -2494,7 +2544,7 @@
                 <td>-6</td>
             </tr>
             
-            <tr>
+            <tr class="tier-unranked unranked">
                 <td>-</td>
                 <td>
                     
@@ -2508,7 +2558,7 @@
                 <td>-8</td>
             </tr>
             
-            <tr>
+            <tr class="tier-unranked unranked">
                 <td>-</td>
                 <td>
                     
@@ -2522,9 +2572,16 @@
                 <td>-14</td>
             </tr>
             
-            <tr>
+            <tr class="tier-squirrel unranked">
                 <td>-</td>
                 <td>
+                    
+                        
+                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
+                            <div class="tier-icon-container">
+                                <img src="assets/icons/squirrel.webp" alt="squirrel">
+                            </div>
+                        </a>
                     
                 </td>
                 <td class="player-name-cell">Youdge</td>
@@ -2536,9 +2593,16 @@
                 <td>35</td>
             </tr>
             
-            <tr>
+            <tr class="tier-squirrel unranked">
                 <td>-</td>
                 <td>
+                    
+                        
+                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
+                            <div class="tier-icon-container">
+                                <img src="assets/icons/squirrel.webp" alt="squirrel">
+                            </div>
+                        </a>
                     
                 </td>
                 <td class="player-name-cell">BadScra</td>
@@ -2550,9 +2614,16 @@
                 <td>-13</td>
             </tr>
             
-            <tr>
+            <tr class="tier-squirrel unranked">
                 <td>-</td>
                 <td>
+                    
+                        
+                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
+                            <div class="tier-icon-container">
+                                <img src="assets/icons/squirrel.webp" alt="squirrel">
+                            </div>
+                        </a>
                     
                 </td>
                 <td class="player-name-cell">mouseinabox</td>
@@ -2564,9 +2635,16 @@
                 <td>-3</td>
             </tr>
             
-            <tr>
+            <tr class="tier-squirrel unranked">
                 <td>-</td>
                 <td>
+                    
+                        
+                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
+                            <div class="tier-icon-container">
+                                <img src="assets/icons/squirrel.webp" alt="squirrel">
+                            </div>
+                        </a>
                     
                 </td>
                 <td class="player-name-cell">DelSol</td>
@@ -2578,9 +2656,16 @@
                 <td>-10</td>
             </tr>
             
-            <tr>
+            <tr class="tier-squirrel unranked">
                 <td>-</td>
                 <td>
+                    
+                        
+                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
+                            <div class="tier-icon-container">
+                                <img src="assets/icons/squirrel.webp" alt="squirrel">
+                            </div>
+                        </a>
                     
                 </td>
                 <td class="player-name-cell">Sebby</td>
@@ -2592,7 +2677,7 @@
                 <td>-14</td>
             </tr>
             
-            <tr>
+            <tr class="tier-unranked unranked">
                 <td>-</td>
                 <td>
                     
@@ -2606,7 +2691,7 @@
                 <td>-11</td>
             </tr>
             
-            <tr>
+            <tr class="tier-unranked unranked">
                 <td>-</td>
                 <td>
                     
@@ -2620,9 +2705,16 @@
                 <td>-11</td>
             </tr>
             
-            <tr>
+            <tr class="tier-squirrel unranked">
                 <td>-</td>
                 <td>
+                    
+                        
+                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
+                            <div class="tier-icon-container">
+                                <img src="assets/icons/squirrel.webp" alt="squirrel">
+                            </div>
+                        </a>
                     
                 </td>
                 <td class="player-name-cell">RFMerlo</td>
@@ -2634,7 +2726,7 @@
                 <td>-9</td>
             </tr>
             
-            <tr>
+            <tr class="tier-unranked unranked">
                 <td>-</td>
                 <td>
                     
@@ -2648,7 +2740,7 @@
                 <td>-20</td>
             </tr>
             
-            <tr>
+            <tr class="tier-unranked unranked">
                 <td>-</td>
                 <td>
                     
@@ -2662,9 +2754,16 @@
                 <td>-18</td>
             </tr>
             
-            <tr>
+            <tr class="tier-squirrel unranked">
                 <td>-</td>
                 <td>
+                    
+                        
+                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
+                            <div class="tier-icon-container">
+                                <img src="assets/icons/squirrel.webp" alt="squirrel">
+                            </div>
+                        </a>
                     
                 </td>
                 <td class="player-name-cell">MylesMoose</td>
@@ -2676,9 +2775,16 @@
                 <td>-13</td>
             </tr>
             
-            <tr>
+            <tr class="tier-squirrel unranked">
                 <td>-</td>
                 <td>
+                    
+                        
+                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
+                            <div class="tier-icon-container">
+                                <img src="assets/icons/squirrel.webp" alt="squirrel">
+                            </div>
+                        </a>
                     
                 </td>
                 <td class="player-name-cell">Excitedteapot</td>
@@ -2690,7 +2796,7 @@
                 <td>-13</td>
             </tr>
             
-            <tr>
+            <tr class="tier-unranked unranked">
                 <td>-</td>
                 <td>
                     
@@ -2704,9 +2810,16 @@
                 <td>-19</td>
             </tr>
             
-            <tr>
+            <tr class="tier-squirrel unranked">
                 <td>-</td>
                 <td>
+                    
+                        
+                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
+                            <div class="tier-icon-container">
+                                <img src="assets/icons/squirrel.webp" alt="squirrel">
+                            </div>
+                        </a>
                     
                 </td>
                 <td class="player-name-cell">LHlegend</td>
@@ -2718,7 +2831,7 @@
                 <td>-5</td>
             </tr>
             
-            <tr>
+            <tr class="tier-unranked unranked">
                 <td>-</td>
                 <td>
                     
@@ -2732,7 +2845,7 @@
                 <td>64</td>
             </tr>
             
-            <tr>
+            <tr class="tier-unranked unranked">
                 <td>-</td>
                 <td>
                     
@@ -2746,7 +2859,7 @@
                 <td>62</td>
             </tr>
             
-            <tr>
+            <tr class="tier-unranked unranked">
                 <td>-</td>
                 <td>
                     
@@ -2760,9 +2873,16 @@
                 <td>-17</td>
             </tr>
             
-            <tr>
+            <tr class="tier-squirrel unranked">
                 <td>-</td>
                 <td>
+                    
+                        
+                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
+                            <div class="tier-icon-container">
+                                <img src="assets/icons/squirrel.webp" alt="squirrel">
+                            </div>
+                        </a>
                     
                 </td>
                 <td class="player-name-cell">Podge0303</td>
@@ -2774,9 +2894,16 @@
                 <td>31</td>
             </tr>
             
-            <tr>
+            <tr class="tier-squirrel unranked">
                 <td>-</td>
                 <td>
+                    
+                        
+                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
+                            <div class="tier-icon-container">
+                                <img src="assets/icons/squirrel.webp" alt="squirrel">
+                            </div>
+                        </a>
                     
                 </td>
                 <td class="player-name-cell">secretpaths</td>
@@ -2788,9 +2915,16 @@
                 <td>-6</td>
             </tr>
             
-            <tr>
+            <tr class="tier-squirrel unranked">
                 <td>-</td>
                 <td>
+                    
+                        
+                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
+                            <div class="tier-icon-container">
+                                <img src="assets/icons/squirrel.webp" alt="squirrel">
+                            </div>
+                        </a>
                     
                 </td>
                 <td class="player-name-cell">TonyDeloreanESQ</td>
@@ -2802,9 +2936,16 @@
                 <td>-8</td>
             </tr>
             
-            <tr>
+            <tr class="tier-squirrel unranked">
                 <td>-</td>
                 <td>
+                    
+                        
+                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
+                            <div class="tier-icon-container">
+                                <img src="assets/icons/squirrel.webp" alt="squirrel">
+                            </div>
+                        </a>
                     
                 </td>
                 <td class="player-name-cell">FVMLion</td>
@@ -2816,9 +2957,16 @@
                 <td>-7</td>
             </tr>
             
-            <tr>
+            <tr class="tier-squirrel unranked">
                 <td>-</td>
                 <td>
+                    
+                        
+                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
+                            <div class="tier-icon-container">
+                                <img src="assets/icons/squirrel.webp" alt="squirrel">
+                            </div>
+                        </a>
                     
                 </td>
                 <td class="player-name-cell">DanzigMF</td>
@@ -2830,9 +2978,16 @@
                 <td>-7</td>
             </tr>
             
-            <tr>
+            <tr class="tier-squirrel unranked">
                 <td>-</td>
                 <td>
+                    
+                        
+                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
+                            <div class="tier-icon-container">
+                                <img src="assets/icons/squirrel.webp" alt="squirrel">
+                            </div>
+                        </a>
                     
                 </td>
                 <td class="player-name-cell">darkcat</td>
@@ -2844,7 +2999,7 @@
                 <td>33</td>
             </tr>
             
-            <tr>
+            <tr class="tier-unranked unranked">
                 <td>-</td>
                 <td>
                     
@@ -2858,7 +3013,7 @@
                 <td>-21</td>
             </tr>
             
-            <tr>
+            <tr class="tier-unranked unranked">
                 <td>-</td>
                 <td>
                     
@@ -2872,9 +3027,16 @@
                 <td>-10</td>
             </tr>
             
-            <tr>
+            <tr class="tier-squirrel unranked">
                 <td>-</td>
                 <td>
+                    
+                        
+                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
+                            <div class="tier-icon-container">
+                                <img src="assets/icons/squirrel.webp" alt="squirrel">
+                            </div>
+                        </a>
                     
                 </td>
                 <td class="player-name-cell">PlagueCarrier</td>
@@ -2886,9 +3048,16 @@
                 <td>36</td>
             </tr>
             
-            <tr>
+            <tr class="tier-squirrel unranked">
                 <td>-</td>
                 <td>
+                    
+                        
+                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
+                            <div class="tier-icon-container">
+                                <img src="assets/icons/squirrel.webp" alt="squirrel">
+                            </div>
+                        </a>
                     
                 </td>
                 <td class="player-name-cell">Wrestler</td>
@@ -2900,9 +3069,16 @@
                 <td>-5</td>
             </tr>
             
-            <tr>
+            <tr class="tier-squirrel unranked">
                 <td>-</td>
                 <td>
+                    
+                        
+                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
+                            <div class="tier-icon-container">
+                                <img src="assets/icons/squirrel.webp" alt="squirrel">
+                            </div>
+                        </a>
                     
                 </td>
                 <td class="player-name-cell">Banzai7000</td>
@@ -2914,9 +3090,16 @@
                 <td>-12</td>
             </tr>
             
-            <tr>
+            <tr class="tier-squirrel unranked">
                 <td>-</td>
                 <td>
+                    
+                        
+                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
+                            <div class="tier-icon-container">
+                                <img src="assets/icons/squirrel.webp" alt="squirrel">
+                            </div>
+                        </a>
                     
                 </td>
                 <td class="player-name-cell">Valzaan</td>
@@ -2928,9 +3111,16 @@
                 <td>-13</td>
             </tr>
             
-            <tr>
+            <tr class="tier-squirrel unranked">
                 <td>-</td>
                 <td>
+                    
+                        
+                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
+                            <div class="tier-icon-container">
+                                <img src="assets/icons/squirrel.webp" alt="squirrel">
+                            </div>
+                        </a>
                     
                 </td>
                 <td class="player-name-cell">TheFourthJesse</td>
@@ -2942,7 +3132,7 @@
                 <td>-7</td>
             </tr>
             
-            <tr>
+            <tr class="tier-unranked unranked">
                 <td>-</td>
                 <td>
                     
@@ -2956,9 +3146,16 @@
                 <td>-9</td>
             </tr>
             
-            <tr>
+            <tr class="tier-squirrel unranked">
                 <td>-</td>
                 <td>
+                    
+                        
+                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
+                            <div class="tier-icon-container">
+                                <img src="assets/icons/squirrel.webp" alt="squirrel">
+                            </div>
+                        </a>
                     
                 </td>
                 <td class="player-name-cell">benssoon</td>
@@ -2970,9 +3167,16 @@
                 <td>-7</td>
             </tr>
             
-            <tr>
+            <tr class="tier-squirrel unranked">
                 <td>-</td>
                 <td>
+                    
+                        
+                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
+                            <div class="tier-icon-container">
+                                <img src="assets/icons/squirrel.webp" alt="squirrel">
+                            </div>
+                        </a>
                     
                 </td>
                 <td class="player-name-cell">Odinius</td>
@@ -2984,9 +3188,16 @@
                 <td>-3</td>
             </tr>
             
-            <tr>
+            <tr class="tier-squirrel unranked">
                 <td>-</td>
                 <td>
+                    
+                        
+                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
+                            <div class="tier-icon-container">
+                                <img src="assets/icons/squirrel.webp" alt="squirrel">
+                            </div>
+                        </a>
                     
                 </td>
                 <td class="player-name-cell">Hadjiya</td>
@@ -2998,9 +3209,16 @@
                 <td>-3</td>
             </tr>
             
-            <tr>
+            <tr class="tier-squirrel unranked">
                 <td>-</td>
                 <td>
+                    
+                        
+                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
+                            <div class="tier-icon-container">
+                                <img src="assets/icons/squirrel.webp" alt="squirrel">
+                            </div>
+                        </a>
                     
                 </td>
                 <td class="player-name-cell">HobGungan</td>
@@ -3012,9 +3230,16 @@
                 <td>-5</td>
             </tr>
             
-            <tr>
+            <tr class="tier-squirrel unranked">
                 <td>-</td>
                 <td>
+                    
+                        
+                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
+                            <div class="tier-icon-container">
+                                <img src="assets/icons/squirrel.webp" alt="squirrel">
+                            </div>
+                        </a>
                     
                 </td>
                 <td class="player-name-cell">Gagneto</td>
@@ -3026,9 +3251,16 @@
                 <td>-6</td>
             </tr>
             
-            <tr>
+            <tr class="tier-squirrel unranked">
                 <td>-</td>
                 <td>
+                    
+                        
+                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
+                            <div class="tier-icon-container">
+                                <img src="assets/icons/squirrel.webp" alt="squirrel">
+                            </div>
+                        </a>
                     
                 </td>
                 <td class="player-name-cell">BaconBoy</td>
@@ -3040,9 +3272,16 @@
                 <td>-3</td>
             </tr>
             
-            <tr>
+            <tr class="tier-squirrel unranked">
                 <td>-</td>
                 <td>
+                    
+                        
+                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
+                            <div class="tier-icon-container">
+                                <img src="assets/icons/squirrel.webp" alt="squirrel">
+                            </div>
+                        </a>
                     
                 </td>
                 <td class="player-name-cell">ReoWulf</td>
@@ -3054,9 +3293,16 @@
                 <td>-3</td>
             </tr>
             
-            <tr>
+            <tr class="tier-squirrel unranked">
                 <td>-</td>
                 <td>
+                    
+                        
+                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
+                            <div class="tier-icon-container">
+                                <img src="assets/icons/squirrel.webp" alt="squirrel">
+                            </div>
+                        </a>
                     
                 </td>
                 <td class="player-name-cell">radiantchaos</td>
@@ -3068,9 +3314,16 @@
                 <td>-11</td>
             </tr>
             
-            <tr>
+            <tr class="tier-squirrel unranked">
                 <td>-</td>
                 <td>
+                    
+                        
+                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
+                            <div class="tier-icon-container">
+                                <img src="assets/icons/squirrel.webp" alt="squirrel">
+                            </div>
+                        </a>
                     
                 </td>
                 <td class="player-name-cell">FakeSki</td>
@@ -3082,9 +3335,16 @@
                 <td>-4</td>
             </tr>
             
-            <tr>
+            <tr class="tier-squirrel unranked">
                 <td>-</td>
                 <td>
+                    
+                        
+                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
+                            <div class="tier-icon-container">
+                                <img src="assets/icons/squirrel.webp" alt="squirrel">
+                            </div>
+                        </a>
                     
                 </td>
                 <td class="player-name-cell">mkcy3</td>
@@ -3096,9 +3356,16 @@
                 <td>-4</td>
             </tr>
             
-            <tr>
+            <tr class="tier-squirrel unranked">
                 <td>-</td>
                 <td>
+                    
+                        
+                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
+                            <div class="tier-icon-container">
+                                <img src="assets/icons/squirrel.webp" alt="squirrel">
+                            </div>
+                        </a>
                     
                 </td>
                 <td class="player-name-cell">Hurple</td>
@@ -3110,9 +3377,16 @@
                 <td>-6</td>
             </tr>
             
-            <tr>
+            <tr class="tier-squirrel unranked">
                 <td>-</td>
                 <td>
+                    
+                        
+                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
+                            <div class="tier-icon-container">
+                                <img src="assets/icons/squirrel.webp" alt="squirrel">
+                            </div>
+                        </a>
                     
                 </td>
                 <td class="player-name-cell">Wubba</td>
@@ -3124,9 +3398,16 @@
                 <td>-5</td>
             </tr>
             
-            <tr>
+            <tr class="tier-squirrel unranked">
                 <td>-</td>
                 <td>
+                    
+                        
+                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
+                            <div class="tier-icon-container">
+                                <img src="assets/icons/squirrel.webp" alt="squirrel">
+                            </div>
+                        </a>
                     
                 </td>
                 <td class="player-name-cell">Dandel</td>
@@ -3138,9 +3419,16 @@
                 <td>-6</td>
             </tr>
             
-            <tr>
+            <tr class="tier-squirrel unranked">
                 <td>-</td>
                 <td>
+                    
+                        
+                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
+                            <div class="tier-icon-container">
+                                <img src="assets/icons/squirrel.webp" alt="squirrel">
+                            </div>
+                        </a>
                     
                 </td>
                 <td class="player-name-cell">WyvernElement</td>
@@ -3152,9 +3440,16 @@
                 <td>-6</td>
             </tr>
             
-            <tr>
+            <tr class="tier-squirrel unranked">
                 <td>-</td>
                 <td>
+                    
+                        
+                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
+                            <div class="tier-icon-container">
+                                <img src="assets/icons/squirrel.webp" alt="squirrel">
+                            </div>
+                        </a>
                     
                 </td>
                 <td class="player-name-cell">ellbelle</td>
@@ -3166,9 +3461,16 @@
                 <td>-5</td>
             </tr>
             
-            <tr>
+            <tr class="tier-squirrel unranked">
                 <td>-</td>
                 <td>
+                    
+                        
+                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
+                            <div class="tier-icon-container">
+                                <img src="assets/icons/squirrel.webp" alt="squirrel">
+                            </div>
+                        </a>
                     
                 </td>
                 <td class="player-name-cell">Oppapi</td>
@@ -3180,9 +3482,16 @@
                 <td>-8</td>
             </tr>
             
-            <tr>
+            <tr class="tier-squirrel unranked">
                 <td>-</td>
                 <td>
+                    
+                        
+                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
+                            <div class="tier-icon-container">
+                                <img src="assets/icons/squirrel.webp" alt="squirrel">
+                            </div>
+                        </a>
                     
                 </td>
                 <td class="player-name-cell">tunnndz</td>
@@ -3194,9 +3503,16 @@
                 <td>-3</td>
             </tr>
             
-            <tr>
+            <tr class="tier-squirrel unranked">
                 <td>-</td>
                 <td>
+                    
+                        
+                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
+                            <div class="tier-icon-container">
+                                <img src="assets/icons/squirrel.webp" alt="squirrel">
+                            </div>
+                        </a>
                     
                 </td>
                 <td class="player-name-cell">Piechu</td>
@@ -3208,9 +3524,16 @@
                 <td>35</td>
             </tr>
             
-            <tr>
+            <tr class="tier-squirrel unranked">
                 <td>-</td>
                 <td>
+                    
+                        
+                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
+                            <div class="tier-icon-container">
+                                <img src="assets/icons/squirrel.webp" alt="squirrel">
+                            </div>
+                        </a>
                     
                 </td>
                 <td class="player-name-cell">Klishu</td>
@@ -3222,9 +3545,16 @@
                 <td>-6</td>
             </tr>
             
-            <tr>
+            <tr class="tier-squirrel unranked">
                 <td>-</td>
                 <td>
+                    
+                        
+                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
+                            <div class="tier-icon-container">
+                                <img src="assets/icons/squirrel.webp" alt="squirrel">
+                            </div>
+                        </a>
                     
                 </td>
                 <td class="player-name-cell">100pctskillz</td>
@@ -3236,9 +3566,16 @@
                 <td>-6</td>
             </tr>
             
-            <tr>
+            <tr class="tier-squirrel unranked">
                 <td>-</td>
                 <td>
+                    
+                        
+                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
+                            <div class="tier-icon-container">
+                                <img src="assets/icons/squirrel.webp" alt="squirrel">
+                            </div>
+                        </a>
                     
                 </td>
                 <td class="player-name-cell">DawnDiVito</td>
@@ -3250,9 +3587,16 @@
                 <td>-2</td>
             </tr>
             
-            <tr>
+            <tr class="tier-squirrel unranked">
                 <td>-</td>
                 <td>
+                    
+                        
+                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
+                            <div class="tier-icon-container">
+                                <img src="assets/icons/squirrel.webp" alt="squirrel">
+                            </div>
+                        </a>
                     
                 </td>
                 <td class="player-name-cell">BaliHoo</td>
@@ -3264,9 +3608,16 @@
                 <td>-3</td>
             </tr>
             
-            <tr>
+            <tr class="tier-squirrel unranked">
                 <td>-</td>
                 <td>
+                    
+                        
+                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
+                            <div class="tier-icon-container">
+                                <img src="assets/icons/squirrel.webp" alt="squirrel">
+                            </div>
+                        </a>
                     
                 </td>
                 <td class="player-name-cell">Wriggleroom</td>
@@ -3278,9 +3629,16 @@
                 <td>-6</td>
             </tr>
             
-            <tr>
+            <tr class="tier-squirrel unranked">
                 <td>-</td>
                 <td>
+                    
+                        
+                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
+                            <div class="tier-icon-container">
+                                <img src="assets/icons/squirrel.webp" alt="squirrel">
+                            </div>
+                        </a>
                     
                 </td>
                 <td class="player-name-cell">buurn</td>
@@ -3292,9 +3650,16 @@
                 <td>-1</td>
             </tr>
             
-            <tr>
+            <tr class="tier-squirrel unranked">
                 <td>-</td>
                 <td>
+                    
+                        
+                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
+                            <div class="tier-icon-container">
+                                <img src="assets/icons/squirrel.webp" alt="squirrel">
+                            </div>
+                        </a>
                     
                 </td>
                 <td class="player-name-cell">cjahwon</td>
@@ -3306,9 +3671,16 @@
                 <td>-4</td>
             </tr>
             
-            <tr>
+            <tr class="tier-squirrel unranked">
                 <td>-</td>
                 <td>
+                    
+                        
+                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
+                            <div class="tier-icon-container">
+                                <img src="assets/icons/squirrel.webp" alt="squirrel">
+                            </div>
+                        </a>
                     
                 </td>
                 <td class="player-name-cell">DarthOblivius</td>
@@ -3333,7 +3705,7 @@
                     <span>Art by <strong>𝕩𝕝𝕦𝕖𝕧𝕚</strong></span>
                 </div>
                 <div class="footer-date">
-                    Updated on 2026-03-25 20:03
+                    Updated on 2026-03-25 20:37
                 </div>
             </div>
         </footer>
@@ -3398,36 +3770,23 @@
     
 <script>
 $(document).ready(function() {
-    // Custom sort for Rank
+    // Custom sorting: move unranked entries ("-") to the bottom
     $.extend($.fn.dataTable.ext.type.order, { "rank-pre": function (d) { return d === "-" ? 9999 : parseInt(d); } });
 
     $('#leaderboard').DataTable({
-        "order": [[3, "desc"]], 
+        "order": [[3, "desc"]], // Default sort by ELO descending
         "responsive": true, 
         "pageLength": 50,
         "dom": '<"top"f>rt<"bottom"ip><"clear">',
         "columnDefs": [ 
             { "targets": 0, "type": "rank" },
-            { "targets": 2, "className": "player-name-cell" }, 
-            // Priorités de visibilité : Player et ELO sont indestructibles
+            { "targets": 2, "className": "player-name-cell" },
+            // Responsive visibility priorities
             { "responsivePriority": 1, "targets": [2, 3] },
             { "responsivePriority": 2, "targets": 0 },
             { "responsivePriority": 3, "targets": 1 },
             { "responsivePriority": 10, "targets": [4, 5, 6, 7, 8] }
-        ],
-        "createdRow": function(row, data, dataIndex) {
-            var rank = data[0]; 
-            var elo = parseInt(data[3]); 
-            
-            if (rank === "-" || rank === "") { 
-                $(row).addClass('unranked'); 
-            } else {
-                if (elo >= 1500) $(row).addClass('tier-bird');
-                else if (elo >= 1400) $(row).addClass('tier-fox');
-                else if (elo >= 1300) $(row).addClass('tier-rabbit');
-                else if (elo >= 1200) $(row).addClass('tier-mouse');
-            }
-        }
+        ]
     });
 });
 </script>
