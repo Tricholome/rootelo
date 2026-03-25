@@ -39,6 +39,7 @@
             --color-fox: {{ colors.fox }};
             --color-rabbit: {{ colors.rabbit }};
             --color-mouse: {{ colors.mouse }};
+            --color-squirrel: {{ colors.squirrel }};
 
             /* Typography */
             --font-title: 'Fraunces', serif;
@@ -64,6 +65,7 @@
         body[data-page="matches"] { --main-color: var(--color-fox); }
         body[data-page="trends"]  { --main-color: var(--color-rabbit); }
         body[data-page="about"]   { --main-color: var(--color-mouse); }
+        body[data-page="cache"]   { --main-color: var(--color-squirrel); }
         body { --main-color: {{ colors.default }}; }
 
         /* =========================================================================
@@ -394,7 +396,7 @@
 
         <header class="page-intro">
             <h2>{{ page_heading }}</h2>
-            {% if page_id != 'about' %}
+            {% if has_seasons %}
             <div class="season-selector">
                 <span class="season-label">Season</span>
                 <a href="{{ page_id }}_lh01.html" class="season-btn {{ 'active' if is_archive else '' }}">LH01</a>
