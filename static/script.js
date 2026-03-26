@@ -86,7 +86,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 		modalTitle.textContent = text.name;
 		
-		modalElo.textContent = text.name;
+		modalElo.textContent = text.elo;
 		modalElo.style.color = color;
 		
 		modalIcon.src = icon;
