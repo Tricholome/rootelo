@@ -62,15 +62,22 @@
                 </td>
                 
                 <td>
-                    {% if player.tier and player.tier != 'unranked' %}
-                        {% set tier_page = 'cache.html' if player.tier == 'squirrel' else 'about.html' %}
-                        <a href="javascript:void(0)" onclick="openTierModal('{{ player.tier }}')" class="tier-anchor-link">
-							<div class="tier-icon-container">
-								<img src="{{ icons[player.tier] }}" alt="{{ player.tier }}">
-							</div>
-						</a>
-                    {% endif %}
-                </td>
+					{% if player.tier and player.tier != 'unranked' %}
+						{% if player.tier == 'squirrel' %}
+							<a href="cache.html" class="tier-anchor-link">
+								<div class="tier-icon-container">
+									<img src="{{ icons[player.tier] }}" alt="{{ player.tier }}">
+								</div>
+							</a>
+						{% else %}
+							<a href="javascript:void(0)" onclick="openTierModal('{{ player.tier }}')" class="tier-anchor-link">
+								<div class="tier-icon-container">
+									<img src="{{ icons[player.tier] }}" alt="{{ player.tier }}">
+								</div>
+							</a>
+						{% endif %}
+					{% endif %}
+				</td>
                 <td class="player-name-cell">{{ player.display_name }}</td>
                 <td>{{ player.ELO }}</td>
                 <td>{{ player.Games }}</td>
