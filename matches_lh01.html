@@ -24,7 +24,7 @@
 			
 			/* Windows */
 			--window-gap: 25px;           
-            --window-max-width: 1100px;   
+            --window-max-width: 700px;   
             --window-bg: var(--bg-container);
             --window-shadow: 0 10px 30px rgba(0,0,0,0.5);
             --window-border: 1px solid rgba(255, 255, 255, 0.08);
@@ -225,9 +225,7 @@
            --- 4. NAVIGATION & BUTTONS ---
            ========================================================================= */
         nav { 
-            margin: 25px 0; 
-            border-bottom: 1px solid var(--border-soft); 
-            padding-bottom: 20px; 
+            margin: 15px 0; 
             display: flex; 
             justify-content: center; 
             gap: 12px; 
@@ -246,6 +244,14 @@
             transition: 0.3s ease; 
             border-bottom: 2px solid transparent; 
         }
+		
+		.nav-separator {
+			width: 80%;
+			height: 1px;
+			margin: 10px auto;
+			background: linear-gradient(90deg, transparent, var(--border-soft), transparent);
+			opacity: 0.6;
+		}
         
         nav a:hover { color: var(--text-main); background: var(--bg-hover); }
         
@@ -696,6 +702,8 @@
                     </a>
                 </div>
             </div>
+			
+			</div> <div class="nav-separator"></div>
 
 			<nav>
 				
@@ -16912,7 +16920,7 @@
                     <span>Art by <strong>𝕩𝕝𝕦𝕖𝕧𝕚</strong></span>
                 </div>
                 <div class="footer-date">
-                    Updated on 2026-03-26 07:49
+                    Updated on 2026-03-26 08:04
                 </div>
             </div>
         </footer>
