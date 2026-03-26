@@ -308,28 +308,43 @@
         }
 		
 		/* --- MODE MOBILE (< 1100px) --- */
-		@media (max-width: 1099px) {
+        @media (max-width: 1099px) {
             .app-banner {
-                transition: all 0.4s ease-in-out;
-                overflow: hidden;
+                /* On anime l'opacité et le scale, mais PAS la hauteur */
+                transition: transform 0.5s ease, opacity 0.4s ease;
+                transform-origin: center;
+                position: relative;
+                z-index: 1;
             }
             
-            /* Quand on scroll, on réduit la bannière à néant */
+            /* Action quand on scroll : la bannière s'efface sur place */
             .is-scrolled .app-banner {
                 opacity: 0;
-                height: 0;
-                margin-top: 0;
-                margin-bottom: 0;
-                padding-top: 0;
-                padding-bottom: 0;
-                transform: translateY(-20px);
+                transform: scale(0.95); /* Petit effet de recul */
                 pointer-events: none;
             }
-			
-			.is-scrolled .screen-deco img {
-                top: 50%; /* Elles se centrent dans l'espace restant */
-                transform: translateX(-50%) translateY(-50%);
-                height: 350px;
+
+            /* On s'assure que le viewport a un z-index plus haut pour passer par-dessus */
+            .app-viewport {
+                position: relative;
+                z-index: 10;
+                background: var(--bg-page); /* Fond opaque pour masquer la bannière dessous */
+            }
+
+            /* Ajustement des images déco */
+            .screen-deco img {
+                transition: all 0.5s ease;
+            }
+
+            /* Quand on scroll, les images déco se centrent dans l'écran 
+               sans être gênées par la bannière devenue invisible */
+            .is-scrolled .screen-deco img {
+                position: fixed; /* On passe en fixed pour le centrage écran */
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                height: clamp(300px, 45vh, 450px);
+                z-index: 5; /* Entre le fond et le texte */
             }
         }
 
@@ -1443,7 +1458,7 @@
                     <span>Art by <strong>𝕩𝕝𝕦𝕖𝕧𝕚</strong></span>
                 </div>
                 <div class="footer-date">
-                    Updated on 2026-03-26 11:38
+                    Updated on 2026-03-26 11:43
                 </div>
             </div>
         </footer>
