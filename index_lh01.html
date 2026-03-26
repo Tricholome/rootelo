@@ -285,22 +285,36 @@
            --- 6. SIDE IMAGES ---
            ========================================================================= */
         
-        /* --- CONFIGURATION COMMUNE --- */
-        .screen-deco img {
-            position: absolute;
-            width: auto;
-            transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1);
-            filter: drop-shadow(0 10px 20px rgba(0,0,0,0.4));
+        .screen-deco {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            height: 200px; /* L'espace entre tes fenêtres en mode portrait */
+            margin: 0;
+            z-index: -1; 
+            pointer-events: none;
+            width: 100%;
         }
 
-        /* --- MODE MOBILE (< 1100px) --- */
+        .screen-deco img {
+            position: absolute;
+            height: 300px;
+            width: auto;
+            left: 50%;
+            transform: translateX(-50%);
+            top: -150px; /* Positionnement par défaut */
+            filter: drop-shadow(0 10px 20px rgba(0,0,0,0.4));
+            transition: all 0.5s ease;
+        }
+		
+		/* --- MODE MOBILE (< 1100px) --- */
         @media (max-width: 1099px) {
             .app-banner {
                 transition: transform 0.5s ease, opacity 0.4s ease;
                 transform-origin: center;
                 position: relative;
-                z-index: 1;
             }
+            
             .is-scrolled .app-banner {
                 opacity: 0;
                 transform: scale(0.95);
@@ -309,61 +323,53 @@
 
             .app-viewport {
                 position: relative;
-                z-index: 10;
-                background: var(--bg-page);
-                transition: transform 0.5s ease, opacity 0.4s ease;
+				transition: transform 0.5s ease, opacity 0.4s ease;
             }
+			
+			.is-at-bottom .app-viewport {
+				opacity: 0;
+				transform: scale(0.95);
+				pointer-events: none;
+			}
 
-            /* On applique tes réglages exacts ici */
             .screen-deco img {
-                left: 50%;
-                transform: translateX(-50%); /* Centrage horizontal mobile */
-                height: 350px;
-                top: 0px;
+				top: 0px;
+                transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1);
             }
 
-            /* Image DROITE (Haut de page) */
-            .is-scrolled .right-deco img {
-                top: -50px;
-            }
-
-            /* Effet BAS DE PAGE (Viewport s'efface) */
-            .is-at-bottom .app-viewport {
-                opacity: 0;
-                transform: scale(0.95);
-            }
-
-            /* Image GAUCHE (Bas de page) */
-            .is-at-bottom .left-deco img {
-                top: -100px; /* Elle remonte quand on est au bottom */
-            }
+			.is-scrolled .right-deco img {
+				top: -50px;
+			}
+			
+			.is-at-bottom .left-deco img {
+				top: -50px;
+			}
         }
+
 
         /* --- MODE DESKTOP (> 1100px) --- */
         @media (min-width: 1100px) {
             .screen-deco {
                 position: fixed;
-                top: 0; left: 0; width: 100vw; height: 100vh;
-                display: block;
-                z-index: -1;
+                top: 0;
+				left: 0;
+				width: 100vw;
+                height: 100vh;
+				display: block;
+				z-index: -1;
             }
 
             .screen-deco img {
                 height: clamp(300px, 50vh, 500px);
-                /* RECENTRAGE DYNAMIQUE PC */
-                top: max(50%, calc(600px - (var(--scroll, 0) * 1px)));
-                transform: translateY(-50%); /* Centrage vertical PC */
-                left: auto;
+                top: max(50%, 600px);
+                left: auto; 
+                transform: translateY(-50%);
+				top: max(50%, calc(550px - (var(--scroll, 0) * 1px)));
             }
 
+            /* Placement latéral sur grand écran */
             .left-deco img { left: 0 !important; right: auto; }
             .right-deco img { right: 0 !important; left: auto; }
-            
-            /* On neutralise les remontées mobiles sur PC */
-            .is-scrolled .right-deco img, 
-            .is-at-bottom .left-deco img {
-                /* Le top est déjà géré par le calcul max() ci-dessus */
-            }
         }
 		   
 		
@@ -4569,7 +4575,7 @@
                     <span>Art by <strong>𝕩𝕝𝕦𝕖𝕧𝕚</strong></span>
                 </div>
                 <div class="footer-date">
-                    Updated on 2026-03-26 12:38
+                    Updated on 2026-03-26 12:43
                 </div>
             </div>
         </footer>
@@ -4586,25 +4592,31 @@
     <script>
 		// Moteur de Scroll Dynamique pour le CSS
 		window.addEventListener('scroll', () => {
-			const scrollY = window.scrollY;
-			const windowHeight = window.innerHeight;
-			const documentHeight = document.documentElement.scrollHeight;
+            const scrollY = window.scrollY;
+            const isMobile = window.innerWidth < 1100;
 
-			// Gestion du haut (Bannière)
-			if (scrollY > 30) {
-				document.body.classList.add('is-scrolled');
-			} else {
-				document.body.classList.remove('is-scrolled');
-			}
+            // 1. Toujours mettre à jour la variable pour le calcul PC (max 50%...)
+            document.body.style.setProperty('--scroll', scrollY);
 
-			// Gestion du bas (Footer)
-			// On déclenche l'effet quand on est à moins de 50px du fond
-			if ((windowHeight + scrollY) >= (documentHeight - 50)) {
-				document.body.classList.add('is-at-bottom');
-			} else {
-				document.body.classList.remove('is-at-bottom');
-			}
-		}, { passive: true });
+            // 2. Logique HAUT (Bannière)
+            if (scrollY > 30) {
+                document.body.classList.add('is-scrolled');
+            } else {
+                document.body.classList.remove('is-scrolled');
+            }
+
+            // 3. Logique BAS (Uniquement Mobile pour éviter les bugs PC)
+            if (isMobile) {
+                const windowHeight = window.innerHeight;
+                const docHeight = document.documentElement.scrollHeight;
+                // Déclenche à 50px du bord fial
+                if ((windowHeight + scrollY) >= (docHeight - 50)) {
+                    document.body.classList.add('is-at-bottom');
+                } else {
+                    document.body.classList.remove('is-at-bottom');
+                }
+            }
+        }, { passive: true });
 		
         // Fonction globale pour ouvrir la lightbox
         function openLightbox(src) {
