@@ -237,7 +237,7 @@
         .season-btn.active { background: transparent !important; color: var(--main-color) !important; border-color: var(--main-color) !important; }
 
         /* =========================================================================
-           --- 5. PAGE TITLES & DATATABLES ---
+           --- 5. PAGE TITLES ---
            ========================================================================= */
         .page-intro { margin-bottom: 30px; }
         .page-intro h2 { font-family: var(--font-title); font-size: clamp(2.5em, 5vw, 4em); margin: 0; color: var(--main-color); }
@@ -255,6 +255,37 @@
             display: block;
         }
         .page-intro p { color: var(--text-muted); font-family: var(--font-ui); font-size: 0.9em; margin: 5px auto 0; }
+		
+		/* =========================================================================
+           --- 6. IMAGES ---
+           ========================================================================= */
+		/* --- Décorations fixes hors-champ --- */
+		.screen-deco {
+			display: none;      /* Caché par défaut */
+			position: fixed;    /* Fixé à l'écran */
+			top: 50%;           /* Centré verticalement */
+			transform: translateY(-50%);
+			z-index: -1;        /* Derrière le container */
+			pointer-events: none; /* On peut cliquer à travers */
+		}
+
+		@media (min-width: 1300px) {
+			.screen-deco { display: block; } /* Visible sur grand écran */
+
+			.left-deco { left: 20px; }  /* À gauche */
+			.right-deco { right: 20px; } /* À droite */
+
+			.screen-deco img {
+				width: auto;
+				height: clamp(200px, 25vh, 400px); /* Taille flexible mais limitée */
+				object-fit: contain;
+			}
+		} 
+		   
+		
+		/* =========================================================================
+           --- 7. DATATABLES ---
+           ========================================================================= */
 
         table.dataTable { border-collapse: collapse !important; }
         table.dataTable thead th { background: var(--bg-page) !important; color: var(--text-muted) !important; font-size: 0.75em; letter-spacing: 1px; text-transform: uppercase; padding: 15px 10px !important; border-bottom: 1px solid var(--border-soft) !important; }
@@ -312,7 +343,7 @@
         table.dataTable > tbody > tr.child ul.dtr-details { background: var(--bg-container); border: 1px solid var(--border-soft); padding: 10px; list-style: none; }
 
         /* =========================================================================
-           --- 6. TIER BOXES SYSTEM ---
+           --- 8. TIER BOXES SYSTEM ---
            ========================================================================= */
         .tier-list { 
             list-style: none; 
@@ -415,7 +446,7 @@
         }
         
         /* =========================================================================
-           --- 7. GLOBAL FOOTER ---
+           --- 9. GLOBAL FOOTER ---
            ========================================================================= */
         .site-footer { 
             margin-top: 50px; 
@@ -440,7 +471,7 @@
         .footer-date { font-style: italic; opacity: 0.7; display: block; }
 
         /* =========================================================================
-           --- 8. MOBILE RESPONSIVE ---
+           --- 10. MOBILE RESPONSIVE ---
            ========================================================================= */
         @media (max-width: 768px) and (orientation: portrait) {
             .banner-container { 
@@ -587,6 +618,12 @@
 </head>
 
 <body data-page="index">
+	<div class="screen-deco left-deco">
+        
+    </div>
+    <div class="screen-deco right-deco">
+        
+    </div>
     <div class="container">
         
         <header class="site-header">
@@ -4447,7 +4484,7 @@
                     <span>Art by <strong>𝕩𝕝𝕦𝕖𝕧𝕚</strong></span>
                 </div>
                 <div class="footer-date">
-                    Updated on 2026-03-26 05:51
+                    Updated on 2026-03-26 07:11
                 </div>
             </div>
         </footer>
