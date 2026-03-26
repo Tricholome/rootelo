@@ -126,12 +126,7 @@
 $(document).ready(function() {
     $('#matchesTable').DataTable({
         "order": [[1, "desc"]], 
-        "responsive": {
-            details: {
-                type: 'column',
-                target: 0 // The button will be on the first column (Rank)
-            }
-        },
+        "responsive": true,
         "pageLength": 25,
         "columnDefs": [
             { "className": "lineup-cell", "targets": 3 },
