@@ -177,10 +177,9 @@
 
 	.nav-separator {
 		width: 80%;
-		height: 1px;
-		margin: 10px auto;
-		background: linear-gradient(90deg, transparent, var(--border-soft), transparent);
-		opacity: 0.6;
+		height: 1.5px;
+		margin: 15px auto;
+		background: linear-gradient(90deg, transparent, var(--main-color), transparent);
 	}
 
 	nav a:hover { color: var(--text-main); background: var(--bg-hover); }
@@ -231,7 +230,7 @@
 		transition: all 0.5s ease;
 	}
 
-	/* --- MODE MOBILE (< 1200px) --- */
+	/* --- MODE MOBILE (< 1300px) --- */
 	@media (max-width: 1299px) {
 		.app-banner {
 			transition: transform 0.5s ease, opacity 0.4s ease;
@@ -424,7 +423,6 @@
 		color: var(--text-main); 
 		font-size: 2.8em;
 		letter-spacing: 4px; 
-		text-transform: uppercase; 
 		font-weight: 900; 
 		text-shadow: 0 2px 10px rgba(0,0,0,0.5);
 	}
@@ -438,13 +436,12 @@
 	#modalSubtitle { 
 		color: var(--text-muted); 
 		font-style: italic; 
-		font-size: 1em; 
-		margin-top: 5px; 
+		font-size: 1em;
 	}
 	
 	#modalText { 
         color: var(--text-muted);
-        text-align: justify;
+        text-align: left;
         font-family: var(--font-ui);
         font-size: 0.95em;
 	}
@@ -462,6 +459,26 @@
 		text-align: left; 
 		margin: 0; 
 	}
+	
+	/* --- RESPONSIVE --- */
+	@media (max-width: 600px) {
+		.modal-content {
+			width: 95%;
+			padding: 20px;
+			max-height: 90vh;
+		}
+
+		#modalIcon { 
+			width: 120px;
+			height: 120px; 
+		}
+		
+		#modalTitle { 
+        font-size: 1.5em;
+        letter-spacing: 1px;
+		}
+    }
+	
 	   
 	/* =========================================================================
 	   --- 8. TIER BOXES SYSTEM (deprecated) ---
