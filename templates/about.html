@@ -135,56 +135,50 @@
     </table>
     
     <h2>The Tier System</h2>
-    <p>After your 10-game calibration phase, you officially join the ranks and unlock your <strong>Tier</strong>:</p>
+    <p>After your 10-game calibration phase, you officially join the ranks and unlock your <strong>Tier</strong> based on your current Elo rating:</p>
     
-    <div class="tier-list">
-    <div class="tier-item tier-bird" id="tier-bird"> 
-        <img src="{{ icons['bird'] }}" class="tier-icon" onclick="openLightbox(this.src)">
-        <div class="tier-content">
-            <div class="tier-header">
-                <span class="tier-name" style="color: {{ colors['bird'] }};">Bird (1500+)</span>
-                <span class="tier-separator">—</span>
-                <span class="tier-subtitle">The Grandmasters</span>
-            </div>
-            <p class="tier-desc">The absolute pinnacle of the Woodland. Reaching this height is a rare feat, a fleeting and prestigious throne where staying at the top is a constant battle against gravity. It is reserved for those who maintain perfection under pressure.</p>
-        </div>
-    </div>
-
-    <div class="tier-item tier-fox" id="tier-fox"> 
-        <img src="{{ icons['fox'] }}" class="tier-icon" onclick="openLightbox(this.src)">
-        <div class="tier-content">
-            <div class="tier-header">
-                <span class="tier-name" style="color: {{ colors['fox'] }};">Fox (1400+)</span>
-                <span class="tier-separator">—</span>
-                <span class="tier-subtitle">The Cunning Tacticians</span>
-            </div>
-            <p class="tier-desc">The elite targets everyone is chasing. With a trick for every turn and a plan for every disaster, they outmaneuver the field with ease. They play with sharp instincts, punctuated by a signature, mischievous grin that keeps opponents guessing.</p>
-        </div>
-    </div>
-
-    <div class="tier-item tier-rabbit" id="tier-rabbit"> 
-        <img src="{{ icons['rabbit'] }}" class="tier-icon" onclick="openLightbox(this.src)">
-        <div class="tier-content">
-            <div class="tier-header">
-                <span class="tier-name" style="color: {{ colors['rabbit'] }};">Rabbit (1300+)</span>
-                <span class="tier-separator">—</span>
-                <span class="tier-subtitle">The Agile Contenders</span>
-            </div>
-            <p class="tier-desc">The true engine of the higher rankings. Their climb is built on speed and sharp adaptability, moving well past the basics to dictate the pace of play. They are restless challengers, always seeking the next opening to leap ahead.</p>
-        </div>
-    </div>
-
-    <div class="tier-item tier-mouse" id="tier-mouse"> 
-        <img src="{{ icons['mouse'] }}" class="tier-icon" onclick="openLightbox(this.src)">
-        <div class="tier-content">
-            <div class="tier-header">
-                <span class="tier-name" style="color: {{ colors['mouse'] }};">Mouse (1200+)</span>
-                <span class="tier-separator">—</span>
-                <span class="tier-subtitle">The Steady Foragers</span>
-            </div>
-            <p class="tier-desc">The solid foundation of the standings, marking a genuine milestone beyond the average player. These resilient competitors provide the first true test on the ladder, proving they have the consistency required to begin a successful climb. They are where every journey starts.</p>
-        </div>
-    </div>
+    <table class="k-table">
+        <tr>
+            <td>
+                <img src="{{ icons['bird'] }}" class="tier-icon-small">
+                <span class="tier-label">Bird</span>
+            </td>
+            <td class="k-val">1500+</td>
+            <td>The Grandmasters</td>
+        </tr>
+        <tr>
+            <td>
+                <img src="{{ icons['fox'] }}" class="tier-icon-small">
+                <span class="tier-label">Fox</span>
+            </td>
+            <td class="k-val">1400+</td>
+            <td>The Cunning Tacticians</td>
+        </tr>
+        <tr>
+            <td>
+                <img src="{{ icons['rabbit'] }}" class="tier-icon-small">
+                <span class="tier-label">Rabbit</span>
+            </td>
+            <td class="k-val">1300+</td>
+            <td>The Agile Contenders</td>
+        </tr>
+        <tr>
+            <td>
+                <img src="{{ icons['mouse'] }}" class="tier-icon-small">
+                <span class="tier-label">Mouse</span>
+            </td>
+            <td class="k-val">1200+</td>
+            <td>The Steady Foragers</td>
+        </tr>
+        <tr>
+            <td>
+                <img src="{{ icons['squirrel'] }}" class="tier-icon-small">
+                <span class="tier-label">Squirrel</span>
+            </td>
+            <td class="k-val">&lt; 1200</td>
+            <td>The Hapless Stragglers</td>
+        </tr>
+    </table>
 </div>
     
     <h2>The Seasonal Lifecycle</h2>
