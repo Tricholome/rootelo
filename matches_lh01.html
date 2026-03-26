@@ -21,6 +21,14 @@
            --- 1. CONFIGURATION PANEL (CSS VARIABLES) ---
            ========================================================================= */
         :root {
+			
+			/* Windows */
+			--window-gap: 25px;           
+            --window-max-width: 1100px;   
+            --window-bg: var(--bg-container);
+            --window-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            --window-border: 1px solid rgba(255, 255, 255, 0.08);
+			
             /* Faction Colors */
             --color-bird: #82C0E7;
             --color-fox: #D34936;
@@ -79,15 +87,33 @@
             overflow-x: hidden; 
         }
         
-        .container { 
-            width: 95%; 
-            max-width: 1100px; 
-            margin: auto; 
-            background: var(--bg-container); 
-            padding: 20px 30px 20px; 
-            border-radius: 12px; 
-            box-shadow: 0 8px 32px rgba(0,0,0,0.6); 
-            box-sizing: border-box; 
+        .window-box {
+			width: 95%;
+			max-width: var(--window-max-width);
+			margin-left: auto;
+			margin-right: auto;
+			background: var(--window-bg);
+			border: var(--window-border);
+			border-radius: 12px;
+			box-shadow: var(--window-shadow);
+			box-sizing: border-box;
+		}
+		
+		.app-banner {
+            margin-top: 20px;
+            margin-bottom: var(--window-gap);
+            padding: 15px 20px;
+        }
+
+        .app-viewport {
+            padding: 20px 30px;
+            margin-bottom: 40px;
+        }
+		
+		.app-footer {
+            padding: 20px;
+            margin-bottom: 40px;
+            text-align: center;
         }
         
         /* =========================================================================
@@ -643,7 +669,7 @@
     </div>
     <div class="container">
         
-        <header class="site-header">
+        <header class="app-banner window-box">
             <div class="banner-container">
                 <div class="banner-icons left">
                     <a href="about.html#tier-bird" class="tooltip-link js-double-tap">
@@ -670,53 +696,55 @@
                     </a>
                 </div>
             </div>
-        </header>
 
-        <nav>
-            
-            
-            
-            
-                
-                    
-                
-                <a href="index_lh01.html" class="">Leaderboard</a>
-            
-                
-                    
-                
-                <a href="matches_lh01.html" class="active">Top Tables</a>
-            
-                
-                    
-                
-                <a href="trends_lh01.html" class="">Player's Journey</a>
-            
-                
-                    
-                
-                <a href="about.html" class="">Codex</a>
-            
-        </nav>
+			<nav>
+				
+				
+				
+				
+					
+						
+					
+					<a href="index_lh01.html" class="">Leaderboard</a>
+				
+					
+						
+					
+					<a href="matches_lh01.html" class="active">Top Tables</a>
+				
+					
+						
+					
+					<a href="trends_lh01.html" class="">Player's Journey</a>
+				
+					
+						
+					
+					<a href="about.html" class="">Codex</a>
+				
+			</nav>
+		
+		</header>
 
-        <header class="page-intro">
-            <div class="h2-wrapper">
-                
-                    <h2>Top Tables</h2>
-                
-            </div>
-            
-            <div class="season-selector">
-                <span class="season-label">Season</span>
-                <a href="matches_lh01.html" class="season-btn active">LH01</a>
-                <a href="matches.html" class="season-btn ">LH02</a>
-            </div>
-            
-            <p>Games ranked by total ELO. Click a Game ID to view full match details.</p>
-        </header>
-    
-        <main>
-            
+		<div class="app-viewport window-box">
+			<header class="page-intro">
+				<div class="h2-wrapper">
+					
+						<h2>Top Tables</h2>
+					
+				</div>
+				
+				<div class="season-selector">
+					<span class="season-label">Season</span>
+					<a href="matches_lh01.html" class="season-btn active">LH01</a>
+					<a href="matches.html" class="season-btn ">LH02</a>
+				</div>
+				
+				<p>Games ranked by total ELO. Click a Game ID to view full match details.</p>
+			</header>
+		
+			<main>
+				
     <table id="matchesTable" class="display responsive" style="width:100%">
         <thead>
             <tr>
@@ -16872,9 +16900,11 @@
         </tbody>
     </table>
 
-        </main>
+			</main>
+			
+		</div>
 
-        <footer class="site-footer">
+        <footer class="app-footer window-box">
             <div class="footer-content">
                 <div class="footer-credits">
                     <span>Powered by <strong>Tʀɪᴄʜᴏʟᴏᴍᴇ</strong></span>
@@ -16882,7 +16912,7 @@
                     <span>Art by <strong>𝕩𝕝𝕦𝕖𝕧𝕚</strong></span>
                 </div>
                 <div class="footer-date">
-                    Updated on 2026-03-26 07:11
+                    Updated on 2026-03-26 07:49
                 </div>
             </div>
         </footer>

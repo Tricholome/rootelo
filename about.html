@@ -21,6 +21,14 @@
            --- 1. CONFIGURATION PANEL (CSS VARIABLES) ---
            ========================================================================= */
         :root {
+			
+			/* Windows */
+			--window-gap: 25px;           
+            --window-max-width: 1100px;   
+            --window-bg: var(--bg-container);
+            --window-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            --window-border: 1px solid rgba(255, 255, 255, 0.08);
+			
             /* Faction Colors */
             --color-bird: #82C0E7;
             --color-fox: #D34936;
@@ -79,15 +87,33 @@
             overflow-x: hidden; 
         }
         
-        .container { 
-            width: 95%; 
-            max-width: 1100px; 
-            margin: auto; 
-            background: var(--bg-container); 
-            padding: 20px 30px 20px; 
-            border-radius: 12px; 
-            box-shadow: 0 8px 32px rgba(0,0,0,0.6); 
-            box-sizing: border-box; 
+        .window-box {
+			width: 95%;
+			max-width: var(--window-max-width);
+			margin-left: auto;
+			margin-right: auto;
+			background: var(--window-bg);
+			border: var(--window-border);
+			border-radius: 12px;
+			box-shadow: var(--window-shadow);
+			box-sizing: border-box;
+		}
+		
+		.app-banner {
+            margin-top: 20px;
+            margin-bottom: var(--window-gap);
+            padding: 15px 20px;
+        }
+
+        .app-viewport {
+            padding: 20px 30px;
+            margin-bottom: 40px;
+        }
+		
+		.app-footer {
+            padding: 20px;
+            margin-bottom: 40px;
+            text-align: center;
         }
         
         /* =========================================================================
@@ -663,7 +689,7 @@
     </div>
     <div class="container">
         
-        <header class="site-header">
+        <header class="app-banner window-box">
             <div class="banner-container">
                 <div class="banner-icons left">
                     <a href="about.html#tier-bird" class="tooltip-link js-double-tap">
@@ -690,47 +716,49 @@
                     </a>
                 </div>
             </div>
-        </header>
 
-        <nav>
-            
-            
-            
-            
-                
-                    
-                
-                <a href="index.html" class="">Leaderboard</a>
-            
-                
-                    
-                
-                <a href="matches.html" class="">Top Tables</a>
-            
-                
-                    
-                
-                <a href="trends.html" class="">Player's Journey</a>
-            
-                
-                    
-                
-                <a href="about.html" class="active">Codex</a>
-            
-        </nav>
+			<nav>
+				
+				
+				
+				
+					
+						
+					
+					<a href="index.html" class="">Leaderboard</a>
+				
+					
+						
+					
+					<a href="matches.html" class="">Top Tables</a>
+				
+					
+						
+					
+					<a href="trends.html" class="">Player's Journey</a>
+				
+					
+						
+					
+					<a href="about.html" class="active">Codex</a>
+				
+			</nav>
+		
+		</header>
 
-        <header class="page-intro">
-            <div class="h2-wrapper">
-                
-                    <h2>Codex</h2>
-                
-            </div>
-            
-            <p>Understanding the mechanics of Rootelo.</p>
-        </header>
-    
-        <main>
-            
+		<div class="app-viewport window-box">
+			<header class="page-intro">
+				<div class="h2-wrapper">
+					
+						<h2>Codex</h2>
+					
+				</div>
+				
+				<p>Understanding the mechanics of Rootelo.</p>
+			</header>
+		
+			<main>
+				
 <div class="codex-section">
     <h2>An Alternative Ladder</h2>
     <p>This platform offers a distinct competitive lens through which to view player performance, providing an alternative ranking experience specifically designed for the <a href="https://rootleague.pliskin.dev/">Root Digital League</a>. Known for its informal yet highly competitive spirit, the league organizes established seasons where every match is played to the bitterest end. You can join the adventure at any time: visit their official site to subscribe, follow the community rules, and start competing for seasonal awards.</p>
@@ -819,9 +847,11 @@
     <p>This system is a living project. Formulas and features may evolve to better reflect the competitive reality of the game. If you have any questions, suggestions, or want to discuss the math behind the ranks, join the conversation on the <a href="https://discord.com/channels/476234833572397056/1477741957139791892">Woodland Warriors</a>.</p>
 </div>
 
-        </main>
+			</main>
+			
+		</div>
 
-        <footer class="site-footer">
+        <footer class="app-footer window-box">
             <div class="footer-content">
                 <div class="footer-credits">
                     <span>Powered by <strong>Tʀɪᴄʜᴏʟᴏᴍᴇ</strong></span>
@@ -829,7 +859,7 @@
                     <span>Art by <strong>𝕩𝕝𝕦𝕖𝕧𝕚</strong></span>
                 </div>
                 <div class="footer-date">
-                    Updated on 2026-03-26 07:11
+                    Updated on 2026-03-26 07:49
                 </div>
             </div>
         </footer>

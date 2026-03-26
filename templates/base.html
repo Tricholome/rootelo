@@ -34,6 +34,14 @@
            --- 1. CONFIGURATION PANEL (CSS VARIABLES) ---
            ========================================================================= */
         :root {
+			
+			/* Windows */
+			--window-gap: 25px;           
+            --window-max-width: 1100px;   
+            --window-bg: var(--bg-container);
+            --window-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            --window-border: 1px solid rgba(255, 255, 255, 0.08);
+			
             /* Faction Colors */
             --color-bird: {{ colors.bird }};
             --color-fox: {{ colors.fox }};
@@ -92,15 +100,33 @@
             overflow-x: hidden; 
         }
         
-        .container { 
-            width: 95%; 
-            max-width: 1100px; 
-            margin: auto; 
-            background: var(--bg-container); 
-            padding: 20px 30px 20px; 
-            border-radius: 12px; 
-            box-shadow: 0 8px 32px rgba(0,0,0,0.6); 
-            box-sizing: border-box; 
+        .window-box {
+			width: 95%;
+			max-width: var(--window-max-width);
+			margin-left: auto;
+			margin-right: auto;
+			background: var(--window-bg);
+			border: var(--window-border);
+			border-radius: 12px;
+			box-shadow: var(--window-shadow);
+			box-sizing: border-box;
+		}
+		
+		.app-banner {
+            margin-top: 20px;
+            margin-bottom: var(--window-gap);
+            padding: 15px 20px;
+        }
+
+        .app-viewport {
+            padding: 20px 30px;
+            margin-bottom: 40px;
+        }
+		
+		.app-footer {
+            padding: 20px;
+            margin-bottom: 40px;
+            text-align: center;
         }
         
         /* =========================================================================
@@ -569,7 +595,7 @@
     </div>
     <div class="container">
         
-        <header class="site-header">
+        <header class="app-banner window-box">
             <div class="banner-container">
                 <div class="banner-icons left">
                     <a href="about.html#tier-bird" class="tooltip-link js-double-tap">
@@ -596,45 +622,49 @@
                     </a>
                 </div>
             </div>
-        </header>
 
-        <nav>
-            {% set nav_links = [('index', 'Leaderboard'), ('matches', 'Top Tables'), ('trends', "Player's Journey"), ('about', 'Codex')] %}
-            {% set archivable_pages = ['index', 'matches', 'trends'] %}
-            {% if page_id == 'cache' %}
-                {% set nav_links = nav_links + [('cache', 'Undergrowth')] %}
-            {% endif %}
-            {% for base, label in nav_links %}
-                {% if has_seasons and is_archive and base in archivable_pages %}
-                    {% set target = base + '_lh01.html' %}
-                {% else %}
-                    {% set target = base + '.html' %}
-                {% endif %}
-                <a href="{{ target }}" class="{{ 'active' if page_id == base else '' }}">{{ label }}</a>
-            {% endfor %}
-        </nav>
+			<nav>
+				{% set nav_links = [('index', 'Leaderboard'), ('matches', 'Top Tables'), ('trends', "Player's Journey"), ('about', 'Codex')] %}
+				{% set archivable_pages = ['index', 'matches', 'trends'] %}
+				{% if page_id == 'cache' %}
+					{% set nav_links = nav_links + [('cache', 'Undergrowth')] %}
+				{% endif %}
+				{% for base, label in nav_links %}
+					{% if has_seasons and is_archive and base in archivable_pages %}
+						{% set target = base + '_lh01.html' %}
+					{% else %}
+						{% set target = base + '.html' %}
+					{% endif %}
+					<a href="{{ target }}" class="{{ 'active' if page_id == base else '' }}">{{ label }}</a>
+				{% endfor %}
+			</nav>
+		
+		</header>
 
-        <header class="page-intro">
-            <div class="h2-wrapper">
-                {% block page_decoration_left %}{% endblock %}
-                    <h2>{{ page_heading }}</h2>
-                {% block page_decoration_right %}{% endblock %}
-            </div>
-            {% if has_seasons %}
-            <div class="season-selector">
-                <span class="season-label">Season</span>
-                <a href="{{ page_id }}_lh01.html" class="season-btn {{ 'active' if is_archive else '' }}">LH01</a>
-                <a href="{{ page_id }}.html" class="season-btn {{ '' if is_archive else 'active' }}">LH02</a>
-            </div>
-            {% endif %}
-            {% if description %}<p>{{ description }}</p>{% endif %}
-        </header>
-    
-        <main>
-            {% block content %}{% endblock %}
-        </main>
+		<div class="app-viewport window-box">
+			<header class="page-intro">
+				<div class="h2-wrapper">
+					{% block page_decoration_left %}{% endblock %}
+						<h2>{{ page_heading }}</h2>
+					{% block page_decoration_right %}{% endblock %}
+				</div>
+				{% if has_seasons %}
+				<div class="season-selector">
+					<span class="season-label">Season</span>
+					<a href="{{ page_id }}_lh01.html" class="season-btn {{ 'active' if is_archive else '' }}">LH01</a>
+					<a href="{{ page_id }}.html" class="season-btn {{ '' if is_archive else 'active' }}">LH02</a>
+				</div>
+				{% endif %}
+				{% if description %}<p>{{ description }}</p>{% endif %}
+			</header>
+		
+			<main>
+				{% block content %}{% endblock %}
+			</main>
+			
+		</div>
 
-        <footer class="site-footer">
+        <footer class="app-footer window-box">
             <div class="footer-content">
                 <div class="footer-credits">
                     <span>Powered by <strong>Tʀɪᴄʜᴏʟᴏᴍᴇ</strong></span>
