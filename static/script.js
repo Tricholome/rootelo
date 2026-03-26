@@ -113,28 +113,36 @@ document.addEventListener("DOMContentLoaded", function() {
 
     if (isTouchDevice) {
         document.querySelectorAll('.js-double-tap').forEach(link => {
-            link.addEventListener('click', function(e) {
-                // Si l'icône n'est pas encore "agrandie" (1er clic)
+            // 1. On "sauvegarde" l'action d'origine (ton onclick dans le HTML)
+            const originalAction = link.onclick;
+            
+            // 2. On remplace complètement le comportement au clic
+            link.onclick = function(e) {
+                // Si ce n'est pas encore agrandi (1ER CLIC)
                 if (!this.classList.contains('expanded')) {
                     e.preventDefault(); 
-                    e.stopPropagation(); // Empêche le clic de se propager ailleurs
-
-                    // On referme les autres
-                    document.querySelectorAll('.js-double-tap').forEach(l => l.classList.remove('expanded'));
                     
-                    // On agrandit celle-ci
+                    // On referme toutes les autres icônes
+                    document.querySelectorAll('.js-double-tap').forEach(l => {
+                        if (l !== this) l.classList.remove('expanded');
+                    });
+                    
+                    // On agrandit celle-ci (affiche le tooltip)
                     this.classList.add('expanded');
                 } 
-                // Si elle est DEJÀ agrandie (2ème clic)
+                // Si c'est DEJA agrandi (2EME CLIC)
                 else {
-                    // Ici, on laisse le comportement normal se faire.
-                    // Si ton HTML a un onclick="openTierModal()", il s'exécutera.
-                    this.classList.remove('expanded'); // On nettoie pour la prochaine fois
+                    this.classList.remove('expanded'); // On nettoie
+                    
+                    // On exécute la vraie fonction qu'on avait mise de côté
+                    if (originalAction) {
+                        originalAction.call(this, e);
+                    }
                 }
-            });
+            };
         });
 
-        // Refermer si on clique à côté
+        // 3. Refermer si on clique n'importe où ailleurs sur l'écran
         document.addEventListener('click', function(e) {
             if (!e.target.closest('.js-double-tap')) {
                 document.querySelectorAll('.js-double-tap').forEach(l => l.classList.remove('expanded'));
