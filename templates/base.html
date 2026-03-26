@@ -303,60 +303,54 @@
         .page-intro p { color: var(--text-muted); font-family: var(--font-ui); font-size: 0.9em; margin: 5px auto 0; }
 		
 		/* =========================================================================
-           --- 6. IMAGES (DÉCORATIONS INTERCALÉES) ---
+           --- 6. IMAGES (DÉCORATIONS RESPONSIVES) ---
            ========================================================================= */
         
+        /* --- MODE ÉCRANS RÉDUITS / MOBILE (< 1300px) --- */
+        /* Les images s'insèrent dans le flux et CRÉENT un espace entre les fenêtres */
         .screen-deco {
             position: relative;
-            height: 0;          /* Ne prend aucune place verticale */
             display: flex;
             justify-content: center;
+            align-items: center;
+            height: 250px;      /* C'est la hauteur de l'espace qui va s'ouvrir entre les fenêtres */
+            margin: 10px 0;
+            z-index: -1;        /* Reste TOUJOURS en arrière-plan */
             pointer-events: none;
             opacity: 0.9;
         }
 
         .screen-deco img {
-            position: absolute;
+            height: 100%;       /* L'image remplit cet espace de 250px */
             width: auto;
-            height: clamp(200px, 35vh, 400px);
+            object-fit: contain;
             filter: drop-shadow(0 10px 20px rgba(0,0,0,0.4));
-            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
-        }
-
-        /* --- MODE ÉCRANS RÉDUITS / MOBILE --- */
-        
-        .left-deco img { 
-            /* Remonte l'image pour couvrir la bannière, le bas glissera sous le viewport */
-            top: -200px; 
-            transform: translateX(-35%) rotate(-5deg); 
-        }
-        
-        .right-deco img { 
-            /* Remonte l'image pour couvrir le viewport, le bas glissera sous le footer */
-            top: -250px; 
-            transform: translateX(35%) rotate(5deg); 
+            transition: all 0.5s ease-in-out;
         }
 
         /* --- MODE DESKTOP (> 1300px) --- */
+        /* L'espace se referme (height: 0) et les images s'envolent sur les côtés */
         @media (min-width: 1300px) {
-            .left-deco img {
+            .screen-deco {
                 position: fixed;
                 top: 50%;
-                left: 0;
-                transform: translateY(-50%) rotate(0deg);
-                height: clamp(450px, 70vh, 900px);
-                z-index: -1; /* Repasse tout au fond de l'écran */
+                height: 0;      /* Ne prend plus de place, les fenêtres se rapprochent */
+                width: 0;
+                margin: 0;
             }
 
-            .right-deco img {
-                position: fixed;
+            .left-deco { left: 0; }
+            .right-deco { right: 0; }
+
+            .screen-deco img {
+                position: absolute;
                 top: 50%;
-                right: 0;
-                left: auto;
-                transform: translateY(-50%) rotate(0deg);
-                height: clamp(450px, 70vh, 900px);
-                z-index: -1; /* Repasse tout au fond de l'écran */
+                transform: translateY(-50%);
+                height: clamp(400px, 60vh, 800px); /* Taille grand format sur le côté */
             }
+
+            .left-deco img { left: 0; }
+            .right-deco img { right: 0; }
         }
 		   
 		
