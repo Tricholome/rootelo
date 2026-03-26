@@ -481,20 +481,20 @@
         font-size: 1.5em;
         letter-spacing: 1px;
 		}
+	}
 	
-		/* SPECIAL LANDSCAPE */
-		@media (orientation: landscape) and (max-height: 450px) {
-			.modal-header {
-				display: flex;
-				flex-direction: row; /* Icône à gauche, Titre à droite */
-				align-items: center;
-				gap: 15px;
-				text-align: left;
-			}
-			#modalIcon { margin: 0; width: 60px !important; }
-			.modal-divider { margin: 10px 0; }
+	/* SPECIAL LANDSCAPE */
+	@media (orientation: landscape) and (max-height: 450px) {
+		.modal-header {
+			display: flex;
+			flex-direction: row; /* Icône à gauche, Titre à droite */
+			align-items: center;
+			gap: 15px;
+			text-align: left;
 		}
-    }
+		#modalIcon { margin: 0; width: 60px !important; }
+		.modal-divider { margin: 10px 0; }
+	}
 	
 	   
 	/* =========================================================================
