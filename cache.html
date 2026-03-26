@@ -300,16 +300,33 @@
             position: absolute;
             height: 300px;
             width: auto;
-            object-fit: contain;
+            left: 50%;
+            transform: translateX(-50%);
+            top: -150px; /* Positionnement par défaut */
             filter: drop-shadow(0 10px 20px rgba(0,0,0,0.4));
-            transition: height 0.8s ease, transform 0.8s ease;
-			left: 50%;
-            transform: translateX(-50%); 
-            top: calc(-80px + (var(--scroll, 0) * 0.6px));
+            transition: all 0.5s ease;
+        }
+		
+		/* --- MODE MOBILE (< 1100px) --- */
+		@media (max-width: 1099px) {
+            .app-header {
+                transition: all 0.4s ease-in-out;
+                transform-origin: top;
+            }
+            
+            /* Quand on scroll, on réduit la bannière à néant */
+            .is-scrolled .app-header {
+                opacity: 0;
+                height: 0;
+                margin-bottom: 0;
+                padding: 0;
+                transform: scaleY(0);
+                pointer-events: none; /* Empêche de cliquer sur les liens invisibles */
+            }
         }
 
 
-        /* --- MODE DESKTOP (> 1300px) --- */
+        /* --- MODE DESKTOP (> 1100px) --- */
         @media (min-width: 1100px) {
             .screen-deco {
                 position: fixed;
@@ -708,7 +725,7 @@
                     <span>Art by <strong>𝕩𝕝𝕦𝕖𝕧𝕚</strong></span>
                 </div>
                 <div class="footer-date">
-                    Updated on 2026-03-26 11:21
+                    Updated on 2026-03-26 11:31
                 </div>
             </div>
         </footer>
@@ -725,8 +742,16 @@
     <script>
 		// Moteur de Scroll Dynamique pour le CSS
 		window.addEventListener('scroll', () => {
-			document.body.style.setProperty('--scroll', window.scrollY);
-		}, { passive: true });
+            // Variable pour le parallax (on la garde pour le mode PC)
+            document.body.style.setProperty('--scroll', window.scrollY);
+            
+            // Gestion de la bannière mobile
+            if (window.scrollY > 20) {
+                document.body.classList.add('is-scrolled');
+            } else {
+                document.body.classList.remove('is-scrolled');
+            }
+        }, { passive: true });
 		
         // Fonction globale pour ouvrir la lightbox
         function openLightbox(src) {
