@@ -352,39 +352,99 @@
         table.dataTable > tbody > tr.child ul.dtr-details { background: var(--bg-container); border: 1px solid var(--border-soft); padding: 10px; list-style: none; }
 
         /* =========================================================================
-           --- 8. TIER MODAL SYSTEM ---
-           ========================================================================= */
-		   
+		   --- 8. TIER MODAL SYSTEM ---
+		   ========================================================================= */
+
 		.modal-overlay {
-			display: none; /* Caché par défaut */
+			display: none; /* Changé en 'flex' par le JS */
 			position: fixed;
-			top: 0; left: 0; width: 100%; height: 100%;
+			top: 0; 
+			left: 0; 
+			width: 100%; 
+			height: 100%;
 			background: rgba(0, 0, 0, 0.85);
 			backdrop-filter: blur(5px);
 			z-index: 9999;
-			align-items: center; justify-content: center;
+			/* Ces deux lignes centrent la modale parfaitement */
+			align-items: center; 
+			justify-content: center; 
 		}
 
 		.modal-content {
 			background: var(--bg-container);
-			border: 1px solid var(--border-soft);
+			border: 1px solid var(--window-border); /* Utilise ta variable globale */
 			border-radius: 16px;
-			width: 90%; max-width: 500px;
+			width: 90%; 
+			max-width: 500px;
 			padding: 30px;
 			position: relative;
-			box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+			box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+			animation: modalFadeIn 0.3s ease-out; /* Optionnel: petit effet d'apparition */
+		}
+
+		@keyframes modalFadeIn {
+			from { opacity: 0; transform: translateY(-20px); }
+			to { opacity: 1; transform: translateY(0); }
 		}
 
 		.modal-close {
 			position: absolute;
-			top: 15px; right: 15px;
-			background: none; border: none;
+			top: 15px; 
+			right: 15px;
+			background: none; 
+			border: none;
 			color: var(--text-muted);
-			font-size: 24px; cursor: pointer;
-}
+			font-size: 28px; 
+			cursor: pointer;
+			line-height: 1;
+			transition: color 0.2s;
+		}
 
-		.tier-item-modal { display: flex; flex-direction: column; gap: 15px; }
-		.tier-header-modal { display: flex; align-items: center; gap: 15px; border-bottom: 1px solid var(--border-soft); padding-bottom: 15px; }
+		.modal-close:hover {
+			color: var(--text-main);
+		}
+
+		/* Structure interne */
+		.modal-header { 
+			text-align: center; 
+			margin-bottom: 20px; 
+		}
+
+		#modalIcon { 
+			width: 80px; 
+			height: 80px; 
+			object-fit: contain; 
+			margin-bottom: 10px; 
+			display: inline-block; 
+		}
+
+		#modalTitle { 
+			margin: 0; 
+			font-family: var(--font-title); 
+			font-size: 1.8em; /* Un peu plus grand pour le titre */
+			font-weight: 800;
+		}
+
+		#modalSubtitle { 
+			color: var(--text-muted); 
+			font-style: italic; 
+			font-size: 1em; 
+			margin-top: 5px; 
+		}
+
+		.modal-divider { 
+			height: 1px; 
+			background: var(--border-soft); 
+			margin: 20px 0; 
+		}
+
+		.modal-description p { 
+			line-height: 1.6; 
+			color: var(--text-main); 
+			font-size: 1.1em; 
+			text-align: left; 
+			margin: 0; 
+		}
 		   
 		/* =========================================================================
 		   --- 8. TIER BOXES SYSTEM (deprecated) ---
