@@ -302,12 +302,12 @@
             margin: 0;
             z-index: -1; 
             pointer-events: none;
-            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 100%;
         }
 
         .screen-deco img {
             position: absolute;
-            height: 550px; /* Taille fixe pour garantir le débordement */
+            height: 500px; /* Taille fixe pour garantir le débordement */
             width: auto;
             object-fit: contain;
             filter: drop-shadow(0 10px 20px rgba(0,0,0,0.4));
@@ -323,11 +323,11 @@
             .screen-deco {
                 position: fixed;
                 top: 0;
-                height: 0;
+				left: 0;
 				width: 100vw;
                 height: 100vh;
-                left: 0;
 				display: block;
+				z-index: -1;
             }
 
             .screen-deco img {
@@ -4553,7 +4553,7 @@
                     <span>Art by <strong>𝕩𝕝𝕦𝕖𝕧𝕚</strong></span>
                 </div>
                 <div class="footer-date">
-                    Updated on 2026-03-26 09:30
+                    Updated on 2026-03-26 09:37
                 </div>
             </div>
         </footer>
