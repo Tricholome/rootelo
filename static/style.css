@@ -1,56 +1,3 @@
-/* =========================================================================
-           --- 1. CONFIGURATION PANEL (CSS VARIABLES) ---
-           ========================================================================= */
-        :root {
-			
-			/* Windows */
-			--window-gap: 25px;           
-            --window-max-width: 950px;   
-            --window-bg: var(--bg-container);
-            --window-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            --window-border: 1px solid rgba(255, 255, 255, 0.08);
-			
-            /* Faction Colors */
-            --color-bird: {{ colors.bird }};
-            --color-fox: {{ colors.fox }};
-            --color-rabbit: {{ colors.rabbit }};
-            --color-mouse: {{ colors.mouse }};
-            --color-squirrel: {{ colors.squirrel }};
-
-            /* Faction Backgrounds */
-            --color-bird-bg: {{ colors.bird }}14;
-            --color-fox-bg: {{ colors.fox }}14;
-            --color-rabbit-bg: {{ colors.rabbit }}14;
-            --color-mouse-bg: {{ colors.mouse }}14;
-            --color-squirrel-bg: {{ colors.squirrel }}14;
-
-            /* Typography */
-            --font-title: 'Fraunces', serif;
-            --font-ui: 'Inter', sans-serif;
-
-            /* Background Colors */
-            --bg-page: #121212;
-            --bg-container: #1c1c1c; 
-            --bg-surface: rgba(255, 255, 255, 0.03); 
-            --bg-hover: rgba(255, 255, 255, 0.08);
-
-            /* Text Colors */
-            --text-main: #E0E0E0; 
-            --text-muted: #888888;
-            --text-dark: #111111; 
-
-            /* Borders */
-            --border-soft: #333333;
-        }
-
-        /* --- DYNAMIC THEME MANAGEMENT --- */
-        body[data-page="index"]   { --main-color: var(--color-bird); }
-        body[data-page="matches"] { --main-color: var(--color-fox); }
-        body[data-page="trends"]  { --main-color: var(--color-rabbit); }
-        body[data-page="about"]   { --main-color: var(--color-mouse); }
-        body[data-page="cache"]   { --main-color: var(--color-squirrel); }
-        body { --main-color: {{ colors.default }}; }
-
         /* =========================================================================
            --- 2. GLOBAL STYLES ---
            ========================================================================= */
@@ -498,11 +445,11 @@
         }
         
         /* Dynamic Border Colors */
-        .tier-bird     { border-left-color: {{ colors['bird'] }} !important; }
-        .tier-fox      { border-left-color: {{ colors['fox'] }} !important; }
-        .tier-rabbit   { border-left-color: {{ colors['rabbit'] }} !important; }
-        .tier-mouse    { border-left-color: {{ colors['mouse'] }} !important; }
-        .tier-squirrel { border-left-color: {{ colors['squirrel'] }} !important; }
+		.tier-bird     { border-left-color: var(--color-bird) !important; }
+		.tier-fox      { border-left-color: var(--color-fox) !important; }
+		.tier-rabbit   { border-left-color: var(--color-rabbit) !important; }
+		.tier-mouse    { border-left-color: var(--color-mouse) !important; }
+		.tier-squirrel { border-left-color: var(--color-squirrel) !important; }
 
         /* --- LIGHTBOX OVERLAY --- */
         .lightbox-overlay {
