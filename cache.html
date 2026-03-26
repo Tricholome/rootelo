@@ -2,6 +2,10 @@
 
 
 
+
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -274,20 +278,7 @@
            --- 5. PAGE TITLES ---
            ========================================================================= */
         .page-intro { margin-bottom: 30px; }
-        .page-intro h2 { font-family: var(--font-title); font-size: clamp(2.5em, 5vw, 4em); margin: 0; color: var(--main-color); }
-        .h2-wrapper {
-            display: flex;
-            align-items: center;      /* Centre tout verticalement */
-            justify-content: center;  /* Centre tout horizontalement */
-            gap: 15px;                /* L'espace entre le titre et les images */
-            margin: 5px 0;           /* On donne de l'air au-dessus et en-dessous */
-        }
-        .side-img {
-            height: clamp(120px, 30vw, 300px); 
-            width: auto;
-            object-fit: contain;
-            display: block;
-        }
+        .page-intro h2 { font-family: var(--font-title); font-size: 2.5em; margin: 0; color: var(--main-color); }
         .page-intro p { color: var(--text-muted); font-family: var(--font-ui); font-size: 0.9em; margin: 5px auto 0; }
 		
 		/* =========================================================================
@@ -314,7 +305,7 @@
             transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 			left: 50%;
             transform: translateX(-50%); 
-            top: -160px;
+            top: -200px;
         }
 
 
@@ -592,14 +583,6 @@
             .site-title { font-size: 2em; }
             .footer-credits span { display: block; margin: 5px 0; text-align: center !important; }
             .footer-separator { display: none !important; }
-
-            /* Illustrations */
-            .h2-wrapper {
-                gap: 5px;
-            }
-            .side-img {
-                flex: 0 0 80px;
-            }
         }
         
         
@@ -678,16 +661,14 @@
 		</header>
 		
 		<div class="screen-deco left-deco">
-			
-		</div>
+            
+                <img src="assets/images/about_img1.webp" alt="Decoration Left">
+            
+        </div>
 
 		<div class="app-viewport window-box">
 			<header class="page-intro">
-				<div class="h2-wrapper">
-					
-						<h2>Undergrowth</h2>
-					
-				</div>
+				<h2>Undergrowth</h2>
 				
 				<p>No rank? No problem. We haven't forgotten you.</p>
 			</header>
@@ -713,8 +694,10 @@
 		</div>
 		
 		<div class="screen-deco right-deco">
-			
-		</div>
+            
+                <img src="assets/images/about_img1.webp" alt="Decoration Right">
+            
+        </div>
 
         <footer class="app-footer window-box">
             <div class="footer-content">
@@ -724,7 +707,7 @@
                     <span>Art by <strong>𝕩𝕝𝕦𝕖𝕧𝕚</strong></span>
                 </div>
                 <div class="footer-date">
-                    Updated on 2026-03-26 09:47
+                    Updated on 2026-03-26 10:00
                 </div>
             </div>
         </footer>
