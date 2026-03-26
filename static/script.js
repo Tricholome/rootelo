@@ -61,9 +61,9 @@
 				}
 			};
 
-			// On récupère les couleurs et icônes déjà définies dans base.html
-			const tierColors = {{ colors|tojson }};
-			const tierIcons = {{ icons|tojson }};
+			// On récupère les couleurs et icônes depuis l'objet CONFIG créé dans le HTML
+				const tierColors = CONFIG.colors;
+				const tierIcons = CONFIG.icons;
 
 			window.openTierModal = function(tier) {
 				const text = tierTexts[tier];
