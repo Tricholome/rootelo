@@ -89,6 +89,7 @@
         
         .window-box {
 			position: relative;
+			z-index: 1;
 			width: 95%;
 			max-width: var(--window-max-width);
 			margin-left: auto;
@@ -290,54 +291,63 @@
         .page-intro p { color: var(--text-muted); font-family: var(--font-ui); font-size: 0.9em; margin: 5px auto 0; }
 		
 		/* =========================================================================
-           --- 6. IMAGES (DÉCORATIONS RESPONSIVES) ---
+           --- 6. IMAGES (DÉCORATIONS INTERCALÉES & DOUCES) ---
            ========================================================================= */
         
-        /* --- MODE ÉCRANS RÉDUITS / MOBILE (< 1300px) --- */
-        /* Les images s'insèrent dans le flux et CRÉENT un espace entre les fenêtres */
         .screen-deco {
             position: relative;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 250px;      /* C'est la hauteur de l'espace qui va s'ouvrir entre les fenêtres */
-            margin: 10px 0;
-            z-index: -1;        /* Reste TOUJOURS en arrière-plan */
+            /* L'espace vertical entre les fenêtres en mode réduit */
+            height: 280px;      
+            margin: 20px 0;
+            z-index: -1;        /* Toujours derrière les fenêtres */
             pointer-events: none;
-            opacity: 0.9;
+            opacity: 0.95;
+            /* Transition très douce pour la position et la taille */
+            transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
         .screen-deco img {
-            height: 100%;       /* L'image remplit cet espace de 250px */
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            /* TAILLE CONSTANTE : On garde une taille imposante */
+            height: clamp(350px, 50vh, 600px); 
             width: auto;
             object-fit: contain;
-            filter: drop-shadow(0 10px 20px rgba(0,0,0,0.4));
-            transition: all 0.5s ease-in-out;
+            filter: drop-shadow(0 15px 30px rgba(0,0,0,0.5));
+            transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
         /* --- MODE DESKTOP (> 1300px) --- */
-        /* L'espace se referme (height: 0) et les images s'envolent sur les côtés */
         @media (min-width: 1300px) {
             .screen-deco {
                 position: fixed;
                 top: 50%;
-                height: 0;      /* Ne prend plus de place, les fenêtres se rapprochent */
-                width: 0;
+                height: 0;      /* L'espace entre les fenêtres se referme */
                 margin: 0;
+                width: 0;
             }
 
             .left-deco { left: 0; }
             .right-deco { right: 0; }
 
             .screen-deco img {
-                position: absolute;
-                top: 50%;
-                transform: translateY(-50%);
-                height: clamp(400px, 60vh, 800px); /* Taille grand format sur le côté */
+                /* Taille plus grande sur les côtés en mode bureau */
+                height: clamp(500px, 75vh, 900px);
             }
 
-            .left-deco img { left: 0; }
-            .right-deco img { right: 0; }
+            .left-deco img { left: 80px; } /* Ajuste selon la largeur de tes images */
+            .right-deco img { right: 80px; left: auto; }
+        }
+
+        /* Petit ajustement pour le mobile portrait pour éviter que ce soit trop massif */
+        @media (max-width: 600px) {
+            .screen-deco { height: 200px; }
+            .screen-deco img { height: 350px; }
         }
 		   
 		
@@ -1432,7 +1442,7 @@
                     <span>Art by <strong>𝕩𝕝𝕦𝕖𝕧𝕚</strong></span>
                 </div>
                 <div class="footer-date">
-                    Updated on 2026-03-26 08:43
+                    Updated on 2026-03-26 08:49
                 </div>
             </div>
         </footer>
