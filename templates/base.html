@@ -121,12 +121,20 @@
             <div class="nav-separator"></div>
 
             <nav>
-                {% set nav_links = [('index', 'Leaderboard'), ('matches', 'Top Tables'), ('trends', "Player's Journey"), ('about', 'Codex')] %}
-                {% for base, label in nav_links %}
-                    {% set target = base + '.html' %}
-                    <a href="{{ target }}" class="{{ 'active' if page_id == base else '' }}">{{ label }}</a>
-                {% endfor %}
-            </nav>
+				{% set nav_links = [('index', 'Leaderboard'), ('matches', 'Top Tables'), ('trends', "Player's Journey"), ('about', 'Codex')] %}
+				{% set archivable_pages = ['index', 'matches', 'trends'] %}
+				{% if page_id == 'cache' %}
+					{% set nav_links = nav_links + [('cache', 'Undergrowth')] %}
+				{% endif %}
+				{% for base, label in nav_links %}
+					{% if has_seasons and is_archive and base in archivable_pages %}
+						{% set target = base + '_lh01.html' %}
+					{% else %}
+						{% set target = base + '.html' %}
+					{% endif %}
+					<a href="{{ target }}" class="{{ 'active' if page_id == base else '' }}">{{ label }}</a>
+				{% endfor %}
+			</nav>
         </header>
         
         <div class="screen-deco right-deco">
@@ -137,9 +145,17 @@
 
         <div class="app-viewport window-box">
             <header class="page-intro">
-                <h2>{{ page_heading }}</h2>
-                {% if description %}<p>{{ description }}</p>{% endif %}
-            </header>
+				<h2>{{ page_heading }}</h2>
+				{% if has_seasons %}
+				<div class="season-selector">
+					<span class="season-label">Season</span>
+					<a href="{{ page_id }}_lh01.html" class="season-btn {{ 'active' if is_archive else '' }}">LH01</a>
+					<a href="{{ page_id }}.html" class="season-btn {{ '' if is_archive else 'active' }}">LH02</a>
+				</div>
+				{% endif %}
+				{% if description %}<p>{{ description }}</p>{% endif %}
+			</header>
+			
             <main>
                 {% block content %}{% endblock %}
             </main>
