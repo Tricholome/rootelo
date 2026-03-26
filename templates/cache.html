@@ -1,17 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="tier-list">
-    <div class="tier-item tier-squirrel" id="tier-squirrel"> 
-        <img src="{{ icons['squirrel'] }}" class="tier-icon" onclick="openLightbox(this.src)">
-        <div class="tier-content">
-            <div class="tier-header">
-                <span class="tier-name" style="color: {{ colors['squirrel'] }};">Squirrel (< 1200)</span>
-                <span class="tier-separator">—</span>
-                <span class="tier-subtitle">The Hapless Stragglers</span>
-            </div>
-            <p class="tier-desc">The frantic collectors of the undergrowth. Often tripped up by clumsy errors or bad luck, they must fall back to let faster rivals pass. Yet, they remain busy; every scrap gathered today is a seed stored away for next season’s harvest.</p>
-        </div>
-    </div>
-</div>
+<a href="javascript:void(0)" onclick="openTierModal('squirrel')" class="tier-anchor-link">
+    Crack a nut! 🐿️
+</a>
 {% endblock %}
