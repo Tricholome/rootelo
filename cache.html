@@ -291,37 +291,42 @@
         .page-intro p { color: var(--text-muted); font-family: var(--font-ui); font-size: 0.9em; margin: 5px auto 0; }
 		
 		/* =========================================================================
-           --- 6. IMAGES (EFFET SANDWICH) ---
+           --- 6. IMAGES (RÉGLAGES DES PLACEMENTS) ---
            ========================================================================= */
         
         .screen-deco {
             position: relative;
             display: flex;
             justify-content: center;
-            /* Hauteur de la zone visible entre les fenêtres */
-            height: 300px; 
+            height: 200px; /* L'espace entre tes fenêtres en mode portrait */
             margin: 0;
-            /* Crucial : les images sont en dessous des fenêtres */
             z-index: -1; 
             pointer-events: none;
-            overflow: visible; /* Permet au bas de l'image de dépasser pour aller SOUS le bloc suivant */
             transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .screen-deco img {
             position: absolute;
-            top: 0;
-            /* Taille fixe et imposante */
-            height: 550px; 
+            height: 550px; /* Taille fixe pour garantir le débordement */
             width: auto;
             object-fit: contain;
             filter: drop-shadow(0 10px 20px rgba(0,0,0,0.4));
             transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* --- MODE PORTRAIT / RÉDUIT --- */
-        .left-deco img { transform: rotate(-5deg); }
-        .right-deco img { transform: rotate(5deg); }
+        /* --- MODE PORTRAIT (PLACEMENT PRÉCIS) --- */
+        
+        .left-deco img { 
+            /* On remonte l'image pour que le haut soit visible et le bas caché par le viewport */
+            top: -150px; 
+            transform: translateX(-20%) rotate(-5deg); 
+        }
+        
+        .right-deco img { 
+            /* On ajuste pour qu'elle soit entre le viewport et le footer */
+            top: -150px; 
+            transform: translateX(20%) rotate(5deg); 
+        }
 
         /* --- MODE DESKTOP (> 1300px) --- */
         @media (min-width: 1300px) {
@@ -329,8 +334,8 @@
                 position: fixed;
                 top: 50%;
                 height: 0;
-                width: 0;
             }
+
             .left-deco { left: 0; }
             .right-deco { right: 0; }
 
@@ -339,8 +344,10 @@
                 top: 50%;
                 transform: translateY(-50%) rotate(0deg);
             }
-            .left-deco img { left: 50px; }
-            .right-deco img { right: 50px; left: auto; }
+
+            /* Placement latéral sur grand écran */
+            .left-deco img { left: 40px; }
+            .right-deco img { right: 40px; left: auto; }
         }
 		   
 		
@@ -725,7 +732,7 @@
                     <span>Art by <strong>𝕩𝕝𝕦𝕖𝕧𝕚</strong></span>
                 </div>
                 <div class="footer-date">
-                    Updated on 2026-03-26 08:59
+                    Updated on 2026-03-26 09:03
                 </div>
             </div>
         </footer>
