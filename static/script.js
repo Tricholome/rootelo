@@ -35,27 +35,32 @@ document.addEventListener('DOMContentLoaded', function() {
 	// Dictionnaire des textes exacts (About)
 	const tierTexts = {
 		'bird': {
-			name: 'Bird (1500+)',
+			name: 'Bird',
+			elo: '1500+',
 			subtitle: 'The Grandmasters',
 			desc: 'The absolute pinnacle of the Woodland. Reaching this height is a rare feat, a fleeting and prestigious throne where staying at the top is a constant battle against gravity. It is reserved for those who maintain perfection under pressure.'
 		},
 		'fox': {
-			name: 'Fox (1400+)',
+			name: 'Fox',
+			elo: '1400+',
 			subtitle: 'The Cunning Tacticians',
 			desc: 'The elite targets everyone is chasing. With a trick for every turn and a plan for every disaster, they outmaneuver the field with ease. They play with sharp instincts, punctuated by a signature, mischievous grin that keeps opponents guessing.'
 		},
 		'rabbit': {
-			name: 'Rabbit (1300+)',
+			name: 'Rabbit',
+			elo: '1300+',
 			subtitle: 'The Agile Contenders',
 			desc: 'The true engine of the higher rankings. Their climb is built on speed and sharp adaptability, moving well past the basics to dictate the pace of play. They are restless challengers, always seeking the next opening to leap ahead.'
 		},
 		'mouse': {
-			name: 'Mouse (1200+)',
+			name: 'Mouse',
+			elo: '1200+',
 			subtitle: 'The Steady Foragers',
 			desc: 'The solid foundation of the standings, marking a genuine milestone beyond the average player. These resilient competitors provide the first true test on the ladder, proving they have the consistency required to begin a successful climb. They are where every journey starts.'
 		},
 		'squirrel': {
-			name: 'Squirrel (< 1200)',
+			name: 'Squirrel',
+			elo: '< 1200',
 			subtitle: 'The Hapless Stragglers',
 			desc: 'The frantic collectors of the undergrowth. Often tripped up by clumsy errors or bad luck, they must fall back to let faster rivals pass. Yet, they remain busy; every scrap gathered today is a seed stored away for next season’s harvest.'
 		}
@@ -74,12 +79,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
 		// On cible les éléments déjà existants dans le HTML
 		const modalTitle = document.getElementById('modalTitle');
+		const modalElo = document.getElementById('modalElo');
 		const modalIcon = document.getElementById('modalIcon');
 		const modalSubtitle = document.getElementById('modalSubtitle');
 		const modalText = document.getElementById('modalText');
 
 		modalTitle.textContent = text.name;
-		modalTitle.style.color = color;
+		
+		modalElo.textContent = text.name;
+		modalElo.style.color = color;
 		
 		modalIcon.src = icon;
 		

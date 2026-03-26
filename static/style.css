@@ -134,7 +134,7 @@
 	/* Titres centraux */
 	.site-title { 
 		font-family: var(--font-title);
-		color: #ffffff; 
+		color: var(--text-main); 
 		font-size: 2.8em; 
 		margin: 0; 
 		letter-spacing: 4px; 
@@ -420,9 +420,19 @@
 
 	#modalTitle { 
 		margin: 0; 
-		font-family: var(--font-title); 
+		font-family: var(--font-title);
+		color: var(--text-main); 
 		font-size: 2.8em;
+		letter-spacing: 4px; 
+		text-transform: uppercase; 
+		font-weight: 900; 
+		text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+	}
+	
+	#modalElo {
 		font-weight: 800;
+		font-size: 1.1em; 
+		margin-top: 5px; 
 	}
 
 	#modalSubtitle { 
