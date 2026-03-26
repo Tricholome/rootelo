@@ -289,7 +289,7 @@
             position: relative;
             display: flex;
             justify-content: center;
-            height: 250px; /* L'espace entre tes fenêtres en mode portrait */
+            height: 200px; /* L'espace entre tes fenêtres en mode portrait */
             margin: 0;
             z-index: -1; 
             pointer-events: none;
@@ -298,7 +298,7 @@
 
         .screen-deco img {
             position: absolute;
-            height: 500px; /* Taille fixe pour garantir le débordement */
+            height: 300px;
             width: auto;
             object-fit: contain;
             filter: drop-shadow(0 10px 20px rgba(0,0,0,0.4));
@@ -322,7 +322,7 @@
             }
 
             .screen-deco img {
-                height: clamp(500px, 80vh, 900px);
+                height: clamp(300px, 80vh, 500px);
                 top: 50%;
                 left: auto; 
                 transform: translateY(-50%);
@@ -4536,7 +4536,7 @@
                     <span>Art by <strong>𝕩𝕝𝕦𝕖𝕧𝕚</strong></span>
                 </div>
                 <div class="footer-date">
-                    Updated on 2026-03-26 10:45
+                    Updated on 2026-03-26 10:49
                 </div>
             </div>
         </footer>
