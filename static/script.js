@@ -112,41 +112,33 @@ document.addEventListener("DOMContentLoaded", function() {
     const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (window.matchMedia("(hover: none)").matches);
 
     if (isTouchDevice) {
-        document.querySelectorAll('.js-double-tap').forEach(link => {
-            // 1. On "sauvegarde" l'action d'origine (ton onclick dans le HTML)
-            const originalAction = link.onclick;
-            
-            // 2. On remplace complètement le comportement au clic
-            link.onclick = function(e) {
-                // Si ce n'est pas encore agrandi (1ER CLIC)
-                if (!this.classList.contains('expanded')) {
-                    e.preventDefault(); 
-                    
-                    // On referme toutes les autres icônes
-                    document.querySelectorAll('.js-double-tap').forEach(l => {
-                        if (l !== this) l.classList.remove('expanded');
-                    });
-                    
-                    // On agrandit celle-ci (affiche le tooltip)
-                    this.classList.add('expanded');
-                } 
-                // Si c'est DEJA agrandi (2EME CLIC)
-                else {
-                    this.classList.remove('expanded'); // On nettoie
-                    
-                    // On exécute la vraie fonction qu'on avait mise de côté
-                    if (originalAction) {
-                        originalAction.call(this, e);
-                    }
-                }
-            };
-        });
+        // On écoute sur le body pour capter même les icônes créées par DataTables
+        document.body.addEventListener('click', function(e) {
+            // On cherche si on a cliqué sur un lien double-tap
+            const link = e.target.closest('.js-double-tap');
 
-        // 3. Refermer si on clique n'importe où ailleurs sur l'écran
-        document.addEventListener('click', function(e) {
-            if (!e.target.closest('.js-double-tap')) {
-                document.querySelectorAll('.js-double-tap').forEach(l => l.classList.remove('expanded'));
+            // 1. Si on clique ailleurs : on ferme tout
+            if (!link) {
+                document.querySelectorAll('.js-double-tap.expanded').forEach(l => l.classList.remove('expanded'));
+                return;
             }
-        });
+
+            // 2. Si on clique sur une icône
+            if (!link.classList.contains('expanded')) {
+                // PREMIER TAP
+                e.preventDefault();
+                e.stopPropagation();
+
+                // On ferme les autres
+                document.querySelectorAll('.js-double-tap.expanded').forEach(l => l.classList.remove('expanded'));
+                
+                // On ouvre celle-ci
+                link.classList.add('expanded');
+            } else {
+                // DEUXIÈME TAP
+                // On laisse le comportement naturel (onclick du HTML ou href)
+                link.classList.remove('expanded');
+            }
+        }, true); // Le "true" ici permet d'intercepter avant DataTables
     }
 });
