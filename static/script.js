@@ -55,9 +55,9 @@ document.addEventListener('DOMContentLoaded', function() {
 			desc: 'The solid foundation of the standings, marking a genuine milestone beyond the average player. These resilient competitors provide the first true test on the ladder, proving they have the consistency required to begin a successful climb. They are where every journey starts.'
 		},
 		'squirrel': {
-			name: 'Squirrel (Under 1200)',
-			subtitle: 'The Hidden Gatherers',
-			desc: 'Newcomers or casual players still finding their paws. Every legend starts somewhere, and the Squirrel tier is the fertile ground where experience is gathered and future champions are born.'
+			name: 'Squirrel (< 1200)',
+			subtitle: 'The Hapless Stragglers',
+			desc: 'The frantic collectors of the undergrowth. Often tripped up by clumsy errors or bad luck, they must fall back to let faster rivals pass. Yet, they remain busy; every scrap gathered today is a seed stored away for next season’s harvest.'
 		}
 	};
 
