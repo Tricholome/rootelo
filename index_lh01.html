@@ -307,8 +307,8 @@
             transition: all 0.5s ease;
         }
 		
-		/* --- MODE MOBILE (< 1100px) --- */
-        @media (max-width: 1099px) {
+		/* --- MODE MOBILE (< 1200px) --- */
+        @media (max-width: 1299px) {
             .app-banner {
                 transition: transform 0.5s ease, opacity 0.4s ease;
                 transform-origin: center;
@@ -342,8 +342,8 @@
         }
 
 
-        /* --- MODE DESKTOP (> 1100px) --- */
-        @media (min-width: 1100px) {
+        /* --- MODE DESKTOP (> 1300px) --- */
+        @media (min-width: 1300px) {
             .screen-deco {
                 position: fixed;
                 top: 0;
@@ -355,11 +355,11 @@
             }
 
             .screen-deco img {
-                height: clamp(300px, 45vh, 300px);
+                height: 300px ;
                 top: max(50%, 600px);
                 left: auto; 
                 transform: translateY(-50%);
-				top: max(50%, calc(500px - (var(--scroll, 0) * 1px)));
+				top: max(50%, calc(550px - (var(--scroll, 0) * 1px)));
             }
 
             /* Placement latéral sur grand écran */
@@ -4570,7 +4570,7 @@
                     <span>Art by <strong>𝕩𝕝𝕦𝕖𝕧𝕚</strong></span>
                 </div>
                 <div class="footer-date">
-                    Updated on 2026-03-26 14:12
+                    Updated on 2026-03-26 14:18
                 </div>
             </div>
         </footer>
