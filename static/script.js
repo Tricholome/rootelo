@@ -72,16 +72,21 @@
 
 				if (!text) return;
 
-				modalBody.innerHTML = `
-					<div style="text-align: center; margin-bottom: 20px;">
-						<img src="${icon}" style="width: 80px; height: 80px; object-fit: contain; margin-bottom: 10px;">
-						<h2 style="color: ${color}; margin: 0; font-family: var(--font-title); font-size: 1.5em;">${text.name}</h2>
-						<div style="color: var(--text-muted); font-style: italic; font-size: 0.9em; margin-top: 5px;">${text.subtitle}</div>
-					</div>
-					<div style="height: 1px; background: var(--border-soft); margin-bottom: 20px;"></div>
-					<p style="line-height: 1.6; color: var(--text-main); font-size: 1.05em; text-align: left; margin: 0;">${text.desc}</p>
-				`;
+				// On cible les éléments déjà existants dans le HTML
+				const modalTitle = document.getElementById('modalTitle');
+				const modalIcon = document.getElementById('modalIcon');
+				const modalSubtitle = document.getElementById('modalSubtitle');
+				const modalText = document.getElementById('modalText');
+
+				modalTitle.textContent = text.name;
+				modalTitle.style.color = color;
 				
+				modalIcon.src = icon;
+				
+				modalSubtitle.textContent = text.subtitle;
+				
+				modalText.textContent = text.desc;
+
 				modal.style.display = 'flex';
 				document.body.style.overflow = 'hidden';
 			};
