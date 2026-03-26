@@ -1,689 +1,144 @@
-	/* =========================================================================
-	   --- 2. GLOBAL STYLES ---
-	   ========================================================================= */
-	html {
-		scroll-behavior: smooth; /* Ajout du scroll fluide ici ! */
+// Moteur de Scroll Dynamique pour le CSS
+window.addEventListener('scroll', () => {
+	const scrollY = window.scrollY;
+	const isMobile = window.innerWidth < 1100;
+
+	// 1. Toujours mettre à jour la variable pour le calcul PC (max 50%...)
+	document.body.style.setProperty('--scroll', scrollY);
+
+	// 2. Logique HAUT (Bannière)
+	if (scrollY > 30) {
+		document.body.classList.add('is-scrolled');
+	} else {
+		document.body.classList.remove('is-scrolled');
 	}
 
-	body { 
-		font-family: var(--font-ui); 
-		background: var(--bg-page); 
-		color: var(--text-main); 
-		text-align: center; 
-		padding: 20px 5px; 
-		margin: 0; 
-		overflow-x: hidden; 
-	}
-
-	.window-box {
-		position: relative;
-		z-index: 1;
-		width: 95%;
-		max-width: var(--window-max-width);
-		margin-left: auto;
-		margin-right: auto;
-		background: var(--window-bg);
-		border: var(--window-border);
-		border-radius: 12px;
-		box-shadow: var(--window-shadow);
-		box-sizing: border-box;
-	}
-
-	.app-banner {
-		margin-top: 20px;
-		margin-bottom: var(--window-gap);
-		padding: 15px 20px;
-	}
-
-	.app-viewport {
-		padding: 20px 30px;
-		margin-bottom: 40px;
-	}
-
-	.app-footer {
-		padding: 20px;
-		margin-bottom: 40px;
-		text-align: center;
-	}
-
-	/* =========================================================================
-	   --- 3. HEADER & BANNER (AVEC TOOLTIPS & EXPANDED) ---
-	   ========================================================================= */
-	.banner-container { display: flex; align-items: center; justify-content: center; gap: 5px; margin-bottom: 20px; flex-wrap: nowrap; }
-	.banner-icons { display: flex; gap: -10px; align-items: center; }
-
-	/* Liens interactifs enveloppant les images */
-	.banner-icons a.tooltip-link {
-		position: relative;
-		display: inline-block;
-		margin: 0 -5px;
-		z-index: 1;
-		text-decoration: none;
-		-webkit-tap-highlight-color: transparent; /* Retire le flash natif sur mobile */
-		transition: margin 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-	}
-
-	/* Effets appliqués au survol (PC) ET au tap (Mobile via classe .expanded) */
-	@media (hover: hover) {
-		.banner-icons a.tooltip-link:hover { margin: 0 15px; z-index: 100; }
-	}
-	.banner-icons a.tooltip-link.expanded { margin: 0 15px; z-index: 100; }
-
-	/* Les images elles-mêmes */
-	.banner-icons a.tooltip-link img { 
-		width: 85px; height: 85px; object-fit: contain; 
-		filter: drop-shadow(0 4px 6px rgba(0,0,0,0.6)); 
-		transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-		display: block;
-	}
-
-	@media (hover: hover) {
-		.banner-icons a.tooltip-link:hover img { 
-			width: 140px; height: 140px; 
-			filter: drop-shadow(0 15px 25px rgba(0,0,0,0.9));
-			transform: translateY(-10px) scale(1.15);
-		}
-		.banner-icons.left a.tooltip-link:hover img { transform: translateY(-10px) scale(1.15) rotate(-8deg); }
-		.banner-icons.right a.tooltip-link:hover img { transform: translateY(-10px) scale(1.15) rotate(8deg); }
-	}
-
-	/* Classe .expanded pour le JavaScript (Mobile) */
-	.banner-icons a.tooltip-link.expanded img { 
-		width: 140px; height: 140px; 
-		filter: drop-shadow(0 15px 25px rgba(0,0,0,0.9));
-		transform: translateY(-10px) scale(1.15);
-	}
-	.banner-icons.left a.tooltip-link.expanded img { transform: translateY(-10px) scale(1.15) rotate(-8deg); }
-	.banner-icons.right a.tooltip-link.expanded img { transform: translateY(-10px) scale(1.15) rotate(8deg); }
-
-	/* Le Tooltip (La petite bulle au-dessus) */
-	.tooltip-text {
-		position: absolute;
-		bottom: 90%;
-		left: 50%;
-		transform: translateX(-50%) translateY(10px);
-		background: var(--bg-container);
-		border: 1px solid var(--border-soft);
-		color: var(--text-muted);
-		padding: 6px 12px;
-		border-radius: 6px;
-		font-family: var(--font-ui);
-		font-size: 0.75rem;
-		white-space: nowrap;
-		opacity: 0;
-		pointer-events: none;
-		transition: all 0.3s ease;
-		box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-		z-index: 101;
-	}
-
-	/* Apparition du tooltip */
-	@media (hover: hover) {
-		.banner-icons a.tooltip-link:hover .tooltip-text {
-			opacity: 1;
-			transform: translateX(-50%) translateY(-15px);
+	// 3. Logique BAS (Uniquement Mobile pour éviter les bugs PC)
+	if (isMobile) {
+		const windowHeight = window.innerHeight;
+		const docHeight = document.documentElement.scrollHeight;
+		// Déclenche à 50px du bord fial
+		if ((windowHeight + scrollY) >= (docHeight - 50)) {
+			document.body.classList.add('is-at-bottom');
+		} else {
+			document.body.classList.remove('is-at-bottom');
 		}
 	}
-	.banner-icons a.tooltip-link.expanded .tooltip-text {
-		opacity: 1;
-		transform: translateX(-50%) translateY(-15px);
-	}
-
-	.tooltip-text strong { font-weight: 800; }
-
-	/* Titres centraux */
-	.site-title { 
-		font-family: var(--font-title);
-		color: var(--text-main); 
-		font-size: 2.8em; 
-		margin: 0; 
-		letter-spacing: 4px; 
-		text-transform: uppercase; 
-		font-weight: 900; 
-		text-shadow: 0 2px 10px rgba(0,0,0,0.5);
-	}
-	.site-subtitle { 
-		font-family: var(--font-title);
-		font-style: italic; 
-		color: var(--text-muted); 
-		font-size: 1em; 
-		margin: 5px 0 0; 
-		letter-spacing: 1px; 
-	}
-
-	/* =========================================================================
-	   --- 4. NAVIGATION & BUTTONS ---
-	   ========================================================================= */
-	nav { 
-		margin: 15px 0; 
-		display: flex; 
-		justify-content: center; 
-		gap: 12px; 
-		flex-wrap: wrap; 
-	}
-
-	nav a { 
-		color: var(--text-muted); 
-		text-decoration: none; 
-		font-weight: 600; 
-		text-transform: uppercase; 
-		font-size: 0.85em; 
-		letter-spacing: 1px;
-		padding: 8px 12px; 
-		border-radius: 6px; 
-		transition: 0.3s ease; 
-		border-bottom: 2px solid transparent; 
-	}
-
-	.nav-separator {
-			width: 80%;
-			height: 1.5px;
-			margin: 10px auto;
-			background: linear-gradient(90deg, transparent, var(--border-soft), transparent);
-			opacity: 0.6;
-	}
-
-	nav a:hover { color: var(--text-main); background: var(--bg-hover); }
-
-	nav a.active { 
-		color: var(--main-color); 
-		border-bottom: 2px solid var(--main-color);
-		border-radius: 6px 6px 0 0; 
-		background: linear-gradient(to top, rgba(255,255,255,0.03) 0%, transparent 100%);
-	}
-
-	.season-selector { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 20px auto 10px; background: none; width: fit-content; }
-	.season-label { font-size: 0.7em; text-transform: uppercase; color: var(--text-muted); letter-spacing: 1.2px; font-weight: bold; margin-right: 5px;}
-	.season-btn { text-decoration: none; font-size: 0.75em; font-weight: 700; color: var(--text-muted); padding: 6px 14px; border-radius: 4px; background: var(--bg-surface); border: 1px solid var(--border-soft); transition: 0.2s; }
-	.season-btn:hover { color: var(--text-main); background: var(--bg-hover); }
-	.season-btn.active { background: transparent !important; color: var(--main-color) !important; border-color: var(--main-color) !important; }
-
-	/* =========================================================================
-	   --- 5. PAGE TITLES ---
-	   ========================================================================= */
-	.page-intro { margin-bottom: 30px; }
-	.page-intro h2 { font-family: var(--font-title); font-size: 2.5em; margin: 0; color: var(--main-color); }
-	.page-intro p { color: var(--text-muted); font-family: var(--font-ui); font-size: 0.9em; margin: 5px auto 0; }
-
-	/* =========================================================================
-	   --- 6. SIDE IMAGES ---
-	   ========================================================================= */
-
-	.screen-deco {
-		position: relative;
-		display: flex;
-		justify-content: center;
-		height: 200px; /* L'espace entre tes fenêtres en mode portrait */
-		margin: 0;
-		z-index: -1; 
-		pointer-events: none;
-		width: 100%;
-	}
-
-	.screen-deco img {
-		position: absolute;
-		height: 300px;
-		width: auto;
-		left: 50%;
-		transform: translateX(-50%);
-		top: -150px; /* Positionnement par défaut */
-		filter: drop-shadow(0 10px 20px rgba(0,0,0,0.4));
-		transition: all 0.5s ease;
-	}
-
-	/* --- MODE MOBILE (< 1300px) --- */
-	@media (max-width: 1299px) {
-		.app-banner {
-			transition: transform 0.5s ease, opacity 0.4s ease;
-			transform-origin: center;
-			position: relative;
-		}
+}, { passive: true });
 		
-		.is-scrolled .app-banner {
-			opacity: 0;
-			transform: scale(0.95);
-			pointer-events: none;
-		}
+// Tier Modal		
+document.addEventListener('DOMContentLoaded', function() {
+	const modal = document.getElementById('tierModal');
+	const modalBody = document.getElementById('modalBody');
+	const closeBtn = document.querySelector('.modal-close');
 
-		.app-viewport {
-			position: relative;
-			transition: transform 0.5s ease, opacity 0.4s ease;
+	// Dictionnaire des textes exacts (About)
+	const tierTexts = {
+		'bird': {
+			name: 'Bird',
+			elo: '1500+',
+			subtitle: 'The Grandmasters',
+			desc: 'The absolute pinnacle of the Woodland. Reaching this height is a rare feat, a fleeting and prestigious throne where staying at the top is a constant battle against gravity. It is reserved for those who maintain perfection under pressure.'
+		},
+		'fox': {
+			name: 'Fox',
+			elo: '1400+',
+			subtitle: 'The Cunning Tacticians',
+			desc: 'The elite targets everyone is chasing. With a trick for every turn and a plan for every disaster, they outmaneuver the field with ease. They play with sharp instincts, punctuated by a signature, mischievous grin that keeps opponents guessing.'
+		},
+		'rabbit': {
+			name: 'Rabbit',
+			elo: '1300+',
+			subtitle: 'The Agile Contenders',
+			desc: 'The true engine of the higher rankings. Their climb is built on speed and sharp adaptability, moving well past the basics to dictate the pace of play. They are restless challengers, always seeking the next opening to leap ahead.'
+		},
+		'mouse': {
+			name: 'Mouse',
+			elo: '1200+',
+			subtitle: 'The Steady Foragers',
+			desc: 'The solid foundation of the standings, marking a genuine milestone beyond the average player. These resilient competitors provide the first true test on the ladder, proving they have the consistency required to begin a successful climb. They are where every journey starts.'
+		},
+		'squirrel': {
+			name: 'Squirrel',
+			elo: '< 1200',
+			subtitle: 'The Hapless Stragglers',
+			desc: 'The frantic collectors of the undergrowth. Often tripped up by clumsy errors or bad luck, they must fall back to let faster rivals pass. Yet, they remain busy; every scrap gathered today is a seed stored away for next season’s harvest.'
 		}
+	};
+
+	// On récupère les couleurs et icônes depuis l'objet CONFIG créé dans le HTML
+		const tierColors = CONFIG.colors;
+		const tierIcons = CONFIG.icons;
+
+	window.openTierModal = function(tier) {
+		const text = tierTexts[tier];
+		const color = tierColors[tier] || tierColors['default'];
+		const icon = tierIcons[tier];
+
+		if (!text) return;
+
+		// On cible les éléments déjà existants dans le HTML
+		const modalTitle = document.getElementById('modalTitle');
+		const modalElo = document.getElementById('modalElo');
+		const modalIcon = document.getElementById('modalIcon');
+		const modalSubtitle = document.getElementById('modalSubtitle');
+		const modalText = document.getElementById('modalText');
+
+		modalTitle.textContent = text.name;
 		
-		.is-at-bottom .app-viewport {
-			opacity: 0;
-			transform: scale(0.95);
-			pointer-events: none;
-		}
-
-		.screen-deco img {
-			top: 0px;
-			transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1);
-		}
-
-		.is-scrolled .right-deco img { top: -50px; }
-		.is-at-bottom .left-deco img { top: -50px; }
-	}
-
-
-	/* --- MODE DESKTOP (> 1300px) --- */
-	@media (min-width: 1300px) {
-		.screen-deco {
-			position: fixed;
-			top: 0;
-			left: 0;
-			width: 100vw;
-			height: 100vh;
-			display: block;
-			z-index: -1;
-		}
-
-		.screen-deco img {
-			height: clamp(300px, 50vh, 900px) ;
-			top: max(50%, 600px);
-			left: auto; 
-			transform: translateY(-50%);
-			top: max(50%, calc(550px - (var(--scroll, 0) * 1px)));
-		}
-
-		/* Placement latéral sur grand écran */
-		.left-deco img { left: 15px; right: auto; }
-		.right-deco img { right: 15px; left: auto; }
-	}
-	   
-
-	/* =========================================================================
-	   --- 7. DATATABLES ---
-	   ========================================================================= */
-
-	table.dataTable { border-collapse: collapse !important; }
-	table.dataTable thead th { background: var(--bg-page) !important; color: var(--text-muted) !important; font-size: 0.75em; letter-spacing: 1px; text-transform: uppercase; padding: 15px 10px !important; border-bottom: 1px solid var(--border-soft) !important; }
-	table.dataTable tbody tr { background-color: transparent !important; }
-	table.dataTable tbody td { border-bottom: 1px solid rgba(255,255,255,0.03); padding: 12px 10px; }
-
-	/* Datatables utilities */
-	.dataTables_filter label, .dataTables_length label { color: var(--text-muted); font-family: var(--font-ui); font-size: 0.8em; }
-
-	.dataTables_filter input, .dataTables_length select { 
-		background: var(--bg-surface) !important; 
-		border: 1px solid var(--border-soft) !important; 
-		color: var(--text-main) !important; 
-		border-radius: 4px; 
-		padding: 4px 8px; 
-		outline: none; 
-		margin: 0 8px; 
-		appearance: none; /* Supprime le style blanc Safari/Chrome */
-		-webkit-appearance: none;
-	}
-
-	/* Ajoute une flèche grise personnalisée pour le menu "Show entries" */
-	.dataTables_length select {
-		padding-right: 24px !important;
-		background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='gray' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") !important;
-		background-repeat: no-repeat !important;
-		background-position: right 8px center !important;
-	}
-
-	/* Force le fond noir des options quand on clique dessus */
-	.dataTables_length select option {
-		background-color: var(--bg-surface);
-		color: var(--text-main);
-	}
-
-	.dataTables_filter input::-webkit-search-cancel-button {
-		-webkit-appearance: none; height: 13px; width: 13px; cursor: pointer;
-		background-color: var(--text-muted);
-		-webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z'/></svg>") no-repeat 50% 50%;
-		-webkit-mask-size: cover;
-	}
-
-	.dataTables_info, .dataTables_paginate { color: var(--text-muted) !important; font-family: var(--font-ui); font-size: 0.8em; padding-top: 15px !important; }
-	.paginate_button { color: var(--text-muted) !important; padding: 5px 10px; cursor: pointer; }
-	.paginate_button.current { background: var(--bg-hover) !important; color: var(--text-main) !important; border-radius: 4px; font-weight: 600; }
-
-	/* Responsive Expand Button (Simple Gray Square) */
-	table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
-		background: var(--bg-surface) !important; color: var(--text-main) !important;
-		border: 1px solid var(--border-soft) !important; border-radius: 3px;
-		box-shadow: none !important; font-weight: bold; height: 16px; width: 16px; 
-		line-height: 16px; text-align: center; text-indent: 0 !important;
-	}
-
-	table.dataTable > tbody > tr.child ul.dtr-details { background: var(--bg-container); border: 1px solid var(--border-soft); padding: 10px; list-style: none; }
-
-	/* =========================================================================
-	   --- 8. TIER MODAL SYSTEM ---
-	   ========================================================================= */
-
-	.modal-overlay {
-		display: none; /* Changé en 'flex' par le JS */
-		position: fixed;
-		top: 0; 
-		left: 0; 
-		width: 100%; 
-		height: 100%;
-		background: rgba(0, 0, 0, 0.85);
-		backdrop-filter: blur(5px);
-		z-index: 9999;
-		/* Ces deux lignes centrent la modale parfaitement */
-		align-items: center; 
-		justify-content: center; 
-	}
-
-	.modal-content {
-		background: var(--bg-container);
-		border: 1px solid var(--window-border); /* Utilise ta variable globale */
-		border-radius: 16px;
-		width: 90%; 
-		max-width: 500px;
-		padding: 30px;
-		position: relative;
-		box-shadow: 0 20px 50px rgba(0,0,0,0.8);
-		animation: modalFadeIn 0.3s ease-out; /* Optionnel: petit effet d'apparition */
-	}
-
-	@keyframes modalFadeIn {
-		from { opacity: 0; transform: translateY(-20px); }
-		to { opacity: 1; transform: translateY(0); }
-	}
-
-	.modal-close {
-		position: absolute;
-		top: 15px; 
-		right: 15px;
-		background: none; 
-		border: none;
-		color: var(--text-muted);
-		font-size: 28px; 
-		cursor: pointer;
-		line-height: 1;
-		transition: color 0.2s;
-	}
-
-	.modal-close:hover {
-		color: var(--text-main);
-	}
-
-	/* Structure interne */
-	.modal-header { 
-		text-align: center; 
-		margin-bottom: 20px; 
-	}
-
-	#modalIcon { 
-		width: 300px; 
-		height: 300px; 
-		object-fit: contain; 
-		margin-bottom: 10px; 
-		display: inline-block; 
-	}
-
-	#modalTitle { 
-		margin: 0; 
-		font-family: var(--font-title);
-		color: var(--text-main); 
-		font-size: 2.8em;
-		letter-spacing: 4px; 
-		font-weight: 900; 
-		text-shadow: 0 2px 10px rgba(0,0,0,0.5);
-	}
-	
-	#modalElo {
-		font-weight: 800;
-		font-size: 1.1em; 
-		margin-top: 5px; 
-	}
-
-	#modalSubtitle { 
-		color: var(--text-muted); 
-		font-style: italic; 
-		font-size: 1em;
-		margin-top: -5px; 
-	}
-	
-	#modalText { 
-        color: var(--text-muted);
-        text-align: left;
-        font-family: var(--font-ui);
-        font-size: 0.95em;
-	}
-
-	.modal-divider { 
-		height: 1px; 
-		background: var(--border-soft); 
-		margin: 20px 0; 
-	}
-
-	.modal-description p { 
-		line-height: 1.6; 
-		color: var(--text-main); 
-		font-size: 1.1em; 
-		text-align: left; 
-		margin: 0; 
-	}
-	
-	/* --- RESPONSIVE --- */
-	@media (max-width: 800px), (max-height: 600px) {
-		.modal-content {
-			width: 95%;
-			max-height: 95vh;
-			padding: 20px;
-			overflow-y: auto;
-			display: flex;
-			flex-direction: column;
-		}
-
-		#modalIcon { 
-			width: 160px;
-			height: 160px; 
-		}
+		modalElo.textContent = text.elo;
+		modalElo.style.color = color;
 		
-		#modalTitle { 
-        font-size: 1.5em;
-        letter-spacing: 1px;
-		}
+		modalIcon.src = icon;
+		
+		modalSubtitle.textContent = text.subtitle;
+		
+		modalText.textContent = text.desc;
+
+		modal.style.display = 'flex';
+		document.body.style.overflow = 'hidden';
+	};
+
+	const closeModal = () => {
+		modal.style.display = 'none';
+		document.body.style.overflow = 'auto';
+	};
+
+	if (closeBtn) closeBtn.onclick = closeModal;
+	window.onclick = (event) => { if (event.target == modal) closeModal(); };
+});
+
+document.addEventListener("DOMContentLoaded", function() {
+    const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (window.matchMedia("(hover: none)").matches);
+
+    if (isTouchDevice) {
+        document.querySelectorAll('.js-double-tap').forEach(link => {
+            link.addEventListener('click', function(e) {
+                // Si l'icône n'est pas encore "agrandie" (1er clic)
+                if (!this.classList.contains('expanded')) {
+                    e.preventDefault(); 
+                    e.stopPropagation(); // Empêche le clic de se propager ailleurs
+
+                    // On referme les autres
+                    document.querySelectorAll('.js-double-tap').forEach(l => l.classList.remove('expanded'));
+                    
+                    // On agrandit celle-ci
+                    this.classList.add('expanded');
+                } 
+                // Si elle est DEJÀ agrandie (2ème clic)
+                else {
+                    // Ici, on laisse le comportement normal se faire.
+                    // Si ton HTML a un onclick="openTierModal()", il s'exécutera.
+                    this.classList.remove('expanded'); // On nettoie pour la prochaine fois
+                }
+            });
+        });
+
+        // Refermer si on clique à côté
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.js-double-tap')) {
+                document.querySelectorAll('.js-double-tap').forEach(l => l.classList.remove('expanded'));
+            }
+        });
     }
-	
-	/* SPECIAL LANDSCAPE */
-    @media (orientation: landscape) and (max-height: 450px) {
-        .modal-header {
-            display: flex;
-            flex-direction: row; /* Icône à gauche, Titre à droite */
-            align-items: center;
-            gap: 15px;
-            text-align: left;
-        }
-        #modalIcon { margin: 0; width: 60px !important; }
-			.modal-divider { margin: 10px 0; }
-    }
-	
-	   
-	/* =========================================================================
-	   --- 8. TIER BOXES SYSTEM (deprecated) ---
-	   ========================================================================= */
-	.tier-list { 
-		list-style: none; 
-		padding: 0; 
-		margin: 30px 0; 
-	}
-
-	.tier-item { 
-		display: flex; 
-		align-items: flex-start; 
-		margin: 0 0 20px 0; 
-		background: var(--bg-container); 
-		padding: 20px;
-		border-radius: 12px;
-		border: 1px solid var(--border-soft);
-		border-left: 6px solid #333;
-		width: 100%;
-		box-sizing: border-box;
-		transition: transform 0.2s ease;
-	}
-
-	.tier-icon { 
-		height: 100px; 
-		width: 100px; 
-		margin-right: 30px; 
-		flex-shrink: 0; 
-		object-fit: contain;
-		cursor: zoom-in;
-		transition: transform 0.2s ease;
-	}
-
-	.tier-icon:hover { transform: scale(1.05); }
-
-	.tier-content {
-		display: flex;
-		flex-direction: column;
-		text-align: left !important;
-	}
-
-	.tier-header {
-		font-size: 1.1em;
-		margin-bottom: 6px;
-		line-height: 1.3;
-	}
-
-	.tier-name { font-weight: 800; }
-	.tier-separator { font-weight: 400; color: var(--text-muted); margin: 0 6px; }
-	.tier-subtitle { font-weight: 500; color: var(--text-main); }
-
-	.tier-desc {
-		margin: 0 !important;
-		font-size: 0.9em;
-		color: var(--text-muted);
-		line-height: 1.6;
-	}
-
-	/* Dynamic Border Colors */
-	.tier-bird     { border-left-color: var(--color-bird) !important; }
-	.tier-fox      { border-left-color: var(--color-fox) !important; }
-	.tier-rabbit   { border-left-color: var(--color-rabbit) !important; }
-	.tier-mouse    { border-left-color: var(--color-mouse) !important; }
-	.tier-squirrel { border-left-color: var(--color-squirrel) !important; }
-
-	/* --- LIGHTBOX OVERLAY --- */
-	.lightbox-overlay {
-		display: none;
-		position: fixed;
-		top: 0; left: 0;
-		width: 100%; height: 100%;
-		background: rgba(0, 0, 0, 0.85);
-		z-index: 9999;
-		justify-content: center;
-		align-items: center;
-		cursor: zoom-out;
-		backdrop-filter: blur(4px);
-	}
-
-	.lightbox-overlay img {
-		max-width: 90%;
-		max-height: 85%;
-		object-fit: contain;
-		animation: zoomAnim 0.25s ease-out;
-	}
-
-	@keyframes zoomAnim {
-		from { transform: scale(0.7); opacity: 0; }
-		to { transform: scale(1); opacity: 1; }
-	}
-
-	/* --- RESPONSIVE --- */
-	@media (max-width: 600px) {
-		.tier-item { flex-direction: column; align-items: flex-start; padding: 15px; }
-		.tier-icon { height: 70px; width: 70px; margin-bottom: 15px; }
-		.tier-separator { display: none; }
-		.tier-subtitle { display: block; margin-top: 4px; font-size: 0.95em; color: var(--text-muted); }
-	}
-
-	/* =========================================================================
-	   --- 9. GLOBAL FOOTER ---
-	   ========================================================================= */
-	.site-footer { 
-		margin-top: 50px; 
-		padding: 30px 20px; 
-		text-align: center; 
-		border-top: 1px solid var(--border-soft); 
-		color: var(--text-muted); 
-		font-family: var(--font-ui); 
-		font-size: 0.8em; 
-	}
-	.footer-credits { 
-		display: flex; 
-		align-items: center; 
-		justify-content: center; 
-		margin-bottom: 8px; 
-	}
-	.footer-credits span:not(.footer-separator) { flex: 1; }
-	.footer-credits span:first-child { text-align: right; }
-	.footer-credits span:last-child { text-align: left; }
-	.footer-credits strong { color: var(--text-main); font-weight: 600; }
-	.footer-separator { margin: 0 15px; color: var(--border-soft); opacity: 0.5; }
-	.footer-date { font-style: italic; opacity: 0.7; display: block; }
-
-	/* =========================================================================
-	   --- 10. MOBILE RESPONSIVE ---
-	   ========================================================================= */
-	@media (max-width: 768px) and (orientation: portrait) {
-		.banner-container { 
-			flex-wrap: wrap; 
-			gap: 10px; 
-			justify-content: center; 
-		}
-		.banner-center { 
-			order: 1; 
-			width: 100%; 
-			margin-bottom: 10px; 
-		}
-		/* Utilisation de nowrap pour forcer UNE SEULE LIGNE */
-		.banner-icons { 
-			order: 2; 
-			display: flex; 
-			flex-wrap: nowrap; 
-			gap: 5px; 
-			justify-content: center;
-		}
-		
-		.banner-icons a.tooltip-link, 
-		.banner-icons a.tooltip-link.expanded { 
-			margin: 0; 
-			display: inline-block;
-		}
-		.banner-icons a.tooltip-link img { 
-			width: 60px !important; 
-			height: 60px !important; 
-			transition: all 0.3s ease; 
-		}
-		
-		/* L'effet de pivot (rotation) que tu avais */
-		.banner-icons.left a.tooltip-link.expanded img { transform: translateY(-8px) scale(1.4) rotate(-8deg) !important; z-index: 100; position: relative; }
-		.banner-icons.right a.tooltip-link.expanded img { transform: translateY(-8px) scale(1.4) rotate(8deg) !important; z-index: 100; position: relative; }
-		
-		/* Tooltip mobile avec retour à la ligne automatique */
-		.tooltip-text { display: none; } 
-		.banner-icons a.tooltip-link.expanded .tooltip-text { 
-			display: block !important;
-			opacity: 1;
-			bottom: 115%;
-			transform: none;
-			width: 150px;           /* Largeur fixe pour forcer le wrap */
-			white-space: normal;    /* Autorise le retour à la ligne */
-			text-align: center;
-			z-index: 101;
-			padding: 8px;
-		}
-
-		/* On remet tes ancres left/right */
-		.banner-icons.left a.tooltip-link.expanded .tooltip-text { left: 0; }
-		.banner-icons.right a.tooltip-link.expanded .tooltip-text { right: 0; left: auto; }
-		
-		/* Le nom du rang prend toute la largeur pour forcer le wrap du texte */
-		.tooltip-text strong { display: block; margin-bottom: 2px; }
-
-		.site-title { font-size: 2em; }
-		.footer-credits span { display: block; margin: 5px 0; text-align: center !important; }
-		.footer-separator { display: none !important; }
-	}
-
-	{% block extra_css %}{% endblock %}
+});
