@@ -310,41 +310,33 @@
 		/* --- MODE MOBILE (< 1100px) --- */
         @media (max-width: 1099px) {
             .app-banner {
-                /* On anime l'opacité et le scale, mais PAS la hauteur */
                 transition: transform 0.5s ease, opacity 0.4s ease;
                 transform-origin: center;
                 position: relative;
                 z-index: 1;
             }
             
-            /* Action quand on scroll : la bannière s'efface sur place */
             .is-scrolled .app-banner {
                 opacity: 0;
-                transform: scale(0.95); /* Petit effet de recul */
+                transform: scale(0.95);
                 pointer-events: none;
             }
 
-            /* On s'assure que le viewport a un z-index plus haut pour passer par-dessus */
             .app-viewport {
                 position: relative;
                 z-index: 10;
-                background: var(--bg-page); /* Fond opaque pour masquer la bannière dessous */
+                background: var(--bg-page);
             }
 
-            /* Ajustement des images déco */
+            /* On garde l'image en position absolue par rapport à son parent */
             .screen-deco img {
-                transition: all 0.5s ease;
+                transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1);
             }
 
-            /* Quand on scroll, les images déco se centrent dans l'écran 
-               sans être gênées par la bannière devenue invisible */
+            /* Quand on scroll : l'image descend pour se centrer par rapport au "trou" 
+               laissé par la bannière, mais elle continue de défiler avec la page */
             .is-scrolled .screen-deco img {
-                position: fixed; /* On passe en fixed pour le centrage écran */
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                height: clamp(300px, 45vh, 450px);
-                z-index: 5; /* Entre le fond et le texte */
+                top: 0px; /* Elle descend de sa position initiale (-150px) vers le centre */
             }
         }
 
@@ -1438,7 +1430,7 @@
                     <span>Art by <strong>𝕩𝕝𝕦𝕖𝕧𝕚</strong></span>
                 </div>
                 <div class="footer-date">
-                    Updated on 2026-03-26 11:43
+                    Updated on 2026-03-26 11:48
                 </div>
             </div>
         </footer>
