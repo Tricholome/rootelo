@@ -312,21 +312,11 @@
             object-fit: contain;
             filter: drop-shadow(0 10px 20px rgba(0,0,0,0.4));
             transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+			left: 50%;
+            transform: translateX(-50%); 
+            top: -200px;
         }
 
-        /* --- MODE PORTRAIT (PLACEMENT PRÉCIS) --- */
-        
-        .left-deco img { 
-            /* On remonte l'image pour que le haut soit visible et le bas caché par le viewport */
-            top: -300px; 
-            transform: translateX(-20%); 
-        }
-        
-        .right-deco img { 
-            /* On ajuste pour qu'elle soit entre le viewport et le footer */
-            top: -300px; 
-            transform: translateX(20%); 
-        }
 
         /* --- MODE DESKTOP (> 1300px) --- */
         @media (min-width: 900px) {
@@ -334,15 +324,15 @@
                 position: fixed;
                 top: 50%;
                 height: 0;
+				width: 100%;
+                left: 0;
             }
-
-            .left-deco { left: 0; }
-            .right-deco { right: 0; }
 
             .screen-deco img {
                 height: clamp(500px, 80vh, 900px);
                 top: 50%;
-                transform: translateY(-50%) rotate(0deg);
+                left: auto; 
+                transform: translateY(-50%);
             }
 
             /* Placement latéral sur grand écran */
@@ -4629,7 +4619,7 @@
                     <span>Art by <strong>𝕩𝕝𝕦𝕖𝕧𝕚</strong></span>
                 </div>
                 <div class="footer-date">
-                    Updated on 2026-03-26 09:15
+                    Updated on 2026-03-26 09:25
                 </div>
             </div>
         </footer>
