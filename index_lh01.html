@@ -337,13 +337,8 @@
                 transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1);
             }
 
-			.is-scrolled .right-deco img {
-				top: -50px;
-			}
-			
-			.is-at-bottom .left-deco img {
-				top: -50px;
-			}
+			.is-scrolled .right-deco img { top: -50px; }
+			.is-at-bottom .left-deco img { top: -50px; }
         }
 
 
@@ -364,12 +359,12 @@
                 top: max(50%, 600px);
                 left: auto; 
                 transform: translateY(-50%);
-				top: max(50%, calc(550px - (var(--scroll, 0) * 1px)));
+				top: max(50%, calc(520px - (var(--scroll, 0) * 1px)));
             }
 
             /* Placement latéral sur grand écran */
-            .left-deco img { left: 0 !important; right: auto; }
-            .right-deco img { right: 0 !important; left: auto; }
+            .left-deco img { left: 0; right: auto; }
+            .right-deco img { right: 0; left: auto; }
         }
 		   
 		
@@ -4575,7 +4570,7 @@
                     <span>Art by <strong>𝕩𝕝𝕦𝕖𝕧𝕚</strong></span>
                 </div>
                 <div class="footer-date">
-                    Updated on 2026-03-26 12:43
+                    Updated on 2026-03-26 13:23
                 </div>
             </div>
         </footer>
