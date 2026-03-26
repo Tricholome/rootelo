@@ -309,19 +309,27 @@
 		
 		/* --- MODE MOBILE (< 1100px) --- */
 		@media (max-width: 1099px) {
-            .app-header {
+            .app-banner {
                 transition: all 0.4s ease-in-out;
-                transform-origin: top;
+                overflow: hidden;
             }
             
             /* Quand on scroll, on réduit la bannière à néant */
-            .is-scrolled .app-header {
+            .is-scrolled .app-banner {
                 opacity: 0;
                 height: 0;
+                margin-top: 0;
                 margin-bottom: 0;
-                padding: 0;
-                transform: scaleY(0);
-                pointer-events: none; /* Empêche de cliquer sur les liens invisibles */
+                padding-top: 0;
+                padding-bottom: 0;
+                transform: translateY(-20px);
+                pointer-events: none;
+            }
+			
+			.is-scrolled .screen-deco img {
+                top: 50%; /* Elles se centrent dans l'espace restant */
+                transform: translateX(-50%) translateY(-50%);
+                height: 350px;
             }
         }
 
@@ -17897,7 +17905,7 @@
                     <span>Art by <strong>𝕩𝕝𝕦𝕖𝕧𝕚</strong></span>
                 </div>
                 <div class="footer-date">
-                    Updated on 2026-03-26 11:31
+                    Updated on 2026-03-26 11:38
                 </div>
             </div>
         </footer>
@@ -17914,11 +17922,11 @@
     <script>
 		// Moteur de Scroll Dynamique pour le CSS
 		window.addEventListener('scroll', () => {
-            // Variable pour le parallax (on la garde pour le mode PC)
-            document.body.style.setProperty('--scroll', window.scrollY);
+            const scrollY = window.scrollY;
+            document.body.style.setProperty('--scroll', scrollY);
             
-            // Gestion de la bannière mobile
-            if (window.scrollY > 20) {
+            // On ajoute/retire la classe selon le scroll
+            if (scrollY > 30) {
                 document.body.classList.add('is-scrolled');
             } else {
                 document.body.classList.remove('is-scrolled');
