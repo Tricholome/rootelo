@@ -65,7 +65,19 @@
             {% endfor %}
             --color-default: {{ colors['default'] }};
         }
-        body { --main-color: var(--color-default); }
+		body {
+			{% if page_id == 'index' %}
+				--main-color: var(--color-bird);
+			{% elif page_id == 'matches' %}
+				--main-color: var(--color-fox);
+			{% elif page_id == 'trends' %}
+				--main-color: var(--color-rabbit);
+			{% elif page_id == 'about' %}
+				--main-color: var(--color-mouse);
+			{% else %}
+				--main-color: var(--color-default);
+			{% endif %}
+		}
     </style>
 
     {% block extra_head %}{% endblock %}
