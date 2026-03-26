@@ -64,6 +64,110 @@
     </style>
 
     
+	
+<style>
+    /* --- STRUCTURE GLOBALE --- */
+    .codex-section { 
+        display: block;
+        margin: 40px auto; /* Centre tout le bloc sur la page */
+        width: 90%; /* S'adapte sur mobile */
+        max-width: 700px; /* Colonne plus étroite pour une meilleure lisibilité */
+        line-height: 1.6; 
+        color: var(--text-main); 
+    }
+
+    .codex-section h2 {
+        color: var(--main-color); 
+        border-bottom: 1px solid var(--border-soft); 
+        padding-bottom: 8px;
+        margin: 40px 0 15px 0;
+        font-family: var(--font-title);
+        font-size: 1.1em; 
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        text-align: left !important;
+    }
+
+    /* Le premier h2 a besoin de moins d'espace au-dessus */
+    .codex-section h2:first-of-type {
+        margin-top: 0;
+    }
+
+    .codex-section p {
+        margin-bottom: 20px;
+        color: var(--text-muted);
+        text-align: left !important;
+        font-family: var(--font-ui);
+        font-size: 0.95em; /* Légèrement remonté pour la lecture de longs textes */
+    }
+
+    .codex-section strong {
+        color: var(--text-main);
+        font-weight: 700;
+    }
+        
+    .codex-section a {
+        color: var(--text-main);
+        text-decoration: none;
+        font-weight: 700;
+        border-bottom: 1px dotted var(--main-color);
+        transition: 0.2s;
+    }
+    .codex-section a:hover {
+        border-bottom: 1px solid var(--main-color);
+        color: var(--main-color);
+    }
+
+    /* --- TABLE K-FACTOR --- */
+    .k-table { 
+        width: 100%; 
+        border-collapse: collapse; 
+        margin: 25px 0;
+        background: var(--bg-container);
+        border: 1px solid var(--border-soft);
+        border-radius: 8px;
+        overflow: hidden; /* Pour garder les coins arrondis avec le background */
+    }
+
+    .k-table td { 
+        padding: 15px; 
+        border-bottom: 1px solid var(--border-soft); 
+        color: var(--text-muted);
+        text-align: left !important;
+        font-size: 0.9em;
+    }
+
+    .k-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .k-val { 
+        color: var(--main-color) !important; 
+        font-weight: bold; 
+        font-family: monospace; 
+        font-size: 1.3em;
+        white-space: nowrap;
+    }
+    
+    .k-table br { display: none; }
+    .k-table td:first-child { white-space: nowrap; }
+
+    /* --- RESPONSIVE (Tablettes et Mobiles paysage) --- */
+    @media (max-width: 900px) {
+        .tier-item { 
+            width: 100%;
+            margin: 0 0 15px 0;
+            border-radius: 8px;
+        }
+    }
+
+    /* --- RESPONSIVE MOBILE --- */
+    @media (max-width: 600px) {
+        .k-table br { display: block; }
+        .k-table td:nth-child(3) { display: none; }
+    }
+</style>
+
 </head>
 
 <body data-page="about">
@@ -235,7 +339,7 @@
                     <span class="footer-separator">|</span>
                     <span>Art by <strong>𝕩𝕝𝕦𝕖𝕧𝕚</strong></span>
                 </div>
-                <div class="footer-date">Updated on 2026-03-26 18:31</div>
+                <div class="footer-date">Updated on 2026-03-26 18:42</div>
             </div>
         </footer>
     </div>

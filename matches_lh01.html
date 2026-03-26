@@ -64,6 +64,59 @@
     </style>
 
     
+	
+    /* --- TABLE STRUCTURE --- */
+    #matchesTable { 
+        margin-top: 20px !important;
+        border-collapse: collapse !important;
+    }
+
+    /* Prevent wrapping on technical columns */
+    #matchesTable th, 
+    #matchesTable td:nth-child(1), 
+    #matchesTable td:nth-child(2), 
+    #matchesTable td:nth-child(3) {
+        white-space: nowrap !important;
+    }
+
+    .lineup-cell { 
+        white-space: normal !important; /* ONLY this column can wrap */
+        word-wrap: break-word; 
+        min-width: 150px;
+        max-width: 400px; 
+        line-height: 1.4; 
+        text-align: left !important; 
+        padding-left: 25px !important;
+        font-family: var(--font-ui);
+    }
+
+    /* Winner & Others styling */
+    .winner-highlight { color: #ffffff; font-weight: 900; }
+    .others-text { color: var(--text-muted); font-size: 0.9em; }
+
+    /* ELO Sum column */
+    .elo-sum-cell {
+        font-weight: 800;
+        color: var(--main-color) !important;
+    }
+    
+    .match-id-link {
+        color: var(--text-muted); 
+        text-decoration: none; 
+        font-size: 0.85em; 
+        border: 1px solid var(--border-soft); 
+        padding: 2px 6px; 
+        border-radius: 4px;
+    }
+
+    /* --- MOBILE OPTIMIZATION --- */
+    @media (max-width: 768px) {
+        .lineup-cell {
+            padding-left: 15px !important;
+            font-size: 0.85em;
+        }
+    }
+
 </head>
 
 <body data-page="matches">
@@ -16302,7 +16355,7 @@
                     <span class="footer-separator">|</span>
                     <span>Art by <strong>𝕩𝕝𝕦𝕖𝕧𝕚</strong></span>
                 </div>
-                <div class="footer-date">Updated on 2026-03-26 18:31</div>
+                <div class="footer-date">Updated on 2026-03-26 18:42</div>
             </div>
         </footer>
     </div>

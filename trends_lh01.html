@@ -66,6 +66,63 @@
     
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+	
+<style>
+    .search-box { margin: 20px 0; text-align: center; }
+    input { 
+        appearance: none;
+        -webkit-appearance: none;
+        background: var(--bg-surface) !important; 
+        color: var(--text-main) !important; 
+        border: 1px solid var(--border-soft) !important; 
+        padding: 12px; 
+        border-radius: 8px; 
+        width: 100%; 
+        max-width: 450px; 
+        outline: none;
+    }
+    input:focus { border-color: var(--color-rabbit); } /* Focus couleur lapin */
+    
+    input::-webkit-search-cancel-button {
+        -webkit-appearance: none;
+        height: 14px; width: 14px;
+        background-color: var(--text-muted); /* Couleur grise */
+        mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z'/></svg>") no-repeat 50% 50%;
+        -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z'/></svg>") no-repeat 50% 50%;
+        cursor: pointer;
+    }
+
+    .landscape-hint { 
+        display: none; color: #666; font-size: 0.7em; 
+        margin-bottom: 10px; text-transform: uppercase; 
+        letter-spacing: 1px; text-align: center;
+    }
+
+    /* Correction du centrage */
+    .chart-wrapper { 
+        width: 100%; 
+        max-width: 1000px; /* On aligne sur la largeur max du contenu */
+        margin: 0 auto;    /* Centrage horizontal */
+        padding: 0;        /* On enlève les paddings qui décalent */
+        box-sizing: border-box; 
+    }
+
+    .chart-container { 
+        position: relative; 
+        width: 100%; 
+        height: 55vh; 
+        background: #1a1a1a; 
+        border-radius: 12px; 
+        border: 1px solid #252525; 
+        padding: 10px;    /* Réduit pour laisser plus de place au canvas */
+        box-sizing: border-box;
+    }
+
+    @media (max-width: 768px) and (orientation: portrait) { 
+        .landscape-hint { display: block; } 
+    }
+</style>
+
 </head>
 
 <body data-page="trends">
@@ -796,7 +853,7 @@
                     <span class="footer-separator">|</span>
                     <span>Art by <strong>𝕩𝕝𝕦𝕖𝕧𝕚</strong></span>
                 </div>
-                <div class="footer-date">Updated on 2026-03-26 18:31</div>
+                <div class="footer-date">Updated on 2026-03-26 18:42</div>
             </div>
         </footer>
     </div>
