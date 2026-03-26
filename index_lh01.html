@@ -428,8 +428,43 @@
         table.dataTable > tbody > tr.child ul.dtr-details { background: var(--bg-container); border: 1px solid var(--border-soft); padding: 10px; list-style: none; }
 
         /* =========================================================================
-           --- 8. TIER BOXES SYSTEM ---
+           --- 8. TIER MODAL SYSTEM ---
            ========================================================================= */
+		   
+		.modal-overlay {
+			display: none; /* Caché par défaut */
+			position: fixed;
+			top: 0; left: 0; width: 100%; height: 100%;
+			background: rgba(0, 0, 0, 0.85);
+			backdrop-filter: blur(5px);
+			z-index: 9999;
+			align-items: center; justify-content: center;
+		}
+
+		.modal-content {
+			background: var(--bg-container);
+			border: 1px solid var(--border-soft);
+			border-radius: 16px;
+			width: 90%; max-width: 500px;
+			padding: 30px;
+			position: relative;
+			box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+		}
+
+		.modal-close {
+			position: absolute;
+			top: 15px; right: 15px;
+			background: none; border: none;
+			color: var(--text-muted);
+			font-size: 24px; cursor: pointer;
+}
+
+		.tier-item-modal { display: flex; flex-direction: column; gap: 15px; }
+		.tier-header-modal { display: flex; align-items: center; gap: 15px; border-bottom: 1px solid var(--border-soft); padding-bottom: 15px; }
+		   
+		/* =========================================================================
+		   --- 8. TIER BOXES SYSTEM (deprecated) ---
+		   ========================================================================= */
         .tier-list { 
             list-style: none; 
             padding: 0; 
@@ -817,11 +852,11 @@
                 <td>
                     
                         
-                        <a href="about.html#tier-bird" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/bird_new.webp" alt="bird">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('bird')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/bird_new.webp" alt="bird">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">Nadav253</td>
@@ -842,11 +877,11 @@
                 <td>
                     
                         
-                        <a href="about.html#tier-fox" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/fox_new.webp" alt="fox">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('fox')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/fox_new.webp" alt="fox">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">Led_Slash</td>
@@ -867,11 +902,11 @@
                 <td>
                     
                         
-                        <a href="about.html#tier-fox" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/fox_new.webp" alt="fox">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('fox')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/fox_new.webp" alt="fox">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">tofuwater</td>
@@ -892,11 +927,11 @@
                 <td>
                     
                         
-                        <a href="about.html#tier-fox" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/fox_new.webp" alt="fox">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('fox')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/fox_new.webp" alt="fox">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">Killerstorm17</td>
@@ -917,11 +952,11 @@
                 <td>
                     
                         
-                        <a href="about.html#tier-fox" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/fox_new.webp" alt="fox">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('fox')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/fox_new.webp" alt="fox">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">kayajam</td>
@@ -942,11 +977,11 @@
                 <td>
                     
                         
-                        <a href="about.html#tier-fox" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/fox_new.webp" alt="fox">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('fox')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/fox_new.webp" alt="fox">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">Mouseman</td>
@@ -967,11 +1002,11 @@
                 <td>
                     
                         
-                        <a href="about.html#tier-fox" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/fox_new.webp" alt="fox">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('fox')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/fox_new.webp" alt="fox">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">ShuShuBana</td>
@@ -992,11 +1027,11 @@
                 <td>
                     
                         
-                        <a href="about.html#tier-fox" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/fox_new.webp" alt="fox">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('fox')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/fox_new.webp" alt="fox">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">Ctfox</td>
@@ -1017,11 +1052,11 @@
                 <td>
                     
                         
-                        <a href="about.html#tier-fox" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/fox_new.webp" alt="fox">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('fox')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/fox_new.webp" alt="fox">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">swiftsusan</td>
@@ -1042,11 +1077,11 @@
                 <td>
                     
                         
-                        <a href="about.html#tier-rabbit" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/rabbit_new.webp" alt="rabbit">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('rabbit')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/rabbit_new.webp" alt="rabbit">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">matemato</td>
@@ -1067,11 +1102,11 @@
                 <td>
                     
                         
-                        <a href="about.html#tier-rabbit" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/rabbit_new.webp" alt="rabbit">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('rabbit')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/rabbit_new.webp" alt="rabbit">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">Antiproject</td>
@@ -1092,11 +1127,11 @@
                 <td>
                     
                         
-                        <a href="about.html#tier-rabbit" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/rabbit_new.webp" alt="rabbit">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('rabbit')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/rabbit_new.webp" alt="rabbit">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">Xar149</td>
@@ -1117,11 +1152,11 @@
                 <td>
                     
                         
-                        <a href="about.html#tier-rabbit" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/rabbit_new.webp" alt="rabbit">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('rabbit')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/rabbit_new.webp" alt="rabbit">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">Tad604</td>
@@ -1142,11 +1177,11 @@
                 <td>
                     
                         
-                        <a href="about.html#tier-rabbit" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/rabbit_new.webp" alt="rabbit">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('rabbit')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/rabbit_new.webp" alt="rabbit">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">DarthPuniceus</td>
@@ -1167,11 +1202,11 @@
                 <td>
                     
                         
-                        <a href="about.html#tier-rabbit" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/rabbit_new.webp" alt="rabbit">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('rabbit')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/rabbit_new.webp" alt="rabbit">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">Nefkano</td>
@@ -1192,11 +1227,11 @@
                 <td>
                     
                         
-                        <a href="about.html#tier-rabbit" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/rabbit_new.webp" alt="rabbit">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('rabbit')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/rabbit_new.webp" alt="rabbit">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">Tricholome</td>
@@ -1235,11 +1270,11 @@
                 <td>
                     
                         
-                        <a href="about.html#tier-rabbit" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/rabbit_new.webp" alt="rabbit">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('rabbit')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/rabbit_new.webp" alt="rabbit">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">Seiza</td>
@@ -1260,11 +1295,11 @@
                 <td>
                     
                         
-                        <a href="about.html#tier-rabbit" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/rabbit_new.webp" alt="rabbit">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('rabbit')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/rabbit_new.webp" alt="rabbit">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">FrancescoBr</td>
@@ -1285,11 +1320,11 @@
                 <td>
                     
                         
-                        <a href="about.html#tier-rabbit" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/rabbit_new.webp" alt="rabbit">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('rabbit')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/rabbit_new.webp" alt="rabbit">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">Bapgo</td>
@@ -1310,11 +1345,11 @@
                 <td>
                     
                         
-                        <a href="about.html#tier-rabbit" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/rabbit_new.webp" alt="rabbit">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('rabbit')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/rabbit_new.webp" alt="rabbit">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">Kmahussier</td>
@@ -1335,11 +1370,11 @@
                 <td>
                     
                         
-                        <a href="about.html#tier-rabbit" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/rabbit_new.webp" alt="rabbit">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('rabbit')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/rabbit_new.webp" alt="rabbit">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">Pliskin</td>
@@ -1360,11 +1395,11 @@
                 <td>
                     
                         
-                        <a href="about.html#tier-rabbit" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/rabbit_new.webp" alt="rabbit">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('rabbit')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/rabbit_new.webp" alt="rabbit">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">FavorOfTheRabbits</td>
@@ -1385,11 +1420,11 @@
                 <td>
                     
                         
-                        <a href="about.html#tier-rabbit" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/rabbit_new.webp" alt="rabbit">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('rabbit')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/rabbit_new.webp" alt="rabbit">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">BareGammon</td>
@@ -1410,11 +1445,11 @@
                 <td>
                     
                         
-                        <a href="about.html#tier-rabbit" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/rabbit_new.webp" alt="rabbit">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('rabbit')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/rabbit_new.webp" alt="rabbit">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">ChippZamoose</td>
@@ -1435,11 +1470,11 @@
                 <td>
                     
                         
-                        <a href="about.html#tier-rabbit" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/rabbit_new.webp" alt="rabbit">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('rabbit')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/rabbit_new.webp" alt="rabbit">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">KFull</td>
@@ -1460,11 +1495,11 @@
                 <td>
                     
                         
-                        <a href="about.html#tier-rabbit" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/rabbit_new.webp" alt="rabbit">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('rabbit')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/rabbit_new.webp" alt="rabbit">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">Rabbitwarlord</td>
@@ -1503,11 +1538,11 @@
                 <td>
                     
                         
-                        <a href="about.html#tier-rabbit" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/rabbit_new.webp" alt="rabbit">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('rabbit')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/rabbit_new.webp" alt="rabbit">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">TurkeyNoNo</td>
@@ -1546,11 +1581,11 @@
                 <td>
                     
                         
-                        <a href="about.html#tier-rabbit" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/rabbit_new.webp" alt="rabbit">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('rabbit')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/rabbit_new.webp" alt="rabbit">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">TimidTailwind</td>
@@ -1571,11 +1606,11 @@
                 <td>
                     
                         
-                        <a href="about.html#tier-rabbit" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/rabbit_new.webp" alt="rabbit">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('rabbit')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/rabbit_new.webp" alt="rabbit">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">ninjacat536</td>
@@ -1668,11 +1703,11 @@
                 <td>
                     
                         
-                        <a href="about.html#tier-rabbit" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/rabbit_new.webp" alt="rabbit">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('rabbit')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/rabbit_new.webp" alt="rabbit">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">Mossfusion</td>
@@ -1693,11 +1728,11 @@
                 <td>
                     
                         
-                        <a href="about.html#tier-rabbit" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/rabbit_new.webp" alt="rabbit">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('rabbit')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/rabbit_new.webp" alt="rabbit">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">Silver</td>
@@ -1736,11 +1771,11 @@
                 <td>
                     
                         
-                        <a href="about.html#tier-mouse" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/mouse_new.webp" alt="mouse">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('mouse')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/mouse_new.webp" alt="mouse">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">VanKaiserman</td>
@@ -1815,11 +1850,11 @@
                 <td>
                     
                         
-                        <a href="about.html#tier-mouse" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/mouse_new.webp" alt="mouse">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('mouse')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/mouse_new.webp" alt="mouse">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">pooge</td>
@@ -1876,11 +1911,11 @@
                 <td>
                     
                         
-                        <a href="about.html#tier-mouse" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/mouse_new.webp" alt="mouse">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('mouse')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/mouse_new.webp" alt="mouse">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">Tolfan</td>
@@ -1937,11 +1972,11 @@
                 <td>
                     
                         
-                        <a href="about.html#tier-mouse" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/mouse_new.webp" alt="mouse">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('mouse')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/mouse_new.webp" alt="mouse">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">cliuless</td>
@@ -1962,11 +1997,11 @@
                 <td>
                     
                         
-                        <a href="about.html#tier-mouse" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/mouse_new.webp" alt="mouse">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('mouse')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/mouse_new.webp" alt="mouse">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">Cookies</td>
@@ -2005,11 +2040,11 @@
                 <td>
                     
                         
-                        <a href="about.html#tier-mouse" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/mouse_new.webp" alt="mouse">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('mouse')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/mouse_new.webp" alt="mouse">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">Dramsss</td>
@@ -2048,11 +2083,11 @@
                 <td>
                     
                         
-                        <a href="about.html#tier-mouse" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/mouse_new.webp" alt="mouse">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('mouse')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/mouse_new.webp" alt="mouse">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">LucianTheFak</td>
@@ -2127,11 +2162,11 @@
                 <td>
                     
                         
-                        <a href="about.html#tier-mouse" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/mouse_new.webp" alt="mouse">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('mouse')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/mouse_new.webp" alt="mouse">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">tjudge</td>
@@ -2170,11 +2205,11 @@
                 <td>
                     
                         
-                        <a href="about.html#tier-mouse" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/mouse_new.webp" alt="mouse">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('mouse')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/mouse_new.webp" alt="mouse">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">1coolguy</td>
@@ -2213,11 +2248,11 @@
                 <td>
                     
                         
-                        <a href="about.html#tier-mouse" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/mouse_new.webp" alt="mouse">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('mouse')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/mouse_new.webp" alt="mouse">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">MrDrouf</td>
@@ -2238,11 +2273,11 @@
                 <td>
                     
                         
-                        <a href="about.html#tier-mouse" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/mouse_new.webp" alt="mouse">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('mouse')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/mouse_new.webp" alt="mouse">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">kaiser</td>
@@ -2263,11 +2298,11 @@
                 <td>
                     
                         
-                        <a href="about.html#tier-mouse" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/mouse_new.webp" alt="mouse">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('mouse')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/mouse_new.webp" alt="mouse">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">Schkitz</td>
@@ -2360,11 +2395,11 @@
                 <td>
                     
                         
-                        <a href="about.html#tier-mouse" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/mouse_new.webp" alt="mouse">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('mouse')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/mouse_new.webp" alt="mouse">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">cringelordirl</td>
@@ -2385,11 +2420,11 @@
                 <td>
                     
                         
-                        <a href="about.html#tier-mouse" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/mouse_new.webp" alt="mouse">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('mouse')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/mouse_new.webp" alt="mouse">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">Pandapapst</td>
@@ -2464,11 +2499,11 @@
                 <td>
                     
                         
-                        <a href="about.html#tier-mouse" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/mouse_new.webp" alt="mouse">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('mouse')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/mouse_new.webp" alt="mouse">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">Hydro033</td>
@@ -2597,11 +2632,11 @@
                 <td>
                     
                         
-                        <a href="about.html#tier-mouse" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/mouse_new.webp" alt="mouse">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('mouse')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/mouse_new.webp" alt="mouse">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">LutherStr</td>
@@ -2640,11 +2675,11 @@
                 <td>
                     
                         
-                        <a href="about.html#tier-mouse" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/mouse_new.webp" alt="mouse">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('mouse')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/mouse_new.webp" alt="mouse">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">ImJustExisting</td>
@@ -2701,11 +2736,11 @@
                 <td>
                     
                         
-                        <a href="about.html#tier-mouse" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/mouse_new.webp" alt="mouse">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('mouse')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/mouse_new.webp" alt="mouse">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">Ptitmxz</td>
@@ -2726,11 +2761,11 @@
                 <td>
                     
                         
-                        <a href="about.html#tier-mouse" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/mouse_new.webp" alt="mouse">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('mouse')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/mouse_new.webp" alt="mouse">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">uwtron</td>
@@ -2805,11 +2840,11 @@
                 <td>
                     
                         
-                        <a href="about.html#tier-mouse" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/mouse_new.webp" alt="mouse">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('mouse')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/mouse_new.webp" alt="mouse">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">Perdita</td>
@@ -2830,11 +2865,11 @@
                 <td>
                     
                         
-                        <a href="about.html#tier-mouse" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/mouse_new.webp" alt="mouse">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('mouse')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/mouse_new.webp" alt="mouse">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">TheDolphinman</td>
@@ -2873,11 +2908,11 @@
                 <td>
                     
                         
-                        <a href="about.html#tier-mouse" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/mouse_new.webp" alt="mouse">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('mouse')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/mouse_new.webp" alt="mouse">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">Emperia</td>
@@ -2898,11 +2933,11 @@
                 <td>
                     
                         
-                        <a href="about.html#tier-mouse" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/mouse_new.webp" alt="mouse">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('mouse')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/mouse_new.webp" alt="mouse">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">DemaRogue</td>
@@ -2923,11 +2958,11 @@
                 <td>
                     
                         
-                        <a href="about.html#tier-mouse" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/mouse_new.webp" alt="mouse">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('mouse')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/mouse_new.webp" alt="mouse">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">fadingnovel</td>
@@ -2948,11 +2983,11 @@
                 <td>
                     
                         
-                        <a href="about.html#tier-mouse" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/mouse_new.webp" alt="mouse">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('mouse')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/mouse_new.webp" alt="mouse">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">NadtyLite</td>
@@ -2991,11 +3026,11 @@
                 <td>
                     
                         
-                        <a href="about.html#tier-mouse" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/mouse_new.webp" alt="mouse">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('mouse')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/mouse_new.webp" alt="mouse">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">KuperMeister</td>
@@ -3052,11 +3087,11 @@
                 <td>
                     
                         
-                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/squirrel.webp" alt="squirrel">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('squirrel')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">AERotters</td>
@@ -3077,11 +3112,11 @@
                 <td>
                     
                         
-                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/squirrel.webp" alt="squirrel">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('squirrel')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">BMPerJMPer</td>
@@ -3102,11 +3137,11 @@
                 <td>
                     
                         
-                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/squirrel.webp" alt="squirrel">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('squirrel')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">Peppy</td>
@@ -3145,11 +3180,11 @@
                 <td>
                     
                         
-                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/squirrel.webp" alt="squirrel">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('squirrel')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">lumpyprol</td>
@@ -3206,11 +3241,11 @@
                 <td>
                     
                         
-                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/squirrel.webp" alt="squirrel">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('squirrel')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">Youdge</td>
@@ -3231,11 +3266,11 @@
                 <td>
                     
                         
-                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/squirrel.webp" alt="squirrel">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('squirrel')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">BadScra</td>
@@ -3256,11 +3291,11 @@
                 <td>
                     
                         
-                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/squirrel.webp" alt="squirrel">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('squirrel')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">mouseinabox</td>
@@ -3281,11 +3316,11 @@
                 <td>
                     
                         
-                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/squirrel.webp" alt="squirrel">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('squirrel')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">DelSol</td>
@@ -3306,11 +3341,11 @@
                 <td>
                     
                         
-                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/squirrel.webp" alt="squirrel">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('squirrel')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">Sebby</td>
@@ -3367,11 +3402,11 @@
                 <td>
                     
                         
-                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/squirrel.webp" alt="squirrel">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('squirrel')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">RFMerlo</td>
@@ -3428,11 +3463,11 @@
                 <td>
                     
                         
-                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/squirrel.webp" alt="squirrel">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('squirrel')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">MylesMoose</td>
@@ -3453,11 +3488,11 @@
                 <td>
                     
                         
-                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/squirrel.webp" alt="squirrel">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('squirrel')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">Excitedteapot</td>
@@ -3496,11 +3531,11 @@
                 <td>
                     
                         
-                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/squirrel.webp" alt="squirrel">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('squirrel')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">LHlegend</td>
@@ -3575,11 +3610,11 @@
                 <td>
                     
                         
-                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/squirrel.webp" alt="squirrel">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('squirrel')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">Podge0303</td>
@@ -3600,11 +3635,11 @@
                 <td>
                     
                         
-                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/squirrel.webp" alt="squirrel">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('squirrel')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">secretpaths</td>
@@ -3625,11 +3660,11 @@
                 <td>
                     
                         
-                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/squirrel.webp" alt="squirrel">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('squirrel')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">TonyDeloreanESQ</td>
@@ -3650,11 +3685,11 @@
                 <td>
                     
                         
-                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/squirrel.webp" alt="squirrel">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('squirrel')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">FVMLion</td>
@@ -3675,11 +3710,11 @@
                 <td>
                     
                         
-                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/squirrel.webp" alt="squirrel">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('squirrel')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">DanzigMF</td>
@@ -3700,11 +3735,11 @@
                 <td>
                     
                         
-                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/squirrel.webp" alt="squirrel">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('squirrel')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">darkcat</td>
@@ -3761,11 +3796,11 @@
                 <td>
                     
                         
-                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/squirrel.webp" alt="squirrel">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('squirrel')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">PlagueCarrier</td>
@@ -3786,11 +3821,11 @@
                 <td>
                     
                         
-                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/squirrel.webp" alt="squirrel">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('squirrel')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">Wrestler</td>
@@ -3811,11 +3846,11 @@
                 <td>
                     
                         
-                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/squirrel.webp" alt="squirrel">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('squirrel')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">Banzai7000</td>
@@ -3836,11 +3871,11 @@
                 <td>
                     
                         
-                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/squirrel.webp" alt="squirrel">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('squirrel')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">Valzaan</td>
@@ -3861,11 +3896,11 @@
                 <td>
                     
                         
-                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/squirrel.webp" alt="squirrel">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('squirrel')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">TheFourthJesse</td>
@@ -3904,11 +3939,11 @@
                 <td>
                     
                         
-                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/squirrel.webp" alt="squirrel">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('squirrel')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">benssoon</td>
@@ -3929,11 +3964,11 @@
                 <td>
                     
                         
-                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/squirrel.webp" alt="squirrel">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('squirrel')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">Odinius</td>
@@ -3954,11 +3989,11 @@
                 <td>
                     
                         
-                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/squirrel.webp" alt="squirrel">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('squirrel')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">Hadjiya</td>
@@ -3979,11 +4014,11 @@
                 <td>
                     
                         
-                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/squirrel.webp" alt="squirrel">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('squirrel')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">HobGungan</td>
@@ -4004,11 +4039,11 @@
                 <td>
                     
                         
-                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/squirrel.webp" alt="squirrel">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('squirrel')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">Gagneto</td>
@@ -4029,11 +4064,11 @@
                 <td>
                     
                         
-                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/squirrel.webp" alt="squirrel">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('squirrel')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">BaconBoy</td>
@@ -4054,11 +4089,11 @@
                 <td>
                     
                         
-                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/squirrel.webp" alt="squirrel">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('squirrel')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">ReoWulf</td>
@@ -4079,11 +4114,11 @@
                 <td>
                     
                         
-                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/squirrel.webp" alt="squirrel">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('squirrel')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">radiantchaos</td>
@@ -4104,11 +4139,11 @@
                 <td>
                     
                         
-                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/squirrel.webp" alt="squirrel">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('squirrel')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">FakeSki</td>
@@ -4129,11 +4164,11 @@
                 <td>
                     
                         
-                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/squirrel.webp" alt="squirrel">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('squirrel')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">mkcy3</td>
@@ -4154,11 +4189,11 @@
                 <td>
                     
                         
-                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/squirrel.webp" alt="squirrel">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('squirrel')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">Hurple</td>
@@ -4179,11 +4214,11 @@
                 <td>
                     
                         
-                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/squirrel.webp" alt="squirrel">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('squirrel')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">Wubba</td>
@@ -4204,11 +4239,11 @@
                 <td>
                     
                         
-                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/squirrel.webp" alt="squirrel">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('squirrel')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">Dandel</td>
@@ -4229,11 +4264,11 @@
                 <td>
                     
                         
-                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/squirrel.webp" alt="squirrel">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('squirrel')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">WyvernElement</td>
@@ -4254,11 +4289,11 @@
                 <td>
                     
                         
-                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/squirrel.webp" alt="squirrel">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('squirrel')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">ellbelle</td>
@@ -4279,11 +4314,11 @@
                 <td>
                     
                         
-                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/squirrel.webp" alt="squirrel">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('squirrel')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">Oppapi</td>
@@ -4304,11 +4339,11 @@
                 <td>
                     
                         
-                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/squirrel.webp" alt="squirrel">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('squirrel')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">tunnndz</td>
@@ -4329,11 +4364,11 @@
                 <td>
                     
                         
-                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/squirrel.webp" alt="squirrel">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('squirrel')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">Piechu</td>
@@ -4354,11 +4389,11 @@
                 <td>
                     
                         
-                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/squirrel.webp" alt="squirrel">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('squirrel')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">Klishu</td>
@@ -4379,11 +4414,11 @@
                 <td>
                     
                         
-                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/squirrel.webp" alt="squirrel">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('squirrel')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">100pctskillz</td>
@@ -4404,11 +4439,11 @@
                 <td>
                     
                         
-                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/squirrel.webp" alt="squirrel">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('squirrel')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">DawnDiVito</td>
@@ -4429,11 +4464,11 @@
                 <td>
                     
                         
-                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/squirrel.webp" alt="squirrel">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('squirrel')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">BaliHoo</td>
@@ -4454,11 +4489,11 @@
                 <td>
                     
                         
-                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/squirrel.webp" alt="squirrel">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('squirrel')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">Wriggleroom</td>
@@ -4479,11 +4514,11 @@
                 <td>
                     
                         
-                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/squirrel.webp" alt="squirrel">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('squirrel')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">buurn</td>
@@ -4504,11 +4539,11 @@
                 <td>
                     
                         
-                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/squirrel.webp" alt="squirrel">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('squirrel')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">cjahwon</td>
@@ -4529,11 +4564,11 @@
                 <td>
                     
                         
-                        <a href="cache.html#tier-squirrel" class="tier-anchor-link">
-                            <div class="tier-icon-container">
-                                <img src="assets/icons/squirrel.webp" alt="squirrel">
-                            </div>
-                        </a>
+                        <a href="javascript:void(0)" onclick="openTierModal('squirrel')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
                     
                 </td>
                 <td class="player-name-cell">DarthOblivius</td>
@@ -4566,11 +4601,19 @@
                     <span>Art by <strong>𝕩𝕝𝕦𝕖𝕧𝕚</strong></span>
                 </div>
                 <div class="footer-date">
-                    Updated on 2026-03-26 14:30
+                    Updated on 2026-03-26 17:50
                 </div>
             </div>
         </footer>
     </div>
+	
+	<div id="tierModal" class="modal-overlay">
+		<div class="modal-content">
+			<button class="modal-close">&times;</button>
+			<div id="modalBody">
+				</div>
+		</div>
+	</div>
 
     <div id="lightbox" class="lightbox-overlay" onclick="this.style.display='none'">
         <img id="lightbox-img" src="" alt="Tier Icon Large">
@@ -4608,6 +4651,75 @@
                 }
             }
         }, { passive: true });
+		
+		
+		document.addEventListener('DOMContentLoaded', function() {
+			const modal = document.getElementById('tierModal');
+			const modalBody = document.getElementById('modalBody');
+			const closeBtn = document.querySelector('.modal-close');
+
+			// Dictionnaire des textes exacts (About)
+			const tierTexts = {
+				'bird': {
+					name: 'Bird (1500+)',
+					subtitle: 'The Grandmasters',
+					desc: 'The absolute pinnacle of the Woodland. Reaching this height is a rare feat, a fleeting and prestigious throne where staying at the top is a constant battle against gravity. It is reserved for those who maintain perfection under pressure.'
+				},
+				'fox': {
+					name: 'Fox (1400+)',
+					subtitle: 'The Cunning Tacticians',
+					desc: 'The elite targets everyone is chasing. With a trick for every turn and a plan for every disaster, they outmaneuver the field with ease. They play with sharp instincts, punctuated by a signature, mischievous grin that keeps opponents guessing.'
+				},
+				'rabbit': {
+					name: 'Rabbit (1300+)',
+					subtitle: 'The Agile Contenders',
+					desc: 'The true engine of the higher rankings. Their climb is built on speed and sharp adaptability, moving well past the basics to dictate the pace of play. They are restless challengers, always seeking the next opening to leap ahead.'
+				},
+				'mouse': {
+					name: 'Mouse (1200+)',
+					subtitle: 'The Steady Foragers',
+					desc: 'The solid foundation of the standings, marking a genuine milestone beyond the average player. These resilient competitors provide the first true test on the ladder, proving they have the consistency required to begin a successful climb. They are where every journey starts.'
+				},
+				'squirrel': {
+					name: 'Squirrel (Under 1200)',
+					subtitle: 'The Hidden Gatherers',
+					desc: 'Newcomers or casual players still finding their paws. Every legend starts somewhere, and the Squirrel tier is the fertile ground where experience is gathered and future champions are born.'
+				}
+			};
+
+			// On récupère les couleurs et icônes déjà définies dans base.html
+			const tierColors = {"bird": "#82C0E7", "default": "#C9A675", "fox": "#D34936", "mouse": "#DF9356", "rabbit": "#E0B634", "squirrel": "#7DA05E"};
+			const tierIcons = {"bird": "assets/icons/bird_new.webp", "fox": "assets/icons/fox_new.webp", "mouse": "assets/icons/mouse_new.webp", "rabbit": "assets/icons/rabbit_new.webp", "squirrel": "assets/icons/squirrel.webp"};
+
+			window.openTierModal = function(tier) {
+				const text = tierTexts[tier];
+				const color = tierColors[tier] || tierColors['default'];
+				const icon = tierIcons[tier];
+
+				if (!text) return;
+
+				modalBody.innerHTML = `
+					<div style="text-align: center; margin-bottom: 20px;">
+						<img src="${icon}" style="width: 80px; height: 80px; object-fit: contain; margin-bottom: 10px;">
+						<h2 style="color: ${color}; margin: 0; font-family: var(--font-title); font-size: 1.5em;">${text.name}</h2>
+						<div style="color: var(--text-muted); font-style: italic; font-size: 0.9em; margin-top: 5px;">${text.subtitle}</div>
+					</div>
+					<div style="height: 1px; background: var(--border-soft); margin-bottom: 20px;"></div>
+					<p style="line-height: 1.6; color: var(--text-main); font-size: 1.05em; text-align: left; margin: 0;">${text.desc}</p>
+				`;
+				
+				modal.style.display = 'flex';
+				document.body.style.overflow = 'hidden';
+			};
+
+			const closeModal = () => {
+				modal.style.display = 'none';
+				document.body.style.overflow = 'auto';
+			};
+
+			if (closeBtn) closeBtn.onclick = closeModal;
+			window.onclick = (event) => { if (event.target == modal) closeModal(); };
+		});
 		
         // Fonction globale pour ouvrir la lightbox
         function openLightbox(src) {
