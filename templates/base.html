@@ -333,7 +333,6 @@
                 transition: transform 0.5s ease, opacity 0.4s ease;
                 transform-origin: center;
                 position: relative;
-                z-index: 1;
             }
             
             .is-scrolled .app-banner {
@@ -344,20 +343,27 @@
 
             .app-viewport {
                 position: relative;
-                z-index: 10;
+				transition: transform 0.5s ease, opacity 0.4s ease;
             }
+			
+			.is-at-bottom .app-viewport {
+				opacity: 0;
+				transform: scale(0.95);
+				pointer-events: none;
+			}
 
-            /* On garde l'image en position absolue par rapport à son parent */
             .screen-deco img {
 				top: 0px;
                 transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1);
             }
 
-            /* Quand on scroll : l'image descend pour se centrer par rapport au "trou" 
-               laissé par la bannière, mais elle continue de défiler avec la page */
-            .is-scrolled .screen-deco img {
-                top: -50px;
-            }
+			.is-scrolled .right-deco img {
+				top: -50px;
+			}
+			
+			.is-at-bottom .left-deco img {
+				top: -50px;
+			}
         }
 
 
@@ -378,7 +384,7 @@
                 top: max(50%, 600px);
                 left: auto; 
                 transform: translateY(-50%);
-				top: max(50%, calc(600px - (var(--scroll, 0) * 1px)));
+				top: max(50%, calc(350px - (var(--scroll, 0) * 1px)));
             }
 
             /* Placement latéral sur grand écran */
@@ -751,16 +757,25 @@
     <script>
 		// Moteur de Scroll Dynamique pour le CSS
 		window.addEventListener('scroll', () => {
-            const scrollY = window.scrollY;
-            document.body.style.setProperty('--scroll', scrollY);
-            
-            // On ajoute/retire la classe selon le scroll
-            if (scrollY > 30) {
-                document.body.classList.add('is-scrolled');
-            } else {
-                document.body.classList.remove('is-scrolled');
-            }
-        }, { passive: true });
+			const scrollY = window.scrollY;
+			const windowHeight = window.innerHeight;
+			const documentHeight = document.documentElement.scrollHeight;
+
+			// Gestion du haut (Bannière)
+			if (scrollY > 30) {
+				document.body.classList.add('is-scrolled');
+			} else {
+				document.body.classList.remove('is-scrolled');
+			}
+
+			// Gestion du bas (Footer)
+			// On déclenche l'effet quand on est à moins de 50px du fond
+			if ((windowHeight + scrollY) >= (documentHeight - 50)) {
+				document.body.classList.add('is-at-bottom');
+			} else {
+				document.body.classList.remove('is-at-bottom');
+			}
+		}, { passive: true });
 		
         // Fonction globale pour ouvrir la lightbox
         function openLightbox(src) {
