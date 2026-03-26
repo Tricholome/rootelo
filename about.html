@@ -289,7 +289,7 @@
             position: relative;
             display: flex;
             justify-content: center;
-            height: 120px; /* L'espace entre tes fenêtres en mode portrait */
+            height: 200px; /* L'espace entre tes fenêtres en mode portrait */
             margin: 0;
             z-index: -1; 
             pointer-events: none;
@@ -311,6 +311,7 @@
         @media (max-width: 1099px) {
             .app-banner {
                 transition: transform 0.5s ease, opacity 0.4s ease;
+                transform-origin: center;
                 position: relative;
                 z-index: 1;
             }
@@ -327,24 +328,11 @@
             }
 
             /* On garde l'image en position absolue par rapport à son parent */
-            .screen-deco {
-                position: -webkit-sticky; /* Pour Safari */
-                position: sticky;
-                top: 0; /* L'image se bloquera en haut de l'écran dès qu'elle le touche */
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                z-index: 5; /* Entre la bannière et le contenu */
-                overflow: visible;
+            .screen-deco img {
+				top: 0px;
+                transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1);
             }
 
-            .screen-deco img {
-                position: relative;
-                width: auto;
-                /* On l'ajuste pour qu'elle soit bien placée au début */
-                top: -50px; 
-                transition: opacity 0.3s ease;
-            }
             /* Quand on scroll : l'image descend pour se centrer par rapport au "trou" 
                laissé par la bannière, mais elle continue de défiler avec la page */
             .is-scrolled .screen-deco img {
@@ -922,7 +910,7 @@
                     <span>Art by <strong>𝕩𝕝𝕦𝕖𝕧𝕚</strong></span>
                 </div>
                 <div class="footer-date">
-                    Updated on 2026-03-26 12:03
+                    Updated on 2026-03-26 12:08
                 </div>
             </div>
         </footer>
