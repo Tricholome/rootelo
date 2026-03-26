@@ -88,6 +88,7 @@
         }
         
         .window-box {
+			position: relative;
 			width: 95%;
 			max-width: var(--window-max-width);
 			margin-left: auto;
@@ -289,58 +290,59 @@
         .page-intro p { color: var(--text-muted); font-family: var(--font-ui); font-size: 0.9em; margin: 5px auto 0; }
 		
 		/* =========================================================================
-           --- 6. IMAGES ---
+           --- 6. IMAGES (DÉCORATIONS INTERCALÉES) ---
            ========================================================================= */
         
         .screen-deco {
-            position: absolute; /* Lié au container */
-            z-index: -1;        /* Passe DERRIÈRE les window-box */
+            position: relative;
+            height: 0;          /* Ne prend aucune place verticale */
+            display: flex;
+            justify-content: center;
             pointer-events: none;
-            opacity: 0.8;
-            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
-        }
-
-        /* --- MODE MOBILE / PORTRAIT --- 
-           Les images s'affichent en haut et en bas, glissant sous le viewport */
-        .left-deco { 
-            top: -40px; 
-            left: 50%; 
-            transform: translateX(-80%) rotate(-5deg); 
-        }
-        .right-deco { 
-            bottom: -60px; 
-            right: 50%; 
-            transform: translateX(80%) rotate(5deg); 
+            opacity: 0.9;
         }
 
         .screen-deco img {
+            position: absolute;
             width: auto;
-            height: clamp(250px, 40vh, 450px);
+            height: clamp(200px, 35vh, 400px);
             filter: drop-shadow(0 10px 20px rgba(0,0,0,0.4));
+            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
         }
 
-        /* --- MODE DESKTOP (Ecrans larges) --- 
-           Elles reprennent leur place sur les côtés */
+        /* --- MODE ÉCRANS RÉDUITS / MOBILE --- */
+        
+        .left-deco img { 
+            /* Remonte l'image pour couvrir la bannière, le bas glissera sous le viewport */
+            top: -200px; 
+            transform: translateX(-35%) rotate(-5deg); 
+        }
+        
+        .right-deco img { 
+            /* Remonte l'image pour couvrir le viewport, le bas glissera sous le footer */
+            top: -250px; 
+            transform: translateX(35%) rotate(5deg); 
+        }
+
+        /* --- MODE DESKTOP (> 1300px) --- */
         @media (min-width: 1300px) {
-            .screen-deco {
+            .left-deco img {
                 position: fixed;
                 top: 50%;
-                bottom: auto;
+                left: 0;
+                transform: translateY(-50%) rotate(0deg);
+                height: clamp(450px, 70vh, 900px);
+                z-index: -1; /* Repasse tout au fond de l'écran */
             }
 
-            .left-deco { 
-                left: 0; 
-                transform: translateY(-50%) rotate(0deg); 
-            }
-
-            .right-deco { 
-                right: 0; 
+            .right-deco img {
+                position: fixed;
+                top: 50%;
+                right: 0;
                 left: auto;
-                transform: translateY(-50%) rotate(0deg); 
-            }
-
-            .screen-deco img {
-                height: clamp(450px, 70vh, 900px); /* Taille XXL */
+                transform: translateY(-50%) rotate(0deg);
+                height: clamp(450px, 70vh, 900px);
+                z-index: -1; /* Repasse tout au fond de l'écran */
             }
         }
 		   
@@ -670,13 +672,6 @@
 <body data-page="trends">
 	
     <div class="container" style="position: relative; overflow: visible;">
-	
-		<div class="screen-deco left-deco">
-			
-		</div>
-		<div class="screen-deco right-deco">
-			
-		</div>
         
         <header class="app-banner window-box">
             <div class="banner-container">
@@ -736,6 +731,10 @@
 			</nav>
 		
 		</header>
+		
+		<div class="screen-deco left-deco">
+			
+		</div>
 
 		<div class="app-viewport window-box">
 			<header class="page-intro">
@@ -1426,6 +1425,10 @@
 			</main>
 			
 		</div>
+		
+		<div class="screen-deco right-deco">
+			
+		</div>
 
         <footer class="app-footer window-box">
             <div class="footer-content">
@@ -1435,7 +1438,7 @@
                     <span>Art by <strong>𝕩𝕝𝕦𝕖𝕧𝕚</strong></span>
                 </div>
                 <div class="footer-date">
-                    Updated on 2026-03-26 08:22
+                    Updated on 2026-03-26 08:36
                 </div>
             </div>
         </footer>
