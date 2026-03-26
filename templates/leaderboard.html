@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% block extra_css %}
+<style>
     /* --- 1. TABLE STRUCTURE --- */
     #leaderboard { margin-top: 20px !important; border-bottom: none !important; }
     
@@ -34,6 +35,7 @@
         .player-name-cell { max-width: 110px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         table.dataTable td:nth-child(4) { padding-right: 10px !important; min-width: 55px; }
     }
+</style>
 {% endblock %}
 
 {% block content %}
