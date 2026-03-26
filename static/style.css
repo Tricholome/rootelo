@@ -176,10 +176,11 @@
 	}
 
 	.nav-separator {
-		width: 80%;
-		height: 1.5px;
-		margin: 15px auto;
-		background: var(--text-muted);
+			width: 80%;
+			height: 1.5px;
+			margin: 10px auto;
+			background: linear-gradient(90deg, transparent, var(--border-soft), transparent);
+			opacity: 0.6;
 	}
 
 	nav a:hover { color: var(--text-main); background: var(--bg-hover); }
@@ -278,7 +279,7 @@
 		}
 
 		.screen-deco img {
-			height: clamp(300px, 60vh, 900px) ;
+			height: clamp(300px, 50vh, 900px) ;
 			top: max(50%, 600px);
 			left: auto; 
 			transform: translateY(-50%);
@@ -473,14 +474,27 @@
 		}
 
 		#modalIcon { 
-			width: 120px;
-			height: 120px; 
+			width: 160px;
+			height: 160px; 
 		}
 		
 		#modalTitle { 
         font-size: 1.5em;
         letter-spacing: 1px;
 		}
+    }
+	
+	/* SPECIAL LANDSCAPE */
+    @media (orientation: landscape) and (max-height: 450px) {
+        .modal-header {
+            display: flex;
+            flex-direction: row; /* Icône à gauche, Titre à droite */
+            align-items: center;
+            gap: 15px;
+            text-align: left;
+        }
+        #modalIcon { margin: 0; width: 60px !important; }
+			.modal-divider { margin: 10px 0; }
     }
 	
 	   
