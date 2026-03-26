@@ -282,14 +282,14 @@
         .page-intro p { color: var(--text-muted); font-family: var(--font-ui); font-size: 0.9em; margin: 5px auto 0; }
 		
 		/* =========================================================================
-           --- 6. IMAGES (RÉGLAGES DES PLACEMENTS) ---
+           --- 6. SIDE IMAGES ---
            ========================================================================= */
         
         .screen-deco {
             position: relative;
             display: flex;
             justify-content: center;
-            height: 200px; /* L'espace entre tes fenêtres en mode portrait */
+            height: 120px; /* L'espace entre tes fenêtres en mode portrait */
             margin: 0;
             z-index: -1; 
             pointer-events: none;
@@ -302,10 +302,10 @@
             width: auto;
             object-fit: contain;
             filter: drop-shadow(0 10px 20px rgba(0,0,0,0.4));
-            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: height 0.8s ease, transform 0.8s ease;
 			left: 50%;
             transform: translateX(-50%); 
-            top: -15px;
+            top: calc(-80px + (var(--scroll, 0) * 0.6px));
         }
 
 
@@ -326,6 +326,7 @@
                 top: max(50%, 600px);
                 left: auto; 
                 transform: translateY(-50%);
+				top: max(50%, calc(600px - (var(--scroll, 0) * 1px)));
             }
 
             /* Placement latéral sur grand écran */
@@ -707,7 +708,7 @@
                     <span>Art by <strong>𝕩𝕝𝕦𝕖𝕧𝕚</strong></span>
                 </div>
                 <div class="footer-date">
-                    Updated on 2026-03-26 11:10
+                    Updated on 2026-03-26 11:21
                 </div>
             </div>
         </footer>
@@ -722,6 +723,11 @@
     <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
     
     <script>
+		// Moteur de Scroll Dynamique pour le CSS
+		window.addEventListener('scroll', () => {
+			document.body.style.setProperty('--scroll', window.scrollY);
+		}, { passive: true });
+		
         // Fonction globale pour ouvrir la lightbox
         function openLightbox(src) {
             const lb = document.getElementById('lightbox');
