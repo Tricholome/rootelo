@@ -47,7 +47,7 @@ html {
 }
 
 body {
-    background-color: #ffffff;
+    background-color: var(--main-color);
     background-image: url('../assets/images/pattern.webp');
     background-repeat: repeat;
     background-position: center;
@@ -70,20 +70,9 @@ body::after {
     height: 100%;
     z-index: 0;
     pointer-events: none; /* Important : pour pouvoir cliquer à travers */
-
     /* LE DÉGRADÉ : Couleur de l'onglet -> Noir */
-    background: linear-gradient(
-        to bottom,
-        var(--main-color) 0%,      /* La couleur pure en haut */
-        rgba(0, 0, 0, 0.6) 50%,    /* Passage au noir fumé à mi-chemin */
-        rgba(0, 0, 0, 0.9) 100%    /* Noir presque total en bas */
-    );
-
-    /* MIX-BLEND-MODE : C'est ce qui rend le voile "vivant" */
-    /* 'multiply' va teindre les dessins blancs/noirs avec ta couleur sombre */
-    mix-blend-mode: multiply; 
-    
-    /* On peut baisser un peu l'opacité globale si c'est trop sombre */
+    background: linear-gradient(rgba(18, 18, 18, 0.8), rgba(18, 18, 18, 0.8));
+    mix-blend-mode: multiply;
     opacity: 0.9; 
 }
 
