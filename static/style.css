@@ -28,7 +28,7 @@
 .text-normal  { font-weight: 400 !important; }
 
 /* Colors - C'est ici que la magie opère */
-.text-bright  { color: var(--text-muted) !important; }    
+.text-bright  { color: var(--text-bright) !important; }    
 .text-main    { color: var(--main-color) !important; }
 .text-muted   { color: var(--text-muted) !important; }
 
