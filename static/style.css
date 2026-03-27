@@ -47,40 +47,37 @@ html {
 }
 
 body {
+    background-color: #0a0a0a; /* Noir profond pour faire ressortir le motif */
     position: relative;
     min-height: 100vh;
     margin: 0;
-    padding: 0;
-    background-color: var(--main-color);
-	font-family: var(--font-ui);
+    font-family: var(--font-ui);
     color: var(--text-main);
     text-align: center;
-    padding: 20px 5px;
-    margin: 0;
-    overflow-x: hidden;
 }
 
 body::before {
     content: "";
-    position: fixed; /* Il reste fixe au défilement */
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -1; /* Il se place DERRIÈRE le contenu */
-    
-    /* L'IMAGE ET SES RÉGLAGES */
-    /* Remplace par ton chemin exact */
-    background-image: url('../assets/images/pattern.webp'); 
-    background-repeat: repeat; /* Se répète à l'infini (le secret) */
-    background-position: center center;
-    background-size: 250px; /* Taille réglable du motif (en px) */
-    
-    /* AJUSTEMENT VISUEL */
-    /* L'opacité rend le motif subtil */
-    opacity: 0.1; 
-    /* Le blend-mode mélange le noir du motif avec la couleur de fond */
-    mix-blend-mode: multiply; 
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: -1;
+
+    /* COUCHE 1 : La couleur dynamique (en dégradé pour ne pas être trop vive) */
+    /* On utilise un dégradé qui part de ta couleur avec 30% d'opacité vers le noir */
+    background-image: 
+        linear-gradient(to bottom, var(--main-color) 0%, #0a0a0a 100%),
+        url('../assets/images/pattern.webp');
+
+    /* COUCHE 2 : Le réglage du motif */
+    background-repeat: repeat;
+    background-position: center;
+    background-size: 180px; /* Un peu plus petit pour faire "papier peint" */
+
+    /* MIXAGE : C'est ici que la magie opère */
+    /* 'screen' ou 'overlay' sont mieux pour voir le motif sur fond sombre */
+    mix-blend-mode: opacity; 
+    opacity: 0.4; /* Augmente l'opacité ici pour voir mieux le motif */
 }
 
 /* =========================================================================
