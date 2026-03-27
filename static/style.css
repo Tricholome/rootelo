@@ -47,18 +47,21 @@ html {
 }
 
 body {
+    position: relative;
+	z-index: -10;
     background-color: var(--main-color);
     background-image: url('../assets/images/pattern.webp');
     background-repeat: repeat;
     background-position: center;
     background-size: 500px;
     background-attachment: fixed;
-    position: relative;
-    min-height: 100vh;
-    margin: 0;
-    font-family: var(--font-ui);
+	
+	font-family: var(--font-ui);
     color: var(--text-main);
-	z-index: -10;
+    text-align: center;
+    padding: 20px 5px;
+    margin: 0;
+    overflow-x: hidden;
 }
 
 body::after {
@@ -72,7 +75,7 @@ body::after {
     pointer-events: none;
     background: linear-gradient(rgba(18, 18, 18, 0.8), rgba(18, 18, 18, 0.8));
     mix-blend-mode: multiply;
-    opacity: 0.5; 
+    opacity: 0.6; 
 }
 
 /* =========================================================================
