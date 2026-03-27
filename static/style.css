@@ -92,15 +92,20 @@ body::after {
     max-width: var(--window-max-width);
     margin: 0 auto;
     
-    background: var(--window-bg);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    /* 1. LE FOND : On prend ta couleur d'onglet mais on l'assombrit énormément */
+    /* On utilise un noir à 85% d'opacité posé SUR ta couleur principale */
+    background: linear-gradient(rgba(15, 15, 15, 0.85), rgba(15, 15, 15, 0.85)), 
+                var(--main-color);
     
-    border: 1px solid rgba(255, 255, 255, 0.1); /* Bordure de base */
-    border-top: 3px solid var(--main-color);   /* Un liseré d'accentuation en haut seulement */
-
+    /* 2. LE FLOU : Pour garder l'effet de profondeur */
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    
+    /* 3. BORDURE SIMPLE : Blanc très transparent (discret) */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    
     border-radius: 12px;
-    box-shadow: var(--window-shadow);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     box-sizing: border-box;
 }
 
