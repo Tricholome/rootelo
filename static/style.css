@@ -41,43 +41,57 @@
    ========================================================================= */
 html {
     scroll-behavior: smooth;
-	height: 100%;
+    height: 100%;
     margin: 0;
     padding: 0;
 }
 
 body {
-    background-color: #0a0a0a; /* Noir profond pour faire ressortir le motif */
     position: relative;
     min-height: 100vh;
     margin: 0;
+    padding: 20px 5px;
+    
+    /* 1. FOND DE BASE : Noir très profond */
+    background-color: #0d0d0d; 
+    
     font-family: var(--font-ui);
     color: var(--text-main);
     text-align: center;
+    overflow-x: hidden;
 }
 
+/* COUCHE 1 : LE VOILE DE COULEUR DYNAMIQUE */
 body::before {
     content: "";
     position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    z-index: -1;
+    top: 0; left: 0; width: 100%; height: 100%;
+    z-index: -2; /* Tout au fond */
+    
+    /* On applique la couleur de ton onglet (Fox, Bird...) */
+    background-color: var(--main-color);
+    
+    /* On la rend très transparente pour créer une "ambiance" sans éblouir */
+    opacity: 0.15; 
+}
 
-    /* COUCHE 1 : La couleur dynamique (en dégradé pour ne pas être trop vive) */
-    /* On utilise un dégradé qui part de ta couleur avec 30% d'opacité vers le noir */
-    background-image: 
-        linear-gradient(to bottom, var(--main-color) 0%, #0a0a0a 100%),
-        url('../assets/images/pattern.webp');
-
-    /* COUCHE 2 : Le réglage du motif */
+/* COUCHE 2 : LE PAPIER PEINT D'ANIMAUX */
+body::after {
+    content: "";
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    z-index: -1; /* Juste au-dessus de la couleur, mais derrière ton tableau */
+    
+    background-image: url('../assets/images/dd_5.webp'); /* Vérifie ton nom de fichier ! */
     background-repeat: repeat;
     background-position: center;
-    background-size: 180px; /* Un peu plus petit pour faire "papier peint" */
-
-    /* MIXAGE : C'est ici que la magie opère */
-    /* 'screen' ou 'overlay' sont mieux pour voir le motif sur fond sombre */
-    mix-blend-mode: opacity; 
-    opacity: 0.4; /* Augmente l'opacité ici pour voir mieux le motif */
+    background-size: 200px; /* Taille des visages */
+    
+    /* LA MAGIE : Transforme tes traits noirs en traits blancs ! */
+    filter: invert(1); 
+    
+    /* On rend les traits blancs très subtils */
+    opacity: 0.08; 
 }
 
 /* =========================================================================
@@ -85,13 +99,15 @@ body::before {
    ========================================================================= */
 .window-box {
     position: relative;
-    z-index: 1;
+    z-index: 1; /* Reste bien au-dessus du fond */
     width: 95%;
     max-width: var(--window-max-width);
     margin: 0 auto;
-    background: var(--window-bg);
-	backdrop-filter: blur(10px); /* Floute le motif d'animaux derrière */
-	-webkit-backdrop-filter: blur(10px); /* Support Safari */
+    
+    background: var(--window-bg); /* Doit être #1c1c1cd9 pour la transparence */
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    
     border: var(--window-border);
     border-radius: 12px;
     box-shadow: var(--window-shadow);
