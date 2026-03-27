@@ -49,7 +49,7 @@ html {
 
 body {
     position: relative;
-	z-index: -10;
+	z-index: -1;
     background-color: var(--main-color);
     background-image: url('../assets/images/pattern.webp');
     background-repeat: repeat;
@@ -75,7 +75,7 @@ body::after {
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: -9;
+    z-index: 0;
     pointer-events: none;
     background: linear-gradient(rgba(18, 18, 18, 0.8), rgba(18, 18, 18, 0.8));
     mix-blend-mode: multiply;
@@ -87,16 +87,18 @@ body::after {
    ========================================================================= */
 .window-box {
     position: relative;
-    z-index: 1; /* Reste bien au-dessus du fond */
+    z-index: 10;
     width: 95%;
     max-width: var(--window-max-width);
     margin: 0 auto;
     
-    background: var(--window-bg); /* Doit être #1c1c1cd9 pour la transparence */
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    background: var(--window-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     
-    border: var(--window-border);
+    border: 1px solid rgba(255, 255, 255, 0.1); /* Bordure de base */
+    border-top: 3px solid var(--main-color);   /* Un liseré d'accentuation en haut seulement */
+
     border-radius: 12px;
     box-shadow: var(--window-shadow);
     box-sizing: border-box;
@@ -487,7 +489,7 @@ table.dataTable > tbody > tr.child ul.dtr-details { background: var(--bg-contain
    ========================================================================= */
 .screen-deco {
     position: relative; display: flex; justify-content: center;
-    height: 200px; margin: 0; z-index: -1; pointer-events: none; width: 100%;
+    height: 200px; margin: 0; z-index: 1; pointer-events: none; width: 100%;
 }
 
 .screen-deco img {
