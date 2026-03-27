@@ -546,4 +546,70 @@ tr[data-tier="rabbit"] td:nth-child(4)   { color: var(--color-rabbit) !important
 tr[data-tier="mouse"] td:nth-child(4)    { color: var(--color-mouse) !important; }
 tr[data-tier="squirrel"] td:nth-child(4) { color: var(--color-squirrel) !important; }
 
+/* =========================================================================
+   --- 11. INTERACTION: CLICKABLE NUT ---
+   ========================================================================= */
+
+.tier-interaction-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 0;
+    width: 100%;
+}
+
+.nut-trigger {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    cursor: pointer;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.nut-sprite {
+    /* Responsive sizing: big on desktop, scales on mobile */
+    width: clamp(140px, 20vw, 220px);
+    height: auto;
+
+    /* HEAVY SHADOW: Makes the object "pop" from the dark pattern */
+    filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.95));
+    
+    margin-bottom: 15px;
+    transition: filter 0.3s ease;
+}
+
+.nut-label {
+    font-family: var(--font-ui);
+    color: var(--text-main);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    opacity: 0.8;
+    transition: opacity 0.3s ease, color 0.3s ease;
+}
+
+/* --- HOVER STATES --- */
+
+.nut-trigger:hover {
+    /* Slight "jump" effect when hovering */
+    transform: scale(1.1) translateY(-5px);
+}
+
+.nut-trigger:hover .nut-sprite {
+    /* Subtle glow using the main theme color on hover */
+    filter: drop-shadow(0 25px 45px rgba(0, 0, 0, 1)) 
+            drop-shadow(0 0 15px var(--main-color));
+}
+
+.nut-trigger:hover .nut-label {
+    opacity: 1;
+    color: var(--main-color);
+}
+
+/* Active state (Click) */
+.nut-trigger:active {
+    transform: scale(0.95);
+}
+
 {% block extra_css %}{% endblock %}
