@@ -10,7 +10,7 @@
    7. Codex & Static Content (About page)
    8. Modals
    9. Background Decorations
-   10. Dynamic Injections (Jinja)
+   10. Tier-based Coloration
    ========================================================================= */
 
 /* =========================================================================
@@ -468,17 +468,20 @@ table.dataTable > tbody > tr.child ul.dtr-details { background: var(--bg-contain
 
 
 /* =========================================================================
-   --- 10. DYNAMIC INJECTIONS (JINJA) ---
+   --- 10. TIER-BASED COLORATION ---
    ========================================================================= */
-{% for tier in ['bird', 'fox', 'rabbit', 'mouse', 'squirrel'] %}
-table.dataTable tbody tr.tier-{{ tier }} { 
-    background-color: var(--color-{{ tier }}-bg) !important; 
-    border-left: 4px solid var(--color-{{ tier }}) !important; 
-}
-.tier-{{ tier }} td:nth-child(4) { 
-    color: var(--color-{{ tier }}) !important; 
-    font-weight: 800; font-size: 1.1em; 
-}
-{% endfor %}
+/* Background and border for each tier row */
+table.dataTable tbody tr[data-tier="bird"]     { background-color: var(--color-bird-bg) !important; border-left: 4px solid var(--color-bird) !important; }
+table.dataTable tbody tr[data-tier="fox"]      { background-color: var(--color-fox-bg) !important; border-left: 4px solid var(--color-fox) !important; }
+table.dataTable tbody tr[data-tier="rabbit"]   { background-color: var(--color-rabbit-bg) !important; border-left: 4px solid var(--color-rabbit) !important; }
+table.dataTable tbody tr[data-tier="mouse"]    { background-color: var(--color-mouse-bg) !important; border-left: 4px solid var(--color-mouse) !important; }
+table.dataTable tbody tr[data-tier="squirrel"] { background-color: var(--color-squirrel-bg) !important; border-left: 4px solid var(--color-squirrel) !important; }
+
+/* Text color for the 4th column (Elo) based on tier */
+tr[data-tier="bird"] td:nth-child(4)     { color: var(--color-bird) !important; font-weight: 800; }
+tr[data-tier="fox"] td:nth-child(4)      { color: var(--color-fox) !important; font-weight: 800; }
+tr[data-tier="rabbit"] td:nth-child(4)   { color: var(--color-rabbit) !important; font-weight: 800; }
+tr[data-tier="mouse"] td:nth-child(4)    { color: var(--color-mouse) !important; font-weight: 800; }
+tr[data-tier="squirrel"] td:nth-child(4) { color: var(--color-squirrel) !important; font-weight: 800; }
 
 {% block extra_css %}{% endblock %}
