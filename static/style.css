@@ -91,28 +91,27 @@ body::after {
     max-width: var(--window-max-width);
     margin: 0 auto;
     
-    /* 1. LE FOND : On mélange 92% de noir avec ta couleur d'onglet */
-    /* Cela crée un gris coloré très profond, très élégant */
-    background: linear-gradient(
-        rgba(0, 0, 0, 0.92), 
-        rgba(0, 0, 0, 0.92)
-    ), 
-    var(--main-color);
+    /* 1. LE FOND : On part d'un gris très sombre (#181818) */
+    /* On ajoute par-dessus un "calque" de ta couleur à seulement 15% d'opacité */
+    background-color: color-mix(in srgb, var(--main-color) 15%, #181818);
     
-    /* 2. LE FLOU : Pour garder la cohérence avec le wallpaper */
+    /* 2. EFFET DE VERRE (Transparent et flou) */
+    /* On rend le tout légèrement transparent (0.9) pour le blur */
+    background-color: rgba(24, 24, 24, 0.9); /* Fallback */
+    background: linear-gradient(
+        rgba(24, 24, 24, 0.85), 
+        rgba(24, 24, 24, 0.85)
+    ), var(--main-color);
+    
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     
-    /* 3. BORDURE : Une simple ligne sombre pour délimiter la boîte */
+    /* 3. BORDURE : On peut aussi la teinter très légèrement */
     border: 1px solid rgba(255, 255, 255, 0.05);
     
-    /* 4. FINITIONS */
     border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     box-sizing: border-box;
-    
-    /* Transition fluide lors du changement d'onglet */
-    transition: background 0.5s ease;
 }
 
 .app-banner {
@@ -505,7 +504,7 @@ table.dataTable > tbody > tr.child ul.dtr-details { background: var(--bg-contain
 
 .screen-deco img {
     position: absolute; height: 300px; width: auto; left: 50%; transform: translateX(-50%);
-    top: -150px; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.4)); transition: all 0.5s ease;
+    top: -150px; filter: drop-shadow(0 15px 40px rgba(0,0,0,0.8)); transition: all 0.5s ease;
 }
 
 @media (max-width: 1299px) {
