@@ -1,3 +1,4 @@
+
 /* =========================================================================
    ROOTELO - MAIN STYLESHEET
    Table of Contents:
@@ -48,30 +49,37 @@ html {
 
 body {
     position: relative;
-    /* On utilise min-height sur l'un ou l'autre, mais 100dvh est vital */
-    min-height: 100dvh; 
+	z-index: -10;
     background-color: var(--main-color);
     background-image: url('../assets/images/pattern.webp');
     background-repeat: repeat;
     background-position: center;
     background-size: 500px;
     background-attachment: fixed;
-    
-    /* On s'assure que le contenu ne touche pas les bords */
-    padding: 20px 0; 
+	
+	min-height: 100vh;
+    min-height: 100dvh;
+	
+	font-family: var(--font-ui);
+    color: var(--text-main);
+    text-align: center;
+    padding: 20px 5px;
     margin: 0;
     overflow-x: hidden;
 }
 
-/* Le voile qui assombrit le motif partout */
 body::after {
     content: "";
     position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    z-index: 0;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -9;
     pointer-events: none;
-    /* Un noir pur à 70% d'opacité : laisse deviner la couleur dessous */
-    background: rgba(0, 0, 0, 0.7); 
+    background: linear-gradient(rgba(18, 18, 18, 0.8), rgba(18, 18, 18, 0.8));
+    mix-blend-mode: multiply;
+    opacity: 0.6; 
 }
 
 /* =========================================================================
@@ -79,26 +87,19 @@ body::after {
    ========================================================================= */
 .window-box {
     position: relative;
-    z-index: 10; /* Doit être au-dessus du voile body::after */
-    width: 92%;
+    z-index: 1; /* Reste bien au-dessus du fond */
+    width: 95%;
     max-width: var(--window-max-width);
-    margin: 0 auto 30px auto;
+    margin: 0 auto;
     
-    /* FOND : Noir très profond mais légèrement transparent */
-    background: rgba(15, 15, 15, 0.85);
+    background: var(--window-bg); /* Doit être #1c1c1cd9 pour la transparence */
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     
-    /* BLUR : C'est lui qui "aspire" la couleur du fond et crée la cohérence */
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    
-    /* BORDURE : Très fine, couleur blanc cassé très transparente */
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 16px;
-    
-    /* OMBRE : On la renforce pour décoller la boîte du motif */
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+    border: var(--window-border);
+    border-radius: 12px;
+    box-shadow: var(--window-shadow);
     box-sizing: border-box;
-    overflow: hidden;
 }
 
 .app-banner {
@@ -486,12 +487,12 @@ table.dataTable > tbody > tr.child ul.dtr-details { background: var(--bg-contain
    ========================================================================= */
 .screen-deco {
     position: relative; display: flex; justify-content: center;
-    height: 200px; margin: 0; z-index: 1; pointer-events: none; width: 100%;
+    height: 200px; margin: 0; z-index: -1; pointer-events: none; width: 100%;
 }
 
 .screen-deco img {
     position: absolute; height: 300px; width: auto; left: 50%; transform: translateX(-50%);
-    top: -150px; filter: drop-shadow(0 20px 30px rgba(0, 0, 0, 0.9)); transition: all 0.5s ease;
+    top: -150px; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.4)); transition: all 0.5s ease;
 }
 
 @media (max-width: 1299px) {
