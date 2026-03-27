@@ -53,7 +53,7 @@ body {
     background-color: var(--bg-page);
     background-image: 
         linear-gradient(rgba(18, 18, 18, 0.8), rgba(18, 18, 18, 0.8)), 
-        url('assets/images/dd_1.webp');
+        url('../assets/images/dd_1.webp');
     background-attachment: fixed;
     background-position: center center;
     background-size: cover;
