@@ -82,7 +82,7 @@ body::after {
     top: 0; left: 0; width: 100%; height: 100%;
     z-index: -1; /* Juste au-dessus de la couleur, mais derrière ton tableau */
     
-    background-image: url('../assets/images/dd_5.webp'); /* Vérifie ton nom de fichier ! */
+    background-image: url('../assets/images/pattern.webp'); /* Vérifie ton nom de fichier ! */
     background-repeat: repeat;
     background-position: center;
     background-size: 200px; /* Taille des visages */
