@@ -47,51 +47,32 @@ html {
 }
 
 body {
-    position: relative;
+    /* 1. La couleur de secours */
+    background-color: #121212; 
+    
+    /* 2. Superposition : COULEUR DYNAMIQUE + IMAGE ORIGINALE */
+    background-image: 
+        /* Le voile coloré : on mélange ta couleur (à 85% d'opacité) avec un noir profond */
+        linear-gradient(
+            rgba(18, 18, 18, 0.85), 
+            var(--main-color)
+        ),
+        url('../assets/images/pattern.webp');
+    
+    /* 3. Réglages du motif pour qu'il soit bien visible et répété */
+    background-attachment: fixed !important;
+    background-position: center center !important;
+    background-size: 400px !important; /* Taille confortable pour voir les dessins */
+    background-repeat: repeat !important; /* Indispensable pour ton motif */
+    
+    /* 4. Mixage : Permet à la couleur de "teindre" les traits noirs du dessin */
+    background-blend-mode: multiply; 
+
+    /* Reste de tes styles */
     min-height: 100vh;
-    margin: 0;
-    padding: 20px 5px;
-    
-    /* 1. FOND DE BASE : Noir très profond */
-    background-color: #1a1a1a; 
-    
     font-family: var(--font-ui);
     color: var(--text-main);
-    text-align: center;
-    overflow-x: hidden;
-}
-
-/* COUCHE 1 : LE VOILE DE COULEUR DYNAMIQUE */
-body::before {
-    content: "";
-    position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    z-index: -2; /* Tout au fond */
-    
-    /* On applique la couleur de ton onglet (Fox, Bird...) */
-    background-color: var(--main-color);
-    
-    /* On la rend très transparente pour créer une "ambiance" sans éblouir */
-    opacity: 0.25; 
-}
-
-/* COUCHE 2 : LE PAPIER PEINT D'ANIMAUX */
-body::after {
-    content: "";
-    position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    z-index: -1; /* Juste au-dessus de la couleur, mais derrière ton tableau */
-    
-    background-image: url('../assets/images/pattern.webp'); /* Vérifie ton nom de fichier ! */
-    background-repeat: repeat;
-    background-position: center;
-    background-size: 450px; /* Taille des visages */
-    
-    /* LA MAGIE : Transforme tes traits noirs en traits blancs ! */
-    filter: invert(1); 
-    
-    /* On rend les traits blancs très subtils */
-    opacity: 0.18; 
+    margin: 0;
 }
 
 /* =========================================================================
