@@ -100,8 +100,15 @@ body::after {
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     
-    /* 3. BORDURE SIMPLE : Blanc très transparent (discret) */
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    /* 1. LA BORDURE : On utilise 10% de blanc et 90% de ta couleur */
+    /* On la rend très transparente (0.2) pour qu'elle ne soit qu'un reflet */
+    border: 1px solid color-mix(in srgb, var(--main-color), rgba(255, 255, 255, 0.2) 20%);
+    
+    /* 2. L'OPACITÉ DE LA BORDURE (Alternative si color-mix est trop complexe ici) */
+    /* border: 1px solid rgba(255, 255, 255, 0.08); */
+
+    /* 3. L'OMBRE PORTÉE (On la garde bien profonde pour le relief) */
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
     
     border-radius: 12px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
