@@ -86,21 +86,40 @@ body::after {
    ========================================================================= */
 .window-box {
     position: relative;
-    z-index: 1; /* Reste bien au-dessus du fond */
+    z-index: 1;
     width: 95%;
-    max-width: var(--window-max-width);
+    /* Utilisation du clamp pour l'élasticité */
+    max-width: var(--window-max-width); 
     margin: 0 auto;
     
-    background: var(--window-bg); /* Doit être #1c1c1cd9 pour la transparence */
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    
-    border: var(--window-border);
-    border-radius: 12px;
-    box-shadow: var(--window-shadow);
-    box-sizing: border-box;
-}
+    /* 1. LE FOND : On mélange le sombre (#1c1c1c) avec la couleur dynamique */
+    /* On utilise un dégradé très subtil pour donner du relief */
+    background: linear-gradient(
+        135deg, 
+        rgba(28, 28, 28, 0.92) 0%, 
+        var(--main-color) 5%, /* Une touche de couleur dans le coin */
+        rgba(28, 28, 28, 0.88) 100%
+    );
 
+    /* 2. L'EFFET DE FLOU (indispensable pour le style) */
+    backdrop-filter: blur(12px) saturate(150%);
+    -webkit-backdrop-filter: blur(12px) saturate(150%);
+    
+    /* 3. LA BORDURE : On lui donne aussi la couleur dynamique, mais très légère */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    outline: 1px solid var(--main-color); /* Double bordure subtile */
+    outline-offset: -1px;
+    
+    border-radius: 12px;
+    
+    /* 4. L'OMBRE : Une lueur diffuse de la couleur du Tiers */
+    box-shadow: 
+        0 10px 30px rgba(0, 0, 0, 0.5),
+        0 0 20px -5px var(--main-color); /* Lueur dynamique */
+        
+    box-sizing: border-box;
+    transition: all 0.4s ease; /* Pour un changement d'onglet fluide */
+}
 .app-banner {
     margin-top: 20px;
     margin-bottom: var(--window-gap);
