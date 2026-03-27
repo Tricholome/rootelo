@@ -1,7 +1,12 @@
 {% extends "base.html" %}
 
 {% block content %}
-<a href="javascript:void(0)" onclick="openTierModal('squirrel')" class="tier-anchor-link">
-    Crack a nut! 🐿️
-</a>
+
+<div class="tier-interaction-zone">
+    <a href="javascript:void(0)" onclick="openTierModal('squirrel')" class="nut-trigger-link">
+        <img src="../assets/images/nut.webp" alt="Tasty Nut" class="nut-image">
+        <span class="nut-action-text">Crack a nut!</span>
+    </a>
+</div>
+
 {% endblock %}
