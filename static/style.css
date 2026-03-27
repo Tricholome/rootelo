@@ -37,7 +37,7 @@
    
 
 /* =========================================================================
-   --- 1. BASE & RESET ---
+   --- 1. GLOBAL STYLES & WALLPAPER ---
    ========================================================================= */
 html {
     scroll-behavior: smooth;
@@ -47,24 +47,40 @@ html {
 }
 
 body {
-    min-height: 100vh; /* Force le body à faire au moins 100% de la hauteur de l'écran */
-    
-    /* Ton code actuel... */
-    background-color: var(--bg-page);
-    background-image: 
-        linear-gradient(rgba(18, 18, 18, 0.8), rgba(18, 18, 18, 0.8)), 
-        url('../assets/images/dd_1.webp');
-    background-attachment: fixed;
-    background-position: center center;
-    background-size: cover;
-    background-repeat: no-repeat;
-    
+    position: relative;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    background-color: var(--main-color);
 	font-family: var(--font-ui);
     color: var(--text-main);
     text-align: center;
     padding: 20px 5px;
     margin: 0;
     overflow-x: hidden;
+}
+
+body::before {
+    content: "";
+    position: fixed; /* Il reste fixe au défilement */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1; /* Il se place DERRIÈRE le contenu */
+    
+    /* L'IMAGE ET SES RÉGLAGES */
+    /* Remplace par ton chemin exact */
+    background-image: url('../assets/images/pattern.webp'); 
+    background-repeat: repeat; /* Se répète à l'infini (le secret) */
+    background-position: center center;
+    background-size: 250px; /* Taille réglable du motif (en px) */
+    
+    /* AJUSTEMENT VISUEL */
+    /* L'opacité rend le motif subtil */
+    opacity: 0.1; 
+    /* Le blend-mode mélange le noir du motif avec la couleur de fond */
+    mix-blend-mode: multiply; 
 }
 
 /* =========================================================================
@@ -77,6 +93,8 @@ body {
     max-width: var(--window-max-width);
     margin: 0 auto;
     background: var(--window-bg);
+	backdrop-filter: blur(10px); /* Floute le motif d'animaux derrière */
+	-webkit-backdrop-filter: blur(10px); /* Support Safari */
     border: var(--window-border);
     border-radius: 12px;
     box-shadow: var(--window-shadow);
