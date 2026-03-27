@@ -56,6 +56,9 @@ body {
     background-size: 500px;
     background-attachment: fixed;
 	
+	min-height: 100vh;
+    min-height: 100dvh;
+	
 	font-family: var(--font-ui);
     color: var(--text-main);
     text-align: center;
