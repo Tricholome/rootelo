@@ -47,32 +47,44 @@ html {
 }
 
 body {
-    /* 1. La couleur de secours */
-    background-color: #ffffff; 
+    background-color: #ffffff;
+    background-image: url('../assets/images/pattern.webp');
+    background-repeat: repeat;
+    background-position: center;
+    background-size: 600px;
+    background-attachment: fixed;
     
-    /* 2. Superposition : COULEUR DYNAMIQUE + IMAGE ORIGINALE */
-    background-image: 
-        /* Le voile coloré : on mélange ta couleur (à 85% d'opacité) avec un noir profond */
-        linear-gradient(
-            rgba(18, 18, 18, 0.85), 
-            var(--main-color)
-        ),
-        url('../assets/images/pattern.webp');
-    
-    /* 3. Réglages du motif pour qu'il soit bien visible et répété */
-    background-attachment: fixed !important;
-    background-position: center center !important;
-    background-size: 400px !important; /* Taille confortable pour voir les dessins */
-    background-repeat: repeat !important; /* Indispensable pour ton motif */
-    
-    /* 4. Mixage : Permet à la couleur de "teindre" les traits noirs du dessin */
-    background-blend-mode: multiply; 
-
-    /* Reste de tes styles */
+    position: relative;
     min-height: 100vh;
+    margin: 0;
     font-family: var(--font-ui);
     color: var(--text-main);
-    margin: 0;
+}
+
+body::after {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none; /* Important : pour pouvoir cliquer à travers */
+
+    /* LE DÉGRADÉ : Couleur de l'onglet -> Noir */
+    background: linear-gradient(
+        to bottom,
+        var(--main-color) 0%,      /* La couleur pure en haut */
+        rgba(0, 0, 0, 0.6) 50%,    /* Passage au noir fumé à mi-chemin */
+        rgba(0, 0, 0, 0.9) 100%    /* Noir presque total en bas */
+    );
+
+    /* MIX-BLEND-MODE : C'est ce qui rend le voile "vivant" */
+    /* 'multiply' va teindre les dessins blancs/noirs avec ta couleur sombre */
+    mix-blend-mode: multiply; 
+    
+    /* On peut baisser un peu l'opacité globale si c'est trop sombre */
+    opacity: 0.9; 
 }
 
 /* =========================================================================
