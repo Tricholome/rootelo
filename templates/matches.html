@@ -15,11 +15,11 @@
             {% for m in matches %}
             <tr>
                 <td>{{ m.rank }}</td>
-                <td class="elo-sum-cell">{{ m.elo_sum }}</td>
+                <td class="text-bold text-main">{{ m.elo_sum }}</td>
                 <td>{{ m.date }}</td>
                 <td class="lineup-cell">
-                    <span class="winner-highlight">{{ m.winner }}</span>, 
-                    <span class="others-text">{{ m.others }}</span>
+                    <span class="text-bold text-bright">{{ m.winner }}</span>, 
+                    <span class="text-muted">{{ m.others }}</span>
                 </td>
                 <td>
                     <a href="{{ m.match_url }}" target="_blank" class="match-id-link">
