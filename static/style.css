@@ -23,7 +23,7 @@
 .text-center  { text-align: center !important; }
 
 /* Weights */
-.text-bold    { font-weight: 800 !important; } 
+.text-bold    { font-weight: 900 !important; } 
 .text-medium  { font-weight: 600 !important; } 
 .text-normal  { font-weight: 400 !important; }
 
@@ -352,7 +352,7 @@ table.dataTable > tbody > tr.child ul.dtr-details { background: var(--bg-contain
 .unranked { opacity: 0.4; font-style: italic; filter: grayscale(1); font-weight: 600 !important; }
 
 /* Matches Specifics */
-.lineup-cell { white-space: normal !important; word-wrap: break-word; min-width: 150px; max-width: 400px; line-height: 1.4; }
+.lineup-cell { white-space: normal !important; word-wrap: break-word; min-width: 150px; max-width: 400px; line-height: 1.4; text-align: left !important;}
 .match-id-link { color: var(--text-muted); text-decoration: none; font-size: 0.85em; border: 1px solid var(--border-soft); padding: 2px 6px; border-radius: 4px; }
 #matchesTable th, #matchesTable td:nth-child(1), #matchesTable td:nth-child(2), #matchesTable td:nth-child(3) { white-space: nowrap !important; }
 
