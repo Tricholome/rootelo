@@ -17,8 +17,7 @@
         </thead>
         <tbody>
             {% for player in players %}
-            <tr class="tier-{{ player.tier }} {{ 'unranked' if player.tier == 'unranked' else '' }}">
-                {# REMOVED THE DOUBLE TD HERE - JUST ONE RANK CELL #}
+            <tr data-tier="{{ player.tier }}" class="{{ 'unranked' if player.tier == 'unranked' else '' }}">
                 <td class="{{ 'unranked' if player.Rank == '-' else '' }}">
                     {{ player.Rank }}
                 </td>
