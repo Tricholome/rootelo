@@ -94,8 +94,7 @@ body::after {
     
     /* 1. LE FOND : On prend ta couleur d'onglet mais on l'assombrit énormément */
     /* On utilise un noir à 85% d'opacité posé SUR ta couleur principale */
-    background: linear-gradient(rgba(15, 15, 15, 0.85), rgba(15, 15, 15, 0.85)), 
-                var(--main-color);
+    background: color-mix(in srgb, var(--main-color) 10%, rgba(15, 15, 15, 0.8));
     
     /* 2. LE FLOU : Pour garder l'effet de profondeur */
     backdrop-filter: blur(10px);
@@ -494,7 +493,7 @@ table.dataTable > tbody > tr.child ul.dtr-details { background: var(--bg-contain
    ========================================================================= */
 .screen-deco {
     position: relative; display: flex; justify-content: center;
-    height: 200px; margin: 0; z-index: 1; pointer-events: none; width: 100%;
+    height: 200px; margin: 0; z-index: 5; pointer-events: none; width: 100%;
 }
 
 .screen-deco img {
