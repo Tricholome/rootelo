@@ -1,6 +1,7 @@
 /* =========================================================================
    ROOTELO - MAIN STYLESHEET
    Table of Contents:
+   0. Text Utilities
    1. Base & Reset
    2. Layout & Containers
    3. Typography & UI Elements
@@ -12,6 +13,28 @@
    9. Background Decorations
    10. Tier-based Coloration
    ========================================================================= */
+   
+/* =========================================================================
+   --- 0. TEXT UTILITIES ---
+   ========================================================================= */
+
+/* Alignment */
+.text-left    { text-align: left !important; padding-left: 15px !important; }
+.text-center  { text-align: center !important; }
+
+/* Weights */
+.text-bold    { font-weight: 800 !important; } 
+.text-medium  { font-weight: 600 !important; } 
+.text-normal  { font-weight: 400 !important; }
+
+/* Colors - C'est ici que la magie opère */
+.text-bright  { color: var(--text-muted) !important; }    
+.text-main    { color: var(--main-color) !important; }
+.text-muted   { color: var(--text-muted) !important; }
+
+/* Sizes */
+.text-lg      { font-size: 1.1em; }
+   
 
 /* =========================================================================
    --- 1. BASE & RESET ---
