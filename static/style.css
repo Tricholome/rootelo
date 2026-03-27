@@ -53,7 +53,7 @@ body {
     padding: 20px 5px;
     
     /* 1. FOND DE BASE : Noir très profond */
-    background-color: #0d0d0d; 
+    background-color: #1a1a1a; 
     
     font-family: var(--font-ui);
     color: var(--text-main);
@@ -72,7 +72,7 @@ body::before {
     background-color: var(--main-color);
     
     /* On la rend très transparente pour créer une "ambiance" sans éblouir */
-    opacity: 0.15; 
+    opacity: 0.25; 
 }
 
 /* COUCHE 2 : LE PAPIER PEINT D'ANIMAUX */
@@ -85,13 +85,13 @@ body::after {
     background-image: url('../assets/images/pattern.webp'); /* Vérifie ton nom de fichier ! */
     background-repeat: repeat;
     background-position: center;
-    background-size: 200px; /* Taille des visages */
+    background-size: 450px; /* Taille des visages */
     
     /* LA MAGIE : Transforme tes traits noirs en traits blancs ! */
     filter: invert(1); 
     
     /* On rend les traits blancs très subtils */
-    opacity: 0.08; 
+    opacity: 0.18; 
 }
 
 /* =========================================================================
