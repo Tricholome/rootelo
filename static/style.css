@@ -347,10 +347,9 @@ table.dataTable > tbody > tr.child ul.dtr-details { background: var(--bg-contain
 .text-accent { font-weight: 800; color: var(--main-color) !important; }
 
 /* Leaderboard Specifics */
-.player-name-cell { font-weight: 600; color: var(--text-main); }
 .tier-icon-container { width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; margin: 0 auto; }
 .tier-icon-container img { max-width: 100%; max-height: 100%; object-fit: contain; }
-.unranked { opacity: 0.4; font-style: italic; filter: grayscale(1); }
+.unranked { opacity: 0.4; font-style: italic; filter: grayscale(1); font-weight: 600 !important; }
 
 /* Matches Specifics */
 .lineup-cell { white-space: normal !important; word-wrap: break-word; min-width: 150px; max-width: 400px; line-height: 1.4; }
@@ -501,10 +500,10 @@ table.dataTable tbody tr[data-tier="mouse"]    { background-color: var(--color-m
 table.dataTable tbody tr[data-tier="squirrel"] { background-color: var(--color-squirrel-bg) !important; border-left: 4px solid var(--color-squirrel) !important; }
 
 /* Text color for the 4th column (Elo) based on tier */
-tr[data-tier="bird"] td:nth-child(4)     { color: var(--color-bird) !important; font-weight: 800; }
-tr[data-tier="fox"] td:nth-child(4)      { color: var(--color-fox) !important; font-weight: 800; }
-tr[data-tier="rabbit"] td:nth-child(4)   { color: var(--color-rabbit) !important; font-weight: 800; }
-tr[data-tier="mouse"] td:nth-child(4)    { color: var(--color-mouse) !important; font-weight: 800; }
-tr[data-tier="squirrel"] td:nth-child(4) { color: var(--color-squirrel) !important; font-weight: 800; }
+tr[data-tier="bird"] td:nth-child(4)     { color: var(--color-bird) !important; }
+tr[data-tier="fox"] td:nth-child(4)      { color: var(--color-fox) !important; }
+tr[data-tier="rabbit"] td:nth-child(4)   { color: var(--color-rabbit) !important; }
+tr[data-tier="mouse"] td:nth-child(4)    { color: var(--color-mouse) !important; }
+tr[data-tier="squirrel"] td:nth-child(4) { color: var(--color-squirrel) !important; }
 
 {% block extra_css %}{% endblock %}
