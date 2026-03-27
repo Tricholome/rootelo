@@ -41,24 +41,22 @@
    ========================================================================= */
 html {
     scroll-behavior: smooth;
+	height: 100%;
+    margin: 0;
+    padding: 0;
 }
 
 body {
-    /* 1. La base de sécurité (si l'image ne charge pas) */
+    min-height: 100vh; /* Force le body à faire au moins 100% de la hauteur de l'écran */
+    
+    /* Ton code actuel... */
     background-color: var(--bg-page);
-    
-    /* 2. L'image de fond */
-    /* Remplace 'chemin/vers/ton/image.jpg' par l'URL réelle de ton wallpaper */
     background-image: 
-        /* LE VOILE SOMBRE (overlay) : il assombrit l'image de 80% */
         linear-gradient(rgba(18, 18, 18, 0.8), rgba(18, 18, 18, 0.8)), 
-        
-        /* L'IMAGE : fixe, centrée, et couvre tout l'écran */
         url('assets/images/dd_1.webp');
-    
-    background-attachment: fixed; /* L'image ne défile pas avec la page */
+    background-attachment: fixed;
     background-position: center center;
-    background-size: cover; /* L'image remplit tout l'espace sans se déformer */
+    background-size: cover;
     background-repeat: no-repeat;
     
 	font-family: var(--font-ui);
