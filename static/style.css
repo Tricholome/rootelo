@@ -54,7 +54,7 @@ body {
     background-image: url('../assets/images/pattern.webp');
     background-repeat: repeat;
     background-position: center;
-    background-size: 400px;
+    background-size: 300px;
     background-attachment: fixed;
 	
 	min-height: 100vh;
