@@ -519,7 +519,7 @@ table.dataTable > tbody > tr.child ul.dtr-details { background: var(--bg-contain
 }
 
 @media (min-width: 1300px) {
-    .screen-deco { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; display: block; z-index: -1; }
+    .screen-deco { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; display: block; }
     .screen-deco img {
         height: clamp(300px, 50vh, 900px); top: max(50%, 600px); left: auto;
         transform: translateY(-50%); top: max(50%, calc(550px - (var(--scroll, 0) * 1px)));
