@@ -185,13 +185,18 @@ body::after {
 }
 
 @media (min-width: 1300px) {
-    .screen-deco { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; display: block; }
+    .screen-deco { 
+        position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; display: block; 
+    }
+
     .screen-deco img {
         height: clamp(300px, 50vh, 900px);
         top: max(50%, calc(550px - (var(--scroll, 0) * 1px)));
-		position: absolute;
+        position: absolute;
+        left: auto; 
         transform: translateY(-50%);
     }
+
     .left-deco img, 
     .right-deco img {
         max-width: calc(50vw - (var(--window-max-width) / 2) + 15px);
