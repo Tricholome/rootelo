@@ -524,8 +524,8 @@ table.dataTable > tbody > tr.child ul.dtr-details { background: var(--bg-contain
         height: clamp(300px, 50vh, 900px); top: max(50%, 600px); left: auto;
         transform: translateY(-50%); top: max(50%, calc(550px - (var(--scroll, 0) * 1px)));
     }
-    .left-deco img { left: 15px; right: auto; }
-    .right-deco img { right: 15px; left: auto; }
+    .left-deco img { left: max(15px, 2vw); right: auto; }
+    .right-deco img { right: max(15px, 2vw); left: auto; }
 }
 
 
