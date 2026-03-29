@@ -38,7 +38,7 @@ NAV_ITEMS = [
 # =========================================================================
 API_TOKEN = os.getenv('API_TOKEN')
 HEADERS = {'Authorization': f'Token {API_TOKEN}'} if API_TOKEN else {}
-TOURNAMENT_ID = 24
+TOURNAMENT_ID = 25
 
 today = date.today()
 CUTOFF_DATE = today - timedelta(days=1)
