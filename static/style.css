@@ -526,21 +526,15 @@ table.dataTable > tbody > tr.child ul.dtr-details { background: var(--bg-contain
         top: max(50%, calc(550px - (var(--scroll, 0) * 1px)));
     }
     .left-deco img {
-        left: auto;
-        right: calc(50% + 800px - 15px); 
-        transform: translateY(-50%);
-    }
-
-    .right-deco img {
+        left: calc(50% - (var(--window-max-width) / 2) + 15px);
+        transform: translate(-100%, -50%);
         right: auto;
-        left: calc(50% + 800px - 15px);
-        transform: translateY(-50%);
     }
-}
-
-@media (max-width: 1630px) {
-        .left-deco img { left: 15px; right: auto; }
-        .right-deco img { right: 15px; left: auto; }
+    .right-deco img {
+        left: calc(50% + (var(--window-max-width) / 2) - 15px);
+        transform: translate(0, -50%);
+        right: auto;
+    }
 }
 
 
