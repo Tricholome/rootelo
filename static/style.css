@@ -81,7 +81,7 @@ body::after {
     pointer-events: none;
     background: linear-gradient(to bottom, var(--bg-overlay-top), var(--bg-overlay-bottom));
     mix-blend-mode: multiply;
-    opacity: 0.6; 
+    opacity: 1; 
 }
 
 /* =========================================================================
