@@ -407,7 +407,7 @@ render_page(
     is_archive=False,
     has_seasons=False,
     page_heading="Undergrowth",
-    description="No rank? No stress. The Woodland needs all its critters, and we haven’t forgotten you.",
+    description="No rank? No stress. The Woodland has room for all kinds of critters.",
 )
 
 print("Génération terminée avec succès !")
