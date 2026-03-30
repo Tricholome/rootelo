@@ -661,11 +661,18 @@ tr[data-tier="squirrel"] td:nth-child(4) { color: var(--color-squirrel) !importa
 .nut-trigger:hover .nut-label {
     opacity: 1;
     color: var(--main-color);
+	transform: scale(0.7);
 }
 
 .nut-trigger:active {
     transform: scale(1.4);
 	transition: transform 0.1s;
+}
+
+.nut-trigger:hover .tooltip-text {
+    opacity: 1 ;
+    pointer-events: auto;
+    transform: translateX(-50%) translateY(-50px) scale(0.7) ;
 }
 
 
