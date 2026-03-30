@@ -508,7 +508,7 @@ table.dataTable > tbody > tr.child ul.dtr-details { background: var(--bg-contain
    --- 9. CODEX & STATIC CONTENT (ABOUT PAGE) ---
    ========================================================================= */
 .codex-section {
-    display: block; margin: 40px auto; width: 90%; max-width: var(--window-max-width); line-height: 1.6;
+    display: block; margin: 40px auto; width: 100%; max-width: var(--window-max-width); line-height: 1.6;
 }
 
 .codex-section h2 {
@@ -550,6 +550,7 @@ table.dataTable > tbody > tr.child ul.dtr-details { background: var(--bg-contain
 .k-val { color: var(--main-color) !important; font-weight: var(--text-bold); font-family: monospace; font-size: 1.3em; white-space: nowrap; }
 
 @media (max-width: 600px) {
+	.k-table { table-layout: auto; }
     .k-table br { display: block; }
     .k-table td:nth-child(4) { display: none; }
 }
