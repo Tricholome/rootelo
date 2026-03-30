@@ -192,28 +192,25 @@ body::after {
     
     .screen-deco img {
         height: clamp(300px, 50vh, 900px); 
+        top: max(50%, calc(550px - (var(--scroll, 0) * 1px)));
         position: absolute;
-        /* FORCE l'annulation du centrage horizontal (le 0 est crucial) */
-        transform: translate(0, -50%) !important; 
-        top: max(50%, calc(550px - (var(--scroll, 0) * 1px))) !important;
-        /* On retire le left: 50% hérité */
+        transform: translateY(-50%); 
+    }
+
+    /* IMAGE GAUCHE */
+    .left-deco img {
         left: auto;
+        /* Le bord droit de l'image est calé sur le bord gauche du viewport, moins 15px */
+        right: calc(50vw + (var(--window-max-width) / 2) - 15px);
+    }
+
+    /* IMAGE DROITE */
+    .right-deco img {
         right: auto;
-    }
-
-    .left-deco img { 
-        /* On force la position à gauche */
-        left: max(15px, calc((100vw - var(--window-max-width)) / 2 + 15px)) !important; 
-        right: auto !important; 
-    }
-
-    .right-deco img { 
-        /* On force la position à droite */
-        right: max(15px, calc((100vw - var(--window-max-width)) / 2 + 15px)) !important; 
-        left: auto !important; 
+        /* Le bord gauche de l'image est calé sur le bord droit du viewport, moins 15px */
+        left: calc(50vw + (var(--window-max-width) / 2) - 15px);
     }
 }
-
 
 /* =========================================================================
    --- 4. TYPOGRAPHY & UI ELEMENTS ---
