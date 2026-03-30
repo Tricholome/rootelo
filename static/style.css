@@ -5,14 +5,16 @@
    0. Text Utilities
    1. Global Styles & Wallpaper
    2. Layout & Containers
-   3. Typography & UI Elements
-   4. Header, Banner & Tooltips
-   5. Navigation & Buttons
-   6. DataTables (Global, Leaderboard, Matches)
-   7. Codex & Static Content (About page)
-   8. Modals
-   9. Background Decorations
-   10. Tier-based Coloration
+   3. Background Decorations
+   4. Typography & UI Elements
+   5. Header, Banner & Tooltips
+   6. Navigation & Buttons
+   7. DataTables (Global, Leaderboard, Matches)
+   8. Chart (Trends)
+   9. Codex & Static Content (About page)
+   10. Modals
+   11. Tier-based Coloration
+   12. Interaction: Clickable Nut
    ========================================================================= */
    
 /* =========================================================================
@@ -28,7 +30,7 @@
 .text-medium  { font-weight: 600 !important; } 
 .text-normal  { font-weight: 400 !important; }
 
-/* Colors - C'est ici que la magie opère */
+/* Colors */
 .text-bright  { color: var(--text-bright) !important; }    
 .text-main    { color: var(--main-color) !important; }
 .text-muted   { color: var(--text-muted) !important; }
@@ -198,13 +200,12 @@ body::after {
     }
 }
 
-@media (min-width: 1300px) and (max-width: 1699px) {
+@media (min-width: 1300px) and (max-width: 1999px) {
     .left-deco img { left: 15px; right: auto; }
     .right-deco img { right: 15px; left: auto; }
 }
 
-
-@media (min-width: 1700px) {
+@media (min-width: 2000px) {
     .left-deco img { 
         left: auto;
         right: calc(50vw + (var(--window-max-width) / 2) - 15px); 
