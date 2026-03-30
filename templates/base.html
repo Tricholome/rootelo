@@ -43,23 +43,36 @@
     
     <style>
         :root {
-            --window-gap: 25px;           
-            --window-max-width: clamp(600px, 60vw, 1600px);   
-            --window-bg: #1c1c1cd9;
-            --window-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            --window-border: 1px solid rgba(255, 255, 255, 0.08);
-            --font-title: 'Fraunces', serif;
-            --font-ui: 'Inter', sans-serif;
-            --bg-page: #121212;
-            --bg-container: #1c1c1c; 
-            --bg-surface: rgba(255, 255, 255, 0.03); 
-            --bg-hover: rgba(255, 255, 255, 0.08);
+			/* --- 1. LAYOUT CONFIG --- */
+			--window-gap: 25px;           
+			--window-max-width: clamp(600px, 60vw, 1600px);
+
+			/* --- 2. TYPOGRAPHY --- */
+			--font-title: 'Fraunces', serif;
+			--font-ui: 'Inter', sans-serif;
+			--normal: 400;
+			--medium: 600;
+			--bold: 900;
+			
+			/* --- 3. GLASS SYSTEM --- */
+			--glass-bg: #1c1c1cd9; 
+			--glass-border: rgba(255, 255, 255, 0.08);
+			--glass-shadow: 0 10px 30px rgba(0,0,0,0.5);
+	
+            /* --- 4. UI FOUNDATION --- */
+			--bg-page: #121212;
+			--bg-surface: rgba(255, 255, 255, 0.03); 
+			--bg-hover: rgba(255, 255, 255, 0.08);
+			--border-soft: #333333;
+			
+			/* --- 5. TEXT COLORS --- */
 			--text-bright: #ffffff;
             --text-main: #E0E0E0; 
             --text-muted: #888888;
             --text-dark: #111111; 
             --border-soft: #333333;
             
+			/* --- 6. TIER DYNAMICS --- */
             {% for tier, hex in colors.items() %}
             --color-{{ tier }}: {{ hex }};
             --color-{{ tier }}-bg: {{ hex }}14;
