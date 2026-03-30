@@ -193,18 +193,24 @@ body::after {
     .screen-deco img {
         height: clamp(300px, 50vh, 900px); 
         position: absolute;
-        transform: translate(0, -50%);
-        top: max(50%, calc(550px - (var(--scroll, 0) * 1px)));
+        /* FORCE l'annulation du centrage horizontal (le 0 est crucial) */
+        transform: translate(0, -50%) !important; 
+        top: max(50%, calc(550px - (var(--scroll, 0) * 1px))) !important;
+        /* On retire le left: 50% hérité */
+        left: auto;
+        right: auto;
     }
 
     .left-deco img { 
-        left: max(15px, calc((100vw - var(--window-max-width)) / 2 + 15px)); 
-        right: auto; 
+        /* On force la position à gauche */
+        left: max(15px, calc((100vw - var(--window-max-width)) / 2 + 15px)) !important; 
+        right: auto !important; 
     }
 
     .right-deco img { 
-        right: max(15px, calc((100vw - var(--window-max-width)) / 2 + 15px)); 
-        left: auto; 
+        /* On force la position à droite */
+        right: max(15px, calc((100vw - var(--window-max-width)) / 2 + 15px)) !important; 
+        left: auto !important; 
     }
 }
 
@@ -455,7 +461,7 @@ table.dataTable > tbody > tr.child ul.dtr-details { background: var(--bg-contain
    --- 8. CODEX & STATIC CONTENT (ABOUT PAGE) ---
    ========================================================================= */
 .codex-section {
-    display: block; margin: 40px auto; width: 90%; max-width: 700px; line-height: 1.6;
+    display: block; margin: 40px auto; width: 90%; max-width: var(--window-max-width); line-height: 1.6;
 }
 
 .codex-section h2 {
