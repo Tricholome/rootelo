@@ -560,6 +560,7 @@ table.dataTable tbody tr:last-child td {
    --- 8. CHART (TRENDS) ---
    ========================================================================= */
 
+/* --- Search Box --- */
 .search-box { 
     margin: 20px auto; 
     text-align: center; 
@@ -569,7 +570,7 @@ table.dataTable tbody tr:last-child td {
 .search-box input { 
     appearance: none;
     -webkit-appearance: none;
-    background: rgba(255, 255, 255, 0.03) !important;
+    background: var(--dt-input-bg) !important; /* Matches Datatables search */
     color: var(--text-main) !important; 
     border: 1px solid var(--border-soft) !important; 
     padding: 10px 15px; 
@@ -577,13 +578,15 @@ table.dataTable tbody tr:last-child td {
     width: 100%; 
     font-family: var(--font-ui);
     outline: none;
-    transition: border-color 0.2s;
+    transition: border-color 0.2s, background-color 0.2s;
 }
 
 .search-box input:focus { 
     border-color: var(--main-color) !important; 
+    background: rgba(255, 255, 255, 0.05) !important; /* Slight glow on focus */
 }
 
+/* Custom Clear Button for Search */
 .search-box input::-webkit-search-cancel-button {
     -webkit-appearance: none;
     height: 14px; width: 14px;
@@ -593,6 +596,7 @@ table.dataTable tbody tr:last-child td {
     cursor: pointer;
 }
 
+/* --- Chart Container --- */
 .chart-wrapper { 
     width: 100%; 
     max-width: var(--window-max-width); 
@@ -604,13 +608,15 @@ table.dataTable tbody tr:last-child td {
     width: 100%; 
     height: 55vh; 
     min-height: 350px;
-    background: rgba(15, 15, 15, 0.4);
-    border: 1px solid var(--border-soft); 
+    background: var(--dt-table-bg); /* Use the translucent table background */
+    border: 1px solid var(--glass-border); /* Consistent glass border */
     border-radius: 12px; 
     padding: 15px;
     box-sizing: border-box;
+    overflow: hidden;
 }
 
+/* --- Responsive Layout --- */
 @media (max-width: 768px) { 
     .chart-container { height: 40vh; padding: 10px; }
     .search-box { padding: 0 15px; }
@@ -645,24 +651,53 @@ table.dataTable tbody tr:last-child td {
 
 /* Information Tables (K-Factor, Tier Codex) */
 .k-table {
-    width: 100%; border-collapse: collapse; margin: 25px 0;
-    background: var(--bg-container); border: 1px solid var(--border-soft); overflow: hidden; table-layout: fixed;
+    width: 100%; 
+    border-collapse: separate !important; 
+    border-spacing: 0 !important;
+    margin: 25px 0;
+    background: var(--dt-table-bg);
+    border: 1px solid var(--glass-border); 
+    border-radius: 8px;
+    overflow: hidden; 
+    table-layout: fixed;
 }
 
-.k-table td:nth-child(1) { width: 15%; }
+.k-table td { 
+    padding: 15px; 
+    border-bottom: 1px solid var(--dt-row-border); 
+    color: var(--text-muted); 
+    text-align: left; 
+    font-size: 0.9em; 
+    transition: background-color 0.2s ease;
+}
+
+/* Subtle hover effect for K-Table rows */
+.k-table tr:hover td {
+    background-color: var(--dt-row-hover);
+}
+
+.k-table tr:last-child td { border-bottom: none; }
+
+/* Column Widths */
+.k-table td:nth-child(1) { width: 15%; white-space: nowrap; }
 .k-table td:nth-child(2) { width: 15%; text-align: center; }
 .k-table td:nth-child(3) { width: 15%; text-align: center; }
 .k-table td:nth-child(4) { width: 55%; }
 
-.k-table td { padding: 15px; border-bottom: 1px solid var(--border-soft); color: var(--text-muted); text-align: left; font-size: 0.9em; }
-.k-table tr:last-child td { border-bottom: none; }
-.k-table td:first-child { white-space: nowrap; }
 .k-table br { display: none; }
 
-.k-val { color: var(--main-color) !important; font-weight: var(--text-bold); font-family: monospace; font-size: 1.3em; white-space: nowrap; }
+/* K-Factor Value Highlighting */
+.k-val { 
+    color: var(--main-color) !important; 
+    font-weight: var(--bold); 
+    font-family: monospace; 
+    font-size: 1.3em; 
+    white-space: nowrap; 
+}
 
+/* Responsive adjustments */
 @media (max-width: 600px) {
-	.k-table { table-layout: auto; }
+    .k-table { table-layout: auto; }
     .k-table br { display: block; }
     .k-table td:nth-child(4) { display: none; }
 }
