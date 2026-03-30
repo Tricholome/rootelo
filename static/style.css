@@ -44,29 +44,36 @@
    ========================================================================= */
    
 html {
+    background-color: var(--main-color) !important;
     scroll-behavior: smooth;
     overscroll-behavior: none;
     min-height: 100%;
-    background-image: 
-        linear-gradient(to bottom, var(--bg-overlay-top), var(--bg-overlay-bottom)),
-        url('../assets/images/pattern.webp');
-    background-color: var(--main-color) !important; 
-    background-attachment: fixed;
-    background-size: cover, 350px;
-    background-repeat: no-repeat, repeat;
 }
 
 body {
-    position: relative;
-    z-index: 0;
     margin: 0;
     padding: 20px 5px;
     min-height: 100vh;
     min-height: 100dvh;
+
+    /* LE SECRET : Le dégradé part de transparent vers un noir progressif */
+    background: 
+        linear-gradient(to bottom, 
+            rgba(0,0,0,0) 0%, 
+            rgba(0,0,0,0.4) 50%, 
+            rgba(0,0,0,0.8) 100%
+        ),
+        url('../assets/images/pattern.webp') repeat;
+    
+    background-attachment: fixed;
+    background-size: auto, 350px;
+    
+    /* On s'assure que le body ne bloque pas la couleur du HTML */
+    background-color: transparent !important;
+    
     font-family: var(--font-ui);
     color: var(--text-main);
     text-align: center;
-    background: transparent;
 }
 
 /* =========================================================================
