@@ -620,7 +620,7 @@ tr[data-tier="squirrel"] td:nth-child(4) { color: var(--color-squirrel) !importa
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 60px 0;
+    padding: 80px 0;
     width: 100%;
 }
 
@@ -639,49 +639,74 @@ tr[data-tier="squirrel"] td:nth-child(4) { color: var(--color-squirrel) !importa
     height: auto;
     filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.5));
     margin-bottom: 15px;
-    transition: filter 0.3s ease;
+    transition: filter 0.4s ease;
 }
 
 .nut-label {
     font-family: var(--font-ui);
     color: var(--text-main);
-    font-weight: var(--text-bold);
-    opacity: 0.7;
-    transition: all 0.3s ease;
-}
-
-.nut-trigger .tooltip-text {
-    bottom: auto;
-    top: 40%;
-    left: 50%;
-    transform: translate(-50%, -50%) scale(0.4);
-    opacity: 0;
-    pointer-events: none;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    opacity: 0.6;
     transition: all 0.4s ease;
 }
 
+/* --- TOOLTIP NUT (Design hérité de la bannière, placement centre) --- */
+
+.nut-tooltip {
+    /* Propriétés de ton Tooltip initial */
+    position: absolute;
+    background: var(--bg-container);
+    border: 1px solid var(--border-soft);
+    color: var(--text-muted);
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    white-space: nowrap;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    z-index: 101;
+    
+    /* Logique de centrage Nut-Specific */
+    bottom: auto;
+    top: 40%; 
+    left: 50%;
+    opacity: 0;
+    pointer-events: none;
+    
+    /* On démarre petit pour l'effet de pop */
+    transform: translate(-50%, -50%) scale(0.4);
+    transition: all 0.3s ease;
+}
+
+/* --- HOVER STATES --- */
+
 .nut-trigger:hover {
-    transform: scale(1.6) translateY(-5px);
+    transform: scale(1.6); /* Ton agrandissement flagrant */
 }
 
 .nut-trigger:hover .nut-sprite {
-    filter: drop-shadow(0 20px 30px rgba(0, 0, 0, 0.6));
+    filter: drop-shadow(0 25px 40px rgba(0, 0, 0, 0.7));
 }
 
 .nut-trigger:hover .nut-label {
     opacity: 1;
     color: var(--main-color);
+    /* On écarte le label pour ne pas boucher la vue */
+    transform: translateY(15px) scale(0.65);
 }
 
-.nut-trigger:active {
-    transform: scale(1.4);
-	transition: transform 0.1s;
-}
-
-.nut-trigger:hover .tooltip-text {
-    opacity: 1 ;
+.nut-trigger:hover .nut-tooltip {
+    opacity: 1;
+    /* On garde scale(0.65) car le parent est déjà à scale(1.6) */
+    /* Cela permet au tooltip de garder une taille normale à l'oeil */
     transform: translate(-50%, -50%) scale(0.65);
 }
 
+/* Active state (Click) */
+.nut-trigger:active {
+    transform: scale(1.45);
+    transition: transform 0.1s;
+}
 
 {% block extra_css %}{% endblock %}
