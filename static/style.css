@@ -186,34 +186,25 @@ body::after {
 
 @media (min-width: 1300px) {
     .screen-deco { 
-        position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; display: block; 
+        position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; 
+        display: block; 
     }
-
+    
     .screen-deco img {
-        height: clamp(300px, 50vh, 900px);
-        top: max(50%, calc(550px - (var(--scroll, 0) * 1px)));
+        height: clamp(300px, 50vh, 900px); 
         position: absolute;
+        transform: translateY(-50%); 
+        top: max(50%, calc(550px - (var(--scroll, 0) * 1px)));
+    }
+
+    .left-deco img { 
+        left: max(15px, calc((100vw - var(--window-max-width)) / 2 + 15px)); 
+        right: auto; 
+    }
+
+    .right-deco img { 
+        right: max(15px, calc((100vw - var(--window-max-width)) / 2 + 15px)); 
         left: auto; 
-        transform: translateY(-50%);
-    }
-
-    .left-deco img, 
-    .right-deco img {
-        max-width: calc(50vw - (var(--window-max-width) / 2) + 15px);
-        min-width: 50px;
-        object-fit: contain;
-    }
-
-    .left-deco img {
-        left: auto;
-        right: calc(50% + (var(--window-max-width) / 2) - 15px);
-        object-position: right;
-    }
-
-    .right-deco img {
-        right: auto;
-        left: calc(50% + (var(--window-max-width) / 2) - 15px);
-        object-position: left;
     }
 }
 
