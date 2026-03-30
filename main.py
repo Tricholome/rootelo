@@ -297,20 +297,42 @@ current_final_df['Rank'] = ranks
 current_history = {k.split('+')[0].split('#')[0]: v for k, v in player_history.items()}
 
 # =========================================================================
-# --- 8. FILTERS & HTML GENERATION (JINJA2) ---
+# --- 8. DATA FILTERING & PREPARATION ---
 # =========================================================================
-print("\n=== GÉNÉRATION DU SITE ===")
+print("\n=== GENERATING SITE ASSETS ===")
 
-# Application du filtre "Minimum 1 victoire" (Identique à ton ancien code)
-display_current_df = pd.DataFrame()
+# --- A. Leaderboard Data (Players) ---
+# Filter: Minimum 1 win required for display
+display_leaderboard_current = []
 if not current_final_df.empty:
-    display_current_df = current_final_df[current_final_df['Wins'].astype(float) >= 1].copy()
+    filtered_df = current_final_df[current_final_df['Wins'].astype(float) >= 1].copy()
+    display_leaderboard_current = prepare_leaderboard_data(filtered_df)
 
-display_archive_df = pd.DataFrame()
+display_leaderboard_archive = []
 if not archive_final_df.empty:
-    display_archive_df = archive_final_df[archive_final_df['Wins'].astype(float) >= 1].copy()
+    filtered_df = archive_final_df[archive_final_df['Wins'].astype(float) >= 1].copy()
+    display_leaderboard_archive = prepare_leaderboard_data(filtered_df)
 
-# A. Génération des pages LH02 (Saison en cours)
+# --- B. Match Data (Top Tables) ---
+# Filter: Limit to Top 100 highest ELO sums
+display_matches_current = []
+if not current_matches_df.empty:
+    display_matches_current = prepare_matches_data(current_matches_df)[:100]
+
+display_matches_archive = []
+if not archive_matches_df.empty:
+    display_matches_archive = prepare_matches_data(archive_matches_df)[:100]
+
+# --- C. Trends Data (Charts) ---
+# Format: JSON strings and sorted name lists for the frontend
+display_trends_current = prepare_trends_data(current_history)
+display_trends_archive = prepare_trends_data(archive_history)
+
+# =========================================================================
+# --- 9. SITE GENERATION (JINJA2 RENDERING) ---
+# =========================================================================
+
+# --- A. Current Season Pages (LH02) ---
 render_page(
     "leaderboard.html", 
     "index.html",
@@ -321,7 +343,7 @@ render_page(
     current_page_base="index",
     page_heading="Leaderboard",
     description=f"Minimum 1 win required for display. Data tracked until {CUTOFF_DATE}.",
-    players=prepare_leaderboard_data(display_current_df)
+    players=display_leaderboard_current
 )
 
 render_page(
@@ -332,8 +354,8 @@ render_page(
     is_archive=False,
     has_seasons=True,
     page_heading="Top Tables",
-    description="Games ranked by total ELO. Click a Game ID to view full match details.",
-    matches=prepare_matches_data(current_matches_df)
+    description="Top 100 games ranked by total ELO. Click a Game ID for match details.",
+    matches=display_matches_current
 )
 
 render_page(
@@ -345,11 +367,11 @@ render_page(
     has_seasons=True,
     page_heading="Player's Journey",
     description="Search for a player to see their ELO evolution over the season.",
-    history_json=json.dumps(current_history),
-    player_names=sorted(list(current_history.keys()))
+    history_json=display_trends_current['history_json'],
+    player_names=display_trends_current['player_names']
 )
 
-# B. Génération des pages Archives (LH01)
+# --- B. Archive Pages (LH01) ---
 render_page(
     "leaderboard.html", 
     "index_lh01.html",
@@ -359,8 +381,8 @@ render_page(
     has_seasons=True,
     current_page_base="index",
     page_heading="Leaderboard",
-    description="Minimum 1 win required for display.",
-    players=prepare_leaderboard_data(display_archive_df)
+    description="Final standings for Season LH01. Minimum 1 win required.",
+    players=display_leaderboard_archive
 )
 
 render_page(
@@ -371,8 +393,8 @@ render_page(
     is_archive=True,
     has_seasons=True,
     page_heading="Top Tables",
-    description="Games ranked by total ELO. Click a Game ID to view full match details.",
-    matches=prepare_matches_data(archive_matches_df)
+    description="Top 100 games from Season LH01.",
+    matches=display_matches_archive
 )
 
 render_page(
@@ -383,12 +405,12 @@ render_page(
     is_archive=True,
     has_seasons=True,
     page_heading="Player's Journey",
-    description="Search for a player to see their ELO evolution over the season.",
-    history_json=json.dumps(archive_history),
-    player_names=sorted(list(archive_history.keys()))
+    description="Historical ELO evolution for Season LH01.",
+    history_json=display_trends_archive['history_json'],
+    player_names=display_trends_archive['player_names']
 )
 
-# C. Génération des pages uniques
+# --- C. Static & Utility Pages ---
 render_page(
     "about.html", 
     "about.html",
@@ -397,7 +419,7 @@ render_page(
     is_archive=False,
     has_seasons=False,
     page_heading="Codex",
-    description="Understanding the mechanics of Rootelo.",
+    description="Understanding the mechanics of Rootelo."
 )
 
 render_page(
@@ -408,7 +430,7 @@ render_page(
     is_archive=False,
     has_seasons=False,
     page_heading="Undergrowth",
-    description="No rank? No stress. The Woodland has room for all kinds of critters.",
+    description="No rank? No stress. The Woodland has room for all kinds of critters."
 )
 
-print("Génération terminée avec succès !")
+print("\n✨ Website generated successfully!")
