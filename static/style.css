@@ -620,7 +620,7 @@ tr[data-tier="squirrel"] td:nth-child(4) { color: var(--color-squirrel) !importa
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 50px 0;
+    padding: 60px 0;
     width: 100%;
 }
 
@@ -631,11 +631,11 @@ tr[data-tier="squirrel"] td:nth-child(4) { color: var(--color-squirrel) !importa
     align-items: center;
     text-decoration: none;
     cursor: pointer;
-    transition: transform 0.3s ease;
+    transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .nut-sprite {
-    width: clamp(140px, 20vw, 210px);
+    width: clamp(90px, 12vw, 130px);
     height: auto;
     filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.5));
     margin-bottom: 15px;
@@ -645,17 +645,17 @@ tr[data-tier="squirrel"] td:nth-child(4) { color: var(--color-squirrel) !importa
 .nut-label {
     font-family: var(--font-ui);
     color: var(--text-main);
-    font-weight: var(--text-medium);
+    font-weight: var(--text-bold);
     opacity: 0.7;
     transition: all 0.3s ease;
 }
 
 .nut-trigger:hover {
-    transform: scale(1.08); 
+    transform: scale(1.6) translateY(-5px);
 }
 
 .nut-trigger:hover .nut-sprite {
-    filter: drop-shadow(0 15px 25px rgba(0, 0, 0, 0.6));
+    filter: drop-shadow(0 20px 30px rgba(0, 0, 0, 0.6));
 }
 
 .nut-trigger:hover .nut-label {
@@ -664,12 +664,8 @@ tr[data-tier="squirrel"] td:nth-child(4) { color: var(--color-squirrel) !importa
 }
 
 .nut-trigger:active {
-    transform: scale(0.95);
-}
-
-.nut-trigger:hover .tooltip-text {
-    opacity: 1;
-    transform: translateX(-50%) translateY(-15px);
+    transform: scale(1.4);
+	transition: transform 0.1s;
 }
 
 
