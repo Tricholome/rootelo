@@ -392,19 +392,19 @@ nav a.active {
    --- 7. DATATABLES (GLOBAL, LEADERBOARD, MATCHES) ---
    ========================================================================= */
 
-/* --- A. Structure de la Table (Effet "Creusé" dans la vitre) --- */
+/* --- A. Table Structure --- */
 table.dataTable { 
     border-collapse: separate !important; 
     border-spacing: 0 !important;
     width: 100% !important; 
     margin-top: 20px !important; 
-    background-color: rgba(0, 0, 0, 0.15) !important; 
+    background-color: var(--dt-table-bg) !important; 
     border-radius: 8px;
     border: 1px solid var(--glass-border) !important;
 }
 
 table.dataTable thead th { 
-    background: rgba(0, 0, 0, 0.25) !important; 
+    background: var(--dt-header-bg) !important; 
     color: var(--text-main) !important; 
     font-size: 0.75em; 
     letter-spacing: 1px; 
@@ -417,13 +417,12 @@ table.dataTable tbody tr {
     background-color: transparent !important; 
 }
 
-/* 🌟 HOVER : Appliqué sur le 'td' pour qu'il s'ajoute par-dessus les couleurs de Tiers */
 table.dataTable tbody tr:hover td { 
-    background-color: rgba(255, 255, 255, 0.07) !important; 
+    background-color: var(--dt-row-hover) !important; 
 }
 
 table.dataTable tbody td { 
-    border-bottom: 1px solid rgba(255,255,255,0.03); 
+    border-bottom: 1px solid var(--dt-row-border); 
     padding: 12px 10px; 
     font-size: 0.95em; 
     transition: background-color 0.2s ease;
@@ -433,7 +432,7 @@ table.dataTable tbody tr:last-child td {
     border-bottom: none;
 }
 
-/* --- B. Contrôles (Recherche & Nombre d'entrées) --- */
+/* --- B. Controls (Search & Length) --- */
 .dataTables_filter label, 
 .dataTables_length label, 
 .dataTables_info, 
@@ -446,7 +445,7 @@ table.dataTable tbody tr:last-child td {
 
 .dataTables_filter input, 
 .dataTables_length select {
-    background: rgba(0, 0, 0, 0.15) !important;
+    background: var(--dt-input-bg) !important;
     border: 1px solid var(--border-soft) !important;
     color: var(--text-main) !important;
     border-radius: 4px; 
@@ -455,9 +454,9 @@ table.dataTable tbody tr:last-child td {
     margin: 0 8px;
     appearance: none; 
     -webkit-appearance: none;
+    -moz-appearance: none;
 }
 
-/* 🌟 Correction Flèche "Show entries" */
 .dataTables_length select {
     padding-right: 24px !important;
     background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='gray' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") !important;
@@ -470,7 +469,7 @@ table.dataTable tbody tr:last-child td {
     color: var(--text-main); 
 }
 
-/* --- C. Pagination (Previous, Next, Numbers) --- */
+/* --- C. Pagination --- */
 .dataTables_paginate .paginate_button { 
     color: var(--text-muted) !important; 
     padding: 5px 12px !important; 
@@ -481,14 +480,12 @@ table.dataTable tbody tr:last-child td {
     text-decoration: none !important;
 }
 
-/* Surlignage des boutons au survol */
 .dataTables_paginate .paginate_button:hover:not(.current):not(.disabled) { 
-    background: rgba(255, 255, 255, 0.08) !important; 
+    background: var(--bg-hover) !important; 
     color: var(--text-main) !important;
     border: 1px solid var(--border-soft) !important;
 }
 
-/* Page actuelle */
 .dataTables_paginate .paginate_button.current { 
     background: rgba(255, 255, 255, 0.1) !important; 
     color: var(--text-bright) !important; 
@@ -501,7 +498,7 @@ table.dataTable tbody tr:last-child td {
     cursor: default !important;
 }
 
-/* --- D. Spécificités Leaderboard & Matches --- */
+/* --- D. Specifics (Leaderboard, Matches) --- */
 .tier-icon-container { 
     width: 36px; 
     height: 36px; 
@@ -510,6 +507,7 @@ table.dataTable tbody tr:last-child td {
     justify-content: center; 
     margin: 0 auto; 
 }
+
 .tier-icon-container img { max-width: 100%; max-height: 100%; object-fit: contain; }
 
 .unranked { 
