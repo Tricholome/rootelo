@@ -463,70 +463,59 @@ table.dataTable > tbody > tr.child ul.dtr-details { background: var(--bg-contain
    ========================================================================= */
 
 .search-box { 
-    margin: 30px auto; 
+    margin: 20px auto; 
     text-align: center; 
-    max-width: 500px;
-    padding: 0 20px;
+    max-width: 450px;
 }
 
 .search-box input { 
     appearance: none;
     -webkit-appearance: none;
-    background: color-mix(in srgb, var(--main-color) 5%, rgba(20, 20, 20, 0.6)) !important;
-    backdrop-filter: blur(5px);
+    background: rgba(255, 255, 255, 0.03) !important;
     color: var(--text-main) !important; 
     border: 1px solid var(--border-soft) !important; 
-    padding: 14px 20px; 
-    border-radius: 10px; 
+    padding: 10px 15px; 
+    border-radius: 6px; 
     width: 100%; 
     font-family: var(--font-ui);
-    font-size: 0.95em;
     outline: none;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    transition: border-color 0.2s;
 }
 
 .search-box input:focus { 
     border-color: var(--main-color) !important; 
-    box-shadow: 0 0 15px color-mix(in srgb, var(--main-color), transparent 70%);
-    background: color-mix(in srgb, var(--main-color) 10%, rgba(30, 30, 30, 0.8)) !important;
+}
+
+.search-box input::-webkit-search-cancel-button {
+    -webkit-appearance: none;
+    height: 14px; width: 14px;
+    background-color: var(--text-muted);
+    mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z'/></svg>") no-repeat 50% 50%;
+    -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z'/></svg>") no-repeat 50% 50%;
+    cursor: pointer;
 }
 
 .chart-wrapper { 
-    width: 95%; 
+    width: 100%; 
     max-width: var(--window-max-width); 
-    margin: 0 auto 50px;
-    box-sizing: border-box; 
+    margin: 0 auto 40px;
 }
 
 .chart-container { 
     position: relative; 
     width: 100%; 
-    height: 60vh; 
-    min-height: 400px;
-    background: color-mix(in srgb, var(--main-color) 5%, rgba(15, 15, 15, 0.7));
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    height: 55vh; 
+    min-height: 350px;
+    background: rgba(15, 15, 15, 0.4);
+    border: 1px solid var(--border-soft); 
     border-radius: 12px; 
-    border: 1px solid color-mix(in srgb, var(--main-color), rgba(255, 255, 255, 0.1) 15%); 
-    padding: 20px;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+    padding: 15px;
     box-sizing: border-box;
 }
 
-.landscape-hint { 
-    display: none; 
-    color: var(--text-muted); 
-    font-size: 0.75em; 
-    margin-bottom: 12px; 
-    text-transform: uppercase; 
-    letter-spacing: 2px; 
-    font-weight: 600;
-}
-
-@media (max-width: 768px) and (orientation: portrait) { 
-    .landscape-hint { display: block; } 
-    .chart-container { height: 45vh; padding: 10px; }
+@media (max-width: 768px) { 
+    .chart-container { height: 40vh; padding: 10px; }
+    .search-box { padding: 0 15px; }
 }
 
 /* =========================================================================
