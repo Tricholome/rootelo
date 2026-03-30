@@ -77,6 +77,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
 		if (!text) return;
 
+		const modalContent = modal.querySelector('.modal-content');
+    	modalContent.style.setProperty('--tier-color', color);
+
 		// On cible les éléments déjà existants dans le HTML
 		const modalTitle = document.getElementById('modalTitle');
 		const modalElo = document.getElementById('modalElo');
