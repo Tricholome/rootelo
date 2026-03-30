@@ -533,42 +533,19 @@ table.dataTable > tbody > tr.child ul.dtr-details { background: var(--bg-contain
 
 /* Information Tables (K-Factor, Tier Codex) */
 .k-table {
-    width: 100%; 
-    border-collapse: collapse; 
-    margin: 25px 0;
-    background: var(--glass-bg);
-    border: 1px solid var(--glass-border); 
-    border-radius: 8px; 
-    overflow: hidden;
+    width: 100%; border-collapse: collapse; margin: 25px 0;
+    background: var(--bg-container); border: 1px solid var(--border-soft); border-radius: 8px; overflow: hidden;
 }
 
-.k-table td { 
-    padding: 12px 10px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.03); 
-    color: var(--text-muted); 
-    text-align: left; 
-    font-size: 0.9em; 
-}
-
-.k-table tr:first-child td {
-    background: var(--bg-page) !important;
-    color: var(--text-muted) !important; 
-    font-size: 0.75em; 
-    font-weight: var(--bold) !important;
-    text-transform: uppercase; 
-    letter-spacing: 1px;
-    padding: 15px 10px !important;
-    border-bottom: 1px solid var(--border-soft) !important;
-}
-
+.k-table td { padding: 15px; border-bottom: 1px solid var(--border-soft); color: var(--text-muted); text-align: left; font-size: 0.9em; }
 .k-table tr:last-child td { border-bottom: none; }
-
+.k-table td:first-child { white-space: nowrap; }
 .k-table br { display: none; }
 
-.k-val { color: var(--main-color) !important; font-weight: var(--bold); font-family: monospace; font-size: 1.3em; white-space: nowrap; }
+.k-val { color: var(--main-color) !important; font-weight: var(--text-bold); font-family: monospace; font-size: 1.3em; white-space: nowrap; }
 
 .tier-icon-small { width: 24px; height: 24px; vertical-align: middle; margin-right: 12px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3)); }
-.tier-label { font-weight: var(--medium); font-size: 0.95em; letter-spacing: 0.5px; }
+.tier-label { font-weight: var(--text-medium); font-size: 0.95em; letter-spacing: 0.5px; }
 
 @media (max-width: 600px) {
     .k-table br { display: block; }
