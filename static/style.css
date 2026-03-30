@@ -26,9 +26,9 @@
 .text-center  { text-align: center !important; }
 
 /* Weights */
-.text-bold    { font-weight: 900 !important; } 
-.text-medium  { font-weight: 600 !important; } 
-.text-normal  { font-weight: 400 !important; }
+.text-bold    { font-weight: var(--bold) !important; } 
+.text-medium  { font-weight: var(--medium) !important; } 
+.text-normal  { font-weight: var(--normal) !important; }
 
 /* Colors */
 .text-bright  { color: var(--text-bright) !important; }    
@@ -93,13 +93,13 @@ body::after {
     width: 95%;
     max-width: var(--window-max-width);
     margin: 0 auto;
-    background: color-mix(in srgb, var(--main-color) 10%, rgba(15, 15, 15, 0.8));
+    background: color-mix(in srgb, var(--main-color) 10%, var(--glass-bg));
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--glass-border);
     border-radius: 12px;
     box-sizing: border-box;
-    box-shadow: inset 0 2px 0 0 color-mix(in srgb, var(--main-color) 50%, transparent), 0 15px 35px rgba(0, 0, 0, 0.6);
+    box-shadow: inset 0 2px 0 0 color-mix(in srgb, var(--main-color) 50%, transparent), var(--glass-shadow);
 }
 
 .app-banner {
@@ -137,7 +137,7 @@ body::after {
 .footer-credits span:not(.footer-separator) { flex: 1; }
 .footer-credits span:first-child { text-align: right; }
 .footer-credits span:last-child { text-align: left; }
-.footer-credits strong { color: var(--text-main); font-weight: var(--text-medium); }
+.footer-credits strong { color: var(--text-main); font-weight: var(--medium); }
 .footer-separator { margin: 0 15px; color: var(--border-soft); opacity: 0.5; }
 .footer-date { font-style: italic; opacity: 0.7; display: block; }
 
@@ -210,7 +210,7 @@ body::after {
     margin: 0;
     letter-spacing: 4px;
     text-transform: uppercase;
-    font-weight: var(--text-bold);
+    font-weight: var(--bold);
     text-shadow: 0 2px 10px rgba(0,0,0,0.5);
 }
 
@@ -308,7 +308,7 @@ body::after {
     z-index: 100;
 }
 
-.tooltip-text strong { font-weight: var(--text-medium); }
+.tooltip-text strong { font-weight: var(--medium); }
 
 @media (hover: hover) {
     .banner-icons a.tooltip-link:hover .tooltip-text { opacity: 1; transform: translateX(-50%) translateY(-15px); }
@@ -353,7 +353,7 @@ nav {
 nav a {
     color: var(--text-muted);
     text-decoration: none;
-    font-weight: 600;
+    font-weight: var(--medium);
     text-transform: uppercase;
     font-size: 0.85em;
     letter-spacing: 1px;
@@ -382,8 +382,8 @@ nav a.active {
 
 /* Season Selectors */
 .season-selector { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 20px auto 10px; }
-.season-label { font-size: 0.7em; text-transform: uppercase; color: var(--text-muted); letter-spacing: 1.2px; font-weight: var(--text-bold); margin-right: 5px;}
-.season-btn { text-decoration: none; font-size: 0.75em; font-weight: var(--text-medium); color: var(--text-muted); padding: 6px 14px; border-radius: 4px; background: var(--bg-surface); border: 1px solid var(--border-soft); transition: 0.2s; }
+.season-label { font-size: 0.7em; text-transform: uppercase; color: var(--text-muted); letter-spacing: 1.2px; font-weight: var(--bold); margin-right: 5px;}
+.season-btn { text-decoration: none; font-size: 0.75em; font-weight: var(--medium); color: var(--text-muted); padding: 6px 14px; border-radius: 4px; background: var(--bg-surface); border: 1px solid var(--border-soft); transition: 0.2s; }
 .season-btn:hover { color: var(--text-main); background: var(--bg-hover); }
 .season-btn.active { background: transparent !important; color: var(--main-color) !important; border-color: var(--main-color) !important; }
 
@@ -417,20 +417,20 @@ table.dataTable tbody td { border-bottom: 1px solid rgba(255,255,255,0.03); padd
 .dataTables_length select option { background-color: var(--bg-surface); color: var(--text-main); }
 
 .paginate_button { color: var(--text-muted) !important; padding: 5px 10px; cursor: pointer; }
-.paginate_button.current { background: var(--bg-hover) !important; color: var(--text-main) !important; border-radius: 4px; font-weight: var(--text-medium); }
+.paginate_button.current { background: var(--bg-hover) !important; color: var(--text-main) !important; border-radius: 4px; font-weight: var(--medium); }
 
 /* Responsive Expand Button */
 table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     background: var(--bg-surface) !important; color: var(--text-main) !important;
     border: 1px solid var(--border-soft) !important; border-radius: 3px;
-    box-shadow: none !important; font-weight: var(--text-bold); height: 16px; width: 16px; line-height: 16px; text-align: center; text-indent: 0 !important;
+    box-shadow: none !important; font-weight: var(--bold); height: 16px; width: 16px; line-height: 16px; text-align: center; text-indent: 0 !important;
 }
 table.dataTable > tbody > tr.child ul.dtr-details { background: var(--bg-container); border: 1px solid var(--border-soft); padding: 10px; list-style: none; }
 
 /* Leaderboard Specifics */
 .tier-icon-container { width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; margin: 0 auto; }
 .tier-icon-container img { max-width: 100%; max-height: 100%; object-fit: contain; }
-.unranked { opacity: 0.4; font-style: italic; filter: grayscale(1); font-weight: var(--text-medium) !important; }
+.unranked { opacity: 0.4; font-style: italic; filter: grayscale(1); font-weight: var(--medium) !important; }
 
 /* Matches Specifics */
 .lineup-cell { white-space: normal !important; word-wrap: break-word; min-width: 150px; max-width: 400px; line-height: 1.4; text-align: left !important;}
@@ -514,14 +514,14 @@ table.dataTable > tbody > tr.child ul.dtr-details { background: var(--bg-contain
 .codex-section h2 {
     color: var(--main-color);
     border-bottom: 1px solid var(--border-soft); padding-bottom: 8px; margin: 40px 0 15px 0;
-    font-family: var(--font-title); font-size: 1.1em; font-weight: var(--text-medium); text-align: left;
+    font-family: var(--font-title); font-size: 1.1em; font-weight: var(--medium); text-align: left;
 }
 .codex-section h2:first-of-type { margin-top: 0; }
 
 .codex-section p { margin-bottom: 20px; color: var(--text-muted); text-align: left; font-size: 0.95em; }
-.codex-section strong { color: var(--text-main); font-weight: var(--text-medium); }
+.codex-section strong { color: var(--text-main); font-weight: var(--medium); }
 
-.codex-section a { color: var(--text-main); text-decoration: none; font-weight: var(--text-medium); border-bottom: 1px dotted var(--main-color); transition: 0.2s; }
+.codex-section a { color: var(--text-main); text-decoration: none; font-weight: var(--medium); border-bottom: 1px dotted var(--main-color); transition: 0.2s; }
 .codex-section a:hover { border-bottom: 1px solid var(--main-color); color: var(--main-color); }
 
 /* Information Tables (K-Factor, Tier Codex) */
@@ -535,10 +535,10 @@ table.dataTable > tbody > tr.child ul.dtr-details { background: var(--bg-contain
 .k-table td:first-child { white-space: nowrap; }
 .k-table br { display: none; }
 
-.k-val { color: var(--main-color) !important; font-weight: var(--text-bold); font-family: monospace; font-size: 1.3em; white-space: nowrap; }
+.k-val { color: var(--main-color) !important; font-weight: var(--bold); font-family: monospace; font-size: 1.3em; white-space: nowrap; }
 
 .tier-icon-small { width: 24px; height: 24px; vertical-align: middle; margin-right: 12px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3)); }
-.tier-label { font-weight: var(--text-medium); font-size: 0.95em; letter-spacing: 0.5px; }
+.tier-label { font-weight: var(--medium); font-size: 0.95em; letter-spacing: 0.5px; }
 
 @media (max-width: 600px) {
     .k-table br { display: block; }
@@ -556,14 +556,12 @@ table.dataTable > tbody > tr.child ul.dtr-details { background: var(--bg-contain
 }
 
 .modal-content {
-    /* On définit une couleur par défaut si le JS n'est pas encore passé */
-    --tier-color: var(--main-color); 
-    
+    --tier-color: var(--main-color);
     position: relative;
     width: 90%; max-width: 600px; padding: 40px;
-    background: color-mix(in srgb, var(--tier-color) 10%, rgba(15, 15, 15, 0.98));
+    background: color-mix(in srgb, var(--tier-color) 10%, var(--glass-bg));
     backdrop-filter: blur(15px);
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--glass-border);
     border-radius: 16px;
     
     /* LE LISERÉ DYNAMIQUE : utilise --tier-color injecté par le JS */
@@ -596,11 +594,11 @@ table.dataTable > tbody > tr.child ul.dtr-details { background: var(--bg-contain
 
 #modalTitle { 
     margin: 0; font-family: var(--font-title); color: var(--text-main); 
-    font-size: 2.8em; letter-spacing: 4px; font-weight: 900; 
+    font-size: 2.8em; letter-spacing: 4px; font-weight: var(--bold); 
 }
 
 #modalElo { 
-    font-weight: 900; font-size: 1.1em; margin-top: 5px; 
+    font-weight: var(--bold); font-size: 1.1em; margin-top: 5px; 
     /* La couleur est gérée directement par modalElo.style.color dans ton JS */
 }
 
@@ -672,7 +670,7 @@ tr[data-tier="squirrel"] td:nth-child(4) { color: var(--color-squirrel) !importa
 .nut-label {
     font-family: var(--font-ui);
 	color: var(--text-muted);
-    font-weight: var(--text-medium);
+    font-weight: var(--medium);
     text-transform: uppercase;
     font-size: 0.85em;
     letter-spacing: 1px;
@@ -685,7 +683,7 @@ tr[data-tier="squirrel"] td:nth-child(4) { color: var(--color-squirrel) !importa
     background: var(--bg-container);
     border: 1px solid var(--border-soft);
     color: var(--main-color);
-	font-weight: var(--text-medium);
+	font-weight: var(--medium);
     padding: 6px 12px;
     border-radius: 6px;
     font-size: 0.75rem;
