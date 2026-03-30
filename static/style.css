@@ -201,18 +201,18 @@ body::after {
 }
 
 @media (min-width: 1300px) and (max-width: 1999px) {
-    .left-deco img { left: 15px; right: auto; }
-    .right-deco img { right: 15px; left: auto; }
+    .left-deco img { left: 50px; right: auto; }
+    .right-deco img { right: 50px; left: auto; }
 }
 
 @media (min-width: 2000px) {
     .left-deco img { 
         left: auto;
-        right: calc(50vw + (var(--window-max-width) / 2) - 15px); 
+        right: calc(50vw + (var(--window-max-width) / 2) - 50px); 
     }
     .right-deco img { 
         right: auto;
-        left: calc(50vw + (var(--window-max-width) / 2) - 15px); 
+        left: calc(50vw + (var(--window-max-width) / 2) - 50px); 
     }
 }
 
