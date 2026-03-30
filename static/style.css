@@ -93,21 +93,13 @@ body::after {
     width: 95%;
     max-width: var(--window-max-width);
     margin: 0 auto;
-    
-    /* Fond & Flou */
     background: color-mix(in srgb, var(--main-color) 10%, rgba(15, 15, 15, 0.8));
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    
-    /* Bordure très fine et discrète */
     border: 1px solid rgba(255, 255, 255, 0.05);
     border-radius: 12px;
     box-sizing: border-box;
-
-    /* LES DEUX OMBRES RÉUNIES */
-    box-shadow: 
-        inset 0 1px 0 0 color-mix(in srgb, var(--main-color) 50%, transparent), /* Reflet haut */
-        0 15px 35px rgba(0, 0, 0, 0.6);                                         /* Ombre portée */
+    box-shadow: inset 0 3px 0 0 color-mix(in srgb, var(--main-color) 50%, transparent), 0 15px 35px rgba(0, 0, 0, 0.6);
 }
 
 .app-banner {
@@ -382,8 +374,11 @@ nav a.active {
 }
 
 .nav-separator {
-    width: 80%; height: 1.5px; margin: 10px auto;
-    background: linear-gradient(90deg, transparent, var(--border-soft), transparent);
+    width: 90%; 
+    height: 0; 
+    margin: 15px auto;
+    border-top: 1px solid rgba(0, 0, 0, 0.4);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 /* Season Selectors */
