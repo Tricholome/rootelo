@@ -232,39 +232,25 @@ body::after {
     .page-intro h2 { font-size: 2em; }
 }
 
-
 /* =========================================================================
    --- 5. HEADER, BANNER & TOOLTIPS ---
    ========================================================================= */
+
 .banner-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 5px;
-    margin-bottom: 20px;
-    flex-wrap: nowrap;
+    display: flex; align-items: center; justify-content: center;
+    gap: 5px; margin-bottom: 20px; flex-wrap: nowrap;
 }
 
 .banner-icons { display: flex; gap: -10px; align-items: center; }
 
 /* Interactive Links */
 .banner-icons a.tooltip-link {
-    position: relative;
-    display: inline-block;
-    margin: 0 -5px;
-    z-index: 1;
-    text-decoration: none;
-    -webkit-tap-highlight-color: transparent;
+    position: relative; display: inline-block; margin: 0 -5px;
+    z-index: 1; text-decoration: none; -webkit-tap-highlight-color: transparent;
     transition: margin 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-/* Hover & Active States */
-@media (hover: hover) {
-    .banner-icons a.tooltip-link:hover { margin: 0 15px; z-index: 100; }
-}
-.banner-icons a.tooltip-link.expanded { margin: 0 15px; z-index: 100; }
-
-/* Icons */
+/* Icons Style de base */
 .banner-icons a.tooltip-link img {
     width: 85px; height: 85px; object-fit: contain;
     filter: drop-shadow(0 4px 6px rgba(0,0,0,0.6));
@@ -272,73 +258,71 @@ body::after {
     display: block;
 }
 
-@media (hover: hover) {
-    .banner-icons a.tooltip-link:hover img {
-        width: 140px; height: 140px;
-        filter: drop-shadow(0 15px 25px rgba(0,0,0,0.9));
-        transform: translateY(-10px) scale(1.15);
-    }
-    .banner-icons.left a.tooltip-link:hover img { transform: translateY(-10px) scale(1.15) rotate(-8deg); }
-    .banner-icons.right a.tooltip-link:hover img { transform: translateY(-10px) scale(1.15) rotate(8deg); }
+/* --- ÉTAT ACTIF (HOVER OU CLASSE .EXPANDED DU JS) --- */
+
+/* 1. Animation du lien (écartement) */
+.banner-icons a.tooltip-link:hover,
+.banner-icons a.tooltip-link.expanded { 
+    margin: 0 15px; z-index: 100; 
 }
 
+/* 2. Animation de l'image (grossissement + montée) */
+.banner-icons a.tooltip-link:hover img,
 .banner-icons a.tooltip-link.expanded img {
     width: 140px; height: 140px;
     filter: drop-shadow(0 15px 25px rgba(0,0,0,0.9));
     transform: translateY(-10px) scale(1.15);
 }
-.banner-icons.left a.tooltip-link.expanded img { transform: translateY(-10px) scale(1.15) rotate(-8deg); }
+
+/* 3. Rotations spécifiques (gauche / droite) */
+.banner-icons.left a.tooltip-link:hover img,
+.banner-icons.left a.tooltip-link.expanded img  { transform: translateY(-10px) scale(1.15) rotate(-8deg); }
+.banner-icons.right a.tooltip-link:hover img,
 .banner-icons.right a.tooltip-link.expanded img { transform: translateY(-10px) scale(1.15) rotate(8deg); }
 
-/* Tooltips */
+/* --- LOGIQUE DES TOOLTIPS --- */
+
 .tooltip-text {
-    position: absolute;
-    bottom: 90%; left: 50%;
+    position: absolute; bottom: 95%; left: 50%;
     transform: translateX(-50%) translateY(10px);
-    background: var(--bg-container);
+    background: rgba(15, 15, 15, 0.95); /* Plus sombre pour ta nouvelle esthétique */
+    backdrop-filter: blur(8px);
     border: 1px solid var(--border-soft);
     color: var(--text-muted);
-    padding: 6px 12px;
-    border-radius: 6px;
-    font-size: 0.75rem;
-    white-space: nowrap;
-    opacity: 0;
-    pointer-events: none;
+    padding: 6px 12px; border-radius: 6px;
+    font-size: 0.75rem; white-space: nowrap;
+    opacity: 0; pointer-events: none;
     transition: all 0.3s ease;
     box-shadow: 0 4px 10px rgba(0,0,0,0.5);
     z-index: 101;
 }
 
-.tooltip-text strong { font-weight: 800; }
-
-@media (hover: hover) {
-    .banner-icons a.tooltip-link:hover .tooltip-text { opacity: 1; transform: translateX(-50%) translateY(-15px); }
+/* Apparition (Hover & JS) */
+.tooltip-link:hover .tooltip-text,
+.tooltip-link.expanded .tooltip-text { 
+    opacity: 1 !important; 
+    transform: translateX(-50%) translateY(-15px) !important; 
 }
-.banner-icons a.tooltip-link.expanded .tooltip-text { opacity: 1; transform: translateX(-50%) translateY(-15px); }
 
-/* Banner Mobile Adjustments */
+/* --- ADAPTATION MOBILE --- */
 @media (max-width: 768px) and (orientation: portrait) {
     .banner-container { flex-wrap: wrap; gap: 10px; }
-    .banner-center { order: 1; width: 100%; margin-bottom: 10px; }
     .banner-icons { order: 2; flex-wrap: nowrap; gap: 5px; }
-    
-    .banner-icons a.tooltip-link, .banner-icons a.tooltip-link.expanded { margin: 0; display: inline-block; }
+    .banner-icons a.tooltip-link { margin: 0 !important; } /* On fige les icônes sur mobile */
     .banner-icons a.tooltip-link img { width: 60px !important; height: 60px !important; }
     
-    .banner-icons.left a.tooltip-link.expanded img { transform: translateY(-8px) scale(1.4) rotate(-8deg) !important; position: relative; z-index: 100; }
-    .banner-icons.right a.tooltip-link.expanded img { transform: translateY(-8px) scale(1.4) rotate(8deg) !important; position: relative; z-index: 100; }
-    
-    .tooltip-text { display: none; }
-    .banner-icons a.tooltip-link.expanded .tooltip-text {
-        display: block !important;
-        bottom: 115%; transform: none; width: 150px;
-        white-space: normal; text-align: center; padding: 8px;
+    /* On surcharge l'animation .expanded pour le tactile mobile */
+    .banner-icons a.tooltip-link.expanded img { 
+        transform: translateY(-8px) scale(1.4) !important; 
     }
-    .banner-icons.left a.tooltip-link.expanded .tooltip-text { left: 0; }
-    .banner-icons.right a.tooltip-link.expanded .tooltip-text { right: 0; left: auto; }
-    .tooltip-text strong { display: block; margin-bottom: 2px; }
+    
+    /* Comportement spécifique du Tooltip sur mobile */
+    .banner-icons a.tooltip-link.expanded .tooltip-text {
+        display: block !important; bottom: 120%; transform: none !important; 
+        left: 50%; transform: translateX(-50%) !important;
+        width: 150px; white-space: normal; text-align: center;
+    }
 }
-
 
 /* =========================================================================
    --- 6. NAVIGATION & BUTTONS ---
@@ -626,19 +610,18 @@ tr[data-tier="squirrel"] td:nth-child(4) { color: var(--color-squirrel) !importa
 }
 
 .nut-trigger {
+    position: relative; /* Nécessaire pour le tooltip */
     display: flex;
     flex-direction: column;
     align-items: center;
     text-decoration: none;
     cursor: pointer;
-    /* On garde une transition fluide pour le scale */
     transition: transform 0.3s ease;
 }
 
 .nut-sprite {
     width: clamp(140px, 20vw, 210px);
     height: auto;
-    /* Ombre très simplifiée : juste une base pour décoller du fond */
     filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.5));
     margin-bottom: 15px;
     transition: filter 0.3s ease;
@@ -654,29 +637,39 @@ tr[data-tier="squirrel"] td:nth-child(4) { color: var(--color-squirrel) !importa
     transition: all 0.3s ease;
 }
 
-/* --- HOVER STATES (DYNAMIQUE MAIS PROPRE) --- */
+/* --- LOGIQUE DE LA NOIX --- */
 
 .nut-trigger:hover {
-    /* On garde l'agrandissement que tu aimes */
     transform: scale(1.08); 
 }
 
 .nut-trigger:hover .nut-sprite {
-    /* Suppression du glow "néon" et des ombres lourdes */
-    /* On remplace par une ombre portée un peu plus nette pour l'effet de hauteur */
     filter: drop-shadow(0 15px 25px rgba(0, 0, 0, 0.6));
 }
 
 .nut-trigger:hover .nut-label {
     opacity: 1;
-    /* On garde la coloration du texte par le Tier */
     color: var(--main-color);
 }
 
-/* Active state (Click) */
 .nut-trigger:active {
-    /* Effet d'écrasement au clic */
     transform: scale(0.95);
+}
+
+/* --- TOOLTIP RÉUTILISÉ --- 
+   On applique les règles de la section 5 à l'élément .tooltip-text 
+   qui se trouve dans .nut-trigger
+----------------------------------------------------------- */
+
+/* On force l'apparition au survol de la noix */
+.nut-trigger:hover .tooltip-text {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-15px); /* Même mouvement que la bannière */
+}
+
+/* Ajustement spécifique car la noix est plus haute que les icônes de bannière */
+.nut-trigger .tooltip-text {
+    bottom: 100%; /* On le place bien au-dessus de l'image */
 }
 
 {% block extra_css %}{% endblock %}
