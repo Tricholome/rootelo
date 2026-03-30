@@ -391,18 +391,20 @@ nav a.active {
 /* =========================================================================
    --- 7. DATATABLES (GLOBAL, LEADERBOARD, MATCHES) ---
    ========================================================================= */
-/* DataTables Global Settings */
+/* DataTables Global Settings - Effet "Creusé" dans la vitre */
 table.dataTable { 
-    border-collapse: collapse !important; 
+    border-collapse: separate !important; /* Nécessaire pour arrondir les angles de la table */
+    border-spacing: 0 !important;
     width: 100% !important; 
     margin-top: 20px !important; 
-    border-bottom: none !important; 
-    background-color: rgba(0, 0, 0, 0.4) !important; /* NOUVEAU: Fond global assombri */
+    background-color: rgba(0, 0, 0, 0.15) !important; /* Très léger, laisse passer ton blur */
+    border-radius: 8px;
+    border: 1px solid var(--glass-border) !important;
 }
 
 table.dataTable thead th { 
-    background: #080808 !important; /* NOUVEAU: Noir très profond */
-    color: var(--text-muted) !important;
+    background: rgba(0, 0, 0, 0.25) !important; /* Sombre mais toujours vitré */
+    color: var(--text-main) !important; 
     font-size: 0.75em; 
     letter-spacing: 1px; 
     text-transform: uppercase; 
@@ -412,17 +414,23 @@ table.dataTable thead th {
 
 table.dataTable tbody tr { 
     background-color: transparent !important; 
-    transition: background-color 0.2s ease; /* NOUVEAU: Transition fluide */
 }
 
-table.dataTable tbody tr:hover { 
-    background-color: rgba(255, 255, 255, 0.04) !important; /* NOUVEAU: Survol très discret */
+/* 🌟 L'ASTUCE DU HOVER : Appliqué sur le 'td', il passe AU-DESSUS des couleurs de Tiers du 'tr' ! */
+table.dataTable tbody tr:hover td { 
+    background-color: rgba(255, 255, 255, 0.06) !important; 
 }
 
 table.dataTable tbody td { 
     border-bottom: 1px solid rgba(255,255,255,0.03); 
     padding: 12px 10px; 
     font-size: 0.95em; 
+    transition: background-color 0.2s ease; /* Rend le hover très fluide */
+}
+
+/* Pour ne pas avoir de double bordure tout en bas de la table */
+table.dataTable tbody tr:last-child td {
+    border-bottom: none;
 }
 
 /* DataTables Controls (Search, Pagination) */
@@ -430,7 +438,7 @@ table.dataTable tbody td {
 .dataTables_info, .dataTables_paginate { padding-top: 15px !important; }
 
 .dataTables_filter input, .dataTables_length select {
-    background: rgba(0, 0, 0, 0.4) !important; /* NOUVEAU: Assorti à la table */
+    background: rgba(0, 0, 0, 0.15) !important; /* Assorti au fond de la table */
     border: 1px solid var(--border-soft) !important;
     color: var(--text-main) !important;
     border-radius: 4px; padding: 4px 8px; outline: none; margin: 0 8px;
