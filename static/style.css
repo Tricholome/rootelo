@@ -392,17 +392,45 @@ nav a.active {
    --- 7. DATATABLES (GLOBAL, LEADERBOARD, MATCHES) ---
    ========================================================================= */
 /* DataTables Global Settings */
-table.dataTable { border-collapse: collapse !important; width: 100% !important; margin-top: 20px !important; border-bottom: none !important; }
-table.dataTable thead th { background: var(--bg-page) !important; color: var(--text-muted) !important; font-size: 0.75em; letter-spacing: 1px; text-transform: uppercase; padding: 15px 10px !important; border-bottom: 1px solid var(--border-soft) !important; }
-table.dataTable tbody tr { background-color: transparent !important; }
-table.dataTable tbody td { border-bottom: 1px solid rgba(255,255,255,0.03); padding: 12px 10px; font-size: 0.95em; }
+table.dataTable { 
+    border-collapse: collapse !important; 
+    width: 100% !important; 
+    margin-top: 20px !important; 
+    border-bottom: none !important; 
+    background-color: rgba(0, 0, 0, 0.4) !important; /* NOUVEAU: Fond global assombri */
+}
+
+table.dataTable thead th { 
+    background: #080808 !important; /* NOUVEAU: Noir très profond */
+    color: var(--text-muted) !important;
+    font-size: 0.75em; 
+    letter-spacing: 1px; 
+    text-transform: uppercase; 
+    padding: 15px 10px !important; 
+    border-bottom: 1px solid var(--border-soft) !important; 
+}
+
+table.dataTable tbody tr { 
+    background-color: transparent !important; 
+    transition: background-color 0.2s ease; /* NOUVEAU: Transition fluide */
+}
+
+table.dataTable tbody tr:hover { 
+    background-color: rgba(255, 255, 255, 0.04) !important; /* NOUVEAU: Survol très discret */
+}
+
+table.dataTable tbody td { 
+    border-bottom: 1px solid rgba(255,255,255,0.03); 
+    padding: 12px 10px; 
+    font-size: 0.95em; 
+}
 
 /* DataTables Controls (Search, Pagination) */
 .dataTables_filter label, .dataTables_length label, .dataTables_info, .dataTables_paginate { color: var(--text-muted) !important; font-size: 0.8em; }
 .dataTables_info, .dataTables_paginate { padding-top: 15px !important; }
 
 .dataTables_filter input, .dataTables_length select {
-    background: var(--bg-surface) !important;
+    background: rgba(0, 0, 0, 0.4) !important; /* NOUVEAU: Assorti à la table */
     border: 1px solid var(--border-soft) !important;
     color: var(--text-main) !important;
     border-radius: 4px; padding: 4px 8px; outline: none; margin: 0 8px;
@@ -414,10 +442,11 @@ table.dataTable tbody td { border-bottom: 1px solid rgba(255,255,255,0.03); padd
     background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='gray' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") !important;
     background-repeat: no-repeat !important; background-position: right 8px center !important;
 }
-.dataTables_length select option { background-color: var(--bg-surface); color: var(--text-main); }
+
+dataTables_length select option { background-color: var(--bg-container); color: var(--text-main); } /* NOUVEAU: Fond du menu déroulant */
 
 .paginate_button { color: var(--text-muted) !important; padding: 5px 10px; cursor: pointer; }
-.paginate_button.current { background: var(--bg-hover) !important; color: var(--text-main) !important; border-radius: 4px; font-weight: var(--medium); }
+.paginate_button.current { background: rgba(255, 255, 255, 0.1) !important; color: var(--text-main) !important; border-radius: 4px; font-weight: var(--medium); } /* NOUVEAU: Bouton actif plus neutre/sombre */
 
 /* Responsive Expand Button */
 table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
