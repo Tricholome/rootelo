@@ -1,676 +1,144 @@
+// Moteur de Scroll Dynamique pour le CSS
+window.addEventListener('scroll', () => {
+	const scrollY = window.scrollY;
+	const isMobile = window.innerWidth < 1100;
 
-/* =========================================================================
-   ROOTELO - MAIN STYLESHEET
-   Table of Contents:
-   0. Text Utilities
-   1. Global Styles & Wallpaper
-   2. Layout & Containers
-   3. Background Decorations
-   4. Typography & UI Elements
-   5. Header, Banner & Tooltips
-   6. Navigation & Buttons
-   7. DataTables (Global, Leaderboard, Matches)
-   8. Chart (Trends)
-   9. Codex & Static Content (About page)
-   10. Modals
-   11. Tier-based Coloration
-   12. Interaction: Clickable Nut
-   ========================================================================= */
-   
-/* =========================================================================
-   --- 0. TEXT UTILITIES ---
-   ========================================================================= */
+	// 1. Toujours mettre à jour la variable pour le calcul PC (max 50%...)
+	document.body.style.setProperty('--scroll', scrollY);
 
-/* Alignment */
-.text-left    { text-align: left !important; padding-left: 15px !important; }
-.text-center  { text-align: center !important; }
+	// 2. Logique HAUT (Bannière)
+	if (scrollY > 30) {
+		document.body.classList.add('is-scrolled');
+	} else {
+		document.body.classList.remove('is-scrolled');
+	}
 
-/* Weights */
-.text-bold    { font-weight: 900 !important; } 
-.text-medium  { font-weight: 600 !important; } 
-.text-normal  { font-weight: 400 !important; }
+	// 3. Logique BAS (Uniquement Mobile pour éviter les bugs PC)
+	if (isMobile) {
+		const windowHeight = window.innerHeight;
+		const docHeight = document.documentElement.scrollHeight;
+		// Déclenche à 50px du bord fial
+		if ((windowHeight + scrollY) >= (docHeight - 50)) {
+			document.body.classList.add('is-at-bottom');
+		} else {
+			document.body.classList.remove('is-at-bottom');
+		}
+	}
+}, { passive: true });
+		
+// Tier Modal		
+document.addEventListener('DOMContentLoaded', function() {
+	const modal = document.getElementById('tierModal');
+	const modalBody = document.getElementById('modalBody');
+	const closeBtn = document.querySelector('.modal-close');
 
-/* Colors */
-.text-bright  { color: var(--text-bright) !important; }    
-.text-main    { color: var(--main-color) !important; }
-.text-muted   { color: var(--text-muted) !important; }
+	// Dictionnaire des textes exacts (About)
+	const tierTexts = {
+		'bird': {
+			name: 'Bird',
+			elo: '1500+',
+			subtitle: 'The Grandmasters',
+			desc: 'The absolute pinnacle of the Woodland. Reaching this height is a rare feat, a fleeting and prestigious throne where staying at the top is a constant battle against gravity. It is reserved for those who maintain perfection under pressure.'
+		},
+		'fox': {
+			name: 'Fox',
+			elo: '1400+',
+			subtitle: 'The Cunning Tacticians',
+			desc: 'The elite targets everyone is chasing. With a trick for every turn and a plan for every disaster, they outmaneuver the field with ease. They play with sharp instincts, punctuated by a signature, mischievous grin that keeps opponents guessing.'
+		},
+		'rabbit': {
+			name: 'Rabbit',
+			elo: '1300+',
+			subtitle: 'The Agile Contenders',
+			desc: 'The true engine of the higher rankings. Their climb is built on speed and sharp adaptability, moving well past the basics to dictate the pace of play. They are restless challengers, always seeking the next opening to leap ahead.'
+		},
+		'mouse': {
+			name: 'Mouse',
+			elo: '1200+',
+			subtitle: 'The Steady Foragers',
+			desc: 'The solid foundation of the standings, marking a genuine milestone beyond the average player. These resilient competitors provide the first true test on the ladder, proving they have the consistency required to begin a successful climb. They are where every journey starts.'
+		},
+		'squirrel': {
+			name: 'Squirrel',
+			elo: '< 1200',
+			subtitle: 'The Hapless Stragglers',
+			desc: 'The frantic collectors of the undergrowth. Often tripped up by clumsy errors or bad luck, they must fall back to let faster rivals pass. Yet, they remain busy; every scrap gathered today is a seed stored away for next season’s harvest.'
+		}
+	};
 
-/* Sizes */
-.text-lg      { font-size: 1.1em; }
-   
+	// On récupère les couleurs et icônes depuis l'objet CONFIG créé dans le HTML
+		const tierColors = CONFIG.colors;
+		const tierIcons = CONFIG.icons;
 
-/* =========================================================================
-   --- 1. GLOBAL STYLES & WALLPAPER ---
-   ========================================================================= */
-html {
-    scroll-behavior: smooth;
-    height: 100%;
-    margin: 0;
-    padding: 0;
-}
+	window.openTierModal = function(tier) {
+		const text = tierTexts[tier];
+		const color = tierColors[tier] || tierColors['default'];
+		const icon = tierIcons[tier];
 
-body {
-    position: relative;
-	z-index: -1;
-    background-color: var(--main-color);
-    background-image: url('../assets/images/pattern.webp');
-    background-repeat: repeat;
-    background-position: center;
-    background-size: 350px;
-    background-attachment: fixed;
-	
-	min-height: 100vh;
-    min-height: 100dvh;
-	
-	font-family: var(--font-ui);
-    color: var(--text-main);
-    text-align: center;
-    padding: 20px 5px;
-    margin: 0;
-    overflow-x: hidden;
-}
+		if (!text) return;
 
-body::after {
-    content: "";
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 0;
-    pointer-events: none;
-    background: linear-gradient(rgba(18, 18, 18, 0.8), rgba(18, 18, 18, 0.8));
-    mix-blend-mode: multiply;
-    opacity: 0.6; 
-}
+		// On cible les éléments déjà existants dans le HTML
+		const modalTitle = document.getElementById('modalTitle');
+		const modalElo = document.getElementById('modalElo');
+		const modalIcon = document.getElementById('modalIcon');
+		const modalSubtitle = document.getElementById('modalSubtitle');
+		const modalText = document.getElementById('modalText');
 
-/* =========================================================================
-   --- 2. LAYOUT & CONTAINERS ---
-   ========================================================================= */
-.window-box {
-    position: relative;
-    z-index: 10;
-    width: 95%;
-    max-width: var(--window-max-width);
-    margin: 0 auto;
-    background: color-mix(in srgb, var(--main-color) 10%, rgba(15, 15, 15, 0.8));
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 12px;
-    box-sizing: border-box;
-    box-shadow: inset 0 2px 0 0 color-mix(in srgb, var(--main-color) 50%, transparent), 0 15px 35px rgba(0, 0, 0, 0.6);
-}
+		modalTitle.textContent = text.name;
+		
+		modalElo.textContent = text.elo;
+		modalElo.style.color = color;
+		
+		modalIcon.src = icon;
+		
+		modalSubtitle.textContent = text.subtitle;
+		
+		modalText.textContent = text.desc;
 
-.app-banner {
-    margin-top: 20px;
-    margin-bottom: var(--window-gap);
-    padding: 15px 20px;
-}
+		modal.style.display = 'flex';
+		document.body.style.overflow = 'hidden';
+	};
 
-.app-viewport {
-    padding: 20px 30px;
-    margin-bottom: 40px;
-}
+	const closeModal = () => {
+		modal.style.display = 'none';
+		document.body.style.overflow = 'auto';
+	};
 
-.app-footer {
-    padding: 20px;
-    margin-bottom: 40px;
-    text-align: center;
-}
+	if (closeBtn) closeBtn.onclick = closeModal;
+	window.onclick = (event) => { if (event.target == modal) closeModal(); };
+});
 
-.site-footer {
-    margin-top: 50px;
-    padding: 30px 20px;
-    border-top: 1px solid var(--border-soft);
-    color: var(--text-muted);
-    font-size: 0.8em;
-}
+document.addEventListener("DOMContentLoaded", function() {
+    const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (window.matchMedia("(hover: none)").matches);
 
-.footer-credits {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 8px;
-}
+    if (isTouchDevice) {
+        // On écoute sur le body pour capter même les icônes créées par DataTables
+        document.body.addEventListener('click', function(e) {
+            // On cherche si on a cliqué sur un lien double-tap
+            const link = e.target.closest('.js-double-tap');
 
-.footer-credits span:not(.footer-separator) { flex: 1; }
-.footer-credits span:first-child { text-align: right; }
-.footer-credits span:last-child { text-align: left; }
-.footer-credits strong { color: var(--text-main); font-weight: 600; }
-.footer-separator { margin: 0 15px; color: var(--border-soft); opacity: 0.5; }
-.footer-date { font-style: italic; opacity: 0.7; display: block; }
+            // 1. Si on clique ailleurs : on ferme tout
+            if (!link) {
+                document.querySelectorAll('.js-double-tap.expanded').forEach(l => l.classList.remove('expanded'));
+                return;
+            }
 
-@media (max-width: 768px) {
-    .footer-credits { flex-direction: column; }
-    .footer-credits span { text-align: center !important; margin: 5px 0; }
-    .footer-separator { display: none; }
-}
+            // 2. Si on clique sur une icône
+            if (!link.classList.contains('expanded')) {
+                // PREMIER TAP
+                e.preventDefault();
+                e.stopPropagation();
 
-/* =========================================================================
-   --- 3. BACKGROUND DECORATIONS ---
-   ========================================================================= */
-.screen-deco {
-    position: relative; display: flex; justify-content: center;
-    height: 200px; margin: 0; z-index: 5; pointer-events: none; width: 100%;
-}
-
-.screen-deco img {
-    position: absolute; height: 300px; width: auto; left: 50%; transform: translateX(-50%);
-    top: -150px; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.4)); transition: all 0.5s ease;
-}
-
-@media (max-width: 1299px) {
-    .app-banner { transition: transform 0.5s ease, opacity 0.4s ease; transform-origin: center; position: relative; }
-    .is-scrolled .app-banner { opacity: 0; transform: scale(0.95); pointer-events: none; }
-    .app-viewport { position: relative; transition: transform 0.5s ease, opacity 0.4s ease; }
-    .is-at-bottom .app-viewport { opacity: 0; transform: scale(0.95); pointer-events: none; }
-    .screen-deco img { top: 0px; transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1); }
-    .is-scrolled .right-deco img { top: -50px; }
-    .is-at-bottom .left-deco img { top: -50px; }
-}
-
-@media (min-width: 1300px) {
-    .screen-deco { 
-        position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; 
-        display: block; 
+                // On ferme les autres
+                document.querySelectorAll('.js-double-tap.expanded').forEach(l => l.classList.remove('expanded'));
+                
+                // On ouvre celle-ci
+                link.classList.add('expanded');
+            } else {
+                // DEUXIÈME TAP
+                // On laisse le comportement naturel (onclick du HTML ou href)
+                link.classList.remove('expanded');
+            }
+        }, true); // Le "true" ici permet d'intercepter avant DataTables
     }
-    
-    .screen-deco img {
-        height: clamp(300px, 50vh, 900px);
-        position: absolute;
-        transform: translateY(-50%);
-        top: max(50%, calc(550px - (var(--scroll, 0) * 1px)));
-    }
-}
-
-@media (min-width: 1300px) and (max-width: 1999px) {
-    .left-deco img { left: 50px; right: auto; }
-    .right-deco img { right: 50px; left: auto; }
-}
-
-@media (min-width: 2000px) {
-    .left-deco img { 
-        left: auto;
-        right: calc(50vw + (var(--window-max-width) / 2) - 50px); 
-    }
-    .right-deco img { 
-        right: auto;
-        left: calc(50vw + (var(--window-max-width) / 2) - 50px); 
-    }
-}
-
-/* =========================================================================
-   --- 4. TYPOGRAPHY & UI ELEMENTS ---
-   ========================================================================= */
-.site-title {
-    font-family: var(--font-title);
-    color: var(--text-main);
-    font-size: 2.8em;
-    margin: 0;
-    letter-spacing: 4px;
-    text-transform: uppercase;
-    font-weight: 900;
-    text-shadow: 0 2px 10px rgba(0,0,0,0.5);
-}
-
-.site-subtitle {
-    font-family: var(--font-title);
-    font-style: italic;
-    color: var(--text-muted);
-    font-size: 1em;
-    margin: 5px 0 0;
-    letter-spacing: 1px;
-}
-
-.page-intro { margin-bottom: 30px; }
-.page-intro h2 { font-family: var(--font-title); font-size: 2.5em; margin: 0; color: var(--main-color); }
-.page-intro p { color: var(--text-muted); font-size: 0.9em; margin: 5px auto 0; }
-
-@media (max-width: 768px) {
-    .site-title { font-size: 2em; }
-    .page-intro h2 { font-size: 2em; }
-}
-
-/* =========================================================================
-   --- 5. HEADER, BANNER & TOOLTIPS ---
-   ========================================================================= */
-.banner-container {
-    display: flex; align-items: center; justify-content: center;
-    gap: 5px; margin-bottom: 20px; flex-wrap: nowrap;
-}
-
-.banner-icons { display: flex; gap: -10px; align-items: center; }
-
-/* Interactive Links */
-.banner-icons a.tooltip-link {
-    position: relative; display: inline-block; margin: 0 -5px;
-    z-index: 1; text-decoration: none; -webkit-tap-highlight-color: transparent;
-    transition: margin 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-/* État Actif (Hover ou Mobile Expanded) */
-.banner-icons a.tooltip-link:hover,
-.banner-icons a.tooltip-link.expanded { 
-    margin: 0 15px; z-index: 100; 
-}
-
-/* Icons Style de base */
-.banner-icons a.tooltip-link img {
-    width: 85px; height: 85px; object-fit: contain;
-    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.6));
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    display: block;
-}
-
-/* Icons Animation (Hover & Expanded) */
-.banner-icons a.tooltip-link:hover img,
-.banner-icons a.tooltip-link.expanded img {
-    width: 140px; height: 140px;
-    filter: drop-shadow(0 15px 25px rgba(0,0,0,0.9));
-    transform: translateY(-10px) scale(1.15);
-}
-
-/* Rotations spécifiques */
-.banner-icons.left a.tooltip-link:hover img,
-.banner-icons.left a.tooltip-link.expanded img  { transform: translateY(-10px) scale(1.15) rotate(-8deg); }
-.banner-icons.right a.tooltip-link:hover img,
-.banner-icons.right a.tooltip-link.expanded img { transform: translateY(-10px) scale(1.15) rotate(8deg); }
-
-/* Tooltips Style de base */
-.tooltip-text {
-    position: absolute; bottom: 90%; left: 50%;
-    transform: translateX(-50%) translateY(10px);
-    background: var(--bg-container);
-    border: 1px solid var(--border-soft);
-    color: var(--text-muted);
-    padding: 6px 12px; border-radius: 6px;
-    font-size: 0.75rem; white-space: nowrap;
-    opacity: 0; pointer-events: none;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-    z-index: 101;
-}
-.tooltip-text strong { font-weight: 800; }
-
-/* Tooltips Apparition */
-.banner-icons a.tooltip-link:hover .tooltip-text,
-.banner-icons a.tooltip-link.expanded .tooltip-text { 
-    opacity: 1; transform: translateX(-50%) translateY(-15px); 
-}
-
-/* --- MOBILE ADJUSTMENTS --- */
-@media (max-width: 768px) and (orientation: portrait) {
-    .banner-container { flex-wrap: wrap; gap: 10px; }
-    .banner-center { order: 1; width: 100%; margin-bottom: 10px; }
-    .banner-icons { order: 2; flex-wrap: nowrap; gap: 5px; }
-    
-    .banner-icons a.tooltip-link { margin: 0; }
-    .banner-icons a.tooltip-link img { width: 60px !important; height: 60px !important; }
-    
-    .banner-icons a.tooltip-link.expanded img { 
-        transform: translateY(-8px) scale(1.4) !important; 
-        position: relative; z-index: 100; 
-    }
-    .banner-icons.left a.tooltip-link.expanded img  { transform: translateY(-8px) scale(1.4) rotate(-8deg) !important; }
-    .banner-icons.right a.tooltip-link.expanded img { transform: translateY(-8px) scale(1.4) rotate(8deg) !important; }
-    
-    .tooltip-text { display: none; }
-    .banner-icons a.tooltip-link.expanded .tooltip-text {
-        display: block !important; bottom: 115%; transform: none; 
-        width: 150px; white-space: normal; text-align: center; padding: 8px;
-    }
-    .banner-icons.left a.tooltip-link.expanded .tooltip-text { left: 0; }
-    .banner-icons.right a.tooltip-link.expanded .tooltip-text { right: 0; left: auto; }
-}
-
-
-/* =========================================================================
-   --- 6. NAVIGATION & BUTTONS ---
-   ========================================================================= */
-nav {
-    margin: 15px 0;
-    display: flex;
-    justify-content: center;
-    gap: 12px;
-    flex-wrap: wrap;
-}
-
-nav a {
-    color: var(--text-muted);
-    text-decoration: none;
-    font-weight: 600;
-    text-transform: uppercase;
-    font-size: 0.85em;
-    letter-spacing: 1px;
-    padding: 8px 12px;
-    border-radius: 6px;
-    transition: 0.3s ease;
-    border-bottom: 2px solid transparent;
-}
-
-nav a:hover { color: var(--text-main); background: var(--bg-hover); }
-
-nav a.active {
-    color: var(--main-color);
-    border-bottom: 2px solid var(--main-color);
-    border-radius: 6px 6px 0 0;
-    background: linear-gradient(to top, rgba(255,255,255,0.03) 0%, transparent 100%);
-}
-
-.nav-separator {
-    width: 90%; 
-    height: 0; 
-    margin: 15px auto;
-    border-top: 1px solid rgba(0, 0, 0, 0.4);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-/* Season Selectors */
-.season-selector { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 20px auto 10px; }
-.season-label { font-size: 0.7em; text-transform: uppercase; color: var(--text-muted); letter-spacing: 1.2px; font-weight: bold; margin-right: 5px;}
-.season-btn { text-decoration: none; font-size: 0.75em; font-weight: 700; color: var(--text-muted); padding: 6px 14px; border-radius: 4px; background: var(--bg-surface); border: 1px solid var(--border-soft); transition: 0.2s; }
-.season-btn:hover { color: var(--text-main); background: var(--bg-hover); }
-.season-btn.active { background: transparent !important; color: var(--main-color) !important; border-color: var(--main-color) !important; }
-
-
-/* =========================================================================
-   --- 7. DATATABLES (GLOBAL, LEADERBOARD, MATCHES) ---
-   ========================================================================= */
-/* DataTables Global Settings */
-table.dataTable { border-collapse: collapse !important; width: 100% !important; margin-top: 20px !important; border-bottom: none !important; }
-table.dataTable thead th { background: var(--bg-page) !important; color: var(--text-muted) !important; font-size: 0.75em; letter-spacing: 1px; text-transform: uppercase; padding: 15px 10px !important; border-bottom: 1px solid var(--border-soft) !important; }
-table.dataTable tbody tr { background-color: transparent !important; }
-table.dataTable tbody td { border-bottom: 1px solid rgba(255,255,255,0.03); padding: 12px 10px; font-size: 0.95em; }
-
-/* DataTables Controls (Search, Pagination) */
-.dataTables_filter label, .dataTables_length label, .dataTables_info, .dataTables_paginate { color: var(--text-muted) !important; font-size: 0.8em; }
-.dataTables_info, .dataTables_paginate { padding-top: 15px !important; }
-
-.dataTables_filter input, .dataTables_length select {
-    background: var(--bg-surface) !important;
-    border: 1px solid var(--border-soft) !important;
-    color: var(--text-main) !important;
-    border-radius: 4px; padding: 4px 8px; outline: none; margin: 0 8px;
-    appearance: none; -webkit-appearance: none;
-}
-
-.dataTables_length select {
-    padding-right: 24px !important;
-    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='gray' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") !important;
-    background-repeat: no-repeat !important; background-position: right 8px center !important;
-}
-.dataTables_length select option { background-color: var(--bg-surface); color: var(--text-main); }
-
-.paginate_button { color: var(--text-muted) !important; padding: 5px 10px; cursor: pointer; }
-.paginate_button.current { background: var(--bg-hover) !important; color: var(--text-main) !important; border-radius: 4px; font-weight: 600; }
-
-/* Responsive Expand Button */
-table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
-    background: var(--bg-surface) !important; color: var(--text-main) !important;
-    border: 1px solid var(--border-soft) !important; border-radius: 3px;
-    box-shadow: none !important; font-weight: bold; height: 16px; width: 16px; line-height: 16px; text-align: center; text-indent: 0 !important;
-}
-table.dataTable > tbody > tr.child ul.dtr-details { background: var(--bg-container); border: 1px solid var(--border-soft); padding: 10px; list-style: none; }
-
-/* Leaderboard Specifics */
-.tier-icon-container { width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; margin: 0 auto; }
-.tier-icon-container img { max-width: 100%; max-height: 100%; object-fit: contain; }
-.unranked { opacity: 0.4; font-style: italic; filter: grayscale(1); font-weight: 600 !important; }
-
-/* Matches Specifics */
-.lineup-cell { white-space: normal !important; word-wrap: break-word; min-width: 150px; max-width: 400px; line-height: 1.4; text-align: left !important;}
-.match-id-link { color: var(--text-muted); text-decoration: none; font-size: 0.85em; border: 1px solid var(--border-soft); padding: 2px 6px; border-radius: 4px; white-space: nowrap;}
-#matchesTable th, #matchesTable td:nth-child(1), #matchesTable td:nth-child(2), #matchesTable td:nth-child(3) { white-space: nowrap !important; }
-
-@media (max-width: 600px) {
-    table.dataTable tbody td { font-size: 0.85em; padding: 8px 4px !important; }
-    .player-name-cell { max-width: 110px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    table.dataTable td:nth-child(4) { padding-right: 10px !important; min-width: 55px; }
-    .lineup-cell { padding-left: 10px !important; }
-}
-
-/* =========================================================================
-   --- 8. CHART (TRENDS) ---
-   ========================================================================= */
-
-.search-box { 
-    margin: 20px auto; 
-    text-align: center; 
-    max-width: 450px;
-}
-
-.search-box input { 
-    appearance: none;
-    -webkit-appearance: none;
-    background: rgba(255, 255, 255, 0.03) !important;
-    color: var(--text-main) !important; 
-    border: 1px solid var(--border-soft) !important; 
-    padding: 10px 15px; 
-    border-radius: 6px; 
-    width: 100%; 
-    font-family: var(--font-ui);
-    outline: none;
-    transition: border-color 0.2s;
-}
-
-.search-box input:focus { 
-    border-color: var(--main-color) !important; 
-}
-
-.search-box input::-webkit-search-cancel-button {
-    -webkit-appearance: none;
-    height: 14px; width: 14px;
-    background-color: var(--text-muted);
-    mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z'/></svg>") no-repeat 50% 50%;
-    -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z'/></svg>") no-repeat 50% 50%;
-    cursor: pointer;
-}
-
-.chart-wrapper { 
-    width: 100%; 
-    max-width: var(--window-max-width); 
-    margin: 0 auto 40px;
-}
-
-.chart-container { 
-    position: relative; 
-    width: 100%; 
-    height: 55vh; 
-    min-height: 350px;
-    background: rgba(15, 15, 15, 0.4);
-    border: 1px solid var(--border-soft); 
-    border-radius: 12px; 
-    padding: 15px;
-    box-sizing: border-box;
-}
-
-@media (max-width: 768px) { 
-    .chart-container { height: 40vh; padding: 10px; }
-    .search-box { padding: 0 15px; }
-}
-
-/* =========================================================================
-   --- 9. CODEX & STATIC CONTENT (ABOUT PAGE) ---
-   ========================================================================= */
-.codex-section {
-    display: block; margin: 40px auto; width: 90%; max-width: var(--window-max-width); line-height: 1.6;
-}
-
-.codex-section h2 {
-    color: var(--main-color);
-    border-bottom: 1px solid var(--border-soft); padding-bottom: 8px; margin: 40px 0 15px 0;
-    font-family: var(--font-title); font-size: 1.1em; font-weight: 700; text-align: left;
-}
-.codex-section h2:first-of-type { margin-top: 0; }
-
-.codex-section p { margin-bottom: 20px; color: var(--text-muted); text-align: left; font-size: 0.95em; }
-.codex-section strong { color: var(--text-main); font-weight: 700; }
-
-.codex-section a { color: var(--text-main); text-decoration: none; font-weight: 700; border-bottom: 1px dotted var(--main-color); transition: 0.2s; }
-.codex-section a:hover { border-bottom: 1px solid var(--main-color); color: var(--main-color); }
-
-/* Information Tables (K-Factor, Tier Codex) */
-.k-table {
-    width: 100%; border-collapse: collapse; margin: 25px 0;
-    background: var(--bg-container); border: 1px solid var(--border-soft); border-radius: 8px; overflow: hidden;
-}
-
-.k-table td { padding: 15px; border-bottom: 1px solid var(--border-soft); color: var(--text-muted); text-align: left; font-size: 0.9em; }
-.k-table tr:last-child td { border-bottom: none; }
-.k-table td:first-child { white-space: nowrap; }
-.k-table br { display: none; }
-
-.k-val { color: var(--main-color) !important; font-weight: bold; font-family: monospace; font-size: 1.3em; white-space: nowrap; }
-
-.tier-icon-small { width: 24px; height: 24px; vertical-align: middle; margin-right: 12px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3)); }
-.tier-label { font-weight: 700; font-size: 0.95em; letter-spacing: 0.5px; }
-
-@media (max-width: 600px) {
-    .k-table br { display: block; }
-    .k-table td:nth-child(3) { display: none; }
-}
-
-
-/* =========================================================================
-   --- 10. MODALS ---
-   ========================================================================= */
-.modal-overlay {
-    display: none; /* Changed to 'flex' by JS */
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(5px);
-    z-index: 9999; align-items: center; justify-content: center;
-}
-
-.modal-content {
-    background: var(--bg-container); border: 1px solid var(--window-border); border-radius: 16px;
-    width: 90%; max-width: 500px; padding: 30px; position: relative;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.8); animation: modalFadeIn 0.3s ease-out;
-}
-
-@keyframes modalFadeIn {
-    from { opacity: 0; transform: translateY(-20px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-.modal-close {
-    position: absolute; top: 15px; right: 15px; background: none; border: none;
-    color: var(--text-muted); font-size: 28px; cursor: pointer; line-height: 1; transition: color 0.2s;
-}
-.modal-close:hover { color: var(--text-main); }
-
-.modal-header { text-align: center; margin-bottom: 20px; }
-#modalIcon { width: 300px; height: 300px; object-fit: contain; margin-bottom: 10px; display: inline-block; }
-#modalTitle { margin: 0; font-family: var(--font-title); color: var(--text-main); font-size: 2.8em; letter-spacing: 4px; font-weight: 900; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
-#modalElo { font-weight: 800; font-size: 1.1em; margin-top: 5px; }
-#modalSubtitle { color: var(--text-muted); font-style: italic; font-size: 1em; margin-top: -5px; }
-#modalText { color: var(--text-muted); text-align: left; font-size: 0.95em; }
-
-.modal-divider { height: 1px; background: var(--border-soft); margin: 20px 0; }
-
-@media (max-width: 800px), (max-height: 600px) {
-    .modal-content { width: 95%; max-height: 95vh; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; }
-    #modalIcon { width: 160px; height: 160px; }
-    #modalTitle { font-size: 1.5em; letter-spacing: 1px; }
-}
-
-@media (orientation: landscape) and (max-height: 450px) {
-    .modal-header { display: flex; flex-direction: row; align-items: center; gap: 15px; text-align: left; }
-    #modalIcon { margin: 0; width: 60px !important; }
-    .modal-divider { margin: 10px 0; }
-}
-
-
-/* =========================================================================
-   --- 11. TIER-BASED COLORATION ---
-   ========================================================================= */
-/* Background and border for each tier row */
-table.dataTable tbody tr[data-tier="bird"]     { background-color: var(--color-bird-bg) !important; border-left: 4px solid var(--color-bird) !important; }
-table.dataTable tbody tr[data-tier="fox"]      { background-color: var(--color-fox-bg) !important; border-left: 4px solid var(--color-fox) !important; }
-table.dataTable tbody tr[data-tier="rabbit"]   { background-color: var(--color-rabbit-bg) !important; border-left: 4px solid var(--color-rabbit) !important; }
-table.dataTable tbody tr[data-tier="mouse"]    { background-color: var(--color-mouse-bg) !important; border-left: 4px solid var(--color-mouse) !important; }
-table.dataTable tbody tr[data-tier="squirrel"] { background-color: var(--color-squirrel-bg) !important; border-left: 4px solid var(--color-squirrel) !important; }
-
-/* Text color for the 4th column (Elo) based on tier */
-tr[data-tier="bird"] td:nth-child(4)     { color: var(--color-bird) !important; }
-tr[data-tier="fox"] td:nth-child(4)      { color: var(--color-fox) !important; }
-tr[data-tier="rabbit"] td:nth-child(4)   { color: var(--color-rabbit) !important; }
-tr[data-tier="mouse"] td:nth-child(4)    { color: var(--color-mouse) !important; }
-tr[data-tier="squirrel"] td:nth-child(4) { color: var(--color-squirrel) !important; }
-
-/* =========================================================================
-   --- 12. INTERACTION: CLICKABLE NUT ---
-   ========================================================================= */
-
-.tier-interaction-wrapper {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 50px 0;
-    width: 100%;
-}
-
-.nut-trigger {
-    position: relative; /* Nécessaire pour le tooltip */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-decoration: none;
-    cursor: pointer;
-    transition: transform 0.3s ease;
-}
-
-.nut-sprite {
-    width: clamp(140px, 20vw, 210px);
-    height: auto;
-    filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.5));
-    margin-bottom: 15px;
-    transition: filter 0.3s ease;
-}
-
-.nut-label {
-    font-family: var(--font-ui);
-    color: var(--text-main);
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    opacity: 0.7;
-    transition: all 0.3s ease;
-}
-
-/* --- LOGIQUE DE LA NOIX --- */
-
-.nut-trigger:hover {
-    transform: scale(1.08); 
-}
-
-.nut-trigger:hover .nut-sprite {
-    filter: drop-shadow(0 15px 25px rgba(0, 0, 0, 0.6));
-}
-
-.nut-trigger:hover .nut-label {
-    opacity: 1;
-    color: var(--main-color);
-}
-
-.nut-trigger:active {
-    transform: scale(0.95);
-}
-
-/* --- TOOLTIP RÉUTILISÉ --- 
-   On applique les règles de la section 5 à l'élément .tooltip-text 
-   qui se trouve dans .nut-trigger
------------------------------------------------------------ */
-
-/* On force l'apparition au survol de la noix */
-.nut-trigger:hover .tooltip-text {
-    opacity: 1;
-    transform: translateX(-50%) translateY(-15px); /* Même mouvement que la bannière */
-}
-
-/* Ajustement spécifique car la noix est plus haute que les icônes de bannière */
-.nut-trigger .tooltip-text {
-    bottom: 100%; /* On le place bien au-dessus de l'image */
-}
-
-{% block extra_css %}{% endblock %}
+});
