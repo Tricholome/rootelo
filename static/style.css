@@ -534,7 +534,7 @@ table.dataTable > tbody > tr.child ul.dtr-details { background: var(--bg-contain
 /* Information Tables (K-Factor, Tier Codex) */
 .k-table {
     width: 100%; border-collapse: collapse; margin: 25px 0;
-    background: var(--bg-container); border: 1px solid var(--border-soft); border-radius: 8px; overflow: hidden;
+    background: var(--bg-container); border: 1px solid var(--border-soft); overflow: hidden;
 }
 
 .k-table td { padding: 15px; border-bottom: 1px solid var(--border-soft); color: var(--text-muted); text-align: left; font-size: 0.9em; }
