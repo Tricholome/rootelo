@@ -537,10 +537,10 @@ table.dataTable > tbody > tr.child ul.dtr-details { background: var(--bg-contain
     background: var(--bg-container); border: 1px solid var(--border-soft); overflow: hidden; table-layout: fixed;
 }
 
-.k-table td:nth-child(1) { width: 25%; }
+.k-table td:nth-child(1) { width: 15%; }
 .k-table td:nth-child(2) { width: 15%; text-align: center; }
-.k-table td:nth-child(3) { width: 25%; text-align: center; }
-.k-table td:nth-child(4) { width: 35%; }
+.k-table td:nth-child(3) { width: 15%; text-align: center; }
+.k-table td:nth-child(4) { width: 55%; }
 
 .k-table td { padding: 15px; border-bottom: 1px solid var(--border-soft); color: var(--text-muted); text-align: left; font-size: 0.9em; }
 .k-table tr:last-child td { border-bottom: none; }
