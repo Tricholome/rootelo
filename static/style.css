@@ -102,12 +102,11 @@ body::after {
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     
-    /* 1. LA BORDURE : On utilise 10% de blanc et 90% de ta couleur */
-    /* On la rend très transparente (0.2) pour qu'elle ne soit qu'un reflet */
-    border: 1px solid color-mix(in srgb, var(--main-color), rgba(255, 255, 255, 0.2) 20%);
+    /* Bordure structurelle très sombre, presque invisible */
+    border: 1px solid rgba(255, 255, 255, 0.05);
     
-    /* 2. L'OPACITÉ DE LA BORDURE (Alternative si color-mix est trop complexe ici) */
-    /* border: 1px solid rgba(255, 255, 255, 0.08); */
+    /* Le "rappel" de la couleur du Tier se fait par une lueur interne en haut uniquement */
+    box-shadow: inset 0 1px 0 0 color-mix(in srgb, var(--main-color), transparent 50%, 0 15px 35px rgba(0, 0, 0, 0.6);
 
     /* 3. L'OMBRE PORTÉE (On la garde bien profonde pour le relief) */
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
