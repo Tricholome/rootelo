@@ -174,87 +174,82 @@
     <p>The <strong>K-Factor</strong> determines the maximum number of Elo points you can win or lose in a single match. As you play more games, your K-Factor decreases, protecting your hard-earned rank from wild swings and rewarding long-term consistency.</p>
     
     <table class="k-table">
-        <tr>
-            <td><strong>Calibration</strong> <br>(0-10 games)</td>
-            <td class="k-val">K = 80</td>
-            <td>High volatility to find your true rank quickly.</td>
-        </tr>
-        <tr>
-            <td><strong>Active</strong> <br>(11-50 games)</td>
-            <td class="k-val">K = 40</td>
-            <td>Balanced weighting to climb the ladder steadily.</td>
-        </tr>
-        <tr>
-            <td><strong>Veteran</strong> <br>(50+ games)</td>
-            <td class="k-val">K = 20</td>
-            <td>Solid stability to protect your long-term standing.</td>
-        </tr>
-    </table>
+		<tr>
+			<td><strong>Calibration</strong></td>
+			<td>0-10 games</td>
+			<td class="k-val">K = 80</td>
+			<td>High volatility to find your true rank quickly.</td>
+		</tr>
+		<tr>
+			<td><strong>Active</strong></td>
+			<td>11-50 games</td>
+			<td class="k-val">K = 40</td>
+			<td>Balanced weighting to climb the ladder steadily.</td>
+		</tr>
+		<tr>
+			<td><strong>Veteran</strong></td>
+			<td>50+ games</td>
+			<td class="k-val">K = 20</td>
+			<td>Solid stability to protect your long-term standing.</td>
+		</tr>
+	</table>
     
     <h2>The Tier System</h2>
     <p>After your 10-game calibration phase, you officially join the ranks and unlock your <strong>Tier</strong> based on your current Elo rating:</p>
     
     <table class="k-table">
-    <tr>
-        <td style="width: 50px; text-align: center;">
-            <a href="javascript:void(0)" onclick="openTierModal('bird')" class="tier-anchor-link">
-                <div class="tier-icon-container">
-                    <img src="assets/icons/bird_new.webp" alt="bird">
-                </div>
-            </a>
-        </td>
-        <td>
-            <span class="tier-label">Bird</span>
-        </td>
-        <td class="k-val">1500+</td>
-        <td>The Grandmasters</td>
-    </tr>
-    
-    <tr>
-        <td style="width: 50px; text-align: center;">
-            <a href="javascript:void(0)" onclick="openTierModal('fox')" class="tier-anchor-link">
-                <div class="tier-icon-container">
-                    <img src="assets/icons/fox_new.webp" alt="fox">
-                </div>
-            </a>
-        </td>
-        <td>
-            <span class="tier-label">Fox</span>
-        </td>
-        <td class="k-val">1400+</td>
-        <td>The Cunning Tacticians</td>
-    </tr>
-    
-    <tr>
-        <td style="width: 50px; text-align: center;">
-            <a href="javascript:void(0)" onclick="openTierModal('rabbit')" class="tier-anchor-link">
-                <div class="tier-icon-container">
-                    <img src="assets/icons/rabbit_new.webp" alt="rabbit">
-                </div>
-            </a>
-        </td>
-        <td>
-            <span class="tier-label">Rabbit</span>
-        </td>
-        <td class="k-val">1300+</td>
-        <td>The Agile Contenders</td>
-    </tr>
+		<tr>
+			<td><strong>Bird</strong></td>
+			<td style="width: 50px; text-align: center;">
+				<a href="javascript:void(0)" onclick="openTierModal('bird')" class="tier-anchor-link">
+					<div class="tier-icon-container">
+						<img src="assets/icons/bird_new.webp" alt="bird">
+					</div>
+				</a>
+			</td>
+			<td class="k-val">1500+</td>
+			<td>The Grandmasters</td>
+		</tr>
+		
+		<tr>
+			<td><strong>Fox</strong></td>
+			<td style="width: 50px; text-align: center;">
+				<a href="javascript:void(0)" onclick="openTierModal('fox')" class="tier-anchor-link">
+					<div class="tier-icon-container">
+						<img src="assets/icons/fox_new.webp" alt="fox">
+					</div>
+				</a>
+			</td>
+			<td class="k-val">1400+</td>
+			<td>The Cunning Tacticians</td>
+		</tr>
+		
+		<tr>
+			<td><strong>Rabbit</strong></td>
+			<td style="width: 50px; text-align: center;">
+				<a href="javascript:void(0)" onclick="openTierModal('rabbit')" class="tier-anchor-link">
+					<div class="tier-icon-container">
+						<img src="assets/icons/rabbit_new.webp" alt="rabbit">
+					</div>
+				</a>
+			</td>
+			<td class="k-val">1300+</td>
+			<td>The Agile Contenders</td>
+		</tr>
 
-    <tr>
-        <td style="width: 50px; text-align: center;">
-            <a href="javascript:void(0)" onclick="openTierModal('mouse')" class="tier-anchor-link">
-                <div class="tier-icon-container">
-                    <img src="assets/icons/mouse_new.webp" alt="mouse">
-                </div>
-            </a>
-        </td>
-        <td>
-            <span class="tier-label">Mouse</span>
-        </td>
-        <td class="k-val">1200+</td>
-        <td>The Steady Foragers</td>
-    </tr>
-</table>
+		<tr>
+			<td><strong>Mouse</strong></td>
+			<td style="width: 50px; text-align: center;">
+				<a href="javascript:void(0)" onclick="openTierModal('mouse')" class="tier-anchor-link">
+					<div class="tier-icon-container">
+						<img src="assets/icons/mouse_new.webp" alt="mouse">
+					</div>
+				</a>
+			</td>
+			<td class="k-val">1200+</td>
+			<td>The Steady Foragers</td>
+		</tr>
+	</table>
     
     <h2>The Seasonal Lifecycle</h2>
     <p>Every player in the Woodland starts from the same root: a <strong>1200 base score</strong>. Your progress is permanent, meaning your Elo score is not reset between seasons. Instead, we begin each new season with the calibration phase. For 10 games, everyone’s volatility is set to the same level, giving every player a fair chance to shake up the rankings and climb quickly. You need to complete these games to refresh your standing and reclaim your Tier.</p>
@@ -279,7 +274,7 @@
                     <span class="footer-separator">|</span>
                     <span>Art by <strong>𝕩𝕝𝕦𝕖𝕧𝕚</strong></span>
                 </div>
-                <div class="footer-date">Updated on 2026-03-30 14:59</div>
+                <div class="footer-date">Updated on 2026-03-30 15:10</div>
             </div>
         </footer>
     </div>
