@@ -14,7 +14,7 @@
    9. Codex & Static Content (About page)
    10. Modals
    11. Tier-based Coloration
-   12. Interaction: Clickable Nut
+   12. Hidden Content & Secrets
    ========================================================================= */
    
 /* =========================================================================
@@ -637,12 +637,15 @@ table.dataTable tbody tr:last-child td {
 .codex-section h2 {
     color: var(--main-color);
     margin-top: 60px ;
+	margin-bottom: -10px ;
     font-family: var(--font-title);
     font-size: 1.1em;
     font-weight: var(--medium);
     text-align: left;
     letter-spacing: 1px;
 }
+
+.codex-section h2:first-of-type { margin-top: 0; }
 
 .codex-section p { margin-bottom: 20px; color: var(--text-muted); text-align: left; font-size: 0.95em; }
 .codex-section strong { color: var(--text-main); font-weight: var(--medium); }
@@ -870,7 +873,7 @@ body[data-page="cache"].show-deco .screen-deco {
     width: clamp(90px, 12vw, 130px);
     height: auto;
     filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.5));
-    margin-bottom: 20px;
+    margin-bottom: 40px;
     transition: filter 0.4s ease;
 }
 
