@@ -157,9 +157,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 	
 	// --- BLOC 2 : Feature "Deco" ---
-    const trigger = document.getElementById('deco-toggle');
-    if (trigger) {
-        trigger.addEventListener('click', () => {
+    const btn = document.getElementById('deco-toggle');
+    if (btn) {
+        btn.addEventListener('click', () => {
+            // On ajoute ou on enlève la classe "show-deco" au body
             document.body.classList.toggle('show-deco');
         });
     }
