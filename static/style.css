@@ -162,26 +162,6 @@ body::after {
     top: -150px; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.4)); transition: all 0.5s ease;
 }
 
-body[data-page="cache"] .screen-deco {
-    height: 0;        /* Le bloc ne prend plus de place verticale */
-    overflow: visible; /* Mais l'image peut quand même dépasser pour être vue */
-}
-
-body[data-page="cache"].show-deco .screen-deco {
-    height: 200px;    /* On remet la hauteur d'origine seulement quand c'est activé */
-    transition: height 0.5s ease;
-}
-
-body[data-page="cache"] .screen-deco img {
-    opacity: 0;
-    pointer-events: none;
-}
-
-body[data-page="cache"].show-deco .screen-deco img {
-    opacity: 1;
-    pointer-events: auto;
-}
-
 @media (max-width: 1299px) {
     .app-banner { transition: transform 0.5s ease, opacity 0.4s ease; transform-origin: center; position: relative; }
     .is-scrolled .app-banner { opacity: 0; transform: scale(0.95); pointer-events: none; }
@@ -817,9 +797,53 @@ tr[data-tier="mouse"] td:nth-child(4)    { color: var(--color-mouse) !important;
 tr[data-tier="squirrel"] td:nth-child(4) { color: var(--color-squirrel) !important; }
 
 /* =========================================================================
-   --- 12. INTERACTION: CLICKABLE NUT ---
+   --- 12. HIDDEN CONTENT & SECRETS ---
    ========================================================================= */
 
+/* Artist content */
+body[data-page="cache"] .screen-deco {
+    height: 0;        /* Le bloc ne prend plus de place verticale */
+    overflow: visible; /* Mais l'image peut quand même dépasser pour être vue */
+}
+
+body[data-page="cache"].show-deco .screen-deco {
+    height: 200px;    /* On remet la hauteur d'origine seulement quand c'est activé */
+    transition: height 0.5s ease;
+}
+
+body[data-page="cache"] .screen-deco img {
+    opacity: 0;
+    pointer-events: none;
+}
+
+body[data-page="cache"].show-deco .screen-deco img {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.artist-story {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 1s ease; /* Transition un peu plus lente pour le côté magique */
+    pointer-events: none;
+    max-height: 0;
+    overflow: hidden;
+}
+
+body.show-deco .artist-story {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+    max-height: 500px; /* On lui donne de la place */
+    margin-top: 30px;
+}
+
+body.show-deco .enigma {
+    opacity: 0.6;
+    transition: opacity 0.5s;
+}
+
+/* Nut interaction */
 .tier-interaction-wrapper {
     display: flex;
     justify-content: center;
