@@ -151,9 +151,11 @@ document.addEventListener("DOMContentLoaded", function() {
 document.addEventListener('DOMContentLoaded', () => {
 	
 	// --- BLOC 1 : Feature "Nut" ---
-    if (window.location.search.includes('view=nut')) {
-        const nut = document.getElementById('nut-section');
-        if (nut) nut.style.display = 'block';
+    if (window.location.hash === '#nut-section') {
+        const nutSection = document.getElementById('nut-section');
+        if (nutSection) {
+            nutSection.style.display = 'block';
+        }
     }
 	
 	// --- BLOC 2 : Feature "Deco" ---
