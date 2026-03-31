@@ -631,22 +631,18 @@ table.dataTable tbody tr:last-child td {
    --- 9. CODEX & STATIC CONTENT (ABOUT PAGE) ---
    ========================================================================= */
 .codex-section {
-    display: block; margin: 40px auto; width: 100%; max-width: var(--window-max-width); line-height: 1.6;
+    display: block; margin: 15px auto; width: 100%; max-width: var(--window-max-width); line-height: 1.6;
 }
 
 .codex-section h2 {
     color: var(--main-color);
-    border-bottom: 1px solid var(--glass-border); 
-    padding-bottom: 12px;
-    margin-top: 40px ;
+    margin-top: 60px ;
     font-family: var(--font-title);
     font-size: 1.1em;
     font-weight: var(--medium);
     text-align: left;
     letter-spacing: 1px;
 }
-
-.codex-section h2:first-of-type { margin-top: 0; }
 
 .codex-section p { margin-bottom: 20px; color: var(--text-muted); text-align: left; font-size: 0.95em; }
 .codex-section strong { color: var(--text-main); font-weight: var(--medium); }
