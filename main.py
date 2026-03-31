@@ -430,7 +430,7 @@ render_page(
     is_archive=False,
     has_seasons=False,
     page_heading="Undergrowth",
-    description="No rank? No stress. The Woodland has room for all kinds of critters."
+    description="A sanctuary for the critters who never sought a crown."
 )
 
 print("\n✨ Website generated successfully!")
