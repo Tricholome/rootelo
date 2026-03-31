@@ -821,14 +821,22 @@ body[data-page="cache"].show-deco .screen-deco img {
     pointer-events: auto;
 }
 
-body[data-page="cache"] .page-intro, .artist-story {
+body[data-page="cache"] .page-intro {
+    display: none;
+}
+
+body[data-page="cache"].show-deco .page-intro {
+    display: revert;
+}
+
+.artist-story {
     opacity: 0;
     transform: translateY(20px);
     transition: all 1s ease;
     pointer-events: none;
 }
 
-body[data-page="cache"].show-deco .page-intro, body.show-deco .artist-story  {
+body.show-deco .artist-story  {
     opacity: 1;
     transform: translateY(0);
     pointer-events: auto;
