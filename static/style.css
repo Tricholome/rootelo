@@ -841,9 +841,11 @@ body.show-deco .artist-story  {
     transform: translateY(0);
     pointer-events: auto;
 }
+
 .enigma {
-	margin-top: 0;
-	text-align: center;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    text-align: center !important;
 }
 
 body.show-deco .enigma {
