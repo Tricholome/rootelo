@@ -165,13 +165,13 @@ body::after {
 body[data-page="cache"] .screen-deco img {
     opacity: 0;
     pointer-events: none;
-    transform: scale(0.98);
+    transform: translateX(-50%) scale(0.98);
 }
 
 body[data-page="cache"].show-deco .screen-deco img {
     opacity: 1;
     pointer-events: auto;
-    transform: scale(1);
+    transform: translateX(-50%) scale(1);
 }
 
 @media (max-width: 1299px) {
