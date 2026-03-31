@@ -800,28 +800,35 @@ tr[data-tier="squirrel"] td:nth-child(4) { color: var(--color-squirrel) !importa
    --- 12. HIDDEN CONTENT & SECRETS ---
    ========================================================================= */
 
-/* --- 1. HIDDEN BY DEFAULT (Intro, Story, Images) --- */
+/* --- 1. Text --- */
 body[data-page="cache"] .page-intro, 
-body[data-page="cache"] .artist-story, 
-body[data-page="cache"] .screen-deco img {
+body[data-page="cache"] .artist-story {
     display: none;
     opacity: 0;
     transform: translateY(20px);
     transition: all 1s ease;
-    pointer-events: none;
 }
 
-/* --- 2. REVEALED ON CLICK --- */
 body[data-page="cache"].show-deco .page-intro, 
-body[data-page="cache"].show-deco .artist-story, 
-body[data-page="cache"].show-deco .screen-deco img {
-    display: revert; /* Restores natural block/inline state */
+body[data-page="cache"].show-deco .artist-story {
+    display: revert;
     opacity: 1;
     transform: translateY(0);
+}
+
+/* --- 2. Images --- */
+body[data-page="cache"] .screen-deco img {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 1s ease;
+}
+
+body[data-page="cache"].show-deco .screen-deco img {
+    opacity: 1;
     pointer-events: auto;
 }
 
-/* --- 3. THE ENIGMA (Initial state & Disappearance) --- */
+/* --- 3. Enigma --- */
 .enigma {
     margin-top: 0 !important;
     margin-bottom: 0 !important;
@@ -832,7 +839,7 @@ body[data-page="cache"].show-deco .enigma {
     display: none;
 }
 
-/* --- 4. DECORATION HEIGHT --- */
+/* --- 4. App gap --- */
 body[data-page="cache"] .screen-deco {
     height: 0;
     overflow: visible;
@@ -843,7 +850,7 @@ body[data-page="cache"].show-deco .screen-deco {
     height: 200px;
 }
 
-/* --- 5. NUT INTERACTION --- */
+/* --- 5. Nut interaction --- */
 .tier-interaction-wrapper {
     display: flex;
     justify-content: center;
