@@ -835,7 +835,7 @@ body[data-page="cache"].show-deco .screen-deco img {
     text-align: center !important;
 }
 
-.enigma span { display: block; }
+.enigma span { display: block !important; }
 
 body[data-page="cache"].show-deco .enigma {
     display: none;
