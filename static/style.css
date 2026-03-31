@@ -638,7 +638,7 @@ table.dataTable tbody tr:last-child td {
     color: var(--main-color);
     border-bottom: 1px solid var(--glass-border); 
     padding-bottom: 12px;
-    margin: 40px 0 20px 0;
+    margin-top: 40px ;
     font-family: var(--font-title);
     font-size: 1.1em;
     font-weight: var(--medium);
@@ -831,7 +831,6 @@ body[data-page="cache"].show-deco .screen-deco img {
 /* --- 3. Enigma --- */
 .enigma {
     margin-top: 0 !important;
-    margin-bottom: 0 !important;
     text-align: center !important;
 }
 
@@ -857,7 +856,7 @@ body[data-page="cache"].show-deco .screen-deco {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 80px 0;
+    padding: 20px 0;
     width: 100%;
 }
 
@@ -875,19 +874,8 @@ body[data-page="cache"].show-deco .screen-deco {
     width: clamp(90px, 12vw, 130px);
     height: auto;
     filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.5));
-    margin-bottom: 15px;
+    margin-bottom: 20px;
     transition: filter 0.4s ease;
-}
-
-.nut-label {
-    font-family: var(--font-ui);
-	color: var(--text-muted);
-    font-weight: var(--medium);
-    text-transform: uppercase;
-    font-size: 0.85em;
-    letter-spacing: 1px;
-    opacity: 0.6;
-    transition: all 0.4s ease;
 }
 
 .nut-tooltip {
@@ -919,12 +907,6 @@ body[data-page="cache"].show-deco .screen-deco {
 
 .nut-trigger:hover .nut-sprite {
     filter: drop-shadow(0 25px 40px rgba(0, 0, 0, 0.7));
-}
-
-.nut-trigger:hover .nut-label {
-    opacity: 1;
-    color: var(--main-color);
-    transform: scale(0.65);
 }
 
 .nut-trigger:hover .nut-tooltip {
