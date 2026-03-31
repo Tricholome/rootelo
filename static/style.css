@@ -871,6 +871,7 @@ body[data-page="cache"].show-deco .screen-deco {
     width: clamp(90px, 12vw, 130px);
     height: auto;
     filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.5));
+	margin-top: 40px;
     margin-bottom: 80px;
     transition: filter 0.4s ease;
 }
