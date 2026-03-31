@@ -800,59 +800,50 @@ tr[data-tier="squirrel"] td:nth-child(4) { color: var(--color-squirrel) !importa
    --- 12. HIDDEN CONTENT & SECRETS ---
    ========================================================================= */
 
-/* Artist content */
-body[data-page="cache"] .screen-deco {
-    height: 0;        /* Le bloc ne prend plus de place verticale */
-    overflow: visible; /* Mais l'image peut quand même dépasser pour être vue */
-}
-
-body[data-page="cache"].show-deco .screen-deco {
-    height: 200px;    /* On remet la hauteur d'origine seulement quand c'est activé */
-    transition: height 0.5s ease;
-}
-
+/* --- 1. HIDDEN BY DEFAULT (Intro, Story, Images) --- */
+body[data-page="cache"] .page-intro, 
+body[data-page="cache"] .artist-story, 
 body[data-page="cache"] .screen-deco img {
-    opacity: 0;
-    pointer-events: none;
-}
-
-body[data-page="cache"].show-deco .screen-deco img {
-    opacity: 1;
-    pointer-events: auto;
-}
-
-body[data-page="cache"] .page-intro {
     display: none;
-}
-
-body[data-page="cache"].show-deco .page-intro {
-    display: revert;
-}
-
-.artist-story {
     opacity: 0;
     transform: translateY(20px);
     transition: all 1s ease;
     pointer-events: none;
 }
 
-body.show-deco .artist-story  {
+/* --- 2. REVEALED ON CLICK --- */
+body[data-page="cache"].show-deco .page-intro, 
+body[data-page="cache"].show-deco .artist-story, 
+body[data-page="cache"].show-deco .screen-deco img {
+    display: revert; /* Restores natural block/inline state */
     opacity: 1;
     transform: translateY(0);
     pointer-events: auto;
 }
 
+/* --- 3. THE ENIGMA (Initial state & Disappearance) --- */
 .enigma {
     margin-top: 0 !important;
     margin-bottom: 0 !important;
     text-align: center !important;
 }
 
-body.show-deco .enigma {
-    display: none
+body[data-page="cache"].show-deco .enigma {
+    display: none;
 }
 
-/* Nut interaction */
+/* --- 4. DECORATION HEIGHT --- */
+body[data-page="cache"] .screen-deco {
+    height: 0;
+    overflow: visible;
+    transition: height 0.5s ease;
+}
+
+body[data-page="cache"].show-deco .screen-deco {
+    height: 200px;
+}
+
+/* --- 5. NUT INTERACTION --- */
 .tier-interaction-wrapper {
     display: flex;
     justify-content: center;
