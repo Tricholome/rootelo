@@ -841,6 +841,10 @@ body.show-deco .artist-story  {
     transform: translateY(0);
     pointer-events: auto;
 }
+.enigma {
+	margin-top: 0;
+	text-align: center;
+}
 
 body.show-deco .enigma {
     display: none
