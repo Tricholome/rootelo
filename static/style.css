@@ -162,6 +162,16 @@ body::after {
     top: -150px; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.4)); transition: all 0.5s ease;
 }
 
+body[data-page="cache"] .screen-deco {
+    height: 0;        /* Le bloc ne prend plus de place verticale */
+    overflow: visible; /* Mais l'image peut quand même dépasser pour être vue */
+}
+
+body[data-page="cache"].show-deco .screen-deco {
+    height: 200px;    /* On remet la hauteur d'origine seulement quand c'est activé */
+    transition: height 0.5s ease;
+}
+
 body[data-page="cache"] .screen-deco img {
     opacity: 0;
     pointer-events: none;
