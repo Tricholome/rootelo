@@ -111,6 +111,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	window.onclick = (event) => { if (event.target == modal) closeModal(); };
 });
 
+// Double-tap
 document.addEventListener("DOMContentLoaded", function() {
     const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (window.matchMedia("(hover: none)").matches);
 
@@ -143,5 +144,13 @@ document.addEventListener("DOMContentLoaded", function() {
                 link.classList.remove('expanded');
             }
         }, true); // Le "true" ici permet d'intercepter avant DataTables
+    }
+});
+
+// Nut surprise
+document.addEventListener('DOMContentLoaded', () => {
+    if (window.location.search.includes('view=nut')) {
+        const nut = document.getElementById('nut-section');
+        if (nut) nut.style.display = 'block';
     }
 });
