@@ -839,8 +839,7 @@ body.show-deco .artist-story {
 }
 
 body.show-deco .enigma {
-    opacity: 0.6;
-    transition: opacity 0.5s;
+    display: none
 }
 
 /* Nut interaction */
