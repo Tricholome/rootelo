@@ -149,8 +149,19 @@ document.addEventListener("DOMContentLoaded", function() {
 
 // Nut surprise
 document.addEventListener('DOMContentLoaded', () => {
+	
+	// --- BLOC 1 : Feature "Nut" ---
     if (window.location.search.includes('view=nut')) {
         const nut = document.getElementById('nut-section');
         if (nut) nut.style.display = 'block';
     }
+	
+	// --- BLOC 2 : Feature "Deco" ---
+    const trigger = document.getElementById('deco-toggle');
+    if (trigger) {
+        trigger.addEventListener('click', () => {
+            document.body.classList.toggle('show-deco');
+        });
+    }
+	
 });

@@ -162,6 +162,18 @@ body::after {
     top: -150px; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.4)); transition: all 0.5s ease;
 }
 
+body[data-page="cache"] .screen-deco img {
+    opacity: 0;
+    pointer-events: none;
+    transform: scale(0.98);
+}
+
+body[data-page="cache"].show-deco .screen-deco img {
+    opacity: 1;
+    pointer-events: auto;
+    transform: scale(1);
+}
+
 @media (max-width: 1299px) {
     .app-banner { transition: transform 0.5s ease, opacity 0.4s ease; transform-origin: center; position: relative; }
     .is-scrolled .app-banner { opacity: 0; transform: scale(0.95); pointer-events: none; }
