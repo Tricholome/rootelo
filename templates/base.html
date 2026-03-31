@@ -1,239 +1,33 @@
-{% set colors = {
-    'bird': '#82C0E7',
-    'fox': '#F05D4E',
-    'rabbit': '#F9CD46',
-    'mouse': '#F49E52',
-    'squirrel': '#8CB369',
-    'default': '#D4BA94'
-} %}
+{% extends "base.html" %}
 
-{% set icons = {
-    'bird': 'assets/icons/bird_new.webp',
-    'fox': 'assets/icons/fox_new.webp',
-    'rabbit': 'assets/icons/rabbit_new.webp',
-    'mouse': 'assets/icons/mouse_new.webp',
-    'squirrel': 'assets/icons/squirrel.webp'
-} %}
+{% block content %}
 
-{% set page_deco = {
-    'index':    {'left': 'assets/images/leaderboard_img_left.webp',   'right': 'assets/images/leaderboard_img_right.webp'},
-    'matches':  {'left': 'assets/images/matches_img_left.webp', 'right': 'assets/images/matches_img_right.webp'},
-    'trends':   {'left': 'assets/images/trends_img_left.webp','right': 'assets/images/trends_img_right.webp'},
-    'about':    {'left': 'assets/images/about_img_left.webp',  'right': 'assets/images/about_img_right.webp'},
-    'cache':    {'left': 'assets/images/about_img1.webp',  'right': 'assets/images/about_img1.webp'},
-    'default':  {'left': '', 'right': ''}
-} %}
+<div class="codex-section">
 
-{% set current_deco = page_deco[page_id] if page_id in page_deco else page_deco['default'] %}
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>{{ title }}</title>
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..900;1,9..144,400..900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
-    
-    <link rel="stylesheet" href="static/style.css">
-    
-    <style>
-        :root {
-			/* --- 1. LAYOUT CONFIG --- */
-			--window-gap: 25px;           
-			--window-max-width: clamp(600px, 60vw, 1600px);
-
-			/* --- 2. TYPOGRAPHY --- */
-			--font-title: 'Fraunces', serif;
-			--font-ui: 'Inter', sans-serif;
-			--normal: 400;
-			--medium: 600;
-			--bold: 900;
-			
-			/* --- 3. GLASS SYSTEM --- */
-			--glass-bg: #1c1c1cd9; 
-			--glass-border: rgba(255, 255, 255, 0.0.08);
-			--glass-shadow: 0 10px 30px rgba(0,0,0,0.5);
+	<p class="enigma">
+		<span>What is this place?</span>
+		<span>Step into the shade.</span>
+		<span>Look beneath the leaves.</span>
+		<a class="cl" href="javascript:void(0)" id="deco-toggle">Seek the silent watcher.</a>
+	</p>
 	
-            /* --- 4. UI FOUNDATION --- */
-			--bg-overlay-top: rgba(0, 0, 0, 0.1);
-			--bg-overlay-bottom: rgba(0, 0, 0, 0.8);
-			--bg-container: #1c1c1c;
-			--bg-surface: rgba(255, 255, 255, 0.03); 
-			--bg-hover: rgba(255, 255, 255, 0.08);
-			--border-soft: #333333;
-			
-			/* --- 5. TEXT COLORS --- */
-			--text-bright: #ffffff;
-            --text-main: #E0E0E0; 
-            --text-muted: #888888;
-            --text-dark: #111111; 
-            
-			/* --- 6. TIER DYNAMICS --- */
-            {% for tier, hex in colors.items() %}
-            --color-{{ tier }}: {{ hex }};
-            --color-{{ tier }}-bg: {{ hex }}14;
-            {% endfor %}
-            --color-default: {{ colors['default'] }};
-			
-			/* --- 7. DATATABLES SPECIFIC (LES NOUVELLES COULEURS) --- */
-			--dt-table-bg: rgba(0, 0, 0, 0.15);
-			--dt-header-bg: rgba(0, 0, 0, 0.25);
-			--dt-row-border: rgba(255, 255, 255, 0.03);
-			--dt-row-hover: rgba(255, 255, 255, 0.07);
-			--dt-input-bg: rgba(0, 0, 0, 0.2);
-        }
-		body {
-			{% if page_id == 'index' %}
-				--main-color: var(--color-bird);
-			{% elif page_id == 'matches' %}
-				--main-color: var(--color-fox);
-			{% elif page_id == 'trends' %}
-				--main-color: var(--color-rabbit);
-			{% elif page_id == 'about' %}
-				--main-color: var(--color-mouse);
-			{% elif page_id == 'cache' %}
-				--main-color: var(--color-squirrel);
-			{% else %}
-				--main-color: var(--color-default);
-			{% endif %}
-		}
-    </style>
-
-    {% block extra_head %}{% endblock %}
-	{% block extra_css %}{% endblock %}
-</head>
-
-<body data-page="{{ page_id }}">
-    
-    <div class="container" style="position: relative; overflow: visible;">
-        
-        <header class="app-banner window-box">
-            <div class="banner-container">
-                <div class="banner-icons left">
-                    <a href="javascript:void(0)" onclick="openTierModal('bird')" class="tooltip-link js-double-tap">
-                        <img src="{{ icons.bird }}" alt="Bird">
-                        <span class="tooltip-text"><strong style="color: var(--color-bird);">Bird (1500+)</strong> — The Grandmasters</span>
-                    </a>
-                    <a href="javascript:void(0)" onclick="openTierModal('fox')" class="tooltip-link js-double-tap">
-                        <img src="{{ icons.fox }}" alt="Fox">
-                        <span class="tooltip-text"><strong style="color: var(--color-fox);">Fox (1400+)</strong> — The Cunning Tacticians</span>
-                    </a>
-                </div>
-                <div class="banner-center">
-                    <h1 class="site-title">ROOTELO</h1>
-                    <p class="site-subtitle">A Metric of Woodland&nbsp;Skill&nbsp;and&nbsp;Will</p>
-                </div>
-                <div class="banner-icons right">
-                    <a href="javascript:void(0)" onclick="openTierModal('rabbit')" class="tooltip-link js-double-tap">
-                        <img src="{{ icons.rabbit }}" alt="Rabbit">
-                        <span class="tooltip-text"><strong style="color: var(--color-rabbit);">Rabbit (1300+)</strong> — The Agile Contenders</span>
-                    </a>
-                    <a href="javascript:void(0)" onclick="openTierModal('mouse')" class="tooltip-link js-double-tap">
-                        <img src="{{ icons.mouse }}" alt="Mouse">
-                        <span class="tooltip-text"><strong style="color: var(--color-mouse);">Mouse (1200+)</strong> — The Steady Foragers</span>
-                    </a>
-                </div>
-            </div>
-            
-            <div class="nav-separator"></div>
-
-            <nav>
-				{% set nav_links = [('index', 'Leaderboard'), ('matches', 'Top Tables'), ('trends', "Player's Journey"), ('about', 'Codex')] %}
-				{% set archivable_pages = ['index', 'matches', 'trends'] %}
-				{% if page_id == 'cache' %}
-					{% set nav_links = nav_links + [('cache', 'Undergrowth')] %}
-				{% endif %}
-				{% for base, label in nav_links %}
-					{% if has_seasons and is_archive and base in archivable_pages %}
-						{% set target = base + '_lh01.html' %}
-					{% else %}
-						{% set target = base + '.html' %}
-					{% endif %}
-					<a href="{{ target }}" class="{{ 'active' if page_id == base else '' }}">{{ label }}</a>
-				{% endfor %}
-			</nav>
-        </header>
-        
-        <div class="screen-deco right-deco">
-            {% if current_deco.right %}
-                <img src="{{ current_deco.right }}" alt="Decoration Right">
-            {% endif %}
-        </div>
-
-        <div class="app-viewport window-box">
-            <header class="page-intro">
-				<h2>{{ page_heading }}</h2>
-				{% if has_seasons %}
-				<div class="season-selector">
-					<span class="season-label">Season</span>
-					<a href="{{ page_id }}_lh01.html" class="season-btn {{ 'active' if is_archive else '' }}">LH01</a>
-					<a href="{{ page_id }}.html" class="season-btn {{ '' if is_archive else 'active' }}">LH02</a>
-				</div>
-				{% endif %}
-				{% if description %}<p>{{ description }}</p>{% endif %}
-			</header>
-			
-            <main>
-                {% block content %}{% endblock %}
-            </main>
-        </div>
-        
-        <div class="screen-deco left-deco">
-            {% if current_deco.left %}
-                <img src="{{ current_deco.left }}" alt="Decoration Left">
-            {% endif %}
-        </div>
-
-        <footer class="app-footer window-box">
-            <div class="footer-content">
-                <div class="footer-credits">
-                    <span>Powered by <strong>Tʀɪᴄʜᴏʟᴏᴍᴇ</strong></span>
-                    <span class="footer-separator">|</span>
-                    <span>Art by <a class="cl" href="cache.html"><strong>𝕩𝕝𝕦𝕖𝕧𝕚</strong></a></span>
-                </div>
-                <div class="footer-date">Updated on {{ generation_date }}</div>
-            </div>
-        </footer>
+    <div class="artist-story">
+        <h2>The Silent Chronicler</h2>
+        <p>Here, where the roots run deep and the wild grows dense, <strong>𝕩𝕝𝕦𝕖𝕧𝕚</strong> sits hidden in the green. With a prolific brush and a warm smile, he captures the flutter of every wing and the twitch of every whisker. He breathes life into the spirit of the Woodland, celebrating its teeming diversity with every stroke—a quiet reminder that beyond the league's grand stakes, no critter is too small to be seen.</p>
     </div>
-    
-    <div id="tierModal" class="modal-overlay">
-		<div class="modal-content window-box"> <button class="modal-close" aria-label="Close">&times;</button>
-			
-			<div id="modalBody">
-				<div class="modal-header">
-					<img id="modalIcon" src="" alt="Tier Icon">
-					<h2 id="modalTitle"></h2>
-					<h3 id="modalElo"></h3>
-					<div id="modalSubtitle"></div>
-				</div>
-				
-				<div class="modal-divider"></div>
-				
-				<div class="modal-description">
-					<p id="modalText"></p>
-				</div>
-			</div>
+	
+	<div id="nut-section" style="display: none;">
+		<h2>No rank? No stress</h2>
+		<p>The Woodland has room for all kinds of critters.</p>
+		<div class="tier-interaction-wrapper">
+			<a href="javascript:void(0)" onclick="openTierModal('squirrel')" class="nut-trigger js-double-tap">
+				<span class="nut-tooltip">Crack a nut!</span>
+				<img src="assets/images/nut.webp" alt="Giant Nut" class="nut-sprite">
+				<span class="nut-label">We haven't forgotten you!</span>
+			</a>
 		</div>
 	</div>
-
-    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 	
-	<script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
-    
-    <script>
-        const CONFIG = {
-            colors: {{ colors|tojson }},
-            icons: {{ icons|tojson }}
-        };
-    </script>
-    
-    <script src="static/script.js"></script>
-    {% block custom_js %}{% endblock %}
-</body>
-</html>
+</div>
+
+{% endblock %}
