@@ -31,7 +31,6 @@
         const input = document.getElementById('playerName');
         const name = input.value;
 
-        // 1. Si le champ est vide ou le joueur inconnu, on nettoie
         if (name === "" || !allData[name]) {
             if (myChart) myChart.destroy();
             localStorage.removeItem('selectedPlayer');
@@ -45,12 +44,11 @@
         const rabbitColor = getComputedStyle(document.documentElement)
                             .getPropertyValue('--color-rabbit').trim() || '#E0B634';
         
-        // 2. Sauvegarde du choix
         localStorage.setItem('selectedPlayer', name);
 
         const rawData = allData[name];
         
-        // 3. Conversion des données pour l'axe temporel
+        // Conversion des données pour l'axe temporel
         const dataPoints = rawData.map(d => ({
             x: new Date(d[0]),
             y: d[1]
@@ -58,34 +56,62 @@
 
         if (myChart) myChart.destroy();
         
-        // 4. Création du graphique
         myChart = new Chart(ctx, {
             type: 'line',
             data: {
                 datasets: [{
                     data: dataPoints,
                     borderColor: rabbitColor,
-                    backgroundColor: rabbitColor + '22',
-                    borderWidth: 3,
+                    backgroundColor: rabbitColor + '15', // Légèrement plus transparent
+                    borderWidth: 4, // Ligne un peu plus épaisse
                     fill: true,
-                    tension: 0.1,
-                    pointRadius: 3,
+                    
+                    // --- LA CORRECTION EST ICI ---
+                    tension: 0, // Désactive complètement le lissage (lignes droites)
+                    // -----------------------------
+                    
+                    pointRadius: 4, // Points légèrement plus grands
                     pointBackgroundColor: rabbitColor,
+                    pointHoverRadius: 6, // Effet au survol
                     pointHitRadius: 20
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                // Pour éviter que la ligne ne bave sur les bords
+                layout: {
+                    padding: {
+                        top: 10,
+                        right: 10,
+                        bottom: 10,
+                        left: 0
+                    }
+                },
                 plugins: {
                     legend: { display: false },
                     tooltip: { 
                         enabled: true, 
                         backgroundColor: '#222',
                         titleColor: rabbitColor,
+                        titleFont: {
+                            family: 'var(--font-ui)',
+                            weight: 'bold'
+                        },
+                        bodyFont: {
+                            family: 'var(--font-ui)'
+                        },
                         callbacks: {
                             title: (items) => {
-                                return new Date(items[0].parsed.x).toLocaleDateString();
+                                // Formatage de la date dans le tooltip (ex: 12 Jan 2024)
+                                return new Date(items[0].parsed.x).toLocaleDateString('en-GB', {
+                                    day: 'numeric',
+                                    month: 'short',
+                                    year: 'numeric'
+                                });
+                            },
+                            label: (context) => {
+                                return ` ELO: ${context.parsed.y}`;
                             }
                         }
                     }
@@ -93,7 +119,10 @@
                 scales: {
                     y: { 
                         grid: { color: '#252525' }, 
-                        ticks: { color: '#888' } 
+                        ticks: { 
+                            color: '#888',
+                            font: { family: 'var(--font-ui)' }
+                        } 
                     },
                     x: { 
                         type: 'time',
@@ -106,6 +135,7 @@
                         grid: { display: false }, 
                         ticks: { 
                             color: '#888', 
+                            font: { family: 'var(--font-ui)' },
                             maxRotation: 0,
                             autoSkip: true,
                             maxTicksLimit: 8 
@@ -116,7 +146,6 @@
         });
     } // Fin de updateChart
 
-    // 5. Initialisation au chargement
     window.onload = function() {
         const savedPlayer = localStorage.getItem('selectedPlayer');
         const input = document.getElementById('playerName');
