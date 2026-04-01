@@ -1,0 +1,37 @@
+name: Update Rootelo DEV Mirror
+
+on:
+  push:
+    branches:
+      - dev  # Se lance automatiquement à chaque modification sur la branche dev
+  workflow_dispatch:  # Gardons le bouton manuel, c'est très pratique pour tester
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10' # (Correction : c'est bien python-version)
+
+      - name: Install dependencies
+        run: |
+          pip install pandas requests openpyxl jinja2
+
+      - name: Run ELO calculation and site generation
+        env:
+          API_TOKEN: ${{ secrets.API_TOKEN }}
+        run: python main.py
+
+      - name: Deploy to GitHub Pages (Subfolder /dev)
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: .
+          publish_branch: gh-pages
+          destination_dir: dev  # MAGIE 1 : Envoie tout dans le sous-dossier "dev"
+          keep_files: true      # MAGIE 2 : Ne supprime SURTOUT PAS ton site principal
