@@ -47,9 +47,11 @@
 
             const rawData = allData[name];
             const labels = rawData.map(d => {
-				const date = new Date(d[0]);
-				// Format : "25 Mar"
-				return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+				const dateObj = new Date(d[0]);
+				if (!isNaN(dateObj.getTime())) {
+					return dateObj.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+				}
+				return d[0]; 
 			});
             const eloScores = rawData.map(d => d[1]);
 
