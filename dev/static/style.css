@@ -835,7 +835,7 @@ body[data-page="cache"] .artist-story {
 
 body[data-page="cache"].show-deco .page-intro, 
 body[data-page="cache"].show-deco .artist-story {
-    display: revert;
+    display: block;
     opacity: 1;
     transform: translateY(0);
 }
