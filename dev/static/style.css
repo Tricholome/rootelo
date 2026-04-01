@@ -746,8 +746,6 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     backdrop-filter: blur(15px);
     border: 1px solid var(--glass-border);
     border-radius: 16px;
-    
-    /* LE LISERÉ DYNAMIQUE : utilise --tier-color injecté par le JS */
     box-shadow: 
         inset 0 2px 0 0 color-mix(in srgb, var(--tier-color) 50%, transparent), 
         0 25px 50px rgba(0, 0, 0, 0.8);
@@ -769,7 +767,7 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 .modal-header { text-align: center; margin-bottom: 20px; }
 
 #modalIcon { 
-    width: 350px; /* Icône vraiment agrandie */
+    width: 350px;
     height: auto; max-height: 35vh;
     object-fit: contain; margin-bottom: 15px; display: inline-block;
     filter: drop-shadow(0 15px 25px rgba(0,0,0,0.6));
@@ -782,14 +780,12 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 
 #modalElo { 
     font-weight: var(--bold); font-size: 1.1em; margin-top: 5px; 
-    /* La couleur est gérée directement par modalElo.style.color dans ton JS */
 }
 
 #modalSubtitle { color: var(--text-muted); font-style: italic; font-size: 1em; margin-top: -5px; }
 
 #modalText { color: var(--text-muted); text-align: left; font-size: 0.95em; line-height: 1.6; }
 
-/* --- LE SÉPARATEUR DE LA BANNIÈRE --- */
 .modal-divider {
     width: 100%; height: 0; margin: 25px auto;
     border-top: 1px solid rgba(0, 0, 0, 0.4);
@@ -798,7 +794,7 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 
 /* --- Mobile (Portrait) --- */
 @media (max-width: 800px) {
-    .modal-content { width: 92%; max-height: 90vh; padding: 25px; }
+    .modal-content { width: 92%; max-height: 90vh; padding: 15px; }
     #modalIcon { width: 200px; }
     #modalTitle { font-size: 1.8em; }
 }
@@ -808,17 +804,14 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     .modal-overlay {
         align-items: flex-start; 
         padding: 20px;
-        overflow-y: auto; 
     }
 
     .modal-content {
         margin: auto;
         padding: 20px;
         max-width: 900px;
-        /* Le flex a été retiré d'ici */
     }
 
-    /* Le flex est appliqué ICI, sur le vrai conteneur de l'image et du texte */
     #modalBody {
         display: flex;
         flex-direction: row;
@@ -827,19 +820,28 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     }
 
     .modal-header {
-        flex: 1;
+        flex: 0 0 150px;
         margin-bottom: 0;
     }
 
     #modalIcon {
-        width: 150px;
-        max-height: 40vh;
+        width: 100%;
+        max-height: 60vh;
+        margin-bottom: 0;
     }
 
-    /* On cible directement le bloc de description pour la partie droite */
     .modal-description {
-        flex: 2;
+        flex: 1;
         text-align: left;
+        display: flex;
+        flex-direction: column;
+    }
+	
+	.title-row {
+        display: flex;
+        align-items: baseline;
+        gap: 15px;
+        margin-bottom: 2px;
     }
     
     #modalTitle { font-size: 1.5em; }
