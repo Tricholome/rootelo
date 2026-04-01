@@ -12,7 +12,7 @@ HEADERS = {'Authorization': f'Token {API_TOKEN}'} if API_TOKEN else {}
 TOURNAMENT_ID = 24  # Season LH01 Tournament ID
 
 # Set cutoff for archive season
-CUTOFF_DATE = datetime.strptime("2026-04-01", "%Y-%m-%d").date()
+CUTOFF_DATE = datetime.strptime("2026-03-31", "%Y-%m-%d").date()
 
 # Define paths matching main.py structure
 DATA_DIR = "data"
