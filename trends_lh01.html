@@ -173,7 +173,7 @@
 					<a href="trends.html" class="season-btn ">LH02</a>
 				</div>
 				
-				<p>Historical ELO evolution for Season LH01.</p>
+				<p>Search for a player to see their Elo evolution over the season.</p>
 			</header>
 			
             <main>
@@ -875,7 +875,7 @@
                     <span class="footer-separator">|</span>
                     <span>Art by <a class="cl" href="cache.html">𝕩𝕝𝕦𝕖𝕧𝕚</a></span>
                 </div>
-                <div class="footer-date">Updated on 2026-04-01 09:46</div>
+                <div class="footer-date">Updated on 2026-04-01 10:09</div>
             </div>
         </footer>
     </div>
@@ -939,9 +939,11 @@
 
             const rawData = allData[name];
             const labels = rawData.map(d => {
-				const date = new Date(d[0]);
-				// Format : "25 Mar"
-				return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+				const dateObj = new Date(d[0]);
+				if (!isNaN(dateObj.getTime())) {
+					return dateObj.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+				}
+				return d[0]; 
 			});
             const eloScores = rawData.map(d => d[1]);
 

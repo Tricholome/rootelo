@@ -1,3 +1,4 @@
+
 import os
 import requests
 import pandas as pd
@@ -12,7 +13,7 @@ from jinja2 import Environment, FileSystemLoader
 DATA_DIR = "data"
 
 # Correction file path
-CORRECTIONS_FILE = os.path.join(DATA_DIR, "lh01_corrections.csv")
+CORRECTIONS_FILE = os.path.join(DATA_DIR, "lh02_corrections.csv")
 
 # LH01 Archive files
 ARCHIVE_LEADERBOARD_FILE = os.path.join(DATA_DIR, "lh01_final_ratings.csv")
@@ -38,7 +39,7 @@ NAV_ITEMS = [
 # =========================================================================
 API_TOKEN = os.getenv('API_TOKEN')
 HEADERS = {'Authorization': f'Token {API_TOKEN}'} if API_TOKEN else {}
-TOURNAMENT_ID = 24
+TOURNAMENT_ID = 25
 
 today = date.today()
 CUTOFF_DATE = today - timedelta(days=1)
@@ -282,17 +283,20 @@ for p_name, rating in elo_ratings.items():
         'Qualified': is_qual
     })
 
-current_final_df = pd.DataFrame(leaderboard_list).sort_values(by='ELO', ascending=False)
-
-rank_counter = 1
-ranks = []
-for _, row in current_final_df.iterrows():
-    if row['Qualified']:
-        ranks.append(rank_counter)
-        rank_counter += 1
-    else: 
-        ranks.append("-")
-current_final_df['Rank'] = ranks
+if leaderboard_list:
+    current_final_df = pd.DataFrame(leaderboard_list).sort_values(by='ELO', ascending=False)
+    
+    rank_counter = 1
+    ranks = []
+    for _, row in current_final_df.iterrows():
+        if row['Qualified']:
+            ranks.append(rank_counter)
+            rank_counter += 1
+        else: 
+            ranks.append("-")
+    current_final_df['Rank'] = ranks
+else:
+    current_final_df = pd.DataFrame(columns=['Rank', 'Player', 'ELO', 'Games', 'Wins', 'Win Rate', 'Peak', 'Last', 'Qualified'])
 
 current_history = {k.split('+')[0].split('#')[0]: v for k, v in player_history.items()}
 
@@ -354,7 +358,7 @@ render_page(
     is_archive=False,
     has_seasons=True,
     page_heading="Top Tables",
-    description="Top 100 games ranked by total ELO. Click a Game ID for match details.",
+    description="Top 100 games ranked by total Elo. Click a Game ID for match details.",
     matches=display_matches_current
 )
 
@@ -366,7 +370,7 @@ render_page(
     is_archive=False,
     has_seasons=True,
     page_heading="Player's Journey",
-    description="Search for a player to see their ELO evolution over the season.",
+    description="Search for a player to see their Elo evolution over the season.",
     history_json=display_trends_current['history_json'],
     player_names=display_trends_current['player_names']
 )
@@ -381,7 +385,7 @@ render_page(
     has_seasons=True,
     current_page_base="index",
     page_heading="Leaderboard",
-    description="Final standings for Season LH01. Minimum 1 win required.",
+    description="Minimum 1 win required for display. Data tracked until 2026-03-31.",
     players=display_leaderboard_archive
 )
 
@@ -393,7 +397,7 @@ render_page(
     is_archive=True,
     has_seasons=True,
     page_heading="Top Tables",
-    description="Top 100 games from Season LH01.",
+    description="Top 100 games ranked by total Elo. Click a Game ID for match details.",
     matches=display_matches_archive
 )
 
@@ -405,7 +409,7 @@ render_page(
     is_archive=True,
     has_seasons=True,
     page_heading="Player's Journey",
-    description="Historical ELO evolution for Season LH01.",
+    description="Search for a player to see their Elo evolution over the season.",
     history_json=display_trends_archive['history_json'],
     player_names=display_trends_archive['player_names']
 )

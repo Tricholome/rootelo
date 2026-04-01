@@ -386,7 +386,7 @@ nav a.active {
 }
 
 /* Season Selectors */
-.season-selector { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 20px auto 10px; }
+.season-selector { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 20px auto 20px; }
 .season-label { font-size: 0.7em; text-transform: uppercase; color: var(--text-muted); letter-spacing: 1.2px; font-weight: var(--bold); margin-right: 5px;}
 .season-btn { text-decoration: none; font-size: 0.75em; font-weight: var(--medium); color: var(--text-muted); padding: 6px 14px; border-radius: 4px; background: var(--bg-surface); border: 1px solid var(--border-soft); transition: 0.2s; }
 .season-btn:hover { color: var(--text-main); background: var(--bg-hover); }
