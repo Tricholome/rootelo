@@ -46,7 +46,11 @@
             localStorage.setItem('selectedPlayer', name);
 
             const rawData = allData[name];
-            const labels = rawData.map(d => d[0]);
+            const labels = rawData.map(d => {
+				const date = new Date(d[0]);
+				// Format : "25 Mar"
+				return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+			});
             const eloScores = rawData.map(d => d[1]);
 
             if (myChart) myChart.destroy();

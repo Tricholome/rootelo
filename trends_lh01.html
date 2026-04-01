@@ -875,7 +875,7 @@
                     <span class="footer-separator">|</span>
                     <span>Art by <a class="cl" href="cache.html">𝕩𝕝𝕦𝕖𝕧𝕚</a></span>
                 </div>
-                <div class="footer-date">Updated on 2026-04-01 09:42</div>
+                <div class="footer-date">Updated on 2026-04-01 09:46</div>
             </div>
         </footer>
     </div>
@@ -938,7 +938,11 @@
             localStorage.setItem('selectedPlayer', name);
 
             const rawData = allData[name];
-            const labels = rawData.map(d => d[0]);
+            const labels = rawData.map(d => {
+				const date = new Date(d[0]);
+				// Format : "25 Mar"
+				return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+			});
             const eloScores = rawData.map(d => d[1]);
 
             if (myChart) myChart.destroy();
