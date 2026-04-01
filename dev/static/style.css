@@ -844,12 +844,31 @@ body[data-page="cache"].show-deco .artist-story {
 body[data-page="cache"] .screen-deco img {
     opacity: 0;
     pointer-events: none;
-    transition: opacity 1s ease;
+    transition: all 1s ease;
 }
 
-body[data-page="cache"].show-deco .screen-deco img {
-    opacity: 1;
-    pointer-events: auto;
+/* Sur Mobile : On garde le centrage horizontal (translateX) */
+@media (max-width: 1299px) {
+    body[data-page="cache"] .screen-deco img {
+        transform: translateX(-50%) scale(0.9);
+    }
+    body[data-page="cache"].show-deco .screen-deco img {
+        opacity: 1;
+        transform: translateX(-50%) scale(1);
+        pointer-events: auto;
+    }
+}
+
+/* Sur PC : On garde le centrage vertical (translateY) du mode fixe */
+@media (min-width: 1300px) {
+    body[data-page="cache"] .screen-deco img {
+        transform: translateY(-50%) scale(0.9);
+    }
+    body[data-page="cache"].show-deco .screen-deco img {
+        opacity: 1;
+        transform: translateY(-50%) scale(1);
+        pointer-events: auto;
+    }
 }
 
 /* --- 3. Enigma --- */
