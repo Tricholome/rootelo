@@ -116,11 +116,10 @@ body::after {
 }
 
 .app-footer {
-    margin-top: 60px;
-    padding: 40px 20px;
+    margin-top: 30px;
+    padding: 15px 10px;
     border-top: 1px solid var(--border-soft);
     color: var(--text-muted);
-    font-size: 0.8em;
     text-align: center;
 }
 
@@ -129,14 +128,13 @@ body::after {
     align-items: center;
     justify-content: center;
     gap: 15px;
-    margin-bottom: 10px;
+    margin-bottom: 4px;
 }
 
 .footer-credits span:first-child::after {
     content: "|";
     margin-left: 15px;
-    color: var(--border-soft);
-    opacity: 0.5;
+    color: var(--text-muted);
 }
 
 .footer-credits strong {
