@@ -1,8 +1,7 @@
 {% extends "base.html" %}
 
 {% block extra_head %}
-	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 {% endblock %}
 
 {% block content %}
@@ -30,13 +29,11 @@
     function updateChart() {
         const input = document.getElementById('playerName');
         const name = input.value;
-
-        if (name === "" || !allData[name]) {
+        if (name === "") {
             if (myChart) myChart.destroy();
             localStorage.removeItem('selectedPlayer');
             return;
         }
-
         const canvas = document.getElementById('progressionChart');
         if (!canvas) return;
         const ctx = canvas.getContext('2d');
@@ -44,115 +41,64 @@
         const rabbitColor = getComputedStyle(document.documentElement)
                             .getPropertyValue('--color-rabbit').trim() || '#E0B634';
         
-        localStorage.setItem('selectedPlayer', name);
+        if (allData[name]) {
+            // SAUVEGARDE : On mémorise le nom du joueur
+            localStorage.setItem('selectedPlayer', name);
 
-        const rawData = allData[name];
-        
-        // Conversion des données pour l'axe temporel
-        const dataPoints = rawData.map(d => ({
-            x: new Date(d[0]),
-            y: d[1]
-        }));
+            const rawData = allData[name];
+            const labels = rawData.map(d => d[0]);
+            const eloScores = rawData.map(d => d[1]);
 
-        if (myChart) myChart.destroy();
-        
-        myChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                datasets: [{
-                    data: dataPoints,
-                    borderColor: rabbitColor,
-                    backgroundColor: rabbitColor + '15', // Légèrement plus transparent
-                    borderWidth: 4, // Ligne un peu plus épaisse
-                    fill: true,
-                    
-                    // --- LA CORRECTION EST ICI ---
-                    tension: 0, // Désactive complètement le lissage (lignes droites)
-                    // -----------------------------
-                    
-                    pointRadius: 4, // Points légèrement plus grands
-                    pointBackgroundColor: rabbitColor,
-                    pointHoverRadius: 6, // Effet au survol
-                    pointHitRadius: 20
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                // Pour éviter que la ligne ne bave sur les bords
-                layout: {
-                    padding: {
-                        top: 10,
-                        right: 10,
-                        bottom: 10,
-                        left: 0
-                    }
+            if (myChart) myChart.destroy();
+            
+            myChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: eloScores,
+                        borderColor: rabbitColor,
+                        backgroundColor: rabbitColor + '22',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.3,
+                        pointRadius: 3,
+                        pointBackgroundColor: rabbitColor,
+                        pointHitRadius: 20
+                    }]
                 },
-                plugins: {
-                    legend: { display: false },
-                    tooltip: { 
-                        enabled: true, 
-                        backgroundColor: '#222',
-                        titleColor: rabbitColor,
-                        titleFont: {
-                            family: 'var(--font-ui)',
-                            weight: 'bold'
-                        },
-                        bodyFont: {
-                            family: 'var(--font-ui)'
-                        },
-                        callbacks: {
-                            title: (items) => {
-                                // Formatage de la date dans le tooltip (ex: 12 Jan 2024)
-                                return new Date(items[0].parsed.x).toLocaleDateString('en-GB', {
-                                    day: 'numeric',
-                                    month: 'short',
-                                    year: 'numeric'
-                                });
-                            },
-                            label: (context) => {
-                                return ` ELO: ${context.parsed.y}`;
-                            }
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { 
+                            enabled: true, 
+                            backgroundColor: '#222',
+                            titleColor: rabbitColor
                         }
-                    }
-                },
-                scales: {
-                    y: { 
-                        grid: { color: '#252525' }, 
-                        ticks: { 
-                            color: '#888',
-                            font: { family: 'var(--font-ui)' }
-                        } 
                     },
-                    x: { 
-                        type: 'time',
-                        time: {
-                            unit: 'day',
-                            displayFormats: {
-                                day: 'MMM d'
-                            }
-                        },
-                        grid: { display: false }, 
-                        ticks: { 
-                            color: '#888', 
-                            font: { family: 'var(--font-ui)' },
-                            maxRotation: 0,
-                            autoSkip: true,
-                            maxTicksLimit: 8 
-                        } 
+                    scales: {
+                        y: { grid: { color: '#252525' }, ticks: { color: '#888' } },
+                        x: { grid: { display: false }, ticks: { color: '#888', maxTicksLimit: 6 } }
                     }
                 }
-            }
-        });
-    } // Fin de updateChart
+            });
+        }
+    }
 
+    // CHARGEMENT : Au chargement de la page
     window.onload = function() {
         const savedPlayer = localStorage.getItem('selectedPlayer');
         const input = document.getElementById('playerName');
 
+        // Si on a un joueur en mémoire ET qu'il existe dans les données de cette saison
         if (savedPlayer && allData[savedPlayer]) {
             input.value = savedPlayer;
             updateChart();
+        } else {
+            // Optionnel : Si le joueur n'existe pas dans cette saison, on peut vider le champ
+            // input.value = "";
         }
     };
 </script>
