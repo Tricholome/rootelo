@@ -814,11 +814,16 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     .modal-content {
         margin: auto;
         padding: 20px;
+        max-width: 900px;
+        /* Le flex a été retiré d'ici */
+    }
+
+    /* Le flex est appliqué ICI, sur le vrai conteneur de l'image et du texte */
+    #modalBody {
         display: flex;
         flex-direction: row;
         align-items: center;
-        gap: 20px;
-        max-width: 900px;
+        gap: 30px;
     }
 
     .modal-header {
@@ -831,13 +836,17 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
         max-height: 40vh;
     }
 
-    .modal-body {
+    /* On cible directement le bloc de description pour la partie droite */
+    .modal-description {
         flex: 2;
         text-align: left;
     }
     
     #modalTitle { font-size: 1.5em; }
-    .modal-divider { margin: 10px 0; }
+    
+    /* Le séparateur horizontal casse le mode côte à côte, on le masque */
+    .modal-divider { display: none; } 
+    
     #modalText { font-size: 0.85em; line-height: 1.4; }
 }
 
