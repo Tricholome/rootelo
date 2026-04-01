@@ -164,6 +164,10 @@ document.addEventListener('DOMContentLoaded', () => {
         btn.addEventListener('click', () => {
             // On ajoute ou on enlève la classe "show-deco" au body
             document.body.classList.toggle('show-deco');
+			
+			setTimeout(() => {
+                window.dispatchEvent(new Event('scroll'));
+            }, 600);
         });
     }
 	
