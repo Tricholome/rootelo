@@ -484,9 +484,9 @@ table.dataTable tbody tr:last-child td {
 }
 
 table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
-    background-color: var(--dt-input-bg) !important;
+    background-color: transparent !important;
     color: var(--text-main) !important;
-    border: 1px solid var(--border-soft) !important;
+    border: none !important;
     box-shadow: none !important;
     text-indent: 0 !important;
     line-height: 1em;
