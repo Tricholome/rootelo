@@ -835,7 +835,7 @@ body[data-page="cache"] .artist-story {
 
 body[data-page="cache"].show-deco .page-intro, 
 body[data-page="cache"].show-deco .artist-story {
-    display: block;
+    display: revert;
     opacity: 1;
     transform: translateY(0);
 }
@@ -844,35 +844,12 @@ body[data-page="cache"].show-deco .artist-story {
 body[data-page="cache"] .screen-deco img {
     opacity: 0;
     pointer-events: none;
-    transition: 
-        opacity 1s ease, 
-        top 0.6s cubic-bezier(0.25, 1, 0.5, 1), 
-        transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+    transition: all 1s ease;
 }
 
-/* Sur Mobile : On garde tes réglages exacts */
-@media (max-width: 1299px) {
-    body[data-page="cache"] .screen-deco img {
-        transform: translateX(-50%) scale(0.9);
-        top: 0px; 
-    }
-    body[data-page="cache"].show-deco .screen-deco img {
-        opacity: 1;
-        transform: translateX(-50%) scale(1);
-        pointer-events: auto;
-    }
-}
-
-/* Sur PC : On garde ton calcul dynamique */
-@media (min-width: 1300px) {
-    body[data-page="cache"] .screen-deco img {
-        transform: translateY(-50%) scale(0.9);
-    }
-    body[data-page="cache"].show-deco .screen-deco img {
-        opacity: 1;
-        transform: translateY(-50%) scale(1);
-        pointer-events: auto;
-    }
+body[data-page="cache"].show-deco .screen-deco img {
+    opacity: 1;
+    pointer-events: auto;
 }
 
 /* --- 3. Enigma --- */
@@ -888,26 +865,18 @@ body[data-page="cache"].show-deco .enigma {
 }
 
 /* --- 4. App gap --- */
-
-/* Sur mobile : on garde ton effet d'accordéon */
-@media (max-width: 1299px) {
-    body[data-page="cache"] .screen-deco {
-        height: 0;
-        overflow: visible;
-        transition: height 0.5s ease;
-    }
-
-    body[data-page="cache"].show-deco .screen-deco {
-        height: 200px;
-    }
+body[data-page="cache"] .screen-deco {
+    height: 0;
+    transition: height 0.5s ease;
 }
 
-/* Sur PC : on FORCE le conteneur à rester en plein écran, 
-   sinon tes images perdent leur repère de scroll */
+body[data-page="cache"].show-deco .screen-deco {
+    height: 200px;
+}
+
 @media (min-width: 1300px) {
-    body[data-page="cache"] .screen-deco {
-        height: 100vh !important;
-        overflow: hidden;
+body[data-page="cache"].show-deco .screen-deco { 
+        height: 100vh; 
     }
 }
 
