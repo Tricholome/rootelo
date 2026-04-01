@@ -1,3 +1,28 @@
+{% extends "base.html" %}
+
+{% block extra_head %}
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+{% endblock %}
+
+{% block content %}
+    <div class="search-box">
+        <input type="search" list="playerList" id="playerName" placeholder="Search Player..." oninput="updateChart()">
+        <datalist id="playerList">
+            {% for name in player_names %}
+                <option value="{{ name }}">
+            {% endfor %}
+        </datalist>
+    </div>
+    
+    <div class="chart-wrapper">
+        <div class="chart-container">
+            <canvas id="progressionChart"></canvas>
+        </div>
+    </div>
+{% endblock %}
+
+{% block custom_js %}
 <script>
     const allData = {{ history_json | safe }};
     let myChart;
@@ -102,3 +127,4 @@
         }
     };
 </script>
+{% endblock %}
