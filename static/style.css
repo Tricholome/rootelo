@@ -45,7 +45,7 @@
    
 html {
     scroll-behavior: smooth;
-    min-height: 100%;
+    height: 100%;
     margin: 0;
     padding: 0;
 	background-color: var(--bg-overlay-bottom);
@@ -62,7 +62,7 @@ body {
     background-attachment: fixed;
 	
 	min-height: 100vh;
-    min-height: 100svh;
+    min-height: 100dvh;
 	
 	font-family: var(--font-ui);
     color: var(--text-main);
@@ -878,6 +878,20 @@ body[data-page="cache"].show-deco .screen-deco {
 body[data-page="cache"].show-deco .screen-deco { 
         height: 100vh; 
     }
+}
+
+/* 1. On crée un "coussin" d'espace quand la déco est masquée */
+body[data-page="cache"] .app-footer {
+    /* 50vh = 50% de la hauteur de l'écran. 
+       Cela garantit que le body est assez long pour couvrir le noir. */
+    margin-top: 50vh !important; 
+    transition: margin-top 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* 2. On réduit cet espace quand la déco apparaît */
+body[data-page="cache"].show-deco .app-footer {
+    /* On revient à une marge normale puisque la déco prend le relais */
+    margin-top: 40px !important; 
 }
 
 /* --- 5. Nut interaction --- */
