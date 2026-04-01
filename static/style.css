@@ -865,14 +865,27 @@ body[data-page="cache"].show-deco .enigma {
 }
 
 /* --- 4. App gap --- */
-body[data-page="cache"] .screen-deco {
-    height: 0;
-    overflow: visible;
-    transition: height 0.5s ease;
+
+/* Sur mobile : on garde ton effet d'accordéon */
+@media (max-width: 1299px) {
+    body[data-page="cache"] .screen-deco {
+        height: 0;
+        overflow: visible;
+        transition: height 0.5s ease;
+    }
+
+    body[data-page="cache"].show-deco .screen-deco {
+        height: 200px;
+    }
 }
 
-body[data-page="cache"].show-deco .screen-deco {
-    height: 200px;
+/* Sur PC : on FORCE le conteneur à rester en plein écran, 
+   sinon tes images perdent leur repère de scroll */
+@media (min-width: 1300px) {
+    body[data-page="cache"] .screen-deco {
+        height: 100vh !important;
+        overflow: hidden;
+    }
 }
 
 /* --- 5. Nut interaction --- */
