@@ -796,12 +796,50 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
+/* --- Mobile (Portrait) --- */
 @media (max-width: 800px) {
-    .modal-content { width: 95%; padding: 25px; }
+    .modal-content { width: 92%; max-height: 90vh; padding: 25px; }
     #modalIcon { width: 200px; }
     #modalTitle { font-size: 1.8em; }
 }
 
+/* --- Mobile (Landscape) --- */
+@media (max-height: 500px) and (orientation: landscape) {
+    .modal-overlay {
+        align-items: flex-start; 
+        padding: 20px;
+        overflow-y: auto; 
+    }
+
+    .modal-content {
+        margin: auto;
+        padding: 20px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 20px;
+        max-width: 900px;
+    }
+
+    .modal-header {
+        flex: 1;
+        margin-bottom: 0;
+    }
+
+    #modalIcon {
+        width: 150px;
+        max-height: 40vh;
+    }
+
+    .modal-body {
+        flex: 2;
+        text-align: left;
+    }
+    
+    #modalTitle { font-size: 1.5em; }
+    .modal-divider { margin: 10px 0; }
+    #modalText { font-size: 0.85em; line-height: 1.4; }
+}
 
 /* =========================================================================
    --- 11. TIER-BASED COLORATION ---
@@ -881,7 +919,7 @@ body[data-page="cache"].show-deco .screen-deco {
 }
 
 body[data-page="cache"] .app-footer {
-    margin-top: 20vh ; 
+    margin-top: 30vh ; 
 }
 
 body[data-page="cache"].show-deco .app-footer {
