@@ -742,16 +742,15 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     --tier-color: var(--main-color);
     position: relative;
     width: 90%; max-width: 600px; padding: 40px;
+    max-height: 85vh; /* Empêche de déborder en portrait */
+    overflow-y: auto;
     background: color-mix(in srgb, var(--tier-color) 10%, var(--glass-bg));
     backdrop-filter: blur(15px);
     border: 1px solid var(--glass-border);
     border-radius: 16px;
-    
-    /* LE LISERÉ DYNAMIQUE : utilise --tier-color injecté par le JS */
     box-shadow: 
         inset 0 2px 0 0 color-mix(in srgb, var(--tier-color) 50%, transparent), 
         0 25px 50px rgba(0, 0, 0, 0.8);
-    
     animation: modalFadeIn 0.3s ease-out;
 }
 
@@ -763,15 +762,15 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 .modal-close {
     position: absolute; top: 15px; right: 15px; background: none; border: none;
     color: var(--text-muted); font-size: 32px; cursor: pointer; line-height: 1;
+    z-index: 10;
 }
 
-/* --- MISE EN PAGE DU CONTENU --- */
-.modal-header { text-align: center; margin-bottom: 20px; }
+/* --- ÉLÉMENTS INTERNES --- */
+#modalBody { display: flex; flex-direction: column; align-items: center; text-align: center; }
 
 #modalIcon { 
-    width: 350px; /* Icône vraiment agrandie */
-    height: auto; max-height: 35vh;
-    object-fit: contain; margin-bottom: 15px; display: inline-block;
+    width: 350px; height: auto; max-height: 35vh;
+    object-fit: contain; margin-bottom: 15px;
     filter: drop-shadow(0 15px 25px rgba(0,0,0,0.6));
 }
 
@@ -780,28 +779,49 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     font-size: 2.8em; letter-spacing: 4px; font-weight: var(--bold); 
 }
 
-#modalElo { 
-    font-weight: var(--bold); font-size: 1.1em; margin-top: 5px; 
-    /* La couleur est gérée directement par modalElo.style.color dans ton JS */
-}
-
+#modalElo { font-weight: var(--bold); font-size: 1.1em; margin-top: 5px; }
 #modalSubtitle { color: var(--text-muted); font-style: italic; font-size: 1em; margin-top: -5px; }
-
 #modalText { color: var(--text-muted); text-align: left; font-size: 0.95em; line-height: 1.6; }
 
-/* --- LE SÉPARATEUR DE LA BANNIÈRE --- */
 .modal-divider {
     width: 100%; height: 0; margin: 25px auto;
     border-top: 1px solid rgba(0, 0, 0, 0.4);
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
+/* --- MOBILE PORTRAIT --- */
 @media (max-width: 800px) {
-    .modal-content { width: 95%; padding: 25px; }
+    .modal-content { width: 92%; padding: 25px; }
     #modalIcon { width: 200px; }
-    #modalTitle { font-size: 1.8em; }
+    #modalTitle { font-size: 1.8em; letter-spacing: 2px; }
 }
 
+/* --- MOBILE PAYSAGE (LAYOUT CÔTE À CÔTE) --- */
+@media (max-height: 500px) and (orientation: landscape) {
+    .modal-content {
+        max-width: 850px; width: 95%; max-height: 90vh;
+        padding: 20px 40px;
+    }
+
+    #modalBody {
+        flex-direction: row; /* On passe en ligne */
+        align-items: center; gap: 35px; text-align: left;
+    }
+
+    .modal-image-side { flex: 0 0 160px; } /* Colonne image */
+    .modal-text-side { flex: 1; }           /* Colonne texte */
+
+    #modalIcon { width: 100%; max-height: 55vh; margin-bottom: 0; }
+
+    /* Titre et Elo sur une ligne */
+    .title-row { display: flex; align-items: baseline; gap: 15px; }
+    #modalTitle { font-size: 1.6em; }
+    #modalElo { margin: 0; }
+    #modalSubtitle { margin: 0; font-size: 0.9em; }
+
+    .modal-divider { margin: 12px 0; }
+    #modalText { font-size: 0.85em; line-height: 1.4; }
+}
 
 /* =========================================================================
    --- 11. TIER-BASED COLORATION ---
@@ -844,7 +864,7 @@ body[data-page="cache"].show-deco .artist-story {
 body[data-page="cache"] .screen-deco img {
     opacity: 0;
     pointer-events: none;
-    transition: opacity 1s ease;
+    transition: all 1s ease;
 }
 
 body[data-page="cache"].show-deco .screen-deco img {
@@ -867,12 +887,25 @@ body[data-page="cache"].show-deco .enigma {
 /* --- 4. App gap --- */
 body[data-page="cache"] .screen-deco {
     height: 0;
-    overflow: visible;
     transition: height 0.5s ease;
 }
 
 body[data-page="cache"].show-deco .screen-deco {
     height: 200px;
+}
+
+@media (min-width: 1300px) {
+body[data-page="cache"].show-deco .screen-deco { 
+        height: 100vh; 
+    }
+}
+
+body[data-page="cache"] .app-footer {
+    margin-top: 30vh ; 
+}
+
+body[data-page="cache"].show-deco .app-footer {
+    margin-top: 40px ; 
 }
 
 /* --- 5. Nut interaction --- */

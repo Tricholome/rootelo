@@ -182,6 +182,88 @@
         <input type="search" list="playerList" id="playerName" placeholder="Search Player..." oninput="updateChart()">
         <datalist id="playerList">
             
+                <option value="1coolguy">
+            
+                <option value="AERotters">
+            
+                <option value="BaliHoo">
+            
+                <option value="Bapgo">
+            
+                <option value="DanzigMF">
+            
+                <option value="DarthOblivius">
+            
+                <option value="DarthPuniceus">
+            
+                <option value="Dumbledore">
+            
+                <option value="Emperia">
+            
+                <option value="Gabobs">
+            
+                <option value="Hadjiya">
+            
+                <option value="HobGungan">
+            
+                <option value="Jasiuńcio">
+            
+                <option value="KFull">
+            
+                <option value="Led_Slash">
+            
+                <option value="LucianTheFak">
+            
+                <option value="Mossfusion">
+            
+                <option value="MylesMoose">
+            
+                <option value="NadtyLite">
+            
+                <option value="Pandapapst">
+            
+                <option value="Rabbitwarlord">
+            
+                <option value="RootiredRooter">
+            
+                <option value="Seiza">
+            
+                <option value="Snivylover12">
+            
+                <option value="TonyDeloreanESQ">
+            
+                <option value="Tricholome">
+            
+                <option value="Ultcyber">
+            
+                <option value="Valzaan">
+            
+                <option value="Whats02">
+            
+                <option value="Wrestler">
+            
+                <option value="Wriggleroom">
+            
+                <option value="Wubba">
+            
+                <option value="ZachB">
+            
+                <option value="balonthebold">
+            
+                <option value="benssoon">
+            
+                <option value="buurn">
+            
+                <option value="cliuless">
+            
+                <option value="deejaythink">
+            
+                <option value="mouseinabox">
+            
+                <option value="swiftsusan">
+            
+                <option value="trollone1993">
+            
         </datalist>
     </div>
     
@@ -206,29 +288,30 @@
 					<span>Powered by <strong>Tʀɪᴄʜᴏʟᴏᴍᴇ</strong></span>
 					<span>Woodland visions by <a class="cl" href="cache.html">𝕩𝕝𝕦𝕖𝕧𝕚</a></span>
 				</div>
-				<div class="footer-date">Updated on 2026-04-01 17:30</div>
+				<div class="footer-date">Updated on 2026-04-02 05:50</div>
 			</div>
 		</footer>
     </div>
     
     <div id="tierModal" class="modal-overlay">
-		<div class="modal-content window-box"> <button class="modal-close" aria-label="Close">&times;</button>
+		<div class="modal-content window-box">
+		<button class="modal-close" aria-label="Close">&times;</button>
+		<div id="modalBody">
+			<div class="modal-image-side">
+				<img id="modalIcon" src="" alt="Tier Icon">
+			</div>
 			
-			<div id="modalBody">
-				<div class="modal-header">
-					<img id="modalIcon" src="" alt="Tier Icon">
+			<div class="modal-text-side">
+				<div class="title-row">
 					<h2 id="modalTitle"></h2>
 					<h3 id="modalElo"></h3>
-					<div id="modalSubtitle"></div>
 				</div>
-				
+				<div id="modalSubtitle"></div>
 				<div class="modal-divider"></div>
-				
-				<div class="modal-description">
-					<p id="modalText"></p>
-				</div>
+				<div id="modalText"></div>
 			</div>
 		</div>
+	</div>
 	</div>
 
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
@@ -246,7 +329,7 @@
     <script src="static/script.js"></script>
     
 <script>
-    const allData = {};
+    const allData = {"Whats02": [["LH01 Final", 1200], ["2026-04-01", 1180]], "trollone1993": [["LH01 Final", 1200], ["2026-04-01", 1260]], "Valzaan": [["LH01 Final", 1200], ["2026-04-01", 1180], ["2026-04-01", 1241]], "Gabobs": [["LH01 Final", 1200], ["2026-04-01", 1180]], "mouseinabox": [["LH01 Final", 1200], ["2026-04-01", 1180], ["2026-04-01", 1161]], "NadtyLite": [["LH01 Final", 1200], ["2026-04-01", 1180], ["2026-04-01", 1162]], "cliuless": [["LH01 Final", 1200], ["2026-04-01", 1260], ["2026-04-01", 1234], ["2026-04-01", 1211], ["2026-04-01", 1271]], "MylesMoose": [["LH01 Final", 1200], ["2026-04-01", 1180]], "Wriggleroom": [["LH01 Final", 1200], ["2026-04-01", 1182], ["2026-04-01", 1163]], "Seiza": [["LH01 Final", 1200], ["2026-04-01", 1262], ["2026-04-01", 1236], ["2026-04-01", 1213], ["2026-04-01", 1191]], "Ultcyber": [["LH01 Final", 1200], ["2026-04-01", 1182], ["2026-04-01", 1163]], "swiftsusan": [["LH01 Final", 1200], ["2026-04-01", 1260]], "buurn": [["LH01 Final", 1200], ["2026-04-01", 1180]], "Pandapapst": [["LH01 Final", 1200], ["2026-04-01", 1180]], "1coolguy": [["LH01 Final", 1200], ["2026-04-01", 1180]], "Mossfusion": [["LH01 Final", 1200], ["2026-04-01", 1259], ["2026-04-01", 1314]], "Hadjiya": [["LH01 Final", 1200], ["2026-04-01", 1179]], "AERotters": [["LH01 Final", 1200], ["2026-04-01", 1179]], "Dumbledore": [["LH01 Final", 1200], ["2026-04-01", 1182]], "HobGungan": [["LH01 Final", 1200], ["2026-04-01", 1182]], "benssoon": [["LH01 Final", 1200], ["2026-04-01", 1182]], "Wrestler": [["LH01 Final", 1200], ["2026-04-01", 1182]], "LucianTheFak": [["LH01 Final", 1200], ["2026-04-01", 1262]], "Jasiu\u0144cio": [["LH01 Final", 1200], ["2026-04-01", 1182]], "Emperia": [["LH01 Final", 1200], ["2026-04-01", 1261], ["2026-04-01", 1235], ["2026-04-01", 1211]], "Tricholome": [["LH01 Final", 1200], ["2026-04-01", 1181]], "BaliHoo": [["LH01 Final", 1200], ["2026-04-01", 1181]], "KFull": [["LH01 Final", 1200], ["2026-04-01", 1181]], "DarthOblivius": [["LH01 Final", 1200], ["2026-04-01", 1181]], "Led_Slash": [["LH01 Final", 1200], ["2026-04-01", 1180]], "DarthPuniceus": [["LH01 Final", 1200], ["2026-04-01", 1180]], "Wubba": [["LH01 Final", 1200], ["2026-04-01", 1180]], "Rabbitwarlord": [["LH01 Final", 1200], ["2026-04-01", 1260]], "balonthebold": [["LH01 Final", 1200], ["2026-04-01", 1182]], "DanzigMF": [["LH01 Final", 1200], ["2026-04-01", 1182]], "ZachB": [["LH01 Final", 1200], ["2026-04-01", 1262]], "Snivylover12": [["LH01 Final", 1200], ["2026-04-01", 1179], ["2026-04-01", 1242]], "RootiredRooter": [["LH01 Final", 1200], ["2026-04-01", 1179]], "deejaythink": [["LH01 Final", 1200], ["2026-04-01", 1181]], "TonyDeloreanESQ": [["LH01 Final", 1200], ["2026-04-01", 1181]], "Bapgo": [["LH01 Final", 1200], ["2026-04-01", 1259]]};
     let myChart;
 
     function updateChart() {
