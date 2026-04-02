@@ -742,7 +742,7 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     --tier-color: var(--main-color);
     position: relative;
     width: 90%; max-width: 600px; padding: 40px;
-    max-height: 85vh; /* Empêche de déborder en portrait */
+    max-height: 85vh;
     overflow-y: auto;
     background: color-mix(in srgb, var(--tier-color) 10%, var(--glass-bg));
     backdrop-filter: blur(15px);
@@ -769,7 +769,7 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 #modalBody { display: flex; flex-direction: column; align-items: center; text-align: center; }
 
 #modalIcon { 
-    width: clamp(350px, 25vw, 200px); height: auto;
+    width: 350px; height: auto; max-height: 35vh;
     object-fit: contain; margin-bottom: 15px;
     filter: drop-shadow(0 15px 25px rgba(0,0,0,0.6));
 }
@@ -791,8 +791,9 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 
 /* --- MOBILE PORTRAIT --- */
 @media (max-width: 800px) {
-    .modal-content { width: 92%; padding: 25px; }
-    #modalIcon { margin-bottom: 5px }
+    .modal-content { width: 95%; padding: 5px; }
+	.modal-divider { margin: 12px auto; }
+    #modalIcon { width: 200px; margin-bottom: 5px; }
     #modalTitle { font-size: 1.8em; letter-spacing: 2px; }
 }
 
