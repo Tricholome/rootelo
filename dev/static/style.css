@@ -811,7 +811,7 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
         align-items: center; gap: 35px; text-align: left;
     }
 
-    .modal-image-side { flex: 0 0 160px; }
+    .modal-image-side { flex: 0 0 200px; }
     .modal-text-side { flex: 1; }
 
     #modalIcon { width: 100%; max-height: 70vh; margin-bottom: 0; }
@@ -819,7 +819,7 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     .title-row { display: flex; align-items: baseline; gap: 15px; }
     #modalTitle { font-size: 1.6em; }
     #modalElo { margin: 0; }
-    #modalSubtitle { margin: 5 0; font-size: 0.9em; }
+    #modalSubtitle { margin: 15 0; font-size: 0.9em; }
 
     .modal-divider { display: none; }
     #modalText { font-size: 0.85em; line-height: 1.4; margin-top: 15px; }
