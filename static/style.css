@@ -792,11 +792,10 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 
 /* --- MOBILE PORTRAIT --- */
 @media (max-width: 800px) {
-    .modal-content { width: 92%; padding: 25px; }
+    .modal-content { width: 92%; padding: 15px; }
 	.modal-divider { margin: 15px 0; }
     #modalIcon { width: 200px; }
     #modalTitle { font-size: 1.8em; letter-spacing: 2px; }
-	#modalText { font-size: 0.85em; line-height: 1.4; }
 }
 
 /* --- MOBILE LANDSCAPE --- */
