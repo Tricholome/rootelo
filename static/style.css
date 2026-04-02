@@ -204,11 +204,11 @@ body::after {
 @media (min-width: 2000px) {
     .left-deco img { 
         left: auto;
-        right: calc(50vw + (var(--window-max-width) / 2) - 50px); 
+        right: calc(50vw + (var(--window-max-width) / 2) - 20px); 
     }
     .right-deco img { 
         right: auto;
-        left: calc(50vw + (var(--window-max-width) / 2) - 50px); 
+        left: calc(50vw + (var(--window-max-width) / 2) - 20px); 
     }
 }
 
