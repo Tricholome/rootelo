@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', function() {
 			name: 'Fox',
 			elo: '1400+',
 			subtitle: 'The Cunning Tacticians',
-			desc: 'The elite targets everyone is chasing. With a trick for every turn and a plan for every disaster, they outmaneuver the field with ease. They play with sharp instincts, punctuated by a signature, mischievous grin that keeps opponents guessing.'
+			desc: 'The sharpest minds on the ladder, thriving on wit over brute force. The hunt presses close from all sides, where a single hesitation proves fatal. Escaping through a signature trick, every step is measured with care, every slip is exploited with flair.'
 		},
 		'rabbit': {
 			name: 'Rabbit',
