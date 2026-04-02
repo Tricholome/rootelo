@@ -197,8 +197,8 @@ body::after {
 }
 
 @media (min-width: 1300px) and (max-width: 2999px) {
-    .left-deco img { left: 20px; right: auto; }
-    .right-deco img { right: 50px; left: auto; }
+    .left-deco img { left: 30px; right: auto; }
+    .right-deco img { right: 30px; left: auto; }
 }
 
 @media (min-width: 3000px) {
