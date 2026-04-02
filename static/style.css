@@ -1,4 +1,5 @@
 
+
 /* =========================================================================
    ROOTELO - MAIN STYLESHEET
    Table of Contents:
@@ -765,7 +766,7 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     z-index: 10;
 }
 
-/* --- INTERNAL ELEMENTS --- */
+/* --- ÉLÉMENTS INTERNES --- */
 #modalBody { display: flex; flex-direction: column; align-items: center; text-align: center; }
 
 #modalIcon { 
@@ -791,13 +792,12 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 
 /* --- MOBILE PORTRAIT --- */
 @media (max-width: 800px) {
-    .modal-content { width: 92%; }
-	.modal-divider { margin: 12px auto; }
-    #modalIcon { width: 200px; margin-bottom: 15px; }
+    .modal-content { width: 92%; padding: 25px; }
+    #modalIcon { width: 200px; }
     #modalTitle { font-size: 1.8em; letter-spacing: 2px; }
 }
 
-/* --- MOBILE LANDSCAPE --- */
+/* --- MOBILE PAYSAGE (LAYOUT CÔTE À CÔTE) --- */
 @media (max-height: 500px) and (orientation: landscape) {
     .modal-content {
         max-width: 850px; width: 95%; max-height: 90vh;
@@ -805,15 +805,16 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     }
 
     #modalBody {
-        flex-direction: row;
+        flex-direction: row; /* On passe en ligne */
         align-items: center; gap: 35px; text-align: left;
     }
 
-    .modal-image-side { flex: 0 0 160px; }
-    .modal-text-side { flex: 1; }
+    .modal-image-side { flex: 0 0 160px; } /* Colonne image */
+    .modal-text-side { flex: 1; }           /* Colonne texte */
 
     #modalIcon { width: 100%; max-height: 55vh; margin-bottom: 0; }
 
+    /* Titre et Elo sur une ligne */
     .title-row { display: flex; align-items: baseline; gap: 15px; }
     #modalTitle { font-size: 1.6em; }
     #modalElo { margin: 0; }
