@@ -796,6 +796,7 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 	.modal-divider { display: none; }
     #modalIcon { width: 200px; }
     #modalTitle { font-size: 1.8em; letter-spacing: 2px; }
+	#modalText { margin-top: 25px; }
 }
 
 /* --- MOBILE LANDSCAPE --- */
@@ -821,7 +822,7 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     #modalSubtitle { margin: 0; font-size: 0.9em; }
 
     .modal-divider { display: none; }
-    #modalText { font-size: 0.85em; line-height: 1.4; }
+    #modalText { font-size: 0.85em; line-height: 1.4; margin-top: 25px; }
 }
 
 /* =========================================================================
