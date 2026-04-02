@@ -819,10 +819,10 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     .title-row { display: flex; align-items: baseline; gap: 15px; }
     #modalTitle { font-size: 1.6em; }
     #modalElo { margin: 0; }
-    #modalSubtitle { margin-top: 20; font-size: 0.9em; }
+    #modalSubtitle { margin-top: 10px; font-size: 0.9em; }
 
     .modal-divider { display: none; }
-    #modalText { font-size: 0.85em; line-height: 1.4; margin-top: 10px; }
+    #modalText { font-size: 0.85em; line-height: 1.4; margin-top: 20px; }
 }
 
 /* =========================================================================
