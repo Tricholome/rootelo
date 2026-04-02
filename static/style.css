@@ -197,18 +197,18 @@ body::after {
 }
 
 @media (min-width: 1300px) and (max-width: 1999px) {
-    .left-deco img { left: 50px; right: auto; }
-    .right-deco img { right: 50px; left: auto; }
+    .left-deco img { left: 20px; right: auto; }
+    .right-deco img { right: 20px; left: auto; }
 }
 
-@media (min-width: 2000px) {
+@media (min-width: 3000px) {
     .left-deco img { 
         left: auto;
-        right: calc(50vw + (var(--window-max-width) / 2) - 20px); 
+        right: calc(50vw + (var(--window-max-width) / 2) - 50px); 
     }
     .right-deco img { 
         right: auto;
-        left: calc(50vw + (var(--window-max-width) / 2) - 20px); 
+        left: calc(50vw + (var(--window-max-width) / 2) - 50px); 
     }
 }
 
