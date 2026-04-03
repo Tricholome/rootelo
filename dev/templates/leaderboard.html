@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <table id="leaderboard" class="display nowrap" style="width:100%">
+        <thead>
+            <tr>
+                <th>Rank</th>
+                <th>Tier</th>
+                <th>Player</th>
+                <th>ELO</th>
+                <th>Games</th>
+                <th>Wins</th>
+                <th>Win Rate</th>
+                <th>Peak</th>
+                <th>Last</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for player in players %}
+            <tr data-tier="{{ player.tier }}" class="{{ 'unranked' if player.tier == 'unranked' else '' }}">
+                <td class="{{ 'unranked' if player.Rank == '-' else '' }}">
+                    {{ player.Rank }}
+                </td>
+                
+                <td>
+					{% if player.tier and player.tier != 'unranked' %}
+						{% if player.tier == 'squirrel' %}
+							<a href="cache.html#nut-section" class="tier-anchor-link">
+								<div class="tier-icon-container">
+									<img src="{{ icons[player.tier] }}" alt="{{ player.tier }}">
+								</div>
+							</a>
+						{% else %}
+							<a href="javascript:void(0)" onclick="openTierModal('{{ player.tier }}')" class="tier-anchor-link">
+								<div class="tier-icon-container">
+									<img src="{{ icons[player.tier] }}" alt="{{ player.tier }}">
+								</div>
+							</a>
+						{% endif %}
+					{% endif %}
+				</td>
+                <td class="text-left text-medium">{{ player.display_name }}</td>
+                <td class="text-lg text-bold">{{ player.ELO }}</td>
+                <td>{{ player.Games }}</td>
+                <td>{{ player.Wins }}</td>
+                <td>{{ player.Win_Rate }}</td>
+                <td>{{ player.Peak }}</td>
+                <td>{{ player.Last }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
+
+{% block custom_js %}
+<script>
+$(document).ready(function() {
+    $.extend($.fn.dataTable.ext.type.order, { "rank-pre": function (d) { return d === "-" ? 9999 : parseInt(d); } });
+
+    $('#leaderboard').DataTable({
+        "order": [[3, "desc"]],
+        "responsive": true, 
+        "pageLength": 50,
+        "dom": '<"top"lf>rt<"bottom"ip><"clear">',
+        "columnDefs": [ 
+            { "targets": 0, "type": "rank" },
+            { "targets": 2, "className": "player-name-cell" },
+            { "responsivePriority": 1, "targets": [2, 3] },
+            { "responsivePriority": 2, "targets": 0 },
+            { "responsivePriority": 3, "targets": 1 },
+			{ "responsivePriority": 8, "targets": 6 },
+            { "responsivePriority": 10, "targets": [4, 5, 7, 8] }
+        ],
+        "language": {
+        "searchPlaceholder": "Player name"
+        }
+    });
+});
+</script>
+{% endblock %}
