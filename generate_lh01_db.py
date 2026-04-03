@@ -28,11 +28,10 @@ game_id_mapping = pd.Series(dtype='datetime64[ns]')
 
 try:
     if os.path.exists(CORRECTIONS_PATH):
-        # Aligned to use CSV like main.py
         df_updates = pd.read_csv(CORRECTIONS_PATH, parse_dates=['New_Date'])
         if not df_updates.empty and 'GameID' in df_updates.columns:
             game_id_mapping = df_updates.set_index('GameID')['New_Date']
-            game_id_mapping.index = game_id_mapping.index.astype(int) # Safecasting for mask
+            game_id_mapping.index = game_id_mapping.index.astype(int)
             print(f"✅ Loaded {len(game_id_mapping)} corrections.")
 except Exception as e:
     print(f"⚠️ Note: Corrections skipped: {e}")
@@ -69,7 +68,6 @@ df = pd.DataFrame(raw_data)
 if not df.empty:
     df['Date_Closed'] = pd.to_datetime(df['Date_Closed'], format='ISO8601', utc=True)
 
-    # Apply date corrections securely
     if not game_id_mapping.empty:
         mask = df['GameID'].isin(game_id_mapping.index)
         if mask.any():
@@ -87,15 +85,15 @@ elo_ratings = {p: 1200.0 for p in df['Player'].unique()}
 peak_elo = {p: 1200.0 for p in df['Player'].unique()}
 player_stats = {p: {'games': 0, 'wins': 0.0} for p in df['Player'].unique()}
 player_history = {p: [["Start", 1200]] for p in df['Player'].unique()}
-last_diff = {p: 0 for p in df['Player'].unique()}
+last_diff = {p: 0.0 for p in df['Player'].unique()}
 archive_matches_list = []
 
 for game_id, group in df.groupby('GameID', sort=False):
     match_participants = group.to_dict('records')
-    current_match_sum = sum([elo_ratings[p['Player']] for p in match_participants])
+    # Sum based on floats, rounded for display
+    current_match_sum = round(sum([elo_ratings[p['Player']] for p in match_participants]))
     current_date = pd.to_datetime(match_participants[0]['Date_Closed']).strftime('%Y-%m-%d')
     
-    # For Matches file (Lineup), logic unified with main.py
     winners = [p['Player'] for p in match_participants if p['Score'] >= 0.5]
     others = [p['Player'] for p in match_participants if p['Score'] == 0.0]
     
@@ -104,10 +102,9 @@ for game_id, group in df.groupby('GameID', sort=False):
         'Date': current_date,
         'Winner': ", ".join(winners),
         'Other Players': ", ".join(others),
-        'ELO_Sum': round(current_match_sum)
+        'ELO_Sum': current_match_sum
     })
 
-    # Calculate ELO
     total_q = sum([10**(elo_ratings[p['Player']]/400) for p in match_participants])
     for p in match_participants:
         name = p['Player']
@@ -123,26 +120,56 @@ for game_id, group in df.groupby('GameID', sort=False):
         elo_ratings[name] += change
         last_diff[name] = change
         if elo_ratings[name] > peak_elo[name]: peak_elo[name] = elo_ratings[name]
+        
+        # UI Graph history : we keep rounded integers to save space/clarity
         player_history[name].append([current_date, round(elo_ratings[name])])
+        
+# =========================================================================
+# --- 5. SEASON END REBALANCING ---
+# =========================================================================
+num_players = len(elo_ratings)
+if num_players > 0:
+    actual_sum = sum(elo_ratings.values())
+    theoretical_sum = num_players * 1200.0
+    total_deficit = theoretical_sum - actual_sum
+    bonus_per_player = total_deficit / num_players
+    
+    print(f"📊 Rebalancing Season LH01:")
+    print(f"   - Actual Total Elo: {actual_sum:.2f}")
+    print(f"   - Theoretical Total: {theoretical_sum:.2f}")
+    print(f"   - Global Bonus: {total_deficit:.2f} points redistributed")
+    print(f"   - Individual Bonus: +{bonus_per_player:.4f} Elo per player")
+    
+    for p in elo_ratings:
+        elo_ratings[p] += bonus_per_player
+        if elo_ratings[p] > peak_elo[p]:
+            peak_elo[p] = elo_ratings[p]   
 
 # =========================================================================
-# --- 5. EXPORT FINAL RATINGS (LEADERBOARD) ---
+# --- 6. EXPORT FINAL RATINGS (LEADERBOARD) ---
 # =========================================================================
 results = []
 for p, rating in elo_ratings.items():
     g = player_stats[p]['games']
     w = player_stats[p]['wins']
+    display_elo = round(rating)
     diff = round(last_diff[p])
+    
     results.append({
-        'Rank': 0, 'Player': p, 'ELO': round(rating), 'Games': g,
+        'Player': p, 
+        'ELO': rating, # Float preserved for LH02 logic
+        'Display_ELO': display_elo, # Temporary column for qualification check
+        'Games': g,
         'Wins': w,
-        'Win Rate': f"{(w/g):.1%}" if g > 0 else "0.0%", 'Peak': round(peak_elo[p]),
+        'Win Rate': f"{(w/g):.1%}" if g > 0 else "0.0%", 
+        'Peak': round(peak_elo[p]),
         'Last': f"+{diff}" if diff > 0 else str(diff),
-        'Qualified': (g >= 10 and rating >= 1200)
+        'Qualified': (g >= 10 and display_elo >= 1200) # Qualified based on VISUAL elo
     })
 
-# Create final standings
+# Sort by FLOAT (true mathematical ranking)
 final_df = pd.DataFrame(results).sort_values(by='ELO', ascending=False)
+
 rank = 1
 ranks = []
 for _, row in final_df.iterrows():
@@ -151,13 +178,14 @@ for _, row in final_df.iterrows():
         rank += 1
     else: 
         ranks.append("-")
-final_df['Rank'] = ranks
+        
+final_df.insert(0, 'Rank', ranks)
+# Drop Display_ELO, we only need true ELO in the CSV
+final_df = final_df.drop(columns=['Display_ELO'])
 
 # =========================================================================
-# --- 6. FINAL EXPORTS ---
+# --- 7. FINAL EXPORTS ---
 # =========================================================================
-
-# Ensure directory exists
 os.makedirs(DATA_DIR, exist_ok=True)
 
 # A. Save Leaderboard
@@ -165,8 +193,6 @@ final_df.to_csv(OUTPUT_RATINGS, index=False)
 
 # B. Save Matches 
 df_archive_matches = pd.DataFrame(archive_matches_list)
-
-# Sort by descending ELO_Sum and insert Rank column
 if not df_archive_matches.empty:
     df_archive_matches = df_archive_matches.sort_values(by='ELO_Sum', ascending=False).reset_index(drop=True)
     df_archive_matches.insert(0, 'Rank', range(1, len(df_archive_matches) + 1))
