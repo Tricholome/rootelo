@@ -191,7 +191,7 @@ body::after {
     .screen-deco img {
         height: clamp(300px, 48vh, 900px);
         position: absolute;
-        transform: translateY(-50%);
+        transform: translateY(-50%) translateX(0);
         top: max(50%, calc(550px - (var(--scroll, 0) * 1px)));
     }
 }
