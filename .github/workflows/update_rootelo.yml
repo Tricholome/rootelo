@@ -2,8 +2,8 @@ name: Update Rootelo Website
 
 on:
   schedule:
-    - cron: '0 0 * * *' # Se lance tous les jours à minuit UTC
-  workflow_dispatch:      # Permet de le lancer manuellement d'un clic
+    - cron: '27 3 * * *'
+  workflow_dispatch: 
 
 jobs:
   build:
@@ -23,7 +23,7 @@ jobs:
 
       - name: Run ELO calculation and site generation
         env:
-          API_TOKEN: ${{ secrets.API_TOKEN }} # On utilise ton Token de manière sécurisée
+          API_TOKEN: ${{ secrets.API_TOKEN }}
         run: python main.py
 
       - name: Deploy to GitHub Pages
@@ -31,4 +31,4 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: .
-          publish_branch: gh-pages # Tes fichiers HTML iront ici
+          publish_branch: gh-pages
