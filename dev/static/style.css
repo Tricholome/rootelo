@@ -197,8 +197,14 @@ body::after {
 }
 
 @media (min-width: 1300px) and (max-width: 2999px) {
-    .left-deco img { left: 20px; right: auto; }
+    .left-deco img { left: 50px; right: auto; }
     .right-deco img { right: 50px; left: auto; }
+	
+	/* Reduced margin for 2 tabs only */
+    body[data-page="index"] .left-deco img, 
+    body[data-page="matches"] .left-deco img { 
+        left: 20px; 
+    }
 }
 
 @media (min-width: 3000px) {
