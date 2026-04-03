@@ -38,31 +38,31 @@ document.addEventListener('DOMContentLoaded', function() {
 			name: 'Bird',
 			elo: '1500+',
 			subtitle: 'The Grandmasters',
-			desc: 'The absolute pinnacle of the Woodland. Reaching this height is a rare feat, a fleeting and prestigious throne where staying at the top is a constant battle against gravity. It is reserved for those who maintain perfection under pressure.'
+			desc: 'These elite sovereigns sit at the absolute pinnacle of the Woodland canopy. Remaining on this prestigious throne is a dizzying battle against shifting winds and ambitious rivals. They rule the skies by maintaining flawless execution and absolute perfection under pressure.'
 		},
 		'fox': {
 			name: 'Fox',
 			elo: '1400+',
 			subtitle: 'The Cunning Tacticians',
-			desc: 'The sharpest minds on the ladder, thriving on wit over brute force. The hunt presses close from all sides, where a single hesitation proves fatal. Escaping through a signature trick, every step is measured with care, every slip is exploited with flair.'
+			desc: 'These keen strategists dominate the ladder by thriving on sharp wit over brute force. The hunt presses close from all sides, and a single moment of hesitation can prove fatal. They prevail by measuring every step with care and exploiting weakness with signature flair.'
 		},
 		'rabbit': {
 			name: 'Rabbit',
 			elo: '1300+',
 			subtitle: 'The Agile Contenders',
-			desc: 'The true engine of the higher rankings. Their climb is built on speed and sharp adaptability, moving well past the basics to dictate the pace of play. They are restless challengers, always seeking the next opening to leap ahead.'
+			desc: 'These nimble wanderers gracefully weave through the crowded and shifting paths of the rankings. Routine strategies falter here, threatening to trap anyone who cannot adapt to sudden chaos. They leap ahead where others see only barriers, turning dead ends into daring escapes.'
 		},
 		'mouse': {
 			name: 'Mouse',
 			elo: '1200+',
 			subtitle: 'The Steady Foragers',
-			desc: 'The solid foundation of the standings, marking a genuine milestone beyond the average player. These resilient competitors provide the first true test on the ladder, proving they have the consistency required to begin a successful climb. They are where every journey starts.'
+			desc: 'These resilient souls rise above the casual fray to mark a true milestone of mastery. The wild now demands true stamina, where early momentum easily fades into exhaustion. They hold their ground through quiet consistency, proving that steady patience outlasts blind luck.'
 		},
 		'squirrel': {
 			name: 'Squirrel',
 			elo: '< 1200',
 			subtitle: 'The Hapless Stragglers',
-			desc: 'The frantic collectors of the undergrowth. Often tripped up by clumsy errors or bad luck, they must fall back to let faster rivals pass. Yet, they remain busy; every scrap gathered today is a seed stored away for next season’s harvest.'
+			desc: 'These frantic collectors dwell in the tangled undergrowth of the ranking system. Clumsy errors and brutal defeats often force them to fall back while fiercer beasts surge ahead. Yet, they bravely endure by turning every painful lesson into a seed for next season’s harvest.'
 		}
 	};
 
