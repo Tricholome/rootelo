@@ -802,7 +802,7 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 	.modal-divider { display: none; }
     #modalIcon { width: 200px; }
     #modalTitle { font-size: 1.8em; letter-spacing: 2px; }
-	#modalText { margin-top: 25px; text-align: center; }
+	#modalText { font-size: 0.9em; line-height: 1.5; margin-top: 25px; text-align: center; }
 }
 
 /* --- MOBILE LANDSCAPE --- */
