@@ -189,19 +189,19 @@ body::after {
     }
     
     .screen-deco img {
-        height: clamp(300px, 50vh, 900px);
+        height: clamp(300px, 45vh, 900px);
         position: absolute;
         transform: translateY(-50%);
         top: max(50%, calc(550px - (var(--scroll, 0) * 1px)));
     }
 }
 
-@media (min-width: 1300px) and (max-width: 1999px) {
+@media (min-width: 1300px) and (max-width: 2999px) {
     .left-deco img { left: 50px; right: auto; }
     .right-deco img { right: 50px; left: auto; }
 }
 
-@media (min-width: 2000px) {
+@media (min-width: 3000px) {
     .left-deco img { 
         left: auto;
         right: calc(50vw + (var(--window-max-width) / 2) - 50px); 
