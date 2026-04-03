@@ -123,9 +123,30 @@ for game_id, group in df.groupby('GameID', sort=False):
         
         # UI Graph history : we keep rounded integers to save space/clarity
         player_history[name].append([current_date, round(elo_ratings[name])])
+        
+# =========================================================================
+# --- 5. SEASON END REBALANCING ---
+# =========================================================================
+num_players = len(elo_ratings)
+if num_players > 0:
+    actual_sum = sum(elo_ratings.values())
+    theoretical_sum = num_players * 1200.0
+    total_deficit = theoretical_sum - actual_sum
+    bonus_per_player = total_deficit / num_players
+    
+    print(f"📊 Rebalancing Season LH01:")
+    print(f"   - Actual Total Elo: {actual_sum:.2f}")
+    print(f"   - Theoretical Total: {theoretical_sum:.2f}")
+    print(f"   - Global Bonus: {total_deficit:.2f} points redistributed")
+    print(f"   - Individual Bonus: +{bonus_per_player:.4f} Elo per player")
+    
+    for p in elo_ratings:
+        elo_ratings[p] += bonus_per_player
+        if elo_ratings[p] > peak_elo[p]:
+            peak_elo[p] = elo_ratings[p]   
 
 # =========================================================================
-# --- 5. EXPORT FINAL RATINGS (LEADERBOARD) ---
+# --- 6. EXPORT FINAL RATINGS (LEADERBOARD) ---
 # =========================================================================
 results = []
 for p, rating in elo_ratings.items():
@@ -163,7 +184,7 @@ final_df.insert(0, 'Rank', ranks)
 final_df = final_df.drop(columns=['Display_ELO'])
 
 # =========================================================================
-# --- 6. FINAL EXPORTS ---
+# --- 7. FINAL EXPORTS ---
 # =========================================================================
 os.makedirs(DATA_DIR, exist_ok=True)
 
