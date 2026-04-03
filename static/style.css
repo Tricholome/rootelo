@@ -196,7 +196,7 @@ body::after {
     }
 }
 
-@media (min-width: 1300px) {
+@media (min-width: 1300px) and (max-width: 2499px) {
     .left-deco img { left: 50px; right: auto; }
     .right-deco img { right: 50px; left: auto; }
 	
@@ -828,7 +828,7 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     #modalSubtitle { margin-top: 7px; font-size: 0.9em; }
 
     .modal-divider { display: none; }
-    #modalText { font-size: 0.85em; line-height: 1.4; margin-top: 20px; }
+    #modalText { font-size: 0.85em; line-height: 1.4; margin-top: 20px; text-align: left; }
 }
 
 /* =========================================================================
