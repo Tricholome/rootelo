@@ -1,4 +1,3 @@
-
 import os
 import requests
 import pandas as pd
@@ -9,13 +8,8 @@ from jinja2 import Environment, FileSystemLoader
 # =========================================================================
 # --- 0. PATH CONFIGURATION (EXTERNAL FILES) ---
 # =========================================================================
-# Define base data directory and specific season folders
 DATA_DIR = "data"
-
-# Correction file path
 CORRECTIONS_FILE = os.path.join(DATA_DIR, "lh02_corrections.csv")
-
-# LH01 Archive files
 ARCHIVE_LEADERBOARD_FILE = os.path.join(DATA_DIR, "lh01_final_ratings.csv")
 ARCHIVE_MATCHES_FILE     = os.path.join(DATA_DIR, "lh01_matches_fixed.csv")
 ARCHIVE_TRENDS_FILE      = os.path.join(DATA_DIR, "lh01_history_full.json")
@@ -23,10 +17,8 @@ ARCHIVE_TRENDS_FILE      = os.path.join(DATA_DIR, "lh01_history_full.json")
 # =========================================================================
 # --- 1. JINJA2 & NAVIGATION SETUP ---
 # =========================================================================
-# Initialize Jinja2 environment for HTML template rendering
 env = Environment(loader=FileSystemLoader('templates'))
 
-# Define menu structure for the website header
 NAV_ITEMS = [
     {'id': 'index', 'url': 'index.html', 'label': 'Leaderboard'},
     {'id': 'matches', 'url': 'matches.html', 'label': 'Top Tables'},
@@ -47,7 +39,7 @@ print(f"Update started. Filtering matches closed before: {today}")
 
 def get_tier_icon(rating, games):
     if games < 10: return None, "unranked"  
-    r = round(rating)
+    r = round(rating) # Ensure tier is based on visual score
     if r >= 1500: return None, "bird"
     if r >= 1400: return None, "fox"
     if r >= 1300: return None, "rabbit"
@@ -64,7 +56,7 @@ def prepare_leaderboard_data(df):
             'Rank': row['Rank'],
             'tier': tier_name,
             'display_name': str(row['Player']).split('+')[0].split('#')[0],
-            'ELO': row['ELO'],
+            'ELO': row['ELO'], # Will be strictly integer when reaching here
             'Games': row['Games'],
             'Wins': row['Wins'],
             'Win_Rate': row['Win Rate'],
@@ -97,7 +89,6 @@ def prepare_matches_data(df):
 def prepare_trends_data(history_dict):
     if not history_dict:
         return {"history_json": "{}", "player_names": []}
-    
     return {
         "history_json": json.dumps(history_dict),
         "player_names": sorted(list(history_dict.keys()))
@@ -119,7 +110,6 @@ def render_page(template_name, output_name, **kwargs):
 # --- 3. LOAD CORRECTIONS ---
 # =========================================================================
 game_id_mapping = pd.Series(dtype='datetime64[ns]')
-
 try:
     if os.path.exists(CORRECTIONS_FILE):
         df_updates = pd.read_csv(CORRECTIONS_FILE, parse_dates=['New_Date'])
@@ -135,10 +125,20 @@ except Exception as e:
 archive_final_df = pd.DataFrame()
 archive_matches_df = pd.DataFrame()
 archive_history = {}
+elo_ratings = {}
 
 try:
     if os.path.exists(ARCHIVE_LEADERBOARD_FILE):
         archive_final_df = pd.read_csv(ARCHIVE_LEADERBOARD_FILE)
+        
+        # Load FLOAT Elo for calculation engine
+        for _, row in archive_final_df.iterrows():
+            p_name = str(row['Player'])
+            elo_ratings[p_name] = float(row.get('ELO', 1200.0))
+            
+        # Clean archive DF for web display: Round ELO to integers
+        archive_final_df['ELO'] = archive_final_df['ELO'].round().astype(int)
+        
         if 'Tier' not in archive_final_df.columns:
             archive_final_df['Tier'] = None 
     
@@ -207,15 +207,7 @@ if not df.empty:
 # =========================================================================
 current_final_df = pd.DataFrame()
 current_matches_df = pd.DataFrame()
-current_history = {}
 match_history_data = []
-
-elo_ratings = {}
-if not archive_final_df.empty:
-    for _, row in archive_final_df.iterrows():
-        p_name = str(row['Player'])
-        elo_ratings[p_name] = float(row.get('ELO', 1200))
-    print(f"📊 Initialized {len(elo_ratings)} players from LH01 archive.")
 
 if not df.empty:
     for player in df['Player'].unique():
@@ -223,14 +215,14 @@ if not df.empty:
             elo_ratings[player] = 1200.0
 
 peak_elo = {p: r for p, r in elo_ratings.items()}
-last_diff = {p: 0 for p in elo_ratings}
+last_diff = {p: 0.0 for p in elo_ratings}
 player_stats = {p: {'games': 0, 'wins': 0.0} for p in elo_ratings}
 player_history = {p: [["LH01 Final", round(r)]] for p, r in elo_ratings.items()}
 
 if not df.empty:
     for game_id, group in df.groupby('GameID', sort=False):
         match_participants = group.to_dict('records')
-        current_match_sum = sum([elo_ratings[p['Player']] for p in match_participants])
+        current_match_sum = round(sum([elo_ratings[p['Player']] for p in match_participants]))
         current_date = pd.to_datetime(match_participants[0]['Date_Closed']).strftime('%Y-%m-%d')
         
         winners = [p['Player'] for p in match_participants if p['Score'] >= 0.5]
@@ -241,18 +233,19 @@ if not df.empty:
             'Date': current_date, 
             'Winner': ", ".join(winners),
             'Other Players': ", ".join(others), 
-            'ELO_Sum': round(current_match_sum)
+            'ELO_Sum': current_match_sum
         })
 
         total_q = sum([10**(elo_ratings[p['Player']]/400) for p in match_participants])
         for p in match_participants:
             name = p['Player']
+            actual = p['Score']
             expected = (10**(elo_ratings[name]/400)) / total_q
             player_stats[name]['games'] += 1
-            player_stats[name]['wins'] += p['Score']
+            player_stats[name]['wins'] += actual
             
             k = 80 if player_stats[name]['games'] <= 10 else (40 if player_stats[name]['games'] <= 50 else 20)
-            change = k * (p['Score'] - expected)
+            change = k * (actual - expected)
             
             elo_ratings[name] += change
             last_diff[name] = change
@@ -276,8 +269,12 @@ for p_name, rating in elo_ratings.items():
     is_qual = (s['games'] >= 10 and display_elo >= 1200)
     
     leaderboard_list.append({
-        'Rank': 0, 'Player': p_name, 'ELO': display_elo, 'Games': s['games'],
-        'Wins': s['wins'], 'Win Rate': f"{(s['wins']/s['games']):.1%}" if s['games'] > 0 else "0.0%",
+        'Player': p_name, 
+        'ELO': rating,  # Keeps float for sorting
+        'Display_ELO': display_elo,
+        'Games': s['games'],
+        'Wins': s['wins'], 
+        'Win Rate': f"{(s['wins']/s['games']):.1%}" if s['games'] > 0 else "0.0%",
         'Peak': round(peak_elo.get(p_name, rating)), 
         'Last': f"+{diff}" if diff > 0 else str(diff),
         'Qualified': is_qual
@@ -294,7 +291,11 @@ if leaderboard_list:
             rank_counter += 1
         else: 
             ranks.append("-")
-    current_final_df['Rank'] = ranks
+            
+    current_final_df.insert(0, 'Rank', ranks)
+    # Apply Visual ELO for web templates
+    current_final_df['ELO'] = current_final_df['Display_ELO']
+    current_final_df = current_final_df.drop(columns=['Display_ELO'])
 else:
     current_final_df = pd.DataFrame(columns=['Rank', 'Player', 'ELO', 'Games', 'Wins', 'Win Rate', 'Peak', 'Last', 'Qualified'])
 
@@ -305,8 +306,6 @@ current_history = {k.split('+')[0].split('#')[0]: v for k, v in player_history.i
 # =========================================================================
 print("\n=== GENERATING SITE ASSETS ===")
 
-# --- A. Leaderboard Data (Players) ---
-# Filter: Minimum 1 win required for display
 display_leaderboard_current = []
 if not current_final_df.empty:
     filtered_df = current_final_df[current_final_df['Wins'].astype(float) >= 1].copy()
@@ -317,8 +316,6 @@ if not archive_final_df.empty:
     filtered_df = archive_final_df[archive_final_df['Wins'].astype(float) >= 1].copy()
     display_leaderboard_archive = prepare_leaderboard_data(filtered_df)
 
-# --- B. Match Data (Top Tables) ---
-# Filter: Limit to Top 100 highest ELO sums
 display_matches_current = []
 if not current_matches_df.empty:
     display_matches_current = prepare_matches_data(current_matches_df)[:100]
@@ -327,113 +324,63 @@ display_matches_archive = []
 if not archive_matches_df.empty:
     display_matches_archive = prepare_matches_data(archive_matches_df)[:100]
 
-# --- C. Trends Data (Charts) ---
-# Format: JSON strings and sorted name lists for the frontend
 display_trends_current = prepare_trends_data(current_history)
 display_trends_archive = prepare_trends_data(archive_history)
 
 # =========================================================================
 # --- 9. SITE GENERATION (JINJA2 RENDERING) ---
 # =========================================================================
-
-# --- A. Current Season Pages (LH02) ---
 render_page(
-    "leaderboard.html", 
-    "index.html",
-    title="Leaderboard • Rootelo",
-    page_id="index",
-    is_archive=False,
-    has_seasons=True,
-    current_page_base="index",
-    page_heading="Leaderboard",
+    "leaderboard.html", "index.html", title="Leaderboard • Rootelo", page_id="index",
+    is_archive=False, has_seasons=True, current_page_base="index", page_heading="Leaderboard",
     description=f"Minimum 1 win required for display. Data tracked until {CUTOFF_DATE}.",
     players=display_leaderboard_current
 )
 
 render_page(
-    "matches.html", 
-    "matches.html",
-    title="Top Tables • Rootelo",
-    page_id="matches",
-    is_archive=False,
-    has_seasons=True,
-    page_heading="Top Tables",
+    "matches.html", "matches.html", title="Top Tables • Rootelo", page_id="matches",
+    is_archive=False, has_seasons=True, page_heading="Top Tables",
     description="Top 100 games ranked by total Elo. Click a Game ID for match details.",
     matches=display_matches_current
 )
 
 render_page(
-    "trends.html", 
-    "trends.html",
-    title="Player's Journey • Rootelo",
-    page_id="trends",
-    is_archive=False,
-    has_seasons=True,
-    page_heading="Player's Journey",
+    "trends.html", "trends.html", title="Player's Journey • Rootelo", page_id="trends",
+    is_archive=False, has_seasons=True, page_heading="Player's Journey",
     description="Search for a player to see their Elo evolution over the season.",
-    history_json=display_trends_current['history_json'],
-    player_names=display_trends_current['player_names']
+    history_json=display_trends_current['history_json'], player_names=display_trends_current['player_names']
 )
 
-# --- B. Archive Pages (LH01) ---
 render_page(
-    "leaderboard.html", 
-    "index_lh01.html",
-    title="Leaderboard • Rootelo",
-    page_id="index",
-    is_archive=True,
-    has_seasons=True,
-    current_page_base="index",
-    page_heading="Leaderboard",
+    "leaderboard.html", "index_lh01.html", title="Leaderboard • Rootelo", page_id="index",
+    is_archive=True, has_seasons=True, current_page_base="index", page_heading="Leaderboard",
     description="Minimum 1 win required for display. Data tracked until 2026-03-31.",
     players=display_leaderboard_archive
 )
 
 render_page(
-    "matches.html",
-    "matches_lh01.html", 
-    title="Top Tables • Rootelo",
-    page_id="matches",
-    is_archive=True,
-    has_seasons=True,
-    page_heading="Top Tables",
+    "matches.html", "matches_lh01.html", title="Top Tables • Rootelo", page_id="matches",
+    is_archive=True, has_seasons=True, page_heading="Top Tables",
     description="Top 100 games ranked by total Elo. Click a Game ID for match details.",
     matches=display_matches_archive
 )
 
 render_page(
-    "trends.html", 
-    "trends_lh01.html",
-    title="Player's Journey • Rootelo",
-    page_id="trends",
-    is_archive=True,
-    has_seasons=True,
-    page_heading="Player's Journey",
+    "trends.html", "trends_lh01.html", title="Player's Journey • Rootelo", page_id="trends",
+    is_archive=True, has_seasons=True, page_heading="Player's Journey",
     description="Search for a player to see their Elo evolution over the season.",
-    history_json=display_trends_archive['history_json'],
-    player_names=display_trends_archive['player_names']
+    history_json=display_trends_archive['history_json'], player_names=display_trends_archive['player_names']
 )
 
-# --- C. Static & Utility Pages ---
 render_page(
-    "about.html", 
-    "about.html",
-    title="Codex • Rootelo",
-    page_id="about",
-    is_archive=False,
-    has_seasons=False,
-    page_heading="Codex",
+    "about.html", "about.html", title="Codex • Rootelo", page_id="about",
+    is_archive=False, has_seasons=False, page_heading="Codex",
     description="Understanding the mechanics of Rootelo."
 )
 
 render_page(
-    "cache.html", 
-    "cache.html",
-    title="Undergrowth • Rootelo",
-    page_id="cache",
-    is_archive=False,
-    has_seasons=False,
-    page_heading="Undergrowth",
+    "cache.html", "cache.html", title="Undergrowth • Rootelo", page_id="cache",
+    is_archive=False, has_seasons=False, page_heading="Undergrowth",
     description="A sanctuary for the critters who never sought a crown."
 )
 
