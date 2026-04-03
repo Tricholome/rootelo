@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="codex-section">
+    <h2>An Alternative Ladder</h2>
+    <p>This platform offers a distinct competitive lens through which to view player performance, providing an alternative ranking experience specifically designed for the <a class="cl" href="https://rootleague.pliskin.dev/">Root Digital League</a>. Known for its informal yet highly competitive spirit, the league organizes established seasons where every match is played to the bitterest end. You can join the adventure at any time: visit their official site to subscribe, follow the community rules, and start competing for seasonal awards.</p>
+
+    <h2>The Scoring Engine</h2>
+    <p>To ensure fairness in a four-player format, this leaderboard uses a multi-player <a class="cl" href="https://en.wikipedia.org/wiki/Elo_rating_system">Elo model</a>. Unlike a simple win-count, it calculates your rating based on your “strength of schedule”. If you defeat high-ranked opponents, your rating climbs significantly. If you lose as the favorite, your score will reflect the upset.</p>
+
+    <h2>The Dynamic Phases</h2>
+    <p>The <strong>K-Factor</strong> determines the maximum number of Elo points you can win or lose in a single match. As you play more games, your K-Factor decreases, protecting your hard-earned rank from wild swings and rewarding long-term consistency.</p>
+    
+    <table class="k-table">
+		<tr>
+			<td><strong>Calibration</strong></td>
+			<td>0-10 games</td>
+			<td class="k-val">K = 80</td>
+			<td>High volatility to find your true rank quickly.</td>
+		</tr>
+		<tr>
+			<td><strong>Active</strong></td>
+			<td>11-50 games</td>
+			<td class="k-val">K = 40</td>
+			<td>Balanced weighting to climb the ladder steadily.</td>
+		</tr>
+		<tr>
+			<td><strong>Veteran</strong></td>
+			<td>50+ games</td>
+			<td class="k-val">K = 20</td>
+			<td>Solid stability to protect your long-term standing.</td>
+		</tr>
+	</table>
+    
+    <h2>The Tier System</h2>
+    <p>After your 10-game calibration phase, you officially join the ranks and unlock your <strong>Tier</strong> based on your current Elo rating:</p>
+    
+    <table class="k-table">
+		<tr>
+			<td><strong>Bird</strong></td>
+			<td>
+				<a href="javascript:void(0)" onclick="openTierModal('bird')" class="tier-anchor-link">
+					<div class="tier-icon-container">
+						<img src="{{ icons['bird'] }}" alt="bird">
+					</div>
+				</a>
+			</td>
+			<td class="k-val">Elo &ge; 1500</td>
+			<td>The Grandmasters</td>
+		</tr>
+		
+		<tr>
+			<td><strong>Fox</strong></td>
+			<td>
+				<a href="javascript:void(0)" onclick="openTierModal('fox')" class="tier-anchor-link">
+					<div class="tier-icon-container">
+						<img src="{{ icons['fox'] }}" alt="fox">
+					</div>
+				</a>
+			</td>
+			<td class="k-val">Elo &ge; 1400</td>
+			<td>The Cunning Tacticians</td>
+		</tr>
+		
+		<tr>
+			<td><strong>Rabbit</strong></td>
+			<td>
+				<a href="javascript:void(0)" onclick="openTierModal('rabbit')" class="tier-anchor-link">
+					<div class="tier-icon-container">
+						<img src="{{ icons['rabbit'] }}" alt="rabbit">
+					</div>
+				</a>
+			</td>
+			<td class="k-val">Elo &ge; 1300</td>
+			<td>The Agile Contenders</td>
+		</tr>
+
+		<tr>
+			<td><strong>Mouse</strong></td>
+			<td>
+				<a href="javascript:void(0)" onclick="openTierModal('mouse')" class="tier-anchor-link">
+					<div class="tier-icon-container">
+						<img src="{{ icons['mouse'] }}" alt="mouse">
+					</div>
+				</a>
+			</td>
+			<td class="k-val">Elo &ge; 1200</td>
+			<td>The Steady Foragers</td>
+		</tr>
+	</table>
+    
+    <h2>The Seasonal Lifecycle</h2>
+    <p>Every player in the Woodland starts from the same root: a <strong>1200 base score</strong>. Your progress is permanent, meaning your Elo score is not reset between seasons. Instead, we begin each new season with the calibration phase. For 10 games, everyone’s volatility is set to the same level, giving every player a fair chance to shake up the rankings and climb quickly. You need to complete these games to refresh your standing and reclaim your Tier.</p>
+
+    <h2>A Living Project</h2>
+    <p>This system is a living project. Formulas and features may evolve to better reflect the competitive reality of the game. If you have any questions, suggestions, or want to discuss the math behind the ranks, join the conversation on the <a class="cl" href="https://discord.com/channels/476234833572397056/1477741957139791892">Woodland Warriors</a>.</p>
+</div>
+{% endblock %}
