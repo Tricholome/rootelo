@@ -1,28 +1,27 @@
-// Moteur de Scroll Dynamique pour le CSS
+// Dynamic Scroll
 window.addEventListener('scroll', () => {
 	const scrollY = window.scrollY;
 	const isMobile = window.innerWidth < 1100;
 
-	// 1. Toujours mettre à jour la variable pour le calcul PC (max 50%...)
 	document.body.style.setProperty('--scroll', scrollY);
 
-	// 2. Logique HAUT (Bannière)
 	if (scrollY > 30) {
 		document.body.classList.add('is-scrolled');
 	} else {
 		document.body.classList.remove('is-scrolled');
 	}
 
-	// 3. Logique BAS (Uniquement Mobile pour éviter les bugs PC)
 	if (isMobile) {
 		const windowHeight = window.innerHeight;
 		const docHeight = document.documentElement.scrollHeight;
-		// Déclenche à 50px du bord fial
-		if ((windowHeight + scrollY) >= (docHeight - 50)) {
-			document.body.classList.add('is-at-bottom');
-		} else {
-			document.body.classList.remove('is-at-bottom');
-		}
+		const isAtBottom = (Math.ceil(windowHeight + scrollY) >= docHeight - 5);
+		if (isAtBottom) {
+            document.body.classList.add('is-at-bottom');
+        } else {
+            if (Math.ceil(windowHeight + scrollY) < docHeight - 25) {
+                document.body.classList.remove('is-at-bottom');
+            }
+        }
 	}
 }, { passive: true });
 		
