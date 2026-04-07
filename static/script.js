@@ -1,28 +1,54 @@
-// Dynamic Scroll
+// Dynamic Scroll & Gesture Management
+let touchStartY = 0;
+
+// Capture the initial touch position
+window.addEventListener('touchstart', (e) => {
+    touchStartY = e.touches[0].pageY;
+}, { passive: true });
+
 window.addEventListener('scroll', () => {
-	const scrollY = window.scrollY;
-	const isMobile = window.innerWidth < 1100;
+    const scrollY = window.scrollY;
+    const isMobile = window.innerWidth < 1100;
 
-	document.body.style.setProperty('--scroll', scrollY);
+    // Set CSS variable for scroll-based animations
+    document.body.style.setProperty('--scroll', scrollY);
 
-	if (scrollY > 30) {
-		document.body.classList.add('is-scrolled');
-	} else {
-		document.body.classList.remove('is-scrolled');
-	}
+    // Header State: Toggle class when passing the 30px threshold
+    if (scrollY > 30) {
+        document.body.classList.add('is-scrolled');
+    } else {
+        document.body.classList.remove('is-scrolled');
+    }
+}, { passive: true });
 
-	if (isMobile) {
-		const windowHeight = window.innerHeight;
-		const docHeight = document.documentElement.scrollHeight;
-		const isAtBottom = (Math.ceil(windowHeight + scrollY) >= docHeight - 5);
-		if (isAtBottom) {
-            document.body.classList.add('is-at-bottom');
-        } else {
-            if (Math.ceil(windowHeight + scrollY) < docHeight - 25) {
-                document.body.classList.remove('is-at-bottom');
-            }
-        }
-	}
+// Specific gesture for mobile: reveal the image if the user "seeks" it
+window.addEventListener('touchmove', (e) => {
+    const isMobile = window.innerWidth < 1100;
+    if (!isMobile) return;
+
+    const touchEndY = e.touches[0].pageY;
+    const windowHeight = window.innerHeight;
+    const docHeight = document.documentElement.scrollHeight;
+    
+    // Check if user is at the very bottom of the document
+    const isAtBottom = (Math.ceil(windowHeight + window.scrollY) >= docHeight - 10);
+
+    /**
+     * TRIGGER REVEAL:
+     * If at bottom AND the user performs a deliberate upward swipe (min. 80px).
+     * This prevents accidental triggers during normal scrolling.
+     */
+    if (isAtBottom && (touchStartY - touchEndY) > 80) {
+        document.body.classList.add('is-at-bottom');
+    }
+
+    /**
+     * RESET REVEAL:
+     * If the user swipes down (min. 50px), hide the image again.
+     */
+    if ((touchEndY - touchStartY) > 50) {
+        document.body.classList.remove('is-at-bottom');
+    }
 }, { passive: true });
 		
 // Tier Modal		
