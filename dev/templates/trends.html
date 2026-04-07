@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block extra_head %}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
+{% block content %}
+    <div class="search-box">
+        <input type="search" list="playerList" id="playerName" placeholder="Search Player..." oninput="updateChart()">
+        <datalist id="playerList">
+            {% for name in player_names %}
+                <option value="{{ name }}">
+            {% endfor %}
+        </datalist>
+    </div>
+    
+    <div class="chart-wrapper">
+        <div class="chart-container">
+            <canvas id="progressionChart"></canvas>
+        </div>
+    </div>
+{% endblock %}
+
+{% block custom_js %}
+<script>
+    const allData = {{ history_json | safe }};
+    let myChart;
+
+    function updateChart() {
+        const input = document.getElementById('playerName');
+        const name = input.value;
+        if (name === "") {
+            if (myChart) myChart.destroy();
+            localStorage.removeItem('selectedPlayer');
+            return;
+        }
+        const canvas = document.getElementById('progressionChart');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        
+        const rabbitColor = getComputedStyle(document.documentElement)
+                            .getPropertyValue('--color-rabbit').trim() || '#E0B634';
+        
+        if (allData[name]) {
+            // SAUVEGARDE : On mémorise le nom du joueur
+            localStorage.setItem('selectedPlayer', name);
+
+            const rawData = allData[name];
+            const labels = rawData.map(d => {
+				const dateObj = new Date(d[0]);
+				if (!isNaN(dateObj.getTime())) {
+					return dateObj.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+				}
+				return d[0]; 
+			});
+            const eloScores = rawData.map(d => d[1]);
+
+            if (myChart) myChart.destroy();
+            
+            myChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: eloScores,
+                        borderColor: rabbitColor,
+                        backgroundColor: rabbitColor + '22',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.3,
+                        pointRadius: 3,
+                        pointBackgroundColor: rabbitColor,
+                        pointHitRadius: 20
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { 
+                            enabled: true, 
+                            backgroundColor: '#222',
+                            titleColor: rabbitColor
+                        }
+                    },
+                    scales: {
+                        y: { grid: { color: '#252525' }, ticks: { color: '#888' } },
+                        x: { grid: { display: false }, ticks: { color: '#888', maxTicksLimit: 6 } }
+                    }
+                }
+            });
+        }
+    }
+
+    // CHARGEMENT : Au chargement de la page
+    window.onload = function() {
+        const savedPlayer = localStorage.getItem('selectedPlayer');
+        const input = document.getElementById('playerName');
+
+        // Si on a un joueur en mémoire ET qu'il existe dans les données de cette saison
+        if (savedPlayer && allData[savedPlayer]) {
+            input.value = savedPlayer;
+            updateChart();
+        } else {
+            // Optionnel : Si le joueur n'existe pas dans cette saison, on peut vider le champ
+            // input.value = "";
+        }
+    };
+</script>
+{% endblock %}

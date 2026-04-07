@@ -1,0 +1,272 @@
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Undergrowth • Rootelo</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..900;1,9..144,400..900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
+    
+    <link rel="stylesheet" href="static/style.css">
+    
+    <style>
+        :root {
+			/* --- 1. LAYOUT CONFIG --- */
+			--window-gap: 25px;           
+			--window-max-width: clamp(600px, 60vw, 1600px);
+
+			/* --- 2. TYPOGRAPHY --- */
+			--font-title: 'Fraunces', serif;
+			--font-ui: 'Inter', sans-serif;
+			--normal: 400;
+			--medium: 600;
+			--bold: 900;
+			
+			/* --- 3. GLASS SYSTEM --- */
+			--glass-bg: #1c1c1cd9; 
+			--glass-border: rgba(255, 255, 255, 0.0.08);
+			--glass-shadow: 0 10px 30px rgba(0,0,0,0.5);
+	
+            /* --- 4. UI FOUNDATION --- */
+			--bg-overlay-top: rgba(0, 0, 0, 0.1);
+			--bg-overlay-bottom: rgba(0, 0, 0, 0.8);
+			--bg-container: #1c1c1c;
+			--bg-surface: rgba(255, 255, 255, 0.03); 
+			--bg-hover: rgba(255, 255, 255, 0.08);
+			--border-soft: #333333;
+			
+			/* --- 5. TEXT COLORS --- */
+			--text-bright: #ffffff;
+            --text-main: #E0E0E0; 
+            --text-muted: #A0A0A0;
+            --text-dark: #111111; 
+            
+			/* --- 6. TIER DYNAMICS --- */
+            
+            --color-bird: #7AB5E0;
+            --color-bird-bg: #7AB5E014;
+            
+            --color-fox: #E55555;
+            --color-fox-bg: #E5555514;
+            
+            --color-rabbit: #F2C14E;
+            --color-rabbit-bg: #F2C14E14;
+            
+            --color-mouse: #E88B3A;
+            --color-mouse-bg: #E88B3A14;
+            
+            --color-squirrel: #94C160;
+            --color-squirrel-bg: #94C16014;
+            
+            --color-default: #7A7347;
+            --color-default-bg: #7A734714;
+            
+            --color-default: #7A7347;
+			
+			/* --- 7. DATATABLES SPECIFIC (LES NOUVELLES COULEURS) --- */
+			--dt-table-bg: rgba(0, 0, 0, 0.15);
+			--dt-header-bg: rgba(0, 0, 0, 0.25);
+			--dt-row-border: rgba(255, 255, 255, 0.03);
+			--dt-row-hover: rgba(255, 255, 255, 0.07);
+			--dt-input-bg: rgba(0, 0, 0, 0.2);
+        }
+		body {
+			
+				--main-color: var(--color-squirrel);
+			
+		}
+    </style>
+	
+	<meta property="og:type" content="website">
+	<meta property="og:url" content="https://tricholome.github.io/rootelo">
+	<meta property="og:title" content="ROOTELO">
+	<meta property="og:description" content="A Metric of Woodland Skill and Will">
+	<meta property="og:image" content="https://tricholome.github.io/rootelo/assets/images/rootelo-preview.webp">
+
+    
+	
+</head>
+
+<body data-page="cache">
+    
+    <div class="container" style="position: relative; overflow: visible;">
+        
+        <header class="app-banner window-box">
+            <div class="banner-container">
+                <div class="banner-icons left">
+                    <a href="javascript:void(0)" onclick="openTierModal('bird')" class="tooltip-link js-double-tap">
+                        <img src="assets/icons/bird_new.webp" alt="Bird">
+                        <span class="tooltip-text"><strong style="color: var(--color-bird);">Bird (1500+)</strong> — The Grandmasters</span>
+                    </a>
+                    <a href="javascript:void(0)" onclick="openTierModal('fox')" class="tooltip-link js-double-tap">
+                        <img src="assets/icons/fox_new.webp" alt="Fox">
+                        <span class="tooltip-text"><strong style="color: var(--color-fox);">Fox (1400+)</strong> — The Cunning Tacticians</span>
+                    </a>
+                </div>
+                <div class="banner-center">
+                    <h1 class="site-title">ROOTELO</h1>
+                    <p class="site-subtitle">A Metric of Woodland&nbsp;Skill&nbsp;and&nbsp;Will</p>
+                </div>
+                <div class="banner-icons right">
+                    <a href="javascript:void(0)" onclick="openTierModal('rabbit')" class="tooltip-link js-double-tap">
+                        <img src="assets/icons/rabbit_new.webp" alt="Rabbit">
+                        <span class="tooltip-text"><strong style="color: var(--color-rabbit);">Rabbit (1300+)</strong> — The Agile Contenders</span>
+                    </a>
+                    <a href="javascript:void(0)" onclick="openTierModal('mouse')" class="tooltip-link js-double-tap">
+                        <img src="assets/icons/mouse_new.webp" alt="Mouse">
+                        <span class="tooltip-text"><strong style="color: var(--color-mouse);">Mouse (1200+)</strong> — The Steady Foragers</span>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="nav-separator"></div>
+
+            <nav>
+				
+				
+				
+					
+				
+				
+					
+						
+					
+					<a href="index.html" class="">Leaderboard</a>
+				
+					
+						
+					
+					<a href="matches.html" class="">Top Tables</a>
+				
+					
+						
+					
+					<a href="trends.html" class="">Player's Journey</a>
+				
+					
+						
+					
+					<a href="about.html" class="">Codex</a>
+				
+					
+						
+					
+					<a href="cache.html" class="active">Undergrowth</a>
+				
+			</nav>
+        </header>
+        
+        <div class="screen-deco right-deco">
+            
+                <img src="assets/images/cache_img_right.webp" alt="Decoration Right">
+            
+        </div>
+
+        <div class="app-viewport window-box">
+            <header class="page-intro">
+				<h2>Undergrowth</h2>
+				
+				<p>A sanctuary for the critters who never sought a crown.</p>
+			</header>
+			
+            <main>
+                
+
+<div class="codex-section">
+
+	<p class="enigma">
+		<span>What is this place?</span>
+		<span>Step into the shade.</span>
+		<span>Look beneath the leaves.</span>
+		<a class="cl" href="javascript:void(0)" id="deco-toggle">Seek the silent watcher.</a>
+	</p>
+	
+    <div class="artist-story">
+        <h2>The Silent Chronicler</h2>
+        <p>Here, where the roots run deep and the wild grows dense, <strong>𝕩𝕝𝕦𝕖𝕧𝕚</strong> sits hidden in the green. With a prolific brush and a warm smile, he captures the flutter of every wing and the twitch of every whisker. He breathes life into the spirit of the Woodland, celebrating its teeming diversity with every stroke.</p>
+		<p>A quiet reminder that beyond the league's grand stakes, no critter is too small to be seen!</p>
+    </div>
+	
+	<div id="nut-section" style="display: none;">
+		<h2>The Secret Nut</h2>
+		<p>No rank? No stress. We haven't forgotten you!</p>
+		<div class="tier-interaction-wrapper">
+			<a href="javascript:void(0)" onclick="openTierModal('squirrel')" class="nut-trigger js-double-tap">
+				<span class="nut-tooltip">Crack it!</span>
+				<img src="assets/images/nut.webp" alt="Giant Nut" class="nut-sprite">
+			</a>
+		</div>
+	</div>
+	
+</div>
+
+
+            </main>
+        </div>
+        
+        <div class="screen-deco left-deco">
+            
+                <img src="assets/images/cache_img_left.webp" alt="Decoration Left">
+            
+        </div>
+
+        <footer class="app-footer window-box">
+			<div class="footer-content">
+				<div class="footer-credits">
+					<span>Powered by <strong>Tʀɪᴄʜᴏʟᴏᴍᴇ</strong></span>
+					<span>Woodland visions by <a class="cl" href="cache.html">𝕩𝕝𝕦𝕖𝕧𝕚</a></span>
+				</div>
+				<div class="footer-date">Updated on 2026-04-07 18:56</div>
+			</div>
+		</footer>
+    </div>
+    
+    <div id="tierModal" class="modal-overlay">
+		<div class="modal-content window-box">
+		<button class="modal-close" aria-label="Close">&times;</button>
+		<div id="modalBody">
+			<div class="modal-image-side">
+				<img id="modalIcon" src="" alt="Tier Icon">
+			</div>
+			
+			<div class="modal-text-side">
+				<div class="title-row">
+					<h2 id="modalTitle"></h2>
+					<h3 id="modalElo"></h3>
+				</div>
+				<div id="modalSubtitle"></div>
+				<div class="modal-divider"></div>
+				<div id="modalText"></div>
+			</div>
+		</div>
+	</div>
+	</div>
+
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+	
+	<script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+    
+    <script>
+        const CONFIG = {
+            colors: {"bird": "#7AB5E0", "default": "#7A7347", "fox": "#E55555", "mouse": "#E88B3A", "rabbit": "#F2C14E", "squirrel": "#94C160"},
+            icons: {"bird": "assets/icons/bird_new.webp", "fox": "assets/icons/fox_new.webp", "mouse": "assets/icons/mouse_new.webp", "rabbit": "assets/icons/rabbit_new.webp", "squirrel": "assets/icons/squirrel.webp"}
+        };
+    </script>
+    
+    <script src="static/script.js"></script>
+    
+</body>
+</html>
