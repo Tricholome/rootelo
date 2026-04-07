@@ -1,51 +1,76 @@
 // Dynamic Scroll & Gesture Management
+// Variables to track touch positions and scroll direction
 let touchStartY = 0;
-let touchEndY = 0;
+let lastScrollY = window.scrollY;
 
+// 1. Capture the initial touch position on the physical screen (clientY)
+// Using clientY instead of pageY makes it immune to overscroll/bounce effects
 window.addEventListener('touchstart', (e) => {
-    touchStartY = e.changedTouches[0].pageY;
+    touchStartY = e.touches[0].clientY; 
 }, { passive: true });
 
-window.addEventListener('scroll', () => {
-    const scrollY = window.scrollY;
-    document.body.style.setProperty('--scroll', scrollY);
+// 2. Handle specific swipe gestures for the bottom image reveal
+window.addEventListener('touchmove', (e) => {
+    const isMobile = window.innerWidth < 1100;
+    if (!isMobile) return;
 
-    if (scrollY > 30) {
+    const currentY = e.touches[0].clientY;
+    const hasClass = document.body.classList.contains('is-at-bottom');
+
+    /**
+     * RESET CONDITION (Close the image):
+     * If the image is visible AND the user swipes DOWN (finger moves down the screen)
+     * We check this first to allow an easy exit from the state.
+     */
+    if (hasClass && (currentY - touchStartY) > 40) {
+        document.body.classList.remove('is-at-bottom');
+        return; // Exit early
+    }
+
+    /**
+     * TRIGGER CONDITION (Reveal the image):
+     * Check if we are at the bottom of the page.
+     */
+    const windowHeight = window.innerHeight;
+    const docHeight = document.documentElement.scrollHeight;
+    // 15px margin to ensure it triggers even with minor calculation rounding
+    const isAtBottom = Math.ceil(windowHeight + window.scrollY) >= (docHeight - 15);
+
+    // If at the bottom AND swiping UP intentionally (finger moves up by more than 70px)
+    if (isAtBottom && !hasClass && (touchStartY - currentY) > 70) {
+        document.body.classList.add('is-at-bottom');
+    }
+}, { passive: true });
+
+// 3. Handle standard scrolling (Header logic + Fallback reset)
+window.addEventListener('scroll', () => {
+    const currentScrollY = window.scrollY;
+    const isMobile = window.innerWidth < 1100;
+
+    // Set CSS variable for dynamic scroll effects
+    document.body.style.setProperty('--scroll', currentScrollY);
+
+    // Header logic: toggle class when scrolling past 30px
+    if (currentScrollY > 30) {
         document.body.classList.add('is-scrolled');
     } else {
         document.body.classList.remove('is-scrolled');
     }
-}, { passive: true });
 
-window.addEventListener('touchend', (e) => {
-    const isMobile = window.innerWidth < 1100;
-    if (!isMobile) return;
-
-    touchEndY = e.changedTouches[0].pageY;
+    /**
+     * FALLBACK RESET (For native scrolling):
+     * If the user scrolls up natively (e.g., using a scrollbar, mouse wheel, 
+     * or native mobile momentum) while the image is revealed.
+     */
+    if (isMobile && document.body.classList.contains('is-at-bottom')) {
+        // If the current scroll position is higher than the previous one (scrolling up)
+        if (currentScrollY < lastScrollY - 10) {
+            document.body.classList.remove('is-at-bottom');
+        }
+    }
     
-    const windowHeight = window.innerHeight;
-    const docHeight = document.documentElement.scrollHeight;
-    const isAtBottomPos = (Math.ceil(windowHeight + window.scrollY) >= docHeight - 20);
-    const hasClass = document.body.classList.contains('is-at-bottom');
-
-    // Distance traveled by the finger
-    const swipeDistance = touchStartY - touchEndY;
-
-    /**
-     * TRIGGER: If we were at the bottom and swiped UP significantly
-     */
-    if (isAtBottomPos && !hasClass && swipeDistance > 70) {
-        document.body.classList.add('is-at-bottom');
-        // Optional: force scroll to top or lock body if needed
-    }
-
-    /**
-     * RESET: If the image is out and we swipe DOWN
-     * We use a negative distance (touchStartY < touchEndY)
-     */
-    if (hasClass && swipeDistance < -50) {
-        document.body.classList.remove('is-at-bottom');
-    }
+    // Update last scroll position for the next event check
+    lastScrollY = currentScrollY;
 }, { passive: true });
 		
 // Tier Modal		
