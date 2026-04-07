@@ -1,19 +1,15 @@
 // Dynamic Scroll & Gesture Management
 let touchStartY = 0;
+let touchEndY = 0;
 
-// Capture the initial touch position
 window.addEventListener('touchstart', (e) => {
-    touchStartY = e.touches[0].pageY;
+    touchStartY = e.changedTouches[0].pageY;
 }, { passive: true });
 
 window.addEventListener('scroll', () => {
     const scrollY = window.scrollY;
-    const isMobile = window.innerWidth < 1100;
-
-    // Set CSS variable for scroll-based animations
     document.body.style.setProperty('--scroll', scrollY);
 
-    // Header State: Toggle class when passing the 30px threshold
     if (scrollY > 30) {
         document.body.classList.add('is-scrolled');
     } else {
@@ -21,32 +17,33 @@ window.addEventListener('scroll', () => {
     }
 }, { passive: true });
 
-// Specific gesture for mobile: reveal the image if the user "seeks" it
-window.addEventListener('touchmove', (e) => {
+window.addEventListener('touchend', (e) => {
     const isMobile = window.innerWidth < 1100;
     if (!isMobile) return;
 
-    const touchEndY = e.touches[0].pageY;
+    touchEndY = e.changedTouches[0].pageY;
+    
     const windowHeight = window.innerHeight;
     const docHeight = document.documentElement.scrollHeight;
-    
-    // Check if user is at the very bottom of the document
-    const isAtBottom = (Math.ceil(windowHeight + window.scrollY) >= docHeight - 10);
+    const isAtBottomPos = (Math.ceil(windowHeight + window.scrollY) >= docHeight - 20);
+    const hasClass = document.body.classList.contains('is-at-bottom');
+
+    // Distance traveled by the finger
+    const swipeDistance = touchStartY - touchEndY;
 
     /**
-     * TRIGGER REVEAL:
-     * If at bottom AND the user performs a deliberate upward swipe (min. 80px).
-     * This prevents accidental triggers during normal scrolling.
+     * TRIGGER: If we were at the bottom and swiped UP significantly
      */
-    if (isAtBottom && (touchStartY - touchEndY) > 80) {
+    if (isAtBottomPos && !hasClass && swipeDistance > 70) {
         document.body.classList.add('is-at-bottom');
+        // Optional: force scroll to top or lock body if needed
     }
 
     /**
-     * RESET REVEAL
-     * Logic: If image is visible AND user swipes down, remove immediately.
+     * RESET: If the image is out and we swipe DOWN
+     * We use a negative distance (touchStartY < touchEndY)
      */
-    if (hasClass && (touchEndY - touchStartY) > 40) {
+    if (hasClass && swipeDistance < -50) {
         document.body.classList.remove('is-at-bottom');
     }
 }, { passive: true });
