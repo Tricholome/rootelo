@@ -43,10 +43,10 @@ window.addEventListener('touchmove', (e) => {
     }
 
     /**
-     * RESET REVEAL:
-     * If the user swipes down (min. 50px), hide the image again.
+     * RESET REVEAL
+     * Logic: If image is visible AND user swipes down, remove immediately.
      */
-    if ((touchEndY - touchStartY) > 50) {
+    if (hasClass && (touchEndY - touchStartY) > 40) {
         document.body.classList.remove('is-at-bottom');
     }
 }, { passive: true });
