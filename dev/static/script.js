@@ -17,20 +17,11 @@ window.addEventListener('touchmove', (e) => {
     const currentY = e.touches[0].clientY;
     const hasClass = document.body.classList.contains('is-at-bottom');
 
-    /**
-     * RESET CONDITION (Close the image):
-     * If the image is visible AND the user swipes DOWN (finger moves down the screen)
-     * We check this first to allow an easy exit from the state.
-     */
     if (hasClass && (currentY - touchStartY) > 40) {
         document.body.classList.remove('is-at-bottom');
         return; // Exit early
     }
 
-    /**
-     * TRIGGER CONDITION (Reveal the image):
-     * Check if we are at the bottom of the page.
-     */
     const windowHeight = window.innerHeight;
     const docHeight = document.documentElement.scrollHeight;
     // 15px margin to ensure it triggers even with minor calculation rounding
@@ -57,11 +48,6 @@ window.addEventListener('scroll', () => {
         document.body.classList.remove('is-scrolled');
     }
 
-    /**
-     * FALLBACK RESET (For native scrolling):
-     * If the user scrolls up natively (e.g., using a scrollbar, mouse wheel, 
-     * or native mobile momentum) while the image is revealed.
-     */
     if (isMobile && document.body.classList.contains('is-at-bottom')) {
         // If the current scroll position is higher than the previous one (scrolling up)
         if (currentScrollY < lastScrollY - 10) {
