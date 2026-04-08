@@ -5,21 +5,28 @@ import json
 from datetime import datetime, date
 
 # =========================================================================
-# --- 1. CONFIGURATION ---
+# --- 0. SETTINGS & AUTHENTICATION ---
 # =========================================================================
+# --- CHANGE FOR THE SEASON TO ARCHIVE ---
+SEASON_TAG = "lh01"           
+TOURNAMENT_ID = 24            
+CUTOFF_DATE_STR = "2026-03-31"
+
+# --- API TOKEN RECOVERY ---
 API_TOKEN = os.getenv('API_TOKEN')
 HEADERS = {'Authorization': f'Token {API_TOKEN}'} if API_TOKEN else {}
-TOURNAMENT_ID = 24  # Season LH01 Tournament ID
 
-# Set cutoff for archive season
-CUTOFF_DATE = datetime.strptime("2026-03-31", "%Y-%m-%d").date()
-
-# Define paths matching main.py structure
+# =========================================================================
+# --- 1. DYNAMIC PATH CONFIGURATION ---
+# =========================================================================
 DATA_DIR = "data"
-CORRECTIONS_PATH = os.path.join(DATA_DIR, "lh01_corrections.csv")
-OUTPUT_RATINGS   = os.path.join(DATA_DIR, "lh01_final_ratings.csv")
-OUTPUT_HISTORY   = os.path.join(DATA_DIR, "lh01_history_full.json")
-OUTPUT_MATCHES   = os.path.join(DATA_DIR, "lh01_matches_fixed.csv")
+CUTOFF_DATE = datetime.strptime(CUTOFF_DATE_STR, "%Y-%m-%d").date()
+
+# Dynamic paths based on the SEASON_TAG
+CORRECTIONS_PATH = os.path.join(DATA_DIR, f"{SEASON_TAG}_corrections.csv")
+OUTPUT_RATINGS   = os.path.join(DATA_DIR, f"{SEASON_TAG}_final_ratings.csv")
+OUTPUT_HISTORY   = os.path.join(DATA_DIR, f"{SEASON_TAG}_history_full.json")
+OUTPUT_MATCHES   = os.path.join(DATA_DIR, f"{SEASON_TAG}_matches_fixed.csv")
 
 # =========================================================================
 # --- 2. LOAD CORRECTIONS ---
@@ -134,7 +141,7 @@ if num_players > 0:
     total_deficit = theoretical_sum - actual_sum
     bonus_per_player = total_deficit / num_players
     
-    print(f"📊 Rebalancing Season LH01:")
+    print(f"📊 Rebalancing Season {SEASON_TAG.upper()}:")
     print(f"   - Actual Total Elo: {actual_sum:.2f}")
     print(f"   - Theoretical Total: {theoretical_sum:.2f}")
     print(f"   - Global Bonus: {total_deficit:.2f} points redistributed")
@@ -203,4 +210,4 @@ df_archive_matches.to_csv(OUTPUT_MATCHES, index=False)
 with open(OUTPUT_HISTORY, 'w', encoding='utf-8') as f:
     json.dump(player_history, f)
 
-print(f"✨ ARCHIVES LH01 SUCCESSFULLY GENERATED.")
+print(f"✨ ARCHIVES FOR {SEASON_TAG.upper()} SUCCESSFULLY GENERATED.")
