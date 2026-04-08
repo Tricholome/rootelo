@@ -113,7 +113,7 @@ for p, rating in inherited_elo.items():
 
 peak_elo = {p: r for p, r in elo_ratings.items()}
 player_stats = {p: {'games': 0, 'wins': 0.0} for p in elo_ratings}
-player_history = {p: [["Start", round(r)]] for p in elo_ratings}
+player_history = {p: [["Start", round(r)]] for p, r in elo_ratings.items()}
 last_diff = {p: 0.0 for p in elo_ratings}
 archive_matches_list = []
 
