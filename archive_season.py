@@ -8,8 +8,9 @@ from datetime import datetime, date
 # --- 0. SETTINGS & AUTHENTICATION ---
 # =========================================================================
 # --- CHANGE FOR THE SEASON TO ARCHIVE ---
-SEASON_TAG = "lh01"           
-TOURNAMENT_ID = 24            
+SEASON_TAG = "lh01"
+PREVIOUS_SEASON_TAG = None
+TOURNAMENT_ID = 24
 CUTOFF_DATE_STR = "2026-03-31"
 
 # --- API TOKEN RECOVERY ---
@@ -27,9 +28,26 @@ CORRECTIONS_PATH = os.path.join(DATA_DIR, f"{SEASON_TAG}_corrections.csv")
 OUTPUT_RATINGS   = os.path.join(DATA_DIR, f"{SEASON_TAG}_final_ratings.csv")
 OUTPUT_HISTORY   = os.path.join(DATA_DIR, f"{SEASON_TAG}_history_full.json")
 OUTPUT_MATCHES   = os.path.join(DATA_DIR, f"{SEASON_TAG}_matches_fixed.csv")
+OUTPUT_METADATA  = os.path.join(DATA_DIR, f"{SEASON_TAG}_metadata.json")
 
 # =========================================================================
-# --- 2. LOAD CORRECTIONS ---
+# --- 2. LOAD PREVIOUS SEASON BASELINE ---
+# =========================================================================
+inherited_elo = {}
+if PREVIOUS_SEASON_TAG:
+    prev_path = os.path.join(DATA_DIR, f"{PREVIOUS_SEASON_TAG}_final_ratings.csv")
+    if os.path.exists(prev_path):
+        print(f"📜 Loading baseline from {PREVIOUS_SEASON_TAG}...")
+        df_prev = pd.read_csv(prev_path)
+        inherited_elo = {str(row['Player']): float(row.get('ELO', 1200.0)) for _, row in df_prev.iterrows()}
+        print(f"   -> {len(inherited_elo)} players inherited.")
+    else:
+        print(f"⚠️ Warning: Previous ratings file not found at {prev_path}")
+else:
+    print("🆕 No previous season defined. Starting fresh (1200.0).")
+
+# =========================================================================
+# --- 3. LOAD CORRECTIONS ---
 # =========================================================================
 game_id_mapping = pd.Series(dtype='datetime64[ns]')
 
@@ -44,7 +62,7 @@ except Exception as e:
     print(f"⚠️ Note: Corrections skipped: {e}")
 
 # =========================================================================
-# --- 3. FETCH MATCH DATA ---
+# --- 4. FETCH MATCH DATA ---
 # =========================================================================
 all_matches = []
 next_url = f"https://rootleague.pliskin.dev/api/match/?format=json&limit=500&tournament={TOURNAMENT_ID}"
@@ -86,13 +104,18 @@ if not df.empty:
     df = df.sort_values(by='Date_Closed').reset_index(drop=True)
 
 # =========================================================================
-# --- 4. ELO CALCULATION & STATS ---
+# --- 5. ELO CALCULATION & STATS ---
 # =========================================================================
-elo_ratings = {p: 1200.0 for p in df['Player'].unique()}
-peak_elo = {p: 1200.0 for p in df['Player'].unique()}
-player_stats = {p: {'games': 0, 'wins': 0.0} for p in df['Player'].unique()}
-player_history = {p: [["Start", 1200]] for p in df['Player'].unique()}
-last_diff = {p: 0.0 for p in df['Player'].unique()}
+elo_ratings = {p: inherited_elo.get(p, 1200.0) for p in df['Player'].unique()}
+
+for p, rating in inherited_elo.items():
+    if p not in elo_ratings:
+        elo_ratings[p] = rating
+
+peak_elo = {p: r for p, r in elo_ratings.items()}
+player_stats = {p: {'games': 0, 'wins': 0.0} for p in elo_ratings}
+player_history = {p: [["Start", round(r)]] for p, r in elo_ratings.items()}
+last_diff = {p: 0.0 for p in elo_ratings}
 archive_matches_list = []
 
 for game_id, group in df.groupby('GameID', sort=False):
@@ -132,7 +155,7 @@ for game_id, group in df.groupby('GameID', sort=False):
         player_history[name].append([current_date, round(elo_ratings[name])])
         
 # =========================================================================
-# --- 5. SEASON END REBALANCING ---
+# --- 6. SEASON END REBALANCING ---
 # =========================================================================
 num_players = len(elo_ratings)
 if num_players > 0:
@@ -153,7 +176,7 @@ if num_players > 0:
             peak_elo[p] = elo_ratings[p]   
 
 # =========================================================================
-# --- 6. EXPORT FINAL RATINGS (LEADERBOARD) ---
+# --- 7. EXPORT FINAL RATINGS (LEADERBOARD) ---
 # =========================================================================
 results = []
 for p, rating in elo_ratings.items():
@@ -191,23 +214,40 @@ final_df.insert(0, 'Rank', ranks)
 final_df = final_df.drop(columns=['Display_ELO'])
 
 # =========================================================================
-# --- 7. FINAL EXPORTS ---
+# --- 8. FINAL EXPORTS ---
 # =========================================================================
 os.makedirs(DATA_DIR, exist_ok=True)
 
+def safe_save(path, data, is_json=False):
+    if os.path.exists(path):
+        os.remove(path)
+    
+    if is_json:
+        with open(path, 'w', encoding='utf-8') as f:
+            json.dump(data, f, indent=4)
+    else:
+        data.to_csv(path, index=False)
+    print(f"DEBUG: Successfully overwritten {path}")
+
 # A. Save Leaderboard
-final_df.to_csv(OUTPUT_RATINGS, index=False)
+safe_save(OUTPUT_RATINGS, final_df)
 
 # B. Save Matches 
 df_archive_matches = pd.DataFrame(archive_matches_list)
 if not df_archive_matches.empty:
     df_archive_matches = df_archive_matches.sort_values(by='ELO_Sum', ascending=False).reset_index(drop=True)
     df_archive_matches.insert(0, 'Rank', range(1, len(df_archive_matches) + 1))
-    
-df_archive_matches.to_csv(OUTPUT_MATCHES, index=False)
+safe_save(OUTPUT_MATCHES, df_archive_matches)
 
 # C. Save History Graph
-with open(OUTPUT_HISTORY, 'w', encoding='utf-8') as f:
-    json.dump(player_history, f)
+safe_save(OUTPUT_HISTORY, player_history, is_json=True)
+
+# D. Save Metadata
+metadata = {
+    "season_tag": SEASON_TAG.upper(),
+    "cutoff_date": CUTOFF_DATE_STR,
+    "match_count": len(archive_matches_list)
+}
+safe_save(os.path.join(DATA_DIR, f"{SEASON_TAG}_metadata.json"), metadata, is_json=True)
 
 print(f"✨ ARCHIVES FOR {SEASON_TAG.upper()} SUCCESSFULLY GENERATED.")
