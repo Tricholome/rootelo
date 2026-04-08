@@ -1,22 +1,30 @@
 # Rootelo
 
-Automated Elo-based leaderboard and stats for Root Digital League.
+Automated Elo-based leaderboard and stats for the Root Digital League.
 
 ## 🚀 Live Website
 👉 **[View the Website](https://tricholome.github.io/rootelo)**
 
 ## ⚙️ How it works
-This project is a static site generator powered by **Python**:
+Rootelo is a custom static site generator (SSG) built with **Python**, designed to provide a lightweight and high-performance competitive dashboard.
 
-### 📊 Data Management
-* **Live Standings**: Fetches real-time match data from the Root Digital League API.
-* **Archives**: Uses a secondary script (`generate_lh01_db.py`) to process and freeze historical data into CSV/JSON format. The main site then reads these files to display past seasons (e.g., LH01).
-* **Manual Corrections**: Dedicated CSV file are used to manually fix specific data points (like dates) that might be incorrect in the source API.
+### 📊 Data Processing & Life Cycle
+* **Live Season**: Fetches and processes real-time match data directly from the Root Digital League API.
+* **Historical Archives**: Seasons are "frozen" once completed. A dedicated processing script (`archive_season.py`) converts raw historical data into optimized CSV/JSON assets, which are then integrated into the main rendering pipeline.
+* **Data Integrity**: Includes a manual correction layer (CSV-based) to fix API anomalies (e.g., incorrect match dates or player aliases) without altering the source.
 
 ### 🏗️ Technology Stack
-* **Engine**: Data processing via `pandas`.
-* **Templating**: Pages generated with **Jinja2 HTML templates**.
-* **Frontend**: Custom **CSS/JS** and assets for a tailored user experience.
-* **Automation**: Pipeline triggered daily by an **external Cron job** via GitHub Actions for maximum reliability.
+* **Core Engine**: Powered by `pandas` for Elo calculations and data manipulation.
+* **Templating**: **Jinja2** is used to generate dynamic HTML pages from a modular base, ensuring consistent UI across live and archived seasons.
+* **Frontend**: A custom **Glassmorphism CSS** theme with **DataTables.js** for interactive, searchable, and responsive leaderboards.
+* **Automation**: The entire site is rebuilt daily via **GitHub Actions**, triggered by an external cron job for maximum reliability.
 
+### 🛠️ Architecture
+The generator follows a "Single Source of Truth" pattern:
+1.  **Ingest**: Collects API data and Local Assets.
+2.  **Calculate**: Computes Elo ratings, tiers, and player trends.
+3.  **Render**: Injects statistics and metadata into Jinja2 templates.
+4.  **Deploy**: Pushes the static build to GitHub Pages.
+
+---
 *Last updated: Automated via GitHub Actions*
