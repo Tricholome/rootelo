@@ -212,6 +212,9 @@ final_df.insert(0, 'Rank', ranks)
 # Drop Display_ELO, we only need true ELO in the CSV
 final_df = final_df.drop(columns=['Display_ELO'])
 
+print(f"DEBUG: Nombre de lignes à sauvegarder : {len(final_df)}")
+print(f"DEBUG: Chemin de sortie : {os.path.abspath(OUTPUT_RATINGS)}")
+
 # =========================================================================
 # --- 8. FINAL EXPORTS ---
 # =========================================================================
