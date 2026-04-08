@@ -218,20 +218,29 @@ final_df = final_df.drop(columns=['Display_ELO'])
 # =========================================================================
 os.makedirs(DATA_DIR, exist_ok=True)
 
+def safe_save(path, data, is_json=False):
+    if os.path.exists(path):
+        os.remove(path)
+    
+    if is_json:
+        with open(path, 'w', encoding='utf-8') as f:
+            json.dump(data, f, indent=4)
+    else:
+        data.to_csv(path, index=False)
+    print(f"DEBUG: Successfully overwritten {path}")
+
 # A. Save Leaderboard
-final_df.to_csv(OUTPUT_RATINGS, index=False)
+safe_save(OUTPUT_RATINGS, final_df)
 
 # B. Save Matches 
 df_archive_matches = pd.DataFrame(archive_matches_list)
 if not df_archive_matches.empty:
     df_archive_matches = df_archive_matches.sort_values(by='ELO_Sum', ascending=False).reset_index(drop=True)
     df_archive_matches.insert(0, 'Rank', range(1, len(df_archive_matches) + 1))
-    
-df_archive_matches.to_csv(OUTPUT_MATCHES, index=False)
+safe_save(OUTPUT_MATCHES, df_archive_matches)
 
 # C. Save History Graph
-with open(OUTPUT_HISTORY, 'w', encoding='utf-8') as f:
-    json.dump(player_history, f)
+safe_save(OUTPUT_HISTORY, player_history, is_json=True)
 
 # D. Save Metadata
 metadata = {
@@ -239,10 +248,6 @@ metadata = {
     "cutoff_date": CUTOFF_DATE_STR,
     "match_count": len(archive_matches_list)
 }
-
-with open(OUTPUT_METADATA, 'w', encoding='utf-8') as f:
-    json.dump(metadata, f, indent=4)
-
-print(f"DEBUG: Saved {len(final_df)} players and {len(archive_matches_list)} matches.")
+safe_save(os.path.join(DATA_DIR, f"{SEASON_TAG}_metadata.json"), metadata, is_json=True)
 
 print(f"✨ ARCHIVES FOR {SEASON_TAG.upper()} SUCCESSFULLY GENERATED.")
