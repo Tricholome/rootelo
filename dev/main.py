@@ -11,9 +11,9 @@ from jinja2 import Environment, FileSystemLoader
 DATA_DIR = "data"
 
 # Add future seasons here when they are archived (e.g., ["lh01", "lh02"])
-ARCHIVE_SEASONS = ["lh01", "lh02"] 
+ARCHIVE_SEASONS = ["lh01"] 
 
-CURRENT_SEASON_TAG = "lh03"
+CURRENT_SEASON_TAG = "lh02"
 TOURNAMENT_ID = 25
 
 CORRECTIONS_FILE = os.path.join(DATA_DIR, f"{CURRENT_SEASON_TAG}_corrections.csv")
@@ -375,7 +375,7 @@ def render_core_pages(file_suffix, is_archive, tag, lb_data, match_data, trends_
     render_page(
         "leaderboard.html", f"index{file_suffix}.html", page_id="index", current_page_base="index",
         title="Leaderboard • Rootelo", page_heading="Leaderboard",
-        description=f"Minimum 1 win required for display. Only players with a Tier are ranked.<br><br><small><i>Includes {meta.get('match_count', 0)} matches through {meta.get('cutoff_date', 'N/A')}.</i></small>",
+        description=f"Minimum 1 win required for display. Only players with a Tier are ranked.<br><small>Includes {meta.get('match_count', 0)} matches through {meta.get('cutoff_date', 'N/A')}.</small>",
         is_archive=is_archive, has_seasons=True, season_tag=tag,
         archive_seasons=ARCHIVE_SEASONS,
         current_season_tag=CURRENT_SEASON_TAG,
