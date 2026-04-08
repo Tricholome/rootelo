@@ -375,7 +375,7 @@ def render_core_pages(file_suffix, is_archive, tag, lb_data, match_data, trends_
     render_page(
         "leaderboard.html", f"index{file_suffix}.html", page_id="index", current_page_base="index",
         title="Leaderboard • Rootelo", page_heading="Leaderboard",
-        description=f"Minimum 1 win required for display. Only players with a Tier are ranked. Data includes {meta.get('match_count', 0)} matches recorded up to {meta.get('cutoff_date', 'N/A')} (inclusive).",
+        description=f"Minimum 1 win required for display. Only players with a Tier are ranked. Includes {meta.get('match_count', 0)} matches through {meta.get('cutoff_date', 'N/A')}.",
         is_archive=is_archive, has_seasons=True, season_tag=tag,
         archive_seasons=ARCHIVE_SEASONS,
         current_season_tag=CURRENT_SEASON_TAG,
