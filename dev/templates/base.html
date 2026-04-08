@@ -150,15 +150,15 @@
 
             <nav>
 				{% set nav_links = [('index', 'Leaderboard'), ('matches', 'Top Tables'), ('trends', "Player's Journey"), ('about', 'Codex')] %}
-				{% set archivable_pages = ['index', 'matches', 'trends'] %}
 				{% if page_id == 'cache' %}
 					{% set nav_links = nav_links + [('cache', 'Undergrowth')] %}
 				{% endif %}
+
 				{% for base, label in nav_links %}
-					{% if has_seasons and is_archive and base in archivable_pages %}
-						{% set target = base + '_lh01.html' %}
+					{% if is_archive and base in ['index', 'matches', 'trends'] %}
+						{% set target = base ~ '_' ~ season_tag ~ '.html' %}
 					{% else %}
-						{% set target = base + '.html' %}
+						{% set target = base ~ '.html' %}
 					{% endif %}
 					<a href="{{ target }}" class="{{ 'active' if page_id == base else '' }}">{{ label }}</a>
 				{% endfor %}
@@ -177,8 +177,16 @@
 				{% if has_seasons %}
 				<div class="season-selector">
 					<span class="season-label">Season</span>
-					<a href="{{ page_id }}_lh01.html" class="season-btn {{ 'active' if is_archive else '' }}">LH01</a>
-					<a href="{{ page_id }}.html" class="season-btn {{ '' if is_archive else 'active' }}">LH02</a>
+					<a href="{{ page_id }}.html" class="season-btn {{ 'active' if not is_archive else '' }}">
+						{{ current_season_tag|upper if current_season_tag else 'LIVE' }}
+					</a>
+					{% if archive_seasons %}
+						{% for s_tag in archive_seasons %}
+							<a href="{{ page_id }}_{{ s_tag }}.html" class="season-btn {{ 'active' if is_archive and season_tag == s_tag else '' }}">
+								{{ s_tag|upper }}
+							</a>
+						{% endfor %}
+					{% endif %}
 				</div>
 				{% endif %}
 				{% if description %}<p>{{ description }}</p>{% endif %}

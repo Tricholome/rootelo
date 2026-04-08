@@ -367,6 +367,8 @@ def render_core_pages(file_suffix, is_archive, tag, lb_data, match_data, trends_
         title="Leaderboard • Rootelo", page_heading="Leaderboard",
         description="Minimum 1 win required for display.",
         is_archive=is_archive, has_seasons=True, season_tag=tag,
+        archive_seasons=ARCHIVE_SEASONS,
+        current_season_tag=CURRENT_SEASON_TAG,
         players=lb_data
     )
 
@@ -375,6 +377,8 @@ def render_core_pages(file_suffix, is_archive, tag, lb_data, match_data, trends_
         title="Top Tables • Rootelo", page_heading="Top Tables",
         description="Top 100 games ranked by total Elo. Click a Game ID for match details.",
         is_archive=is_archive, has_seasons=True, season_tag=tag,
+        archive_seasons=ARCHIVE_SEASONS,
+        current_season_tag=CURRENT_SEASON_TAG,
         matches=match_data
     )
 
@@ -383,6 +387,8 @@ def render_core_pages(file_suffix, is_archive, tag, lb_data, match_data, trends_
         title="Player's Journey • Rootelo", page_heading="Player's Journey",
         description="Search for a player to see their Elo evolution over the season.",
         is_archive=is_archive, has_seasons=True, season_tag=tag,
+        archive_seasons=ARCHIVE_SEASONS,
+        current_season_tag=CURRENT_SEASON_TAG,
         history_json=trends_data['history_json'], player_names=trends_data['player_names']
     )
 
