@@ -369,7 +369,7 @@ for tag in ARCHIVE_SEASONS:
 # =========================================================================
 print("\n=== GENERATING HTML PAGES ===")
 
-def render_core_pages(file_suffix, is_archive, tag, lb_data, match_data, trends_data):
+def render_core_pages(file_suffix, is_archive, tag, lb_data, match_data, trends_data, meta):
     """Helper to generate the 3 main pages identically for live and archives."""
     
     render_page(
