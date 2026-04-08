@@ -22,7 +22,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install pandas requests openpyxl jinja2
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
 
       - name: Run ELO calculation and site generation
         env:
