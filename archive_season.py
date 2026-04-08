@@ -8,9 +8,9 @@ from datetime import datetime, date
 # --- 0. SETTINGS & AUTHENTICATION ---
 # =========================================================================
 # --- CHANGE FOR THE SEASON TO ARCHIVE ---
-SEASON_TAG = "lh01"           
-TOURNAMENT_ID = 24            
-CUTOFF_DATE_STR = "2026-03-31"
+SEASON_TAG = "lh02"
+TOURNAMENT_ID = 25
+CUTOFF_DATE_STR = "2026-04-30"
 
 # --- API TOKEN RECOVERY ---
 API_TOKEN = os.getenv('API_TOKEN')
