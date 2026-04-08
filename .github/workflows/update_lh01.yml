@@ -1,7 +1,7 @@
 name: Update LH01 Database
 
 on:
-  workflow_dispatch: # Permet de lancer le script manuellement depuis l'onglet Actions
+  workflow_dispatch:
 
 jobs:
   build:
@@ -18,7 +18,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install pandas openpyxl requests
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
 
       - name: Run LH01 Script
         run: python generate_lh01_db.py
