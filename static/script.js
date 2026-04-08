@@ -1,29 +1,62 @@
-// Moteur de Scroll Dynamique pour le CSS
+// Dynamic Scroll & Gesture Management
+// Variables to track touch positions and scroll direction
+let touchStartY = 0;
+let lastScrollY = window.scrollY;
+
+// 1. Capture the initial touch position on the physical screen (clientY)
+// Using clientY instead of pageY makes it immune to overscroll/bounce effects
+window.addEventListener('touchstart', (e) => {
+    touchStartY = e.touches[0].clientY; 
+}, { passive: true });
+
+// 2. Handle specific swipe gestures for the bottom image reveal
+window.addEventListener('touchmove', (e) => {
+    const isMobile = window.innerWidth < 1100;
+    if (!isMobile) return;
+
+    const currentY = e.touches[0].clientY;
+    const hasClass = document.body.classList.contains('is-at-bottom');
+
+    if (hasClass && (currentY - touchStartY) > 40) {
+        document.body.classList.remove('is-at-bottom');
+        return; // Exit early
+    }
+
+    const windowHeight = window.innerHeight;
+    const docHeight = document.documentElement.scrollHeight;
+    // 15px margin to ensure it triggers even with minor calculation rounding
+    const isAtBottom = Math.ceil(windowHeight + window.scrollY) >= (docHeight - 15);
+
+    // If at the bottom AND swiping UP intentionally (finger moves up by more than 70px)
+    if (isAtBottom && !hasClass && (touchStartY - currentY) > 70) {
+        document.body.classList.add('is-at-bottom');
+    }
+}, { passive: true });
+
+// 3. Handle standard scrolling (Header logic + Fallback reset)
 window.addEventListener('scroll', () => {
-	const scrollY = window.scrollY;
-	const isMobile = window.innerWidth < 1100;
+    const currentScrollY = window.scrollY;
+    const isMobile = window.innerWidth < 1100;
 
-	// 1. Toujours mettre à jour la variable pour le calcul PC (max 50%...)
-	document.body.style.setProperty('--scroll', scrollY);
+    // Set CSS variable for dynamic scroll effects
+    document.body.style.setProperty('--scroll', currentScrollY);
 
-	// 2. Logique HAUT (Bannière)
-	if (scrollY > 30) {
-		document.body.classList.add('is-scrolled');
-	} else {
-		document.body.classList.remove('is-scrolled');
-	}
+    // Header logic: toggle class when scrolling past 30px
+    if (currentScrollY > 30) {
+        document.body.classList.add('is-scrolled');
+    } else {
+        document.body.classList.remove('is-scrolled');
+    }
 
-	// 3. Logique BAS (Uniquement Mobile pour éviter les bugs PC)
-	if (isMobile) {
-		const windowHeight = window.innerHeight;
-		const docHeight = document.documentElement.scrollHeight;
-		// Déclenche à 50px du bord fial
-		if ((windowHeight + scrollY) >= (docHeight - 50)) {
-			document.body.classList.add('is-at-bottom');
-		} else {
-			document.body.classList.remove('is-at-bottom');
-		}
-	}
+    if (isMobile && document.body.classList.contains('is-at-bottom')) {
+        // If the current scroll position is higher than the previous one (scrolling up)
+        if (currentScrollY < lastScrollY - 10) {
+            document.body.classList.remove('is-at-bottom');
+        }
+    }
+    
+    // Update last scroll position for the next event check
+    lastScrollY = currentScrollY;
 }, { passive: true });
 		
 // Tier Modal		
