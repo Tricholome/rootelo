@@ -28,6 +28,7 @@ CORRECTIONS_PATH = os.path.join(DATA_DIR, f"{SEASON_TAG}_corrections.csv")
 OUTPUT_RATINGS   = os.path.join(DATA_DIR, f"{SEASON_TAG}_final_ratings.csv")
 OUTPUT_HISTORY   = os.path.join(DATA_DIR, f"{SEASON_TAG}_history_full.json")
 OUTPUT_MATCHES   = os.path.join(DATA_DIR, f"{SEASON_TAG}_matches_fixed.csv")
+OUTPUT_METADATA  = os.path.join(DATA_DIR, f"{SEASON_TAG}_metadata.json")
 
 # =========================================================================
 # --- 2. LOAD PREVIOUS SEASON BASELINE ---
@@ -212,9 +213,6 @@ final_df.insert(0, 'Rank', ranks)
 # Drop Display_ELO, we only need true ELO in the CSV
 final_df = final_df.drop(columns=['Display_ELO'])
 
-print(f"DEBUG: Number of rows to save: {len(final_df)}")
-print(f"DEBUG: Output path: {os.path.abspath(OUTPUT_RATINGS)}")
-
 # =========================================================================
 # --- 8. FINAL EXPORTS ---
 # =========================================================================
@@ -234,5 +232,17 @@ df_archive_matches.to_csv(OUTPUT_MATCHES, index=False)
 # C. Save History Graph
 with open(OUTPUT_HISTORY, 'w', encoding='utf-8') as f:
     json.dump(player_history, f)
+
+# D. Save Metadata
+metadata = {
+    "season_tag": SEASON_TAG.upper(),
+    "cutoff_date": CUTOFF_DATE_STR,
+    "match_count": len(archive_matches_list)
+}
+
+with open(OUTPUT_METADATA, 'w', encoding='utf-8') as f:
+    json.dump(metadata, f, indent=4)
+
+print(f"DEBUG: Saved {len(final_df)} players and {len(archive_matches_list)} matches.")
 
 print(f"✨ ARCHIVES FOR {SEASON_TAG.upper()} SUCCESSFULLY GENERATED.")
