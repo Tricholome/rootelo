@@ -140,6 +140,11 @@ for tag in ARCHIVE_SEASONS:
     path_ratings = os.path.join(DATA_DIR, f"{tag}_final_ratings.csv")
     path_matches = os.path.join(DATA_DIR, f"{tag}_matches_fixed.csv")
     path_trends  = os.path.join(DATA_DIR, f"{tag}_history_full.json")
+    path_meta = os.path.join(DATA_DIR, f"{tag}_metadata.json")
+    archives_raw_data[tag]['metadata'] = {"cutoff_date": "N/A", "match_count": 0}
+    if os.path.exists(path_meta):
+        with open(path_meta, "r", encoding="utf-8") as f:
+            archives_raw_data[tag]['metadata'] = json.load(f)
     
     try:
         if os.path.exists(path_ratings):
@@ -324,6 +329,10 @@ current_history = {k.split('+')[0].split('#')[0]: v for k, v in player_history.i
 print("\n=== GENERATING SITE ASSETS ===")
 
 # --- A. Prepare Current Season ---
+current_meta = {
+    'match_count': df['GameID'].nunique() if not df.empty else 0,
+    'cutoff_date': CUTOFF_DATE.strftime('%Y-%m-%d')
+}
 display_leaderboard_current = []
 if not current_final_df.empty:
     filtered_df = current_final_df[current_final_df['Wins'].astype(float) >= 1].copy()
@@ -360,7 +369,7 @@ for tag in ARCHIVE_SEASONS:
 # =========================================================================
 print("\n=== GENERATING HTML PAGES ===")
 
-def render_core_pages(file_suffix, is_archive, tag, lb_data, match_data, trends_data):
+def render_core_pages(file_suffix, is_archive, tag, lb_data, match_data, trends_data, meta):
     """Helper to generate the 3 main pages identically for live and archives."""
     
     render_page(
@@ -370,6 +379,8 @@ def render_core_pages(file_suffix, is_archive, tag, lb_data, match_data, trends_
         is_archive=is_archive, has_seasons=True, season_tag=tag,
         archive_seasons=ARCHIVE_SEASONS,
         current_season_tag=CURRENT_SEASON_TAG,
+        num_matches=meta.get('match_count', 0),
+        cutoff_date=meta.get('cutoff_date', "N/A"),
         players=lb_data
     )
 
@@ -401,7 +412,8 @@ render_core_pages(
     tag=CURRENT_SEASON_TAG, 
     lb_data=display_leaderboard_current, 
     match_data=display_matches_current, 
-    trends_data=display_trends_current
+    trends_data=display_trends_current,
+    meta=current_meta
 )
 
 # --- B. Render Archives Pages ---
@@ -414,7 +426,8 @@ for tag in ARCHIVE_SEASONS:
         tag=tag, 
         lb_data=data['leaderboard'], 
         match_data=data['matches'], 
-        trends_data=data['trends']
+        trends_data=data['trends'],
+        meta=archives_raw_data[tag]['metadata']
     )
 
 # --- C. Render Static Pages ---
