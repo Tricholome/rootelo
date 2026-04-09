@@ -69,7 +69,7 @@ body {
 	
 	font-family: var(--font-ui);
     font-weight: var(--normal);
-    color: var(--text-main);
+    color: var(--text-muted);
     font-size: var(--size-base);
 	
 	min-height: 100vh;
@@ -247,8 +247,8 @@ body::after {
     font-style: italic;
     color: var(--text-muted);
     font-size: var(--size-base);
-    margin: 5px 0 0;
     letter-spacing: var(--track-wide);
+	margin: 5px 0 0;
 }
 
 .page-intro { margin-bottom: var(--window-gap); }
@@ -259,8 +259,8 @@ a.cl { color: var(--text-main); text-decoration: none; font-weight: var(--medium
 a.cl:hover { border-bottom: 1px solid var(--main-color); color: var(--main-color); }
 
 @media (max-width: 768px) {
-    .site-title { font-size: var(--size-xl); }
-    .page-intro h2 { font-size: var(--size-xl); }
+    .site-title { font-size: var(--size-lg); }
+    .page-intro h2 { font-size: var(--size-lg); }
 }
 
 /* =========================================================================
@@ -330,7 +330,7 @@ a.cl:hover { border-bottom: 1px solid var(--main-color); color: var(--main-color
     color: var(--text-muted);
     padding: 6px 12px;
     border-radius: 6px;
-    font-size: var(--size-sm);
+    font-size: var(--size-xs);
     white-space: nowrap;
     opacity: 0;
     pointer-events: none;
@@ -437,7 +437,7 @@ table.dataTable {
 table.dataTable thead th { 
     background: var(--dt-header-bg) !important; 
     color: var(--text-main) !important; 
-    font-size: var(--size-sm) !important;
+    font-size: var(--size-xs) !important;
     letter-spacing: var(--track-wide); 
     text-transform: uppercase; 
     padding: 15px 10px !important; 
@@ -684,10 +684,10 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     margin-top: 60px ;
 	margin-bottom: -10px ;
     font-family: var(--font-title);
-    font-size: var(--size-lg);
+    font-size: var(--size-md);
+	letter-spacing: var(--track-wide);
     font-weight: var(--medium);
     text-align: left;
-    letter-spacing: var(--track-wide);
 }
 
 .codex-section p { margin-bottom: 20px; color: var(--text-muted); text-align: left; font-size: var(--size-base); }
@@ -735,7 +735,7 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     color: var(--main-color) !important; 
     font-weight: var(--bold); 
     font-family: var(--font-mono); 
-    font-size: var(--size-lg);
+    font-size: var(--size-md);
     white-space: nowrap; 
 }
 
@@ -779,7 +779,7 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 
 .modal-close {
     position: absolute; top: 15px; right: 15px; background: none; border: none;
-    color: var(--text-muted); font-size: var(--size-xl); cursor: pointer; line-height: 1;
+    color: var(--text-muted); font-size: var(--size-lg); cursor: pointer; line-height: 1;
     z-index: 10;
 }
 
@@ -798,7 +798,7 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 }
 
 #modalElo { font-weight: var(--bold); var(--size-lg); margin-top: 5px; }
-#modalSubtitle { color: var(--text-muted); font-style: italic; font-size: var(--size-base); margin-top: -5px; }
+#modalSubtitle { color: var(--text-muted); font-style: italic; font-size: var(--size-md); margin-top: -5px; }
 #modalText { color: var(--text-muted); text-align: left; font-size: var(--size-base); line-height: 1.6; }
 
 .modal-divider {
@@ -971,7 +971,7 @@ body[data-page="cache"].show-deco .app-footer {
 	font-weight: var(--medium);
     padding: 6px 12px;
     border-radius: 6px;
-    font-size: var(--size-sm);
+    font-size: var(--size-xs);
     white-space: nowrap;
     box-shadow: 0 4px 10px rgba(0,0,0,0.5);
     z-index: 100;
