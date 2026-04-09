@@ -1,0 +1,66 @@
+{# =========================================================================
+   ROOTELO CONFIGURATION
+   ========================================================================= #}
+
+{% set config = {
+    'colors': {
+        'tiers': {
+            'bird':     '#7AB5E0',
+            'fox':      '#E55555',
+            'rabbit':   '#F2C14E',
+            'mouse':    '#F49E52',
+            'squirrel': '#94C160',
+            'default':  '#7A7347'
+        },
+        'ui': {
+            'bg-container':      '#1c1c1c',
+            'bg-overlay-top':    'rgba(0, 0, 0, 0.1)',
+            'bg-overlay-bottom': 'rgba(0, 0, 0, 0.8)',
+            'bg-surface':        'rgba(255, 255, 255, 0.03)',
+            'bg-hover':          'rgba(255, 255, 255, 0.08)',
+            'border-soft':       '#333333',
+            'text-main':         '#E0E0E0',
+            'text-muted':        '#A0A0A0',
+            'text-bright':       '#ffffff'
+        }
+    },
+    'typography': {
+        'fonts': {
+            'title': "'Fraunces', serif",
+            'ui':    "'Inter', sans-serif"
+        },
+        'weights': {
+            'normal': '400',
+            'medium': '600',
+            'bold':   '900'
+        }
+    },
+    'assets': {
+        'icons': {
+            'bird':     'assets/icons/bird_new.webp',
+            'fox':      'assets/icons/fox_new.webp',
+            'rabbit':   'assets/icons/rabbit_new.webp',
+            'mouse':    'assets/icons/mouse_new.webp',
+            'squirrel': 'assets/icons/squirrel.webp'
+        },
+        'decorations': {
+            'index':   {'left': 'assets/images/leaderboard_img_left.webp', 'right': 'assets/images/leaderboard_img_right.webp'},
+            'matches': {'left': 'assets/images/matches_img_left.webp',     'right': 'assets/images/matches_img_right.webp'},
+            'trends':  {'left': 'assets/images/trends_img_left.webp',    'right': 'assets/images/trends_img_right.webp'},
+            'about':   {'left': 'assets/images/about_img_left.webp',     'right': 'assets/images/about_img_right.webp'},
+            'cache':   {'left': 'assets/images/cache_img_left.webp',     'right': 'assets/images/cache_img_right.webp'}
+        }
+    }
+} %}
+
+{# THEME LOGIC - Determines the main color based on the page #}
+{% set tier_mapping = {
+    'index':   'bird', 
+    'matches': 'fox', 
+    'trends':  'rabbit', 
+    'about':   'mouse', 
+    'cache':   'squirrel'
+} %}
+
+{% set current_tier = tier_mapping[page_id] if page_id in tier_mapping else 'default' %}
+{% set theme_color = config.colors.tiers[current_tier] %}
