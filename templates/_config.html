@@ -1,9 +1,39 @@
 {# =========================================================================
-   ROOTELO CONFIGURATION
+   ROOTELO CONFIGURATION - Master Dictionary
    ========================================================================= #}
 
 {% set config = {
     'colors': {
+        {# 1. UI COLORS #}
+        'ui': {
+            /* Backgrounds & Foundation */
+            'bg-overlay-top':    'rgba(0, 0, 0, 0.1)',
+            'bg-overlay-bottom': 'rgba(0, 0, 0, 0.8)',
+            'bg-container':      '#1c1c1c',
+            'bg-surface':        'rgba(255, 255, 255, 0.03)',
+            'bg-hover':          'rgba(255, 255, 255, 0.08)',
+            'border-soft':       '#333333',
+            
+            /* Glass System */
+            'glass-bg':          '#1c1c1cd9',
+            'glass-border':      'rgba(255, 255, 255, 0.08)',
+            'glass-shadow':      '0 10px 30px rgba(0, 0, 0, 0.5)',
+            
+            /* Text Colors */
+            'text-bright':       '#ffffff',
+            'text-main':         '#E0E0E0',
+            'text-muted':        '#A0A0A0',
+            'text-dark':         '#111111',
+
+            /* DataTables Specific */
+            'dt-table-bg':       'rgba(0, 0, 0, 0.15)',
+            'dt-header-bg':      'rgba(0, 0, 0, 0.25)',
+            'dt-row-border':     'rgba(255, 255, 255, 0.03)',
+            'dt-row-hover':      'rgba(255, 255, 255, 0.07)',
+            'dt-input-bg':       'rgba(0, 0, 0, 0.2)'
+        },
+
+        {# 2. TIERS COLORS #}
         'tiers': {
             'bird':     '#7AB5E0',
             'fox':      '#E55555',
@@ -11,30 +41,25 @@
             'mouse':    '#F49E52',
             'squirrel': '#94C160',
             'default':  '#7A7347'
-        },
-        'ui': {
-            'bg-container':      '#1c1c1c',
-            'bg-overlay-top':    'rgba(0, 0, 0, 0.1)',
-            'bg-overlay-bottom': 'rgba(0, 0, 0, 0.8)',
-            'bg-surface':        'rgba(255, 255, 255, 0.03)',
-            'bg-hover':          'rgba(255, 255, 255, 0.08)',
-            'border-soft':       '#333333',
-            'text-main':         '#E0E0E0',
-            'text-muted':        '#A0A0A0',
-            'text-bright':       '#ffffff'
         }
     },
+
+    {# 3. TYPOGRAPHY #}
     'typography': {
-        'fonts': {
-            'title': "'Fraunces', serif",
-            'ui':    "'Inter', sans-serif"
-        },
-        'weights': {
-            'normal': '400',
-            'medium': '600',
-            'bold':   '900'
-        }
+        'font-title': "'Fraunces', serif",
+        'font-ui':    "'Inter', sans-serif",
+        'bold':       '900',
+        'medium':     '600',
+        'normal':     '400'
     },
+
+    {# 4. LAYOUT #}
+    'layout': {
+        'window-gap': '25px',
+        'max-width':  'clamp(600px, 60vw, 1600px)'
+    },
+
+    {# 5. ASSETS #}
     'assets': {
         'icons': {
             'bird':     'assets/icons/bird_new.webp',
@@ -53,14 +78,6 @@
     }
 } %}
 
-{# THEME LOGIC - Determines the main color based on the page #}
-{% set tier_mapping = {
-    'index':   'bird', 
-    'matches': 'fox', 
-    'trends':  'rabbit', 
-    'about':   'mouse', 
-    'cache':   'squirrel'
-} %}
-
+{% set tier_mapping = {'index':'bird', 'matches':'fox', 'trends':'rabbit', 'about':'mouse', 'cache':'squirrel'} %}
 {% set current_tier = tier_mapping[page_id] if page_id in tier_mapping else 'default' %}
 {% set theme_color = config.colors.tiers[current_tier] %}
