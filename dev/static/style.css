@@ -138,6 +138,7 @@ body::after {
 .footer-credits strong {
     color: var(--text-main);
     font-weight: var(--medium);
+	letter-spacing: var(--track-wide);
 }
 
 .footer-date {
@@ -239,7 +240,7 @@ body::after {
 }
 
 .page-intro { margin-bottom: var(--window-gap); }
-.page-intro h2 { font-family: var(--font-title); font-size: var(--size-xl); var(--track-wide); margin: 0; color: var(--main-color); }
+.page-intro h2 { font-family: var(--font-title); font-size: var(--size-xl); letter-spacing: var(--track-wide); margin: 0; color: var(--main-color); }
 .page-intro p { color: var(--text-muted); font-size: var(--size-base); margin: 5px auto 0; }
 
 a.cl { color: var(--text-main); text-decoration: none; font-weight: var(--medium); border-bottom: 1px dotted var(--main-color); transition: 0.2s; }
