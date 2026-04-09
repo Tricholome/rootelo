@@ -811,7 +811,7 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 	.modal-divider { display: none; }
     #modalIcon { width: 200px; }
     #modalTitle { font-size: var(--size-xl); letter-spacing: var(--track-wide); }
-	#modalText { line-height: 1.5; margin-top: 25px; text-align: center; }
+	#modalText { font-size: var(--size-modal); line-height: 1.5; margin-top: 25px; text-align: center; }
 }
 
 /* --- MOBILE LANDSCAPE --- */
