@@ -11,24 +11,24 @@
                 <th>Game ID</th>
             </tr>
         </thead>
-        <tbody>
-            {% for m in matches %}
-            <tr>
-                <td>{{ m.rank }}</td>
-                <td class="text-bold text-main">{{ m.elo_sum }}</td>
-                <td>{{ m.date }}</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">{{ m.winner }}</span>, 
-                    <span class="text-muted">{{ m.others }}</span>
-                </td>
-                <td>
-                    <a href="{{ m.match_url }}" target="_blank" class="match-id-link">
-                        {{ m.match_id }} ↗
-                    </a>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
+       <tbody>
+			{% for m in matches %}
+			<tr>
+				<td>{{ m.rank }}</td>
+				<td class="elo_sum">{{ m.elo_sum }}</td>
+				<td>{{ m.date }}</td>
+				<td class="lineup-cell">
+					<span class="winner-name">{{ m.winner }}</span>, 
+					<span class="others-names">{{ m.others }}</span>
+				</td>
+				<td>
+					<a href="{{ m.match_url }}" target="_blank" class="match-id-link">
+						{{ m.match_id }} ↗
+					</a>
+				</td>
+			</tr>
+			{% endfor %}
+		</tbody>
     </table>
 {% endblock %}
 
