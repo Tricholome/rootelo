@@ -244,7 +244,7 @@ player_stats = {p: {'games': 0, 'wins': 0.0} for p in elo_ratings}
 player_history = {}
 for p, r in elo_ratings.items():
     if ARCHIVE_SEASONS and p in archived_player_names:
-        label = f"[{ARCHIVE_SEASONS[-1].upper()}] Final"
+        label = f"{ARCHIVE_SEASONS[-1].upper()} Final"
     else:
         label = "Start"
     player_history[p] = [[label, round(r)]]
