@@ -119,7 +119,7 @@ archive_matches_list = []
 player_history = {}
 
 for p, r in elo_ratings.items():
-    start_label = f"[{PREVIOUS_SEASON_TAG.upper()}] Final" if PREVIOUS_SEASON_TAG and p in inherited_elo else "Start"
+    start_label = f"{PREVIOUS_SEASON_TAG.upper()} Final" if PREVIOUS_SEASON_TAG and p in inherited_elo else "Start"
     player_history[p] = [[start_label, round(r)]]
 
 for game_id, group in df.groupby('GameID', sort=False):

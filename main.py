@@ -102,7 +102,7 @@ def render_page(template_name, output_name, **kwargs):
     template = env.get_template(template_name)
     full_vars = {
         "nav_items": NAV_ITEMS,
-        "generation_date": datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M'),
+        "generation_date": datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC'),
         **kwargs
     }
     html_output = template.render(**full_vars)
@@ -244,7 +244,7 @@ player_stats = {p: {'games': 0, 'wins': 0.0} for p in elo_ratings}
 player_history = {}
 for p, r in elo_ratings.items():
     if ARCHIVE_SEASONS and p in archived_player_names:
-        label = f"[{ARCHIVE_SEASONS[-1].upper()}] Final"
+        label = f"{ARCHIVE_SEASONS[-1].upper()} Final"
     else:
         label = "Start"
     player_history[p] = [[label, round(r)]]
@@ -383,7 +383,7 @@ def render_core_pages(file_suffix, is_archive, tag, lb_data, match_data, trends_
     render_page(
         "leaderboard.html", f"index{file_suffix}.html", page_id="index", current_page_base="index",
         title="Leaderboard • Rootelo", page_heading="Leaderboard",
-        description=f"Minimum 1 win required for display. Only players with a Tier are ranked.<br><small>Includes {meta.get('match_count', 0)} matches through {meta.get('cutoff_date', 'N/A')}.</small>",
+        description=f"Minimum 1 win required for display. Only&nbsp;players&nbsp;with&nbsp;a&nbsp;Tier&nbsp;are&nbsp;ranked.<br><br><i><small>Includes {meta.get('match_count', 0)} matches up to {meta.get('cutoff_date', 'N/A')}.</i></small>",
         is_archive=is_archive, has_seasons=True, season_tag=tag,
         archive_seasons=ARCHIVE_SEASONS,
         current_season_tag=CURRENT_SEASON_TAG,
@@ -395,7 +395,7 @@ def render_core_pages(file_suffix, is_archive, tag, lb_data, match_data, trends_
     render_page(
         "matches.html", f"matches{file_suffix}.html", page_id="matches",
         title="Top Tables • Rootelo", page_heading="Top Tables",
-        description="Top 100 games ranked by total Elo. Click a Game ID for match details.",
+        description="Top 100 games ranked by total Elo. Click&nbsp;a&nbsp;Game&nbsp;ID&nbsp;for&nbsp;match&nbsp;details.",
         is_archive=is_archive, has_seasons=True, season_tag=tag,
         archive_seasons=ARCHIVE_SEASONS,
         current_season_tag=CURRENT_SEASON_TAG,
@@ -405,7 +405,7 @@ def render_core_pages(file_suffix, is_archive, tag, lb_data, match_data, trends_
     render_page(
         "trends.html", f"trends{file_suffix}.html", page_id="trends",
         title="Player's Journey • Rootelo", page_heading="Player's Journey",
-        description="Search for a player to see their Elo evolution over the season.",
+        description="Search for a player to see their Elo&nbsp;evolution&nbsp;over&nbsp;the&nbsp;season.",
         is_archive=is_archive, has_seasons=True, season_tag=tag,
         archive_seasons=ARCHIVE_SEASONS,
         current_season_tag=CURRENT_SEASON_TAG,
@@ -442,13 +442,13 @@ for tag in ARCHIVE_SEASONS:
 render_page(
     "about.html", "about.html", title="Codex • Rootelo", page_id="about",
     is_archive=False, has_seasons=False, page_heading="Codex",
-    description="Understanding the fundamental rules and mechanics of Rootelo."
+    description="Understanding the fundamental rules and&nbsp;mechanics&nbsp;of&nbsp;Rootelo."
 )
 
 render_page(
     "cache.html", "cache.html", title="Undergrowth • Rootelo", page_id="cache",
     is_archive=False, has_seasons=False, page_heading="Undergrowth",
-    description="A sanctuary for the critters who never sought a crown."
+    description="A sanctuary for the critters who&nbsp;never&nbsp;sought&nbsp;a&nbsp;crown."
 )
 
 print("✨ Website generated successfully!")
