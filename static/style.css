@@ -243,7 +243,7 @@ body::after {
 .page-intro h2 { font-family: var(--font-title); font-size: var(--size-xl); letter-spacing: var(--track-wide); margin: 0; color: var(--main-color); }
 .page-intro p { color: var(--text-muted); font-size: var(--size-base); margin: 5px auto 0; }
 
-a.cl { color: var(--text-main); text-decoration: none; font-weight: var(--medium); border-bottom: 1px dotted var(--main-color); transition: 0.2s; }
+a.cl { color: var(--text-main); text-decoration: none; font-weight: var(--medium); letter-spacing: var(--track-wide); border-bottom: 1px dotted var(--main-color); transition: 0.2s; }
 a.cl:hover { border-bottom: 1px solid var(--main-color); color: var(--main-color); }
 
 @media (max-width: 768px) {
@@ -444,6 +444,7 @@ table.dataTable tbody td {
     border-bottom: 1px solid var(--dt-row-border); 
     padding: 12px 10px; 
     font-size: var(--size-base);
+	color: var(--text-main);
     transition: background-color 0.2s ease;
 }
 
@@ -536,7 +537,7 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     cursor: default !important;
 }
 
-/* --- D. Specifics (Leaderboard, Matches) --- */
+/* --- D. Specifics (Leaderboard) --- */
 .tier-icon-container { 
     width: 36px; 
     height: 36px; 
@@ -555,6 +556,7 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     font-weight: var(--medium) !important; 
 }
 
+/* --- E. Specifics (Matches) --- */
 .lineup-cell { 
     white-space: normal !important; 
     word-wrap: break-word; 
@@ -563,6 +565,9 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     line-height: 1.4; 
     text-align: left !important;
 }
+
+.lineup-cell .winner-name { color: var(--text-bright); font-weight: var(--bold); }
+.lineup-cell .others-names { color: var(--text-muted); }
 
 .match-id-link { 
     color: var(--text-muted); 
@@ -574,6 +579,12 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     white-space: nowrap;
 }
 
+#matchesTable td:nth-child(2) {
+    color: var(--main-color);
+    font-weight: var(--bold);
+    font-family: var(--font-mono);
+}
+
 #matchesTable th, 
 #matchesTable td:nth-child(1), 
 #matchesTable td:nth-child(2), 
@@ -581,7 +592,7 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     white-space: nowrap !important; 
 }
 
-/* --- E. Responsive --- */
+/* --- F. Responsive --- */
 @media (max-width: 600px) {
     table.dataTable tbody td { font-size: var(--size-sm); padding: 8px 4px !important; }
     .player-name-cell { 
@@ -786,7 +797,7 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 }
 
 #modalElo { font-weight: var(--bold); var(--size-lg); margin-top: 5px; }
-#modalSubtitle { color: var(--text-muted); font-style: italic; font-size: var(--size-md); margin-top: -5px; }
+#modalSubtitle { color: var(--text-muted); font-style: italic; font-size: var(--size-base); margin-top: -5px; }
 #modalText { color: var(--text-muted); text-align: left; font-size: var(--size-base); line-height: 1.6; }
 
 .modal-divider {
