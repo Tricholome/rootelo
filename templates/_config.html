@@ -61,3 +61,4 @@
 {% set tier_mapping = {'index':'bird', 'matches':'fox', 'trends':'rabbit', 'about':'mouse', 'cache':'squirrel'} %}
 {% set current_tier = tier_mapping[page_id] if page_id in tier_mapping else 'default' %}
 {% set theme_color = config.colors.tiers[current_tier] %}
+{% set current_deco = config.assets.decorations[page_id] if page_id in config.assets.decorations else none %}
