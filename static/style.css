@@ -90,6 +90,15 @@ body::after {
 /* =========================================================================
    --- 2. LAYOUT & CONTAINERS ---
    ========================================================================= */
+.container {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: visible;
+}
+
 .window-box {
     position: relative;
     z-index: 10;
@@ -834,6 +843,14 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 /* =========================================================================
    --- 11. TIER-BASED COLORATION ---
    ========================================================================= */
+
+/* Utility classes for text */   
+.tier-bird     { color: var(--color-bird) !important; }
+.tier-fox      { color: var(--color-fox) !important; }
+.tier-rabbit   { color: var(--color-rabbit) !important; }
+.tier-mouse    { color: var(--color-mouse) !important; }
+.tier-squirrel { color: var(--color-squirrel) !important; }
+
 /* Background and border for each tier row */
 table.dataTable tbody tr[data-tier="bird"]     { background-color: var(--color-bird-bg) !important; border-left: 4px solid var(--color-bird) !important; }
 table.dataTable tbody tr[data-tier="fox"]      { background-color: var(--color-fox-bg) !important; border-left: 4px solid var(--color-fox) !important; }
