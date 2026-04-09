@@ -1,30 +1,19 @@
-{# =========================================================================
-   ROOTELO CONFIGURATION
-   ========================================================================= #}
-
 {% set config = {
     'colors': {
         'ui': {
-            {# Foundation #}
             'bg-overlay-top':    'rgba(0, 0, 0, 0.1)',
             'bg-overlay-bottom': 'rgba(0, 0, 0, 0.8)',
             'bg-container':      '#1c1c1c',
             'bg-surface':        'rgba(255, 255, 255, 0.03)',
             'bg-hover':          'rgba(255, 255, 255, 0.08)',
             'border-soft':       '#333333',
-            
-            {# Glass #}
             'glass-bg':          '#1c1c1cd9',
             'glass-border':      'rgba(255, 255, 255, 0.08)',
             'glass-shadow':      '0 10px 30px rgba(0, 0, 0, 0.5)',
-            
-            {# Text #}
             'text-bright':       '#ffffff',
             'text-main':         '#E0E0E0',
             'text-muted':        '#A0A0A0',
             'text-dark':         '#111111',
-
-            {# DataTables #}
             'dt-table-bg':       'rgba(0, 0, 0, 0.15)',
             'dt-header-bg':      'rgba(0, 0, 0, 0.25)',
             'dt-row-border':     'rgba(255, 255, 255, 0.03)',
@@ -69,7 +58,6 @@
     }
 } %}
 
-{# Logic #}
 {% set tier_mapping = {'index':'bird', 'matches':'fox', 'trends':'rabbit', 'about':'mouse', 'cache':'squirrel'} %}
 {% set current_tier = tier_mapping[page_id] if page_id in tier_mapping else 'default' %}
 {% set theme_color = config.colors.tiers[current_tier] %}
