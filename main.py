@@ -102,7 +102,7 @@ def render_page(template_name, output_name, **kwargs):
     template = env.get_template(template_name)
     full_vars = {
         "nav_items": NAV_ITEMS,
-        "generation_date": datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M'),
+        "generation_date": datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC'),
         **kwargs
     }
     html_output = template.render(**full_vars)
