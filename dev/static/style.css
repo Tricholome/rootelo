@@ -1,5 +1,4 @@
 
-
 /* =========================================================================
    ROOTELO - MAIN STYLESHEET
    Table of Contents:
@@ -138,6 +137,7 @@ body::after {
 .footer-credits strong {
     color: var(--text-main);
     font-weight: var(--medium);
+	font-size: var(--size-md);
 	letter-spacing: var(--track-wide);
 }
 
@@ -243,7 +243,7 @@ body::after {
 .page-intro h2 { font-family: var(--font-title); font-size: var(--size-xl); letter-spacing: var(--track-wide); margin: 0; color: var(--main-color); }
 .page-intro p { color: var(--text-muted); font-size: var(--size-base); margin: 5px auto 0; }
 
-a.cl { color: var(--text-main); text-decoration: none; font-weight: var(--medium); letter-spacing: var(--track-wide); border-bottom: 1px dotted var(--main-color); transition: 0.2s; }
+a.cl { color: var(--text-main); text-decoration: none; font-weight: var(--medium); font-size: var(--size-md); letter-spacing: var(--track-wide); border-bottom: 1px dotted var(--main-color); transition: 0.2s; }
 a.cl:hover { border-bottom: 1px solid var(--main-color); color: var(--main-color); }
 
 @media (max-width: 768px) {
@@ -582,7 +582,6 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 #matchesTable td:nth-child(2) {
     color: var(--main-color);
     font-weight: var(--bold);
-    font-family: var(--font-mono);
 }
 
 #matchesTable th, 
