@@ -251,6 +251,10 @@ body::after {
 	color: var(--text-muted);
 	font-size: var(--size-base);
     margin: 5px auto 0;
+	display: block;
+    text-align: center;
+    width: 100%;
+	max-width: var(--window-max-width);
 }
 
 .no-break {
