@@ -62,11 +62,11 @@
             <div class="banner-container">
                 <div class="banner-icons left">
                     <a href="javascript:void(0)" onclick="openTierModal('bird')" class="tooltip-link js-double-tap">
-                        <img src="{{ icons.bird }}" alt="Bird">
+                        <img src="{{ config.assets.icons.bird }}" alt="Bird">
                         <span class="tooltip-text"><strong class="tier-bird">Bird (1500+)</strong> — The Grandmasters</span>
                     </a>
                     <a href="javascript:void(0)" onclick="openTierModal('fox')" class="tooltip-link js-double-tap">
-                        <img src="{{ icons.fox }}" alt="Fox">
+                        <img src="{{ config.assets.icons.fox }}" alt="Fox">
                         <span class="tooltip-text"><strong class="tier-fox">Fox (1400+)</strong> — The Cunning Tacticians</span>
                     </a>
                 </div>
@@ -76,11 +76,11 @@
                 </div>
                 <div class="banner-icons right">
                     <a href="javascript:void(0)" onclick="openTierModal('rabbit')" class="tooltip-link js-double-tap">
-                        <img src="{{ icons.rabbit }}" alt="Rabbit">
+                        <img src="{{ config.assets.icons.rabbit }}" alt="Rabbit">
                         <span class="tooltip-text"><strong class="tier-rabbit">Rabbit (1300+)</strong> — The Agile Contenders</span>
                     </a>
                     <a href="javascript:void(0)" onclick="openTierModal('mouse')" class="tooltip-link js-double-tap">
-                        <img src="{{ icons.mouse }}" alt="Mouse">
+                        <img src="{{ config.assets.icons.mouse }}" alt="Mouse">
                         <span class="tooltip-text"><strong class="tier-mouse">Mouse (1200+)</strong> — The Steady Foragers</span>
                     </a>
                 </div>
@@ -107,10 +107,10 @@
         </header>
         
         <div class="screen-deco right-deco">
-            {% if current_deco.right %}
-                <img src="{{ current_deco.right }}" alt="Decoration Right">
-            {% endif %}
-        </div>
+			{% if current_deco and current_deco.right %}
+				<img src="{{ current_deco.right }}" alt="Decoration Right">
+			{% endif %}
+		</div>
 
         <div class="app-viewport window-box">
             <header class="page-intro">
@@ -139,10 +139,10 @@
         </div>
         
         <div class="screen-deco left-deco">
-            {% if current_deco.left %}
-                <img src="{{ current_deco.left }}" alt="Decoration Left">
-            {% endif %}
-        </div>
+			{% if current_deco and current_deco.left %}
+				<img src="{{ current_deco.left }}" alt="Decoration Left">
+			{% endif %}
+		</div>
 
         <footer class="app-footer window-box">
 			<div class="footer-content">
@@ -182,12 +182,13 @@
 	<script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
     
     <script>
-        const CONFIG = {
-            colors: {{ colors|tojson }},
-            icons: {{ icons|tojson }}
-        };
-    </script>
-    
+		const CONFIG = {
+			colors: {{ config.colors.tiers|tojson }},
+			icons: {{ config.assets.icons|tojson }},
+			currentTier: "{{ current_tier }}"
+		};
+	</script>
+		
     <script src="static/script.js"></script>
     {% block custom_js %}{% endblock %}
 </body>
