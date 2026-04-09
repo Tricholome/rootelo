@@ -687,7 +687,7 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     text-align: left;
 }
 
-.codex-section h2:first-of-type { margin-top: 20px; }
+.codex-section h2:first-of-type { margin-top: 40px; }
 .codex-section p { margin-bottom: 20px; color: var(--text-muted); text-align: left; font-size: var(--size-base); }
 .codex-section strong { color: var(--text-main); font-weight: var(--medium); letter-spacing: var(--track-slight); }
 
