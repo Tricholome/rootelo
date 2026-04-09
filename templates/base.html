@@ -116,18 +116,19 @@
 
 <body data-page="{{ page_id }}">
     
-    <div class="container" style="position: relative; overflow: visible;">
-        
+    <div class="container">
+	
         <header class="app-banner window-box">
+		
             <div class="banner-container">
                 <div class="banner-icons left">
                     <a href="javascript:void(0)" onclick="openTierModal('bird')" class="tooltip-link js-double-tap">
                         <img src="{{ icons.bird }}" alt="Bird">
-                        <span class="tooltip-text"><strong style="color: var(--color-bird);">Bird (1500+)</strong> — The Grandmasters</span>
+                        <span class="tooltip-text"><strong class="tier-bird">Bird (1500+)</strong> — The Grandmasters</span>
                     </a>
                     <a href="javascript:void(0)" onclick="openTierModal('fox')" class="tooltip-link js-double-tap">
                         <img src="{{ icons.fox }}" alt="Fox">
-                        <span class="tooltip-text"><strong style="color: var(--color-fox);">Fox (1400+)</strong> — The Cunning Tacticians</span>
+                        <span class="tooltip-text"><strong class="tier-fox">Fox (1400+)</strong> — The Cunning Tacticians</span>
                     </a>
                 </div>
                 <div class="banner-center">
@@ -137,11 +138,11 @@
                 <div class="banner-icons right">
                     <a href="javascript:void(0)" onclick="openTierModal('rabbit')" class="tooltip-link js-double-tap">
                         <img src="{{ icons.rabbit }}" alt="Rabbit">
-                        <span class="tooltip-text"><strong style="color: var(--color-rabbit);">Rabbit (1300+)</strong> — The Agile Contenders</span>
+                        <span class="tooltip-text"><strong class="tier-rabbit">Rabbit (1300+)</strong> — The Agile Contenders</span>
                     </a>
                     <a href="javascript:void(0)" onclick="openTierModal('mouse')" class="tooltip-link js-double-tap">
                         <img src="{{ icons.mouse }}" alt="Mouse">
-                        <span class="tooltip-text"><strong style="color: var(--color-mouse);">Mouse (1200+)</strong> — The Steady Foragers</span>
+                        <span class="tooltip-text"><strong class="tier-mouse">Mouse (1200+)</strong> — The Steady Foragers</span>
                     </a>
                 </div>
             </div>
@@ -163,6 +164,7 @@
 					<a href="{{ target }}" class="{{ 'active' if page_id == base else '' }}">{{ label }}</a>
 				{% endfor %}
 			</nav>
+			
         </header>
         
         <div class="screen-deco right-deco">
