@@ -1,8 +1,6 @@
 name: Update Rootelo Website
 
 on:
-  schedule:
-    - cron: '27 3 * * *'
   workflow_dispatch: 
 
 concurrency:
