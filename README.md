@@ -25,7 +25,7 @@ Stores the frozen state of completed seasons. Each season consists of:
 * `*_corrections.csv`: Manual overrides to fix API dates anomalies without altering the source code.
 
 ### 🎨 Frontend & Templates
-* **`/templates`**: Modular Jinja2 HTML templates. All pages (leaderboard, trends, etc.) extend `base.html`, which serves as the master layout for navigation and structure.
+* **`/templates`**: Modular Jinja2 HTML templates. `_config.html` serves as the central hub for the design system, managing layout, typography, and color variables. All pages (leaderboard, trends, etc.) extend `base.html`, the master layout for site structure and navigation. 
 * **`/static`**: Custom frontend logic and styling (`script.js`, `style.css`).
 * **`/assets`**: Icons, images, and other static media files.
 
