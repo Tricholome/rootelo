@@ -6,13 +6,17 @@ import json
 from jinja2 import Environment, FileSystemLoader
 
 # =========================================================================
-# --- 0. PATH CONFIGURATION (EXTERNAL FILES) ---
+# --- 0. PATH CONFIGURATION & SEASON SETTINGS ---
 # =========================================================================
 DATA_DIR = "data"
-CORRECTIONS_FILE = os.path.join(DATA_DIR, "lh02_corrections.csv")
-ARCHIVE_LEADERBOARD_FILE = os.path.join(DATA_DIR, "lh01_final_ratings.csv")
-ARCHIVE_MATCHES_FILE     = os.path.join(DATA_DIR, "lh01_matches_fixed.csv")
-ARCHIVE_TRENDS_FILE      = os.path.join(DATA_DIR, "lh01_history_full.json")
+
+# Add future seasons here when they are archived (e.g., ["lh01", "lh02"])
+ARCHIVE_SEASONS = ["lh01"] 
+
+CURRENT_SEASON_TAG = "lh02"
+TOURNAMENT_ID = 25
+
+CORRECTIONS_FILE = os.path.join(DATA_DIR, f"{CURRENT_SEASON_TAG}_corrections.csv")
 
 # =========================================================================
 # --- 1. JINJA2 & NAVIGATION SETUP ---
@@ -120,38 +124,55 @@ except Exception as e:
     print(f"ℹ️ Note: No corrections loaded: {e}")
 
 # =========================================================================
-# --- 4. LOAD ARCHIVE DATA (LH01) ---
+# --- 4. LOAD ARCHIVE DATA ---
 # =========================================================================
-archive_final_df = pd.DataFrame()
-archive_matches_df = pd.DataFrame()
-archive_history = {}
-elo_ratings = {}
+archives_raw_data = {}
+elo_ratings = {} # Engine baseline Elo
 
-try:
-    if os.path.exists(ARCHIVE_LEADERBOARD_FILE):
-        archive_final_df = pd.read_csv(ARCHIVE_LEADERBOARD_FILE)
-        
-        # Load FLOAT Elo for calculation engine
-        for _, row in archive_final_df.iterrows():
-            p_name = str(row['Player'])
-            elo_ratings[p_name] = float(row.get('ELO', 1200.0))
+for tag in ARCHIVE_SEASONS:
+    print(f"📂 Loading archive: {tag.upper()}")
+    archives_raw_data[tag] = {
+        'final_df': pd.DataFrame(),
+        'matches_df': pd.DataFrame(),
+        'history': {}
+    }
+    
+    path_ratings = os.path.join(DATA_DIR, f"{tag}_final_ratings.csv")
+    path_matches = os.path.join(DATA_DIR, f"{tag}_matches_fixed.csv")
+    path_trends  = os.path.join(DATA_DIR, f"{tag}_history_full.json")
+    path_meta = os.path.join(DATA_DIR, f"{tag}_metadata.json")
+    archives_raw_data[tag]['metadata'] = {"cutoff_date": "N/A", "match_count": 0}
+    if os.path.exists(path_meta):
+        with open(path_meta, "r", encoding="utf-8") as f:
+            archives_raw_data[tag]['metadata'] = json.load(f)
+    
+    try:
+        if os.path.exists(path_ratings):
+            df_ratings = pd.read_csv(path_ratings)
             
-        # Clean archive DF for web display: Round ELO to integers
-        archive_final_df['ELO'] = archive_final_df['ELO'].round().astype(int)
+            # Load FLOAT Elo for calculation engine
+            for _, row in df_ratings.iterrows():
+                p_name = str(row['Player'])
+                elo_ratings[p_name] = float(row.get('ELO', 1200.0))
+                
+            # Clean archive DF for web display: Round ELO to integers
+            df_ratings['ELO'] = df_ratings['ELO'].round().astype(int)
+            if 'Tier' not in df_ratings.columns:
+                df_ratings['Tier'] = None 
+            
+            archives_raw_data[tag]['final_df'] = df_ratings
         
-        if 'Tier' not in archive_final_df.columns:
-            archive_final_df['Tier'] = None 
-    
-    if os.path.exists(ARCHIVE_MATCHES_FILE):
-        archive_matches_df = pd.read_csv(ARCHIVE_MATCHES_FILE)
-    
-    if os.path.exists(ARCHIVE_TRENDS_FILE):
-        with open(ARCHIVE_TRENDS_FILE, "r", encoding="utf-8") as f:
-            archive_history = json.load(f)
-            archive_history = {k.split('+')[0].split('#')[0]: v for k, v in archive_history.items()}
-    print("Archive LH01 loaded successfully.")
-except Exception as e:
-    print(f"Error loading archive files: {e}")
+        if os.path.exists(path_matches):
+            archives_raw_data[tag]['matches_df'] = pd.read_csv(path_matches)
+        
+        if os.path.exists(path_trends):
+            with open(path_trends, "r", encoding="utf-8") as f:
+                history = json.load(f)
+                archives_raw_data[tag]['history'] = {k.split('+')[0].split('#')[0]: v for k, v in history.items()}
+                
+        print(f"  ✅ Archive {tag.upper()} loaded successfully.")
+    except Exception as e:
+        print(f"  ⚠️ Error loading archive {tag.upper()}: {e}")
 
 # =========================================================================
 # --- 5. FETCH & PROCESS CURRENT SEASON ---
@@ -217,7 +238,8 @@ if not df.empty:
 peak_elo = {p: r for p, r in elo_ratings.items()}
 last_diff = {p: 0.0 for p in elo_ratings}
 player_stats = {p: {'games': 0, 'wins': 0.0} for p in elo_ratings}
-player_history = {p: [["LH01 Final", round(r)]] for p, r in elo_ratings.items()}
+prev_label = f"{ARCHIVE_SEASONS[-1].upper()} Final" if ARCHIVE_SEASONS else "Start"
+player_history = {p: [[prev_label, round(r)]] for p, r in elo_ratings.items()}
 
 if not df.empty:
     for game_id, group in df.groupby('GameID', sort=False):
@@ -306,76 +328,113 @@ current_history = {k.split('+')[0].split('#')[0]: v for k, v in player_history.i
 # =========================================================================
 print("\n=== GENERATING SITE ASSETS ===")
 
+# --- A. Prepare Current Season ---
+current_meta = {
+    'match_count': df['GameID'].nunique() if not df.empty else 0,
+    'cutoff_date': CUTOFF_DATE.strftime('%Y-%m-%d')
+}
 display_leaderboard_current = []
 if not current_final_df.empty:
     filtered_df = current_final_df[current_final_df['Wins'].astype(float) >= 1].copy()
     display_leaderboard_current = prepare_leaderboard_data(filtered_df)
 
-display_leaderboard_archive = []
-if not archive_final_df.empty:
-    filtered_df = archive_final_df[archive_final_df['Wins'].astype(float) >= 1].copy()
-    display_leaderboard_archive = prepare_leaderboard_data(filtered_df)
-
 display_matches_current = []
 if not current_matches_df.empty:
     display_matches_current = prepare_matches_data(current_matches_df)[:100]
 
-display_matches_archive = []
-if not archive_matches_df.empty:
-    display_matches_archive = prepare_matches_data(archive_matches_df)[:100]
-
 display_trends_current = prepare_trends_data(current_history)
-display_trends_archive = prepare_trends_data(archive_history)
+
+# --- B. Prepare Archives ---
+display_archives = {}
+for tag in ARCHIVE_SEASONS:
+    raw = archives_raw_data[tag]
+    
+    lb_data = []
+    if not raw['final_df'].empty:
+        filtered_df = raw['final_df'][raw['final_df']['Wins'].astype(float) >= 1].copy()
+        lb_data = prepare_leaderboard_data(filtered_df)
+        
+    match_data = []
+    if not raw['matches_df'].empty:
+        match_data = prepare_matches_data(raw['matches_df'])[:100]
+        
+    display_archives[tag] = {
+        'leaderboard': lb_data,
+        'matches': match_data,
+        'trends': prepare_trends_data(raw['history'])
+    }
 
 # =========================================================================
 # --- 9. SITE GENERATION (JINJA2 RENDERING) ---
 # =========================================================================
-render_page(
-    "leaderboard.html", "index.html", title="Leaderboard • Rootelo", page_id="index",
-    is_archive=False, has_seasons=True, current_page_base="index", page_heading="Leaderboard",
-    description=f"Minimum 1 win required for display. Data tracked until {CUTOFF_DATE}.",
-    players=display_leaderboard_current
+print("\n=== GENERATING HTML PAGES ===")
+
+def render_core_pages(file_suffix, is_archive, tag, lb_data, match_data, trends_data, meta):
+    """Helper to generate the 3 main pages identically for live and archives."""
+    
+    render_page(
+        "leaderboard.html", f"index{file_suffix}.html", page_id="index", current_page_base="index",
+        title="Leaderboard • Rootelo", page_heading="Leaderboard",
+        description=f"Minimum 1 win required for display. Only players with a Tier are ranked.<br><small>Includes {meta.get('match_count', 0)} matches through {meta.get('cutoff_date', 'N/A')}.</small>",
+        is_archive=is_archive, has_seasons=True, season_tag=tag,
+        archive_seasons=ARCHIVE_SEASONS,
+        current_season_tag=CURRENT_SEASON_TAG,
+        num_matches=meta.get('match_count', 0),
+        cutoff_date=meta.get('cutoff_date', "N/A"),
+        players=lb_data
+    )
+
+    render_page(
+        "matches.html", f"matches{file_suffix}.html", page_id="matches",
+        title="Top Tables • Rootelo", page_heading="Top Tables",
+        description="Top 100 games ranked by total Elo. Click a Game ID for match details.",
+        is_archive=is_archive, has_seasons=True, season_tag=tag,
+        archive_seasons=ARCHIVE_SEASONS,
+        current_season_tag=CURRENT_SEASON_TAG,
+        matches=match_data
+    )
+
+    render_page(
+        "trends.html", f"trends{file_suffix}.html", page_id="trends",
+        title="Player's Journey • Rootelo", page_heading="Player's Journey",
+        description="Search for a player to see their Elo evolution over the season.",
+        is_archive=is_archive, has_seasons=True, season_tag=tag,
+        archive_seasons=ARCHIVE_SEASONS,
+        current_season_tag=CURRENT_SEASON_TAG,
+        history_json=trends_data['history_json'], player_names=trends_data['player_names']
+    )
+
+# --- A. Render Current Season Pages ---
+# (file_suffix is empty so it generates 'index.html', 'matches.html'...)
+render_core_pages(
+    file_suffix="", 
+    is_archive=False, 
+    tag=CURRENT_SEASON_TAG, 
+    lb_data=display_leaderboard_current, 
+    match_data=display_matches_current, 
+    trends_data=display_trends_current,
+    meta=current_meta
 )
 
-render_page(
-    "matches.html", "matches.html", title="Top Tables • Rootelo", page_id="matches",
-    is_archive=False, has_seasons=True, page_heading="Top Tables",
-    description="Top 100 games ranked by total Elo. Click a Game ID for match details.",
-    matches=display_matches_current
-)
+# --- B. Render Archives Pages ---
+# (file_suffix will be '_lh01' so it generates 'index_lh01.html', etc.)
+for tag in ARCHIVE_SEASONS:
+    data = display_archives[tag]
+    render_core_pages(
+        file_suffix=f"_{tag}", 
+        is_archive=True, 
+        tag=tag, 
+        lb_data=data['leaderboard'], 
+        match_data=data['matches'], 
+        trends_data=data['trends'],
+        meta=archives_raw_data[tag]['metadata']
+    )
 
-render_page(
-    "trends.html", "trends.html", title="Player's Journey • Rootelo", page_id="trends",
-    is_archive=False, has_seasons=True, page_heading="Player's Journey",
-    description="Search for a player to see their Elo evolution over the season.",
-    history_json=display_trends_current['history_json'], player_names=display_trends_current['player_names']
-)
-
-render_page(
-    "leaderboard.html", "index_lh01.html", title="Leaderboard • Rootelo", page_id="index",
-    is_archive=True, has_seasons=True, current_page_base="index", page_heading="Leaderboard",
-    description="Minimum 1 win required for display. Data tracked until 2026-03-31.",
-    players=display_leaderboard_archive
-)
-
-render_page(
-    "matches.html", "matches_lh01.html", title="Top Tables • Rootelo", page_id="matches",
-    is_archive=True, has_seasons=True, page_heading="Top Tables",
-    description="Top 100 games ranked by total Elo. Click a Game ID for match details.",
-    matches=display_matches_archive
-)
-
-render_page(
-    "trends.html", "trends_lh01.html", title="Player's Journey • Rootelo", page_id="trends",
-    is_archive=True, has_seasons=True, page_heading="Player's Journey",
-    description="Search for a player to see their Elo evolution over the season.",
-    history_json=display_trends_archive['history_json'], player_names=display_trends_archive['player_names']
-)
-
+# --- C. Render Static Pages ---
 render_page(
     "about.html", "about.html", title="Codex • Rootelo", page_id="about",
     is_archive=False, has_seasons=False, page_heading="Codex",
-    description="Understanding the mechanics of Rootelo."
+    description="Understanding the fundamental rules and mechanics of Rootelo."
 )
 
 render_page(
@@ -384,4 +443,4 @@ render_page(
     description="A sanctuary for the critters who never sought a crown."
 )
 
-print("\n✨ Website generated successfully!")
+print("✨ Website generated successfully!")
