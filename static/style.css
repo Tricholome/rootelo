@@ -23,7 +23,7 @@
    ========================================================================= */
 
 /* Alignment */
-.text-left    { text-align: left !important; padding-left: 15px !important; }
+.text-left    { text-align: left !important; }
 .text-center  { text-align: center !important; }
 
 /* Weights */
@@ -33,11 +33,15 @@
 
 /* Colors */
 .text-bright  { color: var(--text-bright) !important; }    
-.text-main    { color: var(--main-color) !important; }
+.text-main   { color: var(--text-main) !important; }
+.text-theme  { color: var(--main-color) !important; }
 .text-muted   { color: var(--text-muted) !important; }
 
 /* Sizes */
-.text-lg      { font-size: 1.1em; }
+.text-sm     { font-size: var(--size-sm); }
+.text-base   { font-size: var(--size-base); }
+.text-lg     { font-size: var(--size-lg); }
+.text-xl     { font-size: var(--size-xl); }
    
 
 /* =========================================================================
@@ -55,6 +59,7 @@ html {
 body {
     position: relative;
 	z-index: 0;
+	
     background-color: var(--main-color);
     background-image: url('../assets/images/pattern.webp');
     background-repeat: repeat;
@@ -62,14 +67,14 @@ body {
     background-size: 350px;
     background-attachment: fixed;
 	
+	font-family: var(--font-ui);
+    font-weight: var(--normal);
+    color: var(--text-main);
+    font-size: var(--size-base);
+	
 	min-height: 100vh;
     min-height: 100dvh;
-	
-	font-family: var(--font-ui);
-    color: var(--text-main);
     text-align: center;
-    padding: 20px 5px;
-    margin: 0;
     overflow-x: hidden;
 }
 
@@ -112,25 +117,20 @@ body::after {
     border-radius: 12px;
     box-sizing: border-box;
     box-shadow: inset 0 2px 0 0 color-mix(in srgb, var(--main-color) 70%, transparent), var(--glass-shadow);
+	padding: var(--window-padding);
 }
 
 .app-banner {
-    margin-top: 20px;
+    margin-top: var(--window-gap); 
     margin-bottom: var(--window-gap);
-    padding: 15px 20px;
 }
 
 .app-viewport {
-    padding: 20px 30px;
-    margin-bottom: 40px;
+    margin-bottom: var(--window-gap);
 }
 
 .app-footer {
-    margin-top: 40px;
-    padding: 20px 15px;
-    border-top: 1px solid var(--border-soft);
-    color: var(--text-muted);
-    text-align: center;
+    margin-bottom: var(--window-gap);
 }
 
 .footer-credits {
@@ -155,7 +155,7 @@ body::after {
 .footer-date {
     font-style: italic;
     opacity: 0.6;
-    font-size: 0.9em;
+    font-size: var(--size-sm);
 }
 
 @media (max-width: 768px) {
@@ -233,7 +233,7 @@ body::after {
 .site-title {
     font-family: var(--font-title);
     color: var(--text-main);
-    font-size: 2.8em;
+    font-size: var(--size-display);
     margin: 0;
     letter-spacing: 4px;
     text-transform: uppercase;
@@ -245,21 +245,21 @@ body::after {
     font-family: var(--font-title);
     font-style: italic;
     color: var(--text-muted);
-    font-size: 1em;
+    font-size: var(--size-base);
     margin: 5px 0 0;
     letter-spacing: 1px;
 }
 
-.page-intro { margin-bottom: 30px; }
-.page-intro h2 { font-family: var(--font-title); font-size: 2.5em; margin: 0; color: var(--main-color); }
-.page-intro p { color: var(--text-muted); font-size: 0.9em; margin: 5px auto 0; }
+.page-intro { margin-bottom: var(--window-gap); }
+.page-intro h2 { font-family: var(--font-title); font-size: var(--size-xl); margin: 0; color: var(--main-color); }
+.page-intro p { color: var(--text-muted); font-size: var(--size-sm); margin: 5px auto 0; }
 
 a.cl { color: var(--text-main); text-decoration: none; font-weight: var(--medium); border-bottom: 1px dotted var(--main-color); transition: 0.2s; }
 a.cl:hover { border-bottom: 1px solid var(--main-color); color: var(--main-color); }
 
 @media (max-width: 768px) {
-    .site-title { font-size: 2em; }
-    .page-intro h2 { font-size: 2em; }
+    .site-title { font-size: var(--size-xl); }
+    .page-intro h2 { font-size: var(--size-lg); }
 }
 
 /* =========================================================================
@@ -329,7 +329,7 @@ a.cl:hover { border-bottom: 1px solid var(--main-color); color: var(--main-color
     color: var(--text-muted);
     padding: 6px 12px;
     border-radius: 6px;
-    font-size: 0.75rem;
+    font-size: var(--size-sm);
     white-space: nowrap;
     opacity: 0;
     pointer-events: none;
@@ -385,7 +385,7 @@ nav a {
     text-decoration: none;
     font-weight: var(--medium);
     text-transform: uppercase;
-    font-size: 0.85em;
+    font-size: var(--size-sm);
     letter-spacing: 1px;
     padding: 8px 12px;
     border-radius: 6px;
@@ -406,14 +406,14 @@ nav a.active {
     width: 90%; 
     height: 0; 
     margin: 15px auto;
-    border-top: 1px solid rgba(0, 0, 0, 0.4);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    border-top: 1px solid var(--border-dark);
+    border-bottom: 1px solid var(--border-light);
 }
 
 /* Season Selectors */
 .season-selector { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 20px auto 20px; }
-.season-label { font-size: 0.7em; text-transform: uppercase; color: var(--text-muted); letter-spacing: 1.2px; font-weight: var(--bold); margin-right: 5px;}
-.season-btn { text-decoration: none; font-size: 0.75em; font-weight: var(--medium); color: var(--text-muted); padding: 6px 14px; border-radius: 4px; background: var(--bg-surface); border: 1px solid var(--border-soft); transition: 0.2s; }
+.season-label { font-size: var(--size-sm); text-transform: uppercase; color: var(--text-muted); letter-spacing: 1.2px; font-weight: var(--bold); margin-right: 5px;}
+.season-btn { text-decoration: none; font-size: var(--size-sm); font-weight: var(--medium); color: var(--text-muted); padding: 6px 14px; border-radius: 4px; background: var(--bg-surface); border: 1px solid var(--border-soft); transition: 0.2s; }
 .season-btn:hover { color: var(--text-main); background: var(--bg-hover); }
 .season-btn.active { background: transparent !important; color: var(--main-color) !important; border-color: var(--main-color) !important; }
 
