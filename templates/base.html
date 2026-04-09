@@ -130,7 +130,13 @@
 					</a>
 				</div>
 				{% endif %}
-				{% if description %}<p>{{ description }}</p>{% endif %}
+				{% if description %}
+				<p class="page-intro-text">
+					<span class="no-break">
+						{{ description.replace('. ', '.</span> <span class="no-break">')|safe }}
+					</span>
+				</p>
+				{% endif %}
 			</header>
 			
             <main>
