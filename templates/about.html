@@ -36,57 +36,25 @@
     <p>After your 10-game calibration phase, you officially join the ranks and unlock your <strong>Tier</strong> based on your current Elo rating:</p>
     
     <table class="k-table">
+		{% for tier_id, label, elo, desc in [
+			('bird', 'Bird', '1500', 'The Grandmasters'),
+			('fox', 'Fox', '1400', 'The Cunning Tacticians'),
+			('rabbit', 'Rabbit', '1300', 'The Agile Contenders'),
+			('mouse', 'Mouse', '1200', 'The Steady Foragers')
+		] %}
 		<tr>
-			<td><strong>Bird</strong></td>
+			<td><strong>{{ label }}</strong></td>
 			<td>
-				<a href="javascript:void(0)" onclick="openTierModal('bird')" class="tier-anchor-link">
+				<a href="javascript:void(0)" onclick="openTierModal('{{ tier_id }}')" class="tier-anchor-link">
 					<div class="tier-icon-container">
-						<img src="{{ icons['bird'] }}" alt="bird">
+						<img src="{{ config.assets.icons[tier_id] }}" alt="{{ tier_id }}">
 					</div>
 				</a>
 			</td>
-			<td class="k-val">Elo &ge; 1500</td>
-			<td>The Grandmasters</td>
+			<td class="k-val">Elo &ge; {{ elo }}</td>
+			<td>{{ desc }}</td>
 		</tr>
-		
-		<tr>
-			<td><strong>Fox</strong></td>
-			<td>
-				<a href="javascript:void(0)" onclick="openTierModal('fox')" class="tier-anchor-link">
-					<div class="tier-icon-container">
-						<img src="{{ icons['fox'] }}" alt="fox">
-					</div>
-				</a>
-			</td>
-			<td class="k-val">Elo &ge; 1400</td>
-			<td>The Cunning Tacticians</td>
-		</tr>
-		
-		<tr>
-			<td><strong>Rabbit</strong></td>
-			<td>
-				<a href="javascript:void(0)" onclick="openTierModal('rabbit')" class="tier-anchor-link">
-					<div class="tier-icon-container">
-						<img src="{{ icons['rabbit'] }}" alt="rabbit">
-					</div>
-				</a>
-			</td>
-			<td class="k-val">Elo &ge; 1300</td>
-			<td>The Agile Contenders</td>
-		</tr>
-
-		<tr>
-			<td><strong>Mouse</strong></td>
-			<td>
-				<a href="javascript:void(0)" onclick="openTierModal('mouse')" class="tier-anchor-link">
-					<div class="tier-icon-container">
-						<img src="{{ icons['mouse'] }}" alt="mouse">
-					</div>
-				</a>
-			</td>
-			<td class="k-val">Elo &ge; 1200</td>
-			<td>The Steady Foragers</td>
-		</tr>
+		{% endfor %}
 	</table>
     
     <h2>The Seasonal Lifecycle</h2>
