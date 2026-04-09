@@ -1,11 +1,5 @@
 
 
-
-
-
-
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -23,69 +17,88 @@
     
     <style>
         :root {
-			/* --- 1. LAYOUT CONFIG --- */
-			--window-gap: 25px;           
+			/* --- 1. LAYOUT CONFIG (Automatic loop) --- */
+			
+			--window-gap: 25px;
+			
 			--window-max-width: clamp(600px, 60vw, 1600px);
+			
 
-			/* --- 2. TYPOGRAPHY --- */
+			/* --- 2. TYPOGRAPHY (Automatic loop) --- */
+			
 			--font-title: 'Fraunces', serif;
+			
 			--font-ui: 'Inter', sans-serif;
-			--normal: 400;
-			--medium: 600;
+			
 			--bold: 900;
 			
-			/* --- 3. GLASS SYSTEM --- */
-			--glass-bg: #1c1c1cd9; 
-			--glass-border: rgba(255, 255, 255, 0.0.08);
-			--glass-shadow: 0 10px 30px rgba(0,0,0,0.5);
-	
-            /* --- 4. UI FOUNDATION --- */
+			--medium: 600;
+			
+			--normal: 400;
+			
+
+			/* --- 3. GLOBAL UI (Automatic loop) --- */
+			
 			--bg-overlay-top: rgba(0, 0, 0, 0.1);
+			
 			--bg-overlay-bottom: rgba(0, 0, 0, 0.8);
+			
 			--bg-container: #1c1c1c;
-			--bg-surface: rgba(255, 255, 255, 0.03); 
+			
+			--bg-surface: rgba(255, 255, 255, 0.03);
+			
 			--bg-hover: rgba(255, 255, 255, 0.08);
+			
 			--border-soft: #333333;
 			
-			/* --- 5. TEXT COLORS --- */
+			--glass-bg: #1c1c1cd9;
+			
+			--glass-border: rgba(255, 255, 255, 0.08);
+			
+			--glass-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+			
 			--text-bright: #ffffff;
-            --text-main: #E0E0E0; 
-            --text-muted: #A0A0A0;
-            --text-dark: #111111; 
-            
-			/* --- 6. TIER DYNAMICS --- */
-            
-            --color-bird: #7AB5E0;
-            --color-bird-bg: #7AB5E014;
-            
-            --color-fox: #E55555;
-            --color-fox-bg: #E5555514;
-            
-            --color-rabbit: #F2C14E;
-            --color-rabbit-bg: #F2C14E14;
-            
-            --color-mouse: #F49E52;
-            --color-mouse-bg: #F49E5214;
-            
-            --color-squirrel: #94C160;
-            --color-squirrel-bg: #94C16014;
-            
-            --color-default: #7A7347;
-            --color-default-bg: #7A734714;
-            
-            --color-default: #7A7347;
 			
-			/* --- 7. DATATABLES SPECIFIC (LES NOUVELLES COULEURS) --- */
+			--text-main: #E0E0E0;
+			
+			--text-muted: #A0A0A0;
+			
+			--text-dark: #111111;
+			
 			--dt-table-bg: rgba(0, 0, 0, 0.15);
+			
 			--dt-header-bg: rgba(0, 0, 0, 0.25);
+			
 			--dt-row-border: rgba(255, 255, 255, 0.03);
+			
 			--dt-row-hover: rgba(255, 255, 255, 0.07);
+			
 			--dt-input-bg: rgba(0, 0, 0, 0.2);
-        }
-		body {
 			
-				--main-color: var(--color-bird);
+
+			/* --- 4. TIER DYNAMICS (Loop with logic) --- */
 			
+			--color-bird: #7AB5E0;
+			--color-bird-bg: #7AB5E014;
+			
+			--color-fox: #E55555;
+			--color-fox-bg: #E5555514;
+			
+			--color-rabbit: #F2C14E;
+			--color-rabbit-bg: #F2C14E14;
+			
+			--color-mouse: #F49E52;
+			--color-mouse-bg: #F49E5214;
+			
+			--color-squirrel: #94C160;
+			--color-squirrel-bg: #94C16014;
+			
+			--color-default: #7A7347;
+			--color-default-bg: #7A734714;
+			
+
+			/* --- 5. PAGE THEME --- */
+			--main-color: #7AB5E0;
 		}
     </style>
 	
@@ -164,10 +177,8 @@
         </header>
         
         <div class="screen-deco right-deco">
-            
-                <img src="assets/images/leaderboard_img_right.webp" alt="Decoration Right">
-            
-        </div>
+			
+		</div>
 
         <div class="app-viewport window-box">
             <header class="page-intro">
@@ -213,7 +224,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 				</td>
                 <td class="text-left text-medium">doejurko</td>
@@ -230,7 +241,7 @@
                     1
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="javascript:void(0)" onclick="openTierModal('fox')" class="tier-anchor-link">
@@ -255,7 +266,7 @@
                     2
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="javascript:void(0)" onclick="openTierModal('fox')" class="tier-anchor-link">
@@ -280,7 +291,7 @@
                     3
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="javascript:void(0)" onclick="openTierModal('fox')" class="tier-anchor-link">
@@ -305,7 +316,7 @@
                     4
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="javascript:void(0)" onclick="openTierModal('fox')" class="tier-anchor-link">
@@ -330,7 +341,7 @@
                     5
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="javascript:void(0)" onclick="openTierModal('fox')" class="tier-anchor-link">
@@ -355,7 +366,7 @@
                     6
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="javascript:void(0)" onclick="openTierModal('fox')" class="tier-anchor-link">
@@ -380,7 +391,7 @@
                     7
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="javascript:void(0)" onclick="openTierModal('fox')" class="tier-anchor-link">
@@ -405,7 +416,7 @@
                     8
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="javascript:void(0)" onclick="openTierModal('fox')" class="tier-anchor-link">
@@ -430,7 +441,7 @@
                     9
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="javascript:void(0)" onclick="openTierModal('fox')" class="tier-anchor-link">
@@ -455,7 +466,7 @@
                     10
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="javascript:void(0)" onclick="openTierModal('fox')" class="tier-anchor-link">
@@ -480,7 +491,7 @@
                     11
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="javascript:void(0)" onclick="openTierModal('fox')" class="tier-anchor-link">
@@ -505,7 +516,7 @@
                     12
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="javascript:void(0)" onclick="openTierModal('rabbit')" class="tier-anchor-link">
@@ -530,7 +541,7 @@
                     13
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="javascript:void(0)" onclick="openTierModal('rabbit')" class="tier-anchor-link">
@@ -555,7 +566,7 @@
                     14
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="javascript:void(0)" onclick="openTierModal('rabbit')" class="tier-anchor-link">
@@ -580,7 +591,7 @@
                     15
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="javascript:void(0)" onclick="openTierModal('rabbit')" class="tier-anchor-link">
@@ -605,7 +616,7 @@
                     16
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="javascript:void(0)" onclick="openTierModal('rabbit')" class="tier-anchor-link">
@@ -630,7 +641,7 @@
                     17
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="javascript:void(0)" onclick="openTierModal('rabbit')" class="tier-anchor-link">
@@ -655,7 +666,7 @@
                     18
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="javascript:void(0)" onclick="openTierModal('rabbit')" class="tier-anchor-link">
@@ -680,7 +691,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 				</td>
                 <td class="text-left text-medium">tippop</td>
@@ -697,7 +708,7 @@
                     19
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="javascript:void(0)" onclick="openTierModal('rabbit')" class="tier-anchor-link">
@@ -722,7 +733,7 @@
                     20
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="javascript:void(0)" onclick="openTierModal('rabbit')" class="tier-anchor-link">
@@ -747,7 +758,7 @@
                     21
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="javascript:void(0)" onclick="openTierModal('rabbit')" class="tier-anchor-link">
@@ -772,7 +783,7 @@
                     22
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="javascript:void(0)" onclick="openTierModal('rabbit')" class="tier-anchor-link">
@@ -797,7 +808,7 @@
                     23
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="javascript:void(0)" onclick="openTierModal('rabbit')" class="tier-anchor-link">
@@ -822,7 +833,7 @@
                     24
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="javascript:void(0)" onclick="openTierModal('rabbit')" class="tier-anchor-link">
@@ -847,7 +858,7 @@
                     25
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="javascript:void(0)" onclick="openTierModal('rabbit')" class="tier-anchor-link">
@@ -872,7 +883,7 @@
                     26
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="javascript:void(0)" onclick="openTierModal('rabbit')" class="tier-anchor-link">
@@ -897,7 +908,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 				</td>
                 <td class="text-left text-medium">RootiredRooter</td>
@@ -914,7 +925,7 @@
                     27
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="javascript:void(0)" onclick="openTierModal('rabbit')" class="tier-anchor-link">
@@ -939,7 +950,7 @@
                     28
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="javascript:void(0)" onclick="openTierModal('rabbit')" class="tier-anchor-link">
@@ -964,7 +975,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 				</td>
                 <td class="text-left text-medium">PokerFace126</td>
@@ -981,7 +992,7 @@
                     29
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="javascript:void(0)" onclick="openTierModal('rabbit')" class="tier-anchor-link">
@@ -1006,7 +1017,7 @@
                     30
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="javascript:void(0)" onclick="openTierModal('rabbit')" class="tier-anchor-link">
@@ -1031,7 +1042,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 				</td>
                 <td class="text-left text-medium">time2orush</td>
@@ -1048,7 +1059,7 @@
                     31
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="javascript:void(0)" onclick="openTierModal('rabbit')" class="tier-anchor-link">
@@ -1073,7 +1084,7 @@
                     32
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="javascript:void(0)" onclick="openTierModal('rabbit')" class="tier-anchor-link">
@@ -1098,7 +1109,7 @@
                     33
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="javascript:void(0)" onclick="openTierModal('rabbit')" class="tier-anchor-link">
@@ -1123,7 +1134,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 				</td>
                 <td class="text-left text-medium">complexartichoke</td>
@@ -1140,7 +1151,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 				</td>
                 <td class="text-left text-medium">gord20</td>
@@ -1157,7 +1168,7 @@
                     34
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="javascript:void(0)" onclick="openTierModal('rabbit')" class="tier-anchor-link">
@@ -1182,7 +1193,7 @@
                     35
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="javascript:void(0)" onclick="openTierModal('rabbit')" class="tier-anchor-link">
@@ -1207,7 +1218,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 				</td>
                 <td class="text-left text-medium">vinnie</td>
@@ -1224,7 +1235,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 				</td>
                 <td class="text-left text-medium">Aleph</td>
@@ -1241,7 +1252,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 				</td>
                 <td class="text-left text-medium">Blurr</td>
@@ -1258,7 +1269,7 @@
                     36
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="javascript:void(0)" onclick="openTierModal('rabbit')" class="tier-anchor-link">
@@ -1283,7 +1294,7 @@
                     37
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="javascript:void(0)" onclick="openTierModal('mouse')" class="tier-anchor-link">
@@ -1308,7 +1319,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 				</td>
                 <td class="text-left text-medium">mishaelh1</td>
@@ -1325,7 +1336,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 				</td>
                 <td class="text-left text-medium">dindane</td>
@@ -1342,7 +1353,7 @@
                     38
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="javascript:void(0)" onclick="openTierModal('mouse')" class="tier-anchor-link">
@@ -1367,7 +1378,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 				</td>
                 <td class="text-left text-medium">AxlPrototype</td>
@@ -1384,7 +1395,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 				</td>
                 <td class="text-left text-medium">Bitto</td>
@@ -1401,7 +1412,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 				</td>
                 <td class="text-left text-medium">Nudraxon</td>
@@ -1418,7 +1429,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 				</td>
                 <td class="text-left text-medium">bootle</td>
@@ -1435,7 +1446,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 				</td>
                 <td class="text-left text-medium">saintstonet</td>
@@ -1452,7 +1463,7 @@
                     39
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="javascript:void(0)" onclick="openTierModal('mouse')" class="tier-anchor-link">
@@ -1477,7 +1488,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 				</td>
                 <td class="text-left text-medium">Intraceptor</td>
@@ -1494,7 +1505,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 				</td>
                 <td class="text-left text-medium">lazarus210</td>
@@ -1511,7 +1522,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 				</td>
                 <td class="text-left text-medium">Cabbage0642</td>
@@ -1528,7 +1539,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 				</td>
                 <td class="text-left text-medium">KeyserSoze</td>
@@ -1545,7 +1556,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 				</td>
                 <td class="text-left text-medium">ShowStopperW</td>
@@ -1562,7 +1573,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 				</td>
                 <td class="text-left text-medium">trollone1993</td>
@@ -1579,7 +1590,7 @@
                     40
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="javascript:void(0)" onclick="openTierModal('mouse')" class="tier-anchor-link">
@@ -1604,7 +1615,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 				</td>
                 <td class="text-left text-medium">Vagabond Glazer</td>
@@ -1621,7 +1632,7 @@
                     41
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="javascript:void(0)" onclick="openTierModal('mouse')" class="tier-anchor-link">
@@ -1646,7 +1657,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 				</td>
                 <td class="text-left text-medium">Mindger</td>
@@ -1663,7 +1674,7 @@
                     42
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="javascript:void(0)" onclick="openTierModal('mouse')" class="tier-anchor-link">
@@ -1688,7 +1699,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 				</td>
                 <td class="text-left text-medium">aelisheneithlon</td>
@@ -1705,7 +1716,7 @@
                     43
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="javascript:void(0)" onclick="openTierModal('mouse')" class="tier-anchor-link">
@@ -1730,7 +1741,7 @@
                     44
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="javascript:void(0)" onclick="openTierModal('mouse')" class="tier-anchor-link">
@@ -1755,7 +1766,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 				</td>
                 <td class="text-left text-medium">ermactually</td>
@@ -1772,7 +1783,7 @@
                     45
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="javascript:void(0)" onclick="openTierModal('mouse')" class="tier-anchor-link">
@@ -1797,7 +1808,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 				</td>
                 <td class="text-left text-medium">pwarren8590</td>
@@ -1814,7 +1825,7 @@
                     46
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="javascript:void(0)" onclick="openTierModal('mouse')" class="tier-anchor-link">
@@ -1839,7 +1850,7 @@
                     47
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="javascript:void(0)" onclick="openTierModal('mouse')" class="tier-anchor-link">
@@ -1864,7 +1875,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 				</td>
                 <td class="text-left text-medium">ToasterTrash</td>
@@ -1881,7 +1892,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 				</td>
                 <td class="text-left text-medium">KarmaBurn</td>
@@ -1898,7 +1909,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 				</td>
                 <td class="text-left text-medium">Mohammad</td>
@@ -1915,7 +1926,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 				</td>
                 <td class="text-left text-medium">Napalminthebirdsong</td>
@@ -1932,7 +1943,7 @@
                     48
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="javascript:void(0)" onclick="openTierModal('mouse')" class="tier-anchor-link">
@@ -1957,7 +1968,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 				</td>
                 <td class="text-left text-medium">Furry0329</td>
@@ -1974,7 +1985,7 @@
                     49
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="javascript:void(0)" onclick="openTierModal('mouse')" class="tier-anchor-link">
@@ -1999,7 +2010,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 				</td>
                 <td class="text-left text-medium">Octavius</td>
@@ -2016,7 +2027,7 @@
                     50
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="javascript:void(0)" onclick="openTierModal('mouse')" class="tier-anchor-link">
@@ -2041,7 +2052,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 				</td>
                 <td class="text-left text-medium">udon66</td>
@@ -2058,7 +2069,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 				</td>
                 <td class="text-left text-medium">hakoo</td>
@@ -2075,7 +2086,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 				</td>
                 <td class="text-left text-medium">BuliBaka</td>
@@ -2092,7 +2103,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 				</td>
                 <td class="text-left text-medium">TAKSpx</td>
@@ -2109,7 +2120,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 				</td>
                 <td class="text-left text-medium">Mcauthor</td>
@@ -2126,7 +2137,7 @@
                     51
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="javascript:void(0)" onclick="openTierModal('mouse')" class="tier-anchor-link">
@@ -2151,7 +2162,7 @@
                     52
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="javascript:void(0)" onclick="openTierModal('mouse')" class="tier-anchor-link">
@@ -2176,7 +2187,7 @@
                     53
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="javascript:void(0)" onclick="openTierModal('mouse')" class="tier-anchor-link">
@@ -2201,7 +2212,7 @@
                     54
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="javascript:void(0)" onclick="openTierModal('mouse')" class="tier-anchor-link">
@@ -2226,7 +2237,7 @@
                     55
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="javascript:void(0)" onclick="openTierModal('mouse')" class="tier-anchor-link">
@@ -2251,7 +2262,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 				</td>
                 <td class="text-left text-medium">Acecreamsundae</td>
@@ -2268,7 +2279,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 				</td>
                 <td class="text-left text-medium">GlisteningGeetus</td>
@@ -2285,7 +2296,7 @@
                     56
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="javascript:void(0)" onclick="openTierModal('mouse')" class="tier-anchor-link">
@@ -2310,7 +2321,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 				</td>
                 <td class="text-left text-medium">Sjepeal</td>
@@ -2327,7 +2338,7 @@
                     57
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="javascript:void(0)" onclick="openTierModal('mouse')" class="tier-anchor-link">
@@ -2352,7 +2363,7 @@
                     58
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="javascript:void(0)" onclick="openTierModal('mouse')" class="tier-anchor-link">
@@ -2377,7 +2388,7 @@
                     59
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="javascript:void(0)" onclick="openTierModal('mouse')" class="tier-anchor-link">
@@ -2402,7 +2413,7 @@
                     60
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="javascript:void(0)" onclick="openTierModal('mouse')" class="tier-anchor-link">
@@ -2427,7 +2438,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 				</td>
                 <td class="text-left text-medium">Oriol</td>
@@ -2444,7 +2455,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 				</td>
                 <td class="text-left text-medium">Bodnamax</td>
@@ -2461,7 +2472,7 @@
                     61
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="javascript:void(0)" onclick="openTierModal('mouse')" class="tier-anchor-link">
@@ -2486,7 +2497,7 @@
                     62
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="javascript:void(0)" onclick="openTierModal('mouse')" class="tier-anchor-link">
@@ -2511,7 +2522,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 				</td>
                 <td class="text-left text-medium">Sirius</td>
@@ -2528,7 +2539,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 				</td>
                 <td class="text-left text-medium">BjarkeHuse</td>
@@ -2545,7 +2556,7 @@
                     63
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="javascript:void(0)" onclick="openTierModal('mouse')" class="tier-anchor-link">
@@ -2570,7 +2581,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 				</td>
                 <td class="text-left text-medium">Awesem</td>
@@ -2587,7 +2598,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 				</td>
                 <td class="text-left text-medium">CowOnAPlane</td>
@@ -2604,7 +2615,7 @@
                     64
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="javascript:void(0)" onclick="openTierModal('mouse')" class="tier-anchor-link">
@@ -2629,7 +2640,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 				</td>
                 <td class="text-left text-medium">Karcher</td>
@@ -2646,7 +2657,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="cache.html#nut-section" class="tier-anchor-link">
@@ -2671,7 +2682,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 				</td>
                 <td class="text-left text-medium">idk123</td>
@@ -2688,7 +2699,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="cache.html#nut-section" class="tier-anchor-link">
@@ -2713,7 +2724,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 				</td>
                 <td class="text-left text-medium">FausDav</td>
@@ -2730,7 +2741,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 				</td>
                 <td class="text-left text-medium">Mati92</td>
@@ -2747,7 +2758,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="cache.html#nut-section" class="tier-anchor-link">
@@ -2772,7 +2783,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="cache.html#nut-section" class="tier-anchor-link">
@@ -2797,7 +2808,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="cache.html#nut-section" class="tier-anchor-link">
@@ -2822,7 +2833,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="cache.html#nut-section" class="tier-anchor-link">
@@ -2847,7 +2858,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="cache.html#nut-section" class="tier-anchor-link">
@@ -2872,7 +2883,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="cache.html#nut-section" class="tier-anchor-link">
@@ -2897,7 +2908,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="cache.html#nut-section" class="tier-anchor-link">
@@ -2922,7 +2933,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="cache.html#nut-section" class="tier-anchor-link">
@@ -2947,7 +2958,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="cache.html#nut-section" class="tier-anchor-link">
@@ -2972,7 +2983,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 				</td>
                 <td class="text-left text-medium">StoneOfShame</td>
@@ -2989,7 +3000,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 				</td>
                 <td class="text-left text-medium">Lobster</td>
@@ -3006,7 +3017,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="cache.html#nut-section" class="tier-anchor-link">
@@ -3031,7 +3042,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="cache.html#nut-section" class="tier-anchor-link">
@@ -3056,7 +3067,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="cache.html#nut-section" class="tier-anchor-link">
@@ -3081,7 +3092,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="cache.html#nut-section" class="tier-anchor-link">
@@ -3106,7 +3117,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 				</td>
                 <td class="text-left text-medium">brrrlinguist</td>
@@ -3123,7 +3134,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 				</td>
                 <td class="text-left text-medium">Drinken</td>
@@ -3140,7 +3151,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="cache.html#nut-section" class="tier-anchor-link">
@@ -3165,7 +3176,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 				</td>
                 <td class="text-left text-medium">Biggins96</td>
@@ -3182,7 +3193,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="cache.html#nut-section" class="tier-anchor-link">
@@ -3207,7 +3218,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="cache.html#nut-section" class="tier-anchor-link">
@@ -3232,7 +3243,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="cache.html#nut-section" class="tier-anchor-link">
@@ -3257,7 +3268,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 				</td>
                 <td class="text-left text-medium">Baradhas</td>
@@ -3274,7 +3285,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="cache.html#nut-section" class="tier-anchor-link">
@@ -3299,7 +3310,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="cache.html#nut-section" class="tier-anchor-link">
@@ -3324,7 +3335,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="cache.html#nut-section" class="tier-anchor-link">
@@ -3349,7 +3360,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="cache.html#nut-section" class="tier-anchor-link">
@@ -3374,7 +3385,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="cache.html#nut-section" class="tier-anchor-link">
@@ -3399,7 +3410,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="cache.html#nut-section" class="tier-anchor-link">
@@ -3424,7 +3435,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 				</td>
                 <td class="text-left text-medium">BugMuff44</td>
@@ -3441,7 +3452,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="cache.html#nut-section" class="tier-anchor-link">
@@ -3466,7 +3477,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="cache.html#nut-section" class="tier-anchor-link">
@@ -3491,7 +3502,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 				</td>
                 <td class="text-left text-medium">marksoz00</td>
@@ -3508,7 +3519,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 				</td>
                 <td class="text-left text-medium">Sharkskln</td>
@@ -3525,7 +3536,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="cache.html#nut-section" class="tier-anchor-link">
@@ -3550,7 +3561,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="cache.html#nut-section" class="tier-anchor-link">
@@ -3575,7 +3586,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="cache.html#nut-section" class="tier-anchor-link">
@@ -3600,7 +3611,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="cache.html#nut-section" class="tier-anchor-link">
@@ -3625,7 +3636,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="cache.html#nut-section" class="tier-anchor-link">
@@ -3650,7 +3661,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="cache.html#nut-section" class="tier-anchor-link">
@@ -3675,7 +3686,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="cache.html#nut-section" class="tier-anchor-link">
@@ -3700,7 +3711,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="cache.html#nut-section" class="tier-anchor-link">
@@ -3725,7 +3736,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="cache.html#nut-section" class="tier-anchor-link">
@@ -3750,7 +3761,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="cache.html#nut-section" class="tier-anchor-link">
@@ -3775,7 +3786,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="cache.html#nut-section" class="tier-anchor-link">
@@ -3800,7 +3811,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="cache.html#nut-section" class="tier-anchor-link">
@@ -3825,7 +3836,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="cache.html#nut-section" class="tier-anchor-link">
@@ -3850,7 +3861,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="cache.html#nut-section" class="tier-anchor-link">
@@ -3875,7 +3886,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="cache.html#nut-section" class="tier-anchor-link">
@@ -3900,7 +3911,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="cache.html#nut-section" class="tier-anchor-link">
@@ -3925,7 +3936,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="cache.html#nut-section" class="tier-anchor-link">
@@ -3950,7 +3961,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="cache.html#nut-section" class="tier-anchor-link">
@@ -3975,7 +3986,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="cache.html#nut-section" class="tier-anchor-link">
@@ -4000,7 +4011,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="cache.html#nut-section" class="tier-anchor-link">
@@ -4025,7 +4036,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="cache.html#nut-section" class="tier-anchor-link">
@@ -4050,7 +4061,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="cache.html#nut-section" class="tier-anchor-link">
@@ -4075,7 +4086,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="cache.html#nut-section" class="tier-anchor-link">
@@ -4100,7 +4111,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="cache.html#nut-section" class="tier-anchor-link">
@@ -4125,7 +4136,7 @@
                     -
                 </td>
                 
-                <td>
+                <<td>
 					
 						
 							<a href="cache.html#nut-section" class="tier-anchor-link">
@@ -4152,10 +4163,8 @@
         </div>
         
         <div class="screen-deco left-deco">
-            
-                <img src="assets/images/leaderboard_img_left.webp" alt="Decoration Left">
-            
-        </div>
+			
+		</div>
 
         <footer class="app-footer window-box">
 			<div class="footer-content">
@@ -4163,7 +4172,7 @@
 					<span>Powered by <strong>Tʀɪᴄʜᴏʟᴏᴍᴇ</strong></span>
 					<span>Woodland visions by <a class="cl" href="cache.html">𝕩𝕝𝕦𝕖𝕧𝕚</a></span>
 				</div>
-				<div class="footer-date">Updated on 2026-04-09 12:37</div>
+				<div class="footer-date">Updated on 2026-04-09 13:28</div>
 			</div>
 		</footer>
     </div>
@@ -4195,12 +4204,13 @@
 	<script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
     
     <script>
-        const CONFIG = {
-            colors: {"bird": "#7AB5E0", "default": "#7A7347", "fox": "#E55555", "mouse": "#F49E52", "rabbit": "#F2C14E", "squirrel": "#94C160"},
-            icons: {"bird": "assets/icons/bird_new.webp", "fox": "assets/icons/fox_new.webp", "mouse": "assets/icons/mouse_new.webp", "rabbit": "assets/icons/rabbit_new.webp", "squirrel": "assets/icons/squirrel.webp"}
-        };
-    </script>
-    
+		const CONFIG = {
+			colors: {"bird": "#7AB5E0", "default": "#7A7347", "fox": "#E55555", "mouse": "#F49E52", "rabbit": "#F2C14E", "squirrel": "#94C160"},
+			icons: {"bird": "assets/icons/bird_new.webp", "fox": "assets/icons/fox_new.webp", "mouse": "assets/icons/mouse_new.webp", "rabbit": "assets/icons/rabbit_new.webp", "squirrel": "assets/icons/squirrel.webp"},
+			currentTier: "bird"
+		};
+	</script>
+		
     <script src="static/script.js"></script>
     
 <script>

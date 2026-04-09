@@ -22,18 +22,18 @@
                     {{ player.Rank }}
                 </td>
                 
-                <td>
+                <<td>
 					{% if player.tier and player.tier != 'unranked' %}
 						{% if player.tier == 'squirrel' %}
 							<a href="cache.html#nut-section" class="tier-anchor-link">
 								<div class="tier-icon-container">
-									<img src="{{ icons[player.tier] }}" alt="{{ player.tier }}">
+									<img src="{{ config.assets.icons[player.tier] }}" alt="{{ player.tier }}">
 								</div>
 							</a>
 						{% else %}
 							<a href="javascript:void(0)" onclick="openTierModal('{{ player.tier }}')" class="tier-anchor-link">
 								<div class="tier-icon-container">
-									<img src="{{ icons[player.tier] }}" alt="{{ player.tier }}">
+									<img src="{{ config.assets.icons[player.tier] }}" alt="{{ player.tier }}">
 								</div>
 							</a>
 						{% endif %}
