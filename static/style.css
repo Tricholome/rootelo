@@ -110,7 +110,7 @@ body::after {
     z-index: 10;
     width: 95%;
     max-width: var(--window-max-width);
-    margin: 0 auto;
+    margin: var(--window-gap) auto;
     background: color-mix(in srgb, var(--main-color) 10%, var(--glass-bg));
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
@@ -119,19 +119,6 @@ body::after {
     box-sizing: border-box;
     box-shadow: inset 0 2px 0 0 color-mix(in srgb, var(--main-color) 70%, transparent), var(--glass-shadow);
 	padding: var(--window-padding);
-}
-
-.app-banner {
-    margin-top: var(--window-gap); 
-    margin-bottom: var(--window-gap);
-}
-
-.app-viewport {
-    margin-bottom: var(--window-gap);
-}
-
-.app-footer {
-    margin-bottom: var(--window-gap);
 }
 
 .footer-credits {
@@ -252,7 +239,7 @@ body::after {
 }
 
 .page-intro { margin-bottom: var(--window-gap); }
-.page-intro h2 { font-family: var(--font-title); font-size: var(--size-xl); margin: 0; color: var(--main-color); }
+.page-intro h2 { font-family: var(--font-title); font-size: var(--size-xl); var(--track-wide); margin: 0; color: var(--main-color); }
 .page-intro p { color: var(--text-muted); font-size: var(--size-base); margin: 5px auto 0; }
 
 a.cl { color: var(--text-main); text-decoration: none; font-weight: var(--medium); border-bottom: 1px dotted var(--main-color); transition: 0.2s; }
