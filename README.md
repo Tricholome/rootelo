@@ -2,29 +2,35 @@
 
 Automated Elo-based leaderboard and stats for the Root Digital League.
 
-## 🚀 Live Website
-👉 **[View the Website](https://tricholome.github.io/rootelo)**
+👉 **[View the Live Website](https://tricholome.github.io/rootelo)**
 
-## ⚙️ How it works
-Rootelo is a custom static site generator (SSG) built with **Python**, designed to provide a lightweight and high-performance competitive dashboard.
+## 🛠️ How it Works
+Rootelo is a custom static site generator built with Python:
+1. **Extraction**: Fetches match results from the **Root Digital League API**.
+2. **Processing**: Calculates Elo ratings, assigns tiers, compiles match stats and builds player trends using `pandas`.
+3. **Rendering**: Injects the processed data into HTML templates to generate a static website.
 
-### 📊 Data Processing & Life Cycle
-* **Live Season**: Fetches and processes real-time match data directly from the Root Digital League API.
-* **Historical Archives**: Seasons are "frozen" once completed. A dedicated processing script (`archive_season.py`) converts raw historical data into optimized CSV/JSON assets, which are then integrated into the main rendering pipeline.
-* **Data Integrity**: Includes a manual correction layer (CSV-based) to fix API anomalies (e.g., incorrect match dates or player aliases) without altering the source.
+## 📂 Project Structure
 
-### 🏗️ Technology Stack
-* **Core Engine**: Powered by `pandas` for Elo calculations and data manipulation.
-* **Templating**: **Jinja2** is used to generate dynamic HTML pages from a modular base, ensuring consistent UI across live and archived seasons.
-* **Frontend**: A custom **Glassmorphism CSS** theme with **DataTables.js** for interactive, searchable, and responsive leaderboards.
-* **Automation**: The entire site is rebuilt daily via **GitHub Actions**, triggered by an external cron job for maximum reliability.
+### ⚙️ Core Scripts
+* `main.py`: The primary engine for daily updates and data rendering.
+* `archive_season.py`: Utility script executed at the end of a season to process, freeze, and export historical data.
 
-### 🛠️ Architecture
-The generator follows a "Single Source of Truth" pattern:
-1.  **Ingest**: Collects API data and Local Assets.
-2.  **Calculate**: Computes Elo ratings, tiers, and player trends.
-3.  **Render**: Injects statistics and metadata into Jinja2 templates.
-4.  **Deploy**: Pushes the static build to GitHub Pages.
+### 📊 Data
+Stores the frozen state of completed seasons. Each season consists of:
+* `*_final_ratings.csv`: Final Elo standings and tier distributions.
+* `*_matches_fixed.csv`: Processed match history.
+* `*_history_full.json`: Player rating progression over time.
+* `*_metadata.json`: Static stats for archives.
+* `*_corrections.csv`: Manual overrides to fix API dates anomalies without altering the source code.
 
----
-*Last updated: Automated via GitHub Actions*
+### 🎨 Frontend & Templates
+* **`/templates`**: Modular Jinja2 HTML templates. All pages (leaderboard, trends, etc.) extend `base.html`, which serves as the master layout for navigation and structure.
+* **`/static`**: Custom frontend logic and styling (`script.js`, `style.css`).
+* **`/assets`**: Icons, images, and other static media files.
+
+### 🤖 Automation & Workflows
+The deployment pipeline is fully automated via GitHub Actions:
+* `update_rootelo.yml`: Daily production build, triggered by an external cron job.
+* `archive_season.yml`: Processes and freezes historical data for new archives.
+* `deploy-dev.yml`: Manual deployment workflow used for testing features before production.
