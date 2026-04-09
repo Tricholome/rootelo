@@ -137,7 +137,6 @@ body::after {
 .footer-credits strong {
     color: var(--text-main);
     font-weight: var(--medium);
-	font-size: var(--size-md);
 	letter-spacing: var(--track-slight);
 }
 
@@ -689,7 +688,7 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 }
 
 .codex-section p { margin-bottom: 20px; color: var(--text-muted); text-align: left; font-size: var(--size-base); }
-.codex-section strong { color: var(--text-main); font-weight: var(--medium); }
+.codex-section strong { color: var(--text-main); font-weight: var(--medium); letter-spacing: var(--track-slight); }
 
 /* Information Tables (K-Factor, Tier Codex) */
 .k-table {
@@ -811,7 +810,7 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 	.modal-divider { display: none; }
     #modalIcon { width: 200px; }
     #modalTitle { font-size: var(--size-xl); letter-spacing: var(--track-wide); }
-	#modalText { font-size: var(--size-sm); line-height: 1.5; margin-top: 25px; text-align: center; }
+	#modalText { line-height: 1.5; margin-top: 25px; text-align: center; }
 }
 
 /* --- MOBILE LANDSCAPE --- */
