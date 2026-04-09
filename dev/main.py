@@ -238,8 +238,14 @@ if not df.empty:
 peak_elo = {p: r for p, r in elo_ratings.items()}
 last_diff = {p: 0.0 for p in elo_ratings}
 player_stats = {p: {'games': 0, 'wins': 0.0} for p in elo_ratings}
-prev_label = f"{ARCHIVE_SEASONS[-1].upper()} Final" if ARCHIVE_SEASONS else "Start"
-player_history = {p: [[prev_label, round(r)]] for p, r in elo_ratings.items()}
+
+player_history = {}
+for p, r in elo_ratings.items():
+    if ARCHIVE_SEASONS and p in elo_ratings:
+        label = f"[{ARCHIVE_SEASONS[-1].upper()}] Final"
+    else:
+        label = "Start"
+    player_history[p] = [[label, round(r)]]
 
 if not df.empty:
     for game_id, group in df.groupby('GameID', sort=False):
