@@ -114,9 +114,13 @@ for p, rating in inherited_elo.items():
 
 peak_elo = {p: r for p, r in elo_ratings.items()}
 player_stats = {p: {'games': 0, 'wins': 0.0} for p in elo_ratings}
-player_history = {p: [["Start", round(r)]] for p, r in elo_ratings.items()}
 last_diff = {p: 0.0 for p in elo_ratings}
 archive_matches_list = []
+player_history = {}
+
+for p, r in elo_ratings.items():
+    start_label = f"[{PREVIOUS_SEASON_TAG.upper()}] Final" if PREVIOUS_SEASON_TAG and p in inherited_elo else "Start"
+    player_history[p] = [[start_label, round(r)]]
 
 for game_id, group in df.groupby('GameID', sort=False):
     match_participants = group.to_dict('records')
@@ -173,7 +177,8 @@ if num_players > 0:
     for p in elo_ratings:
         elo_ratings[p] += bonus_per_player
         if elo_ratings[p] > peak_elo[p]:
-            peak_elo[p] = elo_ratings[p]   
+            peak_elo[p] = elo_ratings[p]
+        player_history[p].append(["Final", round(elo_ratings[p])])            
 
 # =========================================================================
 # --- 7. EXPORT FINAL RATINGS (LEADERBOARD) ---
