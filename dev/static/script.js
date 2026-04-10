@@ -206,111 +206,109 @@ document.addEventListener('DOMContentLoaded', () => {
 	
 });
 
-// Cipher
-// On définit la séquence de mots attendue
+/* =========================================================
+   SÉQUENCE SECRÈTE & TRANSITION (Page Cache)
+   ========================================================= */
+
 const secretSequence = ['roots', 'quiet'];
 let userProgress = [];
 
 $('.cipher').on('click', function() {
-    // 1. Récupérer le mot stocké dans le data-word du span cliqué
     const clickedWord = $(this).data('word');
     
-    // 2. Vérifier si ce mot correspond au prochain mot attendu dans la séquence
+    // Vérification du mot
     if (clickedWord === secretSequence[userProgress.length]) {
-        
-        // BON MOT : On progresse
         userProgress.push(clickedWord);
         $(this).addClass('active-cipher');
 
-        // 3. Si la séquence est complète
         if (userProgress.length === secretSequence.length) {
             activateMysticTransition();
         }
     } else {
-        // MAUVAIS MOT : On réinitialise tout
+        // Erreur : Réinitialisation
         userProgress = [];
         $('.cipher').removeClass('active-cipher');
-        
-        // Petit feedback visuel d'erreur (optionnel)
         $(this).css('color', '#ff4444');
         setTimeout(() => $(this).css('color', ''), 500);
     }
 });
 
 function activateMysticTransition() {
-    // Activer le rideau (Overlay) via la classe CSS
+    // 1. On lance le rideau noir de fermeture
     $('#mystic-overlay').addClass('active');
 
-    // Redirection vers la page Legend après la fin de la transition (1.5s)
-    setTimeout(function() {
-        window.location.href = 'legend.html';
-    }, 2000); // 2 secondes pour laisser le temps d'apprécier le noir
-}
-
-$(document).ready(function() {
-    
-    // ---------------------------------------------------------
-    // 1. VÉRIFICATION DU SECRET AU CHARGEMENT DE CHAQUE PAGE
-    // ---------------------------------------------------------
-    if (localStorage.getItem('mysticUnlocked') === 'true') {
-        $('body').addClass('mystic-unlocked');
-        initStardust(); // On génère les étoiles
-    }
-
-    // ---------------------------------------------------------
-    // 2. L'ANIMATION D'OUVERTURE (Page Legend uniquement)
-    // ---------------------------------------------------------
-    if ($('body').data('page') === 'legend') {
-        // Le rideau commence fermé (écran noir)
-        $('#mystic-reveal').addClass('closed');
-        
-        // On l'ouvre doucement après un bref instant
-        setTimeout(() => {
-            $('#mystic-reveal').removeClass('closed');
-        }, 100); 
-    }
-});
-
-// ---------------------------------------------------------
-// 3. LA MÉCANIQUE DU RIDEAU ET DE SAUVEGARDE (Page Cache)
-// ---------------------------------------------------------
-function activateMysticTransition() {
-    // 1. Activer le rideau de fermeture
-    $('#mystic-overlay').addClass('active');
-
-    // 2. LA MAGIE : On grave dans le navigateur que le joueur a réussi
+    // 2. On enregistre le succès pour tout le site
     localStorage.setItem('mysticUnlocked', 'true');
+    // On marque qu'on vient juste de débloquer pour l'effet d'oeil sur la page suivante
+    localStorage.setItem('justUnlocked', 'true');
 
-    // 3. Redirection vers la Legend après 2 secondes (le temps que ça devienne noir)
+    // 3. Redirection
     setTimeout(function() {
         window.location.href = 'legend.html';
     }, 2000);
 }
 
-// ---------------------------------------------------------
-// 4. LE GÉNÉRATEUR DE POUSSIÈRE D'ÉTOILES
-// ---------------------------------------------------------
-function initStardust() {
-    // On cherche toutes les boîtes principales du site
-    $('.window-box').each(function() {
+/* =========================================================
+   INITIALISATION GLOBALE (Toutes les pages)
+   ========================================================= */
+
+$(document).ready(function() {
+    
+    // --- A. GESTION DES ÉTOILES PERSISTANTES ---
+    if (localStorage.getItem('mysticUnlocked') === 'true') {
+        $('body').addClass('mystic-unlocked');
+        initStardust(); // On remplit les window-box d'étoiles
+    }
+
+    // --- B. EFFET D'OUVERTURE "ŒIL" (Page Legend uniquement) ---
+    // On vérifie si on est sur legend ET si on vient de réussir l'énigme
+    if ($('body').data('page') === 'legend' && localStorage.getItem('justUnlocked') === 'true') {
+        const reveal = $('#mystic-reveal');
         
-        // On injecte le conteneur d'étoiles s'il n'y est pas déjà
-        if ($(this).find('.stardust-container').length === 0) {
-            $(this).prepend('<div class="stardust-container"></div>');
+        // 1. On rend le rideau visible (il est fermé par défaut à 0%)
+        reveal.addClass('active');
+        
+        // 2. On lance l'ouverture du cercle après un mini délai
+        setTimeout(() => {
+            reveal.addClass('open');
+            
+            // 3. Une fois l'animation finie (2s), on nettoie
+            setTimeout(() => {
+                reveal.fadeOut(1000, function() {
+                    $(this).removeClass('active open');
+                });
+                // On supprime le flag pour ne pas revoir l'oeil au prochain refresh
+                localStorage.removeItem('justUnlocked');
+            }, 2000);
+        }, 100);
+    }
+});
+
+/* =========================================================
+   GÉNÉRATEUR DE POUSSIÈRE D'ÉTOILES
+   ========================================================= */
+
+function initStardust() {
+    $('.window-box').each(function() {
+        const box = $(this);
+        
+        // Ajout du conteneur s'il n'existe pas
+        if (box.find('.stardust-container').length === 0) {
+            box.prepend('<div class="stardust-container"></div>');
         }
         
-        const container = $(this).find('.stardust-container');
-        const boxHeight = $(this).innerHeight() || 500;
+        const container = box.find('.stardust-container');
+        const boxHeight = box.innerHeight();
         
-        // Plus la boîte est grande, plus on met d'étoiles (ex: 1 étoile tous les 25px)
-        const starCount = Math.floor(boxHeight / 25); 
+        // Densité d'étoiles basée sur la taille de la boîte
+        const starCount = Math.floor(boxHeight / 30); 
 
         for (let i = 0; i < starCount; i++) {
-            const size = Math.random() * 2 + 1 + 'px';
+            const size = (Math.random() * 2 + 1) + 'px';
             const star = $('<div class="star"></div>').css({
-                width: size, 
+                width: size,
                 height: size,
-                left: Math.random() * 100 + '%', 
+                left: Math.random() * 100 + '%',
                 top: Math.random() * 100 + '%',
                 '--duration': (Math.random() * 3 + 2) + 's',
                 'animation-delay': (Math.random() * 5) + 's'
