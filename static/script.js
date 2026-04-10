@@ -250,7 +250,7 @@ function activateMysticTransition() {
 // À mettre dans un bloc <script> sur la page de destination
 $(document).ready(function() {
     const container = $('#stardust');
-    const starCount = 40; // Nombre de points scintillants
+    const starCount = 200;
 
     for (let i = 0; i < starCount; i++) {
         const size = Math.random() * 3 + 1 + 'px';
