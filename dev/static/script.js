@@ -207,51 +207,66 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 /* =========================================================
-   GESTION DU SECRET & TRANSITION
+   GESTION DU SECRET ET RIDEAU NOIR (VERSION SIMPLE)
    ========================================================= */
 
-// --- LOGIQUE DES MOTS ---
+// 1. Logique des mots cliquables
 const secretSequence = ['roots', 'quiet'];
 let userProgress = [];
 
-$('.cipher').on('click', function() {
+// On utilise $(document).on pour être sûr que le clic capte bien les .cipher
+$(document).on('click', '.cipher', function() {
     const word = $(this).data('word');
+    
     if (word === secretSequence[userProgress.length]) {
         userProgress.push(word);
         $(this).addClass('active-cipher');
+
         if (userProgress.length === secretSequence.length) {
+            // VICTOIRE
             localStorage.setItem('justUnlocked', 'true');
             localStorage.setItem('mysticUnlocked', 'true');
-            // On lance le rideau noir
-            $('#mystic-gate').addClass('active');
-            setTimeout(() => { window.location.href = 'legend.html'; }, 1000);
+            
+            // On affiche le rideau noir avant de changer de page
+            $('#mystic-gate').fadeIn(500);
+
+            setTimeout(() => {
+                window.location.href = 'legend.html';
+            }, 800);
         }
     } else {
+        // ERREUR
         userProgress = [];
         $('.cipher').removeClass('active-cipher');
     }
 });
 
-// --- LOGIQUE DE CHARGEMENT ---
+// 2. Logique au chargement de la page
 $(document).ready(function() {
     const gate = $('#mystic-gate');
 
+    // Si on vient de débloquer le secret
     if (localStorage.getItem('justUnlocked') === 'true') {
-        // 1. On plaque le noir immédiatement (œil plein)
-        gate.css('display', 'block').addClass('active');
+        
+        // A. On force l'affichage du noir immédiatement
+        // On utilise .show() et opacity 1 pour éviter tout délai
+        gate.show().css('opacity', '1').addClass('active');
 
-        // 2. Si on est sur Legend, on ouvre l'œil
-        if (window.location.pathname.includes('legend')) {
-            setTimeout(() => {
-                gate.addClass('reveal'); // Le cercle de noir rétrécit à 0%
-                
-                setTimeout(() => {
-                    gate.fadeOut(800, function() {
-                        $(this).removeClass('active reveal');
-                        localStorage.removeItem('justUnlocked');
-                    });
-                }, 1600);
-            }, 400);
+        // B. On attend que l'utilisateur clique pour libérer la page
+        gate.on('click', function() {
+            $(this).fadeOut(1000, function() {
+                $(this).removeClass('active');
+                // On supprime le flag pour que ça ne revienne pas au prochain refresh
+                localStorage.removeItem('justUnlocked');
+            });
+        });
+    }
+
+    // Gestion des étoiles (si tu as gardé la fonction initStardust)
+    if (localStorage.getItem('mysticUnlocked') === 'true') {
+        $('body').addClass('mystic-unlocked');
+        if (typeof initStardust === "function") {
+            initStardust();
         }
     }
 });
