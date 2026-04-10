@@ -12,14 +12,24 @@
 	</p>
 	
 	<div class="mystic-section">
-        <h2>The Legend of the Undergrowth</h2>
+        <h2>The New Tier</h2>
         <p>You've followed the roots to their source. The watcher finally speaks...</p>
-		<div class="banner-icons left">
-			<a href="javascript:void(0)" onclick="openTierModal('stag')" class="tooltip-link js-double-tap">
-				<img src="{{ config.assets.icons.stag }}" alt="Stag">
-				<span class="tooltip-text"><strong class="tier-stag">Stag (1600+)</strong> — The Legend</span>
-			</a>
-		</div>
+		
+		<table class="k-table">
+			<tr>
+				<td><strong>Stag</strong></td>
+				<td>
+					<a href="javascript:void(0)" onclick="openTierModal('stag')" class="tier-anchor-link">
+						<div class="tier-icon-container">
+							<img src="{{ icons['stag'] }}" alt="stag">
+						</div>
+					</a>
+				</td>
+				<td class="k-val">Elo &ge; 1600</td>
+				<td>The Legend</td>
+			</tr>
+		
+		</table>
     </div>
 	
     <div class="artist-story">
