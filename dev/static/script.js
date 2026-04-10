@@ -247,27 +247,75 @@ function activateMysticTransition() {
     }, 2000); // 2 secondes pour laisser le temps d'apprécier le noir
 }
 
-// À mettre dans un bloc <script> sur la page de destination
 $(document).ready(function() {
-    const container = $('#stardust');
-    const starCount = 200;
+    
+    // ---------------------------------------------------------
+    // 1. VÉRIFICATION DU SECRET AU CHARGEMENT DE CHAQUE PAGE
+    // ---------------------------------------------------------
+    if (localStorage.getItem('mysticUnlocked') === 'true') {
+        $('body').addClass('mystic-unlocked');
+        initStardust(); // On génère les étoiles
+    }
 
-    for (let i = 0; i < starCount; i++) {
-        const size = Math.random() * 3 + 1 + 'px';
-        const x = Math.random() * 100 + '%';
-        const y = Math.random() * 100 + '%';
-        const duration = Math.random() * 3 + 2 + 's';
-        const delay = Math.random() * 5 + 's';
-
-        const star = $('<div class="star"></div>').css({
-            width: size,
-            height: size,
-            left: x,
-            top: y,
-            '--duration': duration,
-            'animation-delay': delay
-        });
-
-        container.append(star);
+    // ---------------------------------------------------------
+    // 2. L'ANIMATION D'OUVERTURE (Page Legend uniquement)
+    // ---------------------------------------------------------
+    if ($('body').data('page') === 'legend') {
+        // Le rideau commence fermé (écran noir)
+        $('#mystic-reveal').addClass('closed');
+        
+        // On l'ouvre doucement après un bref instant
+        setTimeout(() => {
+            $('#mystic-reveal').removeClass('closed');
+        }, 100); 
     }
 });
+
+// ---------------------------------------------------------
+// 3. LA MÉCANIQUE DU RIDEAU ET DE SAUVEGARDE (Page Cache)
+// ---------------------------------------------------------
+function activateMysticTransition() {
+    // 1. Activer le rideau de fermeture
+    $('#mystic-overlay').addClass('active');
+
+    // 2. LA MAGIE : On grave dans le navigateur que le joueur a réussi
+    localStorage.setItem('mysticUnlocked', 'true');
+
+    // 3. Redirection vers la Legend après 2 secondes (le temps que ça devienne noir)
+    setTimeout(function() {
+        window.location.href = 'legend.html';
+    }, 2000);
+}
+
+// ---------------------------------------------------------
+// 4. LE GÉNÉRATEUR DE POUSSIÈRE D'ÉTOILES
+// ---------------------------------------------------------
+function initStardust() {
+    // On cherche toutes les boîtes principales du site
+    $('.window-box').each(function() {
+        
+        // On injecte le conteneur d'étoiles s'il n'y est pas déjà
+        if ($(this).find('.stardust-container').length === 0) {
+            $(this).prepend('<div class="stardust-container"></div>');
+        }
+        
+        const container = $(this).find('.stardust-container');
+        const boxHeight = $(this).innerHeight() || 500;
+        
+        // Plus la boîte est grande, plus on met d'étoiles (ex: 1 étoile tous les 25px)
+        const starCount = Math.floor(boxHeight / 25); 
+
+        for (let i = 0; i < starCount; i++) {
+            const size = Math.random() * 2 + 1 + 'px';
+            const star = $('<div class="star"></div>').css({
+                width: size, 
+                height: size,
+                left: Math.random() * 100 + '%', 
+                top: Math.random() * 100 + '%',
+                '--duration': (Math.random() * 3 + 2) + 's',
+                'animation-delay': (Math.random() * 5) + 's'
+            });
+            container.append(star);
+        }
+    });
+}
