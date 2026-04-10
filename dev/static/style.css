@@ -1024,30 +1024,33 @@ body[data-page="cache"].show-deco .app-footer {
     text-shadow: 0 0 8px var(--main-color);
 }
 
+/* --- SIMPLE MYSTIC GATE --- */
 #mystic-gate {
     position: fixed;
     top: 0; left: 0;
     width: 100vw; height: 100vh;
     background: #000;
     z-index: 10000;
-    /* Crucial : ignore la souris par défaut pour laisser cliquer les mots */
-    pointer-events: none; 
-    opacity: 0;
-    /* Le noir couvre tout le champ (cercle à 150%) */
-    clip-path: circle(150% at 50% 50%);
-    transition: opacity 0.8s ease, clip-path 1.5s ease-in-out;
+    display: none; /* Caché par défaut */
+    cursor: pointer; /* Indique qu'on peut cliquer */
+    transition: opacity 1s ease;
 }
 
-/* Étape 1 : On devient noir sur la page Cache */
+/* Quand le rideau est actif */
 #mystic-gate.active {
+    display: block;
     opacity: 1;
-    pointer-events: all; /* Bloque les clics pendant la transition */
 }
 
-/* Étape 2 : L'œil s'ouvre sur la page Legend */
-/* On réduit le cercle de noir vers le centre pour révéler ce qu'il y a derrière */
-#mystic-gate.reveal {
-    clip-path: circle(0% at 50% 50%);
+/* Message optionnel pour dire de cliquer (si tu veux) */
+#mystic-gate::after {
+    content: "Cliquez pour révéler";
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    color: rgba(255,255,255,0.3);
+    font-family: var(--font-main);
+    letter-spacing: 2px;
 }
 
 
