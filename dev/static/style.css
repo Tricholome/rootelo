@@ -1027,6 +1027,10 @@ body[data-page="cache"].show-deco .app-footer {
     pointer-events: none;
 }
 
+body.mystic {
+    --main-color: var(--color-stag);
+}
+
 .mystic-section {
     display: none;
     opacity: 0;
