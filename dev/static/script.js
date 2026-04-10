@@ -207,30 +207,42 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // Cipher
-let sequence = [];
-const targetSequence = ['roots', 'quiet'];
+// On définit la séquence de mots attendue
+const secretSequence = ['roots', 'quiet'];
+let userProgress = [];
 
 $('.cipher').on('click', function() {
-    const word = $(this).data('word');
+    // 1. Récupérer le mot stocké dans le data-word du span cliqué
+    const clickedWord = $(this).data('word');
     
-    // On ajoute le mot au clic
-    sequence.push(word);
-    
-    // Est-ce que le dernier mot cliqué est le bon à ce stade de la séquence ?
-    const currentIndex = sequence.length - 1;
-    if (sequence[currentIndex] !== targetSequence[currentIndex]) {
-        // MAUVAIS ORDRE : On réinitialise tout
-        sequence = [];
-        $(this).css('color', '#E55555'); // Petit flash rouge (couleur Fox)
-        setTimeout(() => $(this).css('color', ''), 500);
-        console.log("Séquence réinitialisée");
-    } else {
-        // BON MOT : On le met en surbrillance (Stag Purple)
-        $(this).css('color', '#A352F4');
+    // 2. Vérifier si ce mot correspond au prochain mot attendu dans la séquence
+    if (clickedWord === secretSequence[userProgress.length]) {
         
-        // SÉQUENCE COMPLÈTE ?
-        if (sequence.length === targetSequence.length) {
-            window.location.href = 'legend.html';
+        // BON MOT : On progresse
+        userProgress.push(clickedWord);
+        $(this).addClass('active-cipher');
+
+        // 3. Si la séquence est complète
+        if (userProgress.length === secretSequence.length) {
+            activateMysticTransition();
         }
+    } else {
+        // MAUVAIS MOT : On réinitialise tout
+        userProgress = [];
+        $('.cipher').removeClass('active-cipher');
+        
+        // Petit feedback visuel d'erreur (optionnel)
+        $(this).css('color', '#ff4444');
+        setTimeout(() => $(this).css('color', ''), 500);
     }
 });
+
+function activateMysticTransition() {
+    // Activer le rideau (Overlay) via la classe CSS
+    $('#mystic-overlay').addClass('active');
+
+    // Redirection vers la page Legend après la fin de la transition (1.5s)
+    setTimeout(function() {
+        window.location.href = 'legend.html';
+    }, 2000); // 2 secondes pour laisser le temps d'apprécier le noir
+}
