@@ -226,6 +226,27 @@ document.addEventListener('DOMContentLoaded', () => {
 			if (descEl) descEl.textContent = "The watcher finally speaks... The forest remembers your name.";
 		}
 		
+		const nav = document.querySelector('nav');
+		// On vérifie si l'onglet n'existe pas déjà pour éviter les doublons
+		if (nav && !document.getElementById('nav-mystic')) {
+			const mysticLink = document.createElement('a');
+			mysticLink.id = 'nav-mystic';
+			mysticLink.href = 'cache.html'; // Lien vers la page secrète
+			mysticLink.textContent = 'The Legend';
+			mysticLink.className = 'mystic-nav-item'; // Pour le styliser en CSS
+			
+			// Si on est déjà sur la page cache, on lui met la classe active
+			if (document.body.getAttribute('data-page') === 'cache') {
+				mysticLink.classList.add('active');
+				
+				// On cache l'ancien lien "Undergrowth" pour ne pas avoir de doublon
+				const oldLink = Array.from(nav.querySelectorAll('a')).find(a => a.textContent === 'Undergrowth');
+				if (oldLink) oldLink.style.display = 'none';
+			}
+
+			nav.appendChild(mysticLink);
+		}
+		
 		document.title = "The Legend • Rootelo";
 	};
 
