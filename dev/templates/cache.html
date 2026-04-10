@@ -16,18 +16,27 @@
         <p>You've followed the roots to their source. The watcher finally speaks...</p>
 		
 		<table class="k-table">
+			{% for tier_id, label, elo, desc in [
+				('stag', 'Stag', '1600', 'The Legend'),
+				('bird', 'Bird', '1500', 'The Grandmasters'),
+				('fox', 'Fox', '1400', 'The Cunning Tacticians'),
+				('rabbit', 'Rabbit', '1300', 'The Agile Contenders'),
+				('mouse', 'Mouse', '1200', 'The Steady Foragers'),
+				('squirrel', 'Squirrel', '1000', 'The Hapless Stragglers')
+			] %}
 			<tr>
-				<td><strong>Stag</strong></td>
+				<td><strong>{{ label }}</strong></td>
 				<td>
-					<a href="javascript:void(0)" onclick="openTierModal('stag')" class="tier-anchor-link">
+					<a href="javascript:void(0)" onclick="openTierModal('{{ tier_id }}')" class="tier-anchor-link">
 						<div class="tier-icon-container">
-							<img src="{{ config.assets.icons['stag'] }}" alt="stag">
+							<img src="{{ config.assets.icons[tier_id] }}" alt="{{ tier_id }}">
 						</div>
 					</a>
 				</td>
-				<td class="k-val">Elo &ge; 1600</td>
-				<td>The Legend</td>
+				<td class="k-val">Elo &ge; {{ elo }}</td>
+				<td>{{ desc }}</td>
 			</tr>
+			{% endfor %}
 		</table>
 		
     </div>
