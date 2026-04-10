@@ -246,3 +246,28 @@ function activateMysticTransition() {
         window.location.href = 'legend.html';
     }, 2000); // 2 secondes pour laisser le temps d'apprécier le noir
 }
+
+// À mettre dans un bloc <script> sur la page de destination
+$(document).ready(function() {
+    const container = $('#stardust');
+    const starCount = 40; // Nombre de points scintillants
+
+    for (let i = 0; i < starCount; i++) {
+        const size = Math.random() * 3 + 1 + 'px';
+        const x = Math.random() * 100 + '%';
+        const y = Math.random() * 100 + '%';
+        const duration = Math.random() * 3 + 2 + 's';
+        const delay = Math.random() * 5 + 's';
+
+        const star = $('<div class="star"></div>').css({
+            width: size,
+            height: size,
+            left: x,
+            top: y,
+            '--duration': duration,
+            'animation-delay': delay
+        });
+
+        container.append(star);
+    }
+});
