@@ -1001,4 +1001,14 @@ body[data-page="cache"].show-deco .app-footer {
     transition: transform 0.1s;
 }
 
+/* --- 6. Cipher interaction --- */
+.cipher {
+    cursor: default; /* Pas de main de lien pour rester secret */
+    transition: color 0.4s ease;
+}
+
+.cipher:active {
+    transform: scale(0.98); /* Petit retour tactile au clic */
+}
+
 {% block extra_css %}{% endblock %}
