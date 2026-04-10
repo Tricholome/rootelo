@@ -210,38 +210,63 @@ document.addEventListener('DOMContentLoaded', () => {
    GESTION DU SECRET ET RIDEAU NOIR (VERSION SIMPLE)
    ========================================================= */
 
-// 1. La séquence
-const secretSequence = ['roots', 'quiet'];
-let userProgress = [];
+document.addEventListener('DOMContentLoaded', () => {
 
-$(document).on('click', '.cipher', function() {
-    const word = $(this).data('word');
-    
-    // Vérification du mot
-    if (word === secretSequence[userProgress.length]) {
-        userProgress.push(word);
-        $(this).addClass('active-cipher');
+    // --- TON CODE EXISTANT (Nut & Deco) ---
+    // (Laisse-le tel quel ici)
 
-        // SI GAGNÉ
-        if (userProgress.length === secretSequence.length) {
+    // --- 13. LOGIQUE MYSTIC ---
+    const secretSequence = ['roots', 'quiet'];
+    let userProgress = [];
+
+    // On écoute les clics sur les mots "cipher"
+    document.querySelectorAll('.cipher').forEach(el => {
+        el.addEventListener('click', () => {
+            const word = el.getAttribute('data-word');
             
-            // A. On affiche le rideau noir (transition)
-            $('#mystic-gate').fadeIn(800, function() {
-                
-                // B. On active les étoiles et le mode secret
-                localStorage.setItem('mysticUnlocked', 'true');
-                $('body').addClass('mystic-unlocked');
-                
-                // C. On relance les étoiles si la fonction existe
-                if (typeof initStardust === "function") initStardust();
+            // Si le mot cliqué est le prochain dans la liste
+            if (word === secretSequence[userProgress.length]) {
+                userProgress.push(word);
+                el.classList.add('active-cipher');
 
-                // D. On retire le rideau noir doucement
-                $('#mystic-gate').fadeOut(1000);
-            });
-        }
-    } else {
-        userProgress = [];
-        $('.cipher').removeClass('active-cipher');
+                // GAGNÉ : On lance la transition
+                if (userProgress.length === secretSequence.length) {
+                    const gate = document.getElementById('mystic-gate');
+                    
+                    // On affiche le rideau noir
+                    $(gate).fadeIn(600, function() {
+                        // On ajoute la classe au body (ce qui affiche la section via le CSS)
+                        document.body.classList.add('mystic');
+                        localStorage.setItem('mysticUnlocked', 'true');
+                        
+                        // On allume les étoiles si la fonction existe
+                        if (typeof initStardust === "function") initStardust();
+
+                        // On retire le rideau
+                        $(gate).fadeOut(1000);
+                    });
+                }
+            } else {
+                // ERREUR : On recommence
+                userProgress = [];
+                document.querySelectorAll('.cipher').forEach(c => c.classList.remove('active-cipher'));
+            }
+        });
+    });
+
+    // PORTE DE SORTIE : Le clic sur "here" pour tout réinitialiser
+    const exitBtn = document.getElementById('leave-mystic');
+    if (exitBtn) {
+        exitBtn.addEventListener('click', () => {
+            localStorage.removeItem('mysticUnlocked');
+            location.reload(); // Un refresh remet tout à zéro proprement
+        });
+    }
+
+    // PERSISTANCE : Si on revient sur la page, on vérifie si c'est déjà débloqué
+    if (localStorage.getItem('mysticUnlocked') === 'true') {
+        document.body.classList.add('mystic');
+        if (typeof initStardust === "function") initStardust();
     }
 });
 
