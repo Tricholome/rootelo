@@ -1003,24 +1003,6 @@ body[data-page="cache"].show-deco .app-footer {
 
 /* --- 6. Mystic interaction (La phase de clic sur les mots) --- */
 
-#mystic-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: var(--bg-overlay-bottom); 
-    z-index: 2000; /* Plus haut que tout pour la fermeture */
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 1.5s ease-in-out;
-}
-
-#mystic-overlay.active {
-    opacity: 1;
-    pointer-events: all;
-}
-
 .cipher {
     display: inline-block;
     position: relative;
@@ -1039,33 +1021,40 @@ body[data-page="cache"].show-deco .app-footer {
     text-shadow: 0 0 8px var(--main-color);
 }
 
-/* --- 7. MYSTIC TRANSITION & STARDUST (La phase de révélation) --- */
-
-/* Le rideau d'ouverture (Effet d'œil) */
-#mystic-reveal {
+/* =========================================================================
+   --- 13. MYSTIC CONTENT ---
+   ========================================================================= */
+   
+#mystic-gate {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: var(--bg-overlay-bottom);
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background: var(--bg-overlay-bottom); /* Noir profond */
     z-index: 10000;
     pointer-events: none;
     
-    /* Correction : On le cache par défaut pour qu'il ne bloque rien */
-    display: none; 
-    clip-path: circle(0% at 50% 50%);
-    transition: clip-path 2s ease-in-out;
-}
-
-/* On l'affiche uniquement quand le JS lui donne la classe .active */
-#mystic-reveal.active {
-    display: block;
-}
-
-/* L'animation d'ouverture */
-#mystic-reveal.open {
+    /* État initial : invisible et grand ouvert */
+    opacity: 0;
     clip-path: circle(150% at 50% 50%);
+    transition: opacity 1.5s ease-in, clip-path 2s ease-in-out;
+    display: none;
+}
+
+/* Étape 1 : Fermeture (sur cache.html) */
+#mystic-gate.closing {
+    display: block;
+    opacity: 1;
+}
+
+/* Étape 2 : Ouverture (sur legend.html) */
+#mystic-gate.opening {
+    display: block;
+    opacity: 1;
+    clip-path: circle(0% at 50% 50%); /* On commence fermé par un point */
+}
+
+#mystic-gate.reveal {
+    clip-path: circle(150% at 50% 50%); /* On ouvre le cercle */
 }
 
 /* Le conteneur d'étoiles interne aux window-box */
