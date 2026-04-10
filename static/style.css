@@ -1004,18 +1004,39 @@ body[data-page="cache"].show-deco .app-footer {
 /* =========================================================================
    --- 13. MYSTIC CONTENT ---
    ========================================================================= */
-   
-#mystic-gate {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100vw; height: 100vh;
-    background: #000;
-    z-index: 10000;
-    display: none; /* Caché par défaut */
+
+.cipher {
+    cursor: pointer;
+    font-weight: var(--bold);
+    transition: color 0.3s ease;
 }
 
-.cipher { cursor: pointer; }
-.active-cipher { color: var(--main-color) !important; }
+.cipher.active-cipher {
+    color: var(--color-stag) !important;
+}
+
+#mystic-gate {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: var(--bg-container);
+    z-index: 1000;
+    display: none;
+    pointer-events: none;
+}
+
+.mystic-section {
+    display: none;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+}
+
+body.mystic .mystic-section {
+    display: block;
+    opacity: 1;
+}
 
 
 /* =========================================================================
