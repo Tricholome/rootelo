@@ -1073,7 +1073,6 @@ body[data-page="cache"].show-deco .app-footer {
     }
     50% { 
         opacity: 0.9; /* Plus d'opacité au pic */
-        transform: scale(1.2) translateY(-15px); /* Petit mouvement ascendant */
     }
 }
 
