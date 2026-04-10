@@ -210,28 +210,21 @@ document.addEventListener('DOMContentLoaded', () => {
    GESTION DU SECRET & TRANSITION
    ========================================================= */
 
+// --- LOGIQUE DES MOTS ---
 const secretSequence = ['roots', 'quiet'];
 let userProgress = [];
 
-// Détection des clics
 $('.cipher').on('click', function() {
-    const clickedWord = $(this).data('word');
-    
-    if (clickedWord === secretSequence[userProgress.length]) {
-        userProgress.push(clickedWord);
+    const word = $(this).data('word');
+    if (word === secretSequence[userProgress.length]) {
+        userProgress.push(word);
         $(this).addClass('active-cipher');
-
         if (userProgress.length === secretSequence.length) {
-            // SUCCESS : On prépare le passage
-            localStorage.setItem('mysticUnlocked', 'true');
             localStorage.setItem('justUnlocked', 'true');
-            
-            // On affiche le rideau noir (il est déjà à 0% de trou dans le CSS)
+            localStorage.setItem('mysticUnlocked', 'true');
+            // On lance le rideau noir
             $('#mystic-gate').addClass('active');
-
-            setTimeout(() => {
-                window.location.href = 'legend.html';
-            }, 1000);
+            setTimeout(() => { window.location.href = 'legend.html'; }, 1000);
         }
     } else {
         userProgress = [];
@@ -239,36 +232,27 @@ $('.cipher').on('click', function() {
     }
 });
 
-// Au chargement de la page
+// --- LOGIQUE DE CHARGEMENT ---
 $(document).ready(function() {
     const gate = $('#mystic-gate');
 
     if (localStorage.getItem('justUnlocked') === 'true') {
-        // On plaque le noir immédiatement
-        gate.addClass('active');
+        // 1. On plaque le noir immédiatement (œil plein)
+        gate.css('display', 'block').addClass('active');
 
-        // On vérifie si on est sur la page legend
-        // (Vérifie bien que l'URL contient 'legend')
+        // 2. Si on est sur Legend, on ouvre l'œil
         if (window.location.pathname.includes('legend')) {
             setTimeout(() => {
-                // On ouvre l'oeil
-                gate.addClass('reveal');
-
-                // On nettoie
+                gate.addClass('reveal'); // Le cercle de noir rétrécit à 0%
+                
                 setTimeout(() => {
-                    gate.fadeOut(1000, function() {
+                    gate.fadeOut(800, function() {
                         $(this).removeClass('active reveal');
                         localStorage.removeItem('justUnlocked');
                     });
-                }, 2000);
-            }, 500);
+                }, 1600);
+            }, 400);
         }
-    }
-    
-    // Étoiles persistantes
-    if (localStorage.getItem('mysticUnlocked') === 'true') {
-        $('body').addClass('mystic-unlocked');
-        if (typeof initStardust === "function") initStardust();
     }
 });
 
