@@ -62,19 +62,21 @@
             'fox':      'assets/icons/fox_new.webp',
             'rabbit':   'assets/icons/rabbit_new.webp',
             'mouse':    'assets/icons/mouse_new.webp',
-            'squirrel': 'assets/icons/squirrel.webp'
+            'squirrel': 'assets/icons/squirrel.webp',
+			'stag': 	'assets/icons/stag.webp'
         },
         'decorations': {
             'index':   {'left': 'assets/images/leaderboard_img_left.webp', 'right': 'assets/images/leaderboard_img_right.webp'},
             'matches': {'left': 'assets/images/matches_img_left.webp',     'right': 'assets/images/matches_img_right.webp'},
             'trends':  {'left': 'assets/images/trends_img_left.webp',    'right': 'assets/images/trends_img_right.webp'},
             'about':   {'left': 'assets/images/about_img_left.webp',     'right': 'assets/images/about_img_right.webp'},
-            'cache':   {'left': 'assets/images/cache_img_left.webp',     'right': 'assets/images/cache_img_right.webp'}
+            'cache':   {'left': 'assets/images/cache_img_left.webp',     'right': 'assets/images/cache_img_right.webp'},
+			'legend':   {'left': 'assets/images/cache_img_left.webp',     'right': 'assets/images/cache_img_right.webp'}
         }
     }
 } %}
 
-{% set tier_mapping = {'index':'bird', 'matches':'fox', 'trends':'rabbit', 'about':'mouse', 'cache':'squirrel'} %}
+{% set tier_mapping = {'index':'bird', 'matches':'fox', 'trends':'rabbit', 'about':'mouse', 'cache':'squirrel', 'legend':'stag'} %}
 {% set current_tier = tier_mapping[page_id] if page_id in tier_mapping else 'default' %}
 {% set theme_color = config.colors.tiers[current_tier] %}
 {% set current_deco = config.assets.decorations[page_id] if page_id in config.assets.decorations else none %}
