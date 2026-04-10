@@ -1001,7 +1001,8 @@ body[data-page="cache"].show-deco .app-footer {
     transition: transform 0.1s;
 }
 
-/* --- 6. Mystic interaction --- */
+/* --- 6. Mystic interaction (La phase de clic sur les mots) --- */
+
 #mystic-overlay {
     position: fixed;
     top: 0;
@@ -1009,7 +1010,7 @@ body[data-page="cache"].show-deco .app-footer {
     width: 100%;
     height: 100%;
     background-color: var(--bg-overlay-bottom); 
-    z-index: 1000; 
+    z-index: 2000; /* Plus haut que tout pour la fermeture */
     opacity: 0;
     pointer-events: none;
     transition: opacity 1.5s ease-in-out;
@@ -1032,52 +1033,56 @@ body[data-page="cache"].show-deco .app-footer {
     color: var(--main-color) !important;
     text-shadow: 0 0 15px var(--main-color);
     font-weight: var(--bold);
-    z-index: 1001; 
 }
 
 .cipher:hover {
     text-shadow: 0 0 8px var(--main-color);
 }
 
-/* --- 7. MYSTIC TRANSITION & STARDUST --- */
+/* --- 7. MYSTIC TRANSITION & STARDUST (La phase de révélation) --- */
 
-/* Le rideau d'ouverture (clip-path crée un effet d'œil qui s'ouvre) */
+/* Le rideau d'ouverture (Effet d'œil) */
 #mystic-reveal {
     position: fixed;
-    top: 0; left: 0;
-    width: 100vw; height: 100vh;
-    background-color: var(--bg-overlay-bottom); /* Ton fond noir */
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: var(--bg-overlay-bottom);
     z-index: 10000;
     pointer-events: none;
-    clip-path: circle(150% at 50% 50%); /* Grand ouvert par défaut */
-    transition: clip-path 2s ease-in-out, opacity 2s ease-in-out;
-}
-
-/* État initial uniquement sur la page Legend (fermé au chargement) */
-body[data-page="legend"] #mystic-reveal.closed {
+    
+    /* Correction : On le cache par défaut pour qu'il ne bloque rien */
+    display: none; 
     clip-path: circle(0% at 50% 50%);
-    opacity: 1;
+    transition: clip-path 2s ease-in-out;
 }
 
-/* Le conteneur d'étoiles (inséré par JS dans les window-box) */
+/* On l'affiche uniquement quand le JS lui donne la classe .active */
+#mystic-reveal.active {
+    display: block;
+}
+
+/* L'animation d'ouverture */
+#mystic-reveal.open {
+    clip-path: circle(150% at 50% 50%);
+}
+
+/* Le conteneur d'étoiles interne aux window-box */
 .stardust-container {
-    display: none; /* Caché pour les visiteurs normaux */
     position: absolute;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     pointer-events: none;
     overflow: hidden;
-    z-index: 1; /* Derrière le texte, devant le fond de la box */
+    z-index: 1; /* Derrière le texte (10) mais devant le fond de la box */
 }
 
-/* Sécurité pour s'assurer que les étoiles ne sortent pas des boîtes */
+/* On s'assure que les window-box acceptent le positionnement absolu des étoiles */
 .window-box {
     position: relative; 
-}
-
-/* On n'affiche les étoiles que si le site est en mode "débloqué" */
-body.mystic-unlocked .stardust-container {
-    display: block;
 }
 
 /* Le design des particules */
@@ -1091,8 +1096,14 @@ body.mystic-unlocked .stardust-container {
 }
 
 @keyframes twinkle {
-    0%, 100% { opacity: 0; transform: scale(0.5); }
-    50% { opacity: 1; transform: scale(1); }
+    0%, 100% { 
+        opacity: 0; 
+        transform: scale(0.5); 
+    }
+    50% { 
+        opacity: 0.8; 
+        transform: scale(1); 
+    }
 }
 
 {% block extra_css %}{% endblock %}
