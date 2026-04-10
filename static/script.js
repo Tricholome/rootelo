@@ -207,25 +207,23 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 /* =========================================================
-   SÉQUENCE SECRÈTE & TRANSITION (Page Cache)
+   1. LA SÉQUENCE DES CIPHERS (Page Cache)
    ========================================================= */
-
 const secretSequence = ['roots', 'quiet'];
 let userProgress = [];
 
 $('.cipher').on('click', function() {
     const clickedWord = $(this).data('word');
     
-    // Vérification du mot
     if (clickedWord === secretSequence[userProgress.length]) {
         userProgress.push(clickedWord);
         $(this).addClass('active-cipher');
 
         if (userProgress.length === secretSequence.length) {
+            // C'est ici qu'on appelle la nouvelle fonction de sortie
             activateMysticTransition();
         }
     } else {
-        // Erreur : Réinitialisation
         userProgress = [];
         $('.cipher').removeClass('active-cipher');
         $(this).css('color', '#ff4444');
@@ -233,54 +231,67 @@ $('.cipher').on('click', function() {
     }
 });
 
+/* =========================================================
+   2. LA SORTIE : FERMETURE DU RIDEAU
+   ========================================================= */
 function activateMysticTransition() {
-    // 1. On lance le rideau noir de fermeture
-    $('#mystic-overlay').addClass('active');
+    const gate = $('#mystic-gate');
+    
+    // On enregistre les flags dans le navigateur
+    localStorage.setItem('mysticUnlocked', 'true'); // Pour les étoiles partout
+    localStorage.setItem('justUnlocked', 'true');   // Pour l'oeil sur la page suivante
 
-    // 2. On enregistre le succès pour tout le site
-    localStorage.setItem('mysticUnlocked', 'true');
-    // On marque qu'on vient juste de débloquer pour l'effet d'oeil sur la page suivante
-    localStorage.setItem('justUnlocked', 'true');
+    // On affiche le div et on lance l'opacité (classe .closing dans ton CSS)
+    gate.addClass('closing'); 
 
-    // 3. Redirection
+    // On attend la fin du fondu (1.5s dans ton CSS) pour changer de page
     setTimeout(function() {
         window.location.href = 'legend.html';
-    }, 2000);
+    }, 1600);
 }
 
 /* =========================================================
-   INITIALISATION GLOBALE (Toutes les pages)
+   3. L'ENTRÉE : OUVERTURE DE L'OEIL (Au chargement)
    ========================================================= */
-
 $(document).ready(function() {
-    
-    // --- A. GESTION DES ÉTOILES PERSISTANTES ---
-    if (localStorage.getItem('mysticUnlocked') === 'true') {
-        $('body').addClass('mystic-unlocked');
-        initStardust(); // On remplit les window-box d'étoiles
+    const gate = $('#mystic-gate');
+
+    // On vérifie si on vient de débloquer le secret
+    if (localStorage.getItem('justUnlocked') === 'true') {
+        
+        // ÉTAPE A : On force l'écran noir IMMEDIATEMENT
+        // .opening doit avoir opacity: 1 et clip-path: circle(0%) dans ton CSS
+        gate.addClass('opening'); 
+
+        // ÉTAPE B : Si on est sur la page Legend, on ouvre l'oeil
+        if ($('body').data('page') === 'legend') {
+            
+            // Petit délai pour s'assurer que le rendu de la page est prêt derrière le noir
+            setTimeout(() => {
+                gate.addClass('reveal'); // Lance l'animation clip-path vers 150%
+
+                // ÉTAPE C : Une fois l'oeil ouvert, on nettoie
+                setTimeout(() => {
+                    gate.fadeOut(1000, function() {
+                        // On retire les flags et classes pour libérer le site
+                        $(this).removeClass('opening reveal closing').hide();
+                        localStorage.removeItem('justUnlocked');
+                    });
+                }, 2100); // Correspond à la durée de transition du clip-path
+            }, 500);
+            
+        } else {
+            // Si l'utilisateur a débloqué le secret mais n'est pas sur Legend
+            // on ne laisse pas l'écran noir indéfiniment
+            gate.hide();
+            localStorage.removeItem('justUnlocked');
+        }
     }
 
-    // --- B. EFFET D'OUVERTURE "ŒIL" (Page Legend uniquement) ---
-    // On vérifie si on est sur legend ET si on vient de réussir l'énigme
-    if ($('body').data('page') === 'legend' && localStorage.getItem('justUnlocked') === 'true') {
-        const reveal = $('#mystic-reveal');
-        
-        // 1. On rend le rideau visible (il est fermé par défaut à 0%)
-        reveal.addClass('active');
-        
-        // 2. On lance l'ouverture du cercle après un mini délai
-        setTimeout(() => {
-            reveal.addClass('open');
-            
-            // 3. Une fois l'animation finie (2s), on nettoie
-            setTimeout(() => {
-                reveal.fadeOut(1000, function() {
-                    $(this).removeClass('active open');
-                });
-                // On supprime le flag pour ne pas revoir l'oeil au prochain refresh
-                localStorage.removeItem('justUnlocked');
-            }, 2000);
-        }, 100);
+    // Gestion du mode "Etoiles" permanent
+    if (localStorage.getItem('mysticUnlocked') === 'true') {
+        $('body').addClass('mystic-unlocked');
+        if (typeof initStardust === "function") initStardust();
     }
 });
 
