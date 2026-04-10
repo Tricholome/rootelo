@@ -205,3 +205,32 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 	
 });
+
+// Cipher
+let sequence = [];
+const targetSequence = ['roots', 'quiet'];
+
+$('.cipher').on('click', function() {
+    const word = $(this).data('word');
+    
+    // On ajoute le mot au clic
+    sequence.push(word);
+    
+    // Est-ce que le dernier mot cliqué est le bon à ce stade de la séquence ?
+    const currentIndex = sequence.length - 1;
+    if (sequence[currentIndex] !== targetSequence[currentIndex]) {
+        // MAUVAIS ORDRE : On réinitialise tout
+        sequence = [];
+        $(this).css('color', '#E55555'); // Petit flash rouge (couleur Fox)
+        setTimeout(() => $(this).css('color', ''), 500);
+        console.log("Séquence réinitialisée");
+    } else {
+        // BON MOT : On le met en surbrillance (Stag Purple)
+        $(this).css('color', '#A352F4');
+        
+        // SÉQUENCE COMPLÈTE ?
+        if (sequence.length === targetSequence.length) {
+            window.location.href = 'legend.html';
+        }
+    }
+});
