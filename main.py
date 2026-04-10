@@ -451,4 +451,10 @@ render_page(
     description="A sanctuary for the critters who&nbsp;never&nbsp;sought&nbsp;a&nbsp;crown."
 )
 
+render_page(
+    "legend.html", "legend.html", title="Mystic Glade • Rootelo", page_id="legend",
+    is_archive=False, has_seasons=False, page_heading="Mystic Glade",
+    description="Silent roots keep a quiet crown."
+)
+
 print("✨ Website generated successfully!")
