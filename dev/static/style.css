@@ -1029,32 +1029,25 @@ body[data-page="cache"].show-deco .app-footer {
     position: fixed;
     top: 0; left: 0;
     width: 100vw; height: 100vh;
-    background: var(--bg-overlay-bottom); /* Noir profond */
+    background: #000; /* Noir pur pour être sûr */
     z-index: 10000;
     pointer-events: none;
-    
-    /* État initial : invisible et grand ouvert */
+    display: none; /* Cache le rideau sur les pages normales */
     opacity: 0;
-    clip-path: circle(150% at 50% 50%);
-    transition: opacity 1.5s ease-in, clip-path 2s ease-in-out;
-    display: none;
+    /* On prépare l'œil (le trou est à 0% donc tout est noir) */
+    clip-path: circle(0% at 50% 50%);
+    transition: clip-path 2s ease-in-out;
 }
 
-/* Étape 1 : Fermeture (sur cache.html) */
-#mystic-gate.closing {
-    display: block;
-    opacity: 1;
+/* LA RÈGLE CRUCIALE : Si le body a cette classe, le rideau sature l'écran */
+body.is-revealing #mystic-gate {
+    display: block !important;
+    opacity: 1 !important;
 }
 
-/* Étape 2 : Ouverture (sur legend.html) */
-#mystic-gate.opening {
-    display: block;
-    opacity: 1;
-    clip-path: circle(0% at 50% 50%); /* On commence fermé par un point */
-}
-
+/* L'animation qui crée le trou (l'œil) */
 #mystic-gate.reveal {
-    clip-path: circle(150% at 50% 50%); /* On ouvre le cercle */
+    clip-path: circle(150% at 50% 50%);
 }
 
 /* Le conteneur d'étoiles interne aux window-box */
