@@ -1004,6 +1004,25 @@ body[data-page="cache"].show-deco .app-footer {
 /* =========================================================================
    --- 13. MYSTIC CONTENT ---
    ========================================================================= */
+   
+.cipher {
+    display: inline-block;
+    position: relative;
+    cursor: default;
+    transition: all 0.4s ease;
+    z-index: 10; 
+}
+
+.cipher.active-cipher {
+    color: var(--main-color) !important;
+    text-shadow: 0 0 15px var(--main-color);
+    font-weight: var(--bold);
+    z-index: 1001; 
+}
+
+.cipher:hover {
+    text-shadow: 0 0 8px var(--main-color);
+}
 
 #mystic-gate {
     position: fixed;
@@ -1011,25 +1030,24 @@ body[data-page="cache"].show-deco .app-footer {
     width: 100vw; height: 100vh;
     background: #000;
     z-index: 10000;
-    pointer-events: none;
-    opacity: 0; /* Invisible par défaut */
-    display: none;
-    /* L'œil est fermé (0%) au centre */
-    clip-path: circle(0% at 50% 50%);
+    /* Crucial : ignore la souris par défaut pour laisser cliquer les mots */
+    pointer-events: none; 
+    opacity: 0;
+    /* Le noir couvre tout le champ (cercle à 150%) */
+    clip-path: circle(150% at 50% 50%);
     transition: opacity 0.8s ease, clip-path 1.5s ease-in-out;
 }
 
-/* ÉTAT FERMÉ (Pendant la transition) */
+/* Étape 1 : On devient noir sur la page Cache */
 #mystic-gate.active {
-    display: block;
     opacity: 1;
-    clip-path: circle(0% at 50% 50%);
+    pointer-events: all; /* Bloque les clics pendant la transition */
 }
 
-/* ÉTAT OUVERT (Révélation) */
+/* Étape 2 : L'œil s'ouvre sur la page Legend */
+/* On réduit le cercle de noir vers le centre pour révéler ce qu'il y a derrière */
 #mystic-gate.reveal {
-    opacity: 1;
-    clip-path: circle(150% at 50% 50%);
+    clip-path: circle(0% at 50% 50%);
 }
 
 
