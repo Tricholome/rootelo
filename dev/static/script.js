@@ -222,10 +222,10 @@ document.addEventListener('DOMContentLoaded', () => {
 			if (intro) {
 				const titleEl = intro.querySelector('h2');
 				const descEl = intro.querySelector('p');
-				if (titleEl) titleEl.textContent = "The Legend";
-				if (descEl) descEl.textContent = "The watcher finally speaks...";
+				if (titleEl) titleEl.textContent = "Mystic Sward";
+				if (descEl) descEl.textContent = "Silent roots keep a quiet crown.";
 			}
-			document.title = "The Legend • Rootelo";
+			document.title = "Mystic Sward • Rootelo";
 		}
 
 		const nav = document.querySelector('nav');
@@ -233,7 +233,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			const mysticLink = document.createElement('a');
 			mysticLink.id = 'nav-mystic';
 			mysticLink.href = 'cache.html'; 
-			mysticLink.textContent = 'The Legend';
+			mysticLink.textContent = 'Mystic Sward';
 			
 			if (document.body.getAttribute('data-page') === 'cache') {
 				mysticLink.className = 'active';
