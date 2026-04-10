@@ -1,11 +1,5 @@
 
 
-
-
-
-
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -23,69 +17,118 @@
     
     <style>
         :root {
-			/* --- 1. LAYOUT CONFIG --- */
-			--window-gap: 25px;           
+			/* --- 1. LAYOUT CONFIG (Automatic loop) --- */
+			
 			--window-max-width: clamp(600px, 60vw, 1600px);
+			
+			--window-padding: clamp(20px, 2.5vw, 40px);
+			
+			--window-gap: 20px;
+			
 
-			/* --- 2. TYPOGRAPHY --- */
+			/* --- 2. TYPOGRAPHY (Automatic loop) --- */
+			
 			--font-title: 'Fraunces', serif;
+			
 			--font-ui: 'Inter', sans-serif;
-			--normal: 400;
-			--medium: 600;
+			
+			--font-mono: 'JetBrains Mono', monospace;
+			
 			--bold: 900;
 			
-			/* --- 3. GLASS SYSTEM --- */
-			--glass-bg: #1c1c1cd9; 
-			--glass-border: rgba(255, 255, 255, 0.0.08);
-			--glass-shadow: 0 10px 30px rgba(0,0,0,0.5);
-	
-            /* --- 4. UI FOUNDATION --- */
+			--medium: 600;
+			
+			--normal: 400;
+			
+			--size-xs: 0.75rem;
+			
+			--size-sm: 0.85rem;
+			
+			--size-modal: 0.90rem;
+			
+			--size-base: 0.95rem;
+			
+			--size-md: 1.2rem;
+			
+			--size-lg: 2.0rem;
+			
+			--size-xl: 2.5rem;
+			
+			--size-display: 2.8rem;
+			
+			--track-slight: 0.5px;
+			
+			--track-wide: 1px;
+			
+			--track-display: 4px;
+			
+
+			/* --- 3. GLOBAL UI (Automatic loop) --- */
+			
 			--bg-overlay-top: rgba(0, 0, 0, 0.1);
+			
 			--bg-overlay-bottom: rgba(0, 0, 0, 0.8);
+			
 			--bg-container: #1c1c1c;
-			--bg-surface: rgba(255, 255, 255, 0.03); 
+			
+			--bg-surface: rgba(255, 255, 255, 0.03);
+			
 			--bg-hover: rgba(255, 255, 255, 0.08);
+			
 			--border-soft: #333333;
 			
-			/* --- 5. TEXT COLORS --- */
+			--border-dark: rgba(0, 0, 0, 0.4);
+			
+			--border-light: rgba(255, 255, 255, 0.05);
+			
+			--glass-bg: #1c1c1cd9;
+			
+			--glass-border: rgba(255, 255, 255, 0.08);
+			
+			--glass-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+			
 			--text-bright: #ffffff;
-            --text-main: #E0E0E0; 
-            --text-muted: #A0A0A0;
-            --text-dark: #111111; 
-            
-			/* --- 6. TIER DYNAMICS --- */
-            
-            --color-bird: #7AB5E0;
-            --color-bird-bg: #7AB5E014;
-            
-            --color-fox: #E55555;
-            --color-fox-bg: #E5555514;
-            
-            --color-rabbit: #F2C14E;
-            --color-rabbit-bg: #F2C14E14;
-            
-            --color-mouse: #F49E52;
-            --color-mouse-bg: #F49E5214;
-            
-            --color-squirrel: #94C160;
-            --color-squirrel-bg: #94C16014;
-            
-            --color-default: #7A7347;
-            --color-default-bg: #7A734714;
-            
-            --color-default: #7A7347;
 			
-			/* --- 7. DATATABLES SPECIFIC (LES NOUVELLES COULEURS) --- */
+			--text-main: #E0E0E0;
+			
+			--text-muted: #A0A0A0;
+			
+			--text-dark: #111111;
+			
 			--dt-table-bg: rgba(0, 0, 0, 0.15);
+			
 			--dt-header-bg: rgba(0, 0, 0, 0.25);
+			
 			--dt-row-border: rgba(255, 255, 255, 0.03);
+			
 			--dt-row-hover: rgba(255, 255, 255, 0.07);
+			
 			--dt-input-bg: rgba(0, 0, 0, 0.2);
-        }
-		body {
 			
-				--main-color: var(--color-fox);
+
+			/* --- 4. TIER DYNAMICS (Loop with logic) --- */
 			
+			--color-bird: #7AB5E0;
+			--color-bird-bg: #7AB5E014;
+			
+			--color-fox: #E55555;
+			--color-fox-bg: #E5555514;
+			
+			--color-rabbit: #F2C14E;
+			--color-rabbit-bg: #F2C14E14;
+			
+			--color-mouse: #F49E52;
+			--color-mouse-bg: #F49E5214;
+			
+			--color-squirrel: #94C160;
+			--color-squirrel-bg: #94C16014;
+			
+			--color-default: #7A7347;
+			--color-default-bg: #7A734714;
+			
+
+			/* --- 5. PAGE THEME --- */
+			--main-color: #E55555;
 		}
     </style>
 	
@@ -101,18 +144,19 @@
 
 <body data-page="matches">
     
-    <div class="container" style="position: relative; overflow: visible;">
-        
+    <div class="container">
+	
         <header class="app-banner window-box">
+		
             <div class="banner-container">
                 <div class="banner-icons left">
                     <a href="javascript:void(0)" onclick="openTierModal('bird')" class="tooltip-link js-double-tap">
                         <img src="assets/icons/bird_new.webp" alt="Bird">
-                        <span class="tooltip-text"><strong style="color: var(--color-bird);">Bird (1500+)</strong> — The Grandmasters</span>
+                        <span class="tooltip-text"><strong class="tier-bird">Bird (1500+)</strong> — The Grandmasters</span>
                     </a>
                     <a href="javascript:void(0)" onclick="openTierModal('fox')" class="tooltip-link js-double-tap">
                         <img src="assets/icons/fox_new.webp" alt="Fox">
-                        <span class="tooltip-text"><strong style="color: var(--color-fox);">Fox (1400+)</strong> — The Cunning Tacticians</span>
+                        <span class="tooltip-text"><strong class="tier-fox">Fox (1400+)</strong> — The Cunning Tacticians</span>
                     </a>
                 </div>
                 <div class="banner-center">
@@ -122,11 +166,11 @@
                 <div class="banner-icons right">
                     <a href="javascript:void(0)" onclick="openTierModal('rabbit')" class="tooltip-link js-double-tap">
                         <img src="assets/icons/rabbit_new.webp" alt="Rabbit">
-                        <span class="tooltip-text"><strong style="color: var(--color-rabbit);">Rabbit (1300+)</strong> — The Agile Contenders</span>
+                        <span class="tooltip-text"><strong class="tier-rabbit">Rabbit (1300+)</strong> — The Agile Contenders</span>
                     </a>
                     <a href="javascript:void(0)" onclick="openTierModal('mouse')" class="tooltip-link js-double-tap">
                         <img src="assets/icons/mouse_new.webp" alt="Mouse">
-                        <span class="tooltip-text"><strong style="color: var(--color-mouse);">Mouse (1200+)</strong> — The Steady Foragers</span>
+                        <span class="tooltip-text"><strong class="tier-mouse">Mouse (1200+)</strong> — The Steady Foragers</span>
                     </a>
                 </div>
             </div>
@@ -159,13 +203,14 @@
 					<a href="about.html" class="">Codex</a>
 				
 			</nav>
+			
         </header>
         
         <div class="screen-deco right-deco">
-            
-                <img src="assets/images/matches_img_right.webp" alt="Decoration Right">
-            
-        </div>
+			
+				<img src="assets/images/matches_img_right.webp" alt="Decoration Right">
+			
+		</div>
 
         <div class="app-viewport window-box">
             <header class="page-intro">
@@ -185,7 +230,7 @@
 					</a>
 				</div>
 				
-				<p>Top 100 games ranked by total Elo. Click a Game ID for match details.</p>
+				<p>Top 100 games ranked by total Elo. Click&nbsp;a&nbsp;Game&nbsp;ID&nbsp;for&nbsp;match&nbsp;details.</p>
 			</header>
 			
             <main>
@@ -200,1519 +245,1519 @@
                 <th>Game ID</th>
             </tr>
         </thead>
-        <tbody>
-            
-            <tr>
-                <td>1</td>
-                <td class="text-bold text-main">5756</td>
-                <td>2026-04-05</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">Emperia</span>, 
-                    <span class="text-muted">Led_Slash, Antiproject, Bapgo</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46335/" target="_blank" class="match-id-link">
-                        46335 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>2</td>
-                <td class="text-bold text-main">5512</td>
-                <td>2026-04-08</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">ShuShuBana</span>, 
-                    <span class="text-muted">Emperia, Nefkano, ZachB</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46264/" target="_blank" class="match-id-link">
-                        46264 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>3</td>
-                <td class="text-bold text-main">5502</td>
-                <td>2026-04-04</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">matemato</span>, 
-                    <span class="text-muted">VanKaiserman, LucianTheFak, NadtyLite</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46308/" target="_blank" class="match-id-link">
-                        46308 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>4</td>
-                <td class="text-bold text-main">5412</td>
-                <td>2026-04-04</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">LucianTheFak</span>, 
-                    <span class="text-muted">Seiza, Nefkano, cliuless</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46309/" target="_blank" class="match-id-link">
-                        46309 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>5</td>
-                <td class="text-bold text-main">5366</td>
-                <td>2026-04-08</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">Led_Slash</span>, 
-                    <span class="text-muted">Kmahussier, Dramsss, DemaRogue</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46384/" target="_blank" class="match-id-link">
-                        46384 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>6</td>
-                <td class="text-bold text-main">5341</td>
-                <td>2026-04-03</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">kaiser</span>, 
-                    <span class="text-muted">Tad604, Schkitz, Mossfusion</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46285/" target="_blank" class="match-id-link">
-                        46285 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>7</td>
-                <td class="text-bold text-main">5319</td>
-                <td>2026-04-05</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">Antiproject</span>, 
-                    <span class="text-muted">NadtyLite, LucianTheFak, Schkitz</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46333/" target="_blank" class="match-id-link">
-                        46333 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>8</td>
-                <td class="text-bold text-main">5308</td>
-                <td>2026-04-06</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">Seiza</span>, 
-                    <span class="text-muted">Nefkano, NadtyLite, MylesMoose</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46340/" target="_blank" class="match-id-link">
-                        46340 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>9</td>
-                <td class="text-bold text-main">5303</td>
-                <td>2026-04-07</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">LutherStr</span>, 
-                    <span class="text-muted">LucianTheFak, NadtyLite, cliuless</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46368/" target="_blank" class="match-id-link">
-                        46368 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>10</td>
-                <td class="text-bold text-main">5301</td>
-                <td>2026-04-05</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">matemato</span>, 
-                    <span class="text-muted">kaiser, Youdge, cliuless</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46327/" target="_blank" class="match-id-link">
-                        46327 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>11</td>
-                <td class="text-bold text-main">5295</td>
-                <td>2026-04-01</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">Rabbitwarlord</span>, 
-                    <span class="text-muted">Led_Slash, DarthPuniceus, Wubba</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46260/" target="_blank" class="match-id-link">
-                        46260 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>12</td>
-                <td class="text-bold text-main">5283</td>
-                <td>2026-04-05</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">NadtyLite</span>, 
-                    <span class="text-muted">LucianTheFak, fadingnovel, LutherStr</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46320/" target="_blank" class="match-id-link">
-                        46320 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>13</td>
-                <td class="text-bold text-main">5278</td>
-                <td>2026-04-08</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">DarthOblivius</span>, 
-                    <span class="text-muted">Wubba, Emperia, matemato</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46396/" target="_blank" class="match-id-link">
-                        46396 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>14</td>
-                <td class="text-bold text-main">5276</td>
-                <td>2026-04-05</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">Jasiuńcio</span>, 
-                    <span class="text-muted">Emperia, radiantchaos, swiftsusan</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46321/" target="_blank" class="match-id-link">
-                        46321 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>15</td>
-                <td class="text-bold text-main">5271</td>
-                <td>2026-04-06</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">Odinius</span>, 
-                    <span class="text-muted">LucianTheFak, Emperia, cliuless</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46353/" target="_blank" class="match-id-link">
-                        46353 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>16</td>
-                <td class="text-bold text-main">5266</td>
-                <td>2026-04-05</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">Emperia</span>, 
-                    <span class="text-muted">radiantchaos, swiftsusan, Jasiuńcio</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46325/" target="_blank" class="match-id-link">
-                        46325 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>17</td>
-                <td class="text-bold text-main">5265</td>
-                <td>2026-04-08</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">Led_Slash</span>, 
-                    <span class="text-muted">DarthPuniceus, Kmahussier, DanzigMF</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46390/" target="_blank" class="match-id-link">
-                        46390 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>18</td>
-                <td class="text-bold text-main">5263</td>
-                <td>2026-04-05</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">Led_Slash</span>, 
-                    <span class="text-muted">Pliskin, radiantchaos, lumpyprol</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46323/" target="_blank" class="match-id-link">
-                        46323 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>19</td>
-                <td class="text-bold text-main">5251</td>
-                <td>2026-04-08</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">Plush2</span>, 
-                    <span class="text-muted">Tad604, Seiza, KeyserSoze</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46378/" target="_blank" class="match-id-link">
-                        46378 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>20</td>
-                <td class="text-bold text-main">5245</td>
-                <td>2026-04-08</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">fadingnovel</span>, 
-                    <span class="text-muted">LutherStr, LucianTheFak, NadtyLite</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46388/" target="_blank" class="match-id-link">
-                        46388 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>21</td>
-                <td class="text-bold text-main">5239</td>
-                <td>2026-04-06</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">Tolfan</span>, 
-                    <span class="text-muted">Gabobs, Valzaan, Emperia</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46349/" target="_blank" class="match-id-link">
-                        46349 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>22</td>
-                <td class="text-bold text-main">5239</td>
-                <td>2026-04-08</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">Led_Slash</span>, 
-                    <span class="text-muted">DarthPuniceus, buurn, Ctfox</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46385/" target="_blank" class="match-id-link">
-                        46385 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>23</td>
-                <td class="text-bold text-main">5229</td>
-                <td>2026-04-02</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">matemato</span>, 
-                    <span class="text-muted">Seiza, Wrestler, Mossfusion</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46276/" target="_blank" class="match-id-link">
-                        46276 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>24</td>
-                <td class="text-bold text-main">5229</td>
-                <td>2026-04-07</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">LucianTheFak</span>, 
-                    <span class="text-muted">cliuless, lumpyprol, Emperia</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46359/" target="_blank" class="match-id-link">
-                        46359 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>25</td>
-                <td class="text-bold text-main">5229</td>
-                <td>2026-04-02</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">NadtyLite</span>, 
-                    <span class="text-muted">Schkitz, LucianTheFak, matemato</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46280/" target="_blank" class="match-id-link">
-                        46280 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>26</td>
-                <td class="text-bold text-main">5210</td>
-                <td>2026-04-06</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">DarthOblivius</span>, 
-                    <span class="text-muted">Led_Slash, Wubba, Seiza</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46346/" target="_blank" class="match-id-link">
-                        46346 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>27</td>
-                <td class="text-bold text-main">5207</td>
-                <td>2026-04-05</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">Led_Slash</span>, 
-                    <span class="text-muted">StoneOfShame, lumpyprol, Rabbitwarlord</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46322/" target="_blank" class="match-id-link">
-                        46322 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>28</td>
-                <td class="text-bold text-main">5202</td>
-                <td>2026-04-06</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">Jasiuńcio</span>, 
-                    <span class="text-muted">Emperia, swiftsusan, radiantchaos</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46341/" target="_blank" class="match-id-link">
-                        46341 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>29</td>
-                <td class="text-bold text-main">5191</td>
-                <td>2026-04-08</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">idk123</span>, 
-                    <span class="text-muted">Valzaan, Tolfan, DemaRogue</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46395/" target="_blank" class="match-id-link">
-                        46395 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>30</td>
-                <td class="text-bold text-main">5191</td>
-                <td>2026-04-02</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">Intraceptor</span>, 
-                    <span class="text-muted">cringelordirl, cliuless, LucianTheFak</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46283/" target="_blank" class="match-id-link">
-                        46283 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>31</td>
-                <td class="text-bold text-main">5188</td>
-                <td>2026-04-08</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">LucianTheFak</span>, 
-                    <span class="text-muted">TurkeyNoNo, LutherStr, AERotters</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46376/" target="_blank" class="match-id-link">
-                        46376 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>32</td>
-                <td class="text-bold text-main">5185</td>
-                <td>2026-04-04</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">Tad604</span>, 
-                    <span class="text-muted">kurtfisto, ZachB, Seiza</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46215/" target="_blank" class="match-id-link">
-                        46215 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>33</td>
-                <td class="text-bold text-main">5169</td>
-                <td>2026-04-08</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">LucianTheFak</span>, 
-                    <span class="text-muted">Seiza, QuixArtagnan, MoxJet</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46383/" target="_blank" class="match-id-link">
-                        46383 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>34</td>
-                <td class="text-bold text-main">5169</td>
-                <td>2026-04-08</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">Tolfan</span>, 
-                    <span class="text-muted">DemaRogue, idk123, Valzaan</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46391/" target="_blank" class="match-id-link">
-                        46391 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>35</td>
-                <td class="text-bold text-main">5165</td>
-                <td>2026-04-03</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">Rabbitwarlord</span>, 
-                    <span class="text-muted">FakeSki, Tricholome, Pliskin</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46291/" target="_blank" class="match-id-link">
-                        46291 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>36</td>
-                <td class="text-bold text-main">5165</td>
-                <td>2026-04-01</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">LucianTheFak</span>, 
-                    <span class="text-muted">Seiza, Wrestler, Jasiuńcio</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46257/" target="_blank" class="match-id-link">
-                        46257 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>37</td>
-                <td class="text-bold text-main">5152</td>
-                <td>2026-04-07</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">LucianTheFak</span>, 
-                    <span class="text-muted">fadingnovel, NadtyLite, cliuless</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46370/" target="_blank" class="match-id-link">
-                        46370 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>38</td>
-                <td class="text-bold text-main">5150</td>
-                <td>2026-04-07</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">Wubba</span>, 
-                    <span class="text-muted">swiftsusan, alevGO, Led_Slash</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46374/" target="_blank" class="match-id-link">
-                        46374 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>39</td>
-                <td class="text-bold text-main">5149</td>
-                <td>2026-04-01</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">Bapgo</span>, 
-                    <span class="text-muted">Ultcyber, Seiza, NadtyLite</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46263/" target="_blank" class="match-id-link">
-                        46263 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>40</td>
-                <td class="text-bold text-main">5148</td>
-                <td>2026-04-01</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">cliuless</span>, 
-                    <span class="text-muted">KFull, DarthOblivius, Seiza</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46259/" target="_blank" class="match-id-link">
-                        46259 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>41</td>
-                <td class="text-bold text-main">5146</td>
-                <td>2026-04-06</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">Schkitz</span>, 
-                    <span class="text-muted">RootiredRooter, kesitron, Led_Slash</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46347/" target="_blank" class="match-id-link">
-                        46347 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>42</td>
-                <td class="text-bold text-main">5142</td>
-                <td>2026-04-04</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">Emperia</span>, 
-                    <span class="text-muted">BaconBoy, DarthPuniceus, RootiredRooter</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46305/" target="_blank" class="match-id-link">
-                        46305 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>43</td>
-                <td class="text-bold text-main">5134</td>
-                <td>2026-04-05</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">ChippZamoose</span>, 
-                    <span class="text-muted">Ultcyber, NadtyLite, Awesem</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46316/" target="_blank" class="match-id-link">
-                        46316 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>44</td>
-                <td class="text-bold text-main">5123</td>
-                <td>2026-04-07</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">Led_Slash</span>, 
-                    <span class="text-muted">Wrestler, Schkitz, RootiredRooter</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46373/" target="_blank" class="match-id-link">
-                        46373 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>45</td>
-                <td class="text-bold text-main">5116</td>
-                <td>2026-04-08</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">ShuShuBana</span>, 
-                    <span class="text-muted">BaconBoy, TurkeyNoNo, NadtyLite</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46377/" target="_blank" class="match-id-link">
-                        46377 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>46</td>
-                <td class="text-bold text-main">5115</td>
-                <td>2026-04-02</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">DanzigMF</span>, 
-                    <span class="text-muted">LucianTheFak, Valzaan, fadingnovel</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46279/" target="_blank" class="match-id-link">
-                        46279 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>47</td>
-                <td class="text-bold text-main">5111</td>
-                <td>2026-04-07</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">Rabbitwarlord</span>, 
-                    <span class="text-muted">Seiza, Bitto, buurn</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46362/" target="_blank" class="match-id-link">
-                        46362 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>48</td>
-                <td class="text-bold text-main">5109</td>
-                <td>2026-04-02</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">Ultcyber</span>, 
-                    <span class="text-muted">KeyserSoze, Emperia, Ctfox</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46267/" target="_blank" class="match-id-link">
-                        46267 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>49</td>
-                <td class="text-bold text-main">5088</td>
-                <td>2026-04-02</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">Seiza</span>, 
-                    <span class="text-muted">Jasiuńcio, Rabbitwarlord, NadtyLite</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46277/" target="_blank" class="match-id-link">
-                        46277 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>50</td>
-                <td class="text-bold text-main">5054</td>
-                <td>2026-04-02</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">VanKaiserman</span>, 
-                    <span class="text-muted">Nefkano, Antiproject, DrCheeseFiend</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46270/" target="_blank" class="match-id-link">
-                        46270 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>51</td>
-                <td class="text-bold text-main">5039</td>
-                <td>2026-04-06</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">Dumbledore</span>, 
-                    <span class="text-muted">kaiser, chibimori, DemaRogue</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46338/" target="_blank" class="match-id-link">
-                        46338 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>52</td>
-                <td class="text-bold text-main">5035</td>
-                <td>2026-04-08</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">Emperia</span>, 
-                    <span class="text-muted">cringelordirl, RootiredRooter, kesitron</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46380/" target="_blank" class="match-id-link">
-                        46380 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>53</td>
-                <td class="text-bold text-main">5030</td>
-                <td>2026-04-03</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">LucianTheFak</span>, 
-                    <span class="text-muted">Valzaan, DarthOblivius, cliuless</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46289/" target="_blank" class="match-id-link">
-                        46289 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>54</td>
-                <td class="text-bold text-main">5027</td>
-                <td>2026-04-05</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">Seiza</span>, 
-                    <span class="text-muted">lumpyprol, Aceosd, LucianTheFak</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46328/" target="_blank" class="match-id-link">
-                        46328 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>55</td>
-                <td class="text-bold text-main">5015</td>
-                <td>2026-04-03</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">LucianTheFak</span>, 
-                    <span class="text-muted">TheFourthJesse, lumpyprol, cliuless</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46290/" target="_blank" class="match-id-link">
-                        46290 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>56</td>
-                <td class="text-bold text-main">5012</td>
-                <td>2026-04-02</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">ChippZamoose</span>, 
-                    <span class="text-muted">Wubba, matemato, lumpyprol</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46281/" target="_blank" class="match-id-link">
-                        46281 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>57</td>
-                <td class="text-bold text-main">5011</td>
-                <td>2026-04-08</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">chibimori</span>, 
-                    <span class="text-muted">DarthPuniceus, NadtyLite, BMPerJMPer</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46386/" target="_blank" class="match-id-link">
-                        46386 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>58</td>
-                <td class="text-bold text-main">5010</td>
-                <td>2026-04-04</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">LucianTheFak</span>, 
-                    <span class="text-muted">TonyDeloreanESQ, cliuless, optimusprawn</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46313/" target="_blank" class="match-id-link">
-                        46313 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>59</td>
-                <td class="text-bold text-main">5009</td>
-                <td>2026-04-08</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">cliuless</span>, 
-                    <span class="text-muted">mouseinabox, LucianTheFak, DanzigMF</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46397/" target="_blank" class="match-id-link">
-                        46397 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>60</td>
-                <td class="text-bold text-main">5007</td>
-                <td>2026-04-01</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">Seiza</span>, 
-                    <span class="text-muted">Wriggleroom, cliuless, Ultcyber</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46251/" target="_blank" class="match-id-link">
-                        46251 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>61</td>
-                <td class="text-bold text-main">5005</td>
-                <td>2026-04-07</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">Bapgo</span>, 
-                    <span class="text-muted">cliuless, DarthOblivius, mouseinabox</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46358/" target="_blank" class="match-id-link">
-                        46358 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>62</td>
-                <td class="text-bold text-main">4992</td>
-                <td>2026-04-04</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">cliuless</span>, 
-                    <span class="text-muted">Rabbitwarlord, TurkeyNoNo, DarthOblivius</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46312/" target="_blank" class="match-id-link">
-                        46312 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>63</td>
-                <td class="text-bold text-main">4991</td>
-                <td>2026-04-01</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">swiftsusan</span>, 
-                    <span class="text-muted">1coolguy, Pandapapst, buurn</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46156/" target="_blank" class="match-id-link">
-                        46156 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>64</td>
-                <td class="text-bold text-main">4990</td>
-                <td>2026-04-06</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">tofuwater</span>, 
-                    <span class="text-muted">swiftsusan, Munchking, Dumbledore</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46339/" target="_blank" class="match-id-link">
-                        46339 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>65</td>
-                <td class="text-bold text-main">4986</td>
-                <td>2026-04-07</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">Led_Slash</span>, 
-                    <span class="text-muted">Youdge, RiverKawaii, StoneOfShame</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46371/" target="_blank" class="match-id-link">
-                        46371 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>66</td>
-                <td class="text-bold text-main">4978</td>
-                <td>2026-04-06</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">Nefkano</span>, 
-                    <span class="text-muted">Jasiuńcio, DanzigMF, chibimori</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46352/" target="_blank" class="match-id-link">
-                        46352 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>67</td>
-                <td class="text-bold text-main">4978</td>
-                <td>2026-04-07</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">betterpools</span>, 
-                    <span class="text-muted">NadtyLite, DarthPuniceus, mouseinabox</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46356/" target="_blank" class="match-id-link">
-                        46356 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>68</td>
-                <td class="text-bold text-main">4977</td>
-                <td>2026-04-07</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">Emperia</span>, 
-                    <span class="text-muted">MylesMoose, KeyserSoze, Fearteiler</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46360/" target="_blank" class="match-id-link">
-                        46360 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>69</td>
-                <td class="text-bold text-main">4974</td>
-                <td>2026-04-02</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">MylesMoose</span>, 
-                    <span class="text-muted">matemato, Snivylover12, TonyDeloreanESQ</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46278/" target="_blank" class="match-id-link">
-                        46278 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>70</td>
-                <td class="text-bold text-main">4958</td>
-                <td>2026-04-04</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">NadtyLite</span>, 
-                    <span class="text-muted">Kmahussier, Schkitz, voltigeur</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46303/" target="_blank" class="match-id-link">
-                        46303 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>71</td>
-                <td class="text-bold text-main">4957</td>
-                <td>2026-04-08</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">Nefkano</span>, 
-                    <span class="text-muted">KeyserSoze, Schkitz, BaconBoy</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46394/" target="_blank" class="match-id-link">
-                        46394 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>72</td>
-                <td class="text-bold text-main">4957</td>
-                <td>2026-04-03</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">Emperia</span>, 
-                    <span class="text-muted">TonyDeloreanESQ, Xman1997, tofuwater</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46302/" target="_blank" class="match-id-link">
-                        46302 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>73</td>
-                <td class="text-bold text-main">4953</td>
-                <td>2026-04-05</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">DemaRogue</span>, 
-                    <span class="text-muted">DawnDiVito, radiantchaos, Mouseman</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46315/" target="_blank" class="match-id-link">
-                        46315 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>74</td>
-                <td class="text-bold text-main">4952</td>
-                <td>2026-04-07</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">idk123</span>, 
-                    <span class="text-muted">CowOnAPlane, RootiredRooter, Valzaan</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46363/" target="_blank" class="match-id-link">
-                        46363 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>75</td>
-                <td class="text-bold text-main">4949</td>
-                <td>2026-04-06</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">Emperia</span>, 
-                    <span class="text-muted">Darkwonderer, Valzaan, Wubba</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46351/" target="_blank" class="match-id-link">
-                        46351 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>76</td>
-                <td class="text-bold text-main">4945</td>
-                <td>2026-04-02</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">Nefkano</span>, 
-                    <span class="text-muted">lumpyprol, PlagueCarrier, RootiredRooter</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46282/" target="_blank" class="match-id-link">
-                        46282 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>77</td>
-                <td class="text-bold text-main">4944</td>
-                <td>2026-04-03</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">Emperia</span>, 
-                    <span class="text-muted">DemaRogue, Ultcyber, KeyserSoze</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46292/" target="_blank" class="match-id-link">
-                        46292 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>78</td>
-                <td class="text-bold text-main">4944</td>
-                <td>2026-04-01</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">Valzaan</span>, 
-                    <span class="text-muted">mouseinabox, Snivylover12, RootiredRooter</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46261/" target="_blank" class="match-id-link">
-                        46261 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>79</td>
-                <td class="text-bold text-main">4939</td>
-                <td>2026-04-07</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">Led_Slash</span>, 
-                    <span class="text-muted">buurn, DemaRogue, TonyDeloreanESQ</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46372/" target="_blank" class="match-id-link">
-                        46372 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>80</td>
-                <td class="text-bold text-main">4929</td>
-                <td>2026-04-01</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">Emperia</span>, 
-                    <span class="text-muted">cliuless, Tricholome, BaliHoo</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46258/" target="_blank" class="match-id-link">
-                        46258 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>81</td>
-                <td class="text-bold text-main">4920</td>
-                <td>2026-04-06</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">Led_Slash</span>, 
-                    <span class="text-muted">TheFourthJesse, Wubba, mouseinabox</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46337/" target="_blank" class="match-id-link">
-                        46337 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>82</td>
-                <td class="text-bold text-main">4895</td>
-                <td>2026-04-03</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">DemaRogue</span>, 
-                    <span class="text-muted">Valzaan, DGDKami, chibimori</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46284/" target="_blank" class="match-id-link">
-                        46284 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>83</td>
-                <td class="text-bold text-main">4875</td>
-                <td>2026-04-07</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">Mossfusion</span>, 
-                    <span class="text-muted">Seiza, Wriggleroom, BoMa85</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46361/" target="_blank" class="match-id-link">
-                        46361 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>84</td>
-                <td class="text-bold text-main">4874</td>
-                <td>2026-04-06</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">Gabobs</span>, 
-                    <span class="text-muted">mouseinabox, Tolfan, Viggs</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46354/" target="_blank" class="match-id-link">
-                        46354 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>85</td>
-                <td class="text-bold text-main">4871</td>
-                <td>2026-04-04</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">HobGungan</span>, 
-                    <span class="text-muted">Ultcyber, alevGO, Mossfusion</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46307/" target="_blank" class="match-id-link">
-                        46307 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>86</td>
-                <td class="text-bold text-main">4870</td>
-                <td>2026-04-08</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">mouseinabox</span>, 
-                    <span class="text-muted">DanzigMF, optimusprawn, LucianTheFak</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46392/" target="_blank" class="match-id-link">
-                        46392 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>87</td>
-                <td class="text-bold text-main">4866</td>
-                <td>2026-04-05</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">Bapgo</span>, 
-                    <span class="text-muted">TurkeyNoNo, Ultcyber, BaliHoo</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46324/" target="_blank" class="match-id-link">
-                        46324 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>88</td>
-                <td class="text-bold text-main">4858</td>
-                <td>2026-04-06</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">cjahwon</span>, 
-                    <span class="text-muted">Tolfan, Valzaan, budynzsmalcem</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46350/" target="_blank" class="match-id-link">
-                        46350 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>89</td>
-                <td class="text-bold text-main">4848</td>
-                <td>2026-04-03</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">Nadav253</span>, 
-                    <span class="text-muted">Temperz87, Dandel, ToughHazelnut</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46300/" target="_blank" class="match-id-link">
-                        46300 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>90</td>
-                <td class="text-bold text-main">4847</td>
-                <td>2026-04-01</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">ZachB</span>, 
-                    <span class="text-muted">DanzigMF, balonthebold, Emperia</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46212/" target="_blank" class="match-id-link">
-                        46212 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>91</td>
-                <td class="text-bold text-main">4847</td>
-                <td>2026-04-06</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">TheFourthJesse</span>, 
-                    <span class="text-muted">Dramsss, Jasiuńcio, Piechu</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46342/" target="_blank" class="match-id-link">
-                        46342 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>92</td>
-                <td class="text-bold text-main">4844</td>
-                <td>2026-04-08</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">Emperia</span>, 
-                    <span class="text-muted">mouseinabox, cjahwon, KeyserSoze</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46355/" target="_blank" class="match-id-link">
-                        46355 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>93</td>
-                <td class="text-bold text-main">4841</td>
-                <td>2026-04-05</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">Wubba</span>, 
-                    <span class="text-muted">KargDemiau, Emperia, radiantchaos</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46326/" target="_blank" class="match-id-link">
-                        46326 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>94</td>
-                <td class="text-bold text-main">4837</td>
-                <td>2026-04-07</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">DemaRogue</span>, 
-                    <span class="text-muted">buurn, Tolfan, BadScra</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46366/" target="_blank" class="match-id-link">
-                        46366 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>95</td>
-                <td class="text-bold text-main">4836</td>
-                <td>2026-04-07</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">Emperia</span>, 
-                    <span class="text-muted">BadScra, Wubba, optimusprawn</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46369/" target="_blank" class="match-id-link">
-                        46369 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>96</td>
-                <td class="text-bold text-main">4833</td>
-                <td>2026-04-03</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">Led_Slash</span>, 
-                    <span class="text-muted">DawnDiVito, Wubba, Snivylover12</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46297/" target="_blank" class="match-id-link">
-                        46297 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>97</td>
-                <td class="text-bold text-main">4832</td>
-                <td>2026-04-08</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">PlagueCarrier</span>, 
-                    <span class="text-muted">TurkeyNoNo, RootiredRooter, Nefkano</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46393/" target="_blank" class="match-id-link">
-                        46393 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>98</td>
-                <td class="text-bold text-main">4822</td>
-                <td>2026-04-05</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">KeyserSoze</span>, 
-                    <span class="text-muted">TheSillyBilly, Mossfusion, HobGungan</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46334/" target="_blank" class="match-id-link">
-                        46334 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>99</td>
-                <td class="text-bold text-main">4819</td>
-                <td>2026-04-02</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">Snivylover12</span>, 
-                    <span class="text-muted">Emperia, DemaRogue, MylesMoose</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46274/" target="_blank" class="match-id-link">
-                        46274 ↗
-                    </a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td>100</td>
-                <td class="text-bold text-main">4816</td>
-                <td>2026-04-03</td>
-                <td class="lineup-cell">
-                    <span class="text-bold text-bright">NadtyLite</span>, 
-                    <span class="text-muted">Dumbledore, ZachB, Karcher</span>
-                </td>
-                <td>
-                    <a href="https://rootleague.pliskin.dev/match/46226/" target="_blank" class="match-id-link">
-                        46226 ↗
-                    </a>
-                </td>
-            </tr>
-            
-        </tbody>
+       <tbody>
+			
+			<tr>
+				<td>1</td>
+				<td>5756</td>
+				<td>2026-04-05</td>
+				<td class="lineup-cell">
+					<span class="winner-name">Emperia</span>, 
+					<span class="others-names">Bapgo, Led_Slash, Antiproject</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46335/" target="_blank" class="match-id-link">
+						46335 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>2</td>
+				<td>5512</td>
+				<td>2026-04-08</td>
+				<td class="lineup-cell">
+					<span class="winner-name">ShuShuBana</span>, 
+					<span class="others-names">Emperia, Nefkano, ZachB</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46264/" target="_blank" class="match-id-link">
+						46264 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>3</td>
+				<td>5502</td>
+				<td>2026-04-04</td>
+				<td class="lineup-cell">
+					<span class="winner-name">matemato</span>, 
+					<span class="others-names">VanKaiserman, LucianTheFak, NadtyLite</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46308/" target="_blank" class="match-id-link">
+						46308 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>4</td>
+				<td>5412</td>
+				<td>2026-04-04</td>
+				<td class="lineup-cell">
+					<span class="winner-name">LucianTheFak</span>, 
+					<span class="others-names">Nefkano, cliuless, Seiza</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46309/" target="_blank" class="match-id-link">
+						46309 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>5</td>
+				<td>5366</td>
+				<td>2026-04-08</td>
+				<td class="lineup-cell">
+					<span class="winner-name">Led_Slash</span>, 
+					<span class="others-names">DemaRogue, Dramsss, Kmahussier</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46384/" target="_blank" class="match-id-link">
+						46384 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>6</td>
+				<td>5361</td>
+				<td>2026-04-09</td>
+				<td class="lineup-cell">
+					<span class="winner-name">ShuShuBana</span>, 
+					<span class="others-names">Emperia, Furry0329, ToughHazelnut</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46407/" target="_blank" class="match-id-link">
+						46407 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>7</td>
+				<td>5341</td>
+				<td>2026-04-03</td>
+				<td class="lineup-cell">
+					<span class="winner-name">kaiser</span>, 
+					<span class="others-names">Tad604, Schkitz, Mossfusion</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46285/" target="_blank" class="match-id-link">
+						46285 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>8</td>
+				<td>5319</td>
+				<td>2026-04-05</td>
+				<td class="lineup-cell">
+					<span class="winner-name">Antiproject</span>, 
+					<span class="others-names">LucianTheFak, Schkitz, NadtyLite</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46333/" target="_blank" class="match-id-link">
+						46333 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>9</td>
+				<td>5308</td>
+				<td>2026-04-06</td>
+				<td class="lineup-cell">
+					<span class="winner-name">Seiza</span>, 
+					<span class="others-names">Nefkano, NadtyLite, MylesMoose</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46340/" target="_blank" class="match-id-link">
+						46340 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>10</td>
+				<td>5303</td>
+				<td>2026-04-07</td>
+				<td class="lineup-cell">
+					<span class="winner-name">LutherStr</span>, 
+					<span class="others-names">cliuless, LucianTheFak, NadtyLite</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46368/" target="_blank" class="match-id-link">
+						46368 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>11</td>
+				<td>5301</td>
+				<td>2026-04-05</td>
+				<td class="lineup-cell">
+					<span class="winner-name">matemato</span>, 
+					<span class="others-names">Youdge, cliuless, kaiser</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46327/" target="_blank" class="match-id-link">
+						46327 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>12</td>
+				<td>5295</td>
+				<td>2026-04-01</td>
+				<td class="lineup-cell">
+					<span class="winner-name">Rabbitwarlord</span>, 
+					<span class="others-names">Led_Slash, DarthPuniceus, Wubba</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46260/" target="_blank" class="match-id-link">
+						46260 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>13</td>
+				<td>5283</td>
+				<td>2026-04-05</td>
+				<td class="lineup-cell">
+					<span class="winner-name">NadtyLite</span>, 
+					<span class="others-names">LucianTheFak, fadingnovel, LutherStr</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46320/" target="_blank" class="match-id-link">
+						46320 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>14</td>
+				<td>5278</td>
+				<td>2026-04-08</td>
+				<td class="lineup-cell">
+					<span class="winner-name">DarthOblivius</span>, 
+					<span class="others-names">Emperia, Wubba, matemato</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46396/" target="_blank" class="match-id-link">
+						46396 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>15</td>
+				<td>5276</td>
+				<td>2026-04-05</td>
+				<td class="lineup-cell">
+					<span class="winner-name">Jasiuńcio</span>, 
+					<span class="others-names">swiftsusan, Emperia, radiantchaos</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46321/" target="_blank" class="match-id-link">
+						46321 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>16</td>
+				<td>5271</td>
+				<td>2026-04-06</td>
+				<td class="lineup-cell">
+					<span class="winner-name">Odinius</span>, 
+					<span class="others-names">LucianTheFak, Emperia, cliuless</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46353/" target="_blank" class="match-id-link">
+						46353 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>17</td>
+				<td>5266</td>
+				<td>2026-04-05</td>
+				<td class="lineup-cell">
+					<span class="winner-name">Emperia</span>, 
+					<span class="others-names">Jasiuńcio, swiftsusan, radiantchaos</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46325/" target="_blank" class="match-id-link">
+						46325 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>18</td>
+				<td>5265</td>
+				<td>2026-04-08</td>
+				<td class="lineup-cell">
+					<span class="winner-name">Led_Slash</span>, 
+					<span class="others-names">DarthPuniceus, Kmahussier, DanzigMF</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46390/" target="_blank" class="match-id-link">
+						46390 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>19</td>
+				<td>5263</td>
+				<td>2026-04-05</td>
+				<td class="lineup-cell">
+					<span class="winner-name">Led_Slash</span>, 
+					<span class="others-names">Pliskin, radiantchaos, lumpyprol</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46323/" target="_blank" class="match-id-link">
+						46323 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>20</td>
+				<td>5257</td>
+				<td>2026-04-09</td>
+				<td class="lineup-cell">
+					<span class="winner-name">ShuShuBana</span>, 
+					<span class="others-names">TonyDeloreanESQ, Mossfusion, Ctfox</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46400/" target="_blank" class="match-id-link">
+						46400 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>21</td>
+				<td>5251</td>
+				<td>2026-04-08</td>
+				<td class="lineup-cell">
+					<span class="winner-name">Plush2</span>, 
+					<span class="others-names">Tad604, Seiza, KeyserSoze</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46378/" target="_blank" class="match-id-link">
+						46378 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>22</td>
+				<td>5245</td>
+				<td>2026-04-08</td>
+				<td class="lineup-cell">
+					<span class="winner-name">fadingnovel</span>, 
+					<span class="others-names">NadtyLite, LucianTheFak, LutherStr</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46388/" target="_blank" class="match-id-link">
+						46388 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>23</td>
+				<td>5239</td>
+				<td>2026-04-06</td>
+				<td class="lineup-cell">
+					<span class="winner-name">Tolfan</span>, 
+					<span class="others-names">Emperia, Valzaan, Gabobs</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46349/" target="_blank" class="match-id-link">
+						46349 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>24</td>
+				<td>5239</td>
+				<td>2026-04-08</td>
+				<td class="lineup-cell">
+					<span class="winner-name">Led_Slash</span>, 
+					<span class="others-names">DarthPuniceus, buurn, Ctfox</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46385/" target="_blank" class="match-id-link">
+						46385 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>25</td>
+				<td>5229</td>
+				<td>2026-04-02</td>
+				<td class="lineup-cell">
+					<span class="winner-name">matemato</span>, 
+					<span class="others-names">Seiza, Wrestler, Mossfusion</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46276/" target="_blank" class="match-id-link">
+						46276 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>26</td>
+				<td>5229</td>
+				<td>2026-04-02</td>
+				<td class="lineup-cell">
+					<span class="winner-name">NadtyLite</span>, 
+					<span class="others-names">LucianTheFak, matemato, Schkitz</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46280/" target="_blank" class="match-id-link">
+						46280 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>27</td>
+				<td>5229</td>
+				<td>2026-04-07</td>
+				<td class="lineup-cell">
+					<span class="winner-name">LucianTheFak</span>, 
+					<span class="others-names">Emperia, lumpyprol, cliuless</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46359/" target="_blank" class="match-id-link">
+						46359 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>28</td>
+				<td>5217</td>
+				<td>2026-04-09</td>
+				<td class="lineup-cell">
+					<span class="winner-name">TurkeyNoNo</span>, 
+					<span class="others-names">tofuwater, Seiza, voltigeur</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46401/" target="_blank" class="match-id-link">
+						46401 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>29</td>
+				<td>5210</td>
+				<td>2026-04-06</td>
+				<td class="lineup-cell">
+					<span class="winner-name">DarthOblivius</span>, 
+					<span class="others-names">Wubba, Seiza, Led_Slash</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46346/" target="_blank" class="match-id-link">
+						46346 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>30</td>
+				<td>5207</td>
+				<td>2026-04-05</td>
+				<td class="lineup-cell">
+					<span class="winner-name">Led_Slash</span>, 
+					<span class="others-names">Rabbitwarlord, lumpyprol, StoneOfShame</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46322/" target="_blank" class="match-id-link">
+						46322 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>31</td>
+				<td>5202</td>
+				<td>2026-04-06</td>
+				<td class="lineup-cell">
+					<span class="winner-name">Jasiuńcio</span>, 
+					<span class="others-names">Emperia, swiftsusan, radiantchaos</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46341/" target="_blank" class="match-id-link">
+						46341 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>32</td>
+				<td>5201</td>
+				<td>2026-04-09</td>
+				<td class="lineup-cell">
+					<span class="winner-name">pooge</span>, 
+					<span class="others-names">Emperia, swiftsusan, Valzaan</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46405/" target="_blank" class="match-id-link">
+						46405 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>33</td>
+				<td>5191</td>
+				<td>2026-04-08</td>
+				<td class="lineup-cell">
+					<span class="winner-name">idk123</span>, 
+					<span class="others-names">Valzaan, Tolfan, DemaRogue</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46395/" target="_blank" class="match-id-link">
+						46395 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>34</td>
+				<td>5191</td>
+				<td>2026-04-02</td>
+				<td class="lineup-cell">
+					<span class="winner-name">Intraceptor</span>, 
+					<span class="others-names">cringelordirl, LucianTheFak, cliuless</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46283/" target="_blank" class="match-id-link">
+						46283 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>35</td>
+				<td>5188</td>
+				<td>2026-04-08</td>
+				<td class="lineup-cell">
+					<span class="winner-name">LucianTheFak</span>, 
+					<span class="others-names">TurkeyNoNo, LutherStr, AERotters</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46376/" target="_blank" class="match-id-link">
+						46376 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>36</td>
+				<td>5185</td>
+				<td>2026-04-04</td>
+				<td class="lineup-cell">
+					<span class="winner-name">Tad604</span>, 
+					<span class="others-names">kurtfisto, ZachB, Seiza</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46215/" target="_blank" class="match-id-link">
+						46215 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>37</td>
+				<td>5169</td>
+				<td>2026-04-08</td>
+				<td class="lineup-cell">
+					<span class="winner-name">Tolfan</span>, 
+					<span class="others-names">idk123, DemaRogue, Valzaan</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46391/" target="_blank" class="match-id-link">
+						46391 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>38</td>
+				<td>5169</td>
+				<td>2026-04-08</td>
+				<td class="lineup-cell">
+					<span class="winner-name">LucianTheFak</span>, 
+					<span class="others-names">MoxJet, QuixArtagnan, Seiza</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46383/" target="_blank" class="match-id-link">
+						46383 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>39</td>
+				<td>5165</td>
+				<td>2026-04-01</td>
+				<td class="lineup-cell">
+					<span class="winner-name">LucianTheFak</span>, 
+					<span class="others-names">Jasiuńcio, Seiza, Wrestler</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46257/" target="_blank" class="match-id-link">
+						46257 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>40</td>
+				<td>5165</td>
+				<td>2026-04-03</td>
+				<td class="lineup-cell">
+					<span class="winner-name">Rabbitwarlord</span>, 
+					<span class="others-names">FakeSki, Tricholome, Pliskin</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46291/" target="_blank" class="match-id-link">
+						46291 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>41</td>
+				<td>5152</td>
+				<td>2026-04-07</td>
+				<td class="lineup-cell">
+					<span class="winner-name">LucianTheFak</span>, 
+					<span class="others-names">cliuless, NadtyLite, fadingnovel</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46370/" target="_blank" class="match-id-link">
+						46370 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>42</td>
+				<td>5150</td>
+				<td>2026-04-07</td>
+				<td class="lineup-cell">
+					<span class="winner-name">Wubba</span>, 
+					<span class="others-names">Led_Slash, alevGO, swiftsusan</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46374/" target="_blank" class="match-id-link">
+						46374 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>43</td>
+				<td>5149</td>
+				<td>2026-04-01</td>
+				<td class="lineup-cell">
+					<span class="winner-name">Bapgo</span>, 
+					<span class="others-names">Seiza, NadtyLite, Ultcyber</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46263/" target="_blank" class="match-id-link">
+						46263 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>44</td>
+				<td>5148</td>
+				<td>2026-04-01</td>
+				<td class="lineup-cell">
+					<span class="winner-name">cliuless</span>, 
+					<span class="others-names">KFull, DarthOblivius, Seiza</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46259/" target="_blank" class="match-id-link">
+						46259 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>45</td>
+				<td>5146</td>
+				<td>2026-04-06</td>
+				<td class="lineup-cell">
+					<span class="winner-name">Schkitz</span>, 
+					<span class="others-names">kesitron, RootiredRooter, Led_Slash</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46347/" target="_blank" class="match-id-link">
+						46347 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>46</td>
+				<td>5142</td>
+				<td>2026-04-04</td>
+				<td class="lineup-cell">
+					<span class="winner-name">Emperia</span>, 
+					<span class="others-names">BaconBoy, DarthPuniceus, RootiredRooter</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46305/" target="_blank" class="match-id-link">
+						46305 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>47</td>
+				<td>5134</td>
+				<td>2026-04-05</td>
+				<td class="lineup-cell">
+					<span class="winner-name">ChippZamoose</span>, 
+					<span class="others-names">Awesem, Ultcyber, NadtyLite</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46316/" target="_blank" class="match-id-link">
+						46316 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>48</td>
+				<td>5123</td>
+				<td>2026-04-07</td>
+				<td class="lineup-cell">
+					<span class="winner-name">Led_Slash</span>, 
+					<span class="others-names">RootiredRooter, Wrestler, Schkitz</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46373/" target="_blank" class="match-id-link">
+						46373 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>49</td>
+				<td>5116</td>
+				<td>2026-04-08</td>
+				<td class="lineup-cell">
+					<span class="winner-name">ShuShuBana</span>, 
+					<span class="others-names">BaconBoy, TurkeyNoNo, NadtyLite</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46377/" target="_blank" class="match-id-link">
+						46377 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>50</td>
+				<td>5115</td>
+				<td>2026-04-02</td>
+				<td class="lineup-cell">
+					<span class="winner-name">DanzigMF</span>, 
+					<span class="others-names">fadingnovel, Valzaan, LucianTheFak</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46279/" target="_blank" class="match-id-link">
+						46279 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>51</td>
+				<td>5114</td>
+				<td>2026-04-09</td>
+				<td class="lineup-cell">
+					<span class="winner-name">DarthOblivius</span>, 
+					<span class="others-names">Ctfox, cringelordirl, Pliskin</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46409/" target="_blank" class="match-id-link">
+						46409 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>52</td>
+				<td>5111</td>
+				<td>2026-04-07</td>
+				<td class="lineup-cell">
+					<span class="winner-name">Rabbitwarlord</span>, 
+					<span class="others-names">buurn, Bitto, Seiza</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46362/" target="_blank" class="match-id-link">
+						46362 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>53</td>
+				<td>5109</td>
+				<td>2026-04-02</td>
+				<td class="lineup-cell">
+					<span class="winner-name">Ultcyber</span>, 
+					<span class="others-names">Ctfox, Emperia, KeyserSoze</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46267/" target="_blank" class="match-id-link">
+						46267 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>54</td>
+				<td>5108</td>
+				<td>2026-04-09</td>
+				<td class="lineup-cell">
+					<span class="winner-name">tofuwater</span>, 
+					<span class="others-names">alevGO, PlagueCarrier, swiftsusan</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46294/" target="_blank" class="match-id-link">
+						46294 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>55</td>
+				<td>5108</td>
+				<td>2026-04-09</td>
+				<td class="lineup-cell">
+					<span class="winner-name">tofuwater</span>, 
+					<span class="others-names">swiftsusan, PlagueCarrier, alevGO</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46293/" target="_blank" class="match-id-link">
+						46293 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>56</td>
+				<td>5108</td>
+				<td>2026-04-09</td>
+				<td class="lineup-cell">
+					<span class="winner-name">tofuwater</span>, 
+					<span class="others-names">alevGO, PlagueCarrier, swiftsusan</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46295/" target="_blank" class="match-id-link">
+						46295 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>57</td>
+				<td>5106</td>
+				<td>2026-04-09</td>
+				<td class="lineup-cell">
+					<span class="winner-name">radiantchaos</span>, 
+					<span class="others-names">swiftsusan, Jasiuńcio, Emperia</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46404/" target="_blank" class="match-id-link">
+						46404 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>58</td>
+				<td>5088</td>
+				<td>2026-04-02</td>
+				<td class="lineup-cell">
+					<span class="winner-name">Seiza</span>, 
+					<span class="others-names">Jasiuńcio, Rabbitwarlord, NadtyLite</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46277/" target="_blank" class="match-id-link">
+						46277 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>59</td>
+				<td>5058</td>
+				<td>2026-04-09</td>
+				<td class="lineup-cell">
+					<span class="winner-name">tofuwater</span>, 
+					<span class="others-names">alevGO, swiftsusan, PlagueCarrier</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46296/" target="_blank" class="match-id-link">
+						46296 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>60</td>
+				<td>5054</td>
+				<td>2026-04-02</td>
+				<td class="lineup-cell">
+					<span class="winner-name">VanKaiserman</span>, 
+					<span class="others-names">Antiproject, DrCheeseFiend, Nefkano</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46270/" target="_blank" class="match-id-link">
+						46270 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>61</td>
+				<td>5039</td>
+				<td>2026-04-06</td>
+				<td class="lineup-cell">
+					<span class="winner-name">Dumbledore</span>, 
+					<span class="others-names">DemaRogue, kaiser, chibimori</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46338/" target="_blank" class="match-id-link">
+						46338 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>62</td>
+				<td>5039</td>
+				<td>2026-04-09</td>
+				<td class="lineup-cell">
+					<span class="winner-name">DemaRogue</span>, 
+					<span class="others-names">kingslime, Dramsss, Tolfan</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46403/" target="_blank" class="match-id-link">
+						46403 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>63</td>
+				<td>5035</td>
+				<td>2026-04-08</td>
+				<td class="lineup-cell">
+					<span class="winner-name">Emperia</span>, 
+					<span class="others-names">cringelordirl, RootiredRooter, kesitron</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46380/" target="_blank" class="match-id-link">
+						46380 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>64</td>
+				<td>5030</td>
+				<td>2026-04-03</td>
+				<td class="lineup-cell">
+					<span class="winner-name">LucianTheFak</span>, 
+					<span class="others-names">Valzaan, DarthOblivius, cliuless</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46289/" target="_blank" class="match-id-link">
+						46289 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>65</td>
+				<td>5027</td>
+				<td>2026-04-05</td>
+				<td class="lineup-cell">
+					<span class="winner-name">Seiza</span>, 
+					<span class="others-names">lumpyprol, Aceosd, LucianTheFak</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46328/" target="_blank" class="match-id-link">
+						46328 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>66</td>
+				<td>5015</td>
+				<td>2026-04-03</td>
+				<td class="lineup-cell">
+					<span class="winner-name">LucianTheFak</span>, 
+					<span class="others-names">TheFourthJesse, lumpyprol, cliuless</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46290/" target="_blank" class="match-id-link">
+						46290 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>67</td>
+				<td>5012</td>
+				<td>2026-04-02</td>
+				<td class="lineup-cell">
+					<span class="winner-name">ChippZamoose</span>, 
+					<span class="others-names">Wubba, matemato, lumpyprol</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46281/" target="_blank" class="match-id-link">
+						46281 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>68</td>
+				<td>5011</td>
+				<td>2026-04-08</td>
+				<td class="lineup-cell">
+					<span class="winner-name">chibimori</span>, 
+					<span class="others-names">DarthPuniceus, NadtyLite, BMPerJMPer</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46386/" target="_blank" class="match-id-link">
+						46386 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>69</td>
+				<td>5010</td>
+				<td>2026-04-04</td>
+				<td class="lineup-cell">
+					<span class="winner-name">LucianTheFak</span>, 
+					<span class="others-names">TonyDeloreanESQ, cliuless, optimusprawn</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46313/" target="_blank" class="match-id-link">
+						46313 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>70</td>
+				<td>5009</td>
+				<td>2026-04-08</td>
+				<td class="lineup-cell">
+					<span class="winner-name">cliuless</span>, 
+					<span class="others-names">DanzigMF, mouseinabox, LucianTheFak</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46397/" target="_blank" class="match-id-link">
+						46397 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>71</td>
+				<td>5007</td>
+				<td>2026-04-01</td>
+				<td class="lineup-cell">
+					<span class="winner-name">Seiza</span>, 
+					<span class="others-names">Wriggleroom, cliuless, Ultcyber</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46251/" target="_blank" class="match-id-link">
+						46251 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>72</td>
+				<td>5005</td>
+				<td>2026-04-07</td>
+				<td class="lineup-cell">
+					<span class="winner-name">Bapgo</span>, 
+					<span class="others-names">DarthOblivius, cliuless, mouseinabox</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46358/" target="_blank" class="match-id-link">
+						46358 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>73</td>
+				<td>4998</td>
+				<td>2026-04-09</td>
+				<td class="lineup-cell">
+					<span class="winner-name">pooge</span>, 
+					<span class="others-names">Jasiuńcio, Seiza, buurn</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46406/" target="_blank" class="match-id-link">
+						46406 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>74</td>
+				<td>4992</td>
+				<td>2026-04-04</td>
+				<td class="lineup-cell">
+					<span class="winner-name">cliuless</span>, 
+					<span class="others-names">Rabbitwarlord, TurkeyNoNo, DarthOblivius</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46312/" target="_blank" class="match-id-link">
+						46312 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>75</td>
+				<td>4991</td>
+				<td>2026-04-01</td>
+				<td class="lineup-cell">
+					<span class="winner-name">swiftsusan</span>, 
+					<span class="others-names">1coolguy, Pandapapst, buurn</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46156/" target="_blank" class="match-id-link">
+						46156 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>76</td>
+				<td>4990</td>
+				<td>2026-04-06</td>
+				<td class="lineup-cell">
+					<span class="winner-name">tofuwater</span>, 
+					<span class="others-names">swiftsusan, Munchking, Dumbledore</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46339/" target="_blank" class="match-id-link">
+						46339 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>77</td>
+				<td>4986</td>
+				<td>2026-04-07</td>
+				<td class="lineup-cell">
+					<span class="winner-name">Led_Slash</span>, 
+					<span class="others-names">StoneOfShame, Youdge, RiverKawaii</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46371/" target="_blank" class="match-id-link">
+						46371 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>78</td>
+				<td>4978</td>
+				<td>2026-04-06</td>
+				<td class="lineup-cell">
+					<span class="winner-name">Nefkano</span>, 
+					<span class="others-names">chibimori, DanzigMF, Jasiuńcio</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46352/" target="_blank" class="match-id-link">
+						46352 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>79</td>
+				<td>4978</td>
+				<td>2026-04-07</td>
+				<td class="lineup-cell">
+					<span class="winner-name">BetterPools</span>, 
+					<span class="others-names">NadtyLite, DarthPuniceus, mouseinabox</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46356/" target="_blank" class="match-id-link">
+						46356 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>80</td>
+				<td>4977</td>
+				<td>2026-04-07</td>
+				<td class="lineup-cell">
+					<span class="winner-name">Emperia</span>, 
+					<span class="others-names">MylesMoose, KeyserSoze, Fearteiler</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46360/" target="_blank" class="match-id-link">
+						46360 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>81</td>
+				<td>4974</td>
+				<td>2026-04-02</td>
+				<td class="lineup-cell">
+					<span class="winner-name">MylesMoose</span>, 
+					<span class="others-names">TonyDeloreanESQ, matemato, Snivylover12</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46278/" target="_blank" class="match-id-link">
+						46278 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>82</td>
+				<td>4958</td>
+				<td>2026-04-04</td>
+				<td class="lineup-cell">
+					<span class="winner-name">NadtyLite</span>, 
+					<span class="others-names">Kmahussier, Schkitz, voltigeur</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46303/" target="_blank" class="match-id-link">
+						46303 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>83</td>
+				<td>4957</td>
+				<td>2026-04-08</td>
+				<td class="lineup-cell">
+					<span class="winner-name">Nefkano</span>, 
+					<span class="others-names">KeyserSoze, Schkitz, BaconBoy</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46394/" target="_blank" class="match-id-link">
+						46394 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>84</td>
+				<td>4957</td>
+				<td>2026-04-03</td>
+				<td class="lineup-cell">
+					<span class="winner-name">Emperia</span>, 
+					<span class="others-names">tofuwater, Xman1997, TonyDeloreanESQ</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46302/" target="_blank" class="match-id-link">
+						46302 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>85</td>
+				<td>4953</td>
+				<td>2026-04-05</td>
+				<td class="lineup-cell">
+					<span class="winner-name">DemaRogue</span>, 
+					<span class="others-names">DawnDiVito, radiantchaos, Mouseman</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46315/" target="_blank" class="match-id-link">
+						46315 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>86</td>
+				<td>4952</td>
+				<td>2026-04-07</td>
+				<td class="lineup-cell">
+					<span class="winner-name">idk123</span>, 
+					<span class="others-names">Valzaan, RootiredRooter, CowOnAPlane</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46363/" target="_blank" class="match-id-link">
+						46363 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>87</td>
+				<td>4949</td>
+				<td>2026-04-06</td>
+				<td class="lineup-cell">
+					<span class="winner-name">Emperia</span>, 
+					<span class="others-names">Wubba, Darkwonderer, Valzaan</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46351/" target="_blank" class="match-id-link">
+						46351 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>88</td>
+				<td>4945</td>
+				<td>2026-04-02</td>
+				<td class="lineup-cell">
+					<span class="winner-name">Nefkano</span>, 
+					<span class="others-names">RootiredRooter, PlagueCarrier, lumpyprol</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46282/" target="_blank" class="match-id-link">
+						46282 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>89</td>
+				<td>4944</td>
+				<td>2026-04-03</td>
+				<td class="lineup-cell">
+					<span class="winner-name">Emperia</span>, 
+					<span class="others-names">DemaRogue, KeyserSoze, Ultcyber</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46292/" target="_blank" class="match-id-link">
+						46292 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>90</td>
+				<td>4944</td>
+				<td>2026-04-01</td>
+				<td class="lineup-cell">
+					<span class="winner-name">Valzaan</span>, 
+					<span class="others-names">mouseinabox, Snivylover12, RootiredRooter</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46261/" target="_blank" class="match-id-link">
+						46261 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>91</td>
+				<td>4939</td>
+				<td>2026-04-07</td>
+				<td class="lineup-cell">
+					<span class="winner-name">Led_Slash</span>, 
+					<span class="others-names">buurn, DemaRogue, TonyDeloreanESQ</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46372/" target="_blank" class="match-id-link">
+						46372 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>92</td>
+				<td>4929</td>
+				<td>2026-04-01</td>
+				<td class="lineup-cell">
+					<span class="winner-name">Emperia</span>, 
+					<span class="others-names">cliuless, Tricholome, BaliHoo</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46258/" target="_blank" class="match-id-link">
+						46258 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>93</td>
+				<td>4920</td>
+				<td>2026-04-06</td>
+				<td class="lineup-cell">
+					<span class="winner-name">Led_Slash</span>, 
+					<span class="others-names">TheFourthJesse, Wubba, mouseinabox</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46337/" target="_blank" class="match-id-link">
+						46337 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>94</td>
+				<td>4895</td>
+				<td>2026-04-03</td>
+				<td class="lineup-cell">
+					<span class="winner-name">DemaRogue</span>, 
+					<span class="others-names">chibimori, Valzaan, DGDKami</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46284/" target="_blank" class="match-id-link">
+						46284 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>95</td>
+				<td>4887</td>
+				<td>2026-04-09</td>
+				<td class="lineup-cell">
+					<span class="winner-name">Seiza</span>, 
+					<span class="others-names">Youdge, benssoon, Ptitmxz</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46399/" target="_blank" class="match-id-link">
+						46399 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>96</td>
+				<td>4875</td>
+				<td>2026-04-07</td>
+				<td class="lineup-cell">
+					<span class="winner-name">Mossfusion</span>, 
+					<span class="others-names">Seiza, Wriggleroom, BoMa85</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46361/" target="_blank" class="match-id-link">
+						46361 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>97</td>
+				<td>4874</td>
+				<td>2026-04-06</td>
+				<td class="lineup-cell">
+					<span class="winner-name">Gabobs</span>, 
+					<span class="others-names">Tolfan, Viggs, mouseinabox</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46354/" target="_blank" class="match-id-link">
+						46354 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>98</td>
+				<td>4871</td>
+				<td>2026-04-04</td>
+				<td class="lineup-cell">
+					<span class="winner-name">HobGungan</span>, 
+					<span class="others-names">Ultcyber, alevGO, Mossfusion</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46307/" target="_blank" class="match-id-link">
+						46307 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>99</td>
+				<td>4870</td>
+				<td>2026-04-08</td>
+				<td class="lineup-cell">
+					<span class="winner-name">mouseinabox</span>, 
+					<span class="others-names">LucianTheFak, DanzigMF, optimusprawn</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46392/" target="_blank" class="match-id-link">
+						46392 ↗
+					</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>100</td>
+				<td>4866</td>
+				<td>2026-04-05</td>
+				<td class="lineup-cell">
+					<span class="winner-name">Bapgo</span>, 
+					<span class="others-names">TurkeyNoNo, Ultcyber, BaliHoo</span>
+				</td>
+				<td>
+					<a href="https://rootleague.pliskin.dev/match/46324/" target="_blank" class="match-id-link">
+						46324 ↗
+					</a>
+				</td>
+			</tr>
+			
+		</tbody>
     </table>
 
             </main>
         </div>
         
         <div class="screen-deco left-deco">
-            
-                <img src="assets/images/matches_img_left.webp" alt="Decoration Left">
-            
-        </div>
+			
+				<img src="assets/images/matches_img_left.webp" alt="Decoration Left">
+			
+		</div>
 
         <footer class="app-footer window-box">
 			<div class="footer-content">
@@ -1720,7 +1765,7 @@
 					<span>Powered by <strong>Tʀɪᴄʜᴏʟᴏᴍᴇ</strong></span>
 					<span>Woodland visions by <a class="cl" href="cache.html">𝕩𝕝𝕦𝕖𝕧𝕚</a></span>
 				</div>
-				<div class="footer-date">Updated on 2026-04-09 09:04</div>
+				<div class="footer-date">Updated on 2026-04-10 00:27 UTC</div>
 			</div>
 		</footer>
     </div>
@@ -1752,12 +1797,13 @@
 	<script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
     
     <script>
-        const CONFIG = {
-            colors: {"bird": "#7AB5E0", "default": "#7A7347", "fox": "#E55555", "mouse": "#F49E52", "rabbit": "#F2C14E", "squirrel": "#94C160"},
-            icons: {"bird": "assets/icons/bird_new.webp", "fox": "assets/icons/fox_new.webp", "mouse": "assets/icons/mouse_new.webp", "rabbit": "assets/icons/rabbit_new.webp", "squirrel": "assets/icons/squirrel.webp"}
-        };
-    </script>
-    
+		const CONFIG = {
+			colors: {"bird": "#7AB5E0", "default": "#7A7347", "fox": "#E55555", "mouse": "#F49E52", "rabbit": "#F2C14E", "squirrel": "#94C160"},
+			icons: {"bird": "assets/icons/bird_new.webp", "fox": "assets/icons/fox_new.webp", "mouse": "assets/icons/mouse_new.webp", "rabbit": "assets/icons/rabbit_new.webp", "squirrel": "assets/icons/squirrel.webp"},
+			currentTier: "fox"
+		};
+	</script>
+		
     <script src="static/script.js"></script>
     
 <script>

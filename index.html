@@ -1,11 +1,5 @@
 
 
-
-
-
-
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -23,69 +17,118 @@
     
     <style>
         :root {
-			/* --- 1. LAYOUT CONFIG --- */
-			--window-gap: 25px;           
+			/* --- 1. LAYOUT CONFIG (Automatic loop) --- */
+			
 			--window-max-width: clamp(600px, 60vw, 1600px);
+			
+			--window-padding: clamp(20px, 2.5vw, 40px);
+			
+			--window-gap: 20px;
+			
 
-			/* --- 2. TYPOGRAPHY --- */
+			/* --- 2. TYPOGRAPHY (Automatic loop) --- */
+			
 			--font-title: 'Fraunces', serif;
+			
 			--font-ui: 'Inter', sans-serif;
-			--normal: 400;
-			--medium: 600;
+			
+			--font-mono: 'JetBrains Mono', monospace;
+			
 			--bold: 900;
 			
-			/* --- 3. GLASS SYSTEM --- */
-			--glass-bg: #1c1c1cd9; 
-			--glass-border: rgba(255, 255, 255, 0.0.08);
-			--glass-shadow: 0 10px 30px rgba(0,0,0,0.5);
-	
-            /* --- 4. UI FOUNDATION --- */
+			--medium: 600;
+			
+			--normal: 400;
+			
+			--size-xs: 0.75rem;
+			
+			--size-sm: 0.85rem;
+			
+			--size-modal: 0.90rem;
+			
+			--size-base: 0.95rem;
+			
+			--size-md: 1.2rem;
+			
+			--size-lg: 2.0rem;
+			
+			--size-xl: 2.5rem;
+			
+			--size-display: 2.8rem;
+			
+			--track-slight: 0.5px;
+			
+			--track-wide: 1px;
+			
+			--track-display: 4px;
+			
+
+			/* --- 3. GLOBAL UI (Automatic loop) --- */
+			
 			--bg-overlay-top: rgba(0, 0, 0, 0.1);
+			
 			--bg-overlay-bottom: rgba(0, 0, 0, 0.8);
+			
 			--bg-container: #1c1c1c;
-			--bg-surface: rgba(255, 255, 255, 0.03); 
+			
+			--bg-surface: rgba(255, 255, 255, 0.03);
+			
 			--bg-hover: rgba(255, 255, 255, 0.08);
+			
 			--border-soft: #333333;
 			
-			/* --- 5. TEXT COLORS --- */
+			--border-dark: rgba(0, 0, 0, 0.4);
+			
+			--border-light: rgba(255, 255, 255, 0.05);
+			
+			--glass-bg: #1c1c1cd9;
+			
+			--glass-border: rgba(255, 255, 255, 0.08);
+			
+			--glass-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+			
 			--text-bright: #ffffff;
-            --text-main: #E0E0E0; 
-            --text-muted: #A0A0A0;
-            --text-dark: #111111; 
-            
-			/* --- 6. TIER DYNAMICS --- */
-            
-            --color-bird: #7AB5E0;
-            --color-bird-bg: #7AB5E014;
-            
-            --color-fox: #E55555;
-            --color-fox-bg: #E5555514;
-            
-            --color-rabbit: #F2C14E;
-            --color-rabbit-bg: #F2C14E14;
-            
-            --color-mouse: #F49E52;
-            --color-mouse-bg: #F49E5214;
-            
-            --color-squirrel: #94C160;
-            --color-squirrel-bg: #94C16014;
-            
-            --color-default: #7A7347;
-            --color-default-bg: #7A734714;
-            
-            --color-default: #7A7347;
 			
-			/* --- 7. DATATABLES SPECIFIC (LES NOUVELLES COULEURS) --- */
+			--text-main: #E0E0E0;
+			
+			--text-muted: #A0A0A0;
+			
+			--text-dark: #111111;
+			
 			--dt-table-bg: rgba(0, 0, 0, 0.15);
+			
 			--dt-header-bg: rgba(0, 0, 0, 0.25);
+			
 			--dt-row-border: rgba(255, 255, 255, 0.03);
+			
 			--dt-row-hover: rgba(255, 255, 255, 0.07);
+			
 			--dt-input-bg: rgba(0, 0, 0, 0.2);
-        }
-		body {
 			
-				--main-color: var(--color-bird);
+
+			/* --- 4. TIER DYNAMICS (Loop with logic) --- */
 			
+			--color-bird: #7AB5E0;
+			--color-bird-bg: #7AB5E014;
+			
+			--color-fox: #E55555;
+			--color-fox-bg: #E5555514;
+			
+			--color-rabbit: #F2C14E;
+			--color-rabbit-bg: #F2C14E14;
+			
+			--color-mouse: #F49E52;
+			--color-mouse-bg: #F49E5214;
+			
+			--color-squirrel: #94C160;
+			--color-squirrel-bg: #94C16014;
+			
+			--color-default: #7A7347;
+			--color-default-bg: #7A734714;
+			
+
+			/* --- 5. PAGE THEME --- */
+			--main-color: #7AB5E0;
 		}
     </style>
 	
@@ -101,18 +144,19 @@
 
 <body data-page="index">
     
-    <div class="container" style="position: relative; overflow: visible;">
-        
+    <div class="container">
+	
         <header class="app-banner window-box">
+		
             <div class="banner-container">
                 <div class="banner-icons left">
                     <a href="javascript:void(0)" onclick="openTierModal('bird')" class="tooltip-link js-double-tap">
                         <img src="assets/icons/bird_new.webp" alt="Bird">
-                        <span class="tooltip-text"><strong style="color: var(--color-bird);">Bird (1500+)</strong> — The Grandmasters</span>
+                        <span class="tooltip-text"><strong class="tier-bird">Bird (1500+)</strong> — The Grandmasters</span>
                     </a>
                     <a href="javascript:void(0)" onclick="openTierModal('fox')" class="tooltip-link js-double-tap">
                         <img src="assets/icons/fox_new.webp" alt="Fox">
-                        <span class="tooltip-text"><strong style="color: var(--color-fox);">Fox (1400+)</strong> — The Cunning Tacticians</span>
+                        <span class="tooltip-text"><strong class="tier-fox">Fox (1400+)</strong> — The Cunning Tacticians</span>
                     </a>
                 </div>
                 <div class="banner-center">
@@ -122,11 +166,11 @@
                 <div class="banner-icons right">
                     <a href="javascript:void(0)" onclick="openTierModal('rabbit')" class="tooltip-link js-double-tap">
                         <img src="assets/icons/rabbit_new.webp" alt="Rabbit">
-                        <span class="tooltip-text"><strong style="color: var(--color-rabbit);">Rabbit (1300+)</strong> — The Agile Contenders</span>
+                        <span class="tooltip-text"><strong class="tier-rabbit">Rabbit (1300+)</strong> — The Agile Contenders</span>
                     </a>
                     <a href="javascript:void(0)" onclick="openTierModal('mouse')" class="tooltip-link js-double-tap">
                         <img src="assets/icons/mouse_new.webp" alt="Mouse">
-                        <span class="tooltip-text"><strong style="color: var(--color-mouse);">Mouse (1200+)</strong> — The Steady Foragers</span>
+                        <span class="tooltip-text"><strong class="tier-mouse">Mouse (1200+)</strong> — The Steady Foragers</span>
                     </a>
                 </div>
             </div>
@@ -159,13 +203,14 @@
 					<a href="about.html" class="">Codex</a>
 				
 			</nav>
+			
         </header>
         
         <div class="screen-deco right-deco">
-            
-                <img src="assets/images/leaderboard_img_right.webp" alt="Decoration Right">
-            
-        </div>
+			
+				<img src="assets/images/leaderboard_img_right.webp" alt="Decoration Right">
+			
+		</div>
 
         <div class="app-viewport window-box">
             <header class="page-intro">
@@ -185,7 +230,7 @@
 					</a>
 				</div>
 				
-				<p>Minimum 1 win required for display. Only players with a Tier are ranked.<br><small>Includes 128 matches through 2026-04-08.</small></p>
+				<p>Minimum 1 win required for display. Only&nbsp;players&nbsp;with&nbsp;a&nbsp;Tier&nbsp;are&nbsp;ranked.<br><br><i><small>Includes 144 matches up to 2026-04-09.</i></small></p>
 			</header>
 			
             <main>
@@ -205,6 +250,23 @@
             </tr>
         </thead>
         <tbody>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                
+                <td>
+					
+				</td>
+                <td class="text-left text-medium">ShuShuBana</td>
+                <td class="text-lg text-bold">1594</td>
+                <td>4</td>
+                <td>4.0</td>
+                <td>100.0%</td>
+                <td>1594</td>
+                <td>+32</td>
+            </tr>
             
             <tr data-tier="bird" class="">
                 <td class="">
@@ -239,13 +301,13 @@
                 <td>
 					
 				</td>
-                <td class="text-left text-medium">ShuShuBana</td>
-                <td class="text-lg text-bold">1528</td>
-                <td>2</td>
-                <td>2.0</td>
-                <td>100.0%</td>
-                <td>1528</td>
-                <td>+49</td>
+                <td class="text-left text-medium">tofuwater</td>
+                <td class="text-lg text-bold">1525</td>
+                <td>7</td>
+                <td>5.0</td>
+                <td>71.4%</td>
+                <td>1547</td>
+                <td>+28</td>
             </tr>
             
             <tr data-tier="unranked" class="unranked">
@@ -290,23 +352,6 @@
                 <td>
 					
 				</td>
-                <td class="text-left text-medium">tofuwater</td>
-                <td class="text-lg text-bold">1454</td>
-                <td>2</td>
-                <td>1.0</td>
-                <td>50.0%</td>
-                <td>1459</td>
-                <td>+44</td>
-            </tr>
-            
-            <tr data-tier="unranked" class="unranked">
-                <td class="unranked">
-                    -
-                </td>
-                
-                <td>
-					
-				</td>
                 <td class="text-left text-medium">ChippZamoose</td>
                 <td class="text-lg text-bold">1428</td>
                 <td>2</td>
@@ -332,13 +377,13 @@
 						
 					
 				</td>
-                <td class="text-left text-medium">Emperia</td>
-                <td class="text-lg text-bold">1427</td>
-                <td>24</td>
-                <td>12.0</td>
-                <td>50.0%</td>
-                <td>1443</td>
-                <td>-16</td>
+                <td class="text-left text-medium">LucianTheFak</td>
+                <td class="text-lg text-bold">1420</td>
+                <td>22</td>
+                <td>10.0</td>
+                <td>45.5%</td>
+                <td>1495</td>
+                <td>+17</td>
             </tr>
             
             <tr data-tier="unranked" class="unranked">
@@ -366,6 +411,23 @@
                 <td>
 					
 				</td>
+                <td class="text-left text-medium">pooge</td>
+                <td class="text-lg text-bold">1405</td>
+                <td>2</td>
+                <td>2.0</td>
+                <td>100.0%</td>
+                <td>1405</td>
+                <td>+51</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                
+                <td>
+					
+				</td>
                 <td class="text-left text-medium">Tad604</td>
                 <td class="text-lg text-bold">1405</td>
                 <td>3</td>
@@ -375,7 +437,7 @@
                 <td>-35</td>
             </tr>
             
-            <tr data-tier="fox" class="">
+            <tr data-tier="rabbit" class="">
                 <td class="">
                     3
                 </td>
@@ -383,21 +445,21 @@
                 <td>
 					
 						
-							<a href="javascript:void(0)" onclick="openTierModal('fox')" class="tier-anchor-link">
+							<a href="javascript:void(0)" onclick="openTierModal('rabbit')" class="tier-anchor-link">
 								<div class="tier-icon-container">
-									<img src="assets/icons/fox_new.webp" alt="fox">
+									<img src="assets/icons/rabbit_new.webp" alt="rabbit">
 								</div>
 							</a>
 						
 					
 				</td>
-                <td class="text-left text-medium">LucianTheFak</td>
-                <td class="text-lg text-bold">1403</td>
-                <td>21</td>
-                <td>9.0</td>
-                <td>42.9%</td>
-                <td>1495</td>
-                <td>-22</td>
+                <td class="text-left text-medium">Emperia</td>
+                <td class="text-lg text-bold">1392</td>
+                <td>28</td>
+                <td>13.0</td>
+                <td>46.4%</td>
+                <td>1443</td>
+                <td>-10</td>
             </tr>
             
             <tr data-tier="unranked" class="unranked">
@@ -451,12 +513,12 @@
 					
 				</td>
                 <td class="text-left text-medium">Seiza</td>
-                <td class="text-lg text-bold">1370</td>
-                <td>15</td>
-                <td>4.0</td>
-                <td>26.7%</td>
+                <td class="text-lg text-bold">1363</td>
+                <td>18</td>
+                <td>5.0</td>
+                <td>27.8%</td>
                 <td>1476</td>
-                <td>-13</td>
+                <td>-17</td>
             </tr>
             
             <tr data-tier="unranked" class="unranked">
@@ -561,12 +623,29 @@
 					
 				</td>
                 <td class="text-left text-medium">DemaRogue</td>
-                <td class="text-lg text-bold">1320</td>
-                <td>15</td>
-                <td>6.0</td>
-                <td>40.0%</td>
+                <td class="text-lg text-bold">1323</td>
+                <td>17</td>
+                <td>7.0</td>
+                <td>41.2%</td>
                 <td>1371</td>
-                <td>-12</td>
+                <td>-24</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                
+                <td>
+					
+				</td>
+                <td class="text-left text-medium">DarthOblivius</td>
+                <td class="text-lg text-bold">1322</td>
+                <td>9</td>
+                <td>4.0</td>
+                <td>44.4%</td>
+                <td>1322</td>
+                <td>+63</td>
             </tr>
             
             <tr data-tier="unranked" class="unranked">
@@ -594,23 +673,6 @@
                 <td>
 					
 				</td>
-                <td class="text-left text-medium">swiftsusan</td>
-                <td class="text-lg text-bold">1313</td>
-                <td>6</td>
-                <td>1.0</td>
-                <td>16.7%</td>
-                <td>1449</td>
-                <td>-17</td>
-            </tr>
-            
-            <tr data-tier="unranked" class="unranked">
-                <td class="unranked">
-                    -
-                </td>
-                
-                <td>
-					
-				</td>
                 <td class="text-left text-medium">LutherStr</td>
                 <td class="text-lg text-bold">1310</td>
                 <td>4</td>
@@ -618,23 +680,6 @@
                 <td>25.0%</td>
                 <td>1351</td>
                 <td>-18</td>
-            </tr>
-            
-            <tr data-tier="unranked" class="unranked">
-                <td class="unranked">
-                    -
-                </td>
-                
-                <td>
-					
-				</td>
-                <td class="text-left text-medium">Mossfusion</td>
-                <td class="text-lg text-bold">1309</td>
-                <td>8</td>
-                <td>3.0</td>
-                <td>37.5%</td>
-                <td>1395</td>
-                <td>+64</td>
             </tr>
             
             <tr data-tier="unranked" class="unranked">
@@ -654,29 +699,21 @@
                 <td>-21</td>
             </tr>
             
-            <tr data-tier="mouse" class="">
-                <td class="">
-                    6
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
                 </td>
                 
                 <td>
 					
-						
-							<a href="javascript:void(0)" onclick="openTierModal('mouse')" class="tier-anchor-link">
-								<div class="tier-icon-container">
-									<img src="assets/icons/mouse_new.webp" alt="mouse">
-								</div>
-							</a>
-						
-					
 				</td>
-                <td class="text-left text-medium">Tolfan</td>
-                <td class="text-lg text-bold">1293</td>
-                <td>10</td>
-                <td>4.0</td>
-                <td>40.0%</td>
-                <td>1350</td>
-                <td>-22</td>
+                <td class="text-left text-medium">Mossfusion</td>
+                <td class="text-lg text-bold">1296</td>
+                <td>9</td>
+                <td>3.0</td>
+                <td>33.3%</td>
+                <td>1395</td>
+                <td>-13</td>
             </tr>
             
             <tr data-tier="unranked" class="unranked">
@@ -698,7 +735,7 @@
             
             <tr data-tier="mouse" class="">
                 <td class="">
-                    7
+                    6
                 </td>
                 
                 <td>
@@ -719,6 +756,31 @@
                 <td>23.5%</td>
                 <td>1328</td>
                 <td>+32</td>
+            </tr>
+            
+            <tr data-tier="mouse" class="">
+                <td class="">
+                    7
+                </td>
+                
+                <td>
+					
+						
+							<a href="javascript:void(0)" onclick="openTierModal('mouse')" class="tier-anchor-link">
+								<div class="tier-icon-container">
+									<img src="assets/icons/mouse_new.webp" alt="mouse">
+								</div>
+							</a>
+						
+					
+				</td>
+                <td class="text-left text-medium">Tolfan</td>
+                <td class="text-lg text-bold">1282</td>
+                <td>11</td>
+                <td>4.0</td>
+                <td>36.4%</td>
+                <td>1350</td>
+                <td>-12</td>
             </tr>
             
             <tr data-tier="mouse" class="">
@@ -771,7 +833,7 @@
                 <td>
 					
 				</td>
-                <td class="text-left text-medium">betterpools</td>
+                <td class="text-left text-medium">BetterPools</td>
                 <td class="text-lg text-bold">1267</td>
                 <td>1</td>
                 <td>1.0</td>
@@ -805,38 +867,30 @@
                 <td>
 					
 				</td>
-                <td class="text-left text-medium">DarthOblivius</td>
-                <td class="text-lg text-bold">1259</td>
-                <td>8</td>
-                <td>3.0</td>
-                <td>37.5%</td>
-                <td>1259</td>
-                <td>+73</td>
+                <td class="text-left text-medium">radiantchaos</td>
+                <td class="text-lg text-bold">1249</td>
+                <td>9</td>
+                <td>2.0</td>
+                <td>22.2%</td>
+                <td>1271</td>
+                <td>+71</td>
             </tr>
             
-            <tr data-tier="mouse" class="">
-                <td class="">
-                    9
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
                 </td>
                 
                 <td>
 					
-						
-							<a href="javascript:void(0)" onclick="openTierModal('mouse')" class="tier-anchor-link">
-								<div class="tier-icon-container">
-									<img src="assets/icons/mouse_new.webp" alt="mouse">
-								</div>
-							</a>
-						
-					
 				</td>
-                <td class="text-left text-medium">Valzaan</td>
+                <td class="text-left text-medium">TurkeyNoNo</td>
                 <td class="text-lg text-bold">1247</td>
-                <td>15</td>
-                <td>4.0</td>
-                <td>26.7%</td>
-                <td>1357</td>
-                <td>-8</td>
+                <td>6</td>
+                <td>1.0</td>
+                <td>16.7%</td>
+                <td>1247</td>
+                <td>+74</td>
             </tr>
             
             <tr data-tier="unranked" class="unranked">
@@ -856,6 +910,31 @@
                 <td>+63</td>
             </tr>
             
+            <tr data-tier="mouse" class="">
+                <td class="">
+                    9
+                </td>
+                
+                <td>
+					
+						
+							<a href="javascript:void(0)" onclick="openTierModal('mouse')" class="tier-anchor-link">
+								<div class="tier-icon-container">
+									<img src="assets/icons/mouse_new.webp" alt="mouse">
+								</div>
+							</a>
+						
+					
+				</td>
+                <td class="text-left text-medium">Valzaan</td>
+                <td class="text-lg text-bold">1240</td>
+                <td>16</td>
+                <td>4.0</td>
+                <td>25.0%</td>
+                <td>1357</td>
+                <td>-7</td>
+            </tr>
+            
             <tr data-tier="unranked" class="unranked">
                 <td class="unranked">
                     -
@@ -873,21 +952,29 @@
                 <td>-21</td>
             </tr>
             
-            <tr data-tier="unranked" class="unranked">
-                <td class="unranked">
-                    -
+            <tr data-tier="mouse" class="">
+                <td class="">
+                    10
                 </td>
                 
                 <td>
 					
+						
+							<a href="javascript:void(0)" onclick="openTierModal('mouse')" class="tier-anchor-link">
+								<div class="tier-icon-container">
+									<img src="assets/icons/mouse_new.webp" alt="mouse">
+								</div>
+							</a>
+						
+					
 				</td>
-                <td class="text-left text-medium">Jasiuńcio</td>
-                <td class="text-lg text-bold">1235</td>
-                <td>7</td>
-                <td>2.0</td>
-                <td>28.6%</td>
-                <td>1284</td>
-                <td>-20</td>
+                <td class="text-left text-medium">swiftsusan</td>
+                <td class="text-lg text-bold">1237</td>
+                <td>12</td>
+                <td>1.0</td>
+                <td>8.3%</td>
+                <td>1449</td>
+                <td>-7</td>
             </tr>
             
             <tr data-tier="unranked" class="unranked">
@@ -916,12 +1003,29 @@
 					
 				</td>
                 <td class="text-left text-medium">fadingnovel</td>
-                <td class="text-lg text-bold">1231</td>
-                <td>4</td>
+                <td class="text-lg text-bold">1214</td>
+                <td>5</td>
                 <td>1.0</td>
-                <td>25.0%</td>
+                <td>20.0%</td>
                 <td>1231</td>
-                <td>+73</td>
+                <td>-17</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                
+                <td>
+					
+				</td>
+                <td class="text-left text-medium">Jasiuńcio</td>
+                <td class="text-lg text-bold">1209</td>
+                <td>9</td>
+                <td>2.0</td>
+                <td>22.2%</td>
+                <td>1284</td>
+                <td>-13</td>
             </tr>
             
             <tr data-tier="unranked" class="unranked">
@@ -1060,29 +1164,12 @@
 					
 				</td>
                 <td class="text-left text-medium">Ultcyber</td>
-                <td class="text-lg text-bold">1183</td>
-                <td>7</td>
-                <td>1.0</td>
-                <td>14.3%</td>
-                <td>1249</td>
-                <td>-13</td>
-            </tr>
-            
-            <tr data-tier="unranked" class="unranked">
-                <td class="unranked">
-                    -
-                </td>
-                
-                <td>
-					
-				</td>
-                <td class="text-left text-medium">radiantchaos</td>
-                <td class="text-lg text-bold">1179</td>
+                <td class="text-lg text-bold">1170</td>
                 <td>8</td>
                 <td>1.0</td>
                 <td>12.5%</td>
-                <td>1271</td>
-                <td>-17</td>
+                <td>1249</td>
+                <td>-13</td>
             </tr>
             
             <tr data-tier="unranked" class="unranked">
@@ -1100,23 +1187,6 @@
                 <td>16.7%</td>
                 <td>1216</td>
                 <td>-11</td>
-            </tr>
-            
-            <tr data-tier="unranked" class="unranked">
-                <td class="unranked">
-                    -
-                </td>
-                
-                <td>
-					
-				</td>
-                <td class="text-left text-medium">PlagueCarrier</td>
-                <td class="text-lg text-bold">1169</td>
-                <td>2</td>
-                <td>1.0</td>
-                <td>50.0%</td>
-                <td>1169</td>
-                <td>+71</td>
             </tr>
             
             <tr data-tier="unranked" class="unranked">
@@ -1204,6 +1274,23 @@
                 <td>-16</td>
             </tr>
             
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                
+                <td>
+					
+				</td>
+                <td class="text-left text-medium">PlagueCarrier</td>
+                <td class="text-lg text-bold">1140</td>
+                <td>6</td>
+                <td>1.0</td>
+                <td>16.7%</td>
+                <td>1169</td>
+                <td>-7</td>
+            </tr>
+            
             <tr data-tier="squirrel" class="">
                 <td class="unranked">
                     -
@@ -1221,46 +1308,62 @@
 					
 				</td>
                 <td class="text-left text-medium">mouseinabox</td>
-                <td class="text-lg text-bold">1144</td>
-                <td>10</td>
+                <td class="text-lg text-bold">1139</td>
+                <td>11</td>
                 <td>1.0</td>
-                <td>10.0%</td>
+                <td>9.1%</td>
                 <td>1167</td>
-                <td>-9</td>
+                <td>-5</td>
             </tr>
             
-            <tr data-tier="unranked" class="unranked">
+            <tr data-tier="squirrel" class="">
                 <td class="unranked">
                     -
                 </td>
                 
                 <td>
+					
+						
+							<a href="cache.html#nut-section" class="tier-anchor-link">
+								<div class="tier-icon-container">
+									<img src="assets/icons/squirrel.webp" alt="squirrel">
+								</div>
+							</a>
+						
 					
 				</td>
                 <td class="text-left text-medium">cjahwon</td>
-                <td class="text-lg text-bold">1047</td>
-                <td>9</td>
-                <td>1.0</td>
-                <td>11.1%</td>
-                <td>1064</td>
-                <td>-6</td>
+                <td class="text-lg text-bold">1077</td>
+                <td>11</td>
+                <td>2.0</td>
+                <td>18.2%</td>
+                <td>1077</td>
+                <td>+36</td>
             </tr>
             
-            <tr data-tier="unranked" class="unranked">
+            <tr data-tier="squirrel" class="">
                 <td class="unranked">
                     -
                 </td>
                 
                 <td>
 					
+						
+							<a href="cache.html#nut-section" class="tier-anchor-link">
+								<div class="tier-icon-container">
+									<img src="assets/icons/squirrel.webp" alt="squirrel">
+								</div>
+							</a>
+						
+					
 				</td>
                 <td class="text-left text-medium">buurn</td>
-                <td class="text-lg text-bold">1042</td>
-                <td>9</td>
+                <td class="text-lg text-bold">1037</td>
+                <td>10</td>
                 <td>1.0</td>
-                <td>11.1%</td>
+                <td>10.0%</td>
                 <td>1084</td>
-                <td>-3</td>
+                <td>-5</td>
             </tr>
             
         </tbody>
@@ -1270,10 +1373,10 @@
         </div>
         
         <div class="screen-deco left-deco">
-            
-                <img src="assets/images/leaderboard_img_left.webp" alt="Decoration Left">
-            
-        </div>
+			
+				<img src="assets/images/leaderboard_img_left.webp" alt="Decoration Left">
+			
+		</div>
 
         <footer class="app-footer window-box">
 			<div class="footer-content">
@@ -1281,7 +1384,7 @@
 					<span>Powered by <strong>Tʀɪᴄʜᴏʟᴏᴍᴇ</strong></span>
 					<span>Woodland visions by <a class="cl" href="cache.html">𝕩𝕝𝕦𝕖𝕧𝕚</a></span>
 				</div>
-				<div class="footer-date">Updated on 2026-04-09 09:04</div>
+				<div class="footer-date">Updated on 2026-04-10 00:27 UTC</div>
 			</div>
 		</footer>
     </div>
@@ -1313,12 +1416,13 @@
 	<script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
     
     <script>
-        const CONFIG = {
-            colors: {"bird": "#7AB5E0", "default": "#7A7347", "fox": "#E55555", "mouse": "#F49E52", "rabbit": "#F2C14E", "squirrel": "#94C160"},
-            icons: {"bird": "assets/icons/bird_new.webp", "fox": "assets/icons/fox_new.webp", "mouse": "assets/icons/mouse_new.webp", "rabbit": "assets/icons/rabbit_new.webp", "squirrel": "assets/icons/squirrel.webp"}
-        };
-    </script>
-    
+		const CONFIG = {
+			colors: {"bird": "#7AB5E0", "default": "#7A7347", "fox": "#E55555", "mouse": "#F49E52", "rabbit": "#F2C14E", "squirrel": "#94C160"},
+			icons: {"bird": "assets/icons/bird_new.webp", "fox": "assets/icons/fox_new.webp", "mouse": "assets/icons/mouse_new.webp", "rabbit": "assets/icons/rabbit_new.webp", "squirrel": "assets/icons/squirrel.webp"},
+			currentTier: "bird"
+		};
+	</script>
+		
     <script src="static/script.js"></script>
     
 <script>

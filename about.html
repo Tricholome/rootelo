@@ -1,11 +1,5 @@
 
 
-
-
-
-
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -23,69 +17,118 @@
     
     <style>
         :root {
-			/* --- 1. LAYOUT CONFIG --- */
-			--window-gap: 25px;           
+			/* --- 1. LAYOUT CONFIG (Automatic loop) --- */
+			
 			--window-max-width: clamp(600px, 60vw, 1600px);
+			
+			--window-padding: clamp(20px, 2.5vw, 40px);
+			
+			--window-gap: 20px;
+			
 
-			/* --- 2. TYPOGRAPHY --- */
+			/* --- 2. TYPOGRAPHY (Automatic loop) --- */
+			
 			--font-title: 'Fraunces', serif;
+			
 			--font-ui: 'Inter', sans-serif;
-			--normal: 400;
-			--medium: 600;
+			
+			--font-mono: 'JetBrains Mono', monospace;
+			
 			--bold: 900;
 			
-			/* --- 3. GLASS SYSTEM --- */
-			--glass-bg: #1c1c1cd9; 
-			--glass-border: rgba(255, 255, 255, 0.0.08);
-			--glass-shadow: 0 10px 30px rgba(0,0,0,0.5);
-	
-            /* --- 4. UI FOUNDATION --- */
+			--medium: 600;
+			
+			--normal: 400;
+			
+			--size-xs: 0.75rem;
+			
+			--size-sm: 0.85rem;
+			
+			--size-modal: 0.90rem;
+			
+			--size-base: 0.95rem;
+			
+			--size-md: 1.2rem;
+			
+			--size-lg: 2.0rem;
+			
+			--size-xl: 2.5rem;
+			
+			--size-display: 2.8rem;
+			
+			--track-slight: 0.5px;
+			
+			--track-wide: 1px;
+			
+			--track-display: 4px;
+			
+
+			/* --- 3. GLOBAL UI (Automatic loop) --- */
+			
 			--bg-overlay-top: rgba(0, 0, 0, 0.1);
+			
 			--bg-overlay-bottom: rgba(0, 0, 0, 0.8);
+			
 			--bg-container: #1c1c1c;
-			--bg-surface: rgba(255, 255, 255, 0.03); 
+			
+			--bg-surface: rgba(255, 255, 255, 0.03);
+			
 			--bg-hover: rgba(255, 255, 255, 0.08);
+			
 			--border-soft: #333333;
 			
-			/* --- 5. TEXT COLORS --- */
+			--border-dark: rgba(0, 0, 0, 0.4);
+			
+			--border-light: rgba(255, 255, 255, 0.05);
+			
+			--glass-bg: #1c1c1cd9;
+			
+			--glass-border: rgba(255, 255, 255, 0.08);
+			
+			--glass-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+			
 			--text-bright: #ffffff;
-            --text-main: #E0E0E0; 
-            --text-muted: #A0A0A0;
-            --text-dark: #111111; 
-            
-			/* --- 6. TIER DYNAMICS --- */
-            
-            --color-bird: #7AB5E0;
-            --color-bird-bg: #7AB5E014;
-            
-            --color-fox: #E55555;
-            --color-fox-bg: #E5555514;
-            
-            --color-rabbit: #F2C14E;
-            --color-rabbit-bg: #F2C14E14;
-            
-            --color-mouse: #F49E52;
-            --color-mouse-bg: #F49E5214;
-            
-            --color-squirrel: #94C160;
-            --color-squirrel-bg: #94C16014;
-            
-            --color-default: #7A7347;
-            --color-default-bg: #7A734714;
-            
-            --color-default: #7A7347;
 			
-			/* --- 7. DATATABLES SPECIFIC (LES NOUVELLES COULEURS) --- */
+			--text-main: #E0E0E0;
+			
+			--text-muted: #A0A0A0;
+			
+			--text-dark: #111111;
+			
 			--dt-table-bg: rgba(0, 0, 0, 0.15);
+			
 			--dt-header-bg: rgba(0, 0, 0, 0.25);
+			
 			--dt-row-border: rgba(255, 255, 255, 0.03);
+			
 			--dt-row-hover: rgba(255, 255, 255, 0.07);
+			
 			--dt-input-bg: rgba(0, 0, 0, 0.2);
-        }
-		body {
 			
-				--main-color: var(--color-mouse);
+
+			/* --- 4. TIER DYNAMICS (Loop with logic) --- */
 			
+			--color-bird: #7AB5E0;
+			--color-bird-bg: #7AB5E014;
+			
+			--color-fox: #E55555;
+			--color-fox-bg: #E5555514;
+			
+			--color-rabbit: #F2C14E;
+			--color-rabbit-bg: #F2C14E14;
+			
+			--color-mouse: #F49E52;
+			--color-mouse-bg: #F49E5214;
+			
+			--color-squirrel: #94C160;
+			--color-squirrel-bg: #94C16014;
+			
+			--color-default: #7A7347;
+			--color-default-bg: #7A734714;
+			
+
+			/* --- 5. PAGE THEME --- */
+			--main-color: #F49E52;
 		}
     </style>
 	
@@ -101,18 +144,19 @@
 
 <body data-page="about">
     
-    <div class="container" style="position: relative; overflow: visible;">
-        
+    <div class="container">
+	
         <header class="app-banner window-box">
+		
             <div class="banner-container">
                 <div class="banner-icons left">
                     <a href="javascript:void(0)" onclick="openTierModal('bird')" class="tooltip-link js-double-tap">
                         <img src="assets/icons/bird_new.webp" alt="Bird">
-                        <span class="tooltip-text"><strong style="color: var(--color-bird);">Bird (1500+)</strong> — The Grandmasters</span>
+                        <span class="tooltip-text"><strong class="tier-bird">Bird (1500+)</strong> — The Grandmasters</span>
                     </a>
                     <a href="javascript:void(0)" onclick="openTierModal('fox')" class="tooltip-link js-double-tap">
                         <img src="assets/icons/fox_new.webp" alt="Fox">
-                        <span class="tooltip-text"><strong style="color: var(--color-fox);">Fox (1400+)</strong> — The Cunning Tacticians</span>
+                        <span class="tooltip-text"><strong class="tier-fox">Fox (1400+)</strong> — The Cunning Tacticians</span>
                     </a>
                 </div>
                 <div class="banner-center">
@@ -122,11 +166,11 @@
                 <div class="banner-icons right">
                     <a href="javascript:void(0)" onclick="openTierModal('rabbit')" class="tooltip-link js-double-tap">
                         <img src="assets/icons/rabbit_new.webp" alt="Rabbit">
-                        <span class="tooltip-text"><strong style="color: var(--color-rabbit);">Rabbit (1300+)</strong> — The Agile Contenders</span>
+                        <span class="tooltip-text"><strong class="tier-rabbit">Rabbit (1300+)</strong> — The Agile Contenders</span>
                     </a>
                     <a href="javascript:void(0)" onclick="openTierModal('mouse')" class="tooltip-link js-double-tap">
                         <img src="assets/icons/mouse_new.webp" alt="Mouse">
-                        <span class="tooltip-text"><strong style="color: var(--color-mouse);">Mouse (1200+)</strong> — The Steady Foragers</span>
+                        <span class="tooltip-text"><strong class="tier-mouse">Mouse (1200+)</strong> — The Steady Foragers</span>
                     </a>
                 </div>
             </div>
@@ -159,19 +203,20 @@
 					<a href="about.html" class="active">Codex</a>
 				
 			</nav>
+			
         </header>
         
         <div class="screen-deco right-deco">
-            
-                <img src="assets/images/about_img_right.webp" alt="Decoration Right">
-            
-        </div>
+			
+				<img src="assets/images/about_img_right.webp" alt="Decoration Right">
+			
+		</div>
 
         <div class="app-viewport window-box">
             <header class="page-intro">
 				<h2>Codex</h2>
 				
-				<p>Understanding the fundamental rules and mechanics of Rootelo.</p>
+				<p>Understanding the fundamental rules and&nbsp;mechanics&nbsp;of&nbsp;Rootelo.</p>
 			</header>
 			
             <main>
@@ -211,6 +256,7 @@
     <p>After your 10-game calibration phase, you officially join the ranks and unlock your <strong>Tier</strong> based on your current Elo rating:</p>
     
     <table class="k-table">
+		
 		<tr>
 			<td><strong>Bird</strong></td>
 			<td>
@@ -249,7 +295,7 @@
 			<td class="k-val">Elo &ge; 1300</td>
 			<td>The Agile Contenders</td>
 		</tr>
-
+		
 		<tr>
 			<td><strong>Mouse</strong></td>
 			<td>
@@ -262,6 +308,7 @@
 			<td class="k-val">Elo &ge; 1200</td>
 			<td>The Steady Foragers</td>
 		</tr>
+		
 	</table>
     
     <h2>The Seasonal Lifecycle</h2>
@@ -275,10 +322,10 @@
         </div>
         
         <div class="screen-deco left-deco">
-            
-                <img src="assets/images/about_img_left.webp" alt="Decoration Left">
-            
-        </div>
+			
+				<img src="assets/images/about_img_left.webp" alt="Decoration Left">
+			
+		</div>
 
         <footer class="app-footer window-box">
 			<div class="footer-content">
@@ -286,7 +333,7 @@
 					<span>Powered by <strong>Tʀɪᴄʜᴏʟᴏᴍᴇ</strong></span>
 					<span>Woodland visions by <a class="cl" href="cache.html">𝕩𝕝𝕦𝕖𝕧𝕚</a></span>
 				</div>
-				<div class="footer-date">Updated on 2026-04-09 09:04</div>
+				<div class="footer-date">Updated on 2026-04-10 00:27 UTC</div>
 			</div>
 		</footer>
     </div>
@@ -318,12 +365,13 @@
 	<script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
     
     <script>
-        const CONFIG = {
-            colors: {"bird": "#7AB5E0", "default": "#7A7347", "fox": "#E55555", "mouse": "#F49E52", "rabbit": "#F2C14E", "squirrel": "#94C160"},
-            icons: {"bird": "assets/icons/bird_new.webp", "fox": "assets/icons/fox_new.webp", "mouse": "assets/icons/mouse_new.webp", "rabbit": "assets/icons/rabbit_new.webp", "squirrel": "assets/icons/squirrel.webp"}
-        };
-    </script>
-    
+		const CONFIG = {
+			colors: {"bird": "#7AB5E0", "default": "#7A7347", "fox": "#E55555", "mouse": "#F49E52", "rabbit": "#F2C14E", "squirrel": "#94C160"},
+			icons: {"bird": "assets/icons/bird_new.webp", "fox": "assets/icons/fox_new.webp", "mouse": "assets/icons/mouse_new.webp", "rabbit": "assets/icons/rabbit_new.webp", "squirrel": "assets/icons/squirrel.webp"},
+			currentTier: "mouse"
+		};
+	</script>
+		
     <script src="static/script.js"></script>
     
 </body>

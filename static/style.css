@@ -1,5 +1,4 @@
 
-
 /* =========================================================================
    ROOTELO - MAIN STYLESHEET
    Table of Contents:
@@ -23,7 +22,7 @@
    ========================================================================= */
 
 /* Alignment */
-.text-left    { text-align: left !important; padding-left: 15px !important; }
+.text-left    { text-align: left !important; }
 .text-center  { text-align: center !important; }
 
 /* Weights */
@@ -33,11 +32,15 @@
 
 /* Colors */
 .text-bright  { color: var(--text-bright) !important; }    
-.text-main    { color: var(--main-color) !important; }
+.text-main   { color: var(--text-main) !important; }
+.text-theme  { color: var(--main-color) !important; }
 .text-muted   { color: var(--text-muted) !important; }
 
 /* Sizes */
-.text-lg      { font-size: 1.1em; }
+.text-sm     { font-size: var(--size-sm); }
+.text-base   { font-size: var(--size-base); }
+.text-lg     { font-size: var(--size-lg); }
+.text-xl     { font-size: var(--size-xl); }
    
 
 /* =========================================================================
@@ -55,6 +58,7 @@ html {
 body {
     position: relative;
 	z-index: 0;
+	
     background-color: var(--main-color);
     background-image: url('../assets/images/pattern.webp');
     background-repeat: repeat;
@@ -62,14 +66,15 @@ body {
     background-size: 350px;
     background-attachment: fixed;
 	
+	font-family: var(--font-ui);
+    font-weight: var(--normal);
+    color: var(--text-muted);
+    font-size: var(--size-base);
+	
 	min-height: 100vh;
     min-height: 100dvh;
-	
-	font-family: var(--font-ui);
-    color: var(--text-main);
     text-align: center;
-    padding: 20px 5px;
-    margin: 0;
+	margin: 0;
     overflow-x: hidden;
 }
 
@@ -90,12 +95,21 @@ body::after {
 /* =========================================================================
    --- 2. LAYOUT & CONTAINERS ---
    ========================================================================= */
+.container {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: visible;
+}
+
 .window-box {
     position: relative;
     z-index: 10;
     width: 95%;
     max-width: var(--window-max-width);
-    margin: 0 auto;
+    margin: var(--window-gap) auto;
     background: color-mix(in srgb, var(--main-color) 10%, var(--glass-bg));
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
@@ -103,25 +117,7 @@ body::after {
     border-radius: 12px;
     box-sizing: border-box;
     box-shadow: inset 0 2px 0 0 color-mix(in srgb, var(--main-color) 70%, transparent), var(--glass-shadow);
-}
-
-.app-banner {
-    margin-top: 20px;
-    margin-bottom: var(--window-gap);
-    padding: 15px 20px;
-}
-
-.app-viewport {
-    padding: 20px 30px;
-    margin-bottom: 40px;
-}
-
-.app-footer {
-    margin-top: 40px;
-    padding: 20px 15px;
-    border-top: 1px solid var(--border-soft);
-    color: var(--text-muted);
-    text-align: center;
+	padding: var(--window-padding);
 }
 
 .footer-credits {
@@ -141,12 +137,13 @@ body::after {
 .footer-credits strong {
     color: var(--text-main);
     font-weight: var(--medium);
+	letter-spacing: var(--track-slight);
 }
 
 .footer-date {
     font-style: italic;
     opacity: 0.6;
-    font-size: 0.9em;
+    font-size: var(--size-sm);
 }
 
 @media (max-width: 768px) {
@@ -224,9 +221,9 @@ body::after {
 .site-title {
     font-family: var(--font-title);
     color: var(--text-main);
-    font-size: 2.8em;
+    font-size: var(--size-display);
     margin: 0;
-    letter-spacing: 4px;
+    letter-spacing: var(--track-display);
     text-transform: uppercase;
     font-weight: var(--bold);
     text-shadow: 0 2px 10px rgba(0,0,0,0.5);
@@ -236,21 +233,21 @@ body::after {
     font-family: var(--font-title);
     font-style: italic;
     color: var(--text-muted);
-    font-size: 1em;
-    margin: 5px 0 0;
-    letter-spacing: 1px;
+    font-size: var(--size-base);
+    letter-spacing: var(--track-wide);
+	margin: 5px 0 0;
 }
 
-.page-intro { margin-bottom: 30px; }
-.page-intro h2 { font-family: var(--font-title); font-size: 2.5em; margin: 0; color: var(--main-color); }
-.page-intro p { color: var(--text-muted); font-size: 0.9em; margin: 5px auto 0; }
+.page-intro { margin-bottom: var(--window-gap); }
+.page-intro h2 { font-family: var(--font-title); font-size: var(--size-xl); letter-spacing: var(--track-wide); margin: 0; color: var(--main-color); }
+.page-intro p { color: var(--text-muted); font-size: var(--size-base); margin: 5px auto 0; }
 
-a.cl { color: var(--text-main); text-decoration: none; font-weight: var(--medium); border-bottom: 1px dotted var(--main-color); transition: 0.2s; }
+a.cl { color: var(--text-main); text-decoration: none; font-weight: var(--medium); letter-spacing: var(--track-slight); border-bottom: 1px dotted var(--main-color); transition: 0.2s; }
 a.cl:hover { border-bottom: 1px solid var(--main-color); color: var(--main-color); }
 
 @media (max-width: 768px) {
-    .site-title { font-size: 2em; }
-    .page-intro h2 { font-size: 2em; }
+    .site-title { font-size: var(--size-lg); }
+    .page-intro h2 { font-size: var(--size-lg); }
 }
 
 /* =========================================================================
@@ -320,7 +317,7 @@ a.cl:hover { border-bottom: 1px solid var(--main-color); color: var(--main-color
     color: var(--text-muted);
     padding: 6px 12px;
     border-radius: 6px;
-    font-size: 0.75rem;
+    font-size: var(--size-xs);
     white-space: nowrap;
     opacity: 0;
     pointer-events: none;
@@ -376,8 +373,8 @@ nav a {
     text-decoration: none;
     font-weight: var(--medium);
     text-transform: uppercase;
-    font-size: 0.85em;
-    letter-spacing: 1px;
+    font-size: var(--size-sm);
+    letter-spacing: var(--track-wide);
     padding: 8px 12px;
     border-radius: 6px;
     transition: 0.3s ease;
@@ -397,14 +394,14 @@ nav a.active {
     width: 90%; 
     height: 0; 
     margin: 15px auto;
-    border-top: 1px solid rgba(0, 0, 0, 0.4);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    border-top: 1px solid var(--border-dark);
+    border-bottom: 1px solid var(--border-light);
 }
 
 /* Season Selectors */
 .season-selector { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 20px auto 20px; }
-.season-label { font-size: 0.7em; text-transform: uppercase; color: var(--text-muted); letter-spacing: 1.2px; font-weight: var(--bold); margin-right: 5px;}
-.season-btn { text-decoration: none; font-size: 0.75em; font-weight: var(--medium); color: var(--text-muted); padding: 6px 14px; border-radius: 4px; background: var(--bg-surface); border: 1px solid var(--border-soft); transition: 0.2s; }
+.season-label { font-size: var(--size-sm); text-transform: uppercase; color: var(--text-muted); letter-spacing: var(--track-wide); font-weight: var(--bold); margin-right: 5px;}
+.season-btn { text-decoration: none; font-size: var(--size-sm); font-weight: var(--medium); color: var(--text-muted); padding: 6px 14px; border-radius: 4px; background: var(--bg-surface); border: 1px solid var(--border-soft); transition: 0.2s; }
 .season-btn:hover { color: var(--text-main); background: var(--bg-hover); }
 .season-btn.active { background: transparent !important; color: var(--main-color) !important; border-color: var(--main-color) !important; }
 
@@ -427,8 +424,8 @@ table.dataTable {
 table.dataTable thead th { 
     background: var(--dt-header-bg) !important; 
     color: var(--text-main) !important; 
-    font-size: 0.75em; 
-    letter-spacing: 1px; 
+    font-size: var(--size-xs) !important;
+    letter-spacing: var(--track-wide); 
     text-transform: uppercase; 
     padding: 15px 10px !important; 
     border-bottom: 1px solid var(--border-soft) !important; 
@@ -445,7 +442,8 @@ table.dataTable tbody tr:hover td {
 table.dataTable tbody td { 
     border-bottom: 1px solid var(--dt-row-border); 
     padding: 12px 10px; 
-    font-size: 0.95em; 
+    font-size: var(--size-base);
+	color: var(--text-main);
     transition: background-color 0.2s ease;
 }
 
@@ -459,7 +457,7 @@ table.dataTable tbody tr:last-child td {
 .dataTables_info, 
 .dataTables_paginate { 
     color: var(--text-muted) !important; 
-    font-size: 0.8em; 
+    font-size: var(--size-sm);
 }
 
 .dataTables_info, .dataTables_paginate { padding-top: 15px !important; }
@@ -517,6 +515,7 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     border: 1px solid transparent !important;
     transition: 0.3s;
     text-decoration: none !important;
+	font-size: var(--size-sm);
 }
 
 .dataTables_paginate .paginate_button:hover:not(.current):not(.disabled) { 
@@ -537,7 +536,7 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     cursor: default !important;
 }
 
-/* --- D. Specifics (Leaderboard, Matches) --- */
+/* --- D. Specifics (Leaderboard) --- */
 .tier-icon-container { 
     width: 36px; 
     height: 36px; 
@@ -556,6 +555,7 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     font-weight: var(--medium) !important; 
 }
 
+/* --- E. Specifics (Matches) --- */
 .lineup-cell { 
     white-space: normal !important; 
     word-wrap: break-word; 
@@ -565,14 +565,22 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     text-align: left !important;
 }
 
+.lineup-cell .winner-name { color: var(--text-bright); font-weight: var(--bold); }
+.lineup-cell .others-names { color: var(--text-muted); }
+
 .match-id-link { 
     color: var(--text-muted); 
     text-decoration: none; 
-    font-size: 0.85em; 
+    font-size: var(--size-sm); 
     border: 1px solid var(--border-soft); 
     padding: 2px 6px; 
     border-radius: 4px; 
     white-space: nowrap;
+}
+
+#matchesTable td:nth-child(2) {
+    color: var(--main-color);
+    font-weight: var(--bold);
 }
 
 #matchesTable th, 
@@ -582,9 +590,9 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     white-space: nowrap !important; 
 }
 
-/* --- E. Responsive --- */
+/* --- F. Responsive --- */
 @media (max-width: 600px) {
-    table.dataTable tbody td { font-size: 0.85em; padding: 8px 4px !important; }
+    table.dataTable tbody td { font-size: var(--size-sm); padding: 8px 4px !important; }
     .player-name-cell { 
         max-width: 110px; 
         overflow: hidden; 
@@ -673,14 +681,15 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     margin-top: 60px ;
 	margin-bottom: -10px ;
     font-family: var(--font-title);
-    font-size: 1.1em;
+    font-size: var(--size-md);
+	letter-spacing: var(--track-wide);
     font-weight: var(--medium);
     text-align: left;
-    letter-spacing: 1px;
 }
 
-.codex-section p { margin-bottom: 20px; color: var(--text-muted); text-align: left; font-size: 0.95em; }
-.codex-section strong { color: var(--text-main); font-weight: var(--medium); }
+.codex-section h2:first-of-type { margin-top: 40px; }
+.codex-section p { margin-bottom: 20px; color: var(--text-muted); text-align: left; font-size: var(--size-base); }
+.codex-section strong { color: var(--text-main); font-weight: var(--medium); letter-spacing: var(--track-slight); }
 
 /* Information Tables (K-Factor, Tier Codex) */
 .k-table {
@@ -700,7 +709,7 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     border-bottom: 1px solid var(--dt-row-border); 
     color: var(--text-muted); 
     text-align: left; 
-    font-size: 0.9em; 
+    font-size: var(--size-sm); 
     transition: background-color 0.2s ease;
 }
 
@@ -723,8 +732,8 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 .k-val { 
     color: var(--main-color) !important; 
     font-weight: var(--bold); 
-    font-family: monospace; 
-    font-size: 1.3em; 
+    font-family: var(--font-mono); 
+    font-size: var(--size-md);
     white-space: nowrap; 
 }
 
@@ -748,7 +757,7 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 .modal-content {
     --tier-color: var(--main-color);
     position: relative;
-    width: 90%; max-width: 600px; padding: 40px;
+    width: 90%; max-width: 600px; padding: var(--window-padding);
     max-height: 85vh;
     overflow-y: auto;
     background: color-mix(in srgb, var(--tier-color) 10%, var(--glass-bg));
@@ -768,7 +777,7 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 
 .modal-close {
     position: absolute; top: 15px; right: 15px; background: none; border: none;
-    color: var(--text-muted); font-size: 32px; cursor: pointer; line-height: 1;
+    color: var(--text-muted); font-size: var(--size-lg); cursor: pointer; line-height: 1;
     z-index: 10;
 }
 
@@ -783,33 +792,32 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 
 #modalTitle { 
     margin: 0; font-family: var(--font-title); color: var(--text-main); 
-    font-size: 2.8em; letter-spacing: 4px; font-weight: var(--bold); 
+    font-size: var(--size-display); letter-spacing: var(--track-display); font-weight: var(--bold); 
 }
 
-#modalElo { font-weight: var(--bold); font-size: 1.1em; margin-top: 5px; }
-#modalSubtitle { color: var(--text-muted); font-style: italic; font-size: 1em; margin-top: -5px; }
-#modalText { color: var(--text-muted); text-align: left; font-size: 0.95em; line-height: 1.6; }
+#modalElo { font-weight: var(--bold); var(--size-lg); margin-top: 5px; }
+#modalSubtitle { color: var(--text-muted); font-style: italic; font-size: var(--size-base); margin-top: -5px; }
+#modalText { color: var(--text-muted); text-align: left; font-size: var(--size-base); line-height: 1.6; }
 
 .modal-divider {
     width: 100%; height: 0; margin: 25px auto;
-    border-top: 1px solid rgba(0, 0, 0, 0.4);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    border-top: 1px solid var(--border-dark);
+    border-bottom: 1px solid var(--border-light);
 }
 
 /* --- MOBILE PORTRAIT --- */
 @media (max-width: 800px) {
-    .modal-content { width: 92%; padding: 20px; }
+    .modal-content { width: 92%; }
 	.modal-divider { display: none; }
     #modalIcon { width: 200px; }
-    #modalTitle { font-size: 1.8em; letter-spacing: 2px; }
-	#modalText { font-size: 0.9em; line-height: 1.5; margin-top: 25px; text-align: center; }
+    #modalTitle { font-size: var(--size-xl); letter-spacing: var(--track-wide); }
+	#modalText { font-size: var(--size-modal); line-height: 1.5; margin-top: 25px; text-align: center; }
 }
 
 /* --- MOBILE LANDSCAPE --- */
 @media (max-height: 500px) and (orientation: landscape) {
     .modal-content {
         max-width: 850px; width: 95%; max-height: 90vh;
-        padding: 20px 20px;
     }
 
     #modalBody {
@@ -823,17 +831,25 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     #modalIcon { width: 100%; max-height: 80vh; margin-bottom: 0; }
 
     .title-row { display: flex; align-items: baseline; gap: 15px; }
-    #modalTitle { font-size: 1.6em; }
+    #modalTitle { font-size: var(--size-lg); }
     #modalElo { margin: 0; }
-    #modalSubtitle { margin-top: 7px; font-size: 0.9em; }
+    #modalSubtitle { margin-top: 7px; font-size: var(--size-sm); }
 
     .modal-divider { display: none; }
-    #modalText { font-size: 0.85em; line-height: 1.4; margin-top: 20px; text-align: left; }
+    #modalText { font-size: var(--size-sm); line-height: 1.4; margin-top: 20px; text-align: left; }
 }
 
 /* =========================================================================
    --- 11. TIER-BASED COLORATION ---
    ========================================================================= */
+
+/* Utility classes for text */   
+.tier-bird     { color: var(--color-bird) !important; }
+.tier-fox      { color: var(--color-fox) !important; }
+.tier-rabbit   { color: var(--color-rabbit) !important; }
+.tier-mouse    { color: var(--color-mouse) !important; }
+.tier-squirrel { color: var(--color-squirrel) !important; }
+
 /* Background and border for each tier row */
 table.dataTable tbody tr[data-tier="bird"]     { background-color: var(--color-bird-bg) !important; border-left: 4px solid var(--color-bird) !important; }
 table.dataTable tbody tr[data-tier="fox"]      { background-color: var(--color-fox-bg) !important; border-left: 4px solid var(--color-fox) !important; }
@@ -952,7 +968,7 @@ body[data-page="cache"].show-deco .app-footer {
 	font-weight: var(--medium);
     padding: 6px 12px;
     border-radius: 6px;
-    font-size: 0.75rem;
+    font-size: var(--size-xs);
     white-space: nowrap;
     box-shadow: 0 4px 10px rgba(0,0,0,0.5);
     z-index: 100;
