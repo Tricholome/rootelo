@@ -1001,14 +1001,42 @@ body[data-page="cache"].show-deco .app-footer {
     transition: transform 0.1s;
 }
 
-/* --- 6. Cipher interaction --- */
-.cipher {
-    cursor: default; /* Pas de main de lien pour rester secret */
-    transition: color 0.4s ease;
+/* --- 6. Mystic interaction --- */
+#mystic-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--bg-overlay-bottom); 
+    z-index: 1000; 
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 1.5s ease-in-out;
 }
 
-.cipher:active {
-    transform: scale(0.98); /* Petit retour tactile au clic */
+#mystic-overlay.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.cipher {
+    display: inline-block;
+    position: relative;
+    cursor: default;
+    transition: all 0.4s ease;
+    z-index: 10; 
+}
+
+.cipher.active-cipher {
+    color: var(--main-color) !important;
+    text-shadow: 0 0 15px var(--main-color);
+    font-weight: var(--bold);
+    z-index: 1001; 
+}
+
+.cipher:hover {
+    text-shadow: 0 0 8px var(--main-color);
 }
 
 {% block extra_css %}{% endblock %}
