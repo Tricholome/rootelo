@@ -207,65 +207,73 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 /* =========================================================
-   GESTION DU SECRET ET RIDEAU NOIR (VERSION SIMPLE)
+   GESTION DU SECRET ET RIDEAU NOIR 
    ========================================================= */
 
 document.addEventListener('DOMContentLoaded', () => {
 
-    // --- TON CODE EXISTANT (Nut & Deco) ---
-    // (Laisse-le tel quel ici)
-
-    // --- 13. LOGIQUE MYSTIC ---
     const secretSequence = ['roots', 'quiet'];
     let userProgress = [];
+
+    // --- Fonction pour changer les textes ---
+    const updateTexts = () => {
+        const titleEl = document.querySelector('.page-heading');
+        const descEl = document.querySelector('.page-description');
+
+        if (titleEl) titleEl.textContent = "The Legend";
+        if (descEl) descEl.textContent = "The watcher finally speaks... The forest remembers your name.";
+        document.title = "The Legend • Rootelo"; // Change aussi l'onglet
+    };
 
     // On écoute les clics sur les mots "cipher"
     document.querySelectorAll('.cipher').forEach(el => {
         el.addEventListener('click', () => {
             const word = el.getAttribute('data-word');
             
-            // Si le mot cliqué est le prochain dans la liste
             if (word === secretSequence[userProgress.length]) {
                 userProgress.push(word);
                 el.classList.add('active-cipher');
 
-                // GAGNÉ : On lance la transition
                 if (userProgress.length === secretSequence.length) {
                     const gate = document.getElementById('mystic-gate');
                     
-                    // On affiche le rideau noir
                     $(gate).fadeIn(600, function() {
-                        // On ajoute la classe au body (ce qui affiche la section via le CSS)
                         document.body.classList.add('mystic');
+                        document.body.classList.add('show-deco');
                         localStorage.setItem('mysticUnlocked', 'true');
                         
-                        // On allume les étoiles si la fonction existe
+                        // ON CHANGE LES TEXTES ICI
+                        updateTexts();
+                        
                         if (typeof initStardust === "function") initStardust();
 
-                        // On retire le rideau
                         $(gate).fadeOut(1000);
                     });
                 }
             } else {
-                // ERREUR : On recommence
                 userProgress = [];
                 document.querySelectorAll('.cipher').forEach(c => c.classList.remove('active-cipher'));
             }
         });
     });
 
-    // PORTE DE SORTIE : Le clic sur "here" pour tout réinitialiser
+    // PORTE DE SORTIE
     const exitBtn = document.getElementById('leave-mystic');
     if (exitBtn) {
         exitBtn.addEventListener('click', () => {
             localStorage.removeItem('mysticUnlocked');
-            location.reload(); // Un refresh remet tout à zéro proprement
+            location.reload();
         });
     }
 
-    // PERSISTANCE : Si on revient sur la page, on vérifie si c'est déjà débloqué
+    // PERSISTANCE
     if (localStorage.getItem('mysticUnlocked') === 'true') {
         document.body.classList.add('mystic');
+        document.body.classList.add('show-deco');
+        
+        // ON CHANGE LES TEXTES ICI AUSSI
+        updateTexts();
+        
         if (typeof initStardust === "function") initStardust();
     }
 });
