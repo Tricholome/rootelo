@@ -213,7 +213,7 @@ document.addEventListener('DOMContentLoaded', () => {
 const secretSequence = ['roots', 'quiet'];
 let userProgress = [];
 
-// 1. Déclenchement du secret (Page Cache)
+// Détection des clics
 $('.cipher').on('click', function() {
     const clickedWord = $(this).data('word');
     
@@ -222,13 +222,12 @@ $('.cipher').on('click', function() {
         $(this).addClass('active-cipher');
 
         if (userProgress.length === secretSequence.length) {
-            // Succès : On prépare la transition
+            // SUCCESS : On prépare le passage
             localStorage.setItem('mysticUnlocked', 'true');
             localStorage.setItem('justUnlocked', 'true');
             
-            // On affiche le rideau noir (il est fermé à 0% par défaut)
-            // On utilise fadeIn pour que ce soit fluide
-            $('#mystic-gate').show().css('opacity', 1);
+            // On affiche le rideau noir (il est déjà à 0% de trou dans le CSS)
+            $('#mystic-gate').addClass('active');
 
             setTimeout(() => {
                 window.location.href = 'legend.html';
@@ -240,31 +239,36 @@ $('.cipher').on('click', function() {
     }
 });
 
-// 2. Gestion de l'arrivée (Page Legend)
+// Au chargement de la page
 $(document).ready(function() {
     const gate = $('#mystic-gate');
 
-    // On vérifie si on vient de débloquer le secret
     if (localStorage.getItem('justUnlocked') === 'true') {
-        
-        // On force le rideau noir immédiatement
-        gate.show().css('opacity', 1);
+        // On plaque le noir immédiatement
+        gate.addClass('active');
 
-        // Si on est bien sur la page legend
+        // On vérifie si on est sur la page legend
+        // (Vérifie bien que l'URL contient 'legend')
         if (window.location.pathname.includes('legend')) {
             setTimeout(() => {
-                // On ouvre l'oeil (0% -> 150%)
+                // On ouvre l'oeil
                 gate.addClass('reveal');
 
-                // Nettoyage après l'animation
+                // On nettoie
                 setTimeout(() => {
                     gate.fadeOut(1000, function() {
-                        $(this).removeClass('active reveal').css('opacity', 0);
+                        $(this).removeClass('active reveal');
                         localStorage.removeItem('justUnlocked');
                     });
-                }, 1600);
-            }, 300);
+                }, 2000);
+            }, 500);
         }
+    }
+    
+    // Étoiles persistantes
+    if (localStorage.getItem('mysticUnlocked') === 'true') {
+        $('body').addClass('mystic-unlocked');
+        if (typeof initStardust === "function") initStardust();
     }
 });
 
