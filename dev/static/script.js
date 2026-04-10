@@ -207,8 +207,9 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 /* =========================================================
-   1. LA SÉQUENCE DES CIPHERS (Page Cache)
+   GÉRER LE SECRET ET LA TRANSITION
    ========================================================= */
+
 const secretSequence = ['roots', 'quiet'];
 let userProgress = [];
 
@@ -220,75 +221,42 @@ $('.cipher').on('click', function() {
         $(this).addClass('active-cipher');
 
         if (userProgress.length === secretSequence.length) {
-            // C'est ici qu'on appelle la nouvelle fonction de sortie
-            activateMysticTransition();
+            // Étape 1 : Activer l'overlay de sortie
+            localStorage.setItem('mysticUnlocked', 'true');
+            localStorage.setItem('justUnlocked', 'true');
+            $('#mystic-overlay').addClass('active');
+
+            // Étape 2 : Rediriger
+            setTimeout(() => {
+                window.location.href = 'legend.html';
+            }, 1600);
         }
     } else {
         userProgress = [];
         $('.cipher').removeClass('active-cipher');
-        $(this).css('color', '#ff4444');
-        setTimeout(() => $(this).css('color', ''), 500);
     }
 });
 
-/* =========================================================
-   2. LA SORTIE : FERMETURE DU RIDEAU
-   ========================================================= */
-function activateMysticTransition() {
-    const gate = $('#mystic-gate');
-    
-    // On enregistre les flags dans le navigateur
-    localStorage.setItem('mysticUnlocked', 'true'); // Pour les étoiles partout
-    localStorage.setItem('justUnlocked', 'true');   // Pour l'oeil sur la page suivante
-
-    // On affiche le div et on lance l'opacité (classe .closing dans ton CSS)
-    gate.addClass('closing'); 
-
-    // On attend la fin du fondu (1.5s dans ton CSS) pour changer de page
-    setTimeout(function() {
-        window.location.href = 'legend.html';
-    }, 1600);
-}
-
-/* =========================================================
-   3. L'ENTRÉE : OUVERTURE DE L'OEIL (Au chargement)
-   ========================================================= */
 $(document).ready(function() {
-    const gate = $('#mystic-gate');
-
-    // On vérifie si on vient de débloquer le secret
-    if (localStorage.getItem('justUnlocked') === 'true') {
+    // A. Si on arrive sur Legend avec le flag débloqué
+    if (localStorage.getItem('justUnlocked') === 'true' && $('body').data('page') === 'legend') {
+        const gate = $('#mystic-gate');
         
-        // ÉTAPE A : On force l'écran noir IMMEDIATEMENT
-        // .opening doit avoir opacity: 1 et clip-path: circle(0%) dans ton CSS
-        gate.addClass('opening'); 
+        // On déclenche l'ouverture de l'oeil après un court délai
+        setTimeout(() => {
+            gate.addClass('reveal');
 
-        // ÉTAPE B : Si on est sur la page Legend, on ouvre l'oeil
-        if ($('body').data('page') === 'legend') {
-            
-            // Petit délai pour s'assurer que le rendu de la page est prêt derrière le noir
+            // Nettoyage final
             setTimeout(() => {
-                gate.addClass('reveal'); // Lance l'animation clip-path vers 150%
-
-                // ÉTAPE C : Une fois l'oeil ouvert, on nettoie
-                setTimeout(() => {
-                    gate.fadeOut(1000, function() {
-                        // On retire les flags et classes pour libérer le site
-                        $(this).removeClass('opening reveal closing').hide();
-                        localStorage.removeItem('justUnlocked');
-                    });
-                }, 2100); // Correspond à la durée de transition du clip-path
-            }, 500);
-            
-        } else {
-            // Si l'utilisateur a débloqué le secret mais n'est pas sur Legend
-            // on ne laisse pas l'écran noir indéfiniment
-            gate.hide();
-            localStorage.removeItem('justUnlocked');
-        }
+                gate.fadeOut(1000, function() {
+                    $('body').removeClass('is-revealing');
+                    localStorage.removeItem('justUnlocked');
+                });
+            }, 2100);
+        }, 500);
     }
 
-    // Gestion du mode "Etoiles" permanent
+    // B. Activer les étoiles si débloqué
     if (localStorage.getItem('mysticUnlocked') === 'true') {
         $('body').addClass('mystic-unlocked');
         if (typeof initStardust === "function") initStardust();
