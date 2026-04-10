@@ -1001,53 +1001,62 @@ body[data-page="cache"].show-deco .app-footer {
     transition: transform 0.1s;
 }
 
-/* --- 6. Mystic interaction (La phase de clic sur les mots) --- */
-
-.cipher {
-    display: inline-block;
-    position: relative;
-    cursor: default;
-    transition: all 0.4s ease;
-    z-index: 10; 
-}
-
-.cipher.active-cipher {
-    color: var(--main-color) !important;
-    text-shadow: 0 0 15px var(--main-color);
-    font-weight: var(--bold);
-}
-
-.cipher:hover {
-    text-shadow: 0 0 8px var(--main-color);
-}
-
 /* =========================================================================
    --- 13. MYSTIC CONTENT ---
    ========================================================================= */
-   
+
 #mystic-gate {
     position: fixed;
     top: 0; left: 0;
     width: 100vw; height: 100vh;
-    background: #000; /* Noir pur pour être sûr */
+    background: #000; /* Noir pur */
     z-index: 10000;
     pointer-events: none;
-    display: none; /* Cache le rideau sur les pages normales */
+    display: none; 
     opacity: 0;
-    /* On prépare l'œil (le trou est à 0% donc tout est noir) */
+    /* État initial : TROU À 0% (Tout est noir) */
     clip-path: circle(0% at 50% 50%);
     transition: clip-path 2s ease-in-out;
 }
 
-/* LA RÈGLE CRUCIALE : Si le body a cette classe, le rideau sature l'écran */
+/* Force l'affichage si on est en train de révéler */
 body.is-revealing #mystic-gate {
     display: block !important;
     opacity: 1 !important;
 }
 
-/* L'animation qui crée le trou (l'œil) */
+/* L'animation d'ouverture */
 #mystic-gate.reveal {
     clip-path: circle(150% at 50% 50%);
+}
+
+/* Styles des mots cliquables */
+.cipher {
+    display: inline-block;
+    cursor: pointer;
+    transition: all 0.4s ease;
+}
+
+.cipher.active-cipher {
+    color: var(--main-color) !important;
+    text-shadow: 0 0 15px var(--main-color);
+}
+
+/* Overlay de fermeture (Page Cache) */
+#mystic-overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: #000;
+    z-index: 9999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 1.5s ease;
+}
+
+#mystic-overlay.active {
+    opacity: 1;
+    pointer-events: all;
 }
 
 /* Le conteneur d'étoiles interne aux window-box */
