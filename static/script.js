@@ -97,6 +97,12 @@ document.addEventListener('DOMContentLoaded', function() {
 			subtitle: 'The Hapless Stragglers',
 			desc: 'These frantic collectors dwell in the tangled undergrowth of the ranking system. Clumsy errors and brutal defeats often force them to fall back while fiercer beasts surge ahead. Yet, they bravely endure by turning every painful lesson into a seed for next season’s harvest.'
 		}
+		'stag': {
+			name: 'Stag',
+			elo: '1600+',
+			subtitle: 'The Legend',
+			desc: 'To be defined.'
+		}
 	};
 
 	// On récupère les couleurs et icônes depuis l'objet CONFIG créé dans le HTML
