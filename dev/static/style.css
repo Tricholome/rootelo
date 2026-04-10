@@ -1056,15 +1056,25 @@ body[data-page="cache"].show-deco .app-footer {
 /* Les particules */
 .star {
     position: absolute;
-    background: var(--main-color); /* Utilise le violet Stag de la page */
+    /* On force une couleur plus claire si var(--main-color) est trop sombre */
+    background: #fff; 
     border-radius: 50%;
     opacity: 0;
+    /* L'éclat utilise ta couleur de thème */
+    box-shadow: 0 0 10px 2px var(--main-color), 0 0 5px #fff;
     animation: twinkle var(--duration) infinite ease-in-out;
+    filter: blur(0.5px); /* Un flou léger pour le côté organique */
 }
 
 @keyframes twinkle {
-    0%, 100% { opacity: 0; transform: scale(0.5); }
-    50% { opacity: 0.8; transform: scale(1.2); box-shadow: 0 0 10px var(--main-color); }
+    0%, 100% { 
+        opacity: 0; 
+        transform: scale(0.3) translateY(0); 
+    }
+    50% { 
+        opacity: 0.9; /* Plus d'opacité au pic */
+        transform: scale(1.2) translateY(-15px); /* Petit mouvement ascendant */
+    }
 }
 
 {% block extra_css %}{% endblock %}
