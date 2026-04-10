@@ -304,3 +304,25 @@ function initStardust() {
         }
     });
 }
+
+/* =========================================================
+   PORTE DE SORTIE : RÉINITIALISATION
+   ========================================================= */
+
+$(document).on('click', '#leave-mystic', function() {
+    const gate = $('#mystic-gate');
+
+    // 1. On affiche le rideau noir pour une transition fluide
+    gate.fadeIn(500, function() {
+        
+        // 2. On vide le localStorage (plus d'étoiles, plus d'accès)
+        localStorage.removeItem('mysticUnlocked');
+        localStorage.removeItem('justUnlocked');
+        
+        // 3. On retire la classe du body pour éteindre les styles liés
+        $('body').removeClass('mystic-unlocked');
+
+        // 4. On redirige vers l'accueil (index.html ou /)
+        window.location.href = 'index.html'; 
+    });
+});
