@@ -1005,26 +1005,6 @@ body[data-page="cache"].show-deco .app-footer {
    --- 13. MYSTIC CONTENT ---
    ========================================================================= */
    
-.cipher {
-    display: inline-block;
-    position: relative;
-    cursor: default;
-    transition: all 0.4s ease;
-    z-index: 10; 
-}
-
-.cipher.active-cipher {
-    color: var(--main-color) !important;
-    text-shadow: 0 0 15px var(--main-color);
-    font-weight: var(--bold);
-    z-index: 1001; 
-}
-
-.cipher:hover {
-    text-shadow: 0 0 8px var(--main-color);
-}
-
-/* --- SIMPLE MYSTIC GATE --- */
 #mystic-gate {
     position: fixed;
     top: 0; left: 0;
@@ -1032,26 +1012,10 @@ body[data-page="cache"].show-deco .app-footer {
     background: #000;
     z-index: 10000;
     display: none; /* Caché par défaut */
-    cursor: pointer; /* Indique qu'on peut cliquer */
-    transition: opacity 1s ease;
 }
 
-/* Quand le rideau est actif */
-#mystic-gate.active {
-    display: block;
-    opacity: 1;
-}
-
-/* Message optionnel pour dire de cliquer (si tu veux) */
-#mystic-gate::after {
-    content: "Cliquez pour révéler";
-    position: absolute;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    color: rgba(255,255,255,0.3);
-    font-family: var(--font-main);
-    letter-spacing: 2px;
-}
+.cipher { cursor: pointer; }
+.active-cipher { color: var(--main-color) !important; }
 
 
 /* =========================================================================
