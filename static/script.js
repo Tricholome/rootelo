@@ -210,64 +210,38 @@ document.addEventListener('DOMContentLoaded', () => {
    GESTION DU SECRET ET RIDEAU NOIR (VERSION SIMPLE)
    ========================================================= */
 
-// 1. Logique des mots cliquables
+// 1. La séquence
 const secretSequence = ['roots', 'quiet'];
 let userProgress = [];
 
-// On utilise $(document).on pour être sûr que le clic capte bien les .cipher
 $(document).on('click', '.cipher', function() {
     const word = $(this).data('word');
     
+    // Vérification du mot
     if (word === secretSequence[userProgress.length]) {
         userProgress.push(word);
         $(this).addClass('active-cipher');
 
+        // SI GAGNÉ
         if (userProgress.length === secretSequence.length) {
-            // VICTOIRE
-            localStorage.setItem('justUnlocked', 'true');
-            localStorage.setItem('mysticUnlocked', 'true');
             
-            // On affiche le rideau noir avant de changer de page
-            $('#mystic-gate').fadeIn(500);
+            // A. On affiche le rideau noir (transition)
+            $('#mystic-gate').fadeIn(800, function() {
+                
+                // B. On active les étoiles et le mode secret
+                localStorage.setItem('mysticUnlocked', 'true');
+                $('body').addClass('mystic-unlocked');
+                
+                // C. On relance les étoiles si la fonction existe
+                if (typeof initStardust === "function") initStardust();
 
-            setTimeout(() => {
-                window.location.href = 'legend.html';
-            }, 800);
+                // D. On retire le rideau noir doucement
+                $('#mystic-gate').fadeOut(1000);
+            });
         }
     } else {
-        // ERREUR
         userProgress = [];
         $('.cipher').removeClass('active-cipher');
-    }
-});
-
-// 2. Logique au chargement de la page
-$(document).ready(function() {
-    const gate = $('#mystic-gate');
-
-    // Si on vient de débloquer le secret
-    if (localStorage.getItem('justUnlocked') === 'true') {
-        
-        // A. On force l'affichage du noir immédiatement
-        // On utilise .show() et opacity 1 pour éviter tout délai
-        gate.show().css('opacity', '1').addClass('active');
-
-        // B. On attend que l'utilisateur clique pour libérer la page
-        gate.on('click', function() {
-            $(this).fadeOut(1000, function() {
-                $(this).removeClass('active');
-                // On supprime le flag pour que ça ne revienne pas au prochain refresh
-                localStorage.removeItem('justUnlocked');
-            });
-        });
-    }
-
-    // Gestion des étoiles (si tu as gardé la fonction initStardust)
-    if (localStorage.getItem('mysticUnlocked') === 'true') {
-        $('body').addClass('mystic-unlocked');
-        if (typeof initStardust === "function") {
-            initStardust();
-        }
     }
 });
 
@@ -304,25 +278,3 @@ function initStardust() {
         }
     });
 }
-
-/* =========================================================
-   PORTE DE SORTIE : RÉINITIALISATION
-   ========================================================= */
-
-$(document).on('click', '#leave-mystic', function() {
-    const gate = $('#mystic-gate');
-
-    // 1. On affiche le rideau noir pour une transition fluide
-    gate.fadeIn(500, function() {
-        
-        // 2. On vide le localStorage (plus d'étoiles, plus d'accès)
-        localStorage.removeItem('mysticUnlocked');
-        localStorage.removeItem('justUnlocked');
-        
-        // 3. On retire la classe du body pour éteindre les styles liés
-        $('body').removeClass('mystic-unlocked');
-
-        // 4. On redirige vers l'accueil (index.html ou /)
-        window.location.href = 'index.html'; 
-    });
-});
