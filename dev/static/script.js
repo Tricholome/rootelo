@@ -207,12 +207,13 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 /* =========================================================
-   GÉRER LE SECRET ET LA TRANSITION
+   GESTION DU SECRET & TRANSITION
    ========================================================= */
 
 const secretSequence = ['roots', 'quiet'];
 let userProgress = [];
 
+// 1. Déclenchement du secret (Page Cache)
 $('.cipher').on('click', function() {
     const clickedWord = $(this).data('word');
     
@@ -221,15 +222,17 @@ $('.cipher').on('click', function() {
         $(this).addClass('active-cipher');
 
         if (userProgress.length === secretSequence.length) {
-            // Étape 1 : Activer l'overlay de sortie
+            // Succès : On prépare la transition
             localStorage.setItem('mysticUnlocked', 'true');
             localStorage.setItem('justUnlocked', 'true');
-            $('#mystic-overlay').addClass('active');
+            
+            // On affiche le rideau noir (il est fermé à 0% par défaut)
+            // On utilise fadeIn pour que ce soit fluide
+            $('#mystic-gate').show().css('opacity', 1);
 
-            // Étape 2 : Rediriger
             setTimeout(() => {
                 window.location.href = 'legend.html';
-            }, 1600);
+            }, 1000);
         }
     } else {
         userProgress = [];
@@ -237,29 +240,31 @@ $('.cipher').on('click', function() {
     }
 });
 
+// 2. Gestion de l'arrivée (Page Legend)
 $(document).ready(function() {
-    // A. Si on arrive sur Legend avec le flag débloqué
-    if (localStorage.getItem('justUnlocked') === 'true' && $('body').data('page') === 'legend') {
-        const gate = $('#mystic-gate');
+    const gate = $('#mystic-gate');
+
+    // On vérifie si on vient de débloquer le secret
+    if (localStorage.getItem('justUnlocked') === 'true') {
         
-        // On déclenche l'ouverture de l'oeil après un court délai
-        setTimeout(() => {
-            gate.addClass('reveal');
+        // On force le rideau noir immédiatement
+        gate.show().css('opacity', 1);
 
-            // Nettoyage final
+        // Si on est bien sur la page legend
+        if (window.location.pathname.includes('legend')) {
             setTimeout(() => {
-                gate.fadeOut(1000, function() {
-                    $('body').removeClass('is-revealing');
-                    localStorage.removeItem('justUnlocked');
-                });
-            }, 2100);
-        }, 500);
-    }
+                // On ouvre l'oeil (0% -> 150%)
+                gate.addClass('reveal');
 
-    // B. Activer les étoiles si débloqué
-    if (localStorage.getItem('mysticUnlocked') === 'true') {
-        $('body').addClass('mystic-unlocked');
-        if (typeof initStardust === "function") initStardust();
+                // Nettoyage après l'animation
+                setTimeout(() => {
+                    gate.fadeOut(1000, function() {
+                        $(this).removeClass('active reveal').css('opacity', 0);
+                        localStorage.removeItem('justUnlocked');
+                    });
+                }, 1600);
+            }, 300);
+        }
     }
 });
 
