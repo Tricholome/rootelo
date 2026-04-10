@@ -217,13 +217,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Fonction pour changer les textes ---
     const updateTexts = () => {
-        const titleEl = document.querySelector('.page-heading');
-        const descEl = document.querySelector('.page-description');
+		const intro = document.querySelector('.page-intro');
+		if (intro) {
+			const titleEl = intro.querySelector('h2');
+			const descEl = intro.querySelector('p');
 
-        if (titleEl) titleEl.textContent = "The Legend";
-        if (descEl) descEl.textContent = "The watcher finally speaks... The forest remembers your name.";
-        document.title = "The Legend • Rootelo"; // Change aussi l'onglet
-    };
+			if (titleEl) titleEl.textContent = "The Legend";
+			if (descEl) descEl.textContent = "The watcher finally speaks... The forest remembers your name.";
+		}
+		
+		document.title = "The Legend • Rootelo";
+	};
 
     // On écoute les clics sur les mots "cipher"
     document.querySelectorAll('.cipher').forEach(el => {
