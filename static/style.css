@@ -601,10 +601,12 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 
 /* --- F. Specifics (Hall of Fame) --- */
 .streak-badge {
-    padding: 8px 8px;
+	display: inline-block;
+    min-width: 35px;
+    padding: 8px;
     border-radius: 8px;
     font-weight: var(--bold);
-	font-size: var(--size-lg);
+	font-size: var(--size-md);
 	font-family: var(--font-mono);
     border: 1px solid var(--text-main);
 }
