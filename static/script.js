@@ -5,6 +5,7 @@
    2. Double-tap
    3. Tier Modal
    4. Secrets Engine
+   5. Stardust Generator
 
    ========================================================================= */
    
@@ -344,15 +345,15 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
-/* =========================================================
-   GÉNÉRATEUR DE POUSSIÈRE D'ÉTOILES
-   ========================================================= */
+/* =========================================================================
+   --- 5. STARDUST GENERATOR ---
+   ========================================================================= */
 
 function initStardust() {
     $('.window-box').each(function() {
         const box = $(this);
         
-        // Ajout du conteneur s'il n'existe pas
+        // Ensure only one container exists per box
         if (box.find('.stardust-container').length === 0) {
             box.prepend('<div class="stardust-container"></div>');
         }
@@ -360,16 +361,16 @@ function initStardust() {
         const container = box.find('.stardust-container');
         const boxHeight = box.innerHeight();
         
-        // Densité d'étoiles basée sur la taille de la boîte
+        // Star density based on box height
         const starCount = Math.floor(boxHeight / 30); 
 
         for (let i = 0; i < starCount; i++) {
             const size = (Math.random() * 2 + 1) + 'px';
             const star = $('<div class="star"></div>').css({
-                width: size,
-                height: size,
-                left: Math.random() * 100 + '%',
-                top: Math.random() * 100 + '%',
+                'width': size,
+                'height': size,
+                'left': Math.random() * 100 + '%',
+                'top': Math.random() * 100 + '%',
                 '--duration': (Math.random() * 3 + 2) + 's',
                 'animation-delay': (Math.random() * 5) + 's'
             });
