@@ -374,94 +374,85 @@ for tag in ARCHIVE_SEASONS:
     }
     
 # =========================================================================
-# --- 8b. HALL OF FAME DATA PREPARATION (LOGIQUE PAR JOURS UNIQUES) ---
+# --- 8b. HALL OF FAME DATA PREPARATION (DÉCOMPTE SÉPARÉ BIRD/STAG) ---
 # =========================================================================
-print("  > Compiling HoF longevity (1 point per active day)...")
+print("  > Compiling HoF longevity (Separate Bird/Stag counts)...")
 
-def get_player_active_days(history):
+def get_player_tier_days(history):
     """
-    Parcourt l'historique et identifie les dates uniques où le joueur
-    finit la journée en étant qualifié (>=10 jeux) et titré (>=1500 ELO).
+    Retourne deux sets de dates : un pour Bird, un pour Stag.
+    Un joueur est qualifié à partir du match index 10.
     """
-    if len(history) < 11:
-        return set(), None
-        
-    active_dates = set()
+    bird_dates = set()
+    stag_dates = set()
     first_date = None
     
-    # On commence à l'index 10 (10ème match)
+    if len(history) < 11:
+        return bird_dates, stag_dates, None
+
     for i in range(10, len(history)):
         date_str, elo_val = history[i][0], history[i][1]
-        
-        # Sécurité : on ignore les tags de texte
         if "-" not in date_str: continue 
         
-        if elo_val >= 1500:
-            active_dates.add(date_str)
-            if first_date is None:
-                first_date = date_str
+        # Détermination du titre précis à cet instant T
+        if 1500 <= elo_val < 1600:
+            bird_dates.add(date_str)
+            if first_date is None: first_date = date_str
+        elif elo_val >= 1600:
+            stag_dates.add(date_str)
+            if first_date is None: first_date = date_str
                 
-    return active_dates, first_date
+    return bird_dates, stag_dates, first_date
 
 compiled_hof = {}
 
-# --- 1. ARCHIVES (LH01) ---
-for tag in ARCHIVE_SEASONS:
-    raw_arc = archives_raw_data.get(tag, {})
-    arc_history = raw_arc.get('history', {})
-    arc_final_df = raw_arc.get('final_df', pd.DataFrame())
+def process_hof_entry(history, player_name, peak):
+    short_name = player_name.split('+')[0].split('#')[0]
+    b_dates, s_dates, first_d = get_player_tier_days(history)
     
-    for _, row in arc_final_df.iterrows():
-        p_name = row['Player']
-        short_name = p_name.split('+')[0].split('#')[0]
-        p_hist = arc_history.get(short_name, [])
+    if b_dates or s_dates:
+        if short_name not in compiled_hof:
+            compiled_hof[short_name] = {
+                'bird_days': set(), 
+                'stag_days': set(), 
+                'first': first_d, 
+                'peak': 0
+            }
         
-        dates, first_d = get_player_active_days(p_hist)
+        compiled_hof[short_name]['bird_days'].update(b_dates)
+        compiled_hof[short_name]['stag_days'].update(s_dates)
+        compiled_hof[short_name]['peak'] = max(compiled_hof[short_name]['peak'], peak)
         
-        if dates:
-            if short_name not in compiled_hof:
-                compiled_hof[short_name] = {'active_days': set(), 'first': first_d, 'peak': 0, 'tier': None}
-            
-            compiled_hof[short_name]['active_days'].update(dates)
-            compiled_hof[short_name]['peak'] = max(compiled_hof[short_name]['peak'], row.get('Peak', 0))
-            _, t_name = get_tier_icon(row['ELO'], row['Games'])
-            compiled_hof[short_name]['tier'] = t_name
+        if first_d and (compiled_hof[short_name]['first'] is None or first_d < compiled_hof[short_name]['first']):
+            compiled_hof[short_name]['first'] = first_d
 
-# --- 2. SAISON EN COURS ---
+# --- 1. ARCHIVES ---
+for tag in ARCHIVE_SEASONS:
+    raw = archives_raw_data.get(tag, {})
+    for _, row in raw.get('final_df', pd.DataFrame()).iterrows():
+        h = raw.get('history', {}).get(row['Player'].split('+')[0].split('#')[0], [])
+        process_hof_entry(h, row['Player'], row.get('Peak', 0))
+
+# --- 2. ACTUEL ---
 if not current_final_df.empty:
     for _, row in current_final_df.iterrows():
-        p_full_name = row['Player']
-        short_name = p_full_name.split('+')[0].split('#')[0]
-        p_hist = player_history.get(p_full_name, [])
-        
-        dates, first_d = get_player_active_days(p_hist)
-        
-        if dates:
-            if short_name not in compiled_hof:
-                compiled_hof[short_name] = {'active_days': dates, 'first': first_d, 'peak': 0, 'tier': None}
-            else:
-                compiled_hof[short_name]['active_days'].update(dates)
-                if first_d:
-                    # On garde la date la plus ancienne
-                    if first_d < compiled_hof[short_name]['first']:
-                        compiled_hof[short_name]['first'] = first_d
+        h = player_history.get(row['Player'], [])
+        process_hof_entry(h, row['Player'], row['Peak'])
 
-            compiled_hof[short_name]['peak'] = max(compiled_hof[short_name]['peak'], row['Peak'])
-            _, t_name = get_tier_icon(row['ELO'], row['Games'])
-            compiled_hof[short_name]['tier'] = t_name
-
-# --- 3. FORMATTAGE FINAL ---
+# --- 3. FORMATTAGE ---
 hall_of_fame_data = []
-for name, data in compiled_hof.items():
+for name, d in compiled_hof.items():
     hall_of_fame_data.append({
         'display_name': name,
-        'tier': data['tier'],
-        'peak_elo': int(data['peak']),
-        'first_ascension': data['first'],
-        'longevity': len(data['active_days']) # Le nombre de dates uniques
+        'bird_longevity': len(d['bird_days']),
+        'stag_longevity': len(d['stag_days']),
+        'total_longevity': len(d['bird_days']) + len(d['stag_days']),
+        'peak_elo': int(d['peak']),
+        'first_ascension': d['first']
     })
 
-hall_of_fame_data = sorted(hall_of_fame_data, key=lambda x: x['longevity'], reverse=True)
+# On trie par longévité totale (ou stag_longevity si tu préfères privilégier le haut du panier)
+hall_of_fame_data = sorted(hall_of_fame_data, key=lambda x: (x['stag_longevity'], x['bird_longevity']), reverse=True)
 
 # =========================================================================
 # --- 9. SITE GENERATION (JINJA2 RENDERING) ---
