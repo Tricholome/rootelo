@@ -12,39 +12,38 @@
 	</p>
 	
 	<div class="mystic-section">
-        <h2>The New Tier</h2>
-        <p>You've followed the roots to their source. The watcher finally speaks...</p>
+		<h2>The New Tier</h2>
+		<p>You've followed the roots to their source. The watcher finally speaks...</p>
 		
-		<div id="hall-of-fame-wrapper">
-			<table id="hof-table" class="display nowrap" style="width:100%">
-				<thead>
-					<tr>
-						<th>Tier</th>
-						<th>Nomad</th>
-						<th>Peak ELO</th>
-						<th>Ascended</th>
-						<th>Longevity</th>
-					</tr>
-				</thead>
-				<tbody>
-					{% for legend in hall_of_fame %}
-					<tr data-tier="{{ legend.tier }}">
-						<td class="text-center">
-							<div class="tier-icon-container">
-								<img src="assets/icons/{{ legend.tier }}.svg" alt="{{ legend.tier }}" style="width: 32px;">
-							</div>
-						</td>
-						<td class="text-left text-medium"><strong>{{ legend.display_name }}</strong></td>
-						<td class="text-lg text-bold">{{ legend.peak_elo }}</td>
-						<td class="text-secondary">{{ legend.ascension_date }}</td>
-						<td>{{ legend.longevity }} days</td>
-					</tr>
-					{% endfor %}
-				</tbody>
-			</table>
-		</div>
-		
-    </div>
+		<table id="leaderboard" class="display nowrap" style="width:100%">
+			<thead>
+				<tr>
+					<th>Rank</th>
+					<th>Tier</th>
+					<th>Legend</th>
+					<th>Peak ELO</th>
+					<th>Ascended</th>
+					<th>Longevity</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for legend in hall_of_fame %}
+				<tr data-tier="{{ legend.tier }}">
+					<td class="text-center unranked">-</td>
+					<td>
+						<div class="tier-icon-container">
+							<img src="assets/icons/{{ legend.tier }}.svg" alt="{{ legend.tier }}">
+						</div>
+					</td>
+					<td class="text-left text-medium player-name-cell"><strong>{{ legend.display_name }}</strong></td>
+					<td class="text-lg text-bold">{{ legend.peak_elo }}</td>
+					<td class="text-secondary">{{ legend.ascension_date }}</td>
+					<td>{{ legend.longevity }} days</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
 	
 	<div id="berry-section">
 		<h2>The Mystic Berry</h2>
@@ -84,4 +83,29 @@
 	
 </div>
 
+{% endblock %}
+
+{% block custom_js %}
+<script>
+$(document).ready(function() {
+    // Le script s'applique au tableau avec l'ID "leaderboard"
+    $('#leaderboard').DataTable({
+        "order": [[3, "desc"]], // On trie par la 4ème colonne (Peak ELO)
+        "responsive": true, 
+        "pageLength": 50,
+        "dom": '<"top"lf>rt<"bottom"ip><"clear">', // Cela génère le fond sombre et la recherche
+        "columnDefs": [ 
+            // On s'assure de ne cibler QUE les colonnes de 0 à 5 maximum !
+            { "targets": 2, "className": "player-name-cell" },
+            { "responsivePriority": 1, "targets": [2, 3] }, // Nom et Peak ELO restent toujours visibles
+            { "responsivePriority": 2, "targets": 0 },
+            { "responsivePriority": 3, "targets": 1 },
+            { "responsivePriority": 10, "targets": [4, 5] } // Les dates disparaissent en premier sur petit écran
+        ],
+        "language": {
+            "searchPlaceholder": "Search a legend..."
+        }
+    });
+});
+</script>
 {% endblock %}
