@@ -265,7 +265,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 	
 	// --- 4. THE CIPHER SEQUENCE ---
-    const secretSequence = ['roots', 'quiet'];
+    const secretSequence = ['roots', 'quiet', 'spirit'];
     let userProgress = [];
 
     document.querySelectorAll('.cipher').forEach(el => {
@@ -294,7 +294,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     document.querySelectorAll('.cipher').forEach(c => {
                         c.classList.remove('active-cipher');
                     });
-                }, 200); 
+                }, 600); 
             }
         });
     });
