@@ -965,59 +965,82 @@ body.watcher-found .nav-secret {
     display: inline-block;
 }
 
-/* --- 3. Nut & Berry Styles --- */
+/* =========================================================================
+   --- 3. SECRETS : NUT & BERRY STYLES ---
+   ========================================================================= */
+
+/* --- A. Layout Principal (Desktop) --- */
+#nut-section,
+#berry-section {
+    position: relative;
+    display: none; /* Géré par le JS */
+    min-height: 140px; /* S'assure que la section a au moins la hauteur de l'image */
+    padding-right: clamp(140px, 20vw, 200px); /* Zone de sécurité pour que le texte ne chevauche pas l'image */
+}
+
+/* Affichage une fois trouvé */
+body.nut-found #nut-section,
+body.berry-found #berry-section {
+    display: block;
+}
+
+/* Le conteneur de l'image, calé à droite en absolu */
 .tier-interaction-wrapper {
     position: absolute;
-    top: 0;
-    right: 40px;
-    height: 100%;
+    top: 50%;
+    right: 30px; /* Marge par rapport au bord droit */
+    transform: translateY(-50%); /* Centrage vertical parfait */
     display: flex;
+    justify-content: flex-end;
     align-items: center;
     padding: 0;
 }
 
+/* --- B. L'Objet Interactif --- */
 .nut-trigger {
     position: relative;
     display: flex;
-    flex-direction: row;
     align-items: center;
-	margin-left: auto;
     text-decoration: none;
     cursor: pointer;
-    transform-origin: right center; 
+    transform-origin: right center; /* Grossit vers la gauche et le haut/bas */
     transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .nut-sprite {
+    /* Tes valeurs d'origine intactes */
     width: clamp(90px, 12vw, 130px);
     height: auto;
     filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.5));
     transition: filter 0.4s ease;
 }
 
+/* --- C. Le Tooltip --- */
 .nut-tooltip {
     position: absolute;
+    right: 110%; /* Apparaît à gauche de l'image */
+    top: 50%;
+    transform: translateY(-50%) scale(0.4);
+    
     background: var(--bg-container);
     border: 1px solid var(--border-soft);
     color: var(--main-color);
-	font-weight: var(--medium);
+    font-weight: var(--medium);
     padding: 6px 12px;
     border-radius: 6px;
     font-size: var(--size-xs);
     white-space: nowrap;
     box-shadow: 0 4px 10px rgba(0,0,0,0.5);
     z-index: 100;
-    bottom: auto;
-    top: 40%; 
-    left: 50%;
+    
     opacity: 0;
     pointer-events: none;
-    transform: translate(-50%, -50%) scale(0.4);
     transition: all 0.3s ease;
 }
 
+/* --- D. Animations au Survol/Clic --- */
 .nut-trigger:hover {
-    transform: scale(1.6);
+    transform: scale(1.6); /* Ton scale d'origine */
 }
 
 .nut-trigger:hover .nut-sprite {
@@ -1026,26 +1049,26 @@ body.watcher-found .nav-secret {
 
 .nut-trigger:hover .nut-tooltip {
     opacity: 1;
-    transform: translate(-50%, -50%) scale(0.65);
+    transform: translateY(-50%) scale(0.65); /* Ton scale d'origine */
 }
 
 .nut-trigger:active {
-    transform: scale(1.45);
+    transform: scale(1.45); /* Ton scale d'origine */
     transition: transform 0.1s;
 }
 
-/* --- 4. Nut & Berry Effects --- */
-#nut-section,
-#berry-section {
-    position: relative;
-	display: none;
+/* --- E. Comportement une fois trouvé (Neutralisation) --- */
+.nut-found #nut-secret,
+.berry-found #berry-secret {
+    pointer-events: none;
+    cursor: default;
+    opacity: 0.7;
+    filter: saturate(0.8);
 }
 
-body.nut-found #nut-section,
-body.berry-found #berry-section {
-    display: block;
-}
-
+/* =========================================================================
+   --- 4. BANNER ICONS (SUCCESS BADGES) ---
+   ========================================================================= */
 .banner-icons a.tooltip-link.banner-icon-squirrel,
 .banner-icons a.tooltip-link.banner-icon-stag { 
     display: none; 
@@ -1057,6 +1080,53 @@ body.nut-found .banner-icons a.tooltip-link.banner-icon-squirrel {
 
 body.berry-found .banner-icons a.tooltip-link.banner-icon-stag {
     display: inline-block;
+}
+
+/* =========================================================================
+   --- 5. RESPONSIVE MOBILE ---
+   ========================================================================= */
+@media (max-width: 768px) {
+    /* Sur mobile, on repasse sur un empilement classique */
+    #nut-section,
+    #berry-section {
+        padding-right: 0; /* On retire la zone de sécurité */
+        display: flex;
+        flex-direction: column; /* Titre en haut, image en bas */
+        align-items: center;
+        text-align: center;
+        gap: 20px;
+    }
+    
+    /* Géré par JS, mais flex quand actif */
+    body.nut-found #nut-section,
+    body.berry-found #berry-section {
+        display: flex;
+    }
+
+    .tier-interaction-wrapper {
+        position: relative; /* Reprend sa place dans le flux */
+        top: auto;
+        right: auto;
+        transform: none;
+        justify-content: center;
+        padding: 20px 0;
+    }
+
+    .nut-trigger {
+        transform-origin: center center; /* Sur mobile, ça grossit depuis le centre */
+    }
+
+    .nut-tooltip {
+        /* On remet le tooltip au-dessus de l'image sur mobile */
+        right: auto;
+        left: 50%;
+        top: -10px;
+        transform: translate(-50%, -100%) scale(0.4);
+    }
+    
+    .nut-trigger:hover .nut-tooltip {
+        transform: translate(-50%, -100%) scale(0.65);
+    }
 }
 
 /* =========================================================================
