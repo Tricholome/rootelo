@@ -41,8 +41,8 @@
 						<strong>{{ entry.player }}</strong>
 					</td>
 					<td class="text-bold">{{ entry.peak }}</td>
-					<td>{{ entry.longest_period }} days</td>
-					<td class="text-lg text-bold">{{ entry.total_period }} days</td>
+					<td>{{ entry.longest }} days</td>
+					<td class="text-lg text-bold">{{ entry.total }} days</td>
 				</tr>
 				{% endfor %}
 			</tbody>
@@ -88,23 +88,17 @@
 {% block custom_js %}
 <script>
 $(document).ready(function() {
-    // Le script s'applique au tableau avec l'ID "leaderboard"
     $('#leaderboard').DataTable({
-        "order": [[3, "desc"]], // On trie par la 4ème colonne (Peak ELO)
+        "order": [[4, "desc"]], // Tri par Total Period (colonne index 4)
         "responsive": true, 
         "pageLength": 50,
-        "dom": '<"top"lf>rt<"bottom"ip><"clear">', // Cela génère le fond sombre et la recherche
+        "dom": '<"top"lf>rt<"bottom"ip><"clear">',
         "columnDefs": [ 
-            // On s'assure de ne cibler QUE les colonnes de 0 à 5 maximum !
-            { "targets": 2, "className": "player-name-cell" },
-            { "responsivePriority": 1, "targets": [2, 3] }, // Nom et Peak ELO restent toujours visibles
+            { "targets": 1, "className": "player-name-cell" },
+            { "responsivePriority": 1, "targets": [1, 4] }, // Joueur et Total prioritaires
             { "responsivePriority": 2, "targets": 0 },
-            { "responsivePriority": 3, "targets": 1 },
-            { "responsivePriority": 10, "targets": [4, 5] } // Les dates disparaissent en premier sur petit écran
-        ],
-        "language": {
-            "searchPlaceholder": "Search a legend..."
-        }
+            { "targets": 0, "orderable": false } // Icône non triable
+        ]
     });
 });
 </script>

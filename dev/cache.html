@@ -272,8 +272,8 @@
 						<strong>Led_Slash</strong>
 					</td>
 					<td class="text-bold">1635</td>
-					<td>2 days</td>
-					<td class="text-lg text-bold">3 days</td>
+					<td> days</td>
+					<td class="text-lg text-bold"> days</td>
 				</tr>
 				
 				<tr data-tier="bird">
@@ -286,8 +286,8 @@
 						<strong>Led_Slash</strong>
 					</td>
 					<td class="text-bold">1598</td>
-					<td>16 days</td>
-					<td class="text-lg text-bold">21 days</td>
+					<td> days</td>
+					<td class="text-lg text-bold"> days</td>
 				</tr>
 				
 				<tr data-tier="bird">
@@ -300,8 +300,8 @@
 						<strong>Killerstorm17</strong>
 					</td>
 					<td class="text-bold">1554</td>
-					<td>6 days</td>
-					<td class="text-lg text-bold">7 days</td>
+					<td> days</td>
+					<td class="text-lg text-bold"> days</td>
 				</tr>
 				
 				<tr data-tier="bird">
@@ -314,8 +314,8 @@
 						<strong>ShuShuBana</strong>
 					</td>
 					<td class="text-bold">1511</td>
-					<td>1 days</td>
-					<td class="text-lg text-bold">2 days</td>
+					<td> days</td>
+					<td class="text-lg text-bold"> days</td>
 				</tr>
 				
 				<tr data-tier="bird">
@@ -328,8 +328,8 @@
 						<strong>tofuwater</strong>
 					</td>
 					<td class="text-bold">1502</td>
-					<td>1 days</td>
-					<td class="text-lg text-bold">1 days</td>
+					<td> days</td>
+					<td class="text-lg text-bold"> days</td>
 				</tr>
 				
 				<tr data-tier="bird">
@@ -342,8 +342,8 @@
 						<strong>Nadav253</strong>
 					</td>
 					<td class="text-bold">1506</td>
-					<td>1 days</td>
-					<td class="text-lg text-bold">1 days</td>
+					<td> days</td>
+					<td class="text-lg text-bold"> days</td>
 				</tr>
 				
 			</tbody>
@@ -400,7 +400,7 @@
 					<span>Powered by <strong>Tʀɪᴄʜᴏʟᴏᴍᴇ</strong></span>
 					<span>Woodland visions by <a class="cl" href="cache.html">𝕩𝕝𝕦𝕖𝕧𝕚</a></span>
 				</div>
-				<div class="footer-date">Updated on 2026-04-11 19:24 UTC</div>
+				<div class="footer-date">Updated on 2026-04-11 19:28 UTC</div>
 			</div>
 		</footer>
     </div>
@@ -445,23 +445,17 @@
     
 <script>
 $(document).ready(function() {
-    // Le script s'applique au tableau avec l'ID "leaderboard"
     $('#leaderboard').DataTable({
-        "order": [[3, "desc"]], // On trie par la 4ème colonne (Peak ELO)
+        "order": [[4, "desc"]], // Tri par Total Period (colonne index 4)
         "responsive": true, 
         "pageLength": 50,
-        "dom": '<"top"lf>rt<"bottom"ip><"clear">', // Cela génère le fond sombre et la recherche
+        "dom": '<"top"lf>rt<"bottom"ip><"clear">',
         "columnDefs": [ 
-            // On s'assure de ne cibler QUE les colonnes de 0 à 5 maximum !
-            { "targets": 2, "className": "player-name-cell" },
-            { "responsivePriority": 1, "targets": [2, 3] }, // Nom et Peak ELO restent toujours visibles
+            { "targets": 1, "className": "player-name-cell" },
+            { "responsivePriority": 1, "targets": [1, 4] }, // Joueur et Total prioritaires
             { "responsivePriority": 2, "targets": 0 },
-            { "responsivePriority": 3, "targets": 1 },
-            { "responsivePriority": 10, "targets": [4, 5] } // Les dates disparaissent en premier sur petit écran
-        ],
-        "language": {
-            "searchPlaceholder": "Search a legend..."
-        }
+            { "targets": 0, "orderable": false } // Icône non triable
+        ]
     });
 });
 </script>
