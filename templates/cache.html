@@ -41,12 +41,10 @@
 							</div>
 						</a>
 					</td>
-					<td class="text-left text-medium player-name-cell">
-						<strong>{{ s.player }}</strong>
-					</td>
-					<td>{{ s.streak_count }} <small>games</small></td>
-					<td class="text-bold">{{ s.peak }}</td>
-					<td class="text-lg text-bold">{{ s.ascension }}</td>
+					<td>{{ s.player }}</td>
+					<td>{{ s.streak_count }}</td>
+					<td>{{ s.peak }}</td>
+					<td>{{ s.ascension }}</td>
 				</tr>
 				{% endfor %}
 			</tbody>
@@ -93,15 +91,14 @@
 <script>
 $(document).ready(function() {
     $('#leaderboard').DataTable({
-        "order": [[4, "desc"]], // Tri par Total Period (colonne index 4)
         "responsive": true, 
-        "pageLength": 50,
+        "pageLength": 10,
         "dom": '<"top"lf>rt<"bottom"ip><"clear">',
         "columnDefs": [ 
             { "targets": 1, "className": "player-name-cell" },
-            { "responsivePriority": 1, "targets": [1, 4] }, // Joueur et Total prioritaires
+            { "responsivePriority": 1, "targets": [1, 2] },
             { "responsivePriority": 2, "targets": 0 },
-            { "targets": 0, "orderable": false } // Icône non triable
+            { "targets": 0, "orderable": false }
         ]
     });
 });
