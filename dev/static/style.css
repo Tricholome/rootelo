@@ -1052,11 +1052,11 @@ body.nut-found .banner-icons a.tooltip-link.banner-icon-squirrel {
 /* --- 1. Ciphers --- */
 .cipher {
     cursor: pointer;
-    font-weight: var(--bold);
     transition: color 0.3s ease;
 }
 
 .cipher.active-cipher {
+	font-weight: var(--bold);
     color: var(--color-stag) !important;
 }
 
