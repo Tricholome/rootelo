@@ -216,30 +216,51 @@ document.addEventListener('DOMContentLoaded', () => {
     const body = document.body;
 
     // --- 1. PERSISTENCE CHECK ---
-    // Restore states from localStorage on page load
     const isWatcherFound = localStorage.getItem('watcher-found') === 'true';
     const isNutFound = localStorage.getItem('nut-found') === 'true';
+    const isCiphersFound = localStorage.getItem('ciphers-found') === 'true';
 
-    // Global state for navigation and exit button
-    if (isWatcherFound || isNutFound) {
+    // Global visibility (Nav & Exit)
+    if (isWatcherFound || isNutFound || isCiphersFound) {
         body.classList.add('secrets-started');
     }
 
-    // Individual states for specific content
+    // Specific states
     if (isWatcherFound) body.classList.add('watcher-found');
     if (isNutFound) body.classList.add('nut-found');
+    
+    // Final state (Mystic Sward)
+    if (isCiphersFound) {
+        body.classList.add('ciphers-found');
+        updateMysticUI();
+        if (typeof initStardust === "function") initStardust();
+    }
 
+    // --- 2. UI TRANSFORMATION FUNCTION ---
+    function updateMysticUI() {
+        if (body.getAttribute('data-page') === 'cache') {
+            const intro = document.querySelector('.page-intro');
+            if (intro) {
+                const titleEl = intro.querySelector('h2');
+                const descEl = intro.querySelector('p');
+                if (titleEl) titleEl.textContent = "Mystic Sward";
+                if (descEl) descEl.textContent = "Silent roots keep a quiet crown.";
+            }
+            document.title = "Mystic Sward • Rootelo";
+        }
 
-    // --- 2. THE NUT SECRET ---
-    // Show the section if reached via the specific URL hash
-    if (window.location.hash === '#nut-section') {
-        const nutSection = document.getElementById('nut-section');
-        if (nutSection) {
-            nutSection.style.display = 'block';
+        const navSecretLink = document.querySelector('.nav-secret');
+        if (navSecretLink) {
+            navSecretLink.textContent = 'Mystic Sward';
         }
     }
 
-    // Trigger activation upon clicking the nut
+    // --- 3. THE NUT SECRET ---
+    if (window.location.hash === '#nut-section') {
+        const nutSection = document.getElementById('nut-section');
+        if (nutSection) nutSection.style.display = 'block';
+    }
+
     const nutBtn = document.getElementById('nut-secret');
     if (nutBtn) {
         nutBtn.addEventListener('click', () => {
@@ -249,74 +270,68 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-
-    // --- 3. THE WATCHER SECRET ---
-    // Trigger activation upon clicking the watcher
+    // --- 4. THE WATCHER SECRET ---
     const watcherBtn = document.getElementById('watcher-secret');
     if (watcherBtn) {
         watcherBtn.addEventListener('click', () => {
             body.classList.add('secrets-started', 'watcher-found');
             localStorage.setItem('secrets-started', 'true');
             localStorage.setItem('watcher-found', 'true');
-            
-            // Refresh potential scroll-reveal animations
             window.dispatchEvent(new Event('scroll'));
         });
     }
-	
-	// --- 4. THE CIPHER SEQUENCE ---
+
+    // --- 5. THE CIPHER SEQUENCE & CURTAIN ---
     const secretSequence = ['roots', 'quiet', 'spirit'];
     let userProgress = [];
+    let isResetting = false;
 
     document.querySelectorAll('.cipher').forEach(el => {
         el.addEventListener('click', () => {
+            if (isResetting) return;
+            el.classList.add('active-cipher');
             const word = el.getAttribute('data-word');
             
-            // 1. Always light up the clicked word
-            el.classList.add('active-cipher');
-            
-            // 2. Check if this click matches the sequence order
             if (word === secretSequence[userProgress.length]) {
                 userProgress.push(word);
 
                 if (userProgress.length === secretSequence.length) {
                     const gate = document.getElementById('mystic-gate');
-                    if (gate) gate.style.display = 'block';
-                    body.classList.add('mystic-unlocked');
+                    
+                    $(gate).fadeIn(600, function() {
+                        body.classList.add('ciphers-found');
+                        localStorage.setItem('ciphers-found', 'true');
+                        
+                        updateMysticUI();
+                        if (typeof initStardust === "function") initStardust();
+
+                        $(gate).fadeOut(1000);
+                    });
                 }
             } else {
-                // WRONG ORDER: Reset with a blink effect after the delay
+                isResetting = true;
                 setTimeout(() => {
-                    const allCiphers = document.querySelectorAll('.cipher');
-                    
-                    // Add blink class to all active words
-                    allCiphers.forEach(c => {
-                        if (c.classList.contains('active-cipher')) {
-                            c.classList.add('cipher-blink');
-                        }
+                    document.querySelectorAll('.cipher').forEach(c => {
+                        if (c.classList.contains('active-cipher')) c.classList.add('cipher-blink');
                     });
-
-                    // Remove everything after the blink animation (approx 500ms)
                     setTimeout(() => {
                         userProgress = [];
-                        allCiphers.forEach(c => {
+                        document.querySelectorAll('.cipher').forEach(c => {
                             c.classList.remove('active-cipher', 'cipher-blink');
                         });
+                        isResetting = false;
                     }, 500);
-
                 }, 2000); 
             }
         });
     });
 
-
-    // --- 5. THE EXIT DOOR ---
-    // Reset everything and return to home
+    // --- 6. THE EXIT DOOR ---
     const exitBtn = document.getElementById('leave-secrets');
     if (exitBtn) {
         exitBtn.addEventListener('click', () => {
             localStorage.clear();
-            body.classList.remove('secrets-started', 'watcher-found', 'nut-found');
+            body.classList.remove('secrets-started', 'watcher-found', 'nut-found', 'ciphers-found', 'show-deco');
             window.location.href = 'index.html'; 
         });
     }
