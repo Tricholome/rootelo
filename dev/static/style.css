@@ -967,12 +967,13 @@ body.watcher-found .nav-secret {
 
 /* --- 3. Nut & Berry Styles --- */
 .tier-interaction-wrapper {
+    position: absolute;
+    top: 0;
+    right: 40px;
+    height: 100%;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding: 20px 0;
-    width: 100%;
-	min-height: 180px;
+    padding: 0;
 }
 
 .nut-trigger {
@@ -983,6 +984,7 @@ body.watcher-found .nav-secret {
 	margin-left: auto;
     text-decoration: none;
     cursor: pointer;
+    transform-origin: right center; 
     transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
@@ -1035,7 +1037,8 @@ body.watcher-found .nav-secret {
 /* --- 4. Nut & Berry Effects --- */
 #nut-section,
 #berry-section {
-    display: none;
+    position: relative;
+	display: none;
 }
 
 body.nut-found #nut-section,
