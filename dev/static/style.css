@@ -1014,7 +1014,8 @@ body.watcher-found .nav-secret {
     transition: all 0.3s ease;
 }
 
-.nut-trigger:hover {
+.nut-trigger:hover,
+.nut-trigger.expanded {
     transform: scale(1.6);
 	margin-top: 80px;
     margin-bottom: 80px;
@@ -1024,7 +1025,8 @@ body.watcher-found .nav-secret {
     filter: drop-shadow(0 25px 40px rgba(0, 0, 0, 0.7));
 }
 
-.nut-trigger:hover .nut-tooltip {
+.nut-trigger:hover .nut-tooltip,
+.nut-trigger.expanded .nut-tooltip {
     opacity: 1;
     transform: translate(-50%, -50%) scale(0.65);
 }
