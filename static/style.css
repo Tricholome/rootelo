@@ -970,16 +970,7 @@ body.watcher-found .nav-secret {
     display: inline-block;
 }
 
-/* --- 5. Banner Icon --- */
-.banner-icons a.tooltip-link.banner-icon-squirrel { 
-	display: none; 
-}
-
-body.show-deco .banner-icons a.tooltip-link.banner-icon-squirrel {
-	display: inline-block;
-}
-
-/* --- 6. Nut interaction --- */
+/* --- 3. Nut Secret --- */
 .tier-interaction-wrapper {
     display: flex;
     justify-content: center;
@@ -1028,8 +1019,6 @@ body.show-deco .banner-icons a.tooltip-link.banner-icon-squirrel {
     transition: all 0.3s ease;
 }
 
-/* --- HOVER STATES --- */
-
 .nut-trigger:hover {
     transform: scale(1.6);
 }
@@ -1046,6 +1035,14 @@ body.show-deco .banner-icons a.tooltip-link.banner-icon-squirrel {
 .nut-trigger:active {
     transform: scale(1.45);
     transition: transform 0.1s;
+}
+
+.banner-icons a.tooltip-link.banner-icon-squirrel { 
+	display: none; 
+}
+
+body.nut-found .banner-icons a.tooltip-link.banner-icon-squirrel {
+	display: inline-block;
 }
 
 /* =========================================================================
