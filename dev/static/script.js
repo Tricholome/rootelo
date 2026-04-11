@@ -263,9 +263,44 @@ document.addEventListener('DOMContentLoaded', () => {
             window.dispatchEvent(new Event('scroll'));
         });
     }
+	
+	// --- 4. THE CIPHER SEQUENCE ---
+    const secretSequence = ['roots', 'quiet'];
+    let userProgress = [];
+
+    document.querySelectorAll('.cipher').forEach(el => {
+        el.addEventListener('click', () => {
+            const word = el.getAttribute('data-word');
+            
+            // 1. Always light up the clicked word
+            el.classList.add('active-cipher');
+            
+            // 2. Check if this click matches the sequence order
+            if (word === secretSequence[userProgress.length]) {
+                // Correct step
+                userProgress.push(word);
+
+                // Check for completion
+                if (userProgress.length === secretSequence.length) {
+                    const gate = document.getElementById('mystic-gate');
+                    if (gate) gate.style.display = 'block';
+                    body.classList.add('mystic-unlocked');
+                }
+            } else {
+                // WRONG ORDER: Reset everything after a tiny delay 
+                // so the user sees the "wrong" word light up briefly
+                setTimeout(() => {
+                    userProgress = [];
+                    document.querySelectorAll('.cipher').forEach(c => {
+                        c.classList.remove('active-cipher');
+                    });
+                }, 200); 
+            }
+        });
+    });
 
 
-    // --- 4. THE EXIT DOOR ---
+    // --- 5. THE EXIT DOOR ---
     // Reset everything and return to home
     const exitBtn = document.getElementById('leave-secrets');
     if (exitBtn) {
