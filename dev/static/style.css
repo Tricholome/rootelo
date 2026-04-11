@@ -603,7 +603,8 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 .streak-badge {
 	display: inline-block;
     min-width: 24px;
-    padding: 8px;
+	aspect-ratio: 1 / 1;
+    padding: 4px;
     border-radius: 8px;
     font-weight: var(--bold);
 	font-size: var(--size-md);
