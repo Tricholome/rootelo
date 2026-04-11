@@ -98,9 +98,6 @@
 
             <nav>
 				{% set nav_links = [('index', 'Leaderboard'), ('matches', 'Top Tables'), ('trends', "Player's Journey"), ('about', 'Codex')] %}
-				{% if page_id == 'cache' %}
-					{% set nav_links = nav_links + [('cache', 'Undergrowth')] %}
-				{% endif %}
 
 				{% for base, label in nav_links %}
 					{% if is_archive and base in ['index', 'matches', 'trends'] %}
@@ -110,6 +107,7 @@
 					{% endif %}
 					<a href="{{ target }}" class="{{ 'active' if page_id == base else '' }}">{{ label }}</a>
 				{% endfor %}
+				<a href="cache.html" class="nav-secret {{ 'active' if page_id == 'cache' else '' }}">Undergrowth</a>
 			</nav>
 			
         </header>
