@@ -1086,7 +1086,7 @@ body.nut-found .banner-icons a.tooltip-link.banner-icon-squirrel {
     pointer-events: none;
 }
 
-body[data-page="cache"].mystic {
+body[data-page="cache"].ciphers-found {
     --main-color: var(--color-stag);
 }
 
@@ -1097,7 +1097,7 @@ body[data-page="cache"].mystic {
     transition: opacity 1s ease-in-out;
 }
 
-body.mystic .mystic-section {
+body.ciphers-found .mystic-section {
     display: block;
     opacity: 1;
 }
@@ -1107,7 +1107,7 @@ body.mystic .mystic-section {
 	display: none; 
 }
 
-body.mystic .banner-icons a.tooltip-link.banner-icon-stag {
+body.ciphers-found .banner-icons a.tooltip-link.banner-icon-stag {
 	display: inline-block;
 }
 
