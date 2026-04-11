@@ -20,20 +20,24 @@
 				<tr>
 					<th>Rank</th>
 					<th>Tier</th>
-					<th>Legend</th>
-					<th>Peak ELO</th>
+					<th>Player</th>
+					<th>Peak</th>
 					<th>Ascended</th>
 					<th>Longevity</th>
 				</tr>
 			</thead>
 			<tbody>
-				{% for legend in hall_of_fame %}
-				<tr data-tier="{{ legend.tier }}">
+				{% for player in players %}
+				<tr data-tier="{{ player.tier }}">
 					<td class="text-center unranked">-</td>
 					<td>
-						<div class="tier-icon-container">
-							<img src="assets/icons/{{ legend.tier }}.svg" alt="{{ legend.tier }}">
-						</div>
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, '{{ player.tier }}')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="{{ config.assets.icons[player.tier] }}" alt="{{ player.tier }}">
+							</div>
+						</a>
 					</td>
 					<td class="text-left text-medium player-name-cell"><strong>{{ legend.display_name }}</strong></td>
 					<td class="text-lg text-bold">{{ legend.peak_elo }}</td>
