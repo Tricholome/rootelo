@@ -1034,6 +1034,14 @@ body.watcher-found .nav-secret {
     transition: transform 0.1s;
 }
 
+@media (max-width: 768px) {
+    .tier-interaction-wrapper {
+        justify-content: center;
+        padding: 0; 
+    }
+	
+}
+
 /* --- 4. Nut & Berry Effects --- */
 #nut-section,
 #berry-section {
