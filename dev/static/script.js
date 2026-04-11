@@ -4,8 +4,7 @@
    1. Dynamic Scroll
    2. Double-tap
    3. Tier Modal
-   4. Secrets
-   5. 
+   4. Secrets Engine
 
    ========================================================================= */
    
@@ -210,49 +209,69 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 /* =========================================================================
-   --- 3. SECRETS ---
+   --- 4. SECRETS ENGINE ---
    ========================================================================= */
 
 document.addEventListener('DOMContentLoaded', () => {
     const body = document.body;
 
     // --- 1. PERSISTENCE CHECK ---
-    // If either key exists in the cache, we restore the full state
-    const hasStarted = localStorage.getItem('secrets-started') === 'true';
-    const isFound = localStorage.getItem('watcher-found') === 'true';
+    // Restore states from localStorage on page load
+    const isWatcherFound = localStorage.getItem('watcher-found') === 'true';
+    const isNutFound = localStorage.getItem('nut-found') === 'true';
 
-    if (hasStarted || isFound) {
-        body.classList.add('secrets-started', 'watcher-found');
+    // Global state for navigation and exit button
+    if (isWatcherFound || isNutFound) {
+        body.classList.add('secrets-started');
     }
 
-    // --- 2. THE TRIGGER (The Watcher's Secret) ---
+    // Individual states for specific content
+    if (isWatcherFound) body.classList.add('watcher-found');
+    if (isNutFound) body.classList.add('nut-found');
+
+
+    // --- 2. THE NUT SECRET ---
+    // Show the section if reached via the specific URL hash
+    if (window.location.hash === '#nut-section') {
+        const nutSection = document.getElementById('nut-section');
+        if (nutSection) {
+            nutSection.style.display = 'block';
+        }
+    }
+
+    // Trigger activation upon clicking the nut
+    const nutBtn = document.getElementById('nut-secret');
+    if (nutBtn) {
+        nutBtn.addEventListener('click', () => {
+            body.classList.add('secrets-started', 'nut-found');
+            localStorage.setItem('secrets-started', 'true');
+            localStorage.setItem('nut-found', 'true');
+        });
+    }
+
+
+    // --- 3. THE WATCHER SECRET ---
+    // Trigger activation upon clicking the watcher
     const watcherBtn = document.getElementById('watcher-secret');
-    
     if (watcherBtn) {
         watcherBtn.addEventListener('click', () => {
-            // Update BOTH Storage keys
+            body.classList.add('secrets-started', 'watcher-found');
             localStorage.setItem('secrets-started', 'true');
             localStorage.setItem('watcher-found', 'true');
-
-            // Update BOTH Body classes
-            body.classList.add('secrets-started', 'watcher-found');
             
+            // Refresh potential scroll-reveal animations
             window.dispatchEvent(new Event('scroll'));
         });
     }
 
-    // --- 3. THE EXIT (Reset & Departure) ---
-    const exitBtn = document.getElementById('leave-secrets');
 
+    // --- 4. THE EXIT DOOR ---
+    // Reset everything and return to home
+    const exitBtn = document.getElementById('leave-secrets');
     if (exitBtn) {
         exitBtn.addEventListener('click', () => {
-            // Full Wipe
             localStorage.clear();
-            
-            // Remove both classes
-            body.classList.remove('secrets-started', 'watcher-found');
-            
-            // Go home
+            body.classList.remove('secrets-started', 'watcher-found', 'nut-found');
             window.location.href = 'index.html'; 
         });
     }
