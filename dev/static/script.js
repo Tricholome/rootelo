@@ -294,7 +294,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     document.querySelectorAll('.cipher').forEach(c => {
                         c.classList.remove('active-cipher');
                     });
-                }, 600); 
+                }, 2000); 
             }
         });
     });
