@@ -288,11 +288,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.querySelectorAll('.cipher').forEach(el => {
         el.addEventListener('click', () => {
-            if (isResetting) return;
+            // Check if already solved or currently resetting
+            const isAlreadySolved = body.classList.contains('ciphers-found');
+            if (isAlreadySolved || isResetting) return;
+
             el.classList.add('active-cipher');
             const word = el.getAttribute('data-word');
             
             if (word === secretSequence[userProgress.length]) {
+                // Correct step
                 userProgress.push(word);
 
                 if (userProgress.length === secretSequence.length) {
@@ -309,11 +313,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
                 }
             } else {
+                // WRONG ORDER: Reset with blink
                 isResetting = true;
                 setTimeout(() => {
                     document.querySelectorAll('.cipher').forEach(c => {
                         if (c.classList.contains('active-cipher')) c.classList.add('cipher-blink');
                     });
+                    
                     setTimeout(() => {
                         userProgress = [];
                         document.querySelectorAll('.cipher').forEach(c => {
