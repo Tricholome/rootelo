@@ -374,52 +374,54 @@ for tag in ARCHIVE_SEASONS:
     }
     
 # =========================================================================
-# --- 8b. HALL OF FAME DATA PREPARATION (VERSION CUMULÉE) ---
+# --- 8b. HALL OF FAME DATA PREPARATION (LOGIQUE POST-PLACEMENT) ---
 # =========================================================================
-print("  > Calculating Hall of Fame longevity from trends data...")
+print("  > Calculating cumulative longevity (excluding placement matches)...")
 hall_of_fame_data = []
 
 if not current_final_df.empty:
     for _, row in current_final_df.iterrows():
         p_full_name = row['Player']
         
-        # On récupère l'historique déjà généré pour la page Trends
+        # Récupération de l'historique (Trend data)
         history = player_history.get(p_full_name, [])
-        if len(history) < 2: continue
+        
+        # CONDITION CRUCIALE : On retire les 10 premiers jeux (placement)
+        # history[0] est souvent le marqueur "Start", on commence à compter après 11 entrées
+        if len(history) <= 11: 
+            continue
+            
+        # On ne garde que la partie de l'historique APRÈS les 10 premiers matchs
+        qualified_history = history[11:] 
         
         total_days = 0
         first_ascension = None
         
-        # On parcourt les points de l'historique deux par deux
-        for i in range(len(history)):
-            date_str, elo_val = history[i][0], history[i][1]
-            
-            # On ignore les marqueurs de texte pour les calculs de date
-            if date_str in ["Start", "LH01 Final"]: continue
+        for i in range(len(qualified_history)):
+            date_str, elo_val = qualified_history[i][0], qualified_history[i][1]
             
             try:
                 curr_date = datetime.strptime(date_str, '%Y-%m-%d').date()
-            except: continue
+            except:
+                continue
 
-            # CONDITION : Le joueur est-il Bird ou Stag ?
-            # (ELO >= 1500)
+            # Si le joueur est Bird/Stag (>= 1500) APRÈS ses matchs de placement
             if elo_val >= 1500:
                 if first_ascension is None:
                     first_ascension = date_str
                 
-                # On calcule la durée jusqu'au prochain point (prochain match)
-                if i + 1 < len(history):
-                    next_date_str = history[i+1][0]
+                # Calcul de l'écart jusqu'au point suivant
+                if i + 1 < len(qualified_history):
                     try:
-                        next_date = datetime.strptime(next_date_str, '%Y-%m-%d').date()
+                        next_date = datetime.strptime(qualified_history[i+1][0], '%Y-%m-%d').date()
                         total_days += (next_date - curr_date).days
-                    except: pass
+                    except:
+                        pass
                 else:
-                    # Dernier match connu : on compte jusqu'à aujourd'hui
+                    # Dernier point connu jusqu'à aujourd'hui
                     total_days += max(0, (today - curr_date).days)
 
         if total_days > 0:
-            # On récupère son tier final actuel pour l'icône
             _, current_tier = get_tier_icon(row['ELO'], row['Games'])
             
             hall_of_fame_data.append({
@@ -430,7 +432,7 @@ if not current_final_df.empty:
                 'longevity': total_days
             })
 
-# Tri par longévité totale
+# Tri par longévité décroissante
 hall_of_fame_data = sorted(hall_of_fame_data, key=lambda x: x['longevity'], reverse=True)
 
 # =========================================================================
