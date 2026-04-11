@@ -1,3 +1,18 @@
+/* =========================================================================
+   ROOTELO - JAVASCRIPT
+   Table of Contents:
+   1. Dynamic Scroll
+   2. Double-tap
+   3. Tier Modal
+   4. Secrets
+   5. 
+
+   ========================================================================= */
+   
+/* =========================================================================
+   --- 1. DYNAMIC SCROLL ---
+   ========================================================================= */
+
 // Dynamic Scroll & Gesture Management
 // Variables to track touch positions and scroll direction
 let touchStartY = 0;
@@ -58,6 +73,49 @@ window.addEventListener('scroll', () => {
     // Update last scroll position for the next event check
     lastScrollY = currentScrollY;
 }, { passive: true });
+
+/* =========================================================================
+   --- 2. DOUBLE-TAP ---
+   ========================================================================= */
+   
+document.addEventListener("DOMContentLoaded", function() {
+    const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (window.matchMedia("(hover: none)").matches);
+
+    if (isTouchDevice) {
+        // On écoute sur le body pour capter même les icônes créées par DataTables
+        document.body.addEventListener('click', function(e) {
+            // On cherche si on a cliqué sur un lien double-tap
+            const link = e.target.closest('.js-double-tap');
+
+            // 1. Si on clique ailleurs : on ferme tout
+            if (!link) {
+                document.querySelectorAll('.js-double-tap.expanded').forEach(l => l.classList.remove('expanded'));
+                return;
+            }
+
+            // 2. Si on clique sur une icône
+            if (!link.classList.contains('expanded')) {
+                // PREMIER TAP
+                e.preventDefault();
+                e.stopPropagation();
+
+                // On ferme les autres
+                document.querySelectorAll('.js-double-tap.expanded').forEach(l => l.classList.remove('expanded'));
+                
+                // On ouvre celle-ci
+                link.classList.add('expanded');
+            } else {
+                // DEUXIÈME TAP
+                // On laisse le comportement naturel (onclick du HTML ou href)
+                link.classList.remove('expanded');
+            }
+        }, true); // Le "true" ici permet d'intercepter avant DataTables
+    }
+});
+
+/* =========================================================================
+   --- 3. TIER MODAL ---
+   ========================================================================= */
 		
 // Tier Modal		
 document.addEventListener('DOMContentLoaded', function() {
@@ -150,162 +208,50 @@ document.addEventListener('DOMContentLoaded', function() {
 	window.onclick = (event) => { if (event.target == modal) closeModal(); };
 });
 
-// Double-tap
-document.addEventListener("DOMContentLoaded", function() {
-    const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (window.matchMedia("(hover: none)").matches);
 
-    if (isTouchDevice) {
-        // On écoute sur le body pour capter même les icônes créées par DataTables
-        document.body.addEventListener('click', function(e) {
-            // On cherche si on a cliqué sur un lien double-tap
-            const link = e.target.closest('.js-double-tap');
-
-            // 1. Si on clique ailleurs : on ferme tout
-            if (!link) {
-                document.querySelectorAll('.js-double-tap.expanded').forEach(l => l.classList.remove('expanded'));
-                return;
-            }
-
-            // 2. Si on clique sur une icône
-            if (!link.classList.contains('expanded')) {
-                // PREMIER TAP
-                e.preventDefault();
-                e.stopPropagation();
-
-                // On ferme les autres
-                document.querySelectorAll('.js-double-tap.expanded').forEach(l => l.classList.remove('expanded'));
-                
-                // On ouvre celle-ci
-                link.classList.add('expanded');
-            } else {
-                // DEUXIÈME TAP
-                // On laisse le comportement naturel (onclick du HTML ou href)
-                link.classList.remove('expanded');
-            }
-        }, true); // Le "true" ici permet d'intercepter avant DataTables
-    }
-});
-
-// Nut surprise
-document.addEventListener('DOMContentLoaded', () => {
-	
-	// --- BLOC 1 : Feature "Nut" ---
-    if (window.location.hash === '#nut-section') {
-        const nutSection = document.getElementById('nut-section');
-        if (nutSection) {
-            nutSection.style.display = 'block';
-        }
-    }
-	
-	// --- BLOC 2 : Feature "Deco" ---
-    const btn = document.getElementById('deco-toggle');
-    if (btn) {
-        btn.addEventListener('click', () => {
-            // On ajoute ou on enlève la classe "show-deco" au body
-            document.body.classList.toggle('show-deco');
-			
-			setTimeout(() => {
-                window.dispatchEvent(new Event('scroll'));
-            }, 600);
-        });
-    }
-	
-});
-
-/* =========================================================
-   GESTION DU SECRET ET RIDEAU NOIR 
-   ========================================================= */
+/* =========================================================================
+   --- 3. SECRETS ---
+   ========================================================================= */
 
 document.addEventListener('DOMContentLoaded', () => {
+    const body = document.body;
 
-    const secretSequence = ['roots', 'quiet'];
-    let userProgress = [];
+    // --- 1. INITIALIZATION ---
+    // Check if the user already found the watcher in a previous session
+    if (localStorage.getItem('watcher-found') === 'true') {
+        body.classList.add('secrets-started');
+    }
 
-    // --- Fonction pour changer les textes ---
-   const updateTexts = () => {
-		if (document.body.getAttribute('data-page') === 'cache') {
-			const intro = document.querySelector('.page-intro');
-			if (intro) {
-				const titleEl = intro.querySelector('h2');
-				const descEl = intro.querySelector('p');
-				if (titleEl) titleEl.textContent = "Mystic Sward";
-				if (descEl) descEl.textContent = "Silent roots keep a quiet crown.";
-			}
-			document.title = "Mystic Sward • Rootelo";
-		}
-
-		const nav = document.querySelector('nav');
-		if (nav && !document.getElementById('nav-mystic')) {
-			const mysticLink = document.createElement('a');
-			mysticLink.id = 'nav-mystic';
-			mysticLink.href = 'cache.html'; 
-			mysticLink.textContent = 'Mystic Sward';
-			
-			if (document.body.getAttribute('data-page') === 'cache') {
-				mysticLink.className = 'active';
-				const links = nav.querySelectorAll('a');
-				links.forEach(a => {
-					if (a.textContent === 'Undergrowth') a.style.display = 'none';
-				});
-			}
-
-			nav.appendChild(mysticLink);
-		}
-	};
-
-    // On écoute les clics sur les mots "cipher"
-    document.querySelectorAll('.cipher').forEach(el => {
-        el.addEventListener('click', () => {
-            const word = el.getAttribute('data-word');
+    // --- 2. THE TRIGGER (The Watcher's Secret) ---
+    // This is the element the user clicks to start the story
+    const watcherBtn = document.getElementById('watcher-secret');
+    
+    if (watcherBtn) {
+        watcherBtn.addEventListener('click', () => {
+            // Activate the visual state
+            body.classList.add('secrets-started');
             
-            if (word === secretSequence[userProgress.length]) {
-                userProgress.push(word);
-                el.classList.add('active-cipher');
-
-                if (userProgress.length === secretSequence.length) {
-                    const gate = document.getElementById('mystic-gate');
-                    
-                    $(gate).fadeIn(600, function() {
-                        document.body.classList.add('mystic');
-                        document.body.classList.add('show-deco');
-                        localStorage.setItem('mysticUnlocked', 'true');
-                        
-                        // ON CHANGE LES TEXTES ICI
-                        updateTexts();
-                        
-                        if (typeof initStardust === "function") initStardust();
-
-                        $(gate).fadeOut(1000);
-                    });
-                }
-            } else {
-                userProgress = [];
-                document.querySelectorAll('.cipher').forEach(c => c.classList.remove('active-cipher'));
-            }
+            // Save progress to the browser's cache
+            localStorage.setItem('watcher-found', 'true');
+            
+            // Refresh scroll-based animations if any
+            window.dispatchEvent(new Event('scroll'));
         });
-    });
+    }
 
-    // FULL RESET
-	const exitBtn = document.getElementById('leave-secrets');
-
-	if (exitBtn) {
-		exitBtn.addEventListener('click', () => {
-			localStorage.clear();
-			window.location.href = 'index.html';
-		});
-	}
-
-    // PERSISTANCE
-    if (localStorage.getItem('mysticUnlocked') === 'true') {
-        document.body.classList.add('mystic');
-        document.body.classList.add('show-deco');
-        
-        // ON CHANGE LES TEXTES ICI AUSSI
-        updateTexts();
-        
-        if (typeof initStardust === "function") initStardust();
+    // --- 3. EXIT DOOR (Reset & Redirect) ---
+    const exitBtn = document.getElementById('leave-secrets');
+    if (exitBtn) {
+        exitBtn.addEventListener('click', () => {
+            // Wipe all secrets from the cache
+            localStorage.clear();
+            
+            // Redirect back to the main landing page
+            window.location.href = 'index.html'; 
+        });
     }
 });
+
 
 /* =========================================================
    GÉNÉRATEUR DE POUSSIÈRE D'ÉTOILES
