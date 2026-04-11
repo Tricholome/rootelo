@@ -216,37 +216,43 @@ document.addEventListener('DOMContentLoaded', function() {
 document.addEventListener('DOMContentLoaded', () => {
     const body = document.body;
 
-    // --- 1. INITIALIZATION ---
-    // Check if the user already found the watcher in a previous session
-    if (localStorage.getItem('watcher-found') === 'true') {
-        body.classList.add('secrets-started');
+    // --- 1. PERSISTENCE CHECK ---
+    // If either key exists in the cache, we restore the full state
+    const hasStarted = localStorage.getItem('secrets-started') === 'true';
+    const isFound = localStorage.getItem('watcher-found') === 'true';
+
+    if (hasStarted || isFound) {
+        body.classList.add('secrets-started', 'watcher-found');
     }
 
     // --- 2. THE TRIGGER (The Watcher's Secret) ---
-    // This is the element the user clicks to start the story
     const watcherBtn = document.getElementById('watcher-secret');
     
     if (watcherBtn) {
         watcherBtn.addEventListener('click', () => {
-            // Activate the visual state
-            body.classList.add('secrets-started');
-            
-            // Save progress to the browser's cache
+            // Update BOTH Storage keys
+            localStorage.setItem('secrets-started', 'true');
             localStorage.setItem('watcher-found', 'true');
+
+            // Update BOTH Body classes
+            body.classList.add('secrets-started', 'watcher-found');
             
-            // Refresh scroll-based animations if any
             window.dispatchEvent(new Event('scroll'));
         });
     }
 
-    // --- 3. EXIT DOOR (Reset & Redirect) ---
+    // --- 3. THE EXIT (Reset & Departure) ---
     const exitBtn = document.getElementById('leave-secrets');
+
     if (exitBtn) {
         exitBtn.addEventListener('click', () => {
-            // Wipe all secrets from the cache
+            // Full Wipe
             localStorage.clear();
             
-            // Redirect back to the main landing page
+            // Remove both classes
+            body.classList.remove('secrets-started', 'watcher-found');
+            
+            // Go home
             window.location.href = 'index.html'; 
         });
     }
