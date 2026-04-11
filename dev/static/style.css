@@ -865,7 +865,7 @@ tr[data-tier="mouse"] td:nth-child(4)    { color: var(--color-mouse) !important;
 tr[data-tier="squirrel"] td:nth-child(4) { color: var(--color-squirrel) !important; }
 
 /* =========================================================================
-   --- 12. HIDDEN CONTENT & SECRETS ---
+   --- 12. HIDDEN CONTENT: UNDERGROWTH ---
    ========================================================================= */
 
 /* --- 1. Exit Door --- */
@@ -1046,7 +1046,7 @@ body.nut-found .banner-icons a.tooltip-link.banner-icon-squirrel {
 }
 
 /* =========================================================================
-   --- 13. MYSTIC CONTENT ---
+   --- 13. HIDDEN CONTENT: MYSTIC ---
    ========================================================================= */
    
 /* --- 1. Ciphers --- */
@@ -1058,6 +1058,7 @@ body.nut-found .banner-icons a.tooltip-link.banner-icon-squirrel {
 .cipher.active-cipher {
 	font-weight: var(--bold);
 	font-size: var(--size-md);
+	letter-spacing: var(--track-wide);
     color: var(--color-stag) !important;
 }
 
