@@ -959,15 +959,6 @@ body[data-page="cache"].watcher-found .screen-deco {
     }
 }
 
-body[data-page="cache"] .app-footer {
-    margin-top: 10vh; 
-}
-
-body[data-page="cache"].watcher-found .app-footer {
-    margin-top: inherit; 
-}
-
-
 .nav-secret {
     display: none;
 }
