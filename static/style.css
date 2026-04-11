@@ -944,11 +944,13 @@ body[data-page="cache"].watcher-found .screen-deco img {
 
 body[data-page="cache"] .screen-deco {
     height: 0;
+	overflow: hidden;
     transition: height 0.5s ease;
 }
 
 body[data-page="cache"].watcher-found .screen-deco {
     height: 200px;
+	overflow: visible;
 }
 
 @media (min-width: 1300px) {
@@ -1058,7 +1060,8 @@ body.watcher-found .nav-secret {
 }
 
 body.nut-found #nut-section,
-body.berry-found #berry-section {
+body.berry-found #berry-section,
+body.ciphers-found #berry-section {
     display: block;
 }
 
