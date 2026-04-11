@@ -962,6 +962,14 @@ body[data-page="cache"].watcher-found .app-footer {
     margin-top: 40px ; 
 }
 
+.nav-secret {
+    display: none;
+}
+
+body.watcher-found .nav-secret {
+    display: inline-block;
+}
+
 /* --- 5. Banner Icon --- */
 .banner-icons a.tooltip-link.banner-icon-squirrel { 
 	display: none; 
