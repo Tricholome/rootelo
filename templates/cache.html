@@ -44,7 +44,7 @@
 					<td>{{ s.player }}</td>
 					<td>
 						{{ s.streak_count }}
-						{{ 'game' if s.streak_count == 1 else 'games' }}
+						<small>{{ 'game' if s.streak_count == 1 else 'games' }}</small>
 					</td>
 					<td>{{ s.peak }}</td>
 					<td>{{ s.ascension }}</td>
