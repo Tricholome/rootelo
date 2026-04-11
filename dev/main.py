@@ -374,9 +374,9 @@ for tag in ARCHIVE_SEASONS:
     }
     
 # =========================================================================
-# --- 8b. HALL OF FAME : MEILLEUR STREAK PERSONNEL PAR TIER ---
+# --- 9. HALL OF FAME : MEILLEUR STREAK PERSONNEL PAR TIER ---
 # =========================================================================
-print("  > Compiling Hall of Fame (Record personnel par Tier)...")
+print("  > Compiling Hall of Fame...")
 
 def extract_all_streaks(history, player_full_name):
     streaks = []
@@ -387,12 +387,8 @@ def extract_all_streaks(history, player_full_name):
     for i in range(10, len(history)):
         date_str, elo_val = history[i][0], history[i][1]
         if "-" not in str(date_str): continue
-        
-        # UTILISATION DE LA FONCTION GÉNÉRALE DU SCRIPT
-        # Elle renvoie (None, "tier_name") basé sur l'ELO et le nombre de matchs
-        _, tier_now = get_tier_icon(elo_val, 11) # On force 11 pour bypasser le check "unranked"
+        _, tier_now = get_tier_icon(elo_val, 11)
 
-        # On ne s'intéresse qu'aux Bird et Stag pour le Hall of Fame
         if tier_now not in ['bird', 'stag']:
             tier_now = None
 
@@ -437,7 +433,7 @@ for p_name, h in sources:
 hall_of_fame_data = sorted(best_streaks_only.values(), key=lambda x: (x['tier'] != 'stag', -x['streak_count']))
 
 # =========================================================================
-# --- 9. SITE GENERATION (JINJA2 RENDERING) ---
+# --- 10. SITE GENERATION (JINJA2 RENDERING) ---
 # =========================================================================
 print("\n=== GENERATING HTML PAGES ===")
 
