@@ -374,72 +374,64 @@ for tag in ARCHIVE_SEASONS:
     }
     
 # =========================================================================
-# --- 8b. HALL OF FAME DATA PREPARATION (LOGIQUE PAR SESSIONS) ---
+# --- 8b. HALL OF FAME DATA PREPARATION (VERSION CUMULÉE) ---
 # =========================================================================
-print("  > Preparing Hall of Fame sessions...")
+print("  > Calculating Hall of Fame longevity from trends data...")
 hall_of_fame_data = []
 
 if not current_final_df.empty:
     for _, row in current_final_df.iterrows():
         p_full_name = row['Player']
+        
+        # On récupère l'historique déjà généré pour la page Trends
         history = player_history.get(p_full_name, [])
+        if len(history) < 2: continue
         
-        in_title_session = False
-        session_start_date = None
+        total_days = 0
+        first_ascension = None
         
-        for i, entry in enumerate(history):
-            date_str = entry[0]
-            elo_val = entry[1]
+        # On parcourt les points de l'historique deux par deux
+        for i in range(len(history)):
+            date_str, elo_val = history[i][0], history[i][1]
             
-            if date_str in ["Start", "LH01 Final"]:
-                continue
-                
+            # On ignore les marqueurs de texte pour les calculs de date
+            if date_str in ["Start", "LH01 Final"]: continue
+            
             try:
-                current_date = datetime.strptime(date_str, '%Y-%m-%d').date()
-            except:
-                continue
+                curr_date = datetime.strptime(date_str, '%Y-%m-%d').date()
+            except: continue
 
-            # CONDITION : Est-ce qu'il est Bird/Stag à cet instant ?
-            # On considère ici que s'il est dans l'historique, il a ses 10 games.
-            is_eligible = elo_val >= 1500
+            # CONDITION : Le joueur est-il Bird ou Stag ?
+            # (ELO >= 1500)
+            if elo_val >= 1500:
+                if first_ascension is None:
+                    first_ascension = date_str
+                
+                # On calcule la durée jusqu'au prochain point (prochain match)
+                if i + 1 < len(history):
+                    next_date_str = history[i+1][0]
+                    try:
+                        next_date = datetime.strptime(next_date_str, '%Y-%m-%d').date()
+                        total_days += (next_date - curr_date).days
+                    except: pass
+                else:
+                    # Dernier match connu : on compte jusqu'à aujourd'hui
+                    total_days += max(0, (today - curr_date).days)
 
-            if is_eligible and not in_title_session:
-                # DÉBUT D'UNE SESSION
-                in_title_session = True
-                session_start_date = current_date
-            
-            elif not is_eligible and in_title_session:
-                # FIN D'UNE SESSION (il est redescendu Fox ou moins)
-                duration = (current_date - session_start_date).days
-                if duration >= 1: # On n'enregistre que les règnes d'au moins 1 jour
-                    hall_of_fame_data.append({
-                        'display_name': str(p_full_name).split('+')[0].split('#')[0],
-                        'tier': 'bird' if elo_val < 1600 else 'stag', # Tier approximatif au moment de la chute
-                        'peak_elo': int(row['Peak']), # Peak global du joueur
-                        'ascension_date': session_start_date.strftime('%Y-%m-%d'),
-                        'longevity': duration,
-                        'status': 'Finished'
-                    })
-                in_title_session = False
-                session_start_date = None
-
-        # Cas particulier : Il est TOUJOURS en titre actuellement
-        if in_title_session and session_start_date:
-            duration = (today - session_start_date).days
-            # On récupère son tier actuel réel
+        if total_days > 0:
+            # On récupère son tier final actuel pour l'icône
             _, current_tier = get_tier_icon(row['ELO'], row['Games'])
             
             hall_of_fame_data.append({
                 'display_name': str(p_full_name).split('+')[0].split('#')[0],
                 'tier': current_tier,
                 'peak_elo': int(row['Peak']),
-                'ascension_date': session_start_date.strftime('%Y-%m-%d'),
-                'longevity': max(1, duration),
-                'status': 'Ongoing'
+                'first_ascension': first_ascension,
+                'longevity': total_days
             })
 
-# Tri par date d'ascension la plus récente
-hall_of_fame_data = sorted(hall_of_fame_data, key=lambda x: x['ascension_date'], reverse=True)
+# Tri par longévité totale
+hall_of_fame_data = sorted(hall_of_fame_data, key=lambda x: x['longevity'], reverse=True)
 
 # =========================================================================
 # --- 9. SITE GENERATION (JINJA2 RENDERING) ---
