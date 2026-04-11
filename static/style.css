@@ -1076,6 +1076,11 @@ body.nut-found .banner-icons a.tooltip-link.banner-icon-squirrel {
     color: var(--color-squirrel) !important;
 }
 
+body.ciphers-found .cipher {
+    cursor: default;
+    pointer-events: none;
+}
+
 /* --- 2. Gate --- */
 #mystic-gate {
     position: fixed;
