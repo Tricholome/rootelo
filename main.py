@@ -427,8 +427,13 @@ for p_name, h in sources:
     player_streaks = extract_all_streaks(h, p_name)
     for s in player_streaks:
         key = (s['player'], s['tier'])
-        if key not in best_streaks_only or s['streak_count'] > best_streaks_only[key]['streak_count']:
+        if key not in best_streaks_only:
             best_streaks_only[key] = s
+        else:
+            current_best = best_streaks_only[key]
+            if (s['streak_count'] > current_best['streak_count']) or \
+               (s['streak_count'] == current_best['streak_count'] and s['peak'] > current_best['peak']):
+                best_streaks_only[key] = s
 
 hall_of_fame_data = sorted(best_streaks_only.values(), key=lambda x: (x['tier'] != 'stag', -x['streak_count']))
 
