@@ -968,17 +968,19 @@ body.watcher-found .nav-secret {
 /* --- 3. Nut & Berry Styles --- */
 .tier-interaction-wrapper {
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
-    padding: 40px 0;
+    padding: 20px 0;
     width: 100%;
+	min-height: 180px;
 }
 
 .nut-trigger {
     position: relative;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
+	margin-left: auto;
     text-decoration: none;
     cursor: pointer;
     transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -988,8 +990,6 @@ body.watcher-found .nav-secret {
     width: clamp(90px, 12vw, 130px);
     height: auto;
     filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.5));
-	margin-top: 40px;
-    margin-bottom: 80px;
     transition: filter 0.4s ease;
 }
 
