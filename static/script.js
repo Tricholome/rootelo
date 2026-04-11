@@ -344,9 +344,29 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+/* =========================================================================
+   --- 5. NUT & BERRY ---
+   ========================================================================= */
+
+function handleTierClick(event, tier) {
+    const isNutFound = localStorage.getItem('nut-found') === 'true';
+    const isBerryFound = localStorage.getItem('berry-found') === 'true';
+
+    if (tier === 'squirrel' && !isNutFound) {
+        window.location.href = 'cache.html#nut-section';
+    } 
+    else if (tier === 'stag' && !isBerryFound) {
+        window.location.href = 'cache.html#berry-section';
+    } 
+    else {
+        if (typeof openTierModal === "function") {
+            openTierModal(tier);
+        }
+    }
+}
 
 /* =========================================================================
-   --- 5. STARDUST GENERATOR ---
+   --- 6. STARDUST GENERATOR ---
    ========================================================================= */
 
 function initStardust() {
