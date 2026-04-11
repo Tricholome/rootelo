@@ -1057,7 +1057,19 @@ body.nut-found .banner-icons a.tooltip-link.banner-icon-squirrel {
 
 .cipher.active-cipher {
 	font-weight: var(--bold);
+	font-size: var(--size-md);
     color: var(--color-stag) !important;
+}
+
+@keyframes cipher-reject {
+    0%, 100% { opacity: 1; }
+    25%, 75% { opacity: 0; }
+    50% { opacity: 1; }
+}
+
+.cipher-blink {
+    animation: cipher-reject 0.5s ease-in-out;
+    color: var(--color-squirrel) !important;
 }
 
 /* --- 2. Gate --- */
