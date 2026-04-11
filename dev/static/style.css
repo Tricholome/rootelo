@@ -970,7 +970,6 @@ body.watcher-found .nav-secret {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 5px 0;
     width: 100%;
 	transition: margin 0.5s ease;
 }
@@ -983,7 +982,6 @@ body.watcher-found .nav-secret {
     text-decoration: none;
     cursor: pointer;
     transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-	margin: 40px 0;
 }
 
 .nut-sprite {
