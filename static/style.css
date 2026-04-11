@@ -970,7 +970,7 @@ body.watcher-found .nav-secret {
     display: flex;
     justify-content: flex-start;
     align-items: center;
-	padding: 0 120px;
+	padding: 0 100px;
     width: 100%;
 	box-sizing: border-box;
 }
@@ -1006,7 +1006,7 @@ body.watcher-found .nav-secret {
     box-shadow: 0 4px 10px rgba(0,0,0,0.5);
     z-index: 100;
     bottom: auto;
-    top: 40%; 
+    top: 50%; 
     left: 50%;
     opacity: 0;
     pointer-events: none;
@@ -1014,8 +1014,7 @@ body.watcher-found .nav-secret {
     transition: all 0.3s ease;
 }
 
-.nut-trigger:hover,
-.nut-trigger.expanded {
+.nut-trigger:hover {
     transform: scale(1.6);
 	padding-top: 80px;
     padding-bottom: 80px;
@@ -1025,8 +1024,7 @@ body.watcher-found .nav-secret {
     filter: drop-shadow(0 25px 40px rgba(0, 0, 0, 0.7));
 }
 
-.nut-trigger:hover .nut-tooltip,
-.nut-trigger.expanded .nut-tooltip {
+.nut-trigger:hover .nut-tooltip {
     opacity: 1;
     transform: translate(-50%, -50%) scale(0.65);
 }
