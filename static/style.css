@@ -1128,7 +1128,6 @@ body.ciphers-found .banner-icons a.tooltip-link.banner-icon-stag {
    --- 14. STARS ---
    ========================================================================= */
    
-/* Le conteneur d'étoiles interne aux window-box */
 .stardust-container {
     position: absolute;
     top: 0;
@@ -1137,21 +1136,14 @@ body.ciphers-found .banner-icons a.tooltip-link.banner-icon-stag {
     height: 100%;
     pointer-events: none;
     overflow: hidden;
-    z-index: 1; /* Derrière le texte (10) mais devant le fond de la box */
+    z-index: 9;
 }
 
-/* On s'assure que les window-box acceptent le positionnement absolu des étoiles */
-.window-box {
-    position: relative; 
-}
-
-/* Le design des particules */
 .star {
     position: absolute;
-    background: #fff;
+    background: white;
     border-radius: 50%;
     opacity: 0;
-    box-shadow: 0 0 8px 2px var(--main-color);
     animation: twinkle var(--duration) infinite ease-in-out;
 }
 
