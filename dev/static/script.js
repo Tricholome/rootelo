@@ -285,14 +285,15 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // PORTE DE SORTIE
-    const exitBtn = document.getElementById('leave-mystic');
-    if (exitBtn) {
-        exitBtn.addEventListener('click', () => {
-            localStorage.removeItem('mysticUnlocked');
-            location.reload();
-        });
-    }
+    // FULL RESET
+	const exitBtn = document.getElementById('leave-secrets');
+
+	if (exitBtn) {
+		exitBtn.addEventListener('click', () => {
+			localStorage.clear();
+			window.location.href = 'index.html';
+		});
+	}
 
     // PERSISTANCE
     if (localStorage.getItem('mysticUnlocked') === 'true') {
