@@ -932,7 +932,16 @@ body[data-page="cache"].show-deco .app-footer {
     margin-top: 40px ; 
 }
 
-/* --- 5. Nut interaction --- */
+/* --- 5. Banner Icon --- */
+.banner-icon-squirrel { 
+	display: none; 
+}
+
+body.show-deco .banner-icon-squirrel {
+	display: inline-block;
+}
+
+/* --- 6. Nut interaction --- */
 .tier-interaction-wrapper {
     display: flex;
     justify-content: center;
@@ -1004,7 +1013,8 @@ body[data-page="cache"].show-deco .app-footer {
 /* =========================================================================
    --- 13. MYSTIC CONTENT ---
    ========================================================================= */
-
+   
+/* --- 1. Ciphers --- */
 .cipher {
     cursor: pointer;
     font-weight: var(--bold);
@@ -1015,6 +1025,7 @@ body[data-page="cache"].show-deco .app-footer {
     color: var(--color-stag) !important;
 }
 
+/* --- 2. Gate --- */
 #mystic-gate {
     position: fixed;
     top: 0;
@@ -1031,6 +1042,7 @@ body[data-page="cache"].mystic {
     --main-color: var(--color-stag);
 }
 
+/* --- 3. Content --- */
 .mystic-section {
     display: none;
     opacity: 0;
@@ -1040,6 +1052,15 @@ body[data-page="cache"].mystic {
 body.mystic .mystic-section {
     display: block;
     opacity: 1;
+}
+
+/* --- 4. Banner Icon --- */
+.banner-icon-stag { 
+	display: none; 
+}
+
+body.mystic .banner-icon-stag {
+	display: inline-block;
 }
 
 
