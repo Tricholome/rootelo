@@ -44,6 +44,7 @@ print(f"Update started. Filtering matches closed before: {today}")
 def get_tier_icon(rating, games):
     if games < 10: return None, "unranked"  
     r = round(rating) # Ensure tier is based on visual score
+    if r >= 1600: return None, "stag"
     if r >= 1500: return None, "bird"
     if r >= 1400: return None, "fox"
     if r >= 1300: return None, "rabbit"
