@@ -973,7 +973,7 @@ body.watcher-found .nav-secret {
     display: inline-block;
 }
 
-/* --- 3. Nut Secret --- */
+/* --- 3. Nut & Berry Styles --- */
 .tier-interaction-wrapper {
     display: flex;
     justify-content: center;
@@ -1040,12 +1040,23 @@ body.watcher-found .nav-secret {
     transition: transform 0.1s;
 }
 
-.banner-icons a.tooltip-link.banner-icon-squirrel { 
-	display: none; 
+/* --- 4. Nut & Berry Effects --- */
+body.nut-found #nut-section,
+body.berry-found #berry-section {
+    display: block !important;
+}
+
+.banner-icons a.tooltip-link.banner-icon-squirrel,
+.banner-icons a.tooltip-link.banner-icon-stag { 
+    display: none; 
 }
 
 body.nut-found .banner-icons a.tooltip-link.banner-icon-squirrel {
-	display: inline-block;
+    display: inline-block;
+}
+
+body.berry-found .banner-icons a.tooltip-link.banner-icon-stag {
+    display: inline-block;
 }
 
 /* =========================================================================
@@ -1112,15 +1123,6 @@ body[data-page="cache"].ciphers-found {
 body.ciphers-found .mystic-section {
     display: block;
     opacity: 1;
-}
-
-/* --- 4. Banner Icon --- */
-.banner-icons a.tooltip-link.banner-icon-stag { 
-	display: none; 
-}
-
-body.ciphers-found .banner-icons a.tooltip-link.banner-icon-stag {
-	display: inline-block;
 }
 
 
