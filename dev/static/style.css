@@ -926,7 +926,7 @@ body[data-page="cache"] .artist-story {
 
 body[data-page="cache"].watcher-found .page-intro, 
 body[data-page="cache"].watcher-found .artist-story {
-    display: revert;
+    display: block;
     opacity: 1;
     transform: translateY(0);
 }
