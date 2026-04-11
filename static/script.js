@@ -219,16 +219,18 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- 1. PERSISTENCE CHECK ---
     const isWatcherFound = localStorage.getItem('watcher-found') === 'true';
     const isNutFound = localStorage.getItem('nut-found') === 'true';
+	const isBerryFound = localStorage.getItem('berry-found') === 'true';
     const isCiphersFound = localStorage.getItem('ciphers-found') === 'true';
 
     // Global visibility (Nav & Exit)
-    if (isWatcherFound || isNutFound || isCiphersFound) {
+    if (isWatcherFound || isNutFound || isBerryFound || isCiphersFound) {
         body.classList.add('secrets-started');
     }
 
     // Specific states
     if (isWatcherFound) body.classList.add('watcher-found');
     if (isNutFound) body.classList.add('nut-found');
+	if (isBerryFound) body.classList.add('berry-found');
     
     // Final state (Mystic Sward)
     if (isCiphersFound) {
@@ -255,8 +257,19 @@ document.addEventListener('DOMContentLoaded', () => {
             navSecretLink.textContent = 'Mystic Sward';
         }
     }
+	
+	// --- 3. THE WATCHER SECRET ---
+    const watcherBtn = document.getElementById('watcher-secret');
+    if (watcherBtn) {
+        watcherBtn.addEventListener('click', () => {
+            body.classList.add('secrets-started', 'watcher-found');
+            localStorage.setItem('secrets-started', 'true');
+            localStorage.setItem('watcher-found', 'true');
+            window.dispatchEvent(new Event('scroll'));
+        });
+    }
 
-    // --- 3. THE NUT SECRET ---
+    // --- 4. THE NUT SECRET ---
     if (window.location.hash === '#nut-section') {
         const nutSection = document.getElementById('nut-section');
         if (nutSection) nutSection.style.display = 'block';
@@ -270,19 +283,23 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.setItem('nut-found', 'true');
         });
     }
+	
+	// --- 5. THE BERRY SECRET ---
+    if (window.location.hash === '#berry-section') {
+        const berrySection = document.getElementById('berry-section');
+        if (berrySection) berrySection.style.display = 'block';
+    }
 
-    // --- 4. THE WATCHER SECRET ---
-    const watcherBtn = document.getElementById('watcher-secret');
-    if (watcherBtn) {
-        watcherBtn.addEventListener('click', () => {
-            body.classList.add('secrets-started', 'watcher-found');
+    const berryBtn = document.getElementById('berry-secret');
+    if (berryBtn) {
+        berryBtn.addEventListener('click', () => {
+            body.classList.add('secrets-started', 'berry-found');
             localStorage.setItem('secrets-started', 'true');
-            localStorage.setItem('watcher-found', 'true');
-            window.dispatchEvent(new Event('scroll'));
+            localStorage.setItem('berry-found', 'true');
         });
     }
 
-    // --- 5. THE CIPHER SEQUENCE & CURTAIN ---
+    // --- 6. THE CIPHER SEQUENCE & CURTAIN ---
     const secretSequence = ['roots', 'quiet', 'spirit'];
     let userProgress = [];
     let isResetting = false;
@@ -338,7 +355,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (exitBtn) {
         exitBtn.addEventListener('click', () => {
             localStorage.clear();
-            body.classList.remove('secrets-started', 'watcher-found', 'nut-found', 'ciphers-found', 'show-deco');
+            body.classList.remove('secrets-started', 'watcher-found', 'nut-found', 'berry-found', 'ciphers-found');
             window.location.href = 'index.html'; 
         });
     }
