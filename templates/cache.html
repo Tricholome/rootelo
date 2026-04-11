@@ -14,6 +14,36 @@
 	<div class="mystic-section">
         <h2>The New Tier</h2>
         <p>You've followed the roots to their source. The watcher finally speaks...</p>
+		
+		<div id="hall-of-fame-wrapper">
+			<table id="hof-table" class="display nowrap" style="width:100%">
+				<thead>
+					<tr>
+						<th>Tier</th>
+						<th>Nomad</th>
+						<th>Peak ELO</th>
+						<th>Ascended</th>
+						<th>Longevity</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for legend in hall_of_fame %}
+					<tr data-tier="{{ legend.tier }}">
+						<td class="text-center">
+							<div class="tier-icon-container">
+								<img src="assets/icons/{{ legend.tier }}.svg" alt="{{ legend.tier }}" style="width: 32px;">
+							</div>
+						</td>
+						<td class="text-left text-medium"><strong>{{ legend.display_name }}</strong></td>
+						<td class="text-lg text-bold">{{ legend.peak_elo }}</td>
+						<td class="text-secondary">{{ legend.ascension_date }}</td>
+						<td>{{ legend.longevity }} days</td>
+					</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+		
     </div>
 	
 	<div id="berry-section">
