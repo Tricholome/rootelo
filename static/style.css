@@ -933,11 +933,11 @@ body[data-page="cache"].show-deco .app-footer {
 }
 
 /* --- 5. Banner Icon --- */
-.banner-icon-squirrel { 
+.banner-icons a.tooltip-link.banner-icon-squirrel { 
 	display: none; 
 }
 
-body.show-deco .banner-icon-squirrel {
+body.show-deco .banner-icons a.tooltip-link.banner-icon-squirrel {
 	display: inline-block;
 }
 
@@ -1055,11 +1055,11 @@ body.mystic .mystic-section {
 }
 
 /* --- 4. Banner Icon --- */
-.banner-icon-stag { 
+.banner-icons a.tooltip-link.banner-icon-stag { 
 	display: none; 
 }
 
-body.mystic .banner-icon-stag {
+body.mystic .banner-icons a.tooltip-link.banner-icon-stag {
 	display: inline-block;
 }
 
