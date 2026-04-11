@@ -386,15 +386,28 @@ def extract_all_streaks(history, player_full_name):
 
     for i in range(10, len(history)):
         date_str, elo_val = history[i][0], history[i][1]
-        if "-" not in date_str: continue
+        if "-" not in str(date_str): continue
         
-        tier_now = get_tier_from_elo(elo_val)
+        # UTILISATION DE LA FONCTION GÉNÉRALE DU SCRIPT
+        # Elle renvoie (None, "tier_name") basé sur l'ELO et le nombre de matchs
+        _, tier_now = get_tier_icon(elo_val, 11) # On force 11 pour bypasser le check "unranked"
+
+        # On ne s'intéresse qu'aux Bird et Stag pour le Hall of Fame
+        if tier_now not in ['bird', 'stag']:
+            tier_now = None
 
         if tier_now != (current_s['tier'] if current_s else None):
             if current_s: streaks.append(current_s)
             if tier_now:
-                current_s = {'player': short_name, 'tier': tier_now, 'ascension': date_str, 'peak': elo_val, 'streak_count': 1}
-            else: current_s = None
+                current_s = {
+                    'player': short_name, 
+                    'tier': tier_now, 
+                    'ascension': date_str, 
+                    'peak': elo_val, 
+                    'streak_count': 1
+                }
+            else:
+                current_s = None
         elif current_s:
             current_s['streak_count'] += 1
             current_s['peak'] = max(current_s['peak'], elo_val)
@@ -402,10 +415,9 @@ def extract_all_streaks(history, player_full_name):
     if current_s: streaks.append(current_s)
     return streaks
 
-# Dictionnaire pour filtrer : (player, tier) -> Best Streak Object
 best_streaks_only = {}
-
 sources = []
+
 if not current_final_df.empty:
     for _, row in current_final_df.iterrows():
         sources.append((row['Player'], player_history.get(row['Player'], [])))
@@ -419,11 +431,9 @@ for p_name, h in sources:
     player_streaks = extract_all_streaks(h, p_name)
     for s in player_streaks:
         key = (s['player'], s['tier'])
-        # On ne garde que la session avec le plus grand streak_count
         if key not in best_streaks_only or s['streak_count'] > best_streaks_only[key]['streak_count']:
             best_streaks_only[key] = s
 
-# Conversion en liste et tri final
 hall_of_fame_data = sorted(best_streaks_only.values(), key=lambda x: (x['tier'] != 'stag', -x['streak_count']))
 
 # =========================================================================
