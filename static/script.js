@@ -277,23 +277,33 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // 2. Check if this click matches the sequence order
             if (word === secretSequence[userProgress.length]) {
-                // Correct step
                 userProgress.push(word);
 
-                // Check for completion
                 if (userProgress.length === secretSequence.length) {
                     const gate = document.getElementById('mystic-gate');
                     if (gate) gate.style.display = 'block';
                     body.classList.add('mystic-unlocked');
                 }
             } else {
-                // WRONG ORDER: Reset everything after a tiny delay 
-                // so the user sees the "wrong" word light up briefly
+                // WRONG ORDER: Reset with a blink effect after the delay
                 setTimeout(() => {
-                    userProgress = [];
-                    document.querySelectorAll('.cipher').forEach(c => {
-                        c.classList.remove('active-cipher');
+                    const allCiphers = document.querySelectorAll('.cipher');
+                    
+                    // Add blink class to all active words
+                    allCiphers.forEach(c => {
+                        if (c.classList.contains('active-cipher')) {
+                            c.classList.add('cipher-blink');
+                        }
                     });
+
+                    // Remove everything after the blink animation (approx 500ms)
+                    setTimeout(() => {
+                        userProgress = [];
+                        allCiphers.forEach(c => {
+                            c.classList.remove('active-cipher', 'cipher-blink');
+                        });
+                    }, 500);
+
                 }, 2000); 
             }
         });
