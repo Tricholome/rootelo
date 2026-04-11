@@ -1041,9 +1041,14 @@ body.watcher-found .nav-secret {
 }
 
 /* --- 4. Nut & Berry Effects --- */
+#nut-section,
+#berry-section {
+    display: none;
+}
+
 body.nut-found #nut-section,
 body.berry-found #berry-section {
-    display: block !important;
+    display: block;
 }
 
 .banner-icons a.tooltip-link.banner-icon-squirrel,
