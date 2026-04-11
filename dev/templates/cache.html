@@ -42,10 +42,7 @@
 						</a>
 					</td>
 					<td>{{ s.player }}</td>
-					<td>
-						{{ s.streak_count }}
-						<small>{{ 'game' if s.streak_count == 1 else 'games' }}</small>
-					</td>
+					<td class="streak-cell">{{ s.streak_count }}</td>
 					<td>{{ s.peak }}</td>
 					<td>{{ s.ascension }}</td>
 				</tr>
