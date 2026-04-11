@@ -24,29 +24,29 @@
 				<tr>
 					<th>Tier</th>
 					<th>Player</th>
-					<th>Longest Period</th>
-					<th>Peak</th>
-					<th>Total Period</th>
+					<th>Best Streak</th>
+					<th>Peak Elo</th>
+					<th>Start</th>
 				</tr>
 			</thead>
 			<tbody>
-				{% for entry in hall_of_fame %}
-				<tr data-tier="{{ entry.tier }}">
+				{% for s in hall_of_fame %}
+				<tr data-tier="{{ s.tier }}">
 					<td>
 						<a href="javascript:void(0)" 
-						   onclick="handleTierClick(event, '{{ entry.tier }}')" 
+						   onclick="handleTierClick(event, '{{ s.tier }}')" 
 						   class="tier-anchor-link">
 							<div class="tier-icon-container">
-								<img src="{{ config.assets.icons[entry.tier] }}" alt="{{ entry.tier }}">
+								<img src="{{ config.assets.icons[s.tier] }}" alt="{{ s.tier }}">
 							</div>
 						</a>
 					</td>
 					<td class="text-left text-medium player-name-cell">
-						<strong>{{ entry.player }}</strong>
+						<strong>{{ s.player }}</strong>
 					</td>
-					<td>{{ entry.longest_period }} days</td>
-					<td class="text-bold">{{ entry.peak }}</td>
-					<td class="text-lg text-bold">{{ entry.total_period }} days</td>
+					<td>{{ s.streak_count }} <small>games</small></td>
+					<td class="text-bold">{{ s.peak }}</td>
+					<td class="text-lg text-bold">{{ s.ascension }}</td>
 				</tr>
 				{% endfor %}
 			</tbody>

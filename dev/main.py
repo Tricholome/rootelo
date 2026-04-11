@@ -374,101 +374,67 @@ for tag in ARCHIVE_SEASONS:
     }
     
 # =========================================================================
-# --- 8b. HALL OF FAME : SESSIONS SÉPARÉES (STAG / BIRD) ---
+# --- 8b. HALL OF FAME : MEILLEUR STREAK PERSONNEL PAR TIER ---
 # =========================================================================
-print("  > Compiling HoF sessions (One row per Tier period)...")
+print("  > Compiling Hall of Fame (Record personnel par Tier)...")
 
-def get_tier_from_elo(elo):
-    if 1500 <= elo < 1600: return 'bird'
-    if elo >= 1600: return 'stag'
-    return None
+def extract_all_streaks(history, player_full_name):
+    streaks = []
+    if len(history) < 11: return streaks
+    short_name = player_full_name.split('+')[0].split('#')[0]
+    current_s = None
 
-def extract_sessions(history, player_name, peak_global):
-    """Extrait des sessions continues de Bird ou Stag après le match 10."""
-    sessions = []
-    if len(history) < 11: return sessions
-
-    short_name = player_name.split('+')[0].split('#')[0]
-    current_session = None # {'tier': str, 'start': date, 'dates': set()}
-
-    # On commence au match 10 (qualification)
     for i in range(10, len(history)):
         date_str, elo_val = history[i][0], history[i][1]
-        if "-" not in date_str: continue
+        if "-" not in str(date_str): continue
         
-        try:
-            curr_date = datetime.strptime(date_str, '%Y-%m-%d').date()
-        except: continue
+        # UTILISATION DE LA FONCTION GÉNÉRALE DU SCRIPT
+        # Elle renvoie (None, "tier_name") basé sur l'ELO et le nombre de matchs
+        _, tier_now = get_tier_icon(elo_val, 11) # On force 11 pour bypasser le check "unranked"
 
-        tier_at_moment = get_tier_from_elo(elo_val)
+        # On ne s'intéresse qu'aux Bird et Stag pour le Hall of Fame
+        if tier_now not in ['bird', 'stag']:
+            tier_now = None
 
-        # CAS 1 : Changement de statut ou de Tier
-        if tier_at_moment != (current_session['tier'] if current_session else None):
-            # On ferme l'ancienne session si elle existait
-            if current_session:
-                sessions.append(current_session)
-            
-            # On ouvre une nouvelle session si le nouveau statut est un titre
-            if tier_at_moment:
-                current_session = {
-                    'player': short_name,
-                    'tier': tier_at_moment,
-                    'first_ascension': date_str,
-                    'dates': {date_str},
-                    'peak': elo_val
+        if tier_now != (current_s['tier'] if current_s else None):
+            if current_s: streaks.append(current_s)
+            if tier_now:
+                current_s = {
+                    'player': short_name, 
+                    'tier': tier_now, 
+                    'ascension': date_str, 
+                    'peak': elo_val, 
+                    'streak_count': 1
                 }
             else:
-                current_session = None
-        
-        # CAS 2 : On reste dans le même Tier, on accumule la date
-        elif current_session:
-            current_session['dates'].add(date_str)
-            current_session['peak'] = max(current_session['peak'], elo_val)
+                current_s = None
+        elif current_s:
+            current_s['streak_count'] += 1
+            current_s['peak'] = max(current_s['peak'], elo_val)
 
-    # Fermeture de la dernière session en cours
-    if current_session:
-        sessions.append(current_session)
-    
-    return sessions
+    if current_s: streaks.append(current_s)
+    return streaks
 
-# --- COMPILATION ---
-raw_sessions = []
+best_streaks_only = {}
+sources = []
 
-# 1. Archives
-for tag in ARCHIVE_SEASONS:
-    raw_arc = archives_raw_data.get(tag, {})
-    for _, row in raw_arc.get('final_df', pd.DataFrame()).iterrows():
-        h = raw_arc.get('history', {}).get(row['Player'].split('+')[0].split('#')[0], [])
-        raw_sessions.extend(extract_sessions(h, row['Player'], row.get('Peak', 0)))
-
-# 2. Actuel
 if not current_final_df.empty:
     for _, row in current_final_df.iterrows():
-        h = player_history.get(row['Player'], [])
-        raw_sessions.extend(extract_sessions(h, row['Player'], row['Peak']))
+        sources.append((row['Player'], player_history.get(row['Player'], [])))
 
-# --- AGRÉGATION PAR (JOUEUR + TIER) ---
-# On veut une ligne par (Joueur, Tier) avec record de session et total
-final_hof_dict = {} # key: (player, tier)
+for tag in ARCHIVE_SEASONS:
+    raw = archives_raw_data.get(tag, {})
+    for p_name, h in raw.get('history', {}).items():
+        sources.append((p_name, h))
 
-for s in raw_sessions:
-    key = (s['player'], s['tier'])
-    duration = len(s['dates'])
-    
-    if key not in final_hof_dict:
-        final_hof_dict[key] = {
-            'player': s['player'],
-            'tier': s['tier'],
-            'peak': s['peak'],
-            'longest_period': duration,
-            'total_period': duration
-        }
-    else:
-        final_hof_dict[key]['total_period'] += duration
-        final_hof_dict[key]['longest_period'] = max(final_hof_dict[key]['longest_period'], duration)
-        final_hof_dict[key]['peak'] = max(final_hof_dict[key]['peak'], s['peak'])
+for p_name, h in sources:
+    player_streaks = extract_all_streaks(h, p_name)
+    for s in player_streaks:
+        key = (s['player'], s['tier'])
+        if key not in best_streaks_only or s['streak_count'] > best_streaks_only[key]['streak_count']:
+            best_streaks_only[key] = s
 
-hall_of_fame_data = sorted(final_hof_dict.values(), key=lambda x: (x['tier'] == 'bird', -x['total_period']))
+hall_of_fame_data = sorted(best_streaks_only.values(), key=lambda x: (x['tier'] != 'stag', -x['streak_count']))
 
 # =========================================================================
 # --- 9. SITE GENERATION (JINJA2 RENDERING) ---
