@@ -374,85 +374,101 @@ for tag in ARCHIVE_SEASONS:
     }
     
 # =========================================================================
-# --- 8b. HALL OF FAME DATA PREPARATION (DÉCOMPTE SÉPARÉ BIRD/STAG) ---
+# --- 8b. HALL OF FAME : SESSIONS SÉPARÉES (STAG / BIRD) ---
 # =========================================================================
-print("  > Compiling HoF longevity (Separate Bird/Stag counts)...")
+print("  > Compiling HoF sessions (One row per Tier period)...")
 
-def get_player_tier_days(history):
-    """
-    Retourne deux sets de dates : un pour Bird, un pour Stag.
-    Un joueur est qualifié à partir du match index 10.
-    """
-    bird_dates = set()
-    stag_dates = set()
-    first_date = None
-    
-    if len(history) < 11:
-        return bird_dates, stag_dates, None
+def get_tier_from_elo(elo):
+    if 1500 <= elo < 1600: return 'bird'
+    if elo >= 1600: return 'stag'
+    return None
 
+def extract_sessions(history, player_name, peak_global):
+    """Extrait des sessions continues de Bird ou Stag après le match 10."""
+    sessions = []
+    if len(history) < 11: return sessions
+
+    short_name = player_name.split('+')[0].split('#')[0]
+    current_session = None # {'tier': str, 'start': date, 'dates': set()}
+
+    # On commence au match 10 (qualification)
     for i in range(10, len(history)):
         date_str, elo_val = history[i][0], history[i][1]
-        if "-" not in date_str: continue 
+        if "-" not in date_str: continue
         
-        # Détermination du titre précis à cet instant T
-        if 1500 <= elo_val < 1600:
-            bird_dates.add(date_str)
-            if first_date is None: first_date = date_str
-        elif elo_val >= 1600:
-            stag_dates.add(date_str)
-            if first_date is None: first_date = date_str
-                
-    return bird_dates, stag_dates, first_date
+        try:
+            curr_date = datetime.strptime(date_str, '%Y-%m-%d').date()
+        except: continue
 
-compiled_hof = {}
+        tier_at_moment = get_tier_from_elo(elo_val)
 
-def process_hof_entry(history, player_name, peak):
-    short_name = player_name.split('+')[0].split('#')[0]
-    b_dates, s_dates, first_d = get_player_tier_days(history)
+        # CAS 1 : Changement de statut ou de Tier
+        if tier_at_moment != (current_session['tier'] if current_session else None):
+            # On ferme l'ancienne session si elle existait
+            if current_session:
+                sessions.append(current_session)
+            
+            # On ouvre une nouvelle session si le nouveau statut est un titre
+            if tier_at_moment:
+                current_session = {
+                    'player': short_name,
+                    'tier': tier_at_moment,
+                    'first_ascension': date_str,
+                    'dates': {date_str},
+                    'peak': elo_val
+                }
+            else:
+                current_session = None
+        
+        # CAS 2 : On reste dans le même Tier, on accumule la date
+        elif current_session:
+            current_session['dates'].add(date_str)
+            current_session['peak'] = max(current_session['peak'], elo_val)
+
+    # Fermeture de la dernière session en cours
+    if current_session:
+        sessions.append(current_session)
     
-    if b_dates or s_dates:
-        if short_name not in compiled_hof:
-            compiled_hof[short_name] = {
-                'bird_days': set(), 
-                'stag_days': set(), 
-                'first': first_d, 
-                'peak': 0
-            }
-        
-        compiled_hof[short_name]['bird_days'].update(b_dates)
-        compiled_hof[short_name]['stag_days'].update(s_dates)
-        compiled_hof[short_name]['peak'] = max(compiled_hof[short_name]['peak'], peak)
-        
-        if first_d and (compiled_hof[short_name]['first'] is None or first_d < compiled_hof[short_name]['first']):
-            compiled_hof[short_name]['first'] = first_d
+    return sessions
 
-# --- 1. ARCHIVES ---
+# --- COMPILATION ---
+raw_sessions = []
+
+# 1. Archives
 for tag in ARCHIVE_SEASONS:
-    raw = archives_raw_data.get(tag, {})
-    for _, row in raw.get('final_df', pd.DataFrame()).iterrows():
-        h = raw.get('history', {}).get(row['Player'].split('+')[0].split('#')[0], [])
-        process_hof_entry(h, row['Player'], row.get('Peak', 0))
+    raw_arc = archives_raw_data.get(tag, {})
+    for _, row in raw_arc.get('final_df', pd.DataFrame()).iterrows():
+        h = raw_arc.get('history', {}).get(row['Player'].split('+')[0].split('#')[0], [])
+        raw_sessions.extend(extract_sessions(h, row['Player'], row.get('Peak', 0)))
 
-# --- 2. ACTUEL ---
+# 2. Actuel
 if not current_final_df.empty:
     for _, row in current_final_df.iterrows():
         h = player_history.get(row['Player'], [])
-        process_hof_entry(h, row['Player'], row['Peak'])
+        raw_sessions.extend(extract_sessions(h, row['Player'], row['Peak']))
 
-# --- 3. FORMATTAGE ---
-hall_of_fame_data = []
-for name, d in compiled_hof.items():
-    hall_of_fame_data.append({
-        'display_name': name,
-        'bird_longevity': len(d['bird_days']),
-        'stag_longevity': len(d['stag_days']),
-        'total_longevity': len(d['bird_days']) + len(d['stag_days']),
-        'peak_elo': int(d['peak']),
-        'first_ascension': d['first']
-    })
+# --- AGRÉGATION PAR (JOUEUR + TIER) ---
+# On veut une ligne par (Joueur, Tier) avec record de session et total
+final_hof_dict = {} # key: (player, tier)
 
-# On trie par longévité totale (ou stag_longevity si tu préfères privilégier le haut du panier)
-hall_of_fame_data = sorted(hall_of_fame_data, key=lambda x: (x['stag_longevity'], x['bird_longevity']), reverse=True)
+for s in raw_sessions:
+    key = (s['player'], s['tier'])
+    duration = len(s['dates'])
+    
+    if key not in final_hof_dict:
+        final_hof_dict[key] = {
+            'player': s['player'],
+            'tier': s['tier'],
+            'peak': s['peak'],
+            'longest_period': duration,
+            'total_period': duration
+        }
+    else:
+        final_hof_dict[key]['total_period'] += duration
+        final_hof_dict[key]['longest_period'] = max(final_hof_dict[key]['longest_period'], duration)
+        final_hof_dict[key]['peak'] = max(final_hof_dict[key]['peak'], s['peak'])
+
+hall_of_fame_data = sorted(final_hof_dict.values(), key=lambda x: (x['tier'] == 'bird', -x['total_period']))
 
 # =========================================================================
 # --- 9. SITE GENERATION (JINJA2 RENDERING) ---
