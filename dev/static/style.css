@@ -548,11 +548,20 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 
 .tier-icon-container img { max-width: 100%; max-height: 100%; object-fit: contain; }
 
+.player-name-cell {
+	text-align: left;
+	font-weight: var(--medium);
+}
+
+.elo-cell {
+	font-size: var(--size-lg); 
+	font-weight: var(--bold);
+}
+
 .unranked { 
     opacity: 0.4; 
     font-style: italic; 
     filter: grayscale(1); 
-    font-weight: var(--medium) !important; 
 }
 
 /* --- E. Specifics (Matches) --- */
