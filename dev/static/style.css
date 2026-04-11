@@ -968,10 +968,11 @@ body.watcher-found .nav-secret {
 /* --- 3. Nut & Berry Styles --- */
 .tier-interaction-wrapper {
     display: flex;
-    justify-content: center;
+    justify-content: flex-end;
     align-items: center;
+	padding: 0 40px;
     width: 100%;
-	transition: margin 0.5s ease;
+	box-sizing: border-box;
 }
 
 .nut-trigger {
@@ -1005,7 +1006,7 @@ body.watcher-found .nav-secret {
     box-shadow: 0 4px 10px rgba(0,0,0,0.5);
     z-index: 100;
     bottom: auto;
-    top: 50%; 
+    top: 40%; 
     left: 50%;
     opacity: 0;
     pointer-events: none;
