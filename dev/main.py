@@ -374,102 +374,83 @@ for tag in ARCHIVE_SEASONS:
     }
     
 # =========================================================================
-# --- 8b. HALL OF FAME DATA PREPARATION (ARCHIVES + CURRENT) ---
+# --- 8b. HALL OF FAME DATA PREPARATION (LOGIQUE PAR JOURS UNIQUES) ---
 # =========================================================================
-print("  > Compiling Hall of Fame longevity (LH01 + Current)...")
+print("  > Compiling HoF longevity (1 point per active day)...")
 
-def calculate_player_longevity(history):
+def get_player_active_days(history):
     """
-    Calcule la longévité cumulée (en jours) à partir d'un historique.
-    Exclut les 10 premiers matchs.
+    Parcourt l'historique et identifie les dates uniques où le joueur
+    finit la journée en étant qualifié (>=10 jeux) et titré (>=1500 ELO).
     """
     if len(history) < 11:
-        return 0, None
+        return set(), None
         
-    qualified_history = history[10:]
-    total_days = 0
+    active_dates = set()
     first_date = None
     
-    for i in range(len(qualified_history)):
-        date_str, elo_val = qualified_history[i][0], qualified_history[i][1]
+    # On commence à l'index 10 (10ème match)
+    for i in range(10, len(history)):
+        date_str, elo_val = history[i][0], history[i][1]
         
-        try:
-            curr_date = datetime.strptime(date_str, '%Y-%m-%d').date()
-        except:
-            continue
-
-        # Condition de titre (Bird ou Stag >= 1500)
+        # Sécurité : on ignore les tags de texte
+        if "-" not in date_str: continue 
+        
         if elo_val >= 1500:
+            active_dates.add(date_str)
             if first_date is None:
                 first_date = date_str
-            
-            if i + 1 < len(qualified_history):
-                try:
-                    next_date = datetime.strptime(qualified_history[i+1][0], '%Y-%m-%d').date()
-                    total_days += (next_date - curr_date).days
-                except:
-                    pass
-            else:
-                # Si on est sur le dernier point de l'historique, 
-                # on compte jusqu'à 'today' (défini en section 2)
-                total_days += max(0, (today - curr_date).days)
                 
-    return total_days, first_date
+    return active_dates, first_date
 
-# Dictionnaire pour fusionner les stats : { "Nom": {"days": X, "first": Y, "peak": Z, "tier": T} }
 compiled_hof = {}
 
-# --- 1. CHARGEMENT & COMPILATION DES ARCHIVES (LH01) ---
+# --- 1. ARCHIVES (LH01) ---
 for tag in ARCHIVE_SEASONS:
     raw_arc = archives_raw_data.get(tag, {})
-    # Note: On utilise le dictionnaire d'historique déjà nettoyé lors du chargement
     arc_history = raw_arc.get('history', {})
     arc_final_df = raw_arc.get('final_df', pd.DataFrame())
     
     for _, row in arc_final_df.iterrows():
         p_name = row['Player']
-        # On récupère l'historique correspondant (nom court pour matcher le JSON)
         short_name = p_name.split('+')[0].split('#')[0]
         p_hist = arc_history.get(short_name, [])
         
-        days, first_d = calculate_player_longevity(p_hist)
+        dates, first_d = get_player_active_days(p_hist)
         
-        if days > 0:
+        if dates:
             if short_name not in compiled_hof:
-                compiled_hof[short_name] = {'days': 0, 'first': first_d, 'peak': 0, 'tier': None}
+                compiled_hof[short_name] = {'active_days': set(), 'first': first_d, 'peak': 0, 'tier': None}
             
-            compiled_hof[short_name]['days'] += days
+            compiled_hof[short_name]['active_days'].update(dates)
             compiled_hof[short_name]['peak'] = max(compiled_hof[short_name]['peak'], row.get('Peak', 0))
-            # On garde le tier le plus haut connu (Stag > Bird)
             _, t_name = get_tier_icon(row['ELO'], row['Games'])
             compiled_hof[short_name]['tier'] = t_name
 
-# --- 2. ADDITION DE LA SAISON EN COURS ---
+# --- 2. SAISON EN COURS ---
 if not current_final_df.empty:
     for _, row in current_final_df.iterrows():
         p_full_name = row['Player']
         short_name = p_full_name.split('+')[0].split('#')[0]
         p_hist = player_history.get(p_full_name, [])
         
-        days, first_d = calculate_player_longevity(p_hist)
+        dates, first_d = get_player_active_days(p_hist)
         
-        if days > 0:
+        if dates:
             if short_name not in compiled_hof:
-                compiled_hof[short_name] = {'days': 0, 'first': first_d, 'peak': 0, 'tier': None}
+                compiled_hof[short_name] = {'active_days': dates, 'first': first_d, 'peak': 0, 'tier': None}
             else:
-                # Si déjà présent dans LH01, on met à jour la date la plus ancienne
+                compiled_hof[short_name]['active_days'].update(dates)
                 if first_d:
-                    old_dt = datetime.strptime(compiled_hof[short_name]['first'], '%Y-%m-%d')
-                    new_dt = datetime.strptime(first_d, '%Y-%m-%d')
-                    if new_dt < old_dt:
+                    # On garde la date la plus ancienne
+                    if first_d < compiled_hof[short_name]['first']:
                         compiled_hof[short_name]['first'] = first_d
 
-            compiled_hof[short_name]['days'] += days
             compiled_hof[short_name]['peak'] = max(compiled_hof[short_name]['peak'], row['Peak'])
             _, t_name = get_tier_icon(row['ELO'], row['Games'])
             compiled_hof[short_name]['tier'] = t_name
 
-# --- 3. FORMATTAGE FINAL POUR LE TEMPLATE ---
+# --- 3. FORMATTAGE FINAL ---
 hall_of_fame_data = []
 for name, data in compiled_hof.items():
     hall_of_fame_data.append({
@@ -477,10 +458,9 @@ for name, data in compiled_hof.items():
         'tier': data['tier'],
         'peak_elo': int(data['peak']),
         'first_ascension': data['first'],
-        'longevity': data['days']
+        'longevity': len(data['active_days']) # Le nombre de dates uniques
     })
 
-# Tri par longévité cumulée totale
 hall_of_fame_data = sorted(hall_of_fame_data, key=lambda x: x['longevity'], reverse=True)
 
 # =========================================================================
