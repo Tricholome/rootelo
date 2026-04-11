@@ -372,6 +372,59 @@ for tag in ARCHIVE_SEASONS:
         'matches': match_data,
         'trends': prepare_trends_data(raw['history'])
     }
+    
+# =========================================================================
+# --- 8b. HALL OF FAME DATA PREPARATION ---
+# =========================================================================
+print("  > Preparing Hall of Fame data...")
+hall_of_fame_data = []
+
+if not current_final_df.empty:
+    for _, row in current_final_df.iterrows():
+        p_full_name = row['Player']
+        games_count = row['Games']
+        
+        # On utilise ta fonction existante pour récupérer le tier
+        _, tier_name = get_tier_icon(row['ELO'], games_count)
+        
+        # Filtre : On ne garde que l'élite
+        if tier_name not in ["bird", "stag"]:
+            continue
+            
+        history = player_history.get(p_full_name, [])
+        ascension_date_str = None
+        
+        # Parcours de l'historique pour trouver la date où il a dépassé 1500
+        for entry in history:
+            event_date = entry[0]
+            elo_val = entry[1]
+            
+            if elo_val >= 1500:
+                if event_date in ["Start", "LH01 Final"]:
+                    # Si c'était dès le début, on fixe une date de départ générique
+                    ascension_date_str = "2024-01-01" 
+                else:
+                    ascension_date_str = event_date
+                break
+                
+        if ascension_date_str:
+            try:
+                # Calcul de la longévité en jours
+                start_dt = datetime.strptime(ascension_date_str, '%Y-%m-%d').date()
+                duration_days = (today - start_dt).days
+            except ValueError:
+                duration_days = 0
+                
+            hall_of_fame_data.append({
+                'display_name': str(p_full_name).split('+')[0].split('#')[0],
+                'tier': tier_name,
+                'peak_elo': row['Peak'],
+                'ascension_date': ascension_date_str,
+                'longevity': duration_days
+            })
+
+    # Tri : Les Stags d'abord, puis par Peak Elo décroissant
+    hall_of_fame_data = sorted(hall_of_fame_data, key=lambda x: (x['tier'] != 'stag', -x['peak_elo']))
 
 # =========================================================================
 # --- 9. SITE GENERATION (JINJA2 RENDERING) ---
@@ -449,7 +502,8 @@ render_page(
 render_page(
     "cache.html", "cache.html", title="Undergrowth • Rootelo", page_id="cache",
     is_archive=False, has_seasons=False, page_heading="Undergrowth",
-    description="A sanctuary for the critters who&nbsp;never&nbsp;sought&nbsp;a&nbsp;crown."
+    description="A sanctuary for the critters who&nbsp;never&nbsp;sought&nbsp;a&nbsp;crown.",
+    hall_of_fame=hall_of_fame_data
 )
 
 print("✨ Website generated successfully!")
