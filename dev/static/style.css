@@ -600,18 +600,12 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 }
 
 /* --- F. Specifics (Hall of Fame) --- */
-.streak-cell {
-    text-align: center;
-    font-weight: 800;
-    color: #ffce45; /* Une couleur dorée pour le côté Hall of Fame */
-    font-size: 1.1em;
-    text-shadow: 0 0 5px rgba(255, 206, 69, 0.3);
-}
-
-/* Optionnel : ajouter un petit effet au survol de la ligne */
-tr:hover .streak-cell {
-    transform: scale(1.1);
-    transition: transform 0.2s;
+.streak-badge {
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-weight: var(--bold);
+	font-family: var(--font-mono);
+    border: 1px solid var(--border-soft);
 }
 
 /* --- G. Responsive --- */
