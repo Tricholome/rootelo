@@ -885,6 +885,8 @@ body.secrets-started .exit-section {
     text-decoration: none;
     font-size: var(--size-sm);
     font-weight: var(--medium);
+	text-transform: uppercase;
+    letter-spacing: var(--track-wide);
     color: var(--text-muted);
     padding: 6px 14px;
     border-radius: 4px;
@@ -894,9 +896,9 @@ body.secrets-started .exit-section {
 }
 
 .btn-reset:hover {
-    color: var(--text-main);
+    color: var(--main-color);
     background: var(--bg-hover);
-    border-color: var(--border-medium);
+    border-color: var(--main-color);
 }
 
 /* --- 2. Watcher Secret --- */
