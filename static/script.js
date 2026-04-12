@@ -351,21 +351,18 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
                 }
             } else {
-                // WRONG ORDER: Reset with blink
-                isResetting = true;
                 setTimeout(() => {
-                    document.querySelectorAll('.cipher').forEach(c => {
-                        if (c.classList.contains('active-cipher')) c.classList.add('cipher-blink');
-                    });
-                    
-                    setTimeout(() => {
-                        userProgress = [];
-                        document.querySelectorAll('.cipher').forEach(c => {
-                            c.classList.remove('active-cipher', 'cipher-blink');
-                        });
-                        isResetting = false;
-                    }, 500);
-                }, 2000); 
+					document.querySelectorAll('.cipher').forEach(c => {
+						if (c.classList.contains('active-cipher')) c.classList.add('cipher-blink');
+					});
+					
+					setTimeout(() => {
+						userProgress = [];
+						document.querySelectorAll('.cipher').forEach(c => {
+							c.classList.remove('active-cipher', 'cipher-blink');
+						});
+					}, 500);
+				}, 2000);
             }
         });
     });
