@@ -265,7 +265,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const titleEl = intro.querySelector('h2');
                 const descEl = intro.querySelector('p');
                 if (titleEl) titleEl.textContent = "Mystic Sward";
-                if (descEl) descEl.textContent = "Silent roots keep a quiet crown.";
+                if (descEl) descEl.textContent = "Silent roots remember every crown.";
             }
             document.title = "Mystic Sward • Rootelo";
         }
@@ -321,7 +321,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- 6. THE CIPHER SEQUENCE & CURTAIN ---
-    const secretSequence = ['silent', 'roots', 'every', 'crown'];
+    const secretSequence = ['silent', 'roots', 'remember', 'every', 'crown'];
     let userProgress = [];
     let isResetting = false;
 
