@@ -1103,7 +1103,7 @@ body.berry-found .banner-icons a.tooltip-link.banner-icon-stag {
 }
 
 body.secrets-started #leave-secrets {
-    display: block;
+    display: inline-block;
 }
 
 /* =========================================================================
