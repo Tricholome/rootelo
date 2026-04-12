@@ -160,7 +160,7 @@ document.addEventListener('DOMContentLoaded', function() {
 			name: 'Stag',
 			elo: '1600+',
 			subtitle: 'The Legend',
-			desc: 'To be defined.'
+			desc: 'Has anyone truly seen this mythical beast? What happens to the predator when the woods turn hollow and every path leads back to a mirror of its own perfection? And when nothing remains to be claimed, is the true crown the silence that follows the chase?'
 		}
 	};
 
@@ -386,9 +386,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	if (leaveBtn) {
 		leaveBtn.addEventListener('click', (e) => {
-			// Plus besoin de vérifier la classe "expanded" ou l'environnement tactile.
-            // Si le code arrive ici sur mobile, c'est forcément le deuxième tap 
-            // car le premier tap a été bloqué par le e.stopPropagation() de la fonction globale.
 
 			localStorage.clear();
 
