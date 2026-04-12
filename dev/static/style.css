@@ -1047,7 +1047,7 @@ body.watcher-found .nav-secret {
 
 .nut-trigger:hover {
     transform: scale(1.6);
-	padding-top: 80px;
+	padding-top: 0;
     padding-bottom: 80px;
 }
 
