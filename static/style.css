@@ -1104,6 +1104,7 @@ body.berry-found .banner-icons a.tooltip-link.banner-icon-stag {
 
 body.secrets-started #leave-secrets {
     display: inline-block;
+	margin-top: 40px;
 }
 
 /* =========================================================================
