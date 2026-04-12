@@ -1170,7 +1170,7 @@ body[data-page="cache"].ciphers-found {
 /* --- 3. Final Button --- */
 #hof-access {
     display: none;
-    cursor: help;
+    cursor: not-allowed;
 }
 
 body.watcher-found #hof-access {
