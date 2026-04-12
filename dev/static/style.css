@@ -906,17 +906,16 @@ body.secrets-started .exit-section {
     opacity: 1;
 }
 
-/* On définit tout sur l'ID pour être sûr que rien ne l'écrase */
 #leave-secrets {
     display: inline-block;
-    position: relative; /* Pour le tooltip */
+    position: relative;
     cursor: pointer;
     text-decoration: none;
     font-size: var(--size-sm);
     font-weight: var(--medium);
     text-transform: uppercase;
     letter-spacing: var(--track-wide);
-    color: var(--text-muted); /* Couleur de base */
+    color: var(--text-muted);
     padding: 6px 14px;
     border-radius: 4px;
     background: var(--bg-surface);
@@ -924,24 +923,32 @@ body.secrets-started .exit-section {
     transition: 0.2s;
 }
 
-/* Hover : on change tout d'un coup */
 #leave-secrets:hover {
     color: var(--main-color);
     background: var(--bg-hover);
     border-color: var(--main-color);
 }
 
-/* Tooltip : affichage via le script double-tap */
+#leave-secrets:hover .tooltip-text,
 #leave-secrets.expanded .tooltip-text {
     visibility: visible !important;
     opacity: 1 !important;
 }
 
-/* Sécurité pour le tooltip (au cas où il hérite de l'uppercase du bouton) */
 #leave-secrets .tooltip-text {
+    position: absolute;
+    bottom: 125%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--bg-surface);
+    color: var(--text-muted);
+    padding: 6px 10px;
+    border: 1px solid var(--border-soft);
+    white-space: nowrap;
     text-transform: none;
     letter-spacing: normal;
     pointer-events: none;
+    transition: opacity 0.2s;
 }
 
 /* --- 2. Watcher Secret --- */
