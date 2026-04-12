@@ -909,6 +909,7 @@ tr[data-tier="stag"] td:nth-child(4)     { color: var(--color-stag) !important; 
     background: var(--bg-surface);
     border: 1px solid var(--border-soft);
     transition: 0.2s;
+	margin: 20px;
 }
 
 .secret-btn:hover {
@@ -1105,7 +1106,6 @@ body.berry-found .banner-icons a.tooltip-link.banner-icon-stag {
 
 body.secrets-started #leave-secrets {
     display: inline-block;
-	margin-top: 40px;
 }
 
 /* =========================================================================
