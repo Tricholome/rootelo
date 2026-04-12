@@ -1098,15 +1098,12 @@ body.berry-found .banner-icons a.tooltip-link.banner-icon-stag {
 }
 
 /* --- 5. Exit Door --- */
-.exit-section {
+#leave-secrets {
     display: none;
-    opacity: 0;
-    transition: opacity 1s ease-in-out;
 }
 
-body.secrets-started .exit-section {
+body.secrets-started .#leave-secrets {
     display: block;
-    opacity: 1;
 }
 
 /* =========================================================================
