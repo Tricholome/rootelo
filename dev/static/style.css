@@ -1181,6 +1181,12 @@ body.secrets-ended #hof-access {
     border-color: var(--main-color);
 }
 
+#hof-access:hover {
+    color: inherit;
+    background: inherit;
+    border-color: inherit;
+}
+
 body.secrets-ended #hof-access:hover {
     background: var(--bg-hover);
 }
