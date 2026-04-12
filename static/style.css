@@ -1102,6 +1102,11 @@ body.berry-found .banner-icons a.tooltip-link.banner-icon-stag {
     transition: color 0.3s ease;
 }
 
+.cipher:hover:not(.active-cipher) {
+    color: var(--color-squirrel);
+    opacity: 0.8;
+}
+
 .cipher.active-cipher {
 	font-weight: var(--bold);
 	font-size: var(--size-md);
