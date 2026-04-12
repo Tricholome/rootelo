@@ -387,23 +387,11 @@ document.addEventListener('DOMContentLoaded', () => {
 	if (leaveBtn) {
 		leaveBtn.addEventListener('click', (e) => {
 			const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
-			
-			// Si c'est du tactile et qu'on n'est pas encore en mode "expanded"
-			// On laisse le script de Double-Tap afficher le tooltip.
 			if (isTouch && !leaveBtn.classList.contains('expanded')) {
 				return; 
 			}
-
-			// Si on arrive ici, c'est soit un Desktop (hover), soit le 2ème tap mobile
-			e.preventDefault(); // On stoppe la navigation immédiate
-			
-			localStorage.clear(); // On vide tout
-			
-			// Feedback visuel (optionnel mais recommandé)
-			document.body.classList.remove('secrets-started', 'secrets-ended', 'hof-unlocked');
-			
-			// On redirige manuellement après le nettoyage
-			window.location.href = leaveBtn.getAttribute('href');
+			localStorage.clear();
+			window.location.href = 'index.html'; 
 		});
 	}
 
