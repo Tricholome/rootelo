@@ -385,22 +385,21 @@ document.addEventListener('DOMContentLoaded', () => {
 	const leaveBtn = document.querySelector('#leave-secrets');
 
 	if (leaveBtn) {
-		// On utilise "true" ici aussi pour être à égalité avec la Section 2
 		leaveBtn.addEventListener('click', (e) => {
-			const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+			// Plus besoin de vérifier la classe "expanded" ou l'environnement tactile.
+            // Si le code arrive ici sur mobile, c'est forcément le deuxième tap 
+            // car le premier tap a été bloqué par le e.stopPropagation() de la fonction globale.
 
-			// Si mobile et pas encore ouvert, on ne fait rien (on laisse la Sec 2 ouvrir)
-			if (isTouch && !leaveBtn.classList.contains('expanded')) {
-				return;
-			}
-
-			// Sinon (Desktop ou 2ème tap), on nettoie TOUT de suite
 			localStorage.clear();
-			document.body.className = ''; 
-			
-			// Et on part
-			window.location.href = 'index.html';
-		}, true); // <--- LE SECRET EST ICI
+
+			document.body.classList.remove(
+				'is-at-bottom', 'is-scrolled', 'secrets-started', 
+				'watcher-found', 'nut-found', 'berry-found', 
+				'ciphers-found', 'secrets-ended', 'hof-unlocked'
+			);
+
+			window.location.href = 'index.html'; 
+		});
 	}
 
 });
