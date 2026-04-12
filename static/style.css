@@ -938,17 +938,8 @@ body.secrets-started .exit-section {
 #leave-secrets .tooltip-text {
     position: absolute;
     bottom: 125%;
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--bg-surface);
-    color: var(--text-muted);
-    padding: 6px 10px;
-    border: 1px solid var(--border-soft);
-    white-space: nowrap;
     text-transform: none;
     letter-spacing: normal;
-    pointer-events: none;
-    transition: opacity 0.2s;
 }
 
 /* --- 2. Watcher Secret --- */
