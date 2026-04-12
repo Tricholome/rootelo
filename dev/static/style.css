@@ -894,19 +894,7 @@ tr[data-tier="stag"] td:nth-child(4)     { color: var(--color-stag) !important; 
    --- 12. HIDDEN CONTENT: UNDERGROWTH ---
    ========================================================================= */
 
-/* --- 1. Exit Door & Button --- */
-.exit-section {
-	margin-top: 40px;
-    display: none;
-    opacity: 0;
-    transition: opacity 1s ease-in-out;
-}
-
-body.secrets-started .exit-section {
-    display: block;
-    opacity: 1;
-}
-
+/* --- 1. Secret Button --- */
 .secret-btn {
     display: inline-block;
     position: relative;
@@ -1108,6 +1096,19 @@ body.nut-found .banner-icons a.tooltip-link.banner-icon-squirrel {
 
 body.berry-found .banner-icons a.tooltip-link.banner-icon-stag {
     display: inline-block;
+}
+
+/* --- 5. Exit Door --- */
+.exit-section {
+	margin-top: 40px;
+    display: none;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+}
+
+body.secrets-started .exit-section {
+    display: block;
+    opacity: 1;
 }
 
 /* =========================================================================
