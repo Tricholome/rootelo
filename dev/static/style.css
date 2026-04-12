@@ -896,6 +896,7 @@ tr[data-tier="stag"] td:nth-child(4)     { color: var(--color-stag) !important; 
 
 /* --- 1. Exit Door & Button --- */
 .exit-section {
+	margin-top: 40px;
     display: none;
     opacity: 0;
     transition: opacity 1s ease-in-out;
@@ -906,7 +907,7 @@ body.secrets-started .exit-section {
     opacity: 1;
 }
 
-#leave-secrets {
+.secret-btn {
     display: inline-block;
     position: relative;
     cursor: pointer;
@@ -923,19 +924,19 @@ body.secrets-started .exit-section {
     transition: 0.2s;
 }
 
-#leave-secrets:hover {
+.secret-btn:hover {
     color: var(--main-color);
     background: var(--bg-hover);
     border-color: var(--main-color);
 }
 
-#leave-secrets:hover .tooltip-text,
-#leave-secrets.expanded .tooltip-text {
+.secret-btn:hover .tooltip-text,
+.secret-btn.expanded .tooltip-text {
     visibility: visible !important;
     opacity: 1 !important;
 }
 
-#leave-secrets .tooltip-text {
+.secret-btn .tooltip-text {
     position: absolute;
     bottom: 125%;
     text-transform: none;
