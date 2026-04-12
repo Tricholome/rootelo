@@ -1165,7 +1165,6 @@ body[data-page="cache"].ciphers-found {
     text-transform: uppercase;
     letter-spacing: var(--track-wide);
     color: var(--text-muted);
-	margin-bottom: 20px;
     padding: 6px 14px;
     border-radius: 4px;
     background: var(--bg-surface);
@@ -1173,7 +1172,7 @@ body[data-page="cache"].ciphers-found {
     transition: all 0.5s ease;
 }
 
-body.secrets-started .hof-access-btn {
+body.watcher-found .hof-access-btn {
     display: inline-block;
     opacity: 1;
 }
