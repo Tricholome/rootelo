@@ -607,6 +607,10 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 	font-family: var(--font-mono);
 }
 
+.hide-mobile {
+    display: inline;
+}
+
 /* --- G. Responsive --- */
 @media (max-width: 600px) {
     table.dataTable tbody td { font-size: var(--size-sm); padding: 8px 4px !important; }
@@ -619,6 +623,7 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     table.dataTable td:nth-child(4) { padding-right: 10px !important; min-width: 55px; }
     .lineup-cell { padding-left: 10px !important; }
 	.streak-cell { font-size: var(--size-base) !important; }
+	.hide-mobile { display: none; }
 }
 
 /* =========================================================================
