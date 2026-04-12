@@ -929,7 +929,7 @@ body.secrets-started .exit-section {
 
 /* --- 2. Watcher Secret --- */
 .enigma {
-    margin-top: 0 !important;
+    margin-top: 40px !important;
     text-align: center !important;
 }
 
