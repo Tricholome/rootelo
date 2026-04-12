@@ -283,7 +283,9 @@ a.cl:hover { border-bottom: 1px solid var(--main-color); color: var(--main-color
 
 /* Icons */
 .banner-icons a.tooltip-link img {
-    width: 85px; height: 85px; object-fit: contain;
+    width: clamp(100px, 12vw, 140px); 
+    height: clamp(100px, 12vw, 140px);
+	object-fit: contain;
     filter: drop-shadow(0 4px 6px rgba(0,0,0,0.6));
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     display: block;
@@ -291,7 +293,8 @@ a.cl:hover { border-bottom: 1px solid var(--main-color); color: var(--main-color
 
 @media (hover: hover) {
     .banner-icons a.tooltip-link:hover img {
-        width: 140px; height: 140px;
+        width: clamp(100px, 12vw, 140px); 
+		height: clamp(100px, 12vw, 140px);
         filter: drop-shadow(0 15px 25px rgba(0,0,0,0.9));
         transform: translateY(-10px) scale(1.15);
     }
@@ -300,7 +303,8 @@ a.cl:hover { border-bottom: 1px solid var(--main-color); color: var(--main-color
 }
 
 .banner-icons a.tooltip-link.expanded img {
-    width: 140px; height: 140px;
+    width: clamp(100px, 12vw, 140px); 
+    height: clamp(100px, 12vw, 140px);
     filter: drop-shadow(0 15px 25px rgba(0,0,0,0.9));
     transform: translateY(-10px) scale(1.15);
 }
@@ -334,13 +338,12 @@ a.cl:hover { border-bottom: 1px solid var(--main-color); color: var(--main-color
 .banner-icons a.tooltip-link.expanded .tooltip-text { opacity: 1; transform: translateX(-50%) translateY(-15px); }
 
 /* Banner Mobile Adjustments */
-@media (max-width: 950px) {
+@media (max-width: 768px) and (orientation: portrait) {
     .banner-container { flex-wrap: wrap; gap: 10px; }
     .banner-center { order: 1; width: 100%; margin-bottom: 10px; }
     .banner-icons { order: 2; flex-wrap: nowrap; gap: 5px; }
     
     .banner-icons a.tooltip-link, .banner-icons a.tooltip-link.expanded { margin: 0; display: inline-block; }
-    .banner-icons a.tooltip-link img { width: 60px !important; height: 60px !important; }
     
     .banner-icons.left a.tooltip-link.expanded img { transform: translateY(-8px) scale(1.4) rotate(-8deg) !important; position: relative; z-index: 100; }
     .banner-icons.right a.tooltip-link.expanded img { transform: translateY(-8px) scale(1.4) rotate(8deg) !important; position: relative; z-index: 100; }
