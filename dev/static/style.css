@@ -894,7 +894,7 @@ tr[data-tier="stag"] td:nth-child(4)     { color: var(--color-stag) !important; 
    --- 12. HIDDEN CONTENT: UNDERGROWTH ---
    ========================================================================= */
 
-/* --- 1. Exit Door --- */
+/* --- 1. Exit Door & Button --- */
 .exit-section {
     display: none;
     opacity: 0;
@@ -906,14 +906,17 @@ body.secrets-started .exit-section {
     opacity: 1;
 }
 
-.btn-reset {
+/* On définit tout sur l'ID pour être sûr que rien ne l'écrase */
+#leave-secrets {
+    display: inline-block;
+    position: relative; /* Pour le tooltip */
     cursor: pointer;
     text-decoration: none;
     font-size: var(--size-sm);
     font-weight: var(--medium);
-	text-transform: uppercase;
+    text-transform: uppercase;
     letter-spacing: var(--track-wide);
-    color: var(--text-muted);
+    color: var(--text-muted); /* Couleur de base */
     padding: 6px 14px;
     border-radius: 4px;
     background: var(--bg-surface);
@@ -921,22 +924,24 @@ body.secrets-started .exit-section {
     transition: 0.2s;
 }
 
-.btn-reset:hover, 
+/* Hover : on change tout d'un coup */
 #leave-secrets:hover {
-    color: var(--main-color) !important;
-    background: var(--bg-hover) !important;
-    border-color: var(--main-color) !important;
+    color: var(--main-color);
+    background: var(--bg-hover);
+    border-color: var(--main-color);
 }
 
-#leave-secrets {
-    display: inline-block;
-    text-decoration: none;
-    color: var(--text-muted);
-}
-
+/* Tooltip : affichage via le script double-tap */
 #leave-secrets.expanded .tooltip-text {
     visibility: visible !important;
     opacity: 1 !important;
+}
+
+/* Sécurité pour le tooltip (au cas où il hérite de l'uppercase du bouton) */
+#leave-secrets .tooltip-text {
+    text-transform: none;
+    letter-spacing: normal;
+    pointer-events: none;
 }
 
 /* --- 2. Watcher Secret --- */
