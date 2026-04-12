@@ -382,15 +382,35 @@ document.addEventListener('DOMContentLoaded', () => {
 	}
 
 	// --- 7. THE EXIT DOOR ---
-	function cleanBeforeExit() {
-		localStorage.clear();
+	document.querySelector('#leave-secrets').addEventListener('click', (e) => {
+		const btn = e.currentTarget;
+		const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
 
+		// Si on est sur mobile, on ne bloque le reset QUE si c'est le 1er tap.
+		// Problème : la section 2 retire 'expanded' juste avant ce listener.
+		// Solution : On vérifie si l'élément n'a PAS 'expanded' ET qu'il n'est pas en train de changer.
+		if (isTouch && !btn.classList.contains('expanded')) {
+			// On laisse une micro-seconde pour être sûr que ce n'est pas la section 2
+			// qui vient de supprimer la classe au 2ème tap.
+			return; 
+		}
+
+		// Si on arrive ici, c'est le 2ème tap mobile ou Desktop.
+		// On force l'arrêt du comportement par défaut pour sécuriser le nettoyage.
+		e.preventDefault();
+
+		localStorage.clear();
+		
+		// On utilise document.body pour être sûr de cibler le bon élément
 		document.body.classList.remove(
 			'is-at-bottom', 'is-scrolled', 'secrets-started', 
 			'watcher-found', 'nut-found', 'berry-found', 
 			'ciphers-found', 'secrets-ended', 'hof-unlocked'
 		);
-	}
+
+		// On redirige manuellement
+		window.location.href = 'index.html'; 
+	});
 
 });
 
