@@ -267,12 +267,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (titleEl) titleEl.textContent = "Glade of Fame";
                 if (descEl) descEl.textContent = "Silent roots remember every crown.";
             }
-            document.title = "Mystic Sward • Rootelo";
+            document.title = "Glade of Fame • Rootelo";
         }
 
         const navSecretLink = document.querySelector('.nav-secret');
         if (navSecretLink) {
-            navSecretLink.textContent = 'Mystic Sward';
+            navSecretLink.textContent = 'Glade of Fame';
         }
     }
 	
