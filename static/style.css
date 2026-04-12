@@ -1188,16 +1188,28 @@ body.secrets-ended .hof-access-btn:hover {
     background: var(--bg-hover);
 }
 
-/* --- 4. Content --- */
+/* --- 4. Hall of Fame Reveal --- */
 .hof-section {
     display: none;
-    opacity: 0;
-    transition: opacity 1s ease-in-out;
+    /* On retire opacity et transition d'ici, l'animation va s'en charger */
 }
 
+/* Quand la classe est ajoutée au body, on affiche le bloc ET on lance l'animation */
 body.hof-unlocked .hof-section {
     display: block;
-    opacity: 1;
+    animation: reveal-hof 1.2s ease-out forwards;
+}
+
+/* L'animation fluide de révélation */
+@keyframes reveal-hof {
+    0% {
+        opacity: 0;
+        transform: translateY(40px); /* Le tableau commence un peu plus bas */
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0); /* Il remonte à sa place naturelle */
+    }
 }
 
 
