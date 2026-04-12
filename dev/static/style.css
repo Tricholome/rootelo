@@ -940,7 +940,9 @@ body[data-page="cache"].watcher-found .enigma {
 }
 
 body[data-page="cache"] .page-intro, 
-body[data-page="cache"] .artist-story {
+body .artist-story-green,
+body .artist-story-purple,
+body.ciphers-found .artist-story-green {
     display: none;
     opacity: 0;
     transform: translateY(20px);
@@ -948,7 +950,8 @@ body[data-page="cache"] .artist-story {
 }
 
 body[data-page="cache"].watcher-found .page-intro, 
-body[data-page="cache"].watcher-found .artist-story {
+body.watcher-found .artist-story-green,
+body.ciphers-found .artist-story-purple {
     display: block;
     opacity: 1;
     transform: translateY(0);
