@@ -1102,7 +1102,7 @@ body.berry-found .banner-icons a.tooltip-link.banner-icon-stag {
     display: none;
 }
 
-body.secrets-started .#leave-secrets {
+body.secrets-started #leave-secrets {
     display: block;
 }
 
@@ -1166,78 +1166,49 @@ body[data-page="cache"].ciphers-found {
 }
 
 /* --- 3. Final Button --- */
-.hof-access-btn {
+#hof-access {
     display: none;
-    opacity: 0;
-	position: relative;
     cursor: help;
-    pointer-events: auto;
-    text-decoration: none;
-    font-size: var(--size-sm);
-    font-weight: var(--medium);
-    text-transform: uppercase;
-    letter-spacing: var(--track-wide);
-    color: var(--text-muted);
-    padding: 6px 14px;
-    border-radius: 4px;
-    background: var(--bg-surface);
-    border: 1px solid var(--border-soft);
-    transition: all 0.5s ease;
 }
 
-body.watcher-found .hof-access-btn {
+body.watcher-found #hof-access {
     display: inline-block;
-    opacity: 1;
 }
 
-body.secrets-ended .hof-access-btn {
-    pointer-events: auto;
+body.secrets-ended #hof-access {
     cursor: pointer;
-	color: var(--main-color);
+    color: var(--main-color);
     border-color: var(--main-color);
 }
 
-body.hof-unlocked .hof-access-btn {
-    display: none;
-    opacity: 0;
-    cursor: default;
-    pointer-events: none;
-}
-
-body.secrets-ended .hof-access-btn:hover {
+body.secrets-ended #hof-access:hover {
     background: var(--bg-hover);
 }
 
-body.watcher-found:not(.secrets-ended) .hof-access-btn:hover .tooltip-text {
-    visibility: visible;
-    opacity: 1;
-}
-
-body.secrets-ended .hof-access-btn .tooltip-text {
-    display: none;
+body.secrets-ended #hof-access .tooltip-text,
+body.hof-unlocked #hof-access {
+    display: none !important;
 }
 
 /* --- 4. Hall of Fame Reveal --- */
 .hof-section {
     display: none;
-    /* On retire opacity et transition d'ici, l'animation va s'en charger */
 }
 
-/* Quand la classe est ajoutée au body, on affiche le bloc ET on lance l'animation */
 body.hof-unlocked .hof-section {
     display: block;
     animation: reveal-hof 1.2s ease-out forwards;
 }
 
-/* L'animation fluide de révélation */
+
 @keyframes reveal-hof {
     0% {
         opacity: 0;
-        transform: translateY(40px); /* Le tableau commence un peu plus bas */
+        transform: translateY(40px);
     }
     100% {
         opacity: 1;
-        transform: translateY(0); /* Il remonte à sa place naturelle */
+        transform: translateY(0);
     }
 }
 
