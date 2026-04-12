@@ -283,8 +283,8 @@ a.cl:hover { border-bottom: 1px solid var(--main-color); color: var(--main-color
 
 /* Icons */
 .banner-icons a.tooltip-link img {
-    width: clamp(100px, 12vw, 140px); 
-    height: clamp(100px, 12vw, 140px);
+    width: clamp(55px, 7vw, 85px);
+    height: clamp(55px, 7vw, 85px);
 	object-fit: contain;
     filter: drop-shadow(0 4px 6px rgba(0,0,0,0.6));
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
