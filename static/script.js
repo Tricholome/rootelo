@@ -130,7 +130,7 @@ document.addEventListener('DOMContentLoaded', function() {
 			name: 'Bird',
 			elo: '1500+',
 			subtitle: 'The Grandmasters',
-			desc: 'These elite sovereigns sit at the absolute pinnacle of the Woodland canopy. Remaining on this prestigious throne is a dizzying battle against shifting winds and ambitious rivals. They rule the skies by maintaining flawless execution and absolute perfection under pressure.'
+			desc: 'These elite sovereigns sit at the absolute pinnacle of the Woodland canopy. Remaining on this prestigious throne is a dizzying battle against shifting winds and ambitious rivals. They rule the skies by maintaining flawless execution and unerring control under pressure.'
 		},
 		'fox': {
 			name: 'Fox',
@@ -142,13 +142,13 @@ document.addEventListener('DOMContentLoaded', function() {
 			name: 'Rabbit',
 			elo: '1300+',
 			subtitle: 'The Agile Contenders',
-			desc: 'These nimble wanderers gracefully weave through the crowded and shifting paths of the rankings. Routine strategies falter here, threatening to trap anyone who cannot adapt to sudden chaos. They leap ahead where others see only barriers, turning dead ends into daring escapes.'
+			desc: 'These nimble wanderers gracefully weave through the crowded and turbulent paths of the rankings. Routine strategies falter here, threatening to trap anyone who cannot adapt to sudden chaos. They leap ahead where others see only barriers, turning dead ends into daring escapes.'
 		},
 		'mouse': {
 			name: 'Mouse',
 			elo: '1200+',
 			subtitle: 'The Steady Foragers',
-			desc: 'These resilient souls rise above the casual fray to mark a true milestone of mastery. The wild now demands true stamina, where early momentum easily fades into exhaustion. They hold their ground through quiet consistency, proving that steady patience outlasts blind luck.'
+			desc: 'These resilient souls rise above the casual fray to mark a true milestone of mastery. The wild now demands pure stamina, where early momentum easily fades into exhaustion. They hold their ground through quiet consistency, proving that patience outlasts blind luck.'
 		},
 		'squirrel': {
 			name: 'Squirrel',
