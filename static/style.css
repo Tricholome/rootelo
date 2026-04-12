@@ -1195,6 +1195,15 @@ body.secrets-ended .hof-access-btn:hover {
     background: var(--bg-hover);
 }
 
+body.watcher-found:not(.secrets-ended) .hof-access-btn:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+}
+
+body.secrets-ended .hof-access-btn .tooltip-text {
+    display: none;
+}
+
 /* --- 4. Hall of Fame Reveal --- */
 .hof-section {
     display: none;
