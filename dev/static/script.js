@@ -368,7 +368,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 	
 	// --- 6. HALL OF FAME FINAL UNLOCK ---
-	const hofBtn = document.getElementById('hof-access-btn');
+	const hofBtn = document.getElementById('hof-access');
 	if (hofBtn) {
 		hofBtn.addEventListener('click', () => {
 			const isEnded = localStorage.getItem('secrets-ended') === 'true';
