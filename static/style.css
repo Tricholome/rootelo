@@ -1146,14 +1146,49 @@ body[data-page="cache"].ciphers-found {
     --main-color: var(--color-stag);
 }
 
-/* --- 3. Content --- */
-.mystic-section {
+/* --- 3. Final Button --- */
+.hof-access-btn {
+    display: none;
+    opacity: 0;
+    cursor: default;
+    pointer-events: none;
+    text-decoration: none;
+    font-size: var(--size-sm);
+    font-weight: var(--medium);
+    text-transform: uppercase;
+    letter-spacing: var(--track-wide);
+    color: var(--text-muted);
+    padding: 6px 14px;
+    border-radius: 4px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-soft);
+    transition: all 0.5s ease;
+}
+
+body.secrets-started .hof-access-btn {
+    display: inline-block;
+    opacity: 1;
+}
+
+body.secrets-ended .hof-access-btn {
+    pointer-events: auto;
+    cursor: pointer;
+	color: var(--main-color);
+    border-color: var(--main-color);
+}
+
+body.secrets-ended .hof-access-btn:hover {
+    background: var(--bg-hover);
+}
+
+/* --- 4. Content --- */
+.hof-section {
     display: none;
     opacity: 0;
     transition: opacity 1s ease-in-out;
 }
 
-body.ciphers-found .mystic-section {
+body.hof-unlocked .hof-section {
     display: block;
     opacity: 1;
 }
