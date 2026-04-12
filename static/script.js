@@ -382,34 +382,28 @@ document.addEventListener('DOMContentLoaded', () => {
 	}
 
 	// --- 7. THE EXIT DOOR ---
-	function handleExit(e) {
-		const btn = e.currentTarget;
-		const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+	const leaveBtn = document.querySelector('#leave-secrets');
 
-		// 1. GESTION DU DOUBLE-TAP (MOBILE)
-		if (isTouch && !btn.classList.contains('expanded')) {
-			// C'est le 1er clic : on ne fait rien, on laisse la Section 2 afficher le tooltip
-			return true; 
-		}
+	if (leaveBtn) {
+		leaveBtn.addEventListener('click', (e) => {
+			// Condition pour le double-tap mobile
+			if (('ontouchstart' in window) && !e.currentTarget.classList.contains('expanded')) {
+				return; 
+			}
 
-		// 2. LE NETTOYAGE (DÉCLENCHÉ AU 2ème CLIC MOBILE OU CLIC DESKTOP)
-		// On bloque la redirection naturelle pour laisser le temps au script
-		e.preventDefault();
+			// 1. On vide le cache (Garanti car la page ne change pas encore)
+			localStorage.clear();
 
-		// On vide tout
-		localStorage.clear();
-		
-		document.body.classList.remove(
-			'is-at-bottom', 'is-scrolled', 'secrets-started', 
-			'watcher-found', 'nut-found', 'berry-found', 
-			'ciphers-found', 'secrets-ended', 'hof-unlocked'
-		);
+			// 2. On nettoie les classes
+			document.body.classList.remove(
+				'is-at-bottom', 'is-scrolled', 'secrets-started', 
+				'watcher-found', 'nut-found', 'berry-found', 
+				'ciphers-found', 'secrets-ended', 'hof-unlocked'
+			);
 
-		// 3. LA REDIRECTION FORCÉE
-		// On part seulement maintenant que le storage est vide
-		window.location.href = 'index.html';
-		
-		return false;
+			// 3. SEULEMENT MAINTENANT, on part
+			window.location.href = 'index.html'; 
+		});
 	}
 
 });
