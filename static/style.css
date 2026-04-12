@@ -921,10 +921,17 @@ body.secrets-started .exit-section {
     transition: 0.2s;
 }
 
-.btn-reset:hover {
-    color: var(--main-color);
-    background: var(--bg-hover);
-    border-color: var(--main-color);
+.btn-reset:hover, 
+#leave-secrets:hover {
+    color: var(--main-color) !important;
+    background: var(--bg-hover) !important;
+    border-color: var(--main-color) !important;
+}
+
+#leave-secrets {
+    display: inline-block;
+    text-decoration: none;
+    color: var(--text-muted);
 }
 
 #leave-secrets.expanded .tooltip-text {
