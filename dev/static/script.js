@@ -382,35 +382,35 @@ document.addEventListener('DOMContentLoaded', () => {
 	}
 
 	// --- 7. THE EXIT DOOR ---
-	document.querySelector('#leave-secrets').addEventListener('click', (e) => {
+	function handleExit(e) {
 		const btn = e.currentTarget;
 		const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
 
-		// Si on est sur mobile, on ne bloque le reset QUE si c'est le 1er tap.
-		// Problème : la section 2 retire 'expanded' juste avant ce listener.
-		// Solution : On vérifie si l'élément n'a PAS 'expanded' ET qu'il n'est pas en train de changer.
+		// 1. GESTION DU DOUBLE-TAP (MOBILE)
 		if (isTouch && !btn.classList.contains('expanded')) {
-			// On laisse une micro-seconde pour être sûr que ce n'est pas la section 2
-			// qui vient de supprimer la classe au 2ème tap.
-			return; 
+			// C'est le 1er clic : on ne fait rien, on laisse la Section 2 afficher le tooltip
+			return true; 
 		}
 
-		// Si on arrive ici, c'est le 2ème tap mobile ou Desktop.
-		// On force l'arrêt du comportement par défaut pour sécuriser le nettoyage.
+		// 2. LE NETTOYAGE (DÉCLENCHÉ AU 2ème CLIC MOBILE OU CLIC DESKTOP)
+		// On bloque la redirection naturelle pour laisser le temps au script
 		e.preventDefault();
 
+		// On vide tout
 		localStorage.clear();
 		
-		// On utilise document.body pour être sûr de cibler le bon élément
 		document.body.classList.remove(
 			'is-at-bottom', 'is-scrolled', 'secrets-started', 
 			'watcher-found', 'nut-found', 'berry-found', 
 			'ciphers-found', 'secrets-ended', 'hof-unlocked'
 		);
 
-		// On redirige manuellement
-		window.location.href = 'index.html'; 
-	});
+		// 3. LA REDIRECTION FORCÉE
+		// On part seulement maintenant que le storage est vide
+		window.location.href = 'index.html';
+		
+		return false;
+	}
 
 });
 
