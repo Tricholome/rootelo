@@ -927,7 +927,7 @@ tr[data-tier="stag"] td:nth-child(4)     { color: var(--color-stag) !important; 
 .secret-btn .tooltip-text {
     position: absolute;
     top: 75%;
-	line-height: 1.4;
+	bottom: auto;
     text-transform: none;
     letter-spacing: normal;
 }
