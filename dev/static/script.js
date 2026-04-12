@@ -382,19 +382,30 @@ document.addEventListener('DOMContentLoaded', () => {
 	}
 
 	// --- 7. THE EXIT DOOR ---
-	document.querySelector('#leave-secrets').addEventListener('click', (e) => {
-		if (('ontouchstart' in window) && !e.currentTarget.classList.contains('expanded')) {
-			return; 
-		}
-		localStorage.clear();
-		body.classList.remove(
-			'is-at-bottom', 'is-scrolled', 'secrets-started', 
-			'watcher-found', 'nut-found', 'berry-found', 
-			'ciphers-found', 'secrets-ended', 'hof-unlocked'
-		);
-		window.location.href = 'index.html'; 
+	const leaveBtn = document.querySelector('#leave-secrets');
 
-	});
+	if (leaveBtn) {
+		leaveBtn.addEventListener('click', (e) => {
+			const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+			
+			// Si c'est du tactile et qu'on n'est pas encore en mode "expanded"
+			// On laisse le script de Double-Tap afficher le tooltip.
+			if (isTouch && !leaveBtn.classList.contains('expanded')) {
+				return; 
+			}
+
+			// Si on arrive ici, c'est soit un Desktop (hover), soit le 2ème tap mobile
+			e.preventDefault(); // On stoppe la navigation immédiate
+			
+			localStorage.clear(); // On vide tout
+			
+			// Feedback visuel (optionnel mais recommandé)
+			document.body.classList.remove('secrets-started', 'secrets-ended', 'hof-unlocked');
+			
+			// On redirige manuellement après le nettoyage
+			window.location.href = leaveBtn.getAttribute('href');
+		});
+	}
 
 });
 
