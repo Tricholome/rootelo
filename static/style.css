@@ -1182,9 +1182,9 @@ body.secrets-ended #hof-access {
 }
 
 #hof-access:hover {
-    color: inherit;
-    background: inherit;
-    border-color: inherit;
+    color: var(--text-muted);
+    background: var(--bg-surface);
+    border-color: var(--border-soft);
 }
 
 body.secrets-ended #hof-access:hover {
