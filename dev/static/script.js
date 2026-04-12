@@ -382,32 +382,14 @@ document.addEventListener('DOMContentLoaded', () => {
 	}
 
 	// --- 7. THE EXIT DOOR ---
-	function handleExit(e) {
-		const btn = e.currentTarget;
-		const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
-
-		// Cas Mobile : On ne nettoie QUE si le tooltip est déjà visible (2ème tap)
-		if (isTouch) {
-			if (!btn.classList.contains('expanded')) {
-				// C'est le 1er clic, on ne fait RIEN. 
-				// On laisse la Section 2 afficher le tooltip.
-				return; 
-			}
-		}
-
-		// Si on arrive ici, c'est soit le 2ème clic mobile, soit un clic Desktop.
-		// ON NETTOIE ENFIN.
+	function cleanBeforeExit() {
 		localStorage.clear();
-		
+
 		document.body.classList.remove(
 			'is-at-bottom', 'is-scrolled', 'secrets-started', 
 			'watcher-found', 'nut-found', 'berry-found', 
 			'ciphers-found', 'secrets-ended', 'hof-unlocked'
 		);
-		
-		// Pas besoin de e.preventDefault() ou window.location ici, 
-		// le href="index.html" naturel du lien va prendre le relais 
-		// juste après l'exécution de cette fonction.
 	}
 
 });
