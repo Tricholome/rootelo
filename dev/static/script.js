@@ -385,25 +385,22 @@ document.addEventListener('DOMContentLoaded', () => {
 	const leaveBtn = document.querySelector('#leave-secrets');
 
 	if (leaveBtn) {
+		// On utilise "true" ici aussi pour être à égalité avec la Section 2
 		leaveBtn.addEventListener('click', (e) => {
-			// Condition pour le double-tap mobile
-			if (('ontouchstart' in window) && !e.currentTarget.classList.contains('expanded')) {
-				return; 
+			const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+
+			// Si mobile et pas encore ouvert, on ne fait rien (on laisse la Sec 2 ouvrir)
+			if (isTouch && !leaveBtn.classList.contains('expanded')) {
+				return;
 			}
 
-			// 1. On vide le cache (Garanti car la page ne change pas encore)
+			// Sinon (Desktop ou 2ème tap), on nettoie TOUT de suite
 			localStorage.clear();
-
-			// 2. On nettoie les classes
-			document.body.classList.remove(
-				'is-at-bottom', 'is-scrolled', 'secrets-started', 
-				'watcher-found', 'nut-found', 'berry-found', 
-				'ciphers-found', 'secrets-ended', 'hof-unlocked'
-			);
-
-			// 3. SEULEMENT MAINTENANT, on part
-			window.location.href = 'index.html'; 
-		});
+			document.body.className = ''; 
+			
+			// Et on part
+			window.location.href = 'index.html';
+		}, true); // <--- LE SECRET EST ICI
 	}
 
 });
