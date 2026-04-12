@@ -927,6 +927,11 @@ body.secrets-started .exit-section {
     border-color: var(--main-color);
 }
 
+#leave-secrets.expanded .tooltip-text {
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
 /* --- 2. Watcher Secret --- */
 .enigma {
     margin-top: 0 !important;
