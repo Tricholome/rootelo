@@ -1177,6 +1177,13 @@ body.secrets-ended .hof-access-btn {
     border-color: var(--main-color);
 }
 
+body.hof-unlocked .hof-access-btn {
+    display: none;
+    opacity: 0;
+    cursor: default;
+    pointer-events: none;
+}
+
 body.secrets-ended .hof-access-btn:hover {
     background: var(--bg-hover);
 }
