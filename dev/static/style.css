@@ -601,9 +601,9 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 
 /* --- F. Specifics (Hall of Fame) --- */
 .streak-cell {
-	color: var(--text-bright);
-	font-size: var(--size-md);
-    font-weight: var(--bold);
+	color: var(--text-bright) !important;
+	font-size: var(--size-md) !important;
+    font-weight: var(--bold) !important;
 	font-family: var(--font-mono);
 }
 
