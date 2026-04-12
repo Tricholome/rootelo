@@ -929,7 +929,7 @@ body.secrets-started .exit-section {
 
 /* --- 2. Watcher Secret --- */
 .enigma {
-    margin-top: 40px !important;
+    margin-top: 0 !important;
     text-align: center !important;
 }
 
@@ -1165,6 +1165,7 @@ body[data-page="cache"].ciphers-found {
     text-transform: uppercase;
     letter-spacing: var(--track-wide);
     color: var(--text-muted);
+	margin-bottom: 20px;
     padding: 6px 14px;
     border-radius: 4px;
     background: var(--bg-surface);
