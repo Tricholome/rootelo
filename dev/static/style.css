@@ -602,8 +602,8 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 /* --- F. Specifics (Hall of Fame) --- */
 .streak-badge {
 	display: inline-block;
-    min-width: 24px;
-    padding: 8px;
+    min-width: 16px;
+    padding: 6px;
     border-radius: 8px;
     font-weight: var(--medium);
 	font-family: var(--font-mono);
