@@ -160,7 +160,7 @@ document.addEventListener('DOMContentLoaded', function() {
 			name: 'Stag',
 			elo: '1600+',
 			subtitle: 'The Legend',
-			desc: 'Has anyone truly seen this mythical beast? What happens to the predator when the woods turn hollow and every path leads back to a mirror of its own perfection? And when nothing remains to be claimed, is the true crown the silence that follows the chase?'
+			desc: 'Has anyone truly seen this mythical beast, or is it only an echo of the wild? What happens to the predator when the woods turn hollow and every path leads back to a mirror of its own perfection? And when nothing remains to be claimed, is the true crown the silence that follows the chase?'
 		}
 	};
 
