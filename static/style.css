@@ -925,7 +925,7 @@ tr[data-tier="stag"] td:nth-child(4)     { color: var(--color-stag) !important; 
 
 .secret-btn .tooltip-text {
     position: absolute;
-    bottom: 125%;
+    top: 125%;
     text-transform: none;
     letter-spacing: normal;
 }
@@ -1106,7 +1106,6 @@ body.berry-found .banner-icons a.tooltip-link.banner-icon-stag {
 
 body.secrets-started .exit-section {
     display: block;
-	margin-top: 80px;
     opacity: 1;
 }
 
