@@ -1,0 +1,4114 @@
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Leaderboard • Rootelo</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..900;1,9..144,400..900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
+    
+    <link rel="stylesheet" href="static/style.css">
+    
+    <style>
+        :root {
+			/* --- 1. LAYOUT CONFIG (Automatic loop) --- */
+			
+			--window-max-width: clamp(600px, 60vw, 1600px);
+			
+			--window-padding: clamp(20px, 2.5vw, 40px);
+			
+			--window-gap: 20px;
+			
+
+			/* --- 2. TYPOGRAPHY (Automatic loop) --- */
+			
+			--font-title: 'Fraunces', serif;
+			
+			--font-ui: 'Inter', sans-serif;
+			
+			--font-mono: 'JetBrains Mono', monospace;
+			
+			--bold: 900;
+			
+			--medium: 600;
+			
+			--normal: 400;
+			
+			--size-xs: 0.75rem;
+			
+			--size-sm: 0.85rem;
+			
+			--size-modal: 0.90rem;
+			
+			--size-base: 0.95rem;
+			
+			--size-md: 1.2rem;
+			
+			--size-lg: 2.0rem;
+			
+			--size-xl: 2.5rem;
+			
+			--size-display: 2.8rem;
+			
+			--track-slight: 0.5px;
+			
+			--track-wide: 1px;
+			
+			--track-display: 4px;
+			
+
+			/* --- 3. GLOBAL UI (Automatic loop) --- */
+			
+			--bg-overlay-top: rgba(0, 0, 0, 0.1);
+			
+			--bg-overlay-bottom: rgba(0, 0, 0, 0.8);
+			
+			--bg-container: #1c1c1c;
+			
+			--bg-surface: rgba(255, 255, 255, 0.03);
+			
+			--bg-hover: rgba(255, 255, 255, 0.08);
+			
+			--border-soft: #333333;
+			
+			--border-dark: rgba(0, 0, 0, 0.4);
+			
+			--border-light: rgba(255, 255, 255, 0.05);
+			
+			--glass-bg: #1c1c1cd9;
+			
+			--glass-border: rgba(255, 255, 255, 0.08);
+			
+			--glass-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+			
+			--text-bright: #ffffff;
+			
+			--text-main: #E0E0E0;
+			
+			--text-muted: #A0A0A0;
+			
+			--text-dark: #111111;
+			
+			--dt-table-bg: rgba(0, 0, 0, 0.15);
+			
+			--dt-header-bg: rgba(0, 0, 0, 0.25);
+			
+			--dt-row-border: rgba(255, 255, 255, 0.03);
+			
+			--dt-row-hover: rgba(255, 255, 255, 0.07);
+			
+			--dt-input-bg: rgba(0, 0, 0, 0.2);
+			
+
+			/* --- 4. TIER DYNAMICS (Loop with logic) --- */
+			
+			--color-bird: #7AB5E0;
+			--color-bird-bg: #7AB5E014;
+			
+			--color-fox: #E55555;
+			--color-fox-bg: #E5555514;
+			
+			--color-rabbit: #F2C14E;
+			--color-rabbit-bg: #F2C14E14;
+			
+			--color-mouse: #F49E52;
+			--color-mouse-bg: #F49E5214;
+			
+			--color-squirrel: #94C160;
+			--color-squirrel-bg: #94C16014;
+			
+			--color-stag: #C686FF;
+			--color-stag-bg: #C686FF14;
+			
+			--color-default: #7A7347;
+			--color-default-bg: #7A734714;
+			
+
+			/* --- 5. PAGE THEME --- */
+			--main-color: #7AB5E0;
+		}
+    </style>
+	
+	<meta property="og:type" content="website">
+	<meta property="og:url" content="https://tricholome.github.io/rootelo">
+	<meta property="og:title" content="ROOTELO">
+	<meta property="og:description" content="A Metric of Woodland Skill and Will">
+	<meta property="og:image" content="https://tricholome.github.io/rootelo/assets/images/rootelo-preview.webp">
+
+    
+	
+</head>
+
+<body data-page="index">
+    
+    <div class="container">
+	
+        <header class="app-banner window-box">
+		
+            <div class="banner-container">
+                <div class="banner-icons left">
+                    <a href="javascript:void(0)" onclick="openTierModal('stag')" class="tooltip-link js-double-tap banner-icon-stag">
+                        <img src="assets/icons/stag.webp" alt="Stag">
+                        <span class="tooltip-text"><strong class="tier-stag">Stag (1600+)</strong> — The Legend</span>
+                    </a>
+					<a href="javascript:void(0)" onclick="openTierModal('bird')" class="tooltip-link js-double-tap">
+                        <img src="assets/icons/bird_new.webp" alt="Bird">
+                        <span class="tooltip-text"><strong class="tier-bird">Bird (1500+)</strong> — The Grandmasters</span>
+                    </a>
+                    <a href="javascript:void(0)" onclick="openTierModal('fox')" class="tooltip-link js-double-tap">
+                        <img src="assets/icons/fox_new.webp" alt="Fox">
+                        <span class="tooltip-text"><strong class="tier-fox">Fox (1400+)</strong> — The Cunning Tacticians</span>
+                    </a>
+                </div>
+                <div class="banner-center">
+                    <h1 class="site-title">ROOTELO</h1>
+                    <p class="site-subtitle">A Metric of Woodland&nbsp;Skill&nbsp;and&nbsp;Will</p>
+                </div>
+                <div class="banner-icons right">
+                    <a href="javascript:void(0)" onclick="openTierModal('rabbit')" class="tooltip-link js-double-tap">
+                        <img src="assets/icons/rabbit_new.webp" alt="Rabbit">
+                        <span class="tooltip-text"><strong class="tier-rabbit">Rabbit (1300+)</strong> — The Agile Contenders</span>
+                    </a>
+                    <a href="javascript:void(0)" onclick="openTierModal('mouse')" class="tooltip-link js-double-tap">
+                        <img src="assets/icons/mouse_new.webp" alt="Mouse">
+                        <span class="tooltip-text"><strong class="tier-mouse">Mouse (1200+)</strong> — The Steady Foragers</span>
+                    </a>
+					<a href="javascript:void(0)" onclick="openTierModal('squirrel')" class="tooltip-link js-double-tap banner-icon-squirrel">
+                        <img src="assets/icons/squirrel.webp" alt="Squirrel">
+                        <span class="tooltip-text"><strong class="tier-squirrel">Squirrel (&lt; 1200)</strong> — The Hapless Stragglers</span>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="nav-separator"></div>
+
+            <nav>
+				
+
+				
+					
+						
+					
+					<a href="index_lh01.html" class="active">Leaderboard</a>
+				
+					
+						
+					
+					<a href="matches_lh01.html" class="">Top Tables</a>
+				
+					
+						
+					
+					<a href="trends_lh01.html" class="">Player's Journey</a>
+				
+					
+						
+					
+					<a href="about.html" class="">Codex</a>
+				
+				<a href="cache.html" class="nav-secret ">Undergrowth</a>
+			</nav>
+			
+        </header>
+        
+        <div class="screen-deco right-deco">
+			
+				<img src="assets/images/leaderboard_img_right.webp" alt="Decoration Right">
+			
+		</div>
+
+        <div class="app-viewport window-box">
+            <header class="page-intro">
+				<h2>Leaderboard</h2>
+				
+				<div class="season-selector">
+					<span class="season-label">Season</span>
+					
+						
+							<a href="index_lh01.html" class="season-btn active">
+								LH01
+							</a>
+						
+					
+					<a href="index.html" class="season-btn ">
+						LH02
+					</a>
+				</div>
+				
+				<p>Minimum 1 win required for display. Only&nbsp;players&nbsp;with&nbsp;a&nbsp;Tier&nbsp;are&nbsp;ranked.<br><br><i><small>Includes 1223 matches up to 2026-03-31.</i></small></p>
+			</header>
+			
+            <main>
+                
+    <table id="leaderboard" class="display nowrap" style="width:100%">
+        <thead>
+            <tr>
+                <th>Rank</th>
+                <th>Tier</th>
+                <th>Player</th>
+                <th>ELO</th>
+                <th>Games</th>
+                <th>Wins</th>
+                <th>Win Rate</th>
+                <th>Peak</th>
+                <th>Last</th>
+            </tr>
+        </thead>
+        <tbody>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>doejurko</td>
+                <td>1560</td>
+                <td>8</td>
+                <td>8.0</td>
+                <td>100.0%</td>
+                <td>1560</td>
+                <td>45</td>
+            </tr>
+            
+            <tr data-tier="fox" class="">
+                <td class="">
+                    1
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'fox')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/fox_new.webp" alt="fox">
+							</div>
+						</a>
+					
+				</td>
+                <td>Killerstorm17</td>
+                <td>1484</td>
+                <td>20</td>
+                <td>14.0</td>
+                <td>70.0%</td>
+                <td>1554</td>
+                <td>-21</td>
+            </tr>
+            
+            <tr data-tier="stag" class="">
+                <td class="">
+                    2
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'stag')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/stag.webp" alt="stag">
+							</div>
+						</a>
+					
+				</td>
+                <td>Led_Slash</td>
+                <td>1784</td>
+                <td>163</td>
+                <td>93.0</td>
+                <td>57.1%</td>
+                <td>1551</td>
+                <td>-14</td>
+            </tr>
+            
+            <tr data-tier="fox" class="">
+                <td class="">
+                    3
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'fox')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/fox_new.webp" alt="fox">
+							</div>
+						</a>
+					
+				</td>
+                <td>kayajam</td>
+                <td>1468</td>
+                <td>32</td>
+                <td>19.0</td>
+                <td>59.4%</td>
+                <td>1489</td>
+                <td>-14</td>
+            </tr>
+            
+            <tr data-tier="fox" class="">
+                <td class="">
+                    4
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'fox')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/fox_new.webp" alt="fox">
+							</div>
+						</a>
+					
+				</td>
+                <td>tofuwater</td>
+                <td>1459</td>
+                <td>21</td>
+                <td>14.0</td>
+                <td>66.7%</td>
+                <td>1502</td>
+                <td>-27</td>
+            </tr>
+            
+            <tr data-tier="fox" class="">
+                <td class="">
+                    5
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'fox')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/fox_new.webp" alt="fox">
+							</div>
+						</a>
+					
+				</td>
+                <td>ShuShuBana</td>
+                <td>1441</td>
+                <td>57</td>
+                <td>30.0</td>
+                <td>52.6%</td>
+                <td>1511</td>
+                <td>10</td>
+            </tr>
+            
+            <tr data-tier="fox" class="">
+                <td class="">
+                    6
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'fox')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/fox_new.webp" alt="fox">
+							</div>
+						</a>
+					
+				</td>
+                <td>Seiza</td>
+                <td>1440</td>
+                <td>40</td>
+                <td>16.0</td>
+                <td>40.0%</td>
+                <td>1440</td>
+                <td>27</td>
+            </tr>
+            
+            <tr data-tier="fox" class="">
+                <td class="">
+                    7
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'fox')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/fox_new.webp" alt="fox">
+							</div>
+						</a>
+					
+				</td>
+                <td>Nadav253</td>
+                <td>1438</td>
+                <td>21</td>
+                <td>13.0</td>
+                <td>61.9%</td>
+                <td>1506</td>
+                <td>-15</td>
+            </tr>
+            
+            <tr data-tier="fox" class="">
+                <td class="">
+                    8
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'fox')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/fox_new.webp" alt="fox">
+							</div>
+						</a>
+					
+				</td>
+                <td>Mouseman</td>
+                <td>1429</td>
+                <td>15</td>
+                <td>8.0</td>
+                <td>53.3%</td>
+                <td>1472</td>
+                <td>-12</td>
+            </tr>
+            
+            <tr data-tier="fox" class="">
+                <td class="">
+                    9
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'fox')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/fox_new.webp" alt="fox">
+							</div>
+						</a>
+					
+				</td>
+                <td>Ctfox</td>
+                <td>1419</td>
+                <td>20</td>
+                <td>11.0</td>
+                <td>55.0%</td>
+                <td>1456</td>
+                <td>-24</td>
+            </tr>
+            
+            <tr data-tier="fox" class="">
+                <td class="">
+                    10
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'fox')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/fox_new.webp" alt="fox">
+							</div>
+						</a>
+					
+				</td>
+                <td>Tad604</td>
+                <td>1419</td>
+                <td>49</td>
+                <td>19.0</td>
+                <td>38.8%</td>
+                <td>1440</td>
+                <td>-26</td>
+            </tr>
+            
+            <tr data-tier="fox" class="">
+                <td class="">
+                    11
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'fox')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/fox_new.webp" alt="fox">
+							</div>
+						</a>
+					
+				</td>
+                <td>swiftsusan</td>
+                <td>1407</td>
+                <td>22</td>
+                <td>12.0</td>
+                <td>54.5%</td>
+                <td>1424</td>
+                <td>-21</td>
+            </tr>
+            
+            <tr data-tier="rabbit" class="">
+                <td class="">
+                    12
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'rabbit')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/rabbit_new.webp" alt="rabbit">
+							</div>
+						</a>
+					
+				</td>
+                <td>matemato</td>
+                <td>1391</td>
+                <td>52</td>
+                <td>21.0</td>
+                <td>40.4%</td>
+                <td>1402</td>
+                <td>-9</td>
+            </tr>
+            
+            <tr data-tier="rabbit" class="">
+                <td class="">
+                    13
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'rabbit')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/rabbit_new.webp" alt="rabbit">
+							</div>
+						</a>
+					
+				</td>
+                <td>LucianTheFak</td>
+                <td>1388</td>
+                <td>94</td>
+                <td>33.5</td>
+                <td>35.6%</td>
+                <td>1388</td>
+                <td>12</td>
+            </tr>
+            
+            <tr data-tier="rabbit" class="">
+                <td class="">
+                    14
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'rabbit')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/rabbit_new.webp" alt="rabbit">
+							</div>
+						</a>
+					
+				</td>
+                <td>IMPERATOR</td>
+                <td>1387</td>
+                <td>11</td>
+                <td>7.5</td>
+                <td>68.2%</td>
+                <td>1501</td>
+                <td>-21</td>
+            </tr>
+            
+            <tr data-tier="rabbit" class="">
+                <td class="">
+                    15
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'rabbit')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/rabbit_new.webp" alt="rabbit">
+							</div>
+						</a>
+					
+				</td>
+                <td>DarthPuniceus</td>
+                <td>1377</td>
+                <td>54</td>
+                <td>18.0</td>
+                <td>33.3%</td>
+                <td>1381</td>
+                <td>12</td>
+            </tr>
+            
+            <tr data-tier="rabbit" class="">
+                <td class="">
+                    16
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'rabbit')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/rabbit_new.webp" alt="rabbit">
+							</div>
+						</a>
+					
+				</td>
+                <td>Xar149</td>
+                <td>1374</td>
+                <td>11</td>
+                <td>7.0</td>
+                <td>63.6%</td>
+                <td>1499</td>
+                <td>-19</td>
+            </tr>
+            
+            <tr data-tier="rabbit" class="">
+                <td class="">
+                    17
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'rabbit')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/rabbit_new.webp" alt="rabbit">
+							</div>
+						</a>
+					
+				</td>
+                <td>Tricholome</td>
+                <td>1366</td>
+                <td>80</td>
+                <td>28.5</td>
+                <td>35.6%</td>
+                <td>1374</td>
+                <td>-8</td>
+            </tr>
+            
+            <tr data-tier="rabbit" class="">
+                <td class="">
+                    18
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'rabbit')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/rabbit_new.webp" alt="rabbit">
+							</div>
+						</a>
+					
+				</td>
+                <td>Bapgo</td>
+                <td>1364</td>
+                <td>17</td>
+                <td>8.0</td>
+                <td>47.1%</td>
+                <td>1453</td>
+                <td>23</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>tippop</td>
+                <td>1364</td>
+                <td>8</td>
+                <td>4.0</td>
+                <td>50.0%</td>
+                <td>1382</td>
+                <td>-23</td>
+            </tr>
+            
+            <tr data-tier="rabbit" class="">
+                <td class="">
+                    19
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'rabbit')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/rabbit_new.webp" alt="rabbit">
+							</div>
+						</a>
+					
+				</td>
+                <td>kaiser</td>
+                <td>1360</td>
+                <td>46</td>
+                <td>19.0</td>
+                <td>41.3%</td>
+                <td>1383</td>
+                <td>23</td>
+            </tr>
+            
+            <tr data-tier="rabbit" class="">
+                <td class="">
+                    20
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'rabbit')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/rabbit_new.webp" alt="rabbit">
+							</div>
+						</a>
+					
+				</td>
+                <td>Pliskin</td>
+                <td>1358</td>
+                <td>22</td>
+                <td>9.0</td>
+                <td>40.9%</td>
+                <td>1381</td>
+                <td>23</td>
+            </tr>
+            
+            <tr data-tier="rabbit" class="">
+                <td class="">
+                    21
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'rabbit')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/rabbit_new.webp" alt="rabbit">
+							</div>
+						</a>
+					
+				</td>
+                <td>Nefkano</td>
+                <td>1356</td>
+                <td>79</td>
+                <td>31.0</td>
+                <td>39.2%</td>
+                <td>1421</td>
+                <td>-5</td>
+            </tr>
+            
+            <tr data-tier="rabbit" class="">
+                <td class="">
+                    22
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'rabbit')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/rabbit_new.webp" alt="rabbit">
+							</div>
+						</a>
+					
+				</td>
+                <td>FrancescoBr</td>
+                <td>1356</td>
+                <td>22</td>
+                <td>10.0</td>
+                <td>45.5%</td>
+                <td>1356</td>
+                <td>19</td>
+            </tr>
+            
+            <tr data-tier="rabbit" class="">
+                <td class="">
+                    23
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'rabbit')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/rabbit_new.webp" alt="rabbit">
+							</div>
+						</a>
+					
+				</td>
+                <td>KFull</td>
+                <td>1355</td>
+                <td>71</td>
+                <td>28.5</td>
+                <td>40.1%</td>
+                <td>1491</td>
+                <td>-5</td>
+            </tr>
+            
+            <tr data-tier="rabbit" class="">
+                <td class="">
+                    24
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'rabbit')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/rabbit_new.webp" alt="rabbit">
+							</div>
+						</a>
+					
+				</td>
+                <td>FavorOfTheRabbits</td>
+                <td>1347</td>
+                <td>20</td>
+                <td>8.0</td>
+                <td>40.0%</td>
+                <td>1366</td>
+                <td>-8</td>
+            </tr>
+            
+            <tr data-tier="rabbit" class="">
+                <td class="">
+                    25
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'rabbit')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/rabbit_new.webp" alt="rabbit">
+							</div>
+						</a>
+					
+				</td>
+                <td>BareGammon</td>
+                <td>1339</td>
+                <td>10</td>
+                <td>5.0</td>
+                <td>50.0%</td>
+                <td>1376</td>
+                <td>-41</td>
+            </tr>
+            
+            <tr data-tier="rabbit" class="">
+                <td class="">
+                    26
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'rabbit')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/rabbit_new.webp" alt="rabbit">
+							</div>
+						</a>
+					
+				</td>
+                <td>Rabbitwarlord</td>
+                <td>1337</td>
+                <td>18</td>
+                <td>7.0</td>
+                <td>38.9%</td>
+                <td>1356</td>
+                <td>-15</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>RootiredRooter</td>
+                <td>1332</td>
+                <td>6</td>
+                <td>3.0</td>
+                <td>50.0%</td>
+                <td>1346</td>
+                <td>-19</td>
+            </tr>
+            
+            <tr data-tier="rabbit" class="">
+                <td class="">
+                    27
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'rabbit')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/rabbit_new.webp" alt="rabbit">
+							</div>
+						</a>
+					
+				</td>
+                <td>ChippZamoose</td>
+                <td>1325</td>
+                <td>33</td>
+                <td>14.0</td>
+                <td>42.4%</td>
+                <td>1399</td>
+                <td>-13</td>
+            </tr>
+            
+            <tr data-tier="rabbit" class="">
+                <td class="">
+                    28
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'rabbit')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/rabbit_new.webp" alt="rabbit">
+							</div>
+						</a>
+					
+				</td>
+                <td>Antiproject</td>
+                <td>1322</td>
+                <td>23</td>
+                <td>10.0</td>
+                <td>43.5%</td>
+                <td>1422</td>
+                <td>-12</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>PokerFace126</td>
+                <td>1321</td>
+                <td>5</td>
+                <td>3.0</td>
+                <td>60.0%</td>
+                <td>1321</td>
+                <td>57</td>
+            </tr>
+            
+            <tr data-tier="rabbit" class="">
+                <td class="">
+                    29
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'rabbit')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/rabbit_new.webp" alt="rabbit">
+							</div>
+						</a>
+					
+				</td>
+                <td>TimidTailwind</td>
+                <td>1320</td>
+                <td>10</td>
+                <td>4.0</td>
+                <td>40.0%</td>
+                <td>1320</td>
+                <td>49</td>
+            </tr>
+            
+            <tr data-tier="rabbit" class="">
+                <td class="">
+                    30
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'rabbit')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/rabbit_new.webp" alt="rabbit">
+							</div>
+						</a>
+					
+				</td>
+                <td>ninjacat536</td>
+                <td>1319</td>
+                <td>12</td>
+                <td>4.0</td>
+                <td>33.3%</td>
+                <td>1339</td>
+                <td>-11</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>time2orush</td>
+                <td>1316</td>
+                <td>7</td>
+                <td>4.0</td>
+                <td>57.1%</td>
+                <td>1351</td>
+                <td>-40</td>
+            </tr>
+            
+            <tr data-tier="rabbit" class="">
+                <td class="">
+                    31
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'rabbit')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/rabbit_new.webp" alt="rabbit">
+							</div>
+						</a>
+					
+				</td>
+                <td>VanKaiserman</td>
+                <td>1315</td>
+                <td>14</td>
+                <td>6.0</td>
+                <td>42.9%</td>
+                <td>1319</td>
+                <td>26</td>
+            </tr>
+            
+            <tr data-tier="rabbit" class="">
+                <td class="">
+                    32
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'rabbit')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/rabbit_new.webp" alt="rabbit">
+							</div>
+						</a>
+					
+				</td>
+                <td>1coolguy</td>
+                <td>1315</td>
+                <td>18</td>
+                <td>7.0</td>
+                <td>38.9%</td>
+                <td>1328</td>
+                <td>31</td>
+            </tr>
+            
+            <tr data-tier="rabbit" class="">
+                <td class="">
+                    33
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'rabbit')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/rabbit_new.webp" alt="rabbit">
+							</div>
+						</a>
+					
+				</td>
+                <td>Mossfusion</td>
+                <td>1314</td>
+                <td>16</td>
+                <td>6.0</td>
+                <td>37.5%</td>
+                <td>1325</td>
+                <td>-15</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>complexartichoke</td>
+                <td>1310</td>
+                <td>3</td>
+                <td>2.0</td>
+                <td>66.7%</td>
+                <td>1310</td>
+                <td>59</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>gord20</td>
+                <td>1309</td>
+                <td>2</td>
+                <td>2.0</td>
+                <td>100.0%</td>
+                <td>1309</td>
+                <td>49</td>
+            </tr>
+            
+            <tr data-tier="rabbit" class="">
+                <td class="">
+                    34
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'rabbit')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/rabbit_new.webp" alt="rabbit">
+							</div>
+						</a>
+					
+				</td>
+                <td>Kmahussier</td>
+                <td>1309</td>
+                <td>40</td>
+                <td>14.0</td>
+                <td>35.0%</td>
+                <td>1342</td>
+                <td>-8</td>
+            </tr>
+            
+            <tr data-tier="rabbit" class="">
+                <td class="">
+                    35
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'rabbit')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/rabbit_new.webp" alt="rabbit">
+							</div>
+						</a>
+					
+				</td>
+                <td>Silver</td>
+                <td>1309</td>
+                <td>10</td>
+                <td>5.0</td>
+                <td>50.0%</td>
+                <td>1408</td>
+                <td>-12</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>vinnie</td>
+                <td>1304</td>
+                <td>3</td>
+                <td>2.0</td>
+                <td>66.7%</td>
+                <td>1304</td>
+                <td>61</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>Aleph</td>
+                <td>1302</td>
+                <td>3</td>
+                <td>2.0</td>
+                <td>66.7%</td>
+                <td>1302</td>
+                <td>55</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>Blurr</td>
+                <td>1300</td>
+                <td>3</td>
+                <td>2.0</td>
+                <td>66.7%</td>
+                <td>1310</td>
+                <td>-14</td>
+            </tr>
+            
+            <tr data-tier="rabbit" class="">
+                <td class="">
+                    36
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'rabbit')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/rabbit_new.webp" alt="rabbit">
+							</div>
+						</a>
+					
+				</td>
+                <td>LutherStr</td>
+                <td>1300</td>
+                <td>45</td>
+                <td>12.0</td>
+                <td>26.7%</td>
+                <td>1300</td>
+                <td>29</td>
+            </tr>
+            
+            <tr data-tier="mouse" class="">
+                <td class="">
+                    37
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'mouse')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/mouse_new.webp" alt="mouse">
+							</div>
+						</a>
+					
+				</td>
+                <td>pooge</td>
+                <td>1291</td>
+                <td>21</td>
+                <td>7.0</td>
+                <td>33.3%</td>
+                <td>1394</td>
+                <td>-6</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>mishaelh1</td>
+                <td>1291</td>
+                <td>8</td>
+                <td>3.0</td>
+                <td>37.5%</td>
+                <td>1291</td>
+                <td>55</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>dindane</td>
+                <td>1290</td>
+                <td>5</td>
+                <td>2.0</td>
+                <td>40.0%</td>
+                <td>1290</td>
+                <td>54</td>
+            </tr>
+            
+            <tr data-tier="mouse" class="">
+                <td class="">
+                    38
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'mouse')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/mouse_new.webp" alt="mouse">
+							</div>
+						</a>
+					
+				</td>
+                <td>tjudge</td>
+                <td>1289</td>
+                <td>19</td>
+                <td>7.0</td>
+                <td>36.8%</td>
+                <td>1315</td>
+                <td>-11</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>AxlPrototype</td>
+                <td>1283</td>
+                <td>8</td>
+                <td>3.0</td>
+                <td>37.5%</td>
+                <td>1313</td>
+                <td>-35</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>Bitto</td>
+                <td>1281</td>
+                <td>8</td>
+                <td>3.0</td>
+                <td>37.5%</td>
+                <td>1378</td>
+                <td>-14</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>Nudraxon</td>
+                <td>1277</td>
+                <td>1</td>
+                <td>1.0</td>
+                <td>100.0%</td>
+                <td>1277</td>
+                <td>73</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>bootle</td>
+                <td>1277</td>
+                <td>6</td>
+                <td>2.0</td>
+                <td>33.3%</td>
+                <td>1277</td>
+                <td>64</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>saintstonet</td>
+                <td>1276</td>
+                <td>1</td>
+                <td>1.0</td>
+                <td>100.0%</td>
+                <td>1276</td>
+                <td>71</td>
+            </tr>
+            
+            <tr data-tier="mouse" class="">
+                <td class="">
+                    39
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'mouse')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/mouse_new.webp" alt="mouse">
+							</div>
+						</a>
+					
+				</td>
+                <td>Valzaan</td>
+                <td>1270</td>
+                <td>20</td>
+                <td>6.0</td>
+                <td>30.0%</td>
+                <td>1270</td>
+                <td>29</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>Intraceptor</td>
+                <td>1269</td>
+                <td>5</td>
+                <td>2.0</td>
+                <td>40.0%</td>
+                <td>1295</td>
+                <td>-30</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>lazarus210</td>
+                <td>1266</td>
+                <td>1</td>
+                <td>1.0</td>
+                <td>100.0%</td>
+                <td>1266</td>
+                <td>62</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>Cabbage0642</td>
+                <td>1266</td>
+                <td>1</td>
+                <td>1.0</td>
+                <td>100.0%</td>
+                <td>1266</td>
+                <td>62</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>KeyserSoze</td>
+                <td>1265</td>
+                <td>1</td>
+                <td>1.0</td>
+                <td>100.0%</td>
+                <td>1265</td>
+                <td>61</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>ShowStopperW</td>
+                <td>1263</td>
+                <td>1</td>
+                <td>1.0</td>
+                <td>100.0%</td>
+                <td>1263</td>
+                <td>58</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>trollone1993</td>
+                <td>1263</td>
+                <td>1</td>
+                <td>1.0</td>
+                <td>100.0%</td>
+                <td>1263</td>
+                <td>58</td>
+            </tr>
+            
+            <tr data-tier="mouse" class="">
+                <td class="">
+                    40
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'mouse')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/mouse_new.webp" alt="mouse">
+							</div>
+						</a>
+					
+				</td>
+                <td>Dramsss</td>
+                <td>1260</td>
+                <td>39</td>
+                <td>11.0</td>
+                <td>28.2%</td>
+                <td>1286</td>
+                <td>-12</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>Vagabond Glazer</td>
+                <td>1259</td>
+                <td>1</td>
+                <td>1.0</td>
+                <td>100.0%</td>
+                <td>1259</td>
+                <td>54</td>
+            </tr>
+            
+            <tr data-tier="mouse" class="">
+                <td class="">
+                    41
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'mouse')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/mouse_new.webp" alt="mouse">
+							</div>
+						</a>
+					
+				</td>
+                <td>Cookies</td>
+                <td>1259</td>
+                <td>15</td>
+                <td>5.0</td>
+                <td>33.3%</td>
+                <td>1314</td>
+                <td>-14</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>Mindger</td>
+                <td>1258</td>
+                <td>5</td>
+                <td>2.0</td>
+                <td>40.0%</td>
+                <td>1286</td>
+                <td>-14</td>
+            </tr>
+            
+            <tr data-tier="mouse" class="">
+                <td class="">
+                    42
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'mouse')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/mouse_new.webp" alt="mouse">
+							</div>
+						</a>
+					
+				</td>
+                <td>MrDrouf</td>
+                <td>1255</td>
+                <td>50</td>
+                <td>14.0</td>
+                <td>28.0%</td>
+                <td>1331</td>
+                <td>-11</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>aelisheneithlon</td>
+                <td>1254</td>
+                <td>3</td>
+                <td>1.0</td>
+                <td>33.3%</td>
+                <td>1254</td>
+                <td>71</td>
+            </tr>
+            
+            <tr data-tier="mouse" class="">
+                <td class="">
+                    43
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'mouse')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/mouse_new.webp" alt="mouse">
+							</div>
+						</a>
+					
+				</td>
+                <td>Schkitz</td>
+                <td>1251</td>
+                <td>98</td>
+                <td>25.0</td>
+                <td>25.5%</td>
+                <td>1293</td>
+                <td>-5</td>
+            </tr>
+            
+            <tr data-tier="mouse" class="">
+                <td class="">
+                    44
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'mouse')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/mouse_new.webp" alt="mouse">
+							</div>
+						</a>
+					
+				</td>
+                <td>cliuless</td>
+                <td>1250</td>
+                <td>116</td>
+                <td>31.5</td>
+                <td>27.2%</td>
+                <td>1306</td>
+                <td>-3</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>ermactually</td>
+                <td>1249</td>
+                <td>2</td>
+                <td>1.0</td>
+                <td>50.0%</td>
+                <td>1249</td>
+                <td>59</td>
+            </tr>
+            
+            <tr data-tier="mouse" class="">
+                <td class="">
+                    45
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'mouse')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/mouse_new.webp" alt="mouse">
+							</div>
+						</a>
+					
+				</td>
+                <td>Bengal3</td>
+                <td>1247</td>
+                <td>10</td>
+                <td>3.0</td>
+                <td>30.0%</td>
+                <td>1285</td>
+                <td>-20</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>pwarren8590</td>
+                <td>1246</td>
+                <td>9</td>
+                <td>3.0</td>
+                <td>33.3%</td>
+                <td>1327</td>
+                <td>-15</td>
+            </tr>
+            
+            <tr data-tier="mouse" class="">
+                <td class="">
+                    46
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'mouse')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/mouse_new.webp" alt="mouse">
+							</div>
+						</a>
+					
+				</td>
+                <td>Emperia</td>
+                <td>1245</td>
+                <td>42</td>
+                <td>11.5</td>
+                <td>27.4%</td>
+                <td>1310</td>
+                <td>-15</td>
+            </tr>
+            
+            <tr data-tier="mouse" class="">
+                <td class="">
+                    47
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'mouse')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/mouse_new.webp" alt="mouse">
+							</div>
+						</a>
+					
+				</td>
+                <td>Pandapapst</td>
+                <td>1245</td>
+                <td>86</td>
+                <td>23.0</td>
+                <td>26.7%</td>
+                <td>1329</td>
+                <td>-4</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>ToasterTrash</td>
+                <td>1244</td>
+                <td>8</td>
+                <td>2.0</td>
+                <td>25.0%</td>
+                <td>1244</td>
+                <td>60</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>KarmaBurn</td>
+                <td>1243</td>
+                <td>2</td>
+                <td>1.0</td>
+                <td>50.0%</td>
+                <td>1243</td>
+                <td>60</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>Mohammad</td>
+                <td>1240</td>
+                <td>2</td>
+                <td>1.0</td>
+                <td>50.0%</td>
+                <td>1259</td>
+                <td>-24</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>Napalminthebirdsong</td>
+                <td>1239</td>
+                <td>6</td>
+                <td>2.0</td>
+                <td>33.3%</td>
+                <td>1239</td>
+                <td>59</td>
+            </tr>
+            
+            <tr data-tier="mouse" class="">
+                <td class="">
+                    48
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'mouse')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/mouse_new.webp" alt="mouse">
+							</div>
+						</a>
+					
+				</td>
+                <td>TurkeyNoNo</td>
+                <td>1239</td>
+                <td>46</td>
+                <td>14.5</td>
+                <td>31.5%</td>
+                <td>1443</td>
+                <td>-20</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>Furry0329</td>
+                <td>1238</td>
+                <td>4</td>
+                <td>1.0</td>
+                <td>25.0%</td>
+                <td>1238</td>
+                <td>64</td>
+            </tr>
+            
+            <tr data-tier="mouse" class="">
+                <td class="">
+                    49
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'mouse')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/mouse_new.webp" alt="mouse">
+							</div>
+						</a>
+					
+				</td>
+                <td>Hydro033</td>
+                <td>1235</td>
+                <td>12</td>
+                <td>3.0</td>
+                <td>25.0%</td>
+                <td>1259</td>
+                <td>-7</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>Octavius</td>
+                <td>1233</td>
+                <td>2</td>
+                <td>1.0</td>
+                <td>50.0%</td>
+                <td>1259</td>
+                <td>-31</td>
+            </tr>
+            
+            <tr data-tier="mouse" class="">
+                <td class="">
+                    50
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'mouse')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/mouse_new.webp" alt="mouse">
+							</div>
+						</a>
+					
+				</td>
+                <td>Tolfan</td>
+                <td>1231</td>
+                <td>62</td>
+                <td>19.0</td>
+                <td>30.6%</td>
+                <td>1396</td>
+                <td>-6</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>udon66</td>
+                <td>1230</td>
+                <td>4</td>
+                <td>1.0</td>
+                <td>25.0%</td>
+                <td>1255</td>
+                <td>-14</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>hakoo</td>
+                <td>1226</td>
+                <td>3</td>
+                <td>1.0</td>
+                <td>33.3%</td>
+                <td>1262</td>
+                <td>-11</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>BuliBaka</td>
+                <td>1223</td>
+                <td>4</td>
+                <td>1.0</td>
+                <td>25.0%</td>
+                <td>1229</td>
+                <td>-11</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>TAKSpx</td>
+                <td>1222</td>
+                <td>6</td>
+                <td>2.0</td>
+                <td>33.3%</td>
+                <td>1267</td>
+                <td>-22</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>Mcauthor</td>
+                <td>1222</td>
+                <td>4</td>
+                <td>1.0</td>
+                <td>25.0%</td>
+                <td>1241</td>
+                <td>-11</td>
+            </tr>
+            
+            <tr data-tier="mouse" class="">
+                <td class="">
+                    51
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'mouse')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/mouse_new.webp" alt="mouse">
+							</div>
+						</a>
+					
+				</td>
+                <td>cringelordirl</td>
+                <td>1222</td>
+                <td>43</td>
+                <td>9.0</td>
+                <td>20.9%</td>
+                <td>1247</td>
+                <td>-4</td>
+            </tr>
+            
+            <tr data-tier="mouse" class="">
+                <td class="">
+                    52
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'mouse')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/mouse_new.webp" alt="mouse">
+							</div>
+						</a>
+					
+				</td>
+                <td>uwtron</td>
+                <td>1221</td>
+                <td>19</td>
+                <td>5.0</td>
+                <td>26.3%</td>
+                <td>1294</td>
+                <td>-11</td>
+            </tr>
+            
+            <tr data-tier="mouse" class="">
+                <td class="">
+                    53
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'mouse')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/mouse_new.webp" alt="mouse">
+							</div>
+						</a>
+					
+				</td>
+                <td>NadtyLite</td>
+                <td>1221</td>
+                <td>167</td>
+                <td>37.0</td>
+                <td>22.2%</td>
+                <td>1279</td>
+                <td>-3</td>
+            </tr>
+            
+            <tr data-tier="mouse" class="">
+                <td class="">
+                    54
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'mouse')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/mouse_new.webp" alt="mouse">
+							</div>
+						</a>
+					
+				</td>
+                <td>TheDolphinman</td>
+                <td>1221</td>
+                <td>25</td>
+                <td>6.0</td>
+                <td>24.0%</td>
+                <td>1258</td>
+                <td>-13</td>
+            </tr>
+            
+            <tr data-tier="mouse" class="">
+                <td class="">
+                    55
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'mouse')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/mouse_new.webp" alt="mouse">
+							</div>
+						</a>
+					
+				</td>
+                <td>Perdita</td>
+                <td>1221</td>
+                <td>24</td>
+                <td>7.0</td>
+                <td>29.2%</td>
+                <td>1301</td>
+                <td>33</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>Acecreamsundae</td>
+                <td>1220</td>
+                <td>3</td>
+                <td>1.0</td>
+                <td>33.3%</td>
+                <td>1240</td>
+                <td>-25</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>GlisteningGeetus</td>
+                <td>1220</td>
+                <td>5</td>
+                <td>2.0</td>
+                <td>40.0%</td>
+                <td>1311</td>
+                <td>-31</td>
+            </tr>
+            
+            <tr data-tier="mouse" class="">
+                <td class="">
+                    56
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'mouse')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/mouse_new.webp" alt="mouse">
+							</div>
+						</a>
+					
+				</td>
+                <td>AERotters</td>
+                <td>1220</td>
+                <td>78</td>
+                <td>20.0</td>
+                <td>25.6%</td>
+                <td>1316</td>
+                <td>14</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>Sjepeal</td>
+                <td>1220</td>
+                <td>4</td>
+                <td>1.0</td>
+                <td>25.0%</td>
+                <td>1220</td>
+                <td>62</td>
+            </tr>
+            
+            <tr data-tier="mouse" class="">
+                <td class="">
+                    57
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'mouse')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/mouse_new.webp" alt="mouse">
+							</div>
+						</a>
+					
+				</td>
+                <td>DemaRogue</td>
+                <td>1219</td>
+                <td>68</td>
+                <td>19.0</td>
+                <td>27.9%</td>
+                <td>1288</td>
+                <td>-5</td>
+            </tr>
+            
+            <tr data-tier="mouse" class="">
+                <td class="">
+                    58
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'mouse')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/mouse_new.webp" alt="mouse">
+							</div>
+						</a>
+					
+				</td>
+                <td>Snivylover12</td>
+                <td>1219</td>
+                <td>15</td>
+                <td>3.5</td>
+                <td>23.3%</td>
+                <td>1274</td>
+                <td>-17</td>
+            </tr>
+            
+            <tr data-tier="mouse" class="">
+                <td class="">
+                    59
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'mouse')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/mouse_new.webp" alt="mouse">
+							</div>
+						</a>
+					
+				</td>
+                <td>radiantchaos</td>
+                <td>1218</td>
+                <td>32</td>
+                <td>8.0</td>
+                <td>25.0%</td>
+                <td>1249</td>
+                <td>25</td>
+            </tr>
+            
+            <tr data-tier="mouse" class="">
+                <td class="">
+                    60
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'mouse')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/mouse_new.webp" alt="mouse">
+							</div>
+						</a>
+					
+				</td>
+                <td>ImJustExisting</td>
+                <td>1216</td>
+                <td>17</td>
+                <td>4.5</td>
+                <td>26.5%</td>
+                <td>1287</td>
+                <td>-9</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>Oriol</td>
+                <td>1214</td>
+                <td>4</td>
+                <td>1.0</td>
+                <td>25.0%</td>
+                <td>1262</td>
+                <td>-14</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>Bodnamax</td>
+                <td>1214</td>
+                <td>4</td>
+                <td>1.0</td>
+                <td>25.0%</td>
+                <td>1214</td>
+                <td>66</td>
+            </tr>
+            
+            <tr data-tier="mouse" class="">
+                <td class="">
+                    61
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'mouse')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/mouse_new.webp" alt="mouse">
+							</div>
+						</a>
+					
+				</td>
+                <td>KuperMeister</td>
+                <td>1211</td>
+                <td>11</td>
+                <td>3.0</td>
+                <td>27.3%</td>
+                <td>1253</td>
+                <td>-8</td>
+            </tr>
+            
+            <tr data-tier="mouse" class="">
+                <td class="">
+                    62
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'mouse')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/mouse_new.webp" alt="mouse">
+							</div>
+						</a>
+					
+				</td>
+                <td>Ptitmxz</td>
+                <td>1210</td>
+                <td>24</td>
+                <td>6.0</td>
+                <td>25.0%</td>
+                <td>1314</td>
+                <td>-7</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>Sirius</td>
+                <td>1210</td>
+                <td>7</td>
+                <td>2.0</td>
+                <td>28.6%</td>
+                <td>1233</td>
+                <td>68</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>BjarkeHuse</td>
+                <td>1209</td>
+                <td>6</td>
+                <td>2.0</td>
+                <td>33.3%</td>
+                <td>1307</td>
+                <td>-14</td>
+            </tr>
+            
+            <tr data-tier="mouse" class="">
+                <td class="">
+                    63
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'mouse')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/mouse_new.webp" alt="mouse">
+							</div>
+						</a>
+					
+				</td>
+                <td>Nymmer</td>
+                <td>1208</td>
+                <td>10</td>
+                <td>2.0</td>
+                <td>20.0%</td>
+                <td>1243</td>
+                <td>-24</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>Awesem</td>
+                <td>1207</td>
+                <td>4</td>
+                <td>1.0</td>
+                <td>25.0%</td>
+                <td>1239</td>
+                <td>-15</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>CowOnAPlane</td>
+                <td>1205</td>
+                <td>7</td>
+                <td>1.0</td>
+                <td>14.3%</td>
+                <td>1205</td>
+                <td>72</td>
+            </tr>
+            
+            <tr data-tier="mouse" class="">
+                <td class="">
+                    64
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'mouse')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/mouse_new.webp" alt="mouse">
+							</div>
+						</a>
+					
+				</td>
+                <td>deejaythink</td>
+                <td>1204</td>
+                <td>10</td>
+                <td>2.0</td>
+                <td>20.0%</td>
+                <td>1239</td>
+                <td>-11</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>Karcher</td>
+                <td>1204</td>
+                <td>4</td>
+                <td>1.0</td>
+                <td>25.0%</td>
+                <td>1250</td>
+                <td>-26</td>
+            </tr>
+            
+            <tr data-tier="squirrel" class="">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'squirrel')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
+					
+				</td>
+                <td>BMPerJMPer</td>
+                <td>1199</td>
+                <td>32</td>
+                <td>8.0</td>
+                <td>25.0%</td>
+                <td>1428</td>
+                <td>-3</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>idk123</td>
+                <td>1197</td>
+                <td>5</td>
+                <td>1.0</td>
+                <td>20.0%</td>
+                <td>1211</td>
+                <td>-19</td>
+            </tr>
+            
+            <tr data-tier="squirrel" class="">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'squirrel')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
+					
+				</td>
+                <td>alevGO</td>
+                <td>1196</td>
+                <td>13</td>
+                <td>2.0</td>
+                <td>15.4%</td>
+                <td>1250</td>
+                <td>-6</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>FausDav</td>
+                <td>1192</td>
+                <td>5</td>
+                <td>1.0</td>
+                <td>20.0%</td>
+                <td>1239</td>
+                <td>-8</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>Mati92</td>
+                <td>1189</td>
+                <td>5</td>
+                <td>1.0</td>
+                <td>20.0%</td>
+                <td>1239</td>
+                <td>-14</td>
+            </tr>
+            
+            <tr data-tier="squirrel" class="">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'squirrel')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
+					
+				</td>
+                <td>secretpaths</td>
+                <td>1188</td>
+                <td>20</td>
+                <td>4.0</td>
+                <td>20.0%</td>
+                <td>1208</td>
+                <td>33</td>
+            </tr>
+            
+            <tr data-tier="squirrel" class="">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'squirrel')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
+					
+				</td>
+                <td>Youdge</td>
+                <td>1188</td>
+                <td>11</td>
+                <td>2.0</td>
+                <td>18.2%</td>
+                <td>1200</td>
+                <td>35</td>
+            </tr>
+            
+            <tr data-tier="squirrel" class="">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'squirrel')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
+					
+				</td>
+                <td>Peppy</td>
+                <td>1184</td>
+                <td>20</td>
+                <td>4.0</td>
+                <td>20.0%</td>
+                <td>1262</td>
+                <td>-9</td>
+            </tr>
+            
+            <tr data-tier="squirrel" class="">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'squirrel')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
+					
+				</td>
+                <td>micherin</td>
+                <td>1183</td>
+                <td>10</td>
+                <td>1.0</td>
+                <td>10.0%</td>
+                <td>1200</td>
+                <td>-10</td>
+            </tr>
+            
+            <tr data-tier="squirrel" class="">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'squirrel')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
+					
+				</td>
+                <td>fadingnovel</td>
+                <td>1182</td>
+                <td>37</td>
+                <td>8.0</td>
+                <td>21.6%</td>
+                <td>1297</td>
+                <td>-7</td>
+            </tr>
+            
+            <tr data-tier="squirrel" class="">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'squirrel')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
+					
+				</td>
+                <td>DelSol</td>
+                <td>1182</td>
+                <td>12</td>
+                <td>2.0</td>
+                <td>16.7%</td>
+                <td>1222</td>
+                <td>-10</td>
+            </tr>
+            
+            <tr data-tier="squirrel" class="">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'squirrel')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
+					
+				</td>
+                <td>Sebby</td>
+                <td>1182</td>
+                <td>23</td>
+                <td>6.0</td>
+                <td>26.1%</td>
+                <td>1291</td>
+                <td>-14</td>
+            </tr>
+            
+            <tr data-tier="squirrel" class="">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'squirrel')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
+					
+				</td>
+                <td>BaconBoy</td>
+                <td>1177</td>
+                <td>59</td>
+                <td>12.0</td>
+                <td>20.3%</td>
+                <td>1309</td>
+                <td>18</td>
+            </tr>
+            
+            <tr data-tier="squirrel" class="">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'squirrel')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
+					
+				</td>
+                <td>RFMerlo</td>
+                <td>1177</td>
+                <td>14</td>
+                <td>3.0</td>
+                <td>21.4%</td>
+                <td>1200</td>
+                <td>-9</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>StoneOfShame</td>
+                <td>1174</td>
+                <td>6</td>
+                <td>1.0</td>
+                <td>16.7%</td>
+                <td>1226</td>
+                <td>-20</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>Lobster</td>
+                <td>1169</td>
+                <td>8</td>
+                <td>1.0</td>
+                <td>12.5%</td>
+                <td>1230</td>
+                <td>-18</td>
+            </tr>
+            
+            <tr data-tier="squirrel" class="">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'squirrel')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
+					
+				</td>
+                <td>mouseinabox</td>
+                <td>1167</td>
+                <td>82</td>
+                <td>15.0</td>
+                <td>18.3%</td>
+                <td>1260</td>
+                <td>-2</td>
+            </tr>
+            
+            <tr data-tier="squirrel" class="">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'squirrel')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
+					
+				</td>
+                <td>BadScra</td>
+                <td>1167</td>
+                <td>20</td>
+                <td>4.0</td>
+                <td>20.0%</td>
+                <td>1344</td>
+                <td>-7</td>
+            </tr>
+            
+            <tr data-tier="squirrel" class="">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'squirrel')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
+					
+				</td>
+                <td>Jasiuńcio</td>
+                <td>1167</td>
+                <td>12</td>
+                <td>2.0</td>
+                <td>16.7%</td>
+                <td>1241</td>
+                <td>-7</td>
+            </tr>
+            
+            <tr data-tier="squirrel" class="">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'squirrel')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
+					
+				</td>
+                <td>Excitedteapot</td>
+                <td>1167</td>
+                <td>12</td>
+                <td>2.0</td>
+                <td>16.7%</td>
+                <td>1270</td>
+                <td>-13</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>brrrlinguist</td>
+                <td>1164</td>
+                <td>6</td>
+                <td>1.0</td>
+                <td>16.7%</td>
+                <td>1240</td>
+                <td>-19</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>Drinken</td>
+                <td>1163</td>
+                <td>7</td>
+                <td>1.0</td>
+                <td>14.3%</td>
+                <td>1200</td>
+                <td>64</td>
+            </tr>
+            
+            <tr data-tier="squirrel" class="">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'squirrel')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
+					
+				</td>
+                <td>LHlegend</td>
+                <td>1162</td>
+                <td>25</td>
+                <td>5.0</td>
+                <td>20.0%</td>
+                <td>1260</td>
+                <td>-5</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>Biggins96</td>
+                <td>1160</td>
+                <td>9</td>
+                <td>1.0</td>
+                <td>11.1%</td>
+                <td>1200</td>
+                <td>62</td>
+            </tr>
+            
+            <tr data-tier="squirrel" class="">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'squirrel')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
+					
+				</td>
+                <td>lumpyprol</td>
+                <td>1158</td>
+                <td>46</td>
+                <td>8.0</td>
+                <td>17.4%</td>
+                <td>1280</td>
+                <td>-5</td>
+            </tr>
+            
+            <tr data-tier="squirrel" class="">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'squirrel')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
+					
+				</td>
+                <td>DanzigMF</td>
+                <td>1157</td>
+                <td>49</td>
+                <td>8.0</td>
+                <td>16.3%</td>
+                <td>1214</td>
+                <td>-5</td>
+            </tr>
+            
+            <tr data-tier="squirrel" class="">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'squirrel')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
+					
+				</td>
+                <td>Odinius</td>
+                <td>1156</td>
+                <td>55</td>
+                <td>10.5</td>
+                <td>19.1%</td>
+                <td>1252</td>
+                <td>-4</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>Baradhas</td>
+                <td>1156</td>
+                <td>7</td>
+                <td>1.0</td>
+                <td>14.3%</td>
+                <td>1200</td>
+                <td>-17</td>
+            </tr>
+            
+            <tr data-tier="squirrel" class="">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'squirrel')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
+					
+				</td>
+                <td>Podge0303</td>
+                <td>1155</td>
+                <td>24</td>
+                <td>4.0</td>
+                <td>16.7%</td>
+                <td>1200</td>
+                <td>31</td>
+            </tr>
+            
+            <tr data-tier="squirrel" class="">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'squirrel')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
+					
+				</td>
+                <td>HobGungan</td>
+                <td>1154</td>
+                <td>85</td>
+                <td>16.5</td>
+                <td>19.4%</td>
+                <td>1244</td>
+                <td>16</td>
+            </tr>
+            
+            <tr data-tier="squirrel" class="">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'squirrel')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
+					
+				</td>
+                <td>FVMLion</td>
+                <td>1153</td>
+                <td>20</td>
+                <td>3.5</td>
+                <td>17.5%</td>
+                <td>1241</td>
+                <td>-7</td>
+            </tr>
+            
+            <tr data-tier="squirrel" class="">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'squirrel')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
+					
+				</td>
+                <td>WyvernElement</td>
+                <td>1152</td>
+                <td>24</td>
+                <td>4.0</td>
+                <td>16.7%</td>
+                <td>1255</td>
+                <td>-10</td>
+            </tr>
+            
+            <tr data-tier="squirrel" class="">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'squirrel')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
+					
+				</td>
+                <td>benssoon</td>
+                <td>1151</td>
+                <td>17</td>
+                <td>3.0</td>
+                <td>17.6%</td>
+                <td>1200</td>
+                <td>-9</td>
+            </tr>
+            
+            <tr data-tier="squirrel" class="">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'squirrel')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
+					
+				</td>
+                <td>MylesMoose</td>
+                <td>1151</td>
+                <td>27</td>
+                <td>5.0</td>
+                <td>18.5%</td>
+                <td>1277</td>
+                <td>-10</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>BugMuff44</td>
+                <td>1149</td>
+                <td>6</td>
+                <td>1.0</td>
+                <td>16.7%</td>
+                <td>1259</td>
+                <td>-21</td>
+            </tr>
+            
+            <tr data-tier="squirrel" class="">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'squirrel')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
+					
+				</td>
+                <td>TheFourthJesse</td>
+                <td>1143</td>
+                <td>17</td>
+                <td>2.0</td>
+                <td>11.8%</td>
+                <td>1243</td>
+                <td>-9</td>
+            </tr>
+            
+            <tr data-tier="squirrel" class="">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'squirrel')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
+					
+				</td>
+                <td>darkcat</td>
+                <td>1143</td>
+                <td>18</td>
+                <td>3.0</td>
+                <td>16.7%</td>
+                <td>1247</td>
+                <td>-7</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>marksoz00</td>
+                <td>1138</td>
+                <td>9</td>
+                <td>1.0</td>
+                <td>11.1%</td>
+                <td>1223</td>
+                <td>-9</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>Sharkskln</td>
+                <td>1136</td>
+                <td>9</td>
+                <td>1.0</td>
+                <td>11.1%</td>
+                <td>1200</td>
+                <td>-13</td>
+            </tr>
+            
+            <tr data-tier="squirrel" class="">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'squirrel')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
+					
+				</td>
+                <td>Wrestler</td>
+                <td>1134</td>
+                <td>49</td>
+                <td>8.0</td>
+                <td>16.3%</td>
+                <td>1231</td>
+                <td>-6</td>
+            </tr>
+            
+            <tr data-tier="squirrel" class="">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'squirrel')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
+					
+				</td>
+                <td>Hadjiya</td>
+                <td>1131</td>
+                <td>57</td>
+                <td>9.0</td>
+                <td>15.8%</td>
+                <td>1200</td>
+                <td>-2</td>
+            </tr>
+            
+            <tr data-tier="squirrel" class="">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'squirrel')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
+					
+				</td>
+                <td>Gagneto</td>
+                <td>1131</td>
+                <td>13</td>
+                <td>1.0</td>
+                <td>7.7%</td>
+                <td>1200</td>
+                <td>-6</td>
+            </tr>
+            
+            <tr data-tier="squirrel" class="">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'squirrel')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
+					
+				</td>
+                <td>ReoWulf</td>
+                <td>1127</td>
+                <td>19</td>
+                <td>3.0</td>
+                <td>15.8%</td>
+                <td>1310</td>
+                <td>-3</td>
+            </tr>
+            
+            <tr data-tier="squirrel" class="">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'squirrel')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
+					
+				</td>
+                <td>mkcy3</td>
+                <td>1122</td>
+                <td>16</td>
+                <td>2.0</td>
+                <td>12.5%</td>
+                <td>1243</td>
+                <td>-4</td>
+            </tr>
+            
+            <tr data-tier="squirrel" class="">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'squirrel')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
+					
+				</td>
+                <td>Hurple</td>
+                <td>1121</td>
+                <td>12</td>
+                <td>1.0</td>
+                <td>8.3%</td>
+                <td>1200</td>
+                <td>-6</td>
+            </tr>
+            
+            <tr data-tier="squirrel" class="">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'squirrel')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
+					
+				</td>
+                <td>Banzai7000</td>
+                <td>1121</td>
+                <td>15</td>
+                <td>1.0</td>
+                <td>6.7%</td>
+                <td>1200</td>
+                <td>-3</td>
+            </tr>
+            
+            <tr data-tier="squirrel" class="">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'squirrel')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
+					
+				</td>
+                <td>Piechu</td>
+                <td>1113</td>
+                <td>49</td>
+                <td>7.0</td>
+                <td>14.3%</td>
+                <td>1236</td>
+                <td>-8</td>
+            </tr>
+            
+            <tr data-tier="squirrel" class="">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'squirrel')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
+					
+				</td>
+                <td>FakeSki</td>
+                <td>1112</td>
+                <td>24</td>
+                <td>2.5</td>
+                <td>10.4%</td>
+                <td>1313</td>
+                <td>-3</td>
+            </tr>
+            
+            <tr data-tier="squirrel" class="">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'squirrel')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
+					
+				</td>
+                <td>ellbelle</td>
+                <td>1107</td>
+                <td>13</td>
+                <td>1.0</td>
+                <td>7.7%</td>
+                <td>1200</td>
+                <td>-5</td>
+            </tr>
+            
+            <tr data-tier="squirrel" class="">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'squirrel')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
+					
+				</td>
+                <td>PlagueCarrier</td>
+                <td>1106</td>
+                <td>31</td>
+                <td>4.0</td>
+                <td>12.9%</td>
+                <td>1200</td>
+                <td>-4</td>
+            </tr>
+            
+            <tr data-tier="squirrel" class="">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'squirrel')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
+					
+				</td>
+                <td>Oppapi</td>
+                <td>1103</td>
+                <td>30</td>
+                <td>4.0</td>
+                <td>13.3%</td>
+                <td>1200</td>
+                <td>-8</td>
+            </tr>
+            
+            <tr data-tier="squirrel" class="">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'squirrel')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
+					
+				</td>
+                <td>TonyDeloreanESQ</td>
+                <td>1103</td>
+                <td>51</td>
+                <td>5.0</td>
+                <td>9.8%</td>
+                <td>1200</td>
+                <td>-2</td>
+            </tr>
+            
+            <tr data-tier="squirrel" class="">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'squirrel')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
+					
+				</td>
+                <td>Wubba</td>
+                <td>1098</td>
+                <td>22</td>
+                <td>2.0</td>
+                <td>9.1%</td>
+                <td>1200</td>
+                <td>-9</td>
+            </tr>
+            
+            <tr data-tier="squirrel" class="">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'squirrel')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
+					
+				</td>
+                <td>Dandel</td>
+                <td>1098</td>
+                <td>25</td>
+                <td>3.0</td>
+                <td>12.0%</td>
+                <td>1200</td>
+                <td>34</td>
+            </tr>
+            
+            <tr data-tier="squirrel" class="">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'squirrel')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
+					
+				</td>
+                <td>DarthOblivius</td>
+                <td>1097</td>
+                <td>55</td>
+                <td>4.0</td>
+                <td>7.3%</td>
+                <td>1200</td>
+                <td>-1</td>
+            </tr>
+            
+            <tr data-tier="squirrel" class="">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'squirrel')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
+					
+				</td>
+                <td>Klishu</td>
+                <td>1083</td>
+                <td>32</td>
+                <td>3.0</td>
+                <td>9.4%</td>
+                <td>1200</td>
+                <td>-6</td>
+            </tr>
+            
+            <tr data-tier="squirrel" class="">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'squirrel')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
+					
+				</td>
+                <td>tunnndz</td>
+                <td>1082</td>
+                <td>26</td>
+                <td>2.0</td>
+                <td>7.7%</td>
+                <td>1261</td>
+                <td>-5</td>
+            </tr>
+            
+            <tr data-tier="squirrel" class="">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'squirrel')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
+					
+				</td>
+                <td>100pctskillz</td>
+                <td>1064</td>
+                <td>46</td>
+                <td>6.0</td>
+                <td>13.0%</td>
+                <td>1241</td>
+                <td>-6</td>
+            </tr>
+            
+            <tr data-tier="squirrel" class="">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'squirrel')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
+					
+				</td>
+                <td>Wriggleroom</td>
+                <td>1064</td>
+                <td>53</td>
+                <td>4.0</td>
+                <td>7.5%</td>
+                <td>1200</td>
+                <td>-2</td>
+            </tr>
+            
+            <tr data-tier="squirrel" class="">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'squirrel')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
+					
+				</td>
+                <td>DawnDiVito</td>
+                <td>1050</td>
+                <td>54</td>
+                <td>4.0</td>
+                <td>7.4%</td>
+                <td>1200</td>
+                <td>-1</td>
+            </tr>
+            
+            <tr data-tier="squirrel" class="">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'squirrel')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
+					
+				</td>
+                <td>Munchking</td>
+                <td>1044</td>
+                <td>27</td>
+                <td>1.0</td>
+                <td>3.7%</td>
+                <td>1200</td>
+                <td>-5</td>
+            </tr>
+            
+            <tr data-tier="squirrel" class="">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'squirrel')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
+					
+				</td>
+                <td>cjahwon</td>
+                <td>1035</td>
+                <td>43</td>
+                <td>2.0</td>
+                <td>4.7%</td>
+                <td>1200</td>
+                <td>-6</td>
+            </tr>
+            
+            <tr data-tier="squirrel" class="">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'squirrel')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
+					
+				</td>
+                <td>BaliHoo</td>
+                <td>1035</td>
+                <td>34</td>
+                <td>2.0</td>
+                <td>5.9%</td>
+                <td>1200</td>
+                <td>-4</td>
+            </tr>
+            
+            <tr data-tier="squirrel" class="">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'squirrel')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/squirrel.webp" alt="squirrel">
+							</div>
+						</a>
+					
+				</td>
+                <td>buurn</td>
+                <td>1024</td>
+                <td>87</td>
+                <td>8.0</td>
+                <td>9.2%</td>
+                <td>1316</td>
+                <td>-1</td>
+            </tr>
+            
+        </tbody>
+    </table>
+
+            </main>
+        </div>
+        
+        <div class="screen-deco left-deco">
+			
+				<img src="assets/images/leaderboard_img_left.webp" alt="Decoration Left">
+			
+		</div>
+
+        <footer class="app-footer window-box">
+			<div class="footer-content">
+				<div class="footer-credits">
+					<span>Powered by <strong>Tʀɪᴄʜᴏʟᴏᴍᴇ</strong></span>
+					<span>Woodland visions by <a class="cl" href="cache.html">𝕩𝕝𝕦𝕖𝕧𝕚</a></span>
+				</div>
+				<div class="footer-date">Updated on 2026-04-12 07:03 UTC</div>
+			</div>
+		</footer>
+    </div>
+    
+    <div id="tierModal" class="modal-overlay">
+		<div class="modal-content window-box">
+			<button class="modal-close" aria-label="Close">&times;</button>
+			<div id="modalBody">
+				<div class="modal-image-side">
+					<img id="modalIcon" src="" alt="Tier Icon">
+				</div>
+				
+				<div class="modal-text-side">
+					<div class="title-row">
+						<h2 id="modalTitle"></h2>
+						<h3 id="modalElo"></h3>
+					</div>
+					<div id="modalSubtitle"></div>
+					<div class="modal-divider"></div>
+					<div id="modalText"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div id="mystic-gate"></div>
+
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+	
+	<script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+    
+    <script>
+		const CONFIG = {
+			colors: {"bird": "#7AB5E0", "default": "#7A7347", "fox": "#E55555", "mouse": "#F49E52", "rabbit": "#F2C14E", "squirrel": "#94C160", "stag": "#C686FF"},
+			icons: {"bird": "assets/icons/bird_new.webp", "fox": "assets/icons/fox_new.webp", "mouse": "assets/icons/mouse_new.webp", "rabbit": "assets/icons/rabbit_new.webp", "squirrel": "assets/icons/squirrel.webp", "stag": "assets/icons/stag.webp"},
+			currentTier: "bird"
+		};
+	</script>
+		
+    <script src="static/script.js"></script>
+    
+<script>
+$(document).ready(function() {
+    $.extend($.fn.dataTable.ext.type.order, { "rank-pre": function (d) { return d === "-" ? 9999 : parseInt(d); } });
+
+    $('#leaderboard').DataTable({
+        "order": [[3, "desc"]],
+        "responsive": true, 
+        "pageLength": 50,
+        "dom": '<"top"lf>rt<"bottom"ip><"clear">',
+        "columnDefs": [ 
+            { "targets": 0, "type": "rank" },
+            { "targets": 2, "className": "player-name-cell" },
+			{ "targets": 3, "className": "elo-cell" },
+            { "responsivePriority": 1, "targets": [2, 3] },
+            { "responsivePriority": 2, "targets": 0 },
+            { "responsivePriority": 3, "targets": 1 },
+			{ "responsivePriority": 8, "targets": 6 },
+            { "responsivePriority": 10, "targets": [4, 5, 7, 8] }
+        ],
+        "language": {
+        "searchPlaceholder": "Player name"
+        }
+    });
+});
+</script>
+
+</body>
+</html>

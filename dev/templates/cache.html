@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="codex-section">
+	
+	<div class="mystic-section">
+		<h2>The Hall of Fame</h2>
+		<p>Through shifting seasons and falling leaves, they remained. A tribute to the spirits who stood tall.</p>
+		
+		<table id="leaderboard" class="display nowrap" style="width:100%">
+			<thead>
+				<tr>
+					<th>Tier</th>
+					<th>Player</th>
+					<th>Best Streak</th>
+					<th>Peak Elo</th>
+					<th>Start</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for s in hall_of_fame %}
+				<tr data-tier="{{ s.tier }}">
+					<td>
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, '{{ s.tier }}')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="{{ config.assets.icons[s.tier] }}" alt="{{ s.tier }}">
+							</div>
+						</a>
+					</td>
+					<td>{{ s.player }}</td>
+					<td>
+						<span class="streak-badge">{{ s.streak_count }}</span>
+					</td>
+					<td>{{ s.peak }}</td>
+					<td>{{ s.ascension }}</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+	
+	<div id="berry-section">
+		<h2>The Mystic Berry</h2>
+		<p>Some secrets are juicier than others. Can you feel the pulse?</p>
+		<div class="tier-interaction-wrapper">
+			<a href="javascript:void(0)" id="berry-secret" onclick="openTierModal('stag')" class="nut-trigger js-double-tap">
+				<span class="nut-tooltip">Squish it!</span>
+				<img src="assets/images/berry.webp" alt="Giant Berry" class="nut-sprite">
+			</a>
+		</div>
+	</div>
+	
+	<p class="enigma">
+		<span>What is this place?</span>
+		<span>Step into the shade.</span>
+		<span>Look beneath the leaves.</span>
+		<a class="cl" href="javascript:void(0)" id="watcher-secret">Seek the silent watcher.</a>
+	</p>
+	
+    <div class="artist-story">
+        <h2>The Silent Chronicler</h2>
+        <p>Here, where the <span class="cipher" data-word="roots">roots</span> run deep and the wild grows dense, <strong>𝕩𝕝𝕦𝕖𝕧𝕚</strong> sits hidden in the green. With a prolific brush and a warm smile, he captures the flutter of every wing and the twitch of every whisker. He breathes life into the <span class="cipher" data-word="spirit">spirit</span> of the Woodland, celebrating its teeming diversity with every stroke.</p>
+		<p><span class="cipher" data-word="quiet">A quiet</span> reminder that beyond the league's grand stakes, no critter is too small to be seen!</p>
+    </div>
+	
+	<div id="nut-section">
+		<h2>The Secret Nut</h2>
+		<p>No rank? No stress. We haven't forgotten you!</p>
+		<div class="tier-interaction-wrapper">
+			<a href="javascript:void(0)" id="nut-secret" onclick="openTierModal('squirrel')" class="nut-trigger js-double-tap">
+				<span class="nut-tooltip">Crack it!</span>
+				<img src="assets/images/nut.webp" alt="Giant Nut" class="nut-sprite">
+			</a>
+		</div>
+	</div>
+	
+	<section class="exit-section">
+		<h2>Back to the Clearings</h2>
+		<p>Do you wish to return to the simple order of the Woodland as you know it?</p>		
+		<button id="leave-secrets" class="btn-reset">
+			Leave and forget this place
+		</button>
+	</section>
+	
+</div>
+
+{% endblock %}
+
+{% block custom_js %}
+<script>
+$(document).ready(function() {
+    $('#leaderboard').DataTable({
+        "responsive": true, 
+        "pageLength": 10,
+        "dom": '<"top"lf>rt<"bottom"ip><"clear">',
+        "columnDefs": [ 
+            { "targets": 1, "className": "player-name-cell" },
+			{ "targets": 3, "className": "elo-cell" },
+            { "responsivePriority": 1, "targets": [1, 2] },
+            { "responsivePriority": 2, "targets": 0 },
+            { "targets": 0, "orderable": false }
+        ]
+    });
+});
+</script>
+{% endblock %}
