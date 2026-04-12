@@ -513,7 +513,7 @@ render_page(
 render_page(
     "cache.html", "cache.html", title="Undergrowth • Rootelo", page_id="cache",
     is_archive=False, has_seasons=False, page_heading="Undergrowth",
-    description="A sanctuary for the critters who&nbsp;never&nbsp;sought&nbsp;a&nbsp;crown.",
+    description="A sanctuary for the critters who&nbsp;never&nbsp;sought&nbsp;a&nbsp;<span class='cipher' data-word='crown'>crown</span>.",
     hall_of_fame=hall_of_fame_data
 )
 
