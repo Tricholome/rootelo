@@ -1157,8 +1157,9 @@ body[data-page="cache"].ciphers-found {
 .hof-access-btn {
     display: none;
     opacity: 0;
-    cursor: default;
-    pointer-events: none;
+	position: relative;
+    cursor: help;
+    pointer-events: auto;
     text-decoration: none;
     font-size: var(--size-sm);
     font-weight: var(--medium);
