@@ -344,7 +344,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     $(gate).fadeIn(600, function() {
                         body.classList.add('ciphers-found');
                         localStorage.setItem('ciphers-found', 'true');
-						$('#leaderboard').DataTable().responsive.recalc();
                         updateMysticUI();
 						checkFinalCompletion();
 
@@ -380,6 +379,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 			body.classList.add('hof-unlocked');
 			localStorage.setItem('hof-unlocked', 'true');
+			$('#leaderboard').DataTable().responsive.recalc();
 			if (typeof initStardust === "function") initStardust();
 		});
 	}
