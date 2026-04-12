@@ -108,8 +108,9 @@ $(document).ready(function() {
         "columnDefs": [ 
             { "targets": 1, "className": "player-name-cell" },
 			{ "targets": 3, "className": "elo-cell" },
-            { "responsivePriority": 1, "targets": [1, 2] },
+            { "responsivePriority": 1, "targets": [1, 2, 3] },
             { "responsivePriority": 2, "targets": 0 },
+			{ "responsivePriority": 3, "targets": 4 },
             { "targets": 0, "orderable": false }
         ]
     });
