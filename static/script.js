@@ -264,7 +264,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (intro) {
                 const titleEl = intro.querySelector('h2');
                 const descEl = intro.querySelector('p');
-                if (titleEl) titleEl.textContent = "Mystic Sward";
+                if (titleEl) titleEl.textContent = "Glade of Fame";
                 if (descEl) descEl.textContent = "Silent roots remember every crown.";
             }
             document.title = "Mystic Sward • Rootelo";
