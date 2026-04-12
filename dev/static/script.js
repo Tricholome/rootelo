@@ -321,7 +321,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- 6. THE CIPHER SEQUENCE & CURTAIN ---
-    const secretSequence = ['silent', 'roots', 'every', 'critter'];
+    const secretSequence = ['silent', 'roots', 'every', 'crown'];
     let userProgress = [];
     let isResetting = false;
 
