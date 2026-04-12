@@ -618,6 +618,7 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     }
     table.dataTable td:nth-child(4) { padding-right: 10px !important; min-width: 55px; }
     .lineup-cell { padding-left: 10px !important; }
+	.streak-cell { font-size: var(--size-base) !important; }
 }
 
 /* =========================================================================
