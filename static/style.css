@@ -941,8 +941,7 @@ body[data-page="cache"].watcher-found .enigma {
 
 body[data-page="cache"] .page-intro, 
 body .artist-story-green,
-body .artist-story-purple,
-body.ciphers-found .artist-story-green {
+body .artist-story-purple {
     display: none;
     opacity: 0;
     transform: translateY(20px);
@@ -950,7 +949,7 @@ body.ciphers-found .artist-story-green {
 }
 
 body[data-page="cache"].watcher-found .page-intro, 
-body.watcher-found .artist-story-green,
+body.watcher-found:not(.ciphers-found) .artist-story-green,
 body.ciphers-found .artist-story-purple {
     display: block;
     opacity: 1;
