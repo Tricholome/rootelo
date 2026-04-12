@@ -600,12 +600,11 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 }
 
 /* --- F. Specifics (Hall of Fame) --- */
-.streak-badge {
-    padding: 6px;
-    border-radius: 8px;
-    font-weight: var(--medium);
+.streak-cell {
+	color: var(--text-bright);
+	font-size: var(--size-md);
+    font-weight: var(--bold);
 	font-family: var(--font-mono);
-    border: 1px solid var(--text-muted);
 }
 
 /* --- G. Responsive --- */
