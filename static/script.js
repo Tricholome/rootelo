@@ -362,7 +362,7 @@ document.addEventListener('DOMContentLoaded', () => {
 							c.classList.remove('active-cipher', 'cipher-blink');
 						});
 					}, 500);
-				}, 2000);
+				}, 3000);
             }
         });
     });
