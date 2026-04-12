@@ -382,28 +382,25 @@ document.addEventListener('DOMContentLoaded', () => {
 	}
 
 	// --- 7. THE EXIT DOOR ---
-	document.querySelector('#leave-secrets').addEventListener('click', (e) => {
-		// On vérifie le tactile et l'état expanded
-		if (('ontouchstart' in window) && !e.currentTarget.classList.contains('expanded')) {
-			return; 
+	function handleExit(e) {
+		const btn = e.currentTarget;
+		const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+
+		if (isTouch && !btn.classList.contains('expanded')) {
+			return;
 		}
 
-		// EMPECHE LA REDIRECTION IMMEDIATE
-		e.preventDefault(); 
+		e.preventDefault();
 
-		// RESET LOGIC
 		localStorage.clear();
-
-		// NETTOYAGE DU BODY
 		document.body.classList.remove(
 			'is-at-bottom', 'is-scrolled', 'secrets-started', 
 			'watcher-found', 'nut-found', 'berry-found', 
 			'ciphers-found', 'secrets-ended', 'hof-unlocked'
 		);
 
-		// REDIRECTION MANUELLE (Une fois le ménage fait)
-		window.location.href = 'index.html'; 
-	});
+		window.location.href = btn.getAttribute('href');
+	}
 
 });
 
