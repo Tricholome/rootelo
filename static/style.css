@@ -344,8 +344,7 @@ a.cl:hover { border-bottom: 1px solid var(--main-color); color: var(--main-color
     
     .banner-icons.left a.tooltip-link.expanded img { transform: translateY(-8px) scale(1.4) rotate(-8deg) !important; position: relative; z-index: 100; }
     .banner-icons.right a.tooltip-link.expanded img { transform: translateY(-8px) scale(1.4) rotate(8deg) !important; position: relative; z-index: 100; }
-    
-    .tooltip-text { display: none; }
+
     .banner-icons a.tooltip-link.expanded .tooltip-text {
         display: block !important;
         bottom: 115%; transform: none; width: 150px;
@@ -1100,7 +1099,6 @@ body.berry-found .banner-icons a.tooltip-link.banner-icon-stag {
 
 /* --- 5. Exit Door --- */
 .exit-section {
-	margin-top: 40px;
     display: none;
     opacity: 0;
     transition: opacity 1s ease-in-out;
@@ -1108,6 +1106,7 @@ body.berry-found .banner-icons a.tooltip-link.banner-icon-stag {
 
 body.secrets-started .exit-section {
     display: block;
+	margin-top: 80px;
     opacity: 1;
 }
 
