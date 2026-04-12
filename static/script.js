@@ -386,20 +386,28 @@ document.addEventListener('DOMContentLoaded', () => {
 		const btn = e.currentTarget;
 		const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
 
-		if (isTouch && !btn.classList.contains('expanded')) {
-			return;
+		// Cas Mobile : On ne nettoie QUE si le tooltip est déjà visible (2ème tap)
+		if (isTouch) {
+			if (!btn.classList.contains('expanded')) {
+				// C'est le 1er clic, on ne fait RIEN. 
+				// On laisse la Section 2 afficher le tooltip.
+				return; 
+			}
 		}
 
-		e.preventDefault();
-
+		// Si on arrive ici, c'est soit le 2ème clic mobile, soit un clic Desktop.
+		// ON NETTOIE ENFIN.
 		localStorage.clear();
+		
 		document.body.classList.remove(
 			'is-at-bottom', 'is-scrolled', 'secrets-started', 
 			'watcher-found', 'nut-found', 'berry-found', 
 			'ciphers-found', 'secrets-ended', 'hof-unlocked'
 		);
-
-		window.location.href = btn.getAttribute('href');
+		
+		// Pas besoin de e.preventDefault() ou window.location ici, 
+		// le href="index.html" naturel du lien va prendre le relais 
+		// juste après l'exécution de cette fonction.
 	}
 
 });
