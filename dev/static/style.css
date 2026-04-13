@@ -941,7 +941,7 @@ tr[data-tier="stag"] td:nth-child(4)     { color: var(--color-stag) !important; 
 
 /* --- 1. Exit Door --- */
 .exit-door {
-	margin-top: 20px;
+	margin-top: 40px;
 	margin-bottom: 20px;
 }
 
@@ -1096,7 +1096,7 @@ body.watcher-found .nav-secret {
 @media (max-width: 768px) {
     .fruit-interaction-wrapper {
         justify-content: center;
-        padding: 0 0 40px; 
+        padding: 0 0 30px; 
     }
 	
 	.fruit-trigger.expanded {
