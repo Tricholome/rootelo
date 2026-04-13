@@ -1057,9 +1057,11 @@ body.watcher-found .nav-secret {
 
 @media (hover: hover) and (pointer: fine) {
     .fruit-trigger:hover {
-        transform: scale(1.6) translateY(10px);
+        transform: scale(1.6);
+        padding-top: 40px;
+        padding-bottom: 80px;
     }
-
+	
     .fruit-trigger:hover .fruit-sprite {
         filter: drop-shadow(0 25px 40px rgba(0, 0, 0, 0.7));
     }
