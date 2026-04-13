@@ -1,441 +1,1310 @@
+
 /* =========================================================================
-   ROOTELO - JAVASCRIPT
+   ROOTELO - MAIN STYLESHEET
    Table of Contents:
-   1. Dynamic Scroll
-   2. Double-tap
-   3. Tier Modal
-   4. Secrets Engine
-   5. Nut & Berry
-   6. Stardust Generator
-
+   0. Text Utilities
+   1. Global Styles & Wallpaper
+   2. Layout & Containers
+   3. Background Decorations
+   4. Typography & UI Elements
+   5. Header, Banner & Tooltips
+   6. Navigation & Buttons
+   7. DataTables (Global, Leaderboard, Matches)
+   8. Chart (Trends)
+   9. Codex & Static Content (About page)
+   10. Modals
+   11. Tier-based Coloration
+   12. Hidden Content & Secrets
    ========================================================================= */
    
 /* =========================================================================
-   --- 1. DYNAMIC SCROLL ---
+   --- 0. TEXT UTILITIES ---
    ========================================================================= */
 
-// Dynamic Scroll & Gesture Management
-// Variables to track touch positions and scroll direction
-let touchStartY = 0;
-let lastScrollY = window.scrollY;
+/* Alignment */
+.text-left    { text-align: left !important; }
+.text-center  { text-align: center !important; }
 
-// 1. Capture the initial touch position on the physical screen (clientY)
-// Using clientY instead of pageY makes it immune to overscroll/bounce effects
-window.addEventListener('touchstart', (e) => {
-    touchStartY = e.touches[0].clientY; 
-}, { passive: true });
+/* Weights */
+.text-bold    { font-weight: var(--bold) !important; } 
+.text-medium  { font-weight: var(--medium) !important; } 
+.text-normal  { font-weight: var(--normal) !important; }
 
-// 2. Handle specific swipe gestures for the bottom image reveal
-window.addEventListener('touchmove', (e) => {
-    const isMobile = window.innerWidth < 1100;
-    if (!isMobile) return;
+/* Colors */
+.text-bright  { color: var(--text-bright) !important; }    
+.text-main   { color: var(--text-main) !important; }
+.text-theme  { color: var(--main-color) !important; }
+.text-muted   { color: var(--text-muted) !important; }
 
-    const currentY = e.touches[0].clientY;
-    const hasClass = document.body.classList.contains('is-at-bottom');
-
-    if (hasClass && (currentY - touchStartY) > 40) {
-        document.body.classList.remove('is-at-bottom');
-        return; // Exit early
-    }
-
-    const windowHeight = window.innerHeight;
-    const docHeight = document.documentElement.scrollHeight;
-    // 15px margin to ensure it triggers even with minor calculation rounding
-    const isAtBottom = Math.ceil(windowHeight + window.scrollY) >= (docHeight - 15);
-
-    // If at the bottom AND swiping UP intentionally (finger moves up by more than 70px)
-    if (isAtBottom && !hasClass && (touchStartY - currentY) > 70) {
-        document.body.classList.add('is-at-bottom');
-    }
-}, { passive: true });
-
-// 3. Handle standard scrolling (Header logic + Fallback reset)
-window.addEventListener('scroll', () => {
-    const currentScrollY = window.scrollY;
-    const isMobile = window.innerWidth < 1100;
-
-    // Set CSS variable for dynamic scroll effects
-    document.body.style.setProperty('--scroll', currentScrollY);
-
-    // Header logic: toggle class when scrolling past 30px
-    if (currentScrollY > 30) {
-        document.body.classList.add('is-scrolled');
-    } else {
-        document.body.classList.remove('is-scrolled');
-    }
-
-    if (isMobile && document.body.classList.contains('is-at-bottom')) {
-        // If the current scroll position is higher than the previous one (scrolling up)
-        if (currentScrollY < lastScrollY - 10) {
-            document.body.classList.remove('is-at-bottom');
-        }
-    }
-    
-    // Update last scroll position for the next event check
-    lastScrollY = currentScrollY;
-}, { passive: true });
+/* Sizes */
+.text-sm     { font-size: var(--size-sm); }
+.text-base   { font-size: var(--size-base); }
+.text-lg     { font-size: var(--size-lg); }
+.text-xl     { font-size: var(--size-xl); }
+   
 
 /* =========================================================================
-   --- 2. DOUBLE-TAP ---
+   --- 1. GLOBAL STYLES & WALLPAPER ---
    ========================================================================= */
    
-document.addEventListener("DOMContentLoaded", function() {
-    const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (window.matchMedia("(hover: none)").matches);
+html {
+    scroll-behavior: smooth;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+	background-color: var(--bg-overlay-bottom);
+}
 
-    if (isTouchDevice) {
-        // On écoute sur le body pour capter même les icônes créées par DataTables
-        document.body.addEventListener('click', function(e) {
-            // On cherche si on a cliqué sur un lien double-tap
-            const link = e.target.closest('.js-double-tap');
+body {
+    position: relative;
+	z-index: 0;
+	
+    background-color: var(--main-color);
+    background-image: url('../assets/images/pattern.webp');
+    background-repeat: repeat;
+    background-position: center;
+    background-size: 350px;
+    background-attachment: fixed;
+	
+	font-family: var(--font-ui);
+    font-weight: var(--normal);
+    color: var(--text-muted);
+    font-size: var(--size-base);
+	
+	min-height: 100vh;
+    min-height: 100dvh;
+    text-align: center;
+	margin: 0;
+    overflow-x: hidden;
+}
 
-            // 1. Si on clique ailleurs : on ferme tout
-            if (!link) {
-                document.querySelectorAll('.js-double-tap.expanded').forEach(l => l.classList.remove('expanded'));
-                return;
-            }
-
-            // 2. Si on clique sur une icône
-            if (!link.classList.contains('expanded')) {
-                // PREMIER TAP
-                e.preventDefault();
-                e.stopPropagation();
-
-                // On ferme les autres
-                document.querySelectorAll('.js-double-tap.expanded').forEach(l => l.classList.remove('expanded'));
-                
-                // On ouvre celle-ci
-                link.classList.add('expanded');
-            } else {
-                // DEUXIÈME TAP
-                // On laisse le comportement naturel (onclick du HTML ou href)
-                link.classList.remove('expanded');
-            }
-        }, true); // Le "true" ici permet d'intercepter avant DataTables
-    }
-});
+body::after {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: none;
+    background: linear-gradient(to bottom, var(--bg-overlay-top), var(--bg-overlay-bottom));
+    mix-blend-mode: multiply;
+    opacity: 1; 
+}
 
 /* =========================================================================
-   --- 3. TIER MODAL ---
+   --- 2. LAYOUT & CONTAINERS ---
    ========================================================================= */
-		
-// Tier Modal		
-document.addEventListener('DOMContentLoaded', function() {
-	const modal = document.getElementById('tierModal');
-	const modalBody = document.getElementById('modalBody');
-	const closeBtn = document.querySelector('.modal-close');
+.container {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: visible;
+}
 
-	// Dictionnaire des textes exacts (About)
-	const tierTexts = {
-		'bird': {
-			name: 'Bird',
-			elo: '1500+',
-			subtitle: 'The Grandmasters',
-			desc: 'These elite sovereigns sit at the absolute pinnacle of the Woodland canopy. Remaining on this prestigious throne is a dizzying battle against shifting winds and ambitious rivals. They rule the skies by maintaining flawless execution and unerring control under pressure.'
-		},
-		'fox': {
-			name: 'Fox',
-			elo: '1400+',
-			subtitle: 'The Cunning Tacticians',
-			desc: 'These keen strategists dominate the ladder by thriving on sharp wit over brute force. The hunt presses close from all sides, and a single moment of hesitation can prove fatal. They prevail by measuring every step with care and exploiting weakness with signature flair.'
-		},
-		'rabbit': {
-			name: 'Rabbit',
-			elo: '1300+',
-			subtitle: 'The Agile Contenders',
-			desc: 'These nimble wanderers gracefully weave through the crowded paths of the rankings. Routine strategies falter here, threatening to trap anyone who cannot adapt to sudden chaos. They leap ahead where others see only barriers, turning dead ends into daring escapes.'
-		},
-		'mouse': {
-			name: 'Mouse',
-			elo: '1200+',
-			subtitle: 'The Steady Foragers',
-			desc: 'These resilient souls rise above the casual fray to mark a milestone of mastery. The wild now demands pure stamina, where early momentum easily fades into exhaustion. They hold their ground through quiet consistency, proving that patience outlasts blind luck.'
-		},
-		'squirrel': {
-			name: 'Squirrel',
-			elo: '< 1200',
-			subtitle: 'The Hapless Stragglers',
-			desc: 'These frantic collectors dwell in the tangled undergrowth of the ranking system. Clumsy errors and brutal defeats often force them to fall back while fiercer beasts surge ahead. Yet, they bravely endure by turning every painful lesson into a seed for next season’s harvest.'
-		},
-		'stag': {
-			name: 'Stag',
-			elo: '1600+',
-			subtitle: 'The Legend',
-			desc: 'Has anyone truly seen this mythical beast, or is it only an echo of the wild? What happens to the predator when the woods turn hollow and every path leads back to a mirror of its own perfection? With nothing left to be claimed, is the true crown the silence that follows the chase?'
-		}
-	};
+.window-box {
+    position: relative;
+    z-index: 10;
+    width: 95%;
+    max-width: var(--window-max-width);
+    margin: var(--window-gap) auto;
+    background: color-mix(in srgb, var(--main-color) 10%, var(--glass-bg));
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    box-sizing: border-box;
+    box-shadow: inset 0 2px 0 0 color-mix(in srgb, var(--main-color) 70%, transparent), var(--glass-shadow);
+	padding: var(--window-padding);
+}
 
-	// On récupère les couleurs et icônes depuis l'objet CONFIG créé dans le HTML
-		const tierColors = CONFIG.colors;
-		const tierIcons = CONFIG.icons;
+.footer-credits {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 15px;
+}
 
-	window.openTierModal = function(tier) {
-		const text = tierTexts[tier];
-		const color = tierColors[tier] || tierColors['default'];
-		const icon = tierIcons[tier];
+.footer-credits span:first-child::after {
+    content: "|";
+    margin-left: 15px;
+    color: var(--text-muted);
+}
 
-		if (!text) return;
+.footer-credits strong {
+    color: var(--text-main);
+    font-weight: var(--medium);
+	letter-spacing: var(--track-slight);
+}
 
-		const modalContent = modal.querySelector('.modal-content');
-    	modalContent.style.setProperty('--tier-color', color);
+.footer-date {
+    font-style: italic;
+    opacity: 0.6;
+    font-size: var(--size-sm);
+}
 
-		// On cible les éléments déjà existants dans le HTML
-		const modalTitle = document.getElementById('modalTitle');
-		const modalElo = document.getElementById('modalElo');
-		const modalIcon = document.getElementById('modalIcon');
-		const modalSubtitle = document.getElementById('modalSubtitle');
-		const modalText = document.getElementById('modalText');
-
-		modalTitle.textContent = text.name;
-		
-		modalElo.textContent = text.elo;
-		modalElo.style.color = color;
-		
-		modalIcon.src = icon;
-		
-		modalSubtitle.textContent = text.subtitle;
-		
-		modalText.textContent = text.desc;
-
-		modal.style.display = 'flex';
-		document.body.style.overflow = 'hidden';
-	};
-
-	const closeModal = () => {
-		modal.style.display = 'none';
-		document.body.style.overflow = 'auto';
-	};
-
-	if (closeBtn) closeBtn.onclick = closeModal;
-	window.onclick = (event) => { if (event.target == modal) closeModal(); };
-});
-
-
-/* =========================================================================
-   --- 4. SECRETS ENGINE ---
-   ========================================================================= */
-
-document.addEventListener('DOMContentLoaded', () => {
-    const body = document.body;
-	
-    // --- 0. FINAL COMPLETION ---
-    function checkFinalCompletion() {
-        const required = ['watcher-found', 'nut-found', 'berry-found', 'ciphers-found'];
-        const allFound = required.every(key => localStorage.getItem(key) === 'true');
-
-        if (allFound) {
-            body.classList.add('secrets-ended');
-            localStorage.setItem('secrets-ended', 'true');
-        }
+@media (max-width: 768px) {
+    .footer-credits {
+        flex-direction: column;
+        gap: 5px;
     }
-
-    // --- 1. PERSISTENCE CHECK ---
-    const isEnded = localStorage.getItem('secrets-ended') === 'true';
-    const isWatcherFound = localStorage.getItem('watcher-found') === 'true';
-    const isNutFound = localStorage.getItem('nut-found') === 'true';
-    const isBerryFound = localStorage.getItem('berry-found') === 'true';
-    const isCiphersFound = localStorage.getItem('ciphers-found') === 'true';
-    const isHofUnlocked = localStorage.getItem('hof-unlocked') === 'true';
-
-    // Specific states
-    if (isWatcherFound) body.classList.add('watcher-found');
-    if (isNutFound) body.classList.add('nut-found');
-    if (isBerryFound) body.classList.add('berry-found');
-    if (isCiphersFound) {
-        body.classList.add('ciphers-found');
-        updateMysticUI();
-    }
-    
-    // Final state
-    if (isEnded) body.classList.add('secrets-ended');
-    if (isHofUnlocked) {
-        body.classList.add('hof-unlocked');
-        if (typeof initStardust === "function") initStardust();
-    }
-
-    // --- 2. UI TRANSFORMATION FUNCTION ---
-    function updateMysticUI() {
-        if (body.getAttribute('data-page') === 'cache') {
-            const intro = document.querySelector('.page-intro');
-            if (intro) {
-                const titleEl = intro.querySelector('h2');
-                const descEl = intro.querySelector('p');
-                if (titleEl) titleEl.textContent = "Glade of Fame";
-                if (descEl) descEl.textContent = "Silent roots remember every crown.";
-            }
-            document.title = "Glade of Fame • Rootelo";
-        }
-
-        const navSecretLink = document.querySelector('.nav-secret');
-        if (navSecretLink) {
-            navSecretLink.textContent = 'Glade of Fame';
-        }
-    }
-	
-    // --- 3. THE WATCHER SECRET ---
-    const watcherBtn = document.getElementById('watcher-secret');
-    if (watcherBtn) {
-        watcherBtn.addEventListener('click', () => {
-            body.classList.add('watcher-found');
-            localStorage.setItem('watcher-found', 'true');
-            checkFinalCompletion();
-            window.dispatchEvent(new Event('scroll'));
-        });
-    }
-
-    // --- 4. THE NUT SECRET ---
-    if (window.location.hash === '#nut-section') {
-        const nutSection = document.getElementById('nut-section');
-        if (nutSection) nutSection.style.display = 'block';
-    }
-
-    const nutBtn = document.getElementById('nut-secret');
-    if (nutBtn) {
-        nutBtn.addEventListener('click', () => {
-            body.classList.add('nut-found');
-            localStorage.setItem('nut-found', 'true');
-			nutBtn.removeAttribute('onclick');
-            checkFinalCompletion();
-        });
-    }
-	
-    // --- 5. THE BERRY SECRET ---
-    if (window.location.hash === '#berry-section') {
-        const berrySection = document.getElementById('berry-section');
-        if (berrySection) berrySection.style.display = 'block';
-    }
-
-    const berryBtn = document.getElementById('berry-secret');
-    if (berryBtn) {
-        berryBtn.addEventListener('click', () => {
-            body.classList.add('berry-found');
-            localStorage.setItem('berry-found', 'true');
-			berryBtn.removeAttribute('onclick');
-            checkFinalCompletion();
-        });
-    }
-
-    // --- 6. THE CIPHER SEQUENCE ---
-    const secretSequence = ['silent', 'roots', 'remember', 'every', 'crown'];
-    let userProgress = [];
-    let isResetting = false;
-
-    document.querySelectorAll('.cipher').forEach(el => {
-        el.addEventListener('click', () => {
-            const isAlreadySolved = body.classList.contains('ciphers-found');
-            if (isAlreadySolved || isResetting) return;
-
-            el.classList.add('active-cipher');
-            const word = el.getAttribute('data-word');
-            
-            if (word === secretSequence[userProgress.length]) {
-                userProgress.push(word);
-
-                if (userProgress.length === secretSequence.length) {
-                    const gate = document.getElementById('mystic-gate');
-                    $(gate).fadeIn(600, function() {
-                        body.classList.add('ciphers-found');
-                        localStorage.setItem('ciphers-found', 'true');
-                        updateMysticUI();
-                        checkFinalCompletion();
-                        $(gate).fadeOut(1000);
-                    });
-                }
-            } else {
-                setTimeout(() => {
-                    document.querySelectorAll('.cipher').forEach(c => {
-                        if (c.classList.contains('active-cipher')) c.classList.add('cipher-blink');
-                    });
-                    
-                    setTimeout(() => {
-                        userProgress = [];
-                        document.querySelectorAll('.cipher').forEach(c => {
-                            c.classList.remove('active-cipher', 'cipher-blink');
-                        });
-                    }, 500);
-                }, 3000);
-            }
-        });
-    });
-	
-    // --- 7. HALL OF FAME FINAL UNLOCK ---
-    const hofBtn = document.getElementById('hof-access');
-    if (hofBtn) {
-        hofBtn.addEventListener('click', () => {
-            if (localStorage.getItem('secrets-ended') !== 'true') return;
-
-            body.classList.add('hof-unlocked');
-            localStorage.setItem('hof-unlocked', 'true');
-            $('#leaderboard').DataTable().responsive.recalc();
-            if (typeof initStardust === "function") initStardust();
-        });
-    }
-
-    // --- 8. THE EXIT DOOR ---
-    const leaveBtn = document.querySelector('#leave-secrets');
-    if (leaveBtn) {
-        leaveBtn.addEventListener('click', () => {
-            localStorage.clear();
-            body.classList.remove(
-                'is-at-bottom', 'is-scrolled',
-                'watcher-found', 'nut-found', 'berry-found', 
-                'ciphers-found', 'secrets-ended', 'hof-unlocked'
-            );
-            window.location.href = 'index.html'; 
-        });
-    }
-});
-
-/* =========================================================================
-   --- 5. NUT & BERRY ---
-   ========================================================================= */
-
-function handleTierClick(event, tier) {
-    const isNutFound = localStorage.getItem('nut-found') === 'true';
-    const isBerryFound = localStorage.getItem('berry-found') === 'true';
-
-    if (tier === 'squirrel' && !isNutFound) {
-        window.location.href = 'cache.html#nut-section';
-    } 
-    else if (tier === 'stag' && !isBerryFound) {
-        window.location.href = 'cache.html#berry-section';
-    } 
-    else {
-        if (typeof openTierModal === "function") {
-            openTierModal(tier);
-        }
+    .footer-credits span:first-child::after {
+        display: none;
     }
 }
 
 /* =========================================================================
-   --- 6. STARDUST GENERATOR ---
+   --- 3. BACKGROUND DECORATIONS ---
+   ========================================================================= */
+.screen-deco {
+    position: relative; display: flex; justify-content: center;
+    height: 200px; margin: 0; z-index: 5; pointer-events: none; width: 100%;
+}
+
+.screen-deco img {
+    position: absolute; height: 300px; width: auto; left: 50%; transform: translateX(-50%);
+    top: -150px; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.4)); transition: all 0.5s ease;
+}
+
+@media (max-width: 1299px) {
+    .app-banner { transition: transform 0.5s ease, opacity 0.4s ease; transform-origin: center; position: relative; }
+    .is-scrolled .app-banner { opacity: 0; transform: scale(0.95); pointer-events: none; }
+    .app-viewport { position: relative; transition: transform 0.5s ease, opacity 0.4s ease; }
+    .is-at-bottom .app-viewport { opacity: 0; transform: scale(0.95); pointer-events: none; }
+    .screen-deco img { top: 0px; transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1); }
+    .is-scrolled .right-deco img { top: -50px; }
+    .is-at-bottom .left-deco img { top: -50px; }
+}
+
+@media (min-width: 1300px) {
+    .screen-deco { 
+        position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; 
+        display: block; 
+    }
+    
+    .screen-deco img {
+        height: clamp(300px, 48vh, 900px);
+        position: absolute;
+        transform: translateY(-50%) translateX(0);
+        top: max(50%, calc(550px - (var(--scroll, 0) * 1px)));
+    }
+}
+
+@media (min-width: 1300px) and (max-width: 2499px) {
+    .left-deco img { left: 50px; right: auto; }
+    .right-deco img { right: 50px; left: auto; }
+	
+	/* Reduced margin for 2 tabs only */
+    body[data-page="index"] .left-deco img, 
+    body[data-page="matches"] .left-deco img { 
+        left: 20px; 
+    }
+}
+
+@media (min-width: 2500px) {
+    .left-deco img { 
+        left: auto;
+        right: calc(50vw + (var(--window-max-width) / 2) - 50px); 
+    }
+    .right-deco img { 
+        right: auto;
+        left: calc(50vw + (var(--window-max-width) / 2) - 50px); 
+    }
+}
+
+/* =========================================================================
+   --- 4. TYPOGRAPHY & UI ELEMENTS ---
+   ========================================================================= */
+.site-title {
+    font-family: var(--font-title);
+    color: var(--text-main);
+    font-size: var(--size-display);
+    margin: 0;
+    letter-spacing: var(--track-display);
+    text-transform: uppercase;
+    font-weight: var(--bold);
+    text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+}
+
+.site-subtitle {
+    font-family: var(--font-title);
+    font-style: italic;
+    color: var(--text-muted);
+    font-size: var(--size-base);
+    letter-spacing: var(--track-wide);
+	margin: 5px 0 0;
+}
+
+.page-intro { margin-bottom: var(--window-gap); }
+.page-intro h2 { font-family: var(--font-title); font-size: var(--size-xl); letter-spacing: var(--track-wide); margin: 0; color: var(--main-color); }
+.page-intro p { color: var(--text-muted); font-size: var(--size-base); margin: 5px auto 0; }
+
+a.cl { color: var(--text-main); text-decoration: none; font-weight: var(--medium); letter-spacing: var(--track-slight); border-bottom: 1px dotted var(--main-color); transition: 0.2s; }
+a.cl:hover { border-bottom: 1px solid var(--main-color); color: var(--main-color); }
+
+@media (max-width: 768px) {
+    .site-title { font-size: var(--size-lg); }
+    .page-intro h2 { font-size: var(--size-lg); }
+}
+
+/* =========================================================================
+   --- 5. HEADER, BANNER & TOOLTIPS ---
+   ========================================================================= */
+.banner-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    margin-bottom: 20px;
+    flex-wrap: nowrap;
+}
+
+.banner-icons { display: flex; gap: -10px; align-items: center; }
+
+/* Interactive Links */
+.banner-icons a.tooltip-link {
+    position: relative;
+    display: inline-block;
+    margin: 0 -5px;
+    z-index: 2;
+    text-decoration: none;
+    -webkit-tap-highlight-color: transparent;
+    transition: margin 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Hover & Active States (Spacing) */
+@media (hover: hover) {
+    .banner-icons a.tooltip-link:hover { margin: 0 15px; z-index: 50; }
+}
+.banner-icons a.tooltip-link.expanded { margin: 0 15px; z-index: 50; }
+
+/* Icons - Base State */
+.banner-icons a.tooltip-link img {
+    width: clamp(55px, 7vw, 85px);
+    height: clamp(55px, 7vw, 85px);
+    object-fit: contain;
+    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.6));
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    display: block;
+}
+
+/* Icons - Expanded/Hover State (Common properties) */
+@media (hover: hover) {
+    .banner-icons a.tooltip-link:hover img {
+        width: clamp(100px, 12vw, 140px); 
+        height: clamp(100px, 12vw, 140px);
+        filter: drop-shadow(0 15px 25px rgba(0,0,0,0.9));
+        transform: translateY(-10px) scale(1.15);
+    }
+}
+
+.banner-icons a.tooltip-link.expanded img {
+    width: clamp(100px, 12vw, 140px); 
+    height: clamp(100px, 12vw, 140px);
+    filter: drop-shadow(0 15px 25px rgba(0,0,0,0.9));
+    transform: translateY(-10px) scale(1.15);
+}
+
+/* Rotations (Specific) */
+@media (hover: hover) {
+    .banner-icons.left a.tooltip-link:hover img { transform: translateY(-10px) scale(1.15) rotate(-8deg); }
+    .banner-icons.right a.tooltip-link:hover img { transform: translateY(-10px) scale(1.15) rotate(8deg); }
+}
+.banner-icons.left a.tooltip-link.expanded img { transform: translateY(-10px) scale(1.15) rotate(-8deg); }
+.banner-icons.right a.tooltip-link.expanded img { transform: translateY(-10px) scale(1.15) rotate(8deg); }
+
+/* Tooltips */
+.tooltip-text {
+    position: absolute;
+    bottom: 90%; left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    background: var(--bg-container);
+    border: 1px solid var(--border-soft);
+    color: var(--text-muted);
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: var(--size-xs);
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    z-index: 100;
+}
+
+.tooltip-text strong { font-weight: var(--medium); }
+
+@media (hover: hover) {
+    .banner-icons a.tooltip-link:hover .tooltip-text { opacity: 1; transform: translateX(-50%) translateY(-15px); }
+}
+.banner-icons a.tooltip-link.expanded .tooltip-text { opacity: 1; transform: translateX(-50%) translateY(-15px); }
+
+/* Banner Mobile Adjustments */
+@media (max-width: 768px) and (orientation: portrait) {
+    .banner-container { flex-wrap: wrap; gap: 10px; }
+    .banner-center { order: 1; width: 100%; margin-bottom: 10px; }
+    .banner-icons { order: 2; flex-wrap: nowrap; gap: 5px; }
+    
+    .banner-icons a.tooltip-link, 
+    .banner-icons a.tooltip-link.expanded { margin: 0; display: inline-block; }
+    
+    .banner-icons.left a.tooltip-link.expanded img { transform: translateY(-8px) scale(1.4) rotate(-8deg) !important; position: relative; z-index: 100; }
+    .banner-icons.right a.tooltip-link.expanded img { transform: translateY(-8px) scale(1.4) rotate(8deg) !important; position: relative; z-index: 100; }
+
+    .banner-icons a.tooltip-link.expanded .tooltip-text {
+        display: block !important;
+        bottom: 115%; transform: none; width: 150px;
+        white-space: normal; text-align: center; padding: 8px;
+    }
+    .banner-icons.left a.tooltip-link.expanded .tooltip-text { left: 0; }
+    .banner-icons.right a.tooltip-link.expanded .tooltip-text { right: 0; left: auto; }
+    .tooltip-text strong { display: block; margin-bottom: 2px; }
+}
+
+/* =========================================================================
+   --- 6. NAVIGATION & BUTTONS ---
+   ========================================================================= */
+nav {
+    margin: 15px 0;
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+nav a {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-weight: var(--medium);
+    text-transform: uppercase;
+    font-size: var(--size-sm);
+    letter-spacing: var(--track-wide);
+    padding: 8px 12px;
+    border-radius: 6px;
+    transition: 0.3s ease;
+    border-bottom: 2px solid transparent;
+}
+
+nav a:hover { color: var(--text-main); background: var(--bg-hover); }
+
+nav a.active {
+    color: var(--main-color);
+    border-bottom: 2px solid var(--main-color);
+    border-radius: 6px 6px 0 0;
+    background: linear-gradient(to top, rgba(255,255,255,0.03) 0%, transparent 100%);
+}
+
+.nav-separator {
+    width: 90%; 
+    height: 0; 
+    margin: 15px auto;
+    border-top: 1px solid var(--border-dark);
+    border-bottom: 1px solid var(--border-light);
+}
+
+/* Season Selectors */
+.season-selector { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 20px auto 20px; }
+.season-label { font-size: var(--size-sm); text-transform: uppercase; color: var(--text-muted); letter-spacing: var(--track-wide); font-weight: var(--bold); margin-right: 5px;}
+.season-btn { text-decoration: none; font-size: var(--size-sm); font-weight: var(--medium); color: var(--text-muted); padding: 6px 14px; border-radius: 4px; background: var(--bg-surface); border: 1px solid var(--border-soft); transition: 0.2s; }
+.season-btn:hover { color: var(--text-main); background: var(--bg-hover); }
+.season-btn.active { background: transparent !important; color: var(--main-color) !important; border-color: var(--main-color) !important; }
+
+
+/* =========================================================================
+   --- 7. DATATABLES (GLOBAL, LEADERBOARD, MATCHES) ---
    ========================================================================= */
 
-function initStardust() {
-    $('.window-box').each(function() {
-        const box = $(this);
-        
-        // Ensure only one container exists per box
-        if (box.find('.stardust-container').length === 0) {
-            box.prepend('<div class="stardust-container"></div>');
-        }
-        
-        const container = box.find('.stardust-container');
-        const boxHeight = box.innerHeight();
-        
-        // Star density based on box height
-        const starCount = Math.floor(boxHeight / 30); 
-
-        for (let i = 0; i < starCount; i++) {
-            const size = (Math.random() * 2 + 1) + 'px';
-            const star = $('<div class="star"></div>').css({
-                'width': size,
-                'height': size,
-                'left': Math.random() * 100 + '%',
-                'top': Math.random() * 100 + '%',
-                '--duration': (Math.random() * 3 + 2) + 's',
-                'animation-delay': (Math.random() * 5) + 's'
-            });
-            container.append(star);
-        }
-    });
+/* --- A. Table Structure --- */
+table.dataTable { 
+    border-collapse: separate !important; 
+    border-spacing: 0 !important;
+    width: 100% !important; 
+    margin-top: 20px !important; 
+    background-color: var(--dt-table-bg) !important; 
+    border-radius: 8px;
+    border: 1px solid var(--glass-border) !important;
 }
+
+table.dataTable thead th { 
+    background: var(--dt-header-bg) !important; 
+    color: var(--text-main) !important; 
+    font-size: var(--size-xs) !important;
+    letter-spacing: var(--track-wide); 
+    text-transform: uppercase; 
+    padding: 15px 10px !important; 
+    border-bottom: 1px solid var(--border-soft) !important; 
+}
+
+table.dataTable tbody tr { 
+    background-color: transparent !important; 
+}
+
+table.dataTable tbody tr:hover td { 
+    background-color: var(--dt-row-hover) !important; 
+}
+
+table.dataTable tbody td { 
+    border-bottom: 1px solid var(--dt-row-border); 
+    padding: 12px 10px; 
+    font-size: var(--size-base);
+	color: var(--text-main);
+    transition: background-color 0.2s ease;
+}
+
+table.dataTable tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* --- B. Controls (Search & Length) --- */
+.dataTables_filter label, 
+.dataTables_length label, 
+.dataTables_info, 
+.dataTables_paginate { 
+    color: var(--text-muted) !important; 
+    font-size: var(--size-sm);
+}
+
+.dataTables_info, .dataTables_paginate { padding-top: 15px !important; }
+
+.dataTables_filter input, 
+.dataTables_length select {
+    background: var(--dt-input-bg) !important;
+    border: 1px solid var(--border-soft) !important;
+    color: var(--text-main) !important;
+    border-radius: 4px; 
+    padding: 4px 8px; 
+    outline: none; 
+    margin: 0 8px;
+    appearance: none; 
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
+
+.dataTables_length select {
+    padding-right: 24px !important;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='gray' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") !important;
+    background-repeat: no-repeat !important; 
+    background-position: right 8px center !important;
+}
+
+.dataTables_filter input::-webkit-search-cancel-button {
+    -webkit-appearance: none;
+    height: 14px; width: 14px;
+    background-color: var(--text-muted);
+    mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z'/></svg>") no-repeat 50% 50%;
+    -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z'/></svg>") no-repeat 50% 50%;
+    cursor: pointer;
+}
+
+.dataTables_length select option { 
+    background-color: var(--bg-container); 
+    color: var(--text-main); 
+}
+
+table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
+    background-color: transparent !important;
+    color: var(--text-main) !important;
+    border: none !important;
+    box-shadow: none !important;
+    text-indent: 0 !important;
+    line-height: 1em;
+}
+
+/* --- C. Pagination --- */
+.dataTables_paginate .paginate_button { 
+    color: var(--text-muted) !important; 
+    padding: 5px 12px !important; 
+    cursor: pointer; 
+    border-radius: 4px !important;
+    border: 1px solid transparent !important;
+    transition: 0.3s;
+    text-decoration: none !important;
+	font-size: var(--size-sm);
+}
+
+.dataTables_paginate .paginate_button:hover:not(.current):not(.disabled) { 
+    background: var(--bg-hover) !important; 
+    color: var(--text-main) !important;
+    border: 1px solid var(--border-soft) !important;
+}
+
+.dataTables_paginate .paginate_button.current { 
+    background: var(--bg-hover) !important; 
+    color: var(--text-bright) !important; 
+    border: var(--glass-border) !important;
+    font-weight: var(--medium); 
+}
+
+.dataTables_paginate .paginate_button.disabled {
+    opacity: 0.3;
+    cursor: default !important;
+}
+
+/* --- D. Specifics (Leaderboard) --- */
+.tier-icon-container { 
+    width: 36px; 
+    height: 36px; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    margin: 0 auto; 
+}
+
+.tier-icon-container img { max-width: 100%; max-height: 100%; object-fit: contain; }
+
+.player-name-cell {
+	text-align: left;
+	font-weight: var(--medium);
+}
+
+.elo-cell {
+	font-size: var(--size-lg); 
+	font-weight: var(--bold);
+}
+
+.unranked { 
+    opacity: 0.4; 
+    font-style: italic; 
+    filter: grayscale(1); 
+}
+
+/* --- E. Specifics (Matches) --- */
+.lineup-cell { 
+    white-space: normal !important; 
+    word-wrap: break-word; 
+    min-width: 150px; 
+    max-width: 400px; 
+    line-height: 1.4; 
+    text-align: left !important;
+}
+
+.lineup-cell .winner-name { color: var(--text-bright); font-weight: var(--bold); }
+.lineup-cell .others-names { color: var(--text-muted); }
+
+.match-id-link { 
+    color: var(--text-muted); 
+    text-decoration: none; 
+    font-size: var(--size-sm); 
+    border: 1px solid var(--border-soft); 
+    padding: 2px 6px; 
+    border-radius: 4px; 
+    white-space: nowrap;
+}
+
+#matchesTable td:nth-child(2) {
+    color: var(--main-color);
+    font-weight: var(--bold);
+}
+
+#matchesTable th, 
+#matchesTable td:nth-child(1), 
+#matchesTable td:nth-child(2), 
+#matchesTable td:nth-child(3) { 
+    white-space: nowrap !important; 
+}
+
+/* --- F. Specifics (Hall of Fame) --- */
+.streak-cell {
+	color: var(--text-bright) !important;
+	font-size: var(--size-md) !important;
+    font-weight: var(--bold) !important;
+	font-family: var(--font-mono);
+}
+
+.hide-mobile {
+    display: inline;
+}
+
+/* --- G. Responsive --- */
+@media (max-width: 600px) {
+    table.dataTable tbody td { font-size: var(--size-sm); padding: 8px 4px !important; }
+    .player-name-cell { 
+        max-width: 110px; 
+        overflow: hidden; 
+        text-overflow: ellipsis; 
+        white-space: nowrap; 
+    }
+    table.dataTable td:nth-child(4) { padding-right: 10px !important; min-width: 55px; }
+    .lineup-cell { padding-left: 10px !important; }
+	.streak-cell { font-size: var(--size-base) !important; }
+	.hide-mobile { display: none; }
+}
+
+/* =========================================================================
+   --- 8. CHART (TRENDS) ---
+   ========================================================================= */
+
+/* --- Search Box --- */
+.search-box { 
+    margin: 20px auto; 
+    text-align: center; 
+    max-width: 450px;
+}
+
+.search-box input { 
+    appearance: none;
+    -webkit-appearance: none;
+    background: var(--dt-input-bg) !important; /* Matches Datatables search */
+    color: var(--text-main) !important; 
+    border: 1px solid var(--border-soft) !important; 
+    padding: 10px 15px; 
+    border-radius: 6px; 
+    width: 100%; 
+    font-family: var(--font-ui);
+    outline: none;
+    transition: border-color 0.2s, background-color 0.2s;
+}
+
+.search-box input:focus { 
+    border-color: var(--main-color) !important; 
+    background: var(--dt-row-hover) !important; /* Slight glow on focus */
+}
+
+/* Custom Clear Button for Search */
+.search-box input::-webkit-search-cancel-button {
+    -webkit-appearance: none;
+    height: 14px; width: 14px;
+    background-color: var(--text-muted);
+    mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z'/></svg>") no-repeat 50% 50%;
+    -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z'/></svg>") no-repeat 50% 50%;
+    cursor: pointer;
+}
+
+/* --- Chart Container --- */
+.chart-wrapper { 
+    width: 100%; 
+    max-width: var(--window-max-width); 
+    margin: 0 auto 40px;
+}
+
+.chart-container { 
+    position: relative; 
+    width: 100%; 
+    height: 55vh; 
+    min-height: 350px;
+    background: var(--dt-table-bg); /* Use the translucent table background */
+    border: 1px solid var(--glass-border); /* Consistent glass border */
+    border-radius: 12px; 
+    padding: 15px;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+/* --- Responsive Layout --- */
+@media (max-width: 768px) { 
+    .chart-container { height: 40vh; padding: 10px; }
+    .search-box { padding: 0 15px; }
+}
+
+/* =========================================================================
+   --- 9. CODEX & STATIC CONTENT (ABOUT PAGE) ---
+   ========================================================================= */
+.codex-section {
+    display: block; margin: auto; width: 100%; max-width: var(--window-max-width); line-height: 1.6;
+}
+
+.codex-section h2 {
+    color: var(--main-color);
+    margin-top: 60px ;
+	margin-bottom: -10px ;
+    font-family: var(--font-title);
+    font-size: var(--size-md);
+	letter-spacing: var(--track-wide);
+    font-weight: var(--medium);
+    text-align: left;
+}
+
+.codex-section h2:first-of-type { margin-top: 40px; }
+.codex-section p { margin-bottom: 20px; color: var(--text-muted); text-align: left; font-size: var(--size-base); }
+.codex-section strong { color: var(--text-main); font-weight: var(--medium); letter-spacing: var(--track-slight); }
+
+/* Information Tables (K-Factor, Tier Codex) */
+.k-table {
+    width: 100%; 
+    border-collapse: separate !important; 
+    border-spacing: 0 !important;
+    margin: 25px 0;
+    background: var(--dt-table-bg);
+    border: 1px solid var(--glass-border); 
+    border-radius: 8px;
+    overflow: hidden; 
+    table-layout: fixed;
+}
+
+.k-table td { 
+    padding: 15px; 
+    border-bottom: 1px solid var(--dt-row-border); 
+    color: var(--text-muted); 
+    text-align: left; 
+    font-size: var(--size-sm); 
+    transition: background-color 0.2s ease;
+}
+
+/* Subtle hover effect for K-Table rows */
+.k-table tr:hover td {
+    background-color: var(--dt-row-hover);
+}
+
+.k-table tr:last-child td { border-bottom: none; }
+
+/* Column Widths */
+.k-table td:nth-child(1) { width: 15%; white-space: nowrap; }
+.k-table td:nth-child(2) { width: 15%; text-align: center; }
+.k-table td:nth-child(3) { width: 15%; text-align: center; }
+.k-table td:nth-child(4) { width: 55%; }
+
+.k-table br { display: none; }
+
+/* K-Factor Value Highlighting */
+.k-val { 
+    color: var(--main-color) !important; 
+    font-weight: var(--bold); 
+    font-family: var(--font-mono); 
+    font-size: var(--size-md);
+    white-space: nowrap; 
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+    .k-table { table-layout: auto; }
+    .k-table br { display: block; }
+    .k-table td:nth-child(4) { display: none; }
+}
+
+/* =========================================================================
+   --- 10. MODALS ---
+   ========================================================================= */
+.modal-overlay {
+    display: none; 
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: var(--bg-overlay-bottom); backdrop-filter: blur(8px);
+    z-index: 9999; align-items: center; justify-content: center;
+}
+
+.modal-content {
+    --tier-color: var(--main-color);
+    position: relative;
+    width: 90%; max-width: 600px; padding: var(--window-padding);
+    max-height: 85vh;
+    overflow-y: auto;
+    background: color-mix(in srgb, var(--tier-color) 10%, var(--glass-bg));
+    backdrop-filter: blur(15px);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    box-shadow: 
+        inset 0 2px 0 0 color-mix(in srgb, var(--tier-color) 50%, transparent), 
+        0 25px 50px rgba(0, 0, 0, 0.8);
+    animation: modalFadeIn 0.3s ease-out;
+}
+
+@keyframes modalFadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.modal-close {
+    position: absolute; top: 15px; right: 15px; background: none; border: none;
+    color: var(--text-muted); font-size: var(--size-lg); cursor: pointer; line-height: 1;
+    z-index: 10;
+}
+
+/* --- INTERNAL ELEMENTS --- */
+#modalBody { display: flex; flex-direction: column; align-items: center; text-align: center; }
+
+#modalIcon { 
+    width: 350px; height: auto; max-height: 35vh;
+    object-fit: contain; margin-bottom: 15px;
+    filter: drop-shadow(0 15px 25px rgba(0,0,0,0.6));
+}
+
+#modalTitle { 
+    margin: 0; font-family: var(--font-title); color: var(--text-main); 
+    font-size: var(--size-display); letter-spacing: var(--track-display); font-weight: var(--bold); 
+}
+
+#modalElo { font-weight: var(--bold); var(--size-lg); margin-top: 5px; }
+#modalSubtitle { color: var(--text-muted); font-style: italic; font-size: var(--size-base); margin-top: -5px; }
+#modalText { color: var(--text-muted); text-align: left; font-size: var(--size-base); line-height: 1.6; }
+
+.modal-divider {
+    width: 100%; height: 0; margin: 25px auto;
+    border-top: 1px solid var(--border-dark);
+    border-bottom: 1px solid var(--border-light);
+}
+
+/* --- MOBILE PORTRAIT --- */
+@media (max-width: 800px) {
+    .modal-content { width: 92%; }
+	.modal-divider { display: none; }
+    #modalIcon { width: 200px; }
+    #modalTitle { font-size: var(--size-xl); letter-spacing: var(--track-wide); }
+	#modalText { font-size: var(--size-modal); line-height: 1.5; margin-top: 25px; text-align: center; }
+}
+
+/* --- MOBILE LANDSCAPE --- */
+@media (max-height: 500px) and (orientation: landscape) {
+    .modal-content {
+        max-width: 850px; width: 95%; max-height: 90vh;
+    }
+
+    #modalBody {
+        flex-direction: row;
+        align-items: center; gap: 20px; text-align: left;
+    }
+
+    .modal-image-side { flex: 0 0 180px; }
+    .modal-text-side { flex: 1; }
+
+    #modalIcon { width: 100%; max-height: 80vh; margin-bottom: 0; }
+
+    .title-row { display: flex; align-items: baseline; gap: 15px; }
+    #modalTitle { font-size: var(--size-lg); }
+    #modalElo { margin: 0; }
+    #modalSubtitle { margin-top: 7px; font-size: var(--size-sm); }
+
+    .modal-divider { display: none; }
+    #modalText { font-size: var(--size-sm); line-height: 1.4; margin-top: 20px; text-align: left; }
+}
+
+/* =========================================================================
+   --- 11. TIER-BASED COLORATION ---
+   ========================================================================= */
+
+/* Utility classes for text */   
+.tier-bird     { color: var(--color-bird) !important; }
+.tier-fox      { color: var(--color-fox) !important; }
+.tier-rabbit   { color: var(--color-rabbit) !important; }
+.tier-mouse    { color: var(--color-mouse) !important; }
+.tier-squirrel { color: var(--color-squirrel) !important; }
+.tier-stag 	   { color: var(--color-stag) !important; }
+
+/* Background and border for each tier row */
+table.dataTable tbody tr[data-tier="bird"]     { background-color: var(--color-bird-bg) !important; border-left: 4px solid var(--color-bird) !important; }
+table.dataTable tbody tr[data-tier="fox"]      { background-color: var(--color-fox-bg) !important; border-left: 4px solid var(--color-fox) !important; }
+table.dataTable tbody tr[data-tier="rabbit"]   { background-color: var(--color-rabbit-bg) !important; border-left: 4px solid var(--color-rabbit) !important; }
+table.dataTable tbody tr[data-tier="mouse"]    { background-color: var(--color-mouse-bg) !important; border-left: 4px solid var(--color-mouse) !important; }
+table.dataTable tbody tr[data-tier="squirrel"] { background-color: var(--color-squirrel-bg) !important; border-left: 4px solid var(--color-squirrel) !important; }
+table.dataTable tbody tr[data-tier="stag"] { background-color: var(--color-stag-bg) !important; border-left: 4px solid var(--color-stag) !important; }
+
+/* Text color for the 4th column (Elo) based on tier */
+tr[data-tier="bird"] td:nth-child(4)     { color: var(--color-bird) !important; }
+tr[data-tier="fox"] td:nth-child(4)      { color: var(--color-fox) !important; }
+tr[data-tier="rabbit"] td:nth-child(4)   { color: var(--color-rabbit) !important; }
+tr[data-tier="mouse"] td:nth-child(4)    { color: var(--color-mouse) !important; }
+tr[data-tier="squirrel"] td:nth-child(4) { color: var(--color-squirrel) !important; }
+tr[data-tier="stag"] td:nth-child(4)     { color: var(--color-stag) !important; }
+
+/* =========================================================================
+   --- 12. HIDDEN CONTENT: UNDERGROWTH ---
+   ========================================================================= */
+
+/* --- 0. Secret Button --- */
+.secret-btn {
+    display: inline-block;
+    position: relative;
+    cursor: pointer;
+    text-decoration: none;
+    font-size: var(--size-sm);
+    font-weight: var(--medium);
+    text-transform: uppercase;
+    letter-spacing: var(--track-wide);
+    color: var(--text-muted);
+    padding: 6px 14px;
+    border-radius: 4px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-soft);
+    transition: 0.2s;
+}
+
+.secret-btn:hover {
+    color: var(--main-color);
+    background: var(--bg-hover);
+    border-color: var(--main-color);
+}
+
+.secret-btn:hover .tooltip-text,
+.secret-btn.expanded .tooltip-text {
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+.secret-btn .tooltip-text {
+    position: absolute;
+    top: 90%;
+	bottom: auto;
+    text-transform: none;
+    letter-spacing: normal;
+}
+
+/* --- 1. Exit Door --- */
+.exit-door {
+	margin-top: 40px;
+	margin-bottom: 20px;
+}
+
+#leave-secrets {
+    display: none;
+}
+
+body.watcher-found #leave-secrets {
+    display: inline-block;
+}
+
+/* --- 2. Watcher Secret --- */
+.enigma {
+    margin-top: 0 !important;
+    text-align: center !important;
+}
+
+.enigma span { display: block !important; }
+
+body[data-page="cache"].watcher-found .enigma {
+    display: none;
+}
+
+body[data-page="cache"] .page-intro, 
+body .artist-story-green,
+body .artist-story-purple {
+    display: none;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 1s ease;
+}
+
+body[data-page="cache"].watcher-found .page-intro, 
+body.watcher-found:not(.ciphers-found) .artist-story-green,
+body.ciphers-found .artist-story-purple {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+body[data-page="cache"] .screen-deco img {
+    opacity: 0;
+    pointer-events: none;
+    transition: all 1s ease;
+}
+
+body[data-page="cache"].watcher-found .screen-deco img {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+body[data-page="cache"] .screen-deco {
+    height: 0;
+	overflow: hidden;
+    transition: height 0.5s ease;
+}
+
+body[data-page="cache"].watcher-found .screen-deco {
+    height: 200px;
+	overflow: visible;
+}
+
+@media (min-width: 1300px) {
+body[data-page="cache"].watcher-found .screen-deco { 
+        height: 100vh; 
+    }
+}
+
+.nav-secret {
+    display: none;
+}
+
+body.watcher-found .nav-secret {
+    display: inline-block;
+}
+
+/* --- 3. Fruits Styles --- */
+.fruit-interaction-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    box-sizing: border-box;
+	margin-bottom: 30px;
+}
+
+.fruit-trigger {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), 
+                padding 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.fruit-sprite {
+    width: 130px;
+    height: auto;
+    filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.5));
+    transition: filter 0.4s ease;
+    backface-visibility: hidden;
+    perspective: 1000px;
+    transform: translateZ(0); 
+    will-change: transform, filter;
+}
+
+.fruit-tooltip {
+    top: 45%;
+	bottom: auto;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.4);
+    color: var(--main-color);
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .fruit-trigger:hover {
+        transform: scale(1.6);
+        padding-top: 40px;
+        padding-bottom: 80px;
+    }
+	
+    .fruit-trigger:hover .fruit-sprite {
+        filter: drop-shadow(0 25px 40px rgba(0, 0, 0, 0.7));
+    }
+
+    .fruit-trigger:hover .fruit-tooltip {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(0.65);
+    }
+}
+
+@media (min-width: 769px) {
+    .fruit-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+		flex-direction: row;
+        gap: 0;
+        width: 100%;
+    }
+
+    #berry-section, #nut-section {
+		width: 50%;
+        max-width: 50%;
+		margin-left: 0;
+        margin-right: 0;
+    }
+}
+
+@media (max-width: 768px) {
+	
+	.fruit-trigger.expanded {
+        transform: scale(1.6) translateY(10px); 
+        z-index: 50;
+    }
+	
+	.fruit-trigger.expanded .fruit-sprite {
+        filter: drop-shadow(0 15px 20px rgba(0, 0, 0, 0.6));
+    }
+	
+	.fruit-trigger.expanded .fruit-tooltip {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(0.65);
+    }
+
+    .fruit-trigger:active {
+        transform: scale(1.4);
+    }
+}
+
+/* --- 4. Fruits Effects --- */
+#nut-section,
+#berry-section {
+    display: none;
+}
+
+body.nut-found #nut-section,
+body.berry-found #berry-section,
+body.ciphers-found #berry-section {
+    display: block;
+}
+
+.banner-icons a.tooltip-link.banner-icon-squirrel,
+.banner-icons a.tooltip-link.banner-icon-stag { 
+    display: none; 
+}
+
+body.nut-found .banner-icons a.tooltip-link.banner-icon-squirrel {
+    display: inline-block;
+}
+
+body.berry-found .banner-icons a.tooltip-link.banner-icon-stag {
+    display: inline-block;
+}
+
+/* L'animation de vibration (on enlève le scale du keyframe pour plus de flexibilité) */
+@keyframes nut-jiggle {
+    0% { transform: rotate(0deg); }
+    25% { transform: rotate(-8deg); }
+    50% { transform: rotate(8deg); }
+    75% { transform: rotate(-4deg); }
+    100% { transform: rotate(0deg); }
+}
+
+/* On l'active au clic (:active) uniquement quand le secret est déjà trouvé */
+body.nut-found #nut-secret:active .fruit-sprite {
+    animation: nut-jiggle 0.4s ease-out;
+}
+
+/* Pour la baie */
+@keyframes berry-squish {
+    0% { transform: scale(1); }
+    30% { transform: scale(1.2, 0.8); }
+    60% { transform: scale(0.9, 1.1); }
+    100% { transform: scale(1); }
+}
+
+body.berry-found #berry-secret:active .fruit-sprite {
+    animation: berry-squish 0.4s ease-out;
+}
+   
+/* --- 5. Ciphers --- */
+.cipher {
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.cipher:hover:not(.active-cipher) {
+    color: var(--color-squirrel);
+    opacity: 0.8;
+}
+
+.cipher.active-cipher {
+	font-weight: var(--bold);
+	font-size: var(--size-md);
+	letter-spacing: var(--track-wide);
+    color: var(--color-stag);
+}
+
+@keyframes cipher-reject {
+    0%, 100% { opacity: 1; }
+    25%, 75% { opacity: 0; }
+    50% { opacity: 1; }
+}
+
+.cipher-blink {
+    animation: cipher-reject 0.5s ease-in-out;
+    color: var(--color-squirrel) !important;
+}
+
+body.ciphers-found .cipher {
+    cursor: default;
+    pointer-events: none;
+	font-weight: inherit;
+    font-size: inherit;
+    letter-spacing: inherit;
+    color: inherit;
+}
+
+/* --- 6. Mystic Gate --- */
+#mystic-gate {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: var(--bg-container);
+    z-index: 1000;
+    display: none;
+    pointer-events: none;
+}
+
+body[data-page="cache"].ciphers-found {
+    --main-color: var(--color-stag);
+}
+
+/* --- 7. Final Button --- */
+#hof-access {
+    display: none;
+    cursor: help;
+}
+
+body.watcher-found #hof-access {
+    display: inline-block;
+}
+
+body.secrets-ended #hof-access {
+    cursor: pointer;
+    color: var(--main-color);
+    border-color: var(--main-color);
+}
+
+#hof-access:hover {
+    color: var(--text-muted);
+    background: var(--bg-surface);
+    border-color: var(--border-soft);
+}
+
+body.secrets-ended #hof-access:hover {
+    background: var(--bg-hover);
+}
+
+body.secrets-ended #hof-access .tooltip-text,
+body.hof-unlocked #hof-access {
+    display: none !important;
+}
+
+/* --- 8. Hall of Fame Reveal --- */
+.hof-section {
+    display: none;
+}
+
+body.hof-unlocked .hof-section {
+    display: block;
+    animation: reveal-hof 1.2s ease-out forwards;
+}
+
+
+@keyframes reveal-hof {
+    0% {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+/* --- 9. Stardust --- */
+   
+.stardust-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 9;
+}
+
+.star {
+    position: absolute;
+    background: white;
+    border-radius: 50%;
+    opacity: 0;
+    animation: twinkle var(--duration) infinite ease-in-out;
+}
+
+@keyframes twinkle {
+    0%, 100% { 
+        opacity: 0; 
+        transform: scale(0.5); 
+    }
+    50% { 
+        opacity: 0.8; 
+        transform: scale(1); 
+    }
+}
+
+{% block extra_css %}{% endblock %}
