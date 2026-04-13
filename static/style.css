@@ -940,6 +940,11 @@ tr[data-tier="stag"] td:nth-child(4)     { color: var(--color-stag) !important; 
 }
 
 /* --- 1. Exit Door --- */
+.exit-door {
+	margin-top: 20px;
+	margin-bottom: 20px;
+}
+
 #leave-secrets {
     display: none;
 }
@@ -1090,7 +1095,7 @@ body.watcher-found .nav-secret {
 	
 	.fruit-trigger.expanded .fruit-tooltip {
         opacity: 1;
-        transform: translate(-50%, -60%) scale(0.65);
+        transform: translate(-50%, -50%) scale(0.65);
     }
 
     .fruit-trigger:active {
