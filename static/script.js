@@ -309,7 +309,7 @@ document.addEventListener('DOMContentLoaded', () => {
         berryBtn.addEventListener('click', () => {
             body.classList.add('berry-found');
             localStorage.setItem('berry-found', 'true');
-			nutBtn.removeAttribute('onclick');
+			berryBtn.removeAttribute('onclick');
             checkFinalCompletion();
         });
     }
