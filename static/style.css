@@ -1057,9 +1057,7 @@ body.watcher-found .nav-secret {
 
 @media (hover: hover) and (pointer: fine) {
     .fruit-trigger:hover {
-        transform: scale(1.6);
-        padding-top: 40px;
-        padding-bottom: 80px;
+        transform: scale(1.6) translateY(10px);
     }
 
     .fruit-trigger:hover .fruit-sprite {
@@ -1072,36 +1070,29 @@ body.watcher-found .nav-secret {
     }
 }
 
-.fruit-trigger.expanded {
-    transform: scale(1.6);
-    padding-top: 40px;
-    padding-bottom: 80px;
-    z-index: 50;
-}
-
-.fruit-trigger.expanded .fruit-sprite {
-    filter: drop-shadow(0 25px 40px rgba(0, 0, 0, 0.7));
-}
-
-.fruit-trigger.expanded .fruit-tooltip {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(0.65);
-}
-
 @media (max-width: 768px) {
     .fruit-interaction-wrapper {
         justify-content: center;
         padding: 0; 
     }
+	
+	.fruit-trigger.expanded {
+        transform: scale(1.6) translateY(10px); 
+        z-index: 50;
+    }
+	
+	.fruit-trigger.expanded .fruit-sprite {
+        filter: drop-shadow(0 15px 20px rgba(0, 0, 0, 0.6));
+    }
+	
+	.fruit-trigger.expanded .fruit-tooltip {
+        opacity: 1;
+        transform: translate(-50%, -90%) scale(0.65);
+    }
 
     .fruit-trigger:active {
         transform: scale(1.4);
         transition: transform 0.1s;
-    }
-	
-	.fruit-trigger.expanded .fruit-sprite,
-    .fruit-trigger:hover .fruit-sprite {
-        filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.5)) !important;
     }
 }
 
