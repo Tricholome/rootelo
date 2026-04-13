@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="codex-section">
+
+	<div>
+		<a href="javascript:void(0)" id="hof-access" class="secret-btn">
+			Reveal what is hidden
+			<span class="tooltip-text">This is not all... keep looking around.</span>
+		</a>
+	</div>
+	
+	<div class="hof-section">
+		<table id="leaderboard" class="display nowrap" style="width:100%">
+			<thead>
+				<tr>
+					<th>Tier</th>
+					<th>Player</th>
+					<th>
+						<span class="hide-mobile">Best</span> Streak
+					</th>
+					<th>
+						Peak <span class="hide-mobile">Elo</span>
+					</th>
+					<th>Start Date</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for s in hall_of_fame %}
+				<tr data-tier="{{ s.tier }}">
+					<td>
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, '{{ s.tier }}')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="{{ config.assets.icons[s.tier] }}" alt="{{ s.tier }}">
+							</div>
+						</a>
+					</td>
+					<td>{{ s.player }}</td>
+					<td class="streak-cell">{{ s.streak_count }}</td>
+					<td>{{ s.peak }}</td>
+					<td>{{ s.ascension }}</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+	
+	<p class="enigma">
+		<span>What is this place?</span>
+		<span>Step into the shade.</span>
+		<span>Look beneath the leaves.</span>
+		<a class="cl" href="javascript:void(0)" id="watcher-secret">Seek the silent watcher.</a>
+	</p>
+	
+    <div class="artist-story-green">
+        <h2>The <span class="cipher" data-word="silent">Silent</span> Chronicler</h2>
+        <p>Here, where <span class="cipher" data-word="roots">roots</span> run deep and the wild grows dense, <strong>𝕩𝕝𝕦𝕖𝕧𝕚</strong> sits hidden in the green. He captures <span class="cipher" data-word="every">every</span> fluttering wing and <span class="cipher" data-word="every">every</span> twitching whisker. He celebrates the Woodland’s teeming diversity with <span class="cipher" data-word="every">every</span> stroke. It is a quiet call to <span class="cipher" data-word="remember">remember</span>: beyond the League’s grand stakes, nothing small goes unseen.</p>
+    </div>
+	
+	<div class="artist-story-purple">
+        <h2>The Eternal Archivist</h2>
+        <p>Here, where the mist hangs thin and light turns to velvet, <strong>𝕩𝕝𝕦𝕖𝕧𝕚</strong> dwells beneath the purple bloom. Every feat, every triumph, every half-remembered tale is carefully preserved. It is a quiet truth to keep: beyond the League’s hollow noise, nothing great is ever truly lost.</p>
+    </div>
+	
+	<div id="berry-section">
+		<h2>The Mystic Berry</h2>
+		<p>Some secrets are juicier than others. Can you feel the pulse?</p>
+		<div class="tier-interaction-wrapper">
+			<a href="javascript:void(0)" id="berry-secret" onclick="openTierModal('stag')" class="nut-trigger js-double-tap">
+				<span class="nut-tooltip">Squish it!</span>
+				<img src="assets/images/berry.webp" alt="Berry" class="nut-sprite">
+			</a>
+		</div>
+	</div>
+	
+	<div id="nut-section">
+		<h2>The Special Nut</h2>
+		<p>No rank? No stress. Take it easy. We haven't forgotten you!</p>
+		<div class="tier-interaction-wrapper">
+			<a href="javascript:void(0)" id="nut-secret" onclick="openTierModal('squirrel')" class="nut-trigger js-double-tap">
+				<span class="nut-tooltip">Crack it!</span>
+				<img src="assets/images/nut.webp" alt="Nut" class="nut-sprite">
+			</a>
+		</div>
+	</div>
+	
+	<div>	
+		<a href="javascript:void(0)" id="leave-secrets" class="secret-btn js-double-tap">
+			Leave and forget this place
+			<span class="tooltip-text">Return to the simple order of the Woodland.</span>
+		</a>
+	</div>
+	
+</div>
+
+{% endblock %}
+
+{% block custom_js %}
+<script>
+$(document).ready(function() {
+    $('#leaderboard').DataTable({
+        "responsive": true, 
+        "pageLength": 10,
+        "dom": '<"top"lf>rt<"bottom"ip><"clear">',
+        "columnDefs": [ 
+            { "targets": 1, "className": "player-name-cell" },
+			{ "targets": 3, "className": "elo-cell" },
+            { "responsivePriority": 1, "targets": [1, 2, 3] },
+            { "responsivePriority": 2, "targets": 4 },
+			{ "responsivePriority": 3, "targets": 0 },
+            { "targets": 0, "orderable": false }
+        ]
+    });
+});
+</script>
+{% endblock %}
