@@ -1025,7 +1025,7 @@ body.watcher-found .nav-secret {
     align-items: center;
     width: 100%;
     box-sizing: border-box;
-	margin-bottom: 30px;
+	padding-bottom: 30px;
 }
 
 .fruit-trigger {
@@ -1056,7 +1056,6 @@ body.watcher-found .nav-secret {
 	bottom: auto;
     left: 50%;
     transform: translate(-50%, -50%) scale(0.4);
-	z-index: 100;
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -1067,12 +1066,13 @@ body.watcher-found .nav-secret {
     }
 	
     #nut-secret:hover .fruit-sprite {
-        filter: drop-shadow(0 15px 35px var(--color-squirrel-bg));
+        filter: drop-shadow(0 20px 25px rgba(0, 0, 0, 0.6)) drop-shadow(0 0 25px var(--color-squirrel));
     }
 
     #berry-secret:hover .fruit-sprite {
-        filter: drop-shadow(0 15px 35px var(--color-stag-bg));
+        filter: drop-shadow(0 20px 25px rgba(0, 0, 0, 0.6)) drop-shadow(0 0 25px var(--color-stag));
     }
+	
     .fruit-trigger:hover .fruit-tooltip {
         opacity: 1;
         transform: translate(-50%, -50%) scale(0.65);
@@ -1104,14 +1104,13 @@ body.watcher-found .nav-secret {
         z-index: 50;
     }
 	
-    #nut-secret.expanded .fruit-sprite {
-        filter: drop-shadow(0 10px 25px var(--color-squirrel-bg));
+   #nut-secret.expanded .fruit-sprite {
+        filter: drop-shadow(0 15px 20px rgba(0, 0, 0, 0.5)) drop-shadow(0 0 15px var(--color-squirrel));
     }
 
     #berry-secret.expanded .fruit-sprite {
-        filter: drop-shadow(0 10px 25px var(--color-stag-bg));
+        filter: drop-shadow(0 15px 20px rgba(0, 0, 0, 0.5)) drop-shadow(0 0 15px var(--color-stag));
     }
-}
 	
 	.fruit-trigger.expanded .fruit-tooltip {
         opacity: 1;
