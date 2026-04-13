@@ -1140,34 +1140,20 @@ body.berry-found .banner-icons a.tooltip-link.banner-icon-stag {
     display: inline-block;
 }
 
-/* --- LA NOIX --- */
-@keyframes nut-jiggle {
-    0%   { transform: rotate(0deg); }
-    15%  { transform: rotate(-25deg); }
-    30%  { transform: rotate(20deg); }
-    45%  { transform: rotate(-15deg); }
-    60%  { transform: rotate(10deg); }
-    100% { transform: rotate(0deg); }
+.fruit-sprite {
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.4s ease;
 }
 
-.fruit-trigger.expanded:active .fruit-sprite {
-    animation: nut-jiggle 1s ease-in-out;
+/* --- LA NOIX : S'incline et s'enfonce sous la pression --- */
+body.nut-found #nut-secret:active .fruit-sprite {
+    transform: scale(0.85) rotate(-15deg);
 }
 
-/* --- LA BAIE --- */
-@keyframes berry-squish {
-    0%   { transform: scale(1, 1); }
-    15%  { transform: scale(1.8, 0.4); }
-    30%  { transform: scale(0.6, 1.6); }
-    45%  { transform: scale(1.4, 0.7); }
-    60%  { transform: scale(0.8, 1.3); }
-    100% { transform: scale(1, 1); }
+/* --- LA BAIE : S'écrase (plus large, moins haute) sous la pression --- */
+body.berry-found #berry-secret:active .fruit-sprite {
+    transform: scale(1.2, 0.75);
 }
 
-.fruit-trigger.expanded:active .fruit-sprite {
-    animation: berry-squish 1s ease-in-out;
-}
-   
 /* --- 5. Ciphers --- */
 .cipher {
     cursor: pointer;
