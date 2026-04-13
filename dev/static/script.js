@@ -293,6 +293,7 @@ document.addEventListener('DOMContentLoaded', () => {
         nutBtn.addEventListener('click', () => {
             body.classList.add('nut-found');
             localStorage.setItem('nut-found', 'true');
+			nutBtn.removeAttribute('onclick');
             checkFinalCompletion();
         });
     }
@@ -308,6 +309,7 @@ document.addEventListener('DOMContentLoaded', () => {
         berryBtn.addEventListener('click', () => {
             body.classList.add('berry-found');
             localStorage.setItem('berry-found', 'true');
+			nutBtn.removeAttribute('onclick');
             checkFinalCompletion();
         });
     }
