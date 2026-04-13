@@ -1065,8 +1065,12 @@ body.watcher-found .nav-secret {
         padding-bottom: 80px;
     }
 	
-    .fruit-trigger:hover .fruit-sprite {
-        filter: drop-shadow(0 25px 40px rgba(0, 0, 0, 0.7));
+    #nut-secret:hover .fruit-sprite {
+        filter: drop-shadow(0 25px 40px var(--color-squirrel));
+    }
+
+    #berry-secret:hover .fruit-sprite {
+        filter: drop-shadow(0 25px 40px var(--color-stag));
     }
 
     .fruit-trigger:hover .fruit-tooltip {
@@ -1100,8 +1104,12 @@ body.watcher-found .nav-secret {
         z-index: 50;
     }
 	
-	.fruit-trigger.expanded .fruit-sprite {
-        filter: drop-shadow(0 15px 20px rgba(0, 0, 0, 0.6));
+	#nut-secret.expanded .fruit-sprite {
+        filter: drop-shadow(0 15px 20px var(--color-squirrel));
+    }
+
+    #berry-secret.expanded .fruit-sprite {
+        filter: drop-shadow(0 15px 20px var(--color-stag));
     }
 	
 	.fruit-trigger.expanded .fruit-tooltip {
