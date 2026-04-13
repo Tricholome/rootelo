@@ -1056,7 +1056,6 @@ body.watcher-found .nav-secret {
 	bottom: auto;
     left: 50%;
     transform: translate(-50%, -50%) scale(0.4);
-    color: var(--main-color);
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -1117,16 +1116,23 @@ body.watcher-found .nav-secret {
 
 /* --- 3b. Fruits Specific --- */
 
-/* --- LA NOIX : S'incline et s'enfonce sous la pression --- */
-body.nut-found #nut-secret:active .fruit-sprite {
-    transform: rotate(180deg);
+#nut-section h2,
+#nut-section .fruit-tooltip {
+        color: var(--color-squirrel);
 }
 
-/* --- LA BAIE : S'écrase (plus large, moins haute) sous la pression --- */
+body.nut-found #nut-secret:active .fruit-sprite {
+    transform: rotate(-120deg);
+}
+
+#berry-section h2,
+#berry-section .fruit-tooltip {
+        color: var(--color-stag);
+}
+
 body.berry-found #berry-secret:active .fruit-sprite {
     transform: scale(1.2, 0.75);
 }
-
 
 /* --- 4. Fruits Secrets --- */
 #nut-section,
