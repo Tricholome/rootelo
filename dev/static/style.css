@@ -1087,6 +1087,8 @@ body.watcher-found .nav-secret {
 
     #berry-section, #nut-section {
         max-width: 50%;
+		margin-left: 0;
+        margin-right: 0;
     }
 }
 
