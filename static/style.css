@@ -1098,6 +1098,11 @@ body.watcher-found .nav-secret {
         transform: scale(1.4);
         transition: transform 0.1s;
     }
+	
+	.fruit-trigger.expanded .fruit-sprite,
+    .fruit-trigger:hover .fruit-sprite {
+        filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.5)) !important;
+    }
 }
 
 /* --- 4. Fruits Effects --- */
