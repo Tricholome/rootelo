@@ -1140,30 +1140,34 @@ body.berry-found .banner-icons a.tooltip-link.banner-icon-stag {
     display: inline-block;
 }
 
-/* L'animation de vibration (on enlève le scale du keyframe pour plus de flexibilité) */
+/* --- LA NOIX : Rotation ample sur 1 seconde --- */
 @keyframes nut-jiggle {
-    0% { transform: rotate(0deg); }
-    25% { transform: rotate(-8deg); }
-    50% { transform: rotate(8deg); }
-    75% { transform: rotate(-4deg); }
+    0%   { transform: rotate(0deg); }
+    15%  { transform: rotate(-25deg); }
+    30%  { transform: rotate(20deg); }
+    45%  { transform: rotate(-15deg); }
+    60%  { transform: rotate(10deg); }
+    75%  { transform: rotate(-5deg); }
     100% { transform: rotate(0deg); }
 }
 
-/* On l'active au clic (:active) uniquement quand le secret est déjà trouvé */
 body.nut-found #nut-secret:active .fruit-sprite {
-    animation: nut-jiggle 3s ease-out;
+    animation: nut-jiggle 1s ease-in-out;
 }
 
-/* Pour la baie */
+/* --- LA BAIE : Écrasement profond sur 1 seconde --- */
 @keyframes berry-squish {
-    0% { transform: scale(1); }
-    30% { transform: scale(1.2, 0.8); }
-    60% { transform: scale(0.9, 1.1); }
-    100% { transform: scale(1); }
+    0%   { transform: scale(1, 1); }
+    15%  { transform: scale(1.8, 0.4); } /* Écrasement massif */
+    30%  { transform: scale(0.6, 1.6); } /* Rebond étiré */
+    45%  { transform: scale(1.4, 0.7); }
+    60%  { transform: scale(0.8, 1.3); }
+    75%  { transform: scale(1.1, 0.9); }
+    100% { transform: scale(1, 1); }
 }
 
 body.berry-found #berry-secret:active .fruit-sprite {
-    animation: berry-squish 3s ease-out;
+    animation: berry-squish 1s ease-in-out;
 }
    
 /* --- 5. Ciphers --- */
