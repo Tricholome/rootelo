@@ -1151,7 +1151,7 @@ body.berry-found .banner-icons a.tooltip-link.banner-icon-stag {
 
 /* On l'active au clic (:active) uniquement quand le secret est déjà trouvé */
 body.nut-found #nut-secret:active .fruit-sprite {
-    animation: nut-jiggle 0.4s ease-out;
+    animation: nut-jiggle 3s ease-out;
 }
 
 /* Pour la baie */
@@ -1163,7 +1163,7 @@ body.nut-found #nut-secret:active .fruit-sprite {
 }
 
 body.berry-found #berry-secret:active .fruit-sprite {
-    animation: berry-squish 0.4s ease-out;
+    animation: berry-squish 3s ease-out;
 }
    
 /* --- 5. Ciphers --- */
