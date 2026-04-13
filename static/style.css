@@ -1077,7 +1077,7 @@ body.watcher-found .nav-secret {
 }
 
 @media (min-width: 769px) {
-    .fruits-container {
+    .fruit-container {
         display: flex;
         flex-wrap: wrap;
         justify-content: flex-start;
