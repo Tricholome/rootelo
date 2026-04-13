@@ -217,45 +217,40 @@ document.addEventListener('DOMContentLoaded', function() {
 document.addEventListener('DOMContentLoaded', () => {
     const body = document.body;
 	
-	// --- 0. FINAL COMPLETION ---
-	function checkFinalCompletion() {
-		const required = ['watcher-found', 'nut-found', 'berry-found', 'ciphers-found'];
-		const allFound = required.every(key => localStorage.getItem(key) === 'true');
+    // --- 0. FINAL COMPLETION ---
+    function checkFinalCompletion() {
+        const required = ['watcher-found', 'nut-found', 'berry-found', 'ciphers-found'];
+        const allFound = required.every(key => localStorage.getItem(key) === 'true');
 
-		if (allFound) {
-			document.body.classList.add('secrets-ended');
-			localStorage.setItem('secrets-ended', 'true');
-		}
-	}
+        if (allFound) {
+            body.classList.add('secrets-ended');
+            localStorage.setItem('secrets-ended', 'true');
+        }
+    }
 
     // --- 1. PERSISTENCE CHECK ---
-	const isEnded = localStorage.getItem('secrets-ended') === 'true';
+    const isEnded = localStorage.getItem('secrets-ended') === 'true';
     const isWatcherFound = localStorage.getItem('watcher-found') === 'true';
     const isNutFound = localStorage.getItem('nut-found') === 'true';
-	const isBerryFound = localStorage.getItem('berry-found') === 'true';
+    const isBerryFound = localStorage.getItem('berry-found') === 'true';
     const isCiphersFound = localStorage.getItem('ciphers-found') === 'true';
-	const isHofUnlocked = localStorage.getItem('hof-unlocked') === 'true';
-
-    // Global visibility (Nav & Exit)
-    if (isWatcherFound || isNutFound || isBerryFound || isCiphersFound) {
-        body.classList.add('secrets-started');
-    }
+    const isHofUnlocked = localStorage.getItem('hof-unlocked') === 'true';
 
     // Specific states
     if (isWatcherFound) body.classList.add('watcher-found');
     if (isNutFound) body.classList.add('nut-found');
-	if (isBerryFound) body.classList.add('berry-found');
-	if (isCiphersFound) {
+    if (isBerryFound) body.classList.add('berry-found');
+    if (isCiphersFound) {
         body.classList.add('ciphers-found');
         updateMysticUI();
     }
     
     // Final state
     if (isEnded) body.classList.add('secrets-ended');
-	if (isHofUnlocked) {
-		body.classList.add('hof-unlocked');
-		if (typeof initStardust === "function") initStardust();
-	}
+    if (isHofUnlocked) {
+        body.classList.add('hof-unlocked');
+        if (typeof initStardust === "function") initStardust();
+    }
 
     // --- 2. UI TRANSFORMATION FUNCTION ---
     function updateMysticUI() {
@@ -276,14 +271,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 	
-	// --- 3. THE WATCHER SECRET ---
+    // --- 3. THE WATCHER SECRET ---
     const watcherBtn = document.getElementById('watcher-secret');
     if (watcherBtn) {
         watcherBtn.addEventListener('click', () => {
-            body.classList.add('secrets-started', 'watcher-found');
-            localStorage.setItem('secrets-started', 'true');
+            body.classList.add('watcher-found');
             localStorage.setItem('watcher-found', 'true');
-			checkFinalCompletion();
+            checkFinalCompletion();
             window.dispatchEvent(new Event('scroll'));
         });
     }
@@ -297,14 +291,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const nutBtn = document.getElementById('nut-secret');
     if (nutBtn) {
         nutBtn.addEventListener('click', () => {
-            body.classList.add('secrets-started', 'nut-found');
-            localStorage.setItem('secrets-started', 'true');
+            body.classList.add('nut-found');
             localStorage.setItem('nut-found', 'true');
-			checkFinalCompletion();
+            checkFinalCompletion();
         });
     }
 	
-	// --- 5. THE BERRY SECRET ---
+    // --- 5. THE BERRY SECRET ---
     if (window.location.hash === '#berry-section') {
         const berrySection = document.getElementById('berry-section');
         if (berrySection) berrySection.style.display = 'block';
@@ -313,21 +306,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const berryBtn = document.getElementById('berry-secret');
     if (berryBtn) {
         berryBtn.addEventListener('click', () => {
-            body.classList.add('secrets-started', 'berry-found');
-            localStorage.setItem('secrets-started', 'true');
+            body.classList.add('berry-found');
             localStorage.setItem('berry-found', 'true');
-			checkFinalCompletion();
+            checkFinalCompletion();
         });
     }
 
-    // --- 6. THE CIPHER SEQUENCE & CURTAIN ---
+    // --- 6. THE CIPHER SEQUENCE ---
     const secretSequence = ['silent', 'roots', 'remember', 'every', 'crown'];
     let userProgress = [];
     let isResetting = false;
 
     document.querySelectorAll('.cipher').forEach(el => {
         el.addEventListener('click', () => {
-            // Check if already solved or currently resetting
             const isAlreadySolved = body.classList.contains('ciphers-found');
             if (isAlreadySolved || isResetting) return;
 
@@ -335,70 +326,61 @@ document.addEventListener('DOMContentLoaded', () => {
             const word = el.getAttribute('data-word');
             
             if (word === secretSequence[userProgress.length]) {
-                // Correct step
                 userProgress.push(word);
 
                 if (userProgress.length === secretSequence.length) {
                     const gate = document.getElementById('mystic-gate');
-                    
                     $(gate).fadeIn(600, function() {
                         body.classList.add('ciphers-found');
                         localStorage.setItem('ciphers-found', 'true');
                         updateMysticUI();
-						checkFinalCompletion();
-
+                        checkFinalCompletion();
                         $(gate).fadeOut(1000);
                     });
                 }
             } else {
                 setTimeout(() => {
-					document.querySelectorAll('.cipher').forEach(c => {
-						if (c.classList.contains('active-cipher')) c.classList.add('cipher-blink');
-					});
-					
-					setTimeout(() => {
-						userProgress = [];
-						document.querySelectorAll('.cipher').forEach(c => {
-							c.classList.remove('active-cipher', 'cipher-blink');
-						});
-					}, 500);
-				}, 3000);
+                    document.querySelectorAll('.cipher').forEach(c => {
+                        if (c.classList.contains('active-cipher')) c.classList.add('cipher-blink');
+                    });
+                    
+                    setTimeout(() => {
+                        userProgress = [];
+                        document.querySelectorAll('.cipher').forEach(c => {
+                            c.classList.remove('active-cipher', 'cipher-blink');
+                        });
+                    }, 500);
+                }, 3000);
             }
         });
     });
 	
-	// --- 6. HALL OF FAME FINAL UNLOCK ---
-	const hofBtn = document.getElementById('hof-access');
-	if (hofBtn) {
-		hofBtn.addEventListener('click', () => {
-			const isEnded = localStorage.getItem('secrets-ended') === 'true';
-			if (!isEnded) return;
+    // --- 7. HALL OF FAME FINAL UNLOCK ---
+    const hofBtn = document.getElementById('hof-access');
+    if (hofBtn) {
+        hofBtn.addEventListener('click', () => {
+            if (localStorage.getItem('secrets-ended') !== 'true') return;
 
-			body.classList.add('hof-unlocked');
-			localStorage.setItem('hof-unlocked', 'true');
-			$('#leaderboard').DataTable().responsive.recalc();
-			if (typeof initStardust === "function") initStardust();
-		});
-	}
+            body.classList.add('hof-unlocked');
+            localStorage.setItem('hof-unlocked', 'true');
+            $('#leaderboard').DataTable().responsive.recalc();
+            if (typeof initStardust === "function") initStardust();
+        });
+    }
 
-	// --- 7. THE EXIT DOOR ---
-	const leaveBtn = document.querySelector('#leave-secrets');
-
-	if (leaveBtn) {
-		leaveBtn.addEventListener('click', (e) => {
-
-			localStorage.clear();
-
-			document.body.classList.remove(
-				'is-at-bottom', 'is-scrolled', 'secrets-started', 
-				'watcher-found', 'nut-found', 'berry-found', 
-				'ciphers-found', 'secrets-ended', 'hof-unlocked'
-			);
-
-			window.location.href = 'index.html'; 
-		});
-	}
-
+    // --- 8. THE EXIT DOOR ---
+    const leaveBtn = document.querySelector('#leave-secrets');
+    if (leaveBtn) {
+        leaveBtn.addEventListener('click', () => {
+            localStorage.clear();
+            body.classList.remove(
+                'is-at-bottom', 'is-scrolled',
+                'watcher-found', 'nut-found', 'berry-found', 
+                'ciphers-found', 'secrets-ended', 'hof-unlocked'
+            );
+            window.location.href = 'index.html'; 
+        });
+    }
 });
 
 /* =========================================================================
