@@ -1081,12 +1081,13 @@ body.watcher-found .nav-secret {
         display: flex;
         flex-wrap: wrap;
         justify-content: flex-start;
+		flex-direction: row;
         gap: 0;
         width: 100%;
     }
 
     #berry-section, #nut-section {
-        max-width: 40%;
+        max-width: 50%;
 		margin-left: 0;
         margin-right: 0;
     }
