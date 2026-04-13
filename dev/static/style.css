@@ -1140,6 +1140,24 @@ body.berry-found .banner-icons a.tooltip-link.banner-icon-stag {
     display: inline-block;
 }
 
+/* L'animation de vibration élastique */
+@keyframes nut-jiggle {
+    0% { transform: scale(1.6) rotate(0deg); }
+    25% { transform: scale(1.6) rotate(-8deg); }
+    50% { transform: scale(1.6) rotate(8deg); }
+    75% { transform: scale(1.6) rotate(-4deg); }
+    100% { transform: scale(1.6) rotate(0deg); }
+}
+
+/* On l'applique uniquement quand .expanded est ajouté */
+.fruit-trigger.expanded .fruit-sprite {
+    /* L'animation dure 0.5s au moment de l'apparition */
+    animation: nut-jiggle 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+    
+    /* On améliore l'ombre pour donner du relief pendant l'animation */
+    filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.4));
+}
+
    
 /* --- 5. Ciphers --- */
 .cipher {
