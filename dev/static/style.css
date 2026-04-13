@@ -1014,7 +1014,7 @@ body.watcher-found .nav-secret {
     display: inline-block;
 }
 
-/* --- 3. Nut & Berry Styles --- */
+/* --- 3. Fruits Styles --- */
 .fruit-interaction-wrapper {
     display: flex;
     justify-content: flex-start;
@@ -1072,6 +1072,22 @@ body.watcher-found .nav-secret {
     }
 }
 
+.fruit-trigger.expanded {
+    transform: scale(1.6);
+    padding-top: 40px;
+    padding-bottom: 80px;
+    z-index: 50;
+}
+
+.fruit-trigger.expanded .fruit-sprite {
+    filter: drop-shadow(0 25px 40px rgba(0, 0, 0, 0.7));
+}
+
+.fruit-trigger.expanded .fruit-tooltip {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(0.65);
+}
+
 @media (max-width: 768px) {
     .fruit-interaction-wrapper {
         justify-content: center;
@@ -1079,12 +1095,12 @@ body.watcher-found .nav-secret {
     }
 
     .fruit-trigger:active {
-        transform: scale(1.2);
+        transform: scale(1.4);
         transition: transform 0.1s;
     }
 }
 
-/* --- 4. Nut & Berry Effects --- */
+/* --- 4. Fruits Effects --- */
 #nut-section,
 #berry-section {
     display: none;
