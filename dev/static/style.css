@@ -351,7 +351,6 @@ a.cl:hover { border-bottom: 1px solid var(--main-color); color: var(--main-color
     .banner-icons a.tooltip-link, 
     .banner-icons a.tooltip-link.expanded { margin: 0; display: inline-block; }
     
-    /* On garde l'agrandissement spécifique mobile que tu avais réglé */
     .banner-icons.left a.tooltip-link.expanded img { transform: translateY(-8px) scale(1.4) rotate(-8deg) !important; position: relative; z-index: 100; }
     .banner-icons.right a.tooltip-link.expanded img { transform: translateY(-8px) scale(1.4) rotate(8deg) !important; position: relative; z-index: 100; }
 
@@ -902,7 +901,7 @@ tr[data-tier="stag"] td:nth-child(4)     { color: var(--color-stag) !important; 
    --- 12. HIDDEN CONTENT: UNDERGROWTH ---
    ========================================================================= */
 
-/* --- 1. Secret Button --- */
+/* --- 0. Secret Button --- */
 .secret-btn {
     display: inline-block;
     position: relative;
@@ -938,6 +937,16 @@ tr[data-tier="stag"] td:nth-child(4)     { color: var(--color-stag) !important; 
 	bottom: auto;
     text-transform: none;
     letter-spacing: normal;
+}
+
+/* --- 1. Exit Door --- */
+#leave-secrets {
+    display: none;
+}
+
+body.secrets-started #leave-secrets {
+    display: inline-block;
+	margin: 20px 0;
 }
 
 /* --- 2. Watcher Secret --- */
@@ -1006,80 +1015,72 @@ body.watcher-found .nav-secret {
 }
 
 /* --- 3. Nut & Berry Styles --- */
-.tier-interaction-wrapper {
+.fruit-interaction-wrapper {
     display: flex;
     justify-content: flex-start;
     align-items: center;
-	padding: 0 100px;
+    padding: 0 100px;
     width: 100%;
-	box-sizing: border-box;
+    box-sizing: border-box;
 }
 
-.nut-trigger {
+.fruit-trigger {
     position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
     text-decoration: none;
     cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
     transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), 
                 padding 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.nut-sprite {
+.fruit-sprite {
     width: 130px;
     height: auto;
     filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.5));
     transition: filter 0.4s ease;
+    backface-visibility: hidden;
+    perspective: 1000px;
+    transform: translateZ(0); 
+    will-change: transform, filter;
 }
 
-.nut-tooltip {
-    position: absolute;
-    background: var(--bg-container);
-    border: 1px solid var(--border-soft);
-    color: var(--main-color);
-	font-weight: var(--medium);
-    padding: 6px 12px;
-    border-radius: 6px;
-    font-size: var(--size-xs);
-    white-space: nowrap;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-    z-index: 100;
-    bottom: auto;
+.fruit-tooltip {
     top: 45%; 
     left: 50%;
-    opacity: 0;
-    pointer-events: none;
     transform: translate(-50%, -50%) scale(0.4);
-    transition: all 0.3s ease;
+    color: var(--main-color);
 }
 
-.nut-trigger:hover {
-    transform: scale(1.6);
-	padding-top: 40px;
-    padding-bottom: 80px;
-}
+@media (hover: hover) and (pointer: fine) {
+    .fruit-trigger:hover {
+        transform: scale(1.6);
+        padding-top: 40px;
+        padding-bottom: 80px;
+    }
 
-.nut-trigger:hover .nut-sprite {
-    filter: drop-shadow(0 25px 40px rgba(0, 0, 0, 0.7));
-}
+    .fruit-trigger:hover .fruit-sprite {
+        filter: drop-shadow(0 25px 40px rgba(0, 0, 0, 0.7));
+    }
 
-.nut-trigger:hover .nut-tooltip {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(0.65);
-}
-
-.nut-trigger:active {
-    transform: scale(1.45);
-    transition: transform 0.1s;
+    .fruit-trigger:hover .fruit-tooltip {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(0.65);
+    }
 }
 
 @media (max-width: 768px) {
-    .tier-interaction-wrapper {
+    .fruit-interaction-wrapper {
         justify-content: center;
         padding: 0; 
     }
-	
+
+    .fruit-trigger:active {
+        transform: scale(1.2);
+        transition: transform 0.1s;
+    }
 }
 
 /* --- 4. Nut & Berry Effects --- */
@@ -1107,21 +1108,8 @@ body.berry-found .banner-icons a.tooltip-link.banner-icon-stag {
     display: inline-block;
 }
 
-/* --- 5. Exit Door --- */
-#leave-secrets {
-    display: none;
-}
-
-body.secrets-started #leave-secrets {
-    display: inline-block;
-	margin: 20px 0;
-}
-
-/* =========================================================================
-   --- 13. HIDDEN CONTENT: MYSTIC ---
-   ========================================================================= */
    
-/* --- 1. Ciphers --- */
+/* --- 5. Ciphers --- */
 .cipher {
     cursor: pointer;
     transition: color 0.3s ease;
@@ -1159,7 +1147,7 @@ body.ciphers-found .cipher {
     color: inherit;
 }
 
-/* --- 2. Gate --- */
+/* --- 6. Mystic Gate --- */
 #mystic-gate {
     position: fixed;
     top: 0;
@@ -1176,7 +1164,7 @@ body[data-page="cache"].ciphers-found {
     --main-color: var(--color-stag);
 }
 
-/* --- 3. Final Button --- */
+/* --- 7. Final Button --- */
 #hof-access {
     display: none;
     cursor: help;
@@ -1207,7 +1195,7 @@ body.hof-unlocked #hof-access {
     display: none !important;
 }
 
-/* --- 4. Hall of Fame Reveal --- */
+/* --- 8. Hall of Fame Reveal --- */
 .hof-section {
     display: none;
 }
@@ -1230,9 +1218,7 @@ body.hof-unlocked .hof-section {
 }
 
 
-/* =========================================================================
-   --- 14. STARS ---
-   ========================================================================= */
+/* --- 9. Stardust --- */
    
 .stardust-container {
     position: absolute;
