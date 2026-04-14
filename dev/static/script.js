@@ -310,6 +310,9 @@ $(document).ready(function() {
 						lastTier = fullName;
 					}
 				});
+				if (api.responsive) {
+					api.responsive.recalc();
+				}
 			}
 		});
 	}
