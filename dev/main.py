@@ -399,7 +399,8 @@ def extract_all_streaks(history, player_full_name):
                 current_s = {
                     'player': short_name, 
                     'tier': tier_now, 
-                    'ascension': date_str, 
+                    'start_date': date_str,
+                    'end_date': date_str,                    
                     'peak': elo_val, 
                     'streak_count': 1
                 }
@@ -407,6 +408,7 @@ def extract_all_streaks(history, player_full_name):
                 current_s = None
         elif current_s:
             current_s['streak_count'] += 1
+            current_s['end_date'] = date_str
             current_s['peak'] = max(current_s['peak'], elo_val)
 
     if current_s: streaks.append(current_s)
@@ -451,6 +453,21 @@ hall_of_fame_data = []
 for t in TIER_HIERARCHY:
     tier_top_5 = [s for s in all_sorted_streaks if s['tier'] == t][:5]
     hall_of_fame_data.extend(tier_top_5)
+    
+def format_us(d_str):
+    try:
+        return datetime.strptime(d_str, '%Y-%m-%d').strftime('%b %d, %Y')
+    except:
+        return d_str
+
+for s in hall_of_fame_data:
+    start = format_us(s['start_date'])
+    end = format_us(s['end_date'])
+    
+    if s['start_date'] == s['end_date']:
+        s['timespan'] = start
+    else:
+        s['timespan'] = f"{start} — {end}"
     
 # =========================================================================
 # --- 10. SITE GENERATION (JINJA2 RENDERING) ---
