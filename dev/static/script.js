@@ -273,33 +273,36 @@ $(document).ready(function() {
 			"searching": false,
 			"info": false,
 			"dom": 'rt',
-			"columnDefs": [ { "targets": 5, "visible": false } ],
+			"columnDefs": [ 
+            { "targets": 1, "className": "player-name-cell" },
+			{ "targets": 3, "className": "elo-cell" },
+			{ "targets": 5, "visible": false },
+            { "responsivePriority": 1, "targets": [1, 2, 3] },
+            { "responsivePriority": 2, "targets": 4 },
+			{ "responsivePriority": 3, "targets": 0 },
+			]
 			"drawCallback": function ( settings ) {
 				var api = this.api();
 				var rows = api.rows( {page:'current'} ).nodes();
 				var lastTier = null;
 
-				// 1. Nettoyage : On retire les anciens headers injectés pour éviter les doublons
 				$(api.table().body()).find('.tier-header-row').remove();
 
-				// 2. Injection
 				api.column(5, {page:'current'} ).data().each( function ( groupData, i ) {
-					// On transforme la string DataTables en objet jQuery pour lire les données
+
 					var $data = $('<div>').append(groupData);
 					var fullName = $data.find('.d-name').text();
 					var iconPath = $data.find('.d-icon').text();
 					var rawTier  = $data.find('.d-raw-tier').text();
 
 					if ( lastTier !== fullName ) {
-						// CLONAGE : On utilise ton template HTML présent dans le DOM
+
 						var $header = $('#tier-header-template tr').clone();
 						
-						// REMPLISSAGE : On peuple le clone avec les infos
 						$header.find('.t-img').attr('src', iconPath).attr('alt', rawTier);
 						$header.find('.t-text').text(fullName);
 						$header.find('.t-link').attr('onclick', "handleTierClick(event, '" + rawTier + "')");
 
-						// INSERTION : On place le header avant la ligne de joueur
 						$(rows).eq( i ).before($header);
 						
 						lastTier = fullName;
