@@ -13,44 +13,39 @@
 	
 	<div class="hof-section">
 		<p>Engraved here are the names of those who left their mark on time. This Hall honors the longest reigns maintained within the Woodland's highest Tiers.</p>
-		<table id="halloffame" class="display nowrap" style="width:100%">
+		<table id="hall_of_fame" class="display nowrap" style="width:100%">
 			<thead>
 				<tr>
-					<th>Rank</th> <th>Player</th>
+					<th>Rank</th>
+					<th>Player</th>
 					<th><span class="hide-mobile">Best</span> Streak</th>
 					<th>Peak <span class="hide-mobile">Elo</span></th>
 					<th>Start Date</th>
-				</tr>
+					<th>TierData</th> </tr>
 			</thead>
 			<tbody>
-				{% set ns = namespace(last_tier=None, rank=0) %}
+				{% set ns = namespace(rank=0, current_tier=None) %}
 				{% for s in hall_of_fame %}
 					
-					{% if s.tier != ns.last_tier %}
+					{# On gère juste le compteur de rang #}
+					{% if s.tier != ns.current_tier %}
 						{% set ns.rank = 0 %}
-						<tr class="tier-header-row">
-							<td colspan="5"> <div class="tier-section-title">
-									<div class="tier-icon-container">
-										<img src="{{ config.assets.icons[s.tier] }}" alt="{{ s.tier }}">
-									</div>
-									<span>{{ s.tier | upper }} ELITE</span>
-								</div>
-							</td>
-							<td style="display: none;"></td>
-							<td style="display: none;"></td>
-							<td style="display: none;"></td>
-							<td style="display: none;"></td>
-						</tr>
-						{% set ns.last_tier = s.tier %}
+						{% set ns.current_tier = s.tier %}
 					{% endif %}
-
 					{% set ns.rank = ns.rank + 1 %}
+
 					<tr>
 						<td>#{{ ns.rank }}</td>
 						<td>{{ s.player }}</td>
 						<td class="streak-cell">{{ s.streak_count }}</td>
 						<td>{{ s.peak }}</td>
-						<td>{{ s.ascension }}</td> </tr>
+						<td>{{ s.ascension }}</td>
+						
+						<td>
+							<span class="t-name">{{ s.tier | upper }} ELITE</span>
+							<span class="t-icon">{{ config.assets.icons[s.tier] }}</span>
+						</td>
+					</tr>
 				{% endfor %}
 			</tbody>
 		</table>
@@ -112,18 +107,49 @@
 {% block custom_js %}
 <script>
 $(document).ready(function() {
-    $('#halloffame').DataTable({
+    $('#hall_of_fame').DataTable({
         "responsive": true,
-        "ordering": false,
-        "paging": false,
-        "info": false,
-        "searching": false,
-        "dom": 'rt',
+        "ordering": false,   // Garde l'ordre de ton Python
+        "paging": false,     // Affiche tout d'un coup
+        "searching": false,  // Pas de barre de recherche
+        "info": false,       // Pas de texte "Showing 1 to X"
+        "dom": 'rt',         // Affiche uniquement le tableau pur
         "columnDefs": [ 
             { "targets": 1, "className": "player-name-cell" },
             { "targets": 3, "className": "elo-cell" },
-            { "responsivePriority": 1, "targets": [1, 2, 3] }
-        ]
+            { "targets": 5, "visible": false }, // Cache la 6ème colonne (TierData)
+            { "responsivePriority": 1, "targets": [1, 2, 3] },
+            { "responsivePriority": 2, "targets": 4 },
+            { "responsivePriority": 3, "targets": 0 }
+        ],
+        // C'est ici que la magie DataTables opère pour les sections
+        "drawCallback": function ( settings ) {
+            var api = this.api();
+            var rows = api.rows( {page:'current'} ).nodes();
+            var lastTier = null;
+
+            // On lit la 6ème colonne (index 5)
+            api.column(5, {page:'current'} ).data().each( function ( groupData, i ) {
+                // On extrait le texte et l'icône cachés dans le HTML
+                var tierName = $(groupData).filter('.t-name').text();
+                var tierIcon = $(groupData).filter('.t-icon').text();
+
+                // Si le Tier change, on insère la magnifique ligne de section avec colspan
+                if ( lastTier !== tierName ) {
+                    $(rows).eq( i ).before(
+                        '<tr class="tier-header-row">' +
+                            '<td colspan="5">' + // Colspan parfait sur les 5 colonnes visibles
+                                '<div class="tier-section-title" style="display: flex; align-items: center; gap: 10px;">' +
+                                    '<img src="' + tierIcon + '" alt="icon" style="width: 32px; height: 32px;">' +
+                                    '<span>' + tierName + '</span>' +
+                                '</div>' +
+                            '</td>' +
+                        '</tr>'
+                    );
+                    lastTier = tierName;
+                }
+            });
+        }
     });
 });
 </script>

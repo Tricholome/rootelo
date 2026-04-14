@@ -244,115 +244,132 @@
 	
 	<div class="hof-section">
 		<p>Engraved here are the names of those who left their mark on time. This Hall honors the longest reigns maintained within the Woodland's highest Tiers.</p>
-		<table id="halloffame" class="display nowrap" style="width:100%">
+		<table id="hall_of_fame" class="display nowrap" style="width:100%">
 			<thead>
 				<tr>
-					<th>Rank</th> <th>Player</th>
+					<th>Rank</th>
+					<th>Player</th>
 					<th><span class="hide-mobile">Best</span> Streak</th>
 					<th>Peak <span class="hide-mobile">Elo</span></th>
 					<th>Start Date</th>
-				</tr>
+					<th>TierData</th> </tr>
 			</thead>
 			<tbody>
 				
 				
 					
 					
+					
 						
-						<tr class="tier-header-row">
-							<td colspan="5"> <div class="tier-section-title">
-									<div class="tier-icon-container">
-										<img src="assets/icons/stag.webp" alt="stag">
-									</div>
-									<span>STAG ELITE</span>
-								</div>
-							</td>
-							<td style="display: none;"></td>
-							<td style="display: none;"></td>
-							<td style="display: none;"></td>
-							<td style="display: none;"></td>
-						</tr>
 						
+					
 					
 
-					
 					<tr>
 						<td>#1</td>
 						<td>Led_Slash</td>
 						<td class="streak-cell">5</td>
 						<td>1635</td>
-						<td>2026-04-08</td> </tr>
+						<td>2026-04-08</td>
+						
+						<td>
+							<span class="t-name">STAG ELITE</span>
+							<span class="t-icon">assets/icons/stag.webp</span>
+						</td>
+					</tr>
 				
 					
 					
+					
 						
-						<tr class="tier-header-row">
-							<td colspan="5"> <div class="tier-section-title">
-									<div class="tier-icon-container">
-										<img src="assets/icons/bird_new.webp" alt="bird">
-									</div>
-									<span>BIRD ELITE</span>
-								</div>
-							</td>
-							<td style="display: none;"></td>
-							<td style="display: none;"></td>
-							<td style="display: none;"></td>
-							<td style="display: none;"></td>
-						</tr>
 						
+					
 					
 
-					
 					<tr>
 						<td>#1</td>
 						<td>Led_Slash</td>
 						<td class="streak-cell">32</td>
 						<td>1551</td>
-						<td>2026-03-01</td> </tr>
+						<td>2026-03-01</td>
+						
+						<td>
+							<span class="t-name">BIRD ELITE</span>
+							<span class="t-icon">assets/icons/bird_new.webp</span>
+						</td>
+					</tr>
 				
 					
 					
-
 					
+					
+
 					<tr>
 						<td>#2</td>
 						<td>Killerstorm17</td>
 						<td class="streak-cell">6</td>
 						<td>1554</td>
-						<td>2026-01-18</td> </tr>
+						<td>2026-01-18</td>
+						
+						<td>
+							<span class="t-name">BIRD ELITE</span>
+							<span class="t-icon">assets/icons/bird_new.webp</span>
+						</td>
+					</tr>
 				
 					
 					
-
 					
+					
+
 					<tr>
 						<td>#3</td>
 						<td>Nadav253</td>
 						<td class="streak-cell">1</td>
 						<td>1506</td>
-						<td>2026-03-21</td> </tr>
+						<td>2026-03-21</td>
+						
+						<td>
+							<span class="t-name">BIRD ELITE</span>
+							<span class="t-icon">assets/icons/bird_new.webp</span>
+						</td>
+					</tr>
 				
 					
 					
-
 					
+					
+
 					<tr>
 						<td>#4</td>
 						<td>ShuShuBana</td>
 						<td class="streak-cell">1</td>
 						<td>1511</td>
-						<td>2026-02-09</td> </tr>
+						<td>2026-02-09</td>
+						
+						<td>
+							<span class="t-name">BIRD ELITE</span>
+							<span class="t-icon">assets/icons/bird_new.webp</span>
+						</td>
+					</tr>
 				
 					
 					
-
 					
+					
+
 					<tr>
 						<td>#5</td>
 						<td>tofuwater</td>
 						<td class="streak-cell">1</td>
 						<td>1502</td>
-						<td>2026-03-23</td> </tr>
+						<td>2026-03-23</td>
+						
+						<td>
+							<span class="t-name">BIRD ELITE</span>
+							<span class="t-icon">assets/icons/bird_new.webp</span>
+						</td>
+					</tr>
 				
 			</tbody>
 		</table>
@@ -425,7 +442,7 @@
 					<span>Powered by <strong>Tʀɪᴄʜᴏʟᴏᴍᴇ</strong></span>
 					<span>Woodland visions by <a class="cl" href="cache.html">𝕩𝕝𝕦𝕖𝕧𝕚</a></span>
 				</div>
-				<div class="footer-date">Updated on 2026-04-14 09:33 UTC</div>
+				<div class="footer-date">Updated on 2026-04-14 09:45 UTC</div>
 			</div>
 		</footer>
     </div>
@@ -470,18 +487,49 @@
     
 <script>
 $(document).ready(function() {
-    $('#halloffame').DataTable({
+    $('#hall_of_fame').DataTable({
         "responsive": true,
-        "ordering": false,
-        "paging": false,
-        "info": false,
-        "searching": false,
-        "dom": 'rt',
+        "ordering": false,   // Garde l'ordre de ton Python
+        "paging": false,     // Affiche tout d'un coup
+        "searching": false,  // Pas de barre de recherche
+        "info": false,       // Pas de texte "Showing 1 to X"
+        "dom": 'rt',         // Affiche uniquement le tableau pur
         "columnDefs": [ 
             { "targets": 1, "className": "player-name-cell" },
             { "targets": 3, "className": "elo-cell" },
-            { "responsivePriority": 1, "targets": [1, 2, 3] }
-        ]
+            { "targets": 5, "visible": false }, // Cache la 6ème colonne (TierData)
+            { "responsivePriority": 1, "targets": [1, 2, 3] },
+            { "responsivePriority": 2, "targets": 4 },
+            { "responsivePriority": 3, "targets": 0 }
+        ],
+        // C'est ici que la magie DataTables opère pour les sections
+        "drawCallback": function ( settings ) {
+            var api = this.api();
+            var rows = api.rows( {page:'current'} ).nodes();
+            var lastTier = null;
+
+            // On lit la 6ème colonne (index 5)
+            api.column(5, {page:'current'} ).data().each( function ( groupData, i ) {
+                // On extrait le texte et l'icône cachés dans le HTML
+                var tierName = $(groupData).filter('.t-name').text();
+                var tierIcon = $(groupData).filter('.t-icon').text();
+
+                // Si le Tier change, on insère la magnifique ligne de section avec colspan
+                if ( lastTier !== tierName ) {
+                    $(rows).eq( i ).before(
+                        '<tr class="tier-header-row">' +
+                            '<td colspan="5">' + // Colspan parfait sur les 5 colonnes visibles
+                                '<div class="tier-section-title" style="display: flex; align-items: center; gap: 10px;">' +
+                                    '<img src="' + tierIcon + '" alt="icon" style="width: 32px; height: 32px;">' +
+                                    '<span>' + tierName + '</span>' +
+                                '</div>' +
+                            '</td>' +
+                        '</tr>'
+                    );
+                    lastTier = tierName;
+                }
+            });
+        }
     });
 });
 </script>
