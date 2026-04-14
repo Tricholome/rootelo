@@ -283,7 +283,7 @@ $(document).ready(function() {
 					var iconPath = $(groupData).find('.d-icon').text();
 					var rawTier = $(groupData).find('.d-raw-tier').text();
 					if ( lastTier !== fullName ) {
-						var $header = $('#header-tier-elite tr').clone();
+						var $header = $('#tier-header tr').clone();
 						$header.find('.t-img').attr('src', iconPath).attr('alt', rawTier);
 						$header.find('.t-text').text(fullName);
 						$header.find('.t-link').attr('onclick', "handleTierClick(event, '" + rawTier + "')");
