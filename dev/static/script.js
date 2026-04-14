@@ -209,9 +209,96 @@ document.addEventListener('DOMContentLoaded', function() {
 	window.onclick = (event) => { if (event.target == modal) closeModal(); };
 });
 
+/* =========================================================================
+   --- 4. DATA TABLES ---
+   ========================================================================= */
+
+$(document).ready(function() {
+
+    // --- 1. LEADERBOARD ---
+    if ($('#leaderboard').length > 0) {
+        // Sort "-" at the end
+        $.extend($.fn.dataTable.ext.type.order, { 
+            "rank-pre": function (d) { return d === "-" ? 9999 : parseInt(d); } 
+        });
+
+        $('#leaderboard').DataTable({
+            "order": [[3, "desc"]],
+            "responsive": true, 
+            "pageLength": 50,
+            "dom": '<"top"lf>rt<"bottom"ip><"clear">',
+            "columnDefs": [ 
+                { "targets": 0, "type": "rank" },
+                { "targets": 2, "className": "player-name-cell" },
+                { "targets": 3, "className": "elo-cell" },
+                { "responsivePriority": 1, "targets": [2, 3] },
+                { "responsivePriority": 2, "targets": 0 },
+                { "responsivePriority": 3, "targets": 1 },
+                { "responsivePriority": 8, "targets": 6 },
+                { "responsivePriority": 10, "targets": [4, 5, 7, 8] }
+            ],
+            "language": {
+                "searchPlaceholder": "Player name"
+            }
+        });
+    }
+	
+	// --- 2. MATCHES ---
+    if ($('#matchesTable').length > 0) {
+        $('#matchesTable').DataTable({
+            "order": [[1, "desc"]], 
+            "responsive": true,
+            "pageLength": 25,
+            "columnDefs": [
+                { "className": "lineup-cell", "targets": 3 },
+                { "className": "elo-sum-cell", "targets": 1 },
+                { "responsivePriority": 1, "targets": [0, 3] },
+                { "responsivePriority": 2, "targets": 1 },
+                { "responsivePriority": 3, "targets": 2 },
+                { "responsivePriority": 4, "targets": 4 }
+            ],
+            "language": {
+                "searchPlaceholder": "Player name, Game ID..."
+            }
+        });
+    }
+
+    // --- 3. HALL OF FAME ---
+    if ($('#hall_of_fame').length > 0) {
+        $('#hall_of_fame').DataTable({
+            "responsive": true,
+            "ordering": false,
+            "paging": false,
+            "searching": false,
+            "info": false,
+            "dom": 'rt',
+            "columnDefs": [ { "targets": 5, "visible": false } ],
+            "drawCallback": function ( settings ) {
+                var api = this.api();
+                var rows = api.rows( {page:'current'} ).nodes();
+                var lastTier = null;
+
+                api.column(5, {page:'current'} ).data().each( function ( groupData, i ) {
+                    var name = $(groupData).find('.d-name').text();
+                    var icon = $(groupData).find('.d-icon').text();
+
+                    if ( lastTier !== name ) {
+                        var $header = $('#header-tier-elite tr').clone();
+                        $header.find('.t-img').attr('src', icon);
+                        $header.find('.t-text').text(name);
+                        $(rows).eq( i ).before($header);
+                        lastTier = name;
+                    }
+                });
+            }
+        });
+    }
+
+});
+
 
 /* =========================================================================
-   --- 4. SECRETS ENGINE ---
+   --- 5. SECRETS ENGINE ---
    ========================================================================= */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -386,7 +473,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 /* =========================================================================
-   --- 5. NUT & BERRY ---
+   --- 6. NUT & BERRY ---
    ========================================================================= */
 
 function handleTierClick(event, tier) {
@@ -407,7 +494,7 @@ function handleTierClick(event, tier) {
 }
 
 /* =========================================================================
-   --- 6. STARDUST GENERATOR ---
+   --- 7. STARDUST GENERATOR ---
    ========================================================================= */
 
 function initStardust() {
