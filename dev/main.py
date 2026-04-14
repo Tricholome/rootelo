@@ -454,20 +454,20 @@ for t in TIER_HIERARCHY:
     tier_top_5 = [s for s in all_sorted_streaks if s['tier'] == t][:5]
     hall_of_fame_data.extend(tier_top_5)
     
-def format_us(d_str):
+def format_smart_timespan(d1_str, d2_str):
     try:
-        return datetime.strptime(d_str, '%Y-%m-%d').strftime('%b %d, %Y')
+        dt1 = datetime.strptime(d1_str, '%Y-%m-%d')
+        dt2 = datetime.strptime(d2_str, '%Y-%m-%d')
+        if d1_str == d2_str:
+            return dt1.strftime('%b %d, %Y')
+        if dt1.year != dt2.year:
+            return f"{dt1.strftime('%b %d, %Y')} — {dt2.strftime('%b %d, %Y')}"
+        return f"{dt1.strftime('%b %d')} — {dt2.strftime('%b %d, %Y')}"
     except:
-        return d_str
+        return d1_str
 
 for s in hall_of_fame_data:
-    start = format_us(s['start_date'])
-    end = format_us(s['end_date'])
-    
-    if s['start_date'] == s['end_date']:
-        s['timespan'] = start
-    else:
-        s['timespan'] = f"{start} — {end}"
+    s['timespan'] = format_smart_timespan(s['start_date'], s['end_date'])
     
 # =========================================================================
 # --- 10. SITE GENERATION (JINJA2 RENDERING) ---
