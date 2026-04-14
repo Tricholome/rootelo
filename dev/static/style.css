@@ -617,6 +617,11 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     border-top: 1px solid var(--glass-border) !important;
 }
 
+#hall_of_fame .tier-icon-container { 
+    width: 24px; 
+    height: 24px;
+}
+
 .streak-cell {
 	color: var(--text-bright) !important;
 	font-size: var(--size-md) !important;
