@@ -51,7 +51,7 @@
 						{% set ns.current_tier = s.tier %}
 					{% endif %}
 					{% set ns.rank = ns.rank + 1 %}
-					<tr>
+					<tr data-tier="{{ s.tier }}">
 						<td>#{{ ns.rank }}</td>
 						<td>{{ s.player }}</td>
 						<td>{{ s.streak_count }}</td>
