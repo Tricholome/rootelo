@@ -634,7 +634,7 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     border-bottom: 1px solid var(--border-soft); 
 }
 
-#tier-header-row:hover td { 
+.tier-header-row td { 
     background: var(--dt-header-bg) !important; 
 }
 
