@@ -28,22 +28,27 @@
 				</tr>
 			</thead>
 			<tbody>
+				{% set last_tier = None %}
 				{% for s in hall_of_fame %}
-				<tr data-tier="{{ s.tier }}">
-					<td>
-						<a href="javascript:void(0)" 
-						   onclick="handleTierClick(event, '{{ s.tier }}')" 
-						   class="tier-anchor-link">
-							<div class="tier-icon-container">
-								<img src="{{ config.assets.icons[s.tier] }}" alt="{{ s.tier }}">
-							</div>
-						</a>
-					</td>
-					<td>{{ s.player }}</td>
-					<td class="streak-cell">{{ s.streak_count }}</td>
-					<td>{{ s.peak }}</td>
-					<td>{{ s.ascension }}</td>
-				</tr>
+					{% if s.tier != last_tier %}
+						<tr class="tier-header-row">
+							<td colspan="5">
+								<div class="tier-section-title">
+									<img src="{{ config.assets.icons[s.tier] }}" class="tier-title-icon">
+									<span>{{ s.tier | uppercase }} ELITE</span>
+								</div>
+							</td>
+						</tr>
+						{% set last_tier = s.tier %}
+					{% endif %}
+
+					<tr>
+						<td>{{ s.tier }}</td>
+						<td>{{ s.player }}</td>
+						<td class="streak-cell">{{ s.streak_count }}</td>
+						<td>{{ s.peak }}</td>
+						<td>{{ s.ascension }}</td>
+					</tr>
 				{% endfor %}
 			</tbody>
 		</table>
