@@ -4041,7 +4041,7 @@
 					<span>Powered by <strong>Tʀɪᴄʜᴏʟᴏᴍᴇ</strong></span>
 					<span>Woodland visions by <a class="cl" href="cache.html">𝕩𝕝𝕦𝕖𝕧𝕚</a></span>
 				</div>
-				<div class="footer-date">Updated on 2026-04-14 09:45 UTC</div>
+				<div class="footer-date">Updated on 2026-04-14 11:09 UTC</div>
 			</div>
 		</footer>
     </div>
@@ -4084,31 +4084,5 @@
 		
     <script src="static/script.js"></script>
     
-<script>
-$(document).ready(function() {
-    $.extend($.fn.dataTable.ext.type.order, { "rank-pre": function (d) { return d === "-" ? 9999 : parseInt(d); } });
-
-    $('#leaderboard').DataTable({
-        "order": [[3, "desc"]],
-        "responsive": true, 
-        "pageLength": 50,
-        "dom": '<"top"lf>rt<"bottom"ip><"clear">',
-        "columnDefs": [ 
-            { "targets": 0, "type": "rank" },
-            { "targets": 2, "className": "player-name-cell" },
-			{ "targets": 3, "className": "elo-cell" },
-            { "responsivePriority": 1, "targets": [2, 3] },
-            { "responsivePriority": 2, "targets": 0 },
-            { "responsivePriority": 3, "targets": 1 },
-			{ "responsivePriority": 8, "targets": 6 },
-            { "responsivePriority": 10, "targets": [4, 5, 7, 8] }
-        ],
-        "language": {
-        "searchPlaceholder": "Player name"
-        }
-    });
-});
-</script>
-
 </body>
 </html>
