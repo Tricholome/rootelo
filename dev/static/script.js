@@ -5,9 +5,10 @@
    2. Double-tap
    3. Tier Modal
    4. Data Tables
-   5. Secrets Engine
-   6. Nut & Berry
-   7. Stardust Generator
+   5. Chart
+   6. Secrets Engine
+   7. Nut & Berry
+   8. Stardust Generator
 
    ========================================================================= */
    
@@ -318,18 +319,17 @@ $(document).ready(function() {
    --- 5. CHART (TRENDS) ---
    ========================================================================= */
 
-let myChart; // Variable globale au module pour pouvoir détruire/récréer le graph
+let myChart;
 
 function updateChart() {
     const input = document.getElementById('playerName');
-    if (!input) return;
-    
-    const name = input.value;
     const canvas = document.getElementById('progressionChart');
-    if (!canvas) return;
-    
-    // Si l'input est vide, on nettoie tout
-    if (name === "") {
+    if (!input || !canvas) return;
+
+    const name = input.value;
+    const allData = CONFIG.chartData;
+
+    if (name === "" || !allData[name]) {
         if (myChart) myChart.destroy();
         localStorage.removeItem('selectedPlayer');
         return;
@@ -338,7 +338,6 @@ function updateChart() {
     const ctx = canvas.getContext('2d');
     const rabbitColor = getComputedStyle(document.documentElement).getPropertyValue('--color-rabbit').trim() || '#E0B634';
     
-    // On vérifie si les données existent (allData est injecté via le HTML)
     if (typeof allData !== 'undefined' && allData[name]) {
         localStorage.setItem('selectedPlayer', name);
 
@@ -385,18 +384,15 @@ function updateChart() {
     }
 }
 
-// Initialisation au chargement
 $(document).ready(function() {
     if ($('#progressionChart').length > 0) {
-        const savedPlayer = localStorage.getItem('selectedPlayer');
         const input = document.getElementById('playerName');
+        const savedPlayer = localStorage.getItem('selectedPlayer');
 
-        if (savedPlayer && typeof allData !== 'undefined' && allData[savedPlayer]) {
+        if (savedPlayer && CONFIG.chartData[savedPlayer]) {
             input.value = savedPlayer;
             updateChart();
         }
-        
-        // On lie l'événement input dynamiquement ici au lieu du HTML
         $(input).on('input', updateChart);
     }
 });
