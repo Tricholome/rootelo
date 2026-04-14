@@ -29,12 +29,12 @@
 					<th>Rank</th>
 					<th>Player</th>
 					<th>
-						<span class="hide-mobile">Best</span> Streak
+						Best Streak
 					</th>
 					<th>
-						Peak <span class="hide-mobile">Elo</span>
+						Peak Elo
 					</th>
-					<th>Date</th>
+					<th>Period</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -48,10 +48,14 @@
 									</div>
 								</a>
 							</td>
-							<td><td>{{ tier_titles[s.tier] }}</td>
-							<td>Streak</td>
-							<td>Elo</td>
-							<td>Timespan</td>
+							<td>{{ tier_titles[s.tier] }}</td>
+							<td>
+								Peak <span class="hide-mobile">Elo</span>
+							</td>
+							<td>
+								<span class="hide-mobile">Best</span> Streak
+							</td>
+							<td>Period</td>
 						</tr>
 					{% else %}
 						<tr data-tier="{{ s.tier }}">
