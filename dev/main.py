@@ -438,14 +438,20 @@ for p_name, h in sources:
 
 TIER_HIERARCHY = ['stag', 'bird', 'fox', 'rabbit', 'mouse']
 
-hall_of_fame_data = sorted(
+all_sorted_streaks = sorted(
     best_streaks_only.values(), 
     key=lambda x: (
         TIER_HIERARCHY.index(x['tier']) if x['tier'] in TIER_HIERARCHY else 99, 
-        -x['streak_count']
+        -x['streak_count'], 
+        -x['peak']
     )
 )
 
+hall_of_fame_data = []
+for t in TIER_HIERARCHY:
+    tier_top_5 = [s for s in all_sorted_streaks if s['tier'] == t][:5]
+    hall_of_fame_data.extend(tier_top_5)
+    
 # =========================================================================
 # --- 10. SITE GENERATION (JINJA2 RENDERING) ---
 # =========================================================================
