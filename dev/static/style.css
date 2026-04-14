@@ -428,7 +428,8 @@ table.dataTable {
     border: 1px solid var(--glass-border) !important;
 }
 
-table.dataTable thead th { 
+table.dataTable thead th,
+table.dataTable tbody tr.tier-header-row td { 
     background: var(--dt-header-bg) !important; 
     color: var(--text-main) !important; 
     font-size: var(--size-xs) !important;
@@ -607,6 +608,15 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 }
 
 /* --- F. Specifics (Hall of Fame) --- */
+
+#hall_of_fame thead {
+    display: none;
+}
+
+#hall_of_fame {
+    border-top: 1px solid var(--glass-border) !important;
+}
+
 .streak-cell {
 	color: var(--text-bright) !important;
 	font-size: var(--size-md) !important;
@@ -1036,11 +1046,8 @@ body.watcher-found .nav-secret {
     text-decoration: none;
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
-    transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-    backface-visibility: hidden;
-    perspective: 1000px;
-    transform: translateZ(0); 
-    will-change: transform;
+    transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), 
+                padding 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .fruit-sprite {
@@ -1064,6 +1071,8 @@ body.watcher-found .nav-secret {
 @media (hover: hover) and (pointer: fine) {
     .fruit-trigger:hover {
         transform: scale(1.6);
+        padding-top: 40px;
+        padding-bottom: 80px;
     }
 	
     .fruit-trigger:hover .fruit-sprite {
