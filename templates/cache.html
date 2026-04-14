@@ -28,13 +28,9 @@
 				<tr>
 					<th>Rank</th>
 					<th>Player</th>
-					<th>
-						Longest Run
-					</th>
-					<th>
-						Peak Elo
-					</th>
-					<th>Period</th>
+					<th>Longest Run</th>
+					<th>Peak Elo</th>
+					<th>Active Timeframe</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -50,12 +46,12 @@
 							</td>
 							<td>{{ tier_titles[s.tier] }}</td>
 							<td>
-								Longest Run
+								<span class="hide-mobile">Longest</span> Run
 							</td>
 							<td>
-								<span class="hide-mobile">Best</span> Streak
+								Peak <span class="hide-mobile">Elo</span>
 							</td>
-							<td>Period</td>
+							<td>Active Timeframe</td>
 						</tr>
 					{% else %}
 						<tr data-tier="{{ s.tier }}">
