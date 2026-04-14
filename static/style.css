@@ -667,8 +667,8 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 }
 
 .timespan-cell {
-	color: var(--text-muted);
-	font-size: var(--size-sm);
+	color: var(--text-muted) !important;
+	font-size: var(--size-sm) !important;
 	font-family: var(--font-mono);
 }
 
