@@ -15,46 +15,9 @@
 		
 		<p>Engraved here are the names of those who left their mark on time. This Hall honors the longest reigns maintained within the Woodland's highest Tiers.</p>
 		
-		<table id="hall_of_fame" class="display nowrap" style="width:100%">
-			<thead>
-				<tr>
-					<th>Rank</th>
-					<th>Player</th>
-					<th><span class="hide-mobile">Best</span> Streak</th>
-					<th>Peak <span class="hide-mobile">Elo</span></th>
-					<th>Start Date</th>
-					<th>TierData</th> </tr>
-			</thead>
-			<tbody>
-				{% set ns = namespace(rank=0, current_tier=None) %}
-				{% for s in hall_of_fame %}
-					
-					{# On gère juste le compteur de rang #}
-					{% if s.tier != ns.current_tier %}
-						{% set ns.rank = 0 %}
-						{% set ns.current_tier = s.tier %}
-					{% endif %}
-					{% set ns.rank = ns.rank + 1 %}
-
-					<tr>
-						<td>#{{ ns.rank }}</td>
-						<td>{{ s.player }}</td>
-						<td class="streak-cell">{{ s.streak_count }}</td>
-						<td>{{ s.peak }}</td>
-						<td>{{ s.ascension }}</td>
-						
-						<td style="display:none;">
-							<span class="d-name">{{ s.tier | upper }} ELITE</span>
-							<span class="d-icon">{{ config.assets.icons[s.tier] }}</span>
-							<span class="d-raw-tier">{{ s.tier }}</span> </td>
-						</tr>
-				{% endfor %}
-			</tbody>
-		</table>
-		
 		<div style="display:none;">
-			<table id="tier-header">
-				<tr class="tier-header">
+			<table id="tier-header-template">
+				<tr class="tier-header-row">
 					<td colspan="5">
 						<div class="tier-section-title">
 							<a href="javascript:void(0)" class="tier-anchor-link t-link">
@@ -68,6 +31,41 @@
 				</tr>
 			</table>
 		</div>
+
+		<table id="hall_of_fame" class="display nowrap" style="width:100%">
+			<thead>
+				<tr>
+					<th>Rank</th>
+					<th>Player</th>
+					<th>Streak</th>
+					<th>Elo</th>
+					<th>Date</th>
+					<th>TierData</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% set ns = namespace(rank=0, current_tier=None) %}
+				{% for s in hall_of_fame %}
+					{% if s.tier != ns.current_tier %}
+						{% set ns.rank = 0 %}
+						{% set ns.current_tier = s.tier %}
+					{% endif %}
+					{% set ns.rank = ns.rank + 1 %}
+					<tr>
+						<td>#{{ ns.rank }}</td>
+						<td>{{ s.player }}</td>
+						<td>{{ s.streak_count }}</td>
+						<td>{{ s.peak }}</td>
+						<td>{{ s.ascension }}</td>
+						<td style="display:none;">
+							<span class="d-name">{{ s.tier | upper }} ELITE</span>
+							<span class="d-icon">{{ config.assets.icons[s.tier] }}</span>
+							<span class="d-raw-tier">{{ s.tier }}</span>
+						</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
 		
 	</div>
 	
