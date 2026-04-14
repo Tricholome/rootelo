@@ -624,9 +624,9 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 
 table.dataTable tbody tr.tier-header-row td { 
     background: var(--dt-header-bg); 
-    color: var(--text-main); 
-    font-size: var(--size-xs);
-    letter-spacing: var(--track-wide); 
+    color: var(--text-main) !important;  
+    font-size: var(--size-xs) !important; 
+    letter-spacing: var(--track-wide) !important;  
     text-transform: uppercase; 
     padding: 10px; 
     border-bottom: 1px solid var(--border-soft); 
