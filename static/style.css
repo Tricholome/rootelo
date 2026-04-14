@@ -555,12 +555,6 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 
 .tier-icon-container img { max-width: 100%; max-height: 100%; object-fit: contain; }
 
-.tier-anchor-link {
-    pointer-events: auto !important;
-    position: relative;
-    z-index: 20;
-}
-
 .player-name-cell {
 	text-align: left;
 	font-weight: var(--medium);
@@ -644,12 +638,25 @@ table.dataTable tbody tr.tier-header-row:hover td {
     background: var(--dt-header-bg) !important; 
 }
 
-tr.tier-header-row td.dtr-control::before {
-    display: none !important;
+
+#hall_of_fame td {
+    pointer-events: none !important;
 }
 
-tr.tier-header-row td.dtr-control {
-    pointer-events: none !important;
+#hall_of_fame td a, 
+#hall_of_fame td button,
+#hall_of_fame .tier-anchor-link {
+    pointer-events: auto !important;
+}
+
+#hall_of_fame td::before, 
+#hall_of_fame td::after {
+    display: none !important;
+    content: "" !important;
+}
+
+#hall_of_fame tr {
+    cursor: default !important;
 }
 
 .streak-cell {
