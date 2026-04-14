@@ -672,6 +672,11 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 	font-family: var(--font-mono);
 }
 
+.rank-cell {
+	color: var(--text-muted);
+	font-weight: var(--medium);
+}
+
 .hide-mobile {
     display: inline;
 }
