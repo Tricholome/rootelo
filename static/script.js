@@ -286,7 +286,7 @@ $(document).ready(function() {
 						var $header = $('#header-tier-elite tr').clone();
 						$header.find('.t-img').attr('src', iconPath).attr('alt', rawTier);
 						$header.find('.t-text').text(fullName);
-						$header.find('.t-link').attr('onclick', "handleTierClick(event, '" + rawTier + "')"
+						$header.find('.t-link').attr('onclick', "handleTierClick(event, '" + rawTier + "')");
 						$(rows).eq( i ).before($header);
 						lastTier = fullName;
 					}
