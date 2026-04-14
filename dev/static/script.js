@@ -268,13 +268,19 @@ $(document).ready(function() {
     // --- 3. HALL OF FAME ---
 	if ($('#hall_of_fame').length > 0) {
 		$('#hall_of_fame').DataTable({
-			"responsive": true,
+			"responsive": {
+				"details": {
+					"type": 'column',
+					"target": 4
+				}
+			},
 			"ordering": false,
 			"paging": false,
 			"searching": false,
 			"info": false,
 			"dom": 'rt',
-			"columnDefs": [ 
+			"columnDefs": [
+				{ "className": 'dtr-control', "targets": 4 },
 				{ "targets": 1, "className": "player-name-cell" },
 				{ "targets": 2, "className": "streak-cell" },
 				{ "targets": 3, "className": "elo-cell" },
