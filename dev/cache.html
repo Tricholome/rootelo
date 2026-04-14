@@ -244,7 +244,7 @@
 	
 	<div class="hof-section">
 		<p>Engraved here are the names of those who left their mark on time. This Hall honors the longest reigns maintained within the Woodland's highest Tiers.</p>
-		<table id="leaderboard" class="display nowrap" style="width:100%">
+		<table id="halloffame" class="display nowrap" style="width:100%">
 			<thead>
 				<tr>
 					<th>Rank</th> <th>Player</th>
@@ -277,7 +277,11 @@
 
 					
 					<tr>
-						<td>#1</td> <td>Led_Slash</td> <td class="streak-cell">5</td> <td>1635</td> <td>2026-04-08</td> </tr>
+						<td>#1</td>
+						<td>Led_Slash</td>
+						<td class="streak-cell">5</td>
+						<td>1635</td>
+						<td>2026-04-08</td> </tr>
 				
 					
 					
@@ -300,35 +304,55 @@
 
 					
 					<tr>
-						<td>#1</td> <td>Led_Slash</td> <td class="streak-cell">32</td> <td>1551</td> <td>2026-03-01</td> </tr>
+						<td>#1</td>
+						<td>Led_Slash</td>
+						<td class="streak-cell">32</td>
+						<td>1551</td>
+						<td>2026-03-01</td> </tr>
 				
 					
 					
 
 					
 					<tr>
-						<td>#2</td> <td>Killerstorm17</td> <td class="streak-cell">6</td> <td>1554</td> <td>2026-01-18</td> </tr>
+						<td>#2</td>
+						<td>Killerstorm17</td>
+						<td class="streak-cell">6</td>
+						<td>1554</td>
+						<td>2026-01-18</td> </tr>
 				
 					
 					
 
 					
 					<tr>
-						<td>#3</td> <td>Nadav253</td> <td class="streak-cell">1</td> <td>1506</td> <td>2026-03-21</td> </tr>
+						<td>#3</td>
+						<td>Nadav253</td>
+						<td class="streak-cell">1</td>
+						<td>1506</td>
+						<td>2026-03-21</td> </tr>
 				
 					
 					
 
 					
 					<tr>
-						<td>#4</td> <td>ShuShuBana</td> <td class="streak-cell">1</td> <td>1511</td> <td>2026-02-09</td> </tr>
+						<td>#4</td>
+						<td>ShuShuBana</td>
+						<td class="streak-cell">1</td>
+						<td>1511</td>
+						<td>2026-02-09</td> </tr>
 				
 					
 					
 
 					
 					<tr>
-						<td>#5</td> <td>tofuwater</td> <td class="streak-cell">1</td> <td>1502</td> <td>2026-03-23</td> </tr>
+						<td>#5</td>
+						<td>tofuwater</td>
+						<td class="streak-cell">1</td>
+						<td>1502</td>
+						<td>2026-03-23</td> </tr>
 				
 			</tbody>
 		</table>
@@ -401,7 +425,7 @@
 					<span>Powered by <strong>Tʀɪᴄʜᴏʟᴏᴍᴇ</strong></span>
 					<span>Woodland visions by <a class="cl" href="cache.html">𝕩𝕝𝕦𝕖𝕧𝕚</a></span>
 				</div>
-				<div class="footer-date">Updated on 2026-04-14 09:25 UTC</div>
+				<div class="footer-date">Updated on 2026-04-14 09:33 UTC</div>
 			</div>
 		</footer>
     </div>
@@ -446,17 +470,17 @@
     
 <script>
 $(document).ready(function() {
-    $('#leaderboard').DataTable({
-        "responsive": true, 
-        "pageLength": 10,
-        "dom": '<"top"lf>rt<"bottom"ip><"clear">',
+    $('#halloffame').DataTable({
+        "responsive": true,
+        "ordering": false,
+        "paging": false,
+        "info": false,
+        "searching": false,
+        "dom": 'rt',
         "columnDefs": [ 
             { "targets": 1, "className": "player-name-cell" },
-			{ "targets": 3, "className": "elo-cell" },
-            { "responsivePriority": 1, "targets": [1, 2, 3] },
-            { "responsivePriority": 2, "targets": 4 },
-			{ "responsivePriority": 3, "targets": 0 },
-            { "targets": 0, "orderable": false }
+            { "targets": 3, "className": "elo-cell" },
+            { "responsivePriority": 1, "targets": [1, 2, 3] }
         ]
     });
 });
