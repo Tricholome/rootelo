@@ -612,11 +612,10 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 }
 
 #hall_of_fame thead th {
-    height: 0;
     padding: 0 !important;
-    border: none;
-    line-height: 0;
-    font-size: 0;
+    border: none !important;
+    line-height: 0 !important;
+    font-size: 0 !important;
 }
 
 #hall_of_fame {
