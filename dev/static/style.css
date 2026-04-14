@@ -673,7 +673,7 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 }
 
 .rank-cell {
-	color: var(--text-muted);
+	color: var(--text-muted) !important;
 	font-weight: var(--medium);
 }
 
