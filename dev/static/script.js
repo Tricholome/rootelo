@@ -279,26 +279,32 @@ $(document).ready(function() {
 				var rows = api.rows( {page:'current'} ).nodes();
 				var lastTier = null;
 
-				for (var i = 0; i < rows.length; i++) {
-					var $row = $(rows[i]);
-					
-					var fullName = $row.find('.d-name').text().trim();
-					var iconPath = $row.find('.d-icon').text().trim();
-					var rawTier  = $row.find('.d-raw-tier').text().trim();
+				// 1. Nettoyage : On retire les anciens headers injectés pour éviter les doublons
+				$(api.table().body()).find('.tier-header-row').remove();
 
-					if ( fullName !== "" && lastTier !== fullName ) {
-						
+				// 2. Injection
+				api.column(5, {page:'current'} ).data().each( function ( groupData, i ) {
+					// On transforme la string DataTables en objet jQuery pour lire les données
+					var $data = $('<div>').append(groupData);
+					var fullName = $data.find('.d-name').text();
+					var iconPath = $data.find('.d-icon').text();
+					var rawTier  = $data.find('.d-raw-tier').text();
+
+					if ( lastTier !== fullName ) {
+						// CLONAGE : On utilise ton template HTML présent dans le DOM
 						var $header = $('#tier-header-template tr').clone();
 						
+						// REMPLISSAGE : On peuple le clone avec les infos
 						$header.find('.t-img').attr('src', iconPath).attr('alt', rawTier);
 						$header.find('.t-text').text(fullName);
 						$header.find('.t-link').attr('onclick', "handleTierClick(event, '" + rawTier + "')");
 
-						$row.before($header);
+						// INSERTION : On place le header avant la ligne de joueur
+						$(rows).eq( i ).before($header);
 						
 						lastTier = fullName;
 					}
-				}
+				});
 			}
 		});
 	}
