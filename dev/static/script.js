@@ -280,7 +280,7 @@ $(document).ready(function() {
             { "responsivePriority": 1, "targets": [1, 2, 3] },
             { "responsivePriority": 2, "targets": 4 },
 			{ "responsivePriority": 3, "targets": 0 },
-			]
+			],
 			"drawCallback": function ( settings ) {
 				var api = this.api();
 				var rows = api.rows( {page:'current'} ).nodes();
