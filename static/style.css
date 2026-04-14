@@ -666,6 +666,12 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 	font-family: var(--font-mono);
 }
 
+.timespan-cell {
+	color: var(--text-muted);
+	font-size: var(--size-sm);
+	font-family: var(--font-mono);
+}
+
 .hide-mobile {
     display: inline;
 }
