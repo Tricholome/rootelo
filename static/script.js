@@ -279,23 +279,26 @@ $(document).ready(function() {
 				var rows = api.rows( {page:'current'} ).nodes();
 				var lastTier = null;
 
-				api.column(5, {page:'current'} ).data().each( function ( groupData, i ) {
-					var fullName = $(groupData).find('.d-name').text();
-					var iconPath = $(groupData).find('.d-icon').text();
-					var rawTier = $(groupData).find('.d-raw-tier').text();
+				for (var i = 0; i < rows.length; i++) {
+					var $row = $(rows[i]);
+					
+					var fullName = $row.find('.d-name').text().trim();
+					var iconPath = $row.find('.d-icon').text().trim();
+					var rawTier  = $row.find('.d-raw-tier').text().trim();
 
-					if ( lastTier !== fullName ) {
+					if ( fullName !== "" && lastTier !== fullName ) {
+						
 						var $header = $('#tier-header-template tr').clone();
 						
 						$header.find('.t-img').attr('src', iconPath).attr('alt', rawTier);
 						$header.find('.t-text').text(fullName);
-						
 						$header.find('.t-link').attr('onclick', "handleTierClick(event, '" + rawTier + "')");
 
-						$(rows).eq( i ).before($header);
+						$row.before($header);
+						
 						lastTier = fullName;
 					}
-				});
+				}
 			}
 		});
 	}
