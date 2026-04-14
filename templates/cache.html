@@ -34,8 +34,10 @@
 						<tr class="tier-header-row">
 							<td colspan="5">
 								<div class="tier-section-title">
-									<img src="{{ config.assets.icons[s.tier] }}" class="tier-title-icon">
-									<span>{{ s.tier | uppercase }} ELITE</span>
+									<div class="tier-icon-container">
+										<img src="{{ config.assets.icons[s.tier] }}" alt="{{ s.tier }}">
+									</div>
+									<span>{{ s.tier | upper }} ELITE</span>
 								</div>
 							</td>
 						</tr>
