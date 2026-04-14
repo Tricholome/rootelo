@@ -12,7 +12,9 @@
 	</div>
 	
 	<div class="hof-section">
+		
 		<p>Engraved here are the names of those who left their mark on time. This Hall honors the longest reigns maintained within the Woodland's highest Tiers.</p>
+		
 		<table id="hall_of_fame" class="display nowrap" style="width:100%">
 			<thead>
 				<tr>
@@ -41,14 +43,32 @@
 						<td>{{ s.peak }}</td>
 						<td>{{ s.ascension }}</td>
 						
-						<td>
-							<span class="t-name">{{ s.tier | upper }} ELITE</span>
-							<span class="t-icon">{{ config.assets.icons[s.tier] }}</span>
-						</td>
-					</tr>
+						<td style="display:none;">
+							<span class="d-name">{{ s.tier | upper }} ELITE</span>
+							<span class="d-icon">{{ config.assets.icons[s.tier] }}</span>
+							<span class="d-raw-tier">{{ s.tier }}</span> </td>
+						</tr>
 				{% endfor %}
 			</tbody>
 		</table>
+		
+		<div style="display:none;">
+			<table id="tier-header">
+				<tr class="tier-header">
+					<td colspan="5">
+						<div class="tier-section-title">
+							<a href="javascript:void(0)" class="tier-anchor-link t-link">
+								<div class="tier-icon-container">
+									<img class="t-img" src="" alt="">
+								</div>
+							</a>
+							<span class="t-text"></span>
+						</div>
+					</td>
+				</tr>
+			</table>
+		</div>
+		
 	</div>
 	
 	<p class="enigma">
@@ -102,55 +122,4 @@
 	
 </div>
 
-{% endblock %}
-
-{% block custom_js %}
-<script>
-$(document).ready(function() {
-    $('#hall_of_fame').DataTable({
-        "responsive": true,
-        "ordering": false,   // Garde l'ordre de ton Python
-        "paging": false,     // Affiche tout d'un coup
-        "searching": false,  // Pas de barre de recherche
-        "info": false,       // Pas de texte "Showing 1 to X"
-        "dom": 'rt',         // Affiche uniquement le tableau pur
-        "columnDefs": [ 
-            { "targets": 1, "className": "player-name-cell" },
-            { "targets": 3, "className": "elo-cell" },
-            { "targets": 5, "visible": false }, // Cache la 6ème colonne (TierData)
-            { "responsivePriority": 1, "targets": [1, 2, 3] },
-            { "responsivePriority": 2, "targets": 4 },
-            { "responsivePriority": 3, "targets": 0 }
-        ],
-        // C'est ici que la magie DataTables opère pour les sections
-        "drawCallback": function ( settings ) {
-            var api = this.api();
-            var rows = api.rows( {page:'current'} ).nodes();
-            var lastTier = null;
-
-            // On lit la 6ème colonne (index 5)
-            api.column(5, {page:'current'} ).data().each( function ( groupData, i ) {
-                // On extrait le texte et l'icône cachés dans le HTML
-                var tierName = $(groupData).filter('.t-name').text();
-                var tierIcon = $(groupData).filter('.t-icon').text();
-
-                // Si le Tier change, on insère la magnifique ligne de section avec colspan
-                if ( lastTier !== tierName ) {
-                    $(rows).eq( i ).before(
-                        '<tr class="tier-header-row">' +
-                            '<td colspan="5">' + // Colspan parfait sur les 5 colonnes visibles
-                                '<div class="tier-section-title" style="display: flex; align-items: center; gap: 10px;">' +
-                                    '<img src="' + tierIcon + '" alt="icon" style="width: 32px; height: 32px;">' +
-                                    '<span>' + tierName + '</span>' +
-                                '</div>' +
-                            '</td>' +
-                        '</tr>'
-                    );
-                    lastTier = tierName;
-                }
-            });
-        }
-    });
-});
-</script>
 {% endblock %}
