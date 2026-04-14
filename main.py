@@ -448,11 +448,6 @@ all_sorted_streaks = sorted(
         -x['peak']
     )
 )
-
-hall_of_fame_data = []
-for t in TIER_HIERARCHY:
-    tier_top_5 = [s for s in all_sorted_streaks if s['tier'] == t][:5]
-    hall_of_fame_data.extend(tier_top_5)
     
 def format_smart_timespan(d1_str, d2_str):
     try:
@@ -466,8 +461,22 @@ def format_smart_timespan(d1_str, d2_str):
     except:
         return d1_str
 
-for s in hall_of_fame_data:
-    s['timespan'] = format_smart_timespan(s['start_date'], s['end_date'])
+hall_of_fame_final = []
+
+for t in TIER_HIERARCHY:
+    tier_top_5 = [s for s in all_sorted_streaks if s['tier'] == t][:5]
+    if tier_top_5:
+        hall_of_fame_final.append({
+            'is_section': True,
+            'tier': t
+        })
+        for rank, s in enumerate(tier_top_5, 1):
+            s['is_section'] = False
+            s['rank_display'] = f"#{rank}"
+            s['timespan'] = format_smart_timespan(s['start_date'], s['end_date'])
+            hall_of_fame_final.append(s)
+
+hall_of_fame_data = hall_of_fame_final
     
 # =========================================================================
 # --- 10. SITE GENERATION (JINJA2 RENDERING) ---
