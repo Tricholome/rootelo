@@ -622,7 +622,7 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     border-top: 1px solid var(--glass-border) !important;
 }
 
-#tier-header-row { 
+.tier-header-row td { 
     background: var(--dt-header-bg); 
     color: var(--text-muted) !important;
 	font-family: var(--font-ui) !important;	
