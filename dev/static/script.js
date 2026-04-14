@@ -280,8 +280,8 @@ $(document).ready(function() {
 			{ "targets": 3, "className": "elo-cell" },
 			{ "targets": 5, "visible": false },
             { "responsivePriority": 1, "targets": [1, 2, 3] },
-            { "responsivePriority": 2, "targets": 4 },
-			{ "responsivePriority": 3, "targets": 0 },
+            { "responsivePriority": 2, "targets": 0 },
+			{ "responsivePriority": 3, "targets": 4 },
 			],
 			"drawCallback": function ( settings ) {
 				var api = this.api();
