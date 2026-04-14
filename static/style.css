@@ -636,6 +636,14 @@ table.dataTable tbody tr.tier-header-row:hover td {
     background: var(--dt-header-bg) !important; 
 }
 
+tr.tier-header-row td.dtr-control::before {
+    display: none !important;
+}
+
+tr.tier-header-row td.dtr-control {
+    cursor: default !important;
+}
+
 .streak-cell {
 	color: var(--text-bright) !important;
 	font-size: var(--size-md) !important;
