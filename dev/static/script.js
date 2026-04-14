@@ -314,9 +314,96 @@ $(document).ready(function() {
 
 });
 
+/* =========================================================================
+   --- 5. CHART (TRENDS) ---
+   ========================================================================= */
+
+let myChart; // Variable globale au module pour pouvoir détruire/récréer le graph
+
+function updateChart() {
+    const input = document.getElementById('playerName');
+    if (!input) return;
+    
+    const name = input.value;
+    const canvas = document.getElementById('progressionChart');
+    if (!canvas) return;
+    
+    // Si l'input est vide, on nettoie tout
+    if (name === "") {
+        if (myChart) myChart.destroy();
+        localStorage.removeItem('selectedPlayer');
+        return;
+    }
+
+    const ctx = canvas.getContext('2d');
+    const rabbitColor = getComputedStyle(document.documentElement).getPropertyValue('--color-rabbit').trim() || '#E0B634';
+    
+    // On vérifie si les données existent (allData est injecté via le HTML)
+    if (typeof allData !== 'undefined' && allData[name]) {
+        localStorage.setItem('selectedPlayer', name);
+
+        const rawData = allData[name];
+        const labels = rawData.map(d => {
+            const dateObj = new Date(d[0]);
+            return !isNaN(dateObj.getTime()) 
+                ? dateObj.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) 
+                : d[0];
+        });
+        const eloScores = rawData.map(d => d[1]);
+
+        if (myChart) myChart.destroy();
+        
+        myChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: eloScores,
+                    borderColor: rabbitColor,
+                    backgroundColor: rabbitColor + '22',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.3,
+                    pointRadius: 3,
+                    pointBackgroundColor: rabbitColor,
+                    pointHitRadius: 20
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: { enabled: true, backgroundColor: '#222', titleColor: rabbitColor }
+                },
+                scales: {
+                    y: { grid: { color: '#252525' }, ticks: { color: '#888' } },
+                    x: { grid: { display: false }, ticks: { color: '#888', maxTicksLimit: 6 } }
+                }
+            }
+        });
+    }
+}
+
+// Initialisation au chargement
+$(document).ready(function() {
+    if ($('#progressionChart').length > 0) {
+        const savedPlayer = localStorage.getItem('selectedPlayer');
+        const input = document.getElementById('playerName');
+
+        if (savedPlayer && typeof allData !== 'undefined' && allData[savedPlayer]) {
+            input.value = savedPlayer;
+            updateChart();
+        }
+        
+        // On lie l'événement input dynamiquement ici au lieu du HTML
+        $(input).on('input', updateChart);
+    }
+});
+
 
 /* =========================================================================
-   --- 5. SECRETS ENGINE ---
+   --- 6. SECRETS ENGINE ---
    ========================================================================= */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -491,7 +578,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 /* =========================================================================
-   --- 6. NUT & BERRY ---
+   --- 7. NUT & BERRY ---
    ========================================================================= */
 
 function handleTierClick(event, tier) {
@@ -512,7 +599,7 @@ function handleTierClick(event, tier) {
 }
 
 /* =========================================================================
-   --- 7. STARDUST GENERATOR ---
+   --- 8. STARDUST GENERATOR ---
    ========================================================================= */
 
 function initStardust() {
