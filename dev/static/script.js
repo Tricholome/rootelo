@@ -278,15 +278,20 @@ $(document).ready(function() {
 				var api = this.api();
 				var rows = api.rows( {page:'current'} ).nodes();
 				var lastTier = null;
+
 				api.column(5, {page:'current'} ).data().each( function ( groupData, i ) {
 					var fullName = $(groupData).find('.d-name').text();
 					var iconPath = $(groupData).find('.d-icon').text();
 					var rawTier = $(groupData).find('.d-raw-tier').text();
+
 					if ( lastTier !== fullName ) {
-						var $header = $('#tier-header tr').clone();
+						var $header = $('#tier-header-template tr').clone();
+						
 						$header.find('.t-img').attr('src', iconPath).attr('alt', rawTier);
 						$header.find('.t-text').text(fullName);
+						
 						$header.find('.t-link').attr('onclick', "handleTierClick(event, '" + rawTier + "')");
+
 						$(rows).eq( i ).before($header);
 						lastTier = fullName;
 					}
