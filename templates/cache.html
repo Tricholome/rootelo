@@ -15,24 +15,6 @@
 		
 		<p>Engraved here are the names of those who left their mark on time. This Hall honors the longest reigns maintained within the Woodland's highest Tiers.</p>
 		
-		<div style="display:none;">
-			<table id="tier-header-template">
-				<tr class="tier-header-row">
-					<td>
-						<a href="javascript:void(0)" class="tier-anchor-link t-link">
-							<div class="tier-icon-container">
-								<img class="t-img" src="" alt="">
-							</div>
-						</a>
-					</td>
-					<td class="tier-label-cell t-text"></td>
-					<td>Streak</td>
-					<td>Elo</td>
-					<td>Timespan</td>
-				</tr>
-			</table>
-		</div>
-
 		<table id="hall_of_fame" class="display nowrap responsive" style="width:100%">
 			<thead>
 				<tr>
@@ -41,29 +23,33 @@
 					<th>Streak</th>
 					<th>Elo</th>
 					<th>Date</th>
-					<th>TierData</th>
 				</tr>
 			</thead>
 			<tbody>
-				{% set ns = namespace(rank=0, current_tier=None) %}
 				{% for s in hall_of_fame %}
-					{% if s.tier != ns.current_tier %}
-						{% set ns.rank = 0 %}
-						{% set ns.current_tier = s.tier %}
+					{% if s.is_section %}
+						<tr class="tier-header-row">
+							<td>
+								<a href="javascript:void(0)" onclick="handleTierClick(event, '{{ s.tier }}')" class="tier-anchor-link">
+									<div class="tier-icon-container">
+										<img src="{{ config.assets.icons[s.tier] }}" alt="{{ s.tier }}">
+									</div>
+								</a>
+							</td>
+							<td class="tier-label-cell"><strong>{{ s.tier | upper }} LEGENDS</strong></td>
+							<td>Streak</td>
+							<td>Elo</td>
+							<td>Timespan</td>
+						</tr>
+					{% else %}
+						<tr data-tier="{{ s.tier }}">
+							<td>{{ s.rank_display }}</td>
+							<td>{{ s.player }}</td>
+							<td>{{ s.streak_count }}</td>
+							<td>{{ s.peak }}</td>
+							<td>{{ s.timespan }}</td>
+						</tr>
 					{% endif %}
-					{% set ns.rank = ns.rank + 1 %}
-					<tr data-tier="{{ s.tier }}">
-						<td>#{{ ns.rank }}</td>
-						<td>{{ s.player }}</td>
-						<td>{{ s.streak_count }}</td>
-						<td>{{ s.peak }}</td>
-						<td>{{ s.timespan }}</td>
-						<td style="display:none;">
-							<span class="d-name">{{ s.tier | upper }} ELITE</span>
-							<span class="d-icon">{{ config.assets.icons[s.tier] }}</span>
-							<span class="d-raw-tier">{{ s.tier }}</span>
-						</td>
-					</tr>
 				{% endfor %}
 			</tbody>
 		</table>
