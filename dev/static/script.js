@@ -276,7 +276,7 @@ $(document).ready(function() {
 			"dom": 'rt',
 			"columnDefs": [ 
             { "targets": 1, "className": "player-name-cell" },
-			{ "targets": 1, "className": "streak-cell" },
+			{ "targets": 2, "className": "streak-cell" },
 			{ "targets": 3, "className": "elo-cell" },
 			{ "targets": 5, "visible": false },
             { "responsivePriority": 1, "targets": [1, 2, 3] },
