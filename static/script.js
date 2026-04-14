@@ -269,7 +269,6 @@ $(document).ready(function() {
 	if ($('#hall_of_fame').length > 0) {
 		$('#hall_of_fame').DataTable({
 			"responsive": true,
-			"bHeader": false,
 			"ordering": false,
 			"paging": false,
 			"searching": false,
@@ -281,7 +280,7 @@ $(document).ready(function() {
 				{ "targets": 3, "className": "elo-cell" },
 				{ "responsivePriority": 1, "targets": [0, 1] },
 				{ "responsivePriority": 2, "targets": [2, 3] },
-				{ "responsivePriority": 10, "targets": 4 },
+				{ "responsivePriority": 3, "targets": 4 },
 			]
 		});
 	}
