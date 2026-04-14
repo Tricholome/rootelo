@@ -1,3 +1,11 @@
+{% set tier_titles = {
+    'stag': 'Legends',
+    'bird': 'Brilliant Birds',
+    'fox': 'Fierce Foxes',
+    'rabbit': 'Radiant Rabbits',
+    'mouse': 'Mighty Mice'
+} %}
+
 {% extends "base.html" %}
 
 {% block content %}
@@ -20,8 +28,12 @@
 				<tr>
 					<th>Rank</th>
 					<th>Player</th>
-					<th>Streak</th>
-					<th>Elo</th>
+					<th>
+						<span class="hide-mobile">Best</span> Streak
+					</th>
+					<th>
+						Peak <span class="hide-mobile">Elo</span>
+					</th>
 					<th>Date</th>
 				</tr>
 			</thead>
@@ -36,7 +48,7 @@
 									</div>
 								</a>
 							</td>
-							<td class="tier-label-cell"><strong>{{ s.tier | upper }} LEGENDS</strong></td>
+							<td><td>{{ tier_titles[s.tier] }}</td>
 							<td>Streak</td>
 							<td>Elo</td>
 							<td>Timespan</td>
