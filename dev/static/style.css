@@ -622,7 +622,7 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     border-top: 1px solid var(--glass-border) !important;
 }
 
-table.dataTable tbody tr.tier-header-row td { 
+#tier-header-row { 
     background: var(--dt-header-bg); 
     color: var(--text-muted) !important;
 	font-family: var(--font-ui) !important;	
@@ -634,7 +634,7 @@ table.dataTable tbody tr.tier-header-row td {
     border-bottom: 1px solid var(--border-soft); 
 }
 
-table.dataTable tbody tr.tier-header-row:hover td { 
+#tier-header-row:hover td { 
     background: var(--dt-header-bg) !important; 
 }
 
