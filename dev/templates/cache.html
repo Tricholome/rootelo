@@ -16,24 +16,20 @@
 		<table id="leaderboard" class="display nowrap" style="width:100%">
 			<thead>
 				<tr>
-					<th>Tier</th>
-					<th>Player</th>
-					<th>
-						<span class="hide-mobile">Best</span> Streak
-					</th>
-					<th>
-						Peak <span class="hide-mobile">Elo</span>
-					</th>
+					<th>Rank</th> <th>Player</th>
+					<th><span class="hide-mobile">Best</span> Streak</th>
+					<th>Peak <span class="hide-mobile">Elo</span></th>
 					<th>Start Date</th>
 				</tr>
 			</thead>
 			<tbody>
-				{% set last_tier = None %}
+				{% set ns = namespace(last_tier=None, rank=0) %}
 				{% for s in hall_of_fame %}
-					{% if s.tier != last_tier %}
+					
+					{% if s.tier != ns.last_tier %}
+						{% set ns.rank = 0 %}
 						<tr class="tier-header-row">
-							<td colspan="5">
-								<div class="tier-section-title">
+							<td colspan="5"> <div class="tier-section-title">
 									<div class="tier-icon-container">
 										<img src="{{ config.assets.icons[s.tier] }}" alt="{{ s.tier }}">
 									</div>
@@ -41,16 +37,12 @@
 								</div>
 							</td>
 						</tr>
-						{% set last_tier = s.tier %}
+						{% set ns.last_tier = s.tier %}
 					{% endif %}
 
+					{% set ns.rank = ns.rank + 1 %}
 					<tr>
-						<td>{{ s.tier }}</td>
-						<td>{{ s.player }}</td>
-						<td class="streak-cell">{{ s.streak_count }}</td>
-						<td>{{ s.peak }}</td>
-						<td>{{ s.ascension }}</td>
-					</tr>
+						<td>#{{ ns.rank }}</td> <td>{{ s.player }}</td> <td class="streak-cell">{{ s.streak_count }}</td> <td>{{ s.peak }}</td> <td>{{ s.ascension }}</td> </tr>
 				{% endfor %}
 			</tbody>
 		</table>
