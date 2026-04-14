@@ -4,9 +4,10 @@
    1. Dynamic Scroll
    2. Double-tap
    3. Tier Modal
-   4. Secrets Engine
-   5. Nut & Berry
-   6. Stardust Generator
+   4. Data Tables
+   5. Secrets Engine
+   6. Nut & Berry
+   7. Stardust Generator
 
    ========================================================================= */
    
@@ -264,35 +265,35 @@ $(document).ready(function() {
     }
 
     // --- 3. HALL OF FAME ---
-    if ($('#hall_of_fame').length > 0) {
-        $('#hall_of_fame').DataTable({
-            "responsive": true,
-            "ordering": false,
-            "paging": false,
-            "searching": false,
-            "info": false,
-            "dom": 'rt',
-            "columnDefs": [ { "targets": 5, "visible": false } ],
-            "drawCallback": function ( settings ) {
-                var api = this.api();
-                var rows = api.rows( {page:'current'} ).nodes();
-                var lastTier = null;
-
-                api.column(5, {page:'current'} ).data().each( function ( groupData, i ) {
-                    var name = $(groupData).find('.d-name').text();
-                    var icon = $(groupData).find('.d-icon').text();
-
-                    if ( lastTier !== name ) {
-                        var $header = $('#header-tier-elite tr').clone();
-                        $header.find('.t-img').attr('src', icon);
-                        $header.find('.t-text').text(name);
-                        $(rows).eq( i ).before($header);
-                        lastTier = name;
-                    }
-                });
-            }
-        });
-    }
+	if ($('#hall_of_fame').length > 0) {
+		$('#hall_of_fame').DataTable({
+			"responsive": true,
+			"ordering": false,
+			"paging": false,
+			"searching": false,
+			"info": false,
+			"dom": 'rt',
+			"columnDefs": [ { "targets": 5, "visible": false } ],
+			"drawCallback": function ( settings ) {
+				var api = this.api();
+				var rows = api.rows( {page:'current'} ).nodes();
+				var lastTier = null;
+				api.column(5, {page:'current'} ).data().each( function ( groupData, i ) {
+					var fullName = $(groupData).find('.d-name').text();
+					var iconPath = $(groupData).find('.d-icon').text();
+					var rawTier = $(groupData).find('.d-raw-tier').text();
+					if ( lastTier !== fullName ) {
+						var $header = $('#header-tier-elite tr').clone();
+						$header.find('.t-img').attr('src', iconPath).attr('alt', rawTier);
+						$header.find('.t-text').text(fullName);
+						$header.find('.t-link').attr('onclick', "handleTierClick(event, '" + rawTier + "')"
+						$(rows).eq( i ).before($header);
+						lastTier = fullName;
+					}
+				});
+			}
+		});
+	}
 
 });
 
