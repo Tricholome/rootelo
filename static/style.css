@@ -622,8 +622,8 @@ table.dataTable tbody tr.tier-header-row:hover td {
 }
 
 #hall_of_fame .tier-icon-container { 
-    width: 28px; 
-    height: 28px;
+    width: 32; 
+    height: 32px;
 }
 
 .streak-cell {
