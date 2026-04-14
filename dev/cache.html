@@ -1,0 +1,491 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Undergrowth • Rootelo</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..900;1,9..144,400..900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
+    
+    <link rel="stylesheet" href="static/style.css">
+    
+    <style>
+        :root {
+			/* --- 1. LAYOUT CONFIG (Automatic loop) --- */
+			
+			--window-max-width: clamp(600px, 60vw, 1600px);
+			
+			--window-padding: clamp(20px, 2.5vw, 40px);
+			
+			--window-gap: 20px;
+			
+
+			/* --- 2. TYPOGRAPHY (Automatic loop) --- */
+			
+			--font-title: 'Fraunces', serif;
+			
+			--font-ui: 'Inter', sans-serif;
+			
+			--font-mono: 'JetBrains Mono', monospace;
+			
+			--bold: 900;
+			
+			--medium: 600;
+			
+			--normal: 400;
+			
+			--size-xs: 0.75rem;
+			
+			--size-sm: 0.85rem;
+			
+			--size-modal: 0.90rem;
+			
+			--size-base: 0.95rem;
+			
+			--size-md: 1.2rem;
+			
+			--size-lg: 2.0rem;
+			
+			--size-xl: 2.5rem;
+			
+			--size-display: 2.8rem;
+			
+			--track-slight: 0.5px;
+			
+			--track-wide: 1px;
+			
+			--track-display: 4px;
+			
+
+			/* --- 3. GLOBAL UI (Automatic loop) --- */
+			
+			--bg-overlay-top: rgba(0, 0, 0, 0.1);
+			
+			--bg-overlay-bottom: rgba(0, 0, 0, 0.8);
+			
+			--bg-container: #1c1c1c;
+			
+			--bg-surface: rgba(255, 255, 255, 0.03);
+			
+			--bg-hover: rgba(255, 255, 255, 0.08);
+			
+			--border-soft: #333333;
+			
+			--border-dark: rgba(0, 0, 0, 0.4);
+			
+			--border-light: rgba(255, 255, 255, 0.05);
+			
+			--glass-bg: #1c1c1cd9;
+			
+			--glass-border: rgba(255, 255, 255, 0.08);
+			
+			--glass-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+			
+			--text-bright: #ffffff;
+			
+			--text-main: #E0E0E0;
+			
+			--text-muted: #A0A0A0;
+			
+			--text-dark: #111111;
+			
+			--dt-table-bg: rgba(0, 0, 0, 0.15);
+			
+			--dt-header-bg: rgba(0, 0, 0, 0.25);
+			
+			--dt-row-border: rgba(255, 255, 255, 0.03);
+			
+			--dt-row-hover: rgba(255, 255, 255, 0.07);
+			
+			--dt-input-bg: rgba(0, 0, 0, 0.2);
+			
+
+			/* --- 4. TIER DYNAMICS (Loop with logic) --- */
+			
+			--color-bird: #7AB5E0;
+			--color-bird-bg: #7AB5E014;
+			
+			--color-fox: #E55555;
+			--color-fox-bg: #E5555514;
+			
+			--color-rabbit: #F2C14E;
+			--color-rabbit-bg: #F2C14E14;
+			
+			--color-mouse: #F49E52;
+			--color-mouse-bg: #F49E5214;
+			
+			--color-squirrel: #94C160;
+			--color-squirrel-bg: #94C16014;
+			
+			--color-stag: #C686FF;
+			--color-stag-bg: #C686FF14;
+			
+			--color-default: #7A7347;
+			--color-default-bg: #7A734714;
+			
+
+			/* --- 5. PAGE THEME --- */
+			--main-color: #94C160;
+		}
+    </style>
+	
+	<meta property="og:type" content="website">
+	<meta property="og:url" content="https://tricholome.github.io/rootelo">
+	<meta property="og:title" content="ROOTELO">
+	<meta property="og:description" content="A Metric of Woodland Skill and Will">
+	<meta property="og:image" content="https://tricholome.github.io/rootelo/assets/images/rootelo-preview.webp">
+
+    
+	
+</head>
+
+<body data-page="cache">
+    
+    <div class="container">
+	
+        <header class="app-banner window-box">
+		
+            <div class="banner-container">
+                <div class="banner-icons left">
+                    <a href="javascript:void(0)" onclick="openTierModal('stag')" class="tooltip-link js-double-tap banner-icon-stag">
+                        <img src="assets/icons/stag.webp" alt="Stag">
+                        <span class="tooltip-text"><strong class="tier-stag">Stag (1600+)</strong> — The Legend</span>
+                    </a>
+					<a href="javascript:void(0)" onclick="openTierModal('bird')" class="tooltip-link js-double-tap">
+                        <img src="assets/icons/bird_new.webp" alt="Bird">
+                        <span class="tooltip-text"><strong class="tier-bird">Bird (1500+)</strong> — The Grandmasters</span>
+                    </a>
+                    <a href="javascript:void(0)" onclick="openTierModal('fox')" class="tooltip-link js-double-tap">
+                        <img src="assets/icons/fox_new.webp" alt="Fox">
+                        <span class="tooltip-text"><strong class="tier-fox">Fox (1400+)</strong> — The Cunning Tacticians</span>
+                    </a>
+                </div>
+                <div class="banner-center">
+                    <h1 class="site-title">ROOTELO</h1>
+                    <p class="site-subtitle">A Metric of Woodland&nbsp;Skill&nbsp;and&nbsp;Will</p>
+                </div>
+                <div class="banner-icons right">
+                    <a href="javascript:void(0)" onclick="openTierModal('rabbit')" class="tooltip-link js-double-tap">
+                        <img src="assets/icons/rabbit_new.webp" alt="Rabbit">
+                        <span class="tooltip-text"><strong class="tier-rabbit">Rabbit (1300+)</strong> — The Agile Contenders</span>
+                    </a>
+                    <a href="javascript:void(0)" onclick="openTierModal('mouse')" class="tooltip-link js-double-tap">
+                        <img src="assets/icons/mouse_new.webp" alt="Mouse">
+                        <span class="tooltip-text"><strong class="tier-mouse">Mouse (1200+)</strong> — The Steady Foragers</span>
+                    </a>
+					<a href="javascript:void(0)" onclick="openTierModal('squirrel')" class="tooltip-link js-double-tap banner-icon-squirrel">
+                        <img src="assets/icons/squirrel.webp" alt="Squirrel">
+                        <span class="tooltip-text"><strong class="tier-squirrel">Squirrel (&lt; 1200)</strong> — The Hapless Stragglers</span>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="nav-separator"></div>
+
+            <nav>
+				
+
+				
+					
+						
+					
+					<a href="index.html" class="">Leaderboard</a>
+				
+					
+						
+					
+					<a href="matches.html" class="">Top Tables</a>
+				
+					
+						
+					
+					<a href="trends.html" class="">Player's Journey</a>
+				
+					
+						
+					
+					<a href="about.html" class="">Codex</a>
+				
+				<a href="cache.html" class="nav-secret active">Undergrowth</a>
+			</nav>
+			
+        </header>
+        
+        <div class="screen-deco right-deco">
+			
+				<img src="assets/images/cache_img_right.webp" alt="Decoration Right">
+			
+		</div>
+
+        <div class="app-viewport window-box">
+            <header class="page-intro">
+				<h2>Undergrowth</h2>
+				
+				<p>A sanctuary for the critters who&nbsp;never&nbsp;sought&nbsp;a&nbsp;<span class='cipher' data-word='crown'>crown</span>.</p>
+			</header>
+			
+            <main>
+                
+
+<div class="codex-section">
+
+	<div class="entry-door">
+		<a href="javascript:void(0)" id="hof-access" class="secret-btn">
+			Reveal what is hidden
+			<span class="tooltip-text">This is not all... keep looking around.</span>
+		</a>
+	</div>
+	
+	<div class="hof-section">
+		<table id="leaderboard" class="display nowrap" style="width:100%">
+			<thead>
+				<tr>
+					<th>Tier</th>
+					<th>Player</th>
+					<th>
+						<span class="hide-mobile">Best</span> Streak
+					</th>
+					<th>
+						Peak <span class="hide-mobile">Elo</span>
+					</th>
+					<th>Start Date</th>
+				</tr>
+			</thead>
+			<tbody>
+				
+				<tr data-tier="stag">
+					<td>
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'stag')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/stag.webp" alt="stag">
+							</div>
+						</a>
+					</td>
+					<td>Led_Slash</td>
+					<td class="streak-cell">5</td>
+					<td>1635</td>
+					<td>2026-04-08</td>
+				</tr>
+				
+				<tr data-tier="bird">
+					<td>
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'bird')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/bird_new.webp" alt="bird">
+							</div>
+						</a>
+					</td>
+					<td>Led_Slash</td>
+					<td class="streak-cell">32</td>
+					<td>1551</td>
+					<td>2026-03-01</td>
+				</tr>
+				
+				<tr data-tier="bird">
+					<td>
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'bird')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/bird_new.webp" alt="bird">
+							</div>
+						</a>
+					</td>
+					<td>Killerstorm17</td>
+					<td class="streak-cell">6</td>
+					<td>1554</td>
+					<td>2026-01-18</td>
+				</tr>
+				
+				<tr data-tier="bird">
+					<td>
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'bird')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/bird_new.webp" alt="bird">
+							</div>
+						</a>
+					</td>
+					<td>Nadav253</td>
+					<td class="streak-cell">1</td>
+					<td>1506</td>
+					<td>2026-03-21</td>
+				</tr>
+				
+				<tr data-tier="bird">
+					<td>
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'bird')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/bird_new.webp" alt="bird">
+							</div>
+						</a>
+					</td>
+					<td>ShuShuBana</td>
+					<td class="streak-cell">1</td>
+					<td>1511</td>
+					<td>2026-02-09</td>
+				</tr>
+				
+				<tr data-tier="bird">
+					<td>
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, 'bird')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="assets/icons/bird_new.webp" alt="bird">
+							</div>
+						</a>
+					</td>
+					<td>tofuwater</td>
+					<td class="streak-cell">1</td>
+					<td>1502</td>
+					<td>2026-03-23</td>
+				</tr>
+				
+			</tbody>
+		</table>
+	</div>
+	
+	<p class="enigma">
+		<span>What is this place?</span>
+		<span>Step into the shade.</span>
+		<span>Look beneath the leaves.</span>
+		<a class="cl" href="javascript:void(0)" id="watcher-secret">Seek the silent watcher.</a>
+	</p>
+	
+    <div class="artist-story-green">
+        <h2>The <span class="cipher" data-word="silent">Silent</span> Chronicler</h2>
+        <p>Here, where <span class="cipher" data-word="roots">roots</span> run deep and the wild grows dense, <strong>𝕩𝕝𝕦𝕖𝕧𝕚</strong> sits hidden in the green. He captures <span class="cipher" data-word="every">every</span> fluttering wing and <span class="cipher" data-word="every">every</span> twitching whisker. He celebrates the Woodland’s teeming diversity with <span class="cipher" data-word="every">every</span> stroke. It is a quiet call to <span class="cipher" data-word="remember">remember</span>: beyond the League’s grand stakes, nothing small goes unseen.</p>
+    </div>
+	
+	<div class="artist-story-purple">
+        <h2>The Eternal Archivist</h2>
+        <p>Here, where the mist hangs thin and light turns to velvet, <strong>𝕩𝕝𝕦𝕖𝕧𝕚</strong> dwells beneath the purple bloom. Every feat, every triumph, every half-remembered tale is carefully preserved. It is a quiet truth to keep: beyond the League’s hollow noise, nothing great is ever truly lost.</p>
+    </div>
+	
+	<div class="fruit-container">
+		<div id="berry-section">
+			<h2>The Mystic Berry</h2>
+			<p>Some secrets are juicier than others.<br>Can you feel the pulse?</p>
+			<div class="fruit-interaction-wrapper">
+				<a href="javascript:void(0)" id="berry-secret" onclick="openTierModal('stag')" class="fruit-trigger js-double-tap">
+					<span class="tooltip-text fruit-tooltip">Squish it!</span>
+					<img src="assets/images/berry.webp" alt="Berry" class="fruit-sprite">
+				</a>
+			</div>
+		</div>
+	
+		<div id="nut-section">
+			<h2>The Special Nut</h2>
+			<p>No rank? No stress. Take it easy.<br>We haven't forgotten you!</p>
+			<div class="fruit-interaction-wrapper">
+				<a href="javascript:void(0)" id="nut-secret" onclick="openTierModal('squirrel')" class="fruit-trigger js-double-tap">
+					<span class="tooltip-text fruit-tooltip">Crack it!</span>
+					<img src="assets/images/nut.webp" alt="Nut" class="fruit-sprite">
+				</a>
+			</div>
+		</div>
+	</div>
+		
+	<div class="exit-door">	
+		<a href="javascript:void(0)" id="leave-secrets" class="secret-btn js-double-tap">
+			Leave and forget this place
+			<span class="tooltip-text">Return to the simple order of the Woodland.</span>
+		</a>
+	</div>
+	
+	
+</div>
+
+
+            </main>
+        </div>
+        
+        <div class="screen-deco left-deco">
+			
+				<img src="assets/images/cache_img_left.webp" alt="Decoration Left">
+			
+		</div>
+
+        <footer class="app-footer window-box">
+			<div class="footer-content">
+				<div class="footer-credits">
+					<span>Powered by <strong>Tʀɪᴄʜᴏʟᴏᴍᴇ</strong></span>
+					<span>Woodland visions by <a class="cl" href="cache.html">𝕩𝕝𝕦𝕖𝕧𝕚</a></span>
+				</div>
+				<div class="footer-date">Updated on 2026-04-14 06:14 UTC</div>
+			</div>
+		</footer>
+    </div>
+    
+    <div id="tierModal" class="modal-overlay">
+		<div class="modal-content window-box">
+			<button class="modal-close" aria-label="Close">&times;</button>
+			<div id="modalBody">
+				<div class="modal-image-side">
+					<img id="modalIcon" src="" alt="Tier Icon">
+				</div>
+				
+				<div class="modal-text-side">
+					<div class="title-row">
+						<h2 id="modalTitle"></h2>
+						<h3 id="modalElo"></h3>
+					</div>
+					<div id="modalSubtitle"></div>
+					<div class="modal-divider"></div>
+					<div id="modalText"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div id="mystic-gate"></div>
+
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+	
+	<script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+    
+    <script>
+		const CONFIG = {
+			colors: {"bird": "#7AB5E0", "default": "#7A7347", "fox": "#E55555", "mouse": "#F49E52", "rabbit": "#F2C14E", "squirrel": "#94C160", "stag": "#C686FF"},
+			icons: {"bird": "assets/icons/bird_new.webp", "fox": "assets/icons/fox_new.webp", "mouse": "assets/icons/mouse_new.webp", "rabbit": "assets/icons/rabbit_new.webp", "squirrel": "assets/icons/squirrel.webp", "stag": "assets/icons/stag.webp"},
+			currentTier: "squirrel"
+		};
+	</script>
+		
+    <script src="static/script.js"></script>
+    
+<script>
+$(document).ready(function() {
+    $('#leaderboard').DataTable({
+        "responsive": true, 
+        "pageLength": 10,
+        "dom": '<"top"lf>rt<"bottom"ip><"clear">',
+        "columnDefs": [ 
+            { "targets": 1, "className": "player-name-cell" },
+			{ "targets": 3, "className": "elo-cell" },
+            { "responsivePriority": 1, "targets": [1, 2, 3] },
+            { "responsivePriority": 2, "targets": 4 },
+			{ "responsivePriority": 3, "targets": 0 },
+            { "targets": 0, "orderable": false }
+        ]
+    });
+});
+</script>
+
+</body>
+</html>
