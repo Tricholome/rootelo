@@ -246,24 +246,6 @@
 		
 		<p>Engraved here are the names of those who left their mark on time. This Hall honors the longest reigns maintained within the Woodland's highest Tiers.</p>
 		
-		<div style="display:none;">
-			<table id="tier-header-template">
-				<tr class="tier-header-row">
-					<td>
-						<a href="javascript:void(0)" class="tier-anchor-link t-link">
-							<div class="tier-icon-container">
-								<img class="t-img" src="" alt="">
-							</div>
-						</a>
-					</td>
-					<td class="tier-label-cell t-text"></td>
-					<td>Streak</td>
-					<td>Elo</td>
-					<td>Timespan</td>
-				</tr>
-			</table>
-		</div>
-
 		<table id="hall_of_fame" class="display nowrap responsive" style="width:100%">
 			<thead>
 				<tr>
@@ -272,416 +254,299 @@
 					<th>Streak</th>
 					<th>Elo</th>
 					<th>Date</th>
-					<th>TierData</th>
 				</tr>
 			</thead>
 			<tbody>
 				
+					
+						<tr class="tier-header-row">
+							<td>
+								<a href="javascript:void(0)" onclick="handleTierClick(event, 'stag')" class="tier-anchor-link">
+									<div class="tier-icon-container">
+										<img src="assets/icons/stag.webp" alt="stag">
+									</div>
+								</a>
+							</td>
+							<td class="tier-label-cell"><strong>STAG LEGENDS</strong></td>
+							<td>Streak</td>
+							<td>Elo</td>
+							<td>Timespan</td>
+						</tr>
+					
 				
 					
-						
-						
+						<tr data-tier="stag">
+							<td>#1</td>
+							<td>Led_Slash</td>
+							<td>5</td>
+							<td>1635</td>
+							<td>Apr 08 — Apr 11, 2026</td>
+						</tr>
 					
-					
-					<tr data-tier="stag">
-						<td>#1</td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td style="display:none;">
-							<span class="d-name">STAG ELITE</span>
-							<span class="d-icon">assets/icons/stag.webp</span>
-							<span class="d-raw-tier">stag</span>
-						</td>
-					</tr>
 				
 					
+						<tr class="tier-header-row">
+							<td>
+								<a href="javascript:void(0)" onclick="handleTierClick(event, 'bird')" class="tier-anchor-link">
+									<div class="tier-icon-container">
+										<img src="assets/icons/bird_new.webp" alt="bird">
+									</div>
+								</a>
+							</td>
+							<td class="tier-label-cell"><strong>BIRD LEGENDS</strong></td>
+							<td>Streak</td>
+							<td>Elo</td>
+							<td>Timespan</td>
+						</tr>
 					
-					<tr data-tier="stag">
-						<td>#2</td>
-						<td>Led_Slash</td>
-						<td>5</td>
-						<td>1635</td>
-						<td>Apr 08 — Apr 11, 2026</td>
-						<td style="display:none;">
-							<span class="d-name">STAG ELITE</span>
-							<span class="d-icon">assets/icons/stag.webp</span>
-							<span class="d-raw-tier">stag</span>
-						</td>
-					</tr>
 				
 					
-						
-						
+						<tr data-tier="bird">
+							<td>#1</td>
+							<td>Led_Slash</td>
+							<td>32</td>
+							<td>1551</td>
+							<td>Mar 01 — Mar 19, 2026</td>
+						</tr>
 					
-					
-					<tr data-tier="bird">
-						<td>#1</td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td style="display:none;">
-							<span class="d-name">BIRD ELITE</span>
-							<span class="d-icon">assets/icons/bird_new.webp</span>
-							<span class="d-raw-tier">bird</span>
-						</td>
-					</tr>
 				
 					
+						<tr data-tier="bird">
+							<td>#2</td>
+							<td>Killerstorm17</td>
+							<td>6</td>
+							<td>1554</td>
+							<td>Jan 18 — Feb 06, 2026</td>
+						</tr>
 					
-					<tr data-tier="bird">
-						<td>#2</td>
-						<td>Led_Slash</td>
-						<td>32</td>
-						<td>1551</td>
-						<td>Mar 01 — Mar 19, 2026</td>
-						<td style="display:none;">
-							<span class="d-name">BIRD ELITE</span>
-							<span class="d-icon">assets/icons/bird_new.webp</span>
-							<span class="d-raw-tier">bird</span>
-						</td>
-					</tr>
 				
 					
+						<tr data-tier="bird">
+							<td>#3</td>
+							<td>ShuShuBana</td>
+							<td>1</td>
+							<td>1511</td>
+							<td>Feb 09, 2026</td>
+						</tr>
 					
-					<tr data-tier="bird">
-						<td>#3</td>
-						<td>Killerstorm17</td>
-						<td>6</td>
-						<td>1554</td>
-						<td>Jan 18 — Feb 06, 2026</td>
-						<td style="display:none;">
-							<span class="d-name">BIRD ELITE</span>
-							<span class="d-icon">assets/icons/bird_new.webp</span>
-							<span class="d-raw-tier">bird</span>
-						</td>
-					</tr>
 				
 					
+						<tr data-tier="bird">
+							<td>#4</td>
+							<td>Nadav253</td>
+							<td>1</td>
+							<td>1506</td>
+							<td>Mar 21, 2026</td>
+						</tr>
 					
-					<tr data-tier="bird">
-						<td>#4</td>
-						<td>ShuShuBana</td>
-						<td>1</td>
-						<td>1511</td>
-						<td>Feb 09, 2026</td>
-						<td style="display:none;">
-							<span class="d-name">BIRD ELITE</span>
-							<span class="d-icon">assets/icons/bird_new.webp</span>
-							<span class="d-raw-tier">bird</span>
-						</td>
-					</tr>
 				
 					
+						<tr data-tier="bird">
+							<td>#5</td>
+							<td>tofuwater</td>
+							<td>1</td>
+							<td>1502</td>
+							<td>Mar 23, 2026</td>
+						</tr>
 					
-					<tr data-tier="bird">
-						<td>#5</td>
-						<td>Nadav253</td>
-						<td>1</td>
-						<td>1506</td>
-						<td>Mar 21, 2026</td>
-						<td style="display:none;">
-							<span class="d-name">BIRD ELITE</span>
-							<span class="d-icon">assets/icons/bird_new.webp</span>
-							<span class="d-raw-tier">bird</span>
-						</td>
-					</tr>
 				
 					
+						<tr class="tier-header-row">
+							<td>
+								<a href="javascript:void(0)" onclick="handleTierClick(event, 'fox')" class="tier-anchor-link">
+									<div class="tier-icon-container">
+										<img src="assets/icons/fox_new.webp" alt="fox">
+									</div>
+								</a>
+							</td>
+							<td class="tier-label-cell"><strong>FOX LEGENDS</strong></td>
+							<td>Streak</td>
+							<td>Elo</td>
+							<td>Timespan</td>
+						</tr>
 					
-					<tr data-tier="bird">
-						<td>#6</td>
-						<td>tofuwater</td>
-						<td>1</td>
-						<td>1502</td>
-						<td>Mar 23, 2026</td>
-						<td style="display:none;">
-							<span class="d-name">BIRD ELITE</span>
-							<span class="d-icon">assets/icons/bird_new.webp</span>
-							<span class="d-raw-tier">bird</span>
-						</td>
-					</tr>
 				
 					
-						
-						
+						<tr data-tier="fox">
+							<td>#1</td>
+							<td>Led_Slash</td>
+							<td>26</td>
+							<td>1495</td>
+							<td>Feb 10 — Feb 18, 2026</td>
+						</tr>
 					
-					
-					<tr data-tier="fox">
-						<td>#1</td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td style="display:none;">
-							<span class="d-name">FOX ELITE</span>
-							<span class="d-icon">assets/icons/fox_new.webp</span>
-							<span class="d-raw-tier">fox</span>
-						</td>
-					</tr>
 				
 					
+						<tr data-tier="fox">
+							<td>#2</td>
+							<td>kayajam</td>
+							<td>22</td>
+							<td>1489</td>
+							<td>Jan 17 — Mar 15, 2026</td>
+						</tr>
 					
-					<tr data-tier="fox">
-						<td>#2</td>
-						<td>Led_Slash</td>
-						<td>26</td>
-						<td>1495</td>
-						<td>Feb 10 — Feb 18, 2026</td>
-						<td style="display:none;">
-							<span class="d-name">FOX ELITE</span>
-							<span class="d-icon">assets/icons/fox_new.webp</span>
-							<span class="d-raw-tier">fox</span>
-						</td>
-					</tr>
 				
 					
+						<tr data-tier="fox">
+							<td>#3</td>
+							<td>KFull</td>
+							<td>14</td>
+							<td>1491</td>
+							<td>Feb 01 — Feb 09, 2026</td>
+						</tr>
 					
-					<tr data-tier="fox">
-						<td>#3</td>
-						<td>kayajam</td>
-						<td>22</td>
-						<td>1489</td>
-						<td>Jan 17 — Mar 15, 2026</td>
-						<td style="display:none;">
-							<span class="d-name">FOX ELITE</span>
-							<span class="d-icon">assets/icons/fox_new.webp</span>
-							<span class="d-raw-tier">fox</span>
-						</td>
-					</tr>
 				
 					
+						<tr data-tier="fox">
+							<td>#4</td>
+							<td>ShuShuBana</td>
+							<td>11</td>
+							<td>1495</td>
+							<td>Jan 27 — Feb 01, 2026</td>
+						</tr>
 					
-					<tr data-tier="fox">
-						<td>#4</td>
-						<td>KFull</td>
-						<td>14</td>
-						<td>1491</td>
-						<td>Feb 01 — Feb 09, 2026</td>
-						<td style="display:none;">
-							<span class="d-name">FOX ELITE</span>
-							<span class="d-icon">assets/icons/fox_new.webp</span>
-							<span class="d-raw-tier">fox</span>
-						</td>
-					</tr>
 				
 					
+						<tr data-tier="fox">
+							<td>#5</td>
+							<td>LucianTheFak</td>
+							<td>11</td>
+							<td>1473</td>
+							<td>Apr 07 — Apr 11, 2026</td>
+						</tr>
 					
-					<tr data-tier="fox">
-						<td>#5</td>
-						<td>ShuShuBana</td>
-						<td>11</td>
-						<td>1495</td>
-						<td>Jan 27 — Feb 01, 2026</td>
-						<td style="display:none;">
-							<span class="d-name">FOX ELITE</span>
-							<span class="d-icon">assets/icons/fox_new.webp</span>
-							<span class="d-raw-tier">fox</span>
-						</td>
-					</tr>
 				
 					
+						<tr class="tier-header-row">
+							<td>
+								<a href="javascript:void(0)" onclick="handleTierClick(event, 'rabbit')" class="tier-anchor-link">
+									<div class="tier-icon-container">
+										<img src="assets/icons/rabbit_new.webp" alt="rabbit">
+									</div>
+								</a>
+							</td>
+							<td class="tier-label-cell"><strong>RABBIT LEGENDS</strong></td>
+							<td>Streak</td>
+							<td>Elo</td>
+							<td>Timespan</td>
+						</tr>
 					
-					<tr data-tier="fox">
-						<td>#6</td>
-						<td>LucianTheFak</td>
-						<td>11</td>
-						<td>1473</td>
-						<td>Apr 07 — Apr 11, 2026</td>
-						<td style="display:none;">
-							<span class="d-name">FOX ELITE</span>
-							<span class="d-icon">assets/icons/fox_new.webp</span>
-							<span class="d-raw-tier">fox</span>
-						</td>
-					</tr>
 				
 					
-						
-						
+						<tr data-tier="rabbit">
+							<td>#1</td>
+							<td>Tolfan</td>
+							<td>32</td>
+							<td>1396</td>
+							<td>Feb 01 — Mar 11, 2026</td>
+						</tr>
 					
-					
-					<tr data-tier="rabbit">
-						<td>#1</td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td style="display:none;">
-							<span class="d-name">RABBIT ELITE</span>
-							<span class="d-icon">assets/icons/rabbit_new.webp</span>
-							<span class="d-raw-tier">rabbit</span>
-						</td>
-					</tr>
 				
 					
+						<tr data-tier="rabbit">
+							<td>#2</td>
+							<td>Tricholome</td>
+							<td>32</td>
+							<td>1369</td>
+							<td>Feb 24 — Mar 29, 2026</td>
+						</tr>
 					
-					<tr data-tier="rabbit">
-						<td>#2</td>
-						<td>Tolfan</td>
-						<td>32</td>
-						<td>1396</td>
-						<td>Feb 01 — Mar 11, 2026</td>
-						<td style="display:none;">
-							<span class="d-name">RABBIT ELITE</span>
-							<span class="d-icon">assets/icons/rabbit_new.webp</span>
-							<span class="d-raw-tier">rabbit</span>
-						</td>
-					</tr>
 				
 					
+						<tr data-tier="rabbit">
+							<td>#3</td>
+							<td>Nefkano</td>
+							<td>26</td>
+							<td>1391</td>
+							<td>Feb 15 — Mar 10, 2026</td>
+						</tr>
 					
-					<tr data-tier="rabbit">
-						<td>#3</td>
-						<td>Tricholome</td>
-						<td>32</td>
-						<td>1369</td>
-						<td>Feb 24 — Mar 29, 2026</td>
-						<td style="display:none;">
-							<span class="d-name">RABBIT ELITE</span>
-							<span class="d-icon">assets/icons/rabbit_new.webp</span>
-							<span class="d-raw-tier">rabbit</span>
-						</td>
-					</tr>
 				
 					
+						<tr data-tier="rabbit">
+							<td>#4</td>
+							<td>ChippZamoose</td>
+							<td>22</td>
+							<td>1388</td>
+							<td>Jan 24 — Mar 30, 2026</td>
+						</tr>
 					
-					<tr data-tier="rabbit">
-						<td>#4</td>
-						<td>Nefkano</td>
-						<td>26</td>
-						<td>1391</td>
-						<td>Feb 15 — Mar 10, 2026</td>
-						<td style="display:none;">
-							<span class="d-name">RABBIT ELITE</span>
-							<span class="d-icon">assets/icons/rabbit_new.webp</span>
-							<span class="d-raw-tier">rabbit</span>
-						</td>
-					</tr>
 				
 					
+						<tr data-tier="rabbit">
+							<td>#5</td>
+							<td>kaiser</td>
+							<td>18</td>
+							<td>1383</td>
+							<td>Feb 08 — Mar 10, 2026</td>
+						</tr>
 					
-					<tr data-tier="rabbit">
-						<td>#5</td>
-						<td>ChippZamoose</td>
-						<td>22</td>
-						<td>1388</td>
-						<td>Jan 24 — Mar 30, 2026</td>
-						<td style="display:none;">
-							<span class="d-name">RABBIT ELITE</span>
-							<span class="d-icon">assets/icons/rabbit_new.webp</span>
-							<span class="d-raw-tier">rabbit</span>
-						</td>
-					</tr>
 				
 					
+						<tr class="tier-header-row">
+							<td>
+								<a href="javascript:void(0)" onclick="handleTierClick(event, 'mouse')" class="tier-anchor-link">
+									<div class="tier-icon-container">
+										<img src="assets/icons/mouse_new.webp" alt="mouse">
+									</div>
+								</a>
+							</td>
+							<td class="tier-label-cell"><strong>MOUSE LEGENDS</strong></td>
+							<td>Streak</td>
+							<td>Elo</td>
+							<td>Timespan</td>
+						</tr>
 					
-					<tr data-tier="rabbit">
-						<td>#6</td>
-						<td>kaiser</td>
-						<td>18</td>
-						<td>1383</td>
-						<td>Feb 08 — Mar 10, 2026</td>
-						<td style="display:none;">
-							<span class="d-name">RABBIT ELITE</span>
-							<span class="d-icon">assets/icons/rabbit_new.webp</span>
-							<span class="d-raw-tier">rabbit</span>
-						</td>
-					</tr>
 				
 					
-						
-						
+						<tr data-tier="mouse">
+							<td>#1</td>
+							<td>Schkitz</td>
+							<td>89</td>
+							<td>1293</td>
+							<td>Jan 28 — Mar 30, 2026</td>
+						</tr>
 					
-					
-					<tr data-tier="mouse">
-						<td>#1</td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td style="display:none;">
-							<span class="d-name">MOUSE ELITE</span>
-							<span class="d-icon">assets/icons/mouse_new.webp</span>
-							<span class="d-raw-tier">mouse</span>
-						</td>
-					</tr>
 				
 					
+						<tr data-tier="mouse">
+							<td>#2</td>
+							<td>NadtyLite</td>
+							<td>56</td>
+							<td>1279</td>
+							<td>Mar 05 — Mar 31, 2026</td>
+						</tr>
 					
-					<tr data-tier="mouse">
-						<td>#2</td>
-						<td>Schkitz</td>
-						<td>89</td>
-						<td>1293</td>
-						<td>Jan 28 — Mar 30, 2026</td>
-						<td style="display:none;">
-							<span class="d-name">MOUSE ELITE</span>
-							<span class="d-icon">assets/icons/mouse_new.webp</span>
-							<span class="d-raw-tier">mouse</span>
-						</td>
-					</tr>
 				
 					
+						<tr data-tier="mouse">
+							<td>#3</td>
+							<td>Pandapapst</td>
+							<td>50</td>
+							<td>1294</td>
+							<td>Jan 30 — Mar 29, 2026</td>
+						</tr>
 					
-					<tr data-tier="mouse">
-						<td>#3</td>
-						<td>NadtyLite</td>
-						<td>56</td>
-						<td>1279</td>
-						<td>Mar 05 — Mar 31, 2026</td>
-						<td style="display:none;">
-							<span class="d-name">MOUSE ELITE</span>
-							<span class="d-icon">assets/icons/mouse_new.webp</span>
-							<span class="d-raw-tier">mouse</span>
-						</td>
-					</tr>
 				
 					
+						<tr data-tier="mouse">
+							<td>#4</td>
+							<td>DemaRogue</td>
+							<td>37</td>
+							<td>1288</td>
+							<td>Feb 25 — Mar 27, 2026</td>
+						</tr>
 					
-					<tr data-tier="mouse">
-						<td>#4</td>
-						<td>Pandapapst</td>
-						<td>50</td>
-						<td>1294</td>
-						<td>Jan 30 — Mar 29, 2026</td>
-						<td style="display:none;">
-							<span class="d-name">MOUSE ELITE</span>
-							<span class="d-icon">assets/icons/mouse_new.webp</span>
-							<span class="d-raw-tier">mouse</span>
-						</td>
-					</tr>
 				
 					
+						<tr data-tier="mouse">
+							<td>#5</td>
+							<td>cliuless</td>
+							<td>34</td>
+							<td>1294</td>
+							<td>Feb 12 — Mar 09, 2026</td>
+						</tr>
 					
-					<tr data-tier="mouse">
-						<td>#5</td>
-						<td>DemaRogue</td>
-						<td>37</td>
-						<td>1288</td>
-						<td>Feb 25 — Mar 27, 2026</td>
-						<td style="display:none;">
-							<span class="d-name">MOUSE ELITE</span>
-							<span class="d-icon">assets/icons/mouse_new.webp</span>
-							<span class="d-raw-tier">mouse</span>
-						</td>
-					</tr>
-				
-					
-					
-					<tr data-tier="mouse">
-						<td>#6</td>
-						<td>cliuless</td>
-						<td>34</td>
-						<td>1294</td>
-						<td>Feb 12 — Mar 09, 2026</td>
-						<td style="display:none;">
-							<span class="d-name">MOUSE ELITE</span>
-							<span class="d-icon">assets/icons/mouse_new.webp</span>
-							<span class="d-raw-tier">mouse</span>
-						</td>
-					</tr>
 				
 			</tbody>
 		</table>
@@ -755,7 +620,7 @@
 					<span>Powered by <strong>Tʀɪᴄʜᴏʟᴏᴍᴇ</strong></span>
 					<span>Woodland visions by <a class="cl" href="cache.html">𝕩𝕝𝕦𝕖𝕧𝕚</a></span>
 				</div>
-				<div class="footer-date">Updated on 2026-04-14 19:57 UTC</div>
+				<div class="footer-date">Updated on 2026-04-14 20:02 UTC</div>
 			</div>
 		</footer>
     </div>
