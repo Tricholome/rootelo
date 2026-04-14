@@ -1776,7 +1776,7 @@
 					<span>Powered by <strong>Tʀɪᴄʜᴏʟᴏᴍᴇ</strong></span>
 					<span>Woodland visions by <a class="cl" href="cache.html">𝕩𝕝𝕦𝕖𝕧𝕚</a></span>
 				</div>
-				<div class="footer-date">Updated on 2026-04-14 11:09 UTC</div>
+				<div class="footer-date">Updated on 2026-04-14 11:11 UTC</div>
 			</div>
 		</footer>
     </div>
@@ -1819,28 +1819,5 @@
 		
     <script src="static/script.js"></script>
     
-<script>
-$(document).ready(function() {
-    $('#matchesTable').DataTable({
-        "order": [[1, "desc"]], 
-        "responsive": true,
-        "pageLength": 25,
-        "columnDefs": [
-            { "className": "lineup-cell", "targets": 3 },
-            { "className": "elo-sum-cell", "targets": 1 },
-            
-            /* Responsive Priorities */
-            { "responsivePriority": 1, "targets": [0, 3] }, // Rank & Lineup stay
-            { "responsivePriority": 2, "targets": 1 },      // Elo stays if possible
-            { "responsivePriority": 3, "targets": 2 },      // Date is hidden first
-            { "responsivePriority": 4, "targets": 4 }       // ID is hidden first
-        ],
-        "language": {
-        "searchPlaceholder": "Player name, Game ID..."
-        }
-    });
-});
-</script>
-
 </body>
 </html>
