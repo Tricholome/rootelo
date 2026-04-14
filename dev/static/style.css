@@ -428,8 +428,7 @@ table.dataTable {
     border: 1px solid var(--glass-border) !important;
 }
 
-table.dataTable thead th,
-table.dataTable tbody tr.tier-header-row td { 
+table.dataTable thead th { 
     background: var(--dt-header-bg) !important; 
     color: var(--text-main) !important; 
     font-size: var(--size-xs) !important;
@@ -617,13 +616,18 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     border-top: 1px solid var(--glass-border) !important;
 }
 
-table.dataTable tbody tr.tier-header-row:hover td { 
-    background: var(--dt-header-bg) !important; 
+table.dataTable tbody tr.tier-header-row td { 
+    background: var(--dt-header-bg); 
+    color: var(--text-main); 
+    font-size: var(--size-xs);
+    letter-spacing: var(--track-wide); 
+    text-transform: uppercase; 
+    padding: 0 10px; 
+    border-bottom: 1px solid var(--border-soft); 
 }
 
-#hall_of_fame .tier-icon-container { 
-    width: 32; 
-    height: 32px;
+table.dataTable tbody tr.tier-header-row:hover td { 
+    background: var(--dt-header-bg) !important; 
 }
 
 .streak-cell {
