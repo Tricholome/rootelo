@@ -472,7 +472,7 @@ for t in TIER_HIERARCHY:
         })
         for rank, s in enumerate(tier_top_5, 1):
             s['is_section'] = False
-            s['rank_display'] = [None, "I", "II", "III", "IV", "V"][s['rank']]
+            s['rank_display'] = ["", "I", "II", "III", "IV", "V"][rank]
             s['timespan'] = format_smart_timespan(s['start_date'], s['end_date'])
             hall_of_fame_final.append(s)
 
