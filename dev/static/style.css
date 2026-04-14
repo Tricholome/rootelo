@@ -555,6 +555,12 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 
 .tier-icon-container img { max-width: 100%; max-height: 100%; object-fit: contain; }
 
+.tier-anchor-link {
+    pointer-events: auto !important;
+    position: relative;
+    z-index: 20;
+}
+
 .player-name-cell {
 	text-align: left;
 	font-weight: var(--medium);
@@ -624,10 +630,12 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 
 table.dataTable tbody tr.tier-header-row td { 
     background: var(--dt-header-bg); 
-    color: var(--text-main) !important;  
-    font-size: var(--size-xs) !important; 
-    letter-spacing: var(--track-wide) !important;  
-    text-transform: uppercase; 
+    color: var(--text-main) !important;
+	font-family: var(--font-ui) !important;	
+    font-size: var(--size-xs) !important;
+	font-weight: var(--normal);
+    letter-spacing: var(--track-wide) !important;
+    text-transform: uppercase !important; 
     padding: 10px; 
     border-bottom: 1px solid var(--border-soft); 
 }
@@ -641,13 +649,13 @@ tr.tier-header-row td.dtr-control::before {
 }
 
 tr.tier-header-row td.dtr-control {
-    cursor: default !important;
+    pointer-events: none !important;
 }
 
 .streak-cell {
-	color: var(--text-bright) !important;
-	font-size: var(--size-md) !important;
-    font-weight: var(--bold) !important;
+	color: var(--text-bright);
+	font-size: var(--size-md);
+    font-weight: var(--bold);
 	font-family: var(--font-mono);
 }
 
