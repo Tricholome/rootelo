@@ -269,6 +269,7 @@ $(document).ready(function() {
 	if ($('#hall_of_fame').length > 0) {
 		$('#hall_of_fame').DataTable({
 			"responsive": true,
+			"bHeader": false,
 			"ordering": false,
 			"paging": false,
 			"searching": false,
