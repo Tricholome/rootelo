@@ -275,7 +275,7 @@ $(document).ready(function() {
 			"info": false,
 			"dom": 'rt',
 			"columnDefs": [
-				{ "targets": 1, "className": "rank-cell" },
+				{ "targets": 0, "className": "rank-cell" },
 				{ "targets": 1, "className": "player-name-cell" },
 				{ "targets": 2, "className": "streak-cell" },
 				{ "targets": 3, "className": "elo-cell" },
