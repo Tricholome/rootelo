@@ -269,48 +269,19 @@ $(document).ready(function() {
 	if ($('#hall_of_fame').length > 0) {
 		$('#hall_of_fame').DataTable({
 			"responsive": true,
-			"ordering": false,
+			"ordering": false, // On garde l'ordre exact de Python
 			"paging": false,
 			"searching": false,
 			"info": false,
 			"dom": 'rt',
 			"columnDefs": [ 
-            { "targets": 1, "className": "player-name-cell" },
-			{ "targets": 2, "className": "streak-cell" },
-			{ "targets": 3, "className": "elo-cell" },
-			{ "targets": 5, "visible": false },
-            { "responsivePriority": 1, "targets": [1, 2, 3] },
-            { "responsivePriority": 2, "targets": 0 },
-			{ "responsivePriority": 3, "targets": 4 },
-			],
-			"drawCallback": function ( settings ) {
-				var api = this.api();
-				var rows = api.rows( {page:'current'} ).nodes();
-				var lastTier = null;
-
-				$(api.table().body()).find('.tier-header-row').remove();
-
-				api.column(5, {page:'current'} ).data().each( function ( groupData, i ) {
-
-					var $data = $('<div>').append(groupData);
-					var fullName = $data.find('.d-name').text();
-					var iconPath = $data.find('.d-icon').text();
-					var rawTier  = $data.find('.d-raw-tier').text();
-
-					if ( lastTier !== fullName ) {
-
-						var $header = $('#tier-header-template tr').clone();
-						
-						$header.find('.t-img').attr('src', iconPath).attr('alt', rawTier);
-						$header.find('.t-text').text(fullName);
-						$header.find('.t-link').attr('onclick', "handleTierClick(event, '" + rawTier + "')");
-
-						$(rows).eq( i ).before($header);
-						
-						lastTier = fullName;
-					}
-				});
-			}
+				{ "targets": 1, "className": "player-name-cell" },
+				{ "targets": 2, "className": "streak-cell" },
+				{ "targets": 3, "className": "elo-cell" },
+				{ "responsivePriority": 1, "targets": [0, 1] },
+				{ "responsivePriority": 2, "targets": [2, 3] },
+				{ "responsivePriority": 3, "targets": 4 },
+			]
 		});
 	}
 
