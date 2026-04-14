@@ -607,6 +607,9 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 }
 
 /* --- F. Specifics (Hall of Fame) --- */
+#hall_of_fame thead th {
+    height: 0;
+}
 
 #hall_of_fame {
     border-top: 1px solid var(--glass-border) !important;
