@@ -622,7 +622,7 @@ table.dataTable tbody tr.tier-header-row td {
     font-size: var(--size-xs);
     letter-spacing: var(--track-wide); 
     text-transform: uppercase; 
-    padding: 0 10px; 
+    padding: 5px 10px; 
     border-bottom: 1px solid var(--border-soft); 
 }
 
