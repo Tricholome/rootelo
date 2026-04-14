@@ -278,6 +278,7 @@ $(document).ready(function() {
 				{ "targets": 1, "className": "player-name-cell" },
 				{ "targets": 2, "className": "streak-cell" },
 				{ "targets": 3, "className": "elo-cell" },
+				{ "targets": 4, "className": "timespan-cell" },
 				{ "responsivePriority": 1, "targets": [0, 1] },
 				{ "responsivePriority": 2, "targets": [2, 3] },
 				{ "responsivePriority": 3, "targets": 4 },
