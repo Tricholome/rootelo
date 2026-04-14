@@ -374,7 +374,7 @@ for tag in ARCHIVE_SEASONS:
     }
     
 # =========================================================================
-# --- 9. HALL OF FAME : MEILLEUR STREAK PERSONNEL PAR TIER ---
+# --- 9. HALL OF FAME : BEST INDIVIDUAL STREAK PER TIER ---
 # =========================================================================
 print("  > Compiling Hall of Fame...")
 
