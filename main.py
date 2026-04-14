@@ -389,7 +389,8 @@ def extract_all_streaks(history, player_full_name):
         if "-" not in str(date_str): continue
         _, tier_now = get_tier_icon(elo_val, 11)
 
-        if tier_now not in ['bird', 'stag']:
+        authorized_tiers = ['stag', 'bird', 'fox', 'rabbit', 'mouse']
+        if tier_now not in authorized_tiers:
             tier_now = None
 
         if tier_now != (current_s['tier'] if current_s else None):
@@ -435,7 +436,15 @@ for p_name, h in sources:
                (s['streak_count'] == current_best['streak_count'] and s['peak'] > current_best['peak']):
                 best_streaks_only[key] = s
 
-hall_of_fame_data = sorted(best_streaks_only.values(), key=lambda x: (x['tier'] != 'stag', -x['streak_count']))
+TIER_HIERARCHY = ['stag', 'bird', 'fox', 'rabbit', 'mouse']
+
+hall_of_fame_data = sorted(
+    best_streaks_only.values(), 
+    key=lambda x: (
+        TIER_HIERARCHY.index(x['tier']) if x['tier'] in TIER_HIERARCHY else 99, 
+        -x['streak_count']
+    )
+)
 
 # =========================================================================
 # --- 10. SITE GENERATION (JINJA2 RENDERING) ---
