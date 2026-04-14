@@ -617,6 +617,10 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     border-top: 1px solid var(--glass-border) !important;
 }
 
+table.dataTable tbody tr.tier-header-row:hover td { 
+    background: var(--dt-header-bg) !important; 
+}
+
 #hall_of_fame .tier-icon-container { 
     width: 24px; 
     height: 24px;
