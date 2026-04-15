@@ -624,22 +624,21 @@ if (btnEngrave) {
 // 2. Confirmation
 if (btnConfirm) {
     btnConfirm.addEventListener('click', () => {
-        const name = visitorNameInput.value || "Anonymous Watcher";
+        const name = document.getElementById('visitor-name').value || "Anonymous Watcher";
         const date = new Date().toLocaleDateString();
-        
+
+        // 1. On remplit les données
+        document.querySelector('#visitor-name-display strong').textContent = name;
+        document.getElementById('visitor-date-display').textContent = `Revealed on ${date}`;
+
+        // 2. On retire la classe qui cache les lignes
+        document.querySelectorAll('.is-visitor').forEach(el => {
+            el.classList.remove('is-visitor');
+        });
+
+        // 3. Feedback et sauvegarde
+        document.getElementById('visitor-recognition').innerHTML = "<p>Your presence is recorded.</p>";
         localStorage.setItem('visitor_name', name);
         localStorage.setItem('discovery_date', date);
-
-        const visitorRow = `
-            <tr class="visitor-row" style="color: var(--color-squirrel, #4d7c0f);">
-                <td>🥜</td>
-                <td><strong>${name}</strong></td>
-                <td>—</td>
-                <td>&lt; 1200</td>
-                <td>Revealed this place on ${date}</td>
-            </tr>`;
-        
-        document.querySelector('#hall_of_fame tbody').insertAdjacentHTML('beforeend', visitorRow);
-        visitorArea.innerHTML = "<p>Your presence is recorded.</p>";
     });
 }
