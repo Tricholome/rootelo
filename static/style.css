@@ -689,6 +689,11 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 }
 
 /* --- G. Specifics (Visitor) --- */
+
+#visitor-recognition {
+	margin-top: 20px;
+}
+
 #input-zone {
     display: none;
 }
@@ -710,16 +715,13 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 	font-size: var(--size-base);
 	color: var(--text-muted);
     font-weight: var(--normal)
+	font-style: italic;
 }
 
 .visitor-name {
 	font-weight: var(--medium);
-	color: var(--text-bright);
-}
-
-.visitor-date {
-	color: var(--text-muted);
-	font-weight: var(--normal);
+	color: var(--text-main);
+	font-style: normal;
 }
 
 /* --- G. Responsive --- */
