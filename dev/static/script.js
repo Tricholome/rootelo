@@ -286,6 +286,18 @@ $(document).ready(function() {
 			]
 		});
 	}
+	
+	// --- 4. VISITOR TABLE ---
+	if ($('#visitor_table').length > 0) {
+		$('#visitor_table').DataTable({
+			"responsive": true,
+			"ordering": false,
+			"paging": false,
+			"searching": false,
+			"info": false,
+			"dom": 'rt',
+		});
+	}
 
 });
 
@@ -624,33 +636,23 @@ if (btnConfirm) {
         const nameInput = document.getElementById('visitor-name');
         const name = nameInput ? nameInput.value || "Anonymous Watcher" : "Anonymous Watcher";
         const date = new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
-
-        // Mise à jour de toutes les lignes cachées
-        document.querySelectorAll('.is-visitor').forEach(row => {
-            row.classList.remove('is-visitor');
-            row.style.setProperty('display', 'table-row', 'important');
-            
-            // On remplit le nom et la date en ciblant les classes
-            const nameSpan = row.querySelector('.visitor-name');
+        const visitorTable = document.getElementById('visitor_table');
+        
+        if (visitorTable) {
+            const nameSpan = visitorTable.querySelector('.visitor-name');
             if (nameSpan) nameSpan.textContent = name;
-            
-            const dateSpan = row.querySelector('.visitor-date');
+            const dateSpan = visitorTable.querySelector('.visitor-date');
             if (dateSpan) dateSpan.textContent = date;
-        });
+            visitorTable.style.setProperty('display', 'table', 'important');
+        }
 
-        // Disparition du formulaire
         const recognitionZone = document.getElementById('visitor-recognition');
         if (recognitionZone) {
             recognitionZone.innerHTML = "<h2>Your presence is recorded.</h2>";
         }
         
-        // Sauvegarde
         localStorage.setItem('visitor_name', name);
         localStorage.setItem('discovery_date', date);
 
-        // Ajustement DataTables pour la longue phrase (optionnel mais conseillé)
-        if (window.jQuery && $.fn.dataTable) {
-            $('#hall_of_fame').DataTable().columns.adjust().draw();
-        }
     });
 }
