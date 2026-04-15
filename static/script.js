@@ -601,3 +601,45 @@ function initStardust() {
         }
     });
 }
+
+/* =========================================================================
+   --- 9. VISITOR RECOGNITION ---
+   ========================================================================= */
+
+const visitorArea = document.getElementById('visitor-recognition');
+const btnEngrave = document.getElementById('btn-engrave');
+const inputZone = document.getElementById('input-zone');
+const btnConfirm = document.getElementById('btn-confirm');
+const visitorNameInput = document.getElementById('visitor-name');
+
+
+// 1. Input button
+if (btnEngrave) {
+    btnEngrave.addEventListener('click', () => {
+        btnEngrave.style.display = 'none';
+        inputZone.style.display = 'block';
+    });
+}
+
+// 2. Confirmation
+if (btnConfirm) {
+    btnConfirm.addEventListener('click', () => {
+        const name = visitorNameInput.value || "Anonymous Watcher";
+        const date = new Date().toLocaleDateString();
+        
+        localStorage.setItem('visitor_name', name);
+        localStorage.setItem('discovery_date', date);
+
+        const visitorRow = `
+            <tr class="visitor-row" style="color: var(--color-squirrel, #4d7c0f);">
+                <td>🥜</td>
+                <td><strong>${name}</strong></td>
+                <td>—</td>
+                <td>&lt; 1200</td>
+                <td>Revealed this place on ${date}</td>
+            </tr>`;
+        
+        document.querySelector('#hall_of_fame tbody').insertAdjacentHTML('beforeend', visitorRow);
+        visitorArea.innerHTML = "<h2>Your presence is recorded.</h2>";
+    });
+}
