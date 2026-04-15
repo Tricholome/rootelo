@@ -49,21 +49,24 @@
 							<td>Active Timeframe</td>
 						</tr>
 					{% else %}
-						<tr data-tier="{{ s.tier }}" {% if s.is_visitor %}id="is-visitor-row" class="is-visitor"{% endif %}>
+						<tr {% if s.is_visitor %}class="is-visitor"{% endif %}>
 							<td>{{ s.rank_display if not s.is_visitor }}</td>
-							<td {% if s.is_visitor %}id="visitor-name-display" class="visitor-column"{% endif %}>
+							
+							<td {% if s.is_visitor %}class="visitor-column"{% endif %}>
 								{% if s.is_visitor %}
-									<span class="visitor-name">{{ s.player }}</span>
+									<span class="visitor-name"></span>
 									<span class="visitor-phrase">has passed through here and discovered all the hidden secrets.</span>
 								{% else %}
 									{{ s.player }}
 								{% endif %}
 							</td>
+							
 							<td>{{ s.streak_count if not s.is_visitor }}</td>
 							<td>{{ s.peak if not s.is_visitor }}</td>
+							
 							<td>
 								{% if s.is_visitor %}
-									Revealed on <span id="visitor-date-value"></span>
+									Revealed on <span id="visitor-date"></span>
 								{% else %}
 									{{ s.start_date | smart_date(s.end_date) }}
 								{% endif %}
