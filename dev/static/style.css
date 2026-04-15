@@ -696,6 +696,11 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 
 #input-zone {
     display: none;
+	background: var(--dt-input-bg);
+    color: var(--text-main);
+    border: 1px solid var(--border-soft);
+    padding: 12px 20px;
+    border-radius: 6px;
 }
 
 #visitor_table {
