@@ -624,7 +624,7 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 }
 
 .tier-header-row td,
-.tier-header-row thead th { 
+#visitor_table thead th { 
     background: var(--dt-header-bg); 
     color: var(--text-muted) !important;
 	font-family: var(--font-ui) !important;	
@@ -681,6 +681,37 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 
 .hide-mobile {
     display: inline;
+}
+
+/* --- F. Specifics (Visitor) --- */
+#input-zone {
+    display: none;
+}
+
+#visitor_table {
+    display: none;
+	margin-top: 0; 
+}
+
+.visitor-cell {
+	text-align: left;
+}
+
+.visitor-name {
+	font-weight: var(--medium);
+}
+
+.visitor-phrase {
+    margin-left: 8px;
+    font-weight: normal;
+    font-style: italic;
+    opacity: 0.8;
+}
+
+.visitor-date {
+	color: var(--text-muted) !important;
+	font-size: var(--size-sm) !important;
+	font-family: var(--font-mono);
 }
 
 /* --- G. Responsive --- */
@@ -1364,37 +1395,6 @@ body.hof-unlocked .hof-section {
         opacity: 0.8; 
         transform: scale(1); 
     }
-}
-
-/* --- 10. Visitor Recognition --- */
-#input-zone {
-    display: none;
-}
-
-#visitor_table {
-    display: none;
-	margin-top: -1px !important; 
-}
-
-.visitor-cell {
-	text-align: left;
-}
-
-.visitor-name {
-	font-weight: var(--medium);
-}
-
-.visitor-phrase {
-    margin-left: 8px;
-    font-weight: normal;
-    font-style: italic;
-    opacity: 0.8;
-}
-
-.visitor-date {
-	color: var(--text-muted) !important;
-	font-size: var(--size-sm) !important;
-	font-family: var(--font-mono);
 }
 
 {% block extra_css %}{% endblock %}
