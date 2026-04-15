@@ -296,6 +296,9 @@ $(document).ready(function() {
 			"searching": false,
 			"info": false,
 			"dom": 'rt',
+			"columnDefs": [
+				{ "targets": 0, "className": "rank-cell" },
+			]
 		});
 	}
 
