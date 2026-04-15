@@ -699,16 +699,15 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 	margin-top: 5px !important;
 	table-layout: fixed !important;
     width: 100% !important;
-    border-collapse: collapse !important;
 }
 
 .visitor-cell {
 	text-align: left;
+	font-size: var(--size-base) !important;
 }
 
 .visitor-name {
 	font-weight: var(--medium);
-	color: var(--color-squirrel);
 }
 
 .visitor-phrase {
