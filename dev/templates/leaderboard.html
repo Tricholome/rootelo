@@ -1,0 +1,47 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+    <table id="leaderboard" class="display nowrap" style="width:100%">
+        <thead>
+            <tr>
+                <th>Rank</th>
+                <th>Tier</th>
+                <th>Player</th>
+                <th>ELO</th>
+                <th>Games</th>
+                <th>Wins</th>
+                <th>Win Rate</th>
+                <th>Peak</th>
+                <th>Last</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for player in players %}
+            <tr data-tier="{{ player.tier }}" class="{{ 'unranked' if player.tier == 'unranked' else '' }}">
+                <td class="{{ 'unranked' if player.Rank == '-' else '' }}">
+                    {{ player.Rank }}
+                </td>
+                <td>
+					{% if player.tier and player.tier != 'unranked' %}
+						<a href="javascript:void(0)" 
+						   onclick="handleTierClick(event, '{{ player.tier }}')" 
+						   class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="{{ config.assets.icons[player.tier] }}" alt="{{ player.tier }}">
+							</div>
+						</a>
+					{% endif %}
+				</td>
+                <td>{{ player.display_name }}</td>
+                <td>{{ player.ELO }}</td>
+                <td>{{ player.Games }}</td>
+                <td>{{ player.Wins }}</td>
+                <td>{{ player.Win_Rate }}</td>
+                <td>{{ player.Peak }}</td>
+                <td>{{ player.Last }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

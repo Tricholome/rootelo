@@ -1,0 +1,120 @@
+{% set tier_titles = {
+    'stag': 'Sacred Stags',
+    'bird': 'Brilliant Birds',
+    'fox': 'Fierce Foxes',
+    'rabbit': 'Radiant Rabbits',
+    'mouse': 'Mighty Mice'
+} %}
+
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="codex-section">
+
+	<div class="entry-door">
+		<a href="javascript:void(0)" id="hof-access" class="secret-btn">
+			Reveal what is hidden
+			<span class="tooltip-text">This is not all... keep looking around.</span>
+		</a>
+	</div>
+	
+	<div class="hof-section">
+		
+		<table id="hall_of_fame" class="display nowrap responsive" style="width:100%">
+			<thead>
+				<tr>
+					<th>Rank</th>
+					<th>Player</th>
+					<th>Longest Run</th>
+					<th>Peak Elo</th>
+					<th>Active Timeframe</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for s in hall_of_fame %}
+					{% if s.is_section %}
+						<tr class="tier-header-row">
+							<td>
+								<a href="javascript:void(0)" onclick="handleTierClick(event, '{{ s.tier }}')" class="tier-anchor-link">
+									<div class="tier-icon-container">
+										<img src="{{ config.assets.icons[s.tier] }}" alt="{{ s.tier }}">
+									</div>
+								</a>
+							</td>
+							<td>{{ tier_titles[s.tier] }}</td>
+							<td>
+								<span class="hide-mobile">Longest</span> Run
+							</td>
+							<td>
+								Peak <span class="hide-mobile">Elo</span>
+							</td>
+							<td>Active Timeframe</td>
+						</tr>
+					{% else %}
+						<tr data-tier="{{ s.tier }}">
+							<td>{{ s.rank_display }}</td>
+							<td>{{ s.player }}</td>
+							<td>{{ s.streak_count }}</td>
+							<td>{{ s.peak }}</td>
+							<td>{{ s.timespan }}</td>
+						</tr>
+					{% endif %}
+				{% endfor %}
+			</tbody>
+		</table>
+		
+	</div>
+	
+	<p class="enigma">
+		<span>What is this place?</span>
+		<span>Step into the shade.</span>
+		<span>Look beneath the leaves.</span>
+		<a class="cl" href="javascript:void(0)" id="watcher-secret">Seek the silent watcher.</a>
+	</p>
+	
+    <div class="artist-story-green">
+        <h2>The <span class="cipher" data-word="silent">Silent</span> Chronicler</h2>
+        <p>Here, where <span class="cipher" data-word="roots">roots</span> run deep and the wild grows dense, <strong>𝕩𝕝𝕦𝕖𝕧𝕚</strong> sits hidden in the green. He captures <span class="cipher" data-word="every">every</span> fluttering wing and <span class="cipher" data-word="every">every</span> twitching whisker. He celebrates the Woodland’s teeming diversity with <span class="cipher" data-word="every">every</span> stroke. It is a quiet call to <span class="cipher" data-word="remember">remember</span>: beyond the League’s grand stakes, nothing small goes unseen.</p>
+    </div>
+	
+	<div class="artist-story-purple">
+        <h2>The Eternal Archivist</h2>
+        <p>Here, where the mist hangs thin and light turns to velvet, <strong>𝕩𝕝𝕦𝕖𝕧𝕚</strong> dwells beneath the purple bloom. Every feat, every triumph, every half-remembered tale is carefully preserved. It is a quiet truth to keep: beyond the League’s hollow noise, nothing great is ever truly lost.</p>
+    </div>
+	
+	<div class="fruit-container">
+		<div id="berry-section">
+			<h2>The Mystic Berry</h2>
+			<p>Some secrets are juicier than others.<br>Can you feel the pulse?</p>
+			<div class="fruit-interaction-wrapper">
+				<a href="javascript:void(0)" id="berry-secret" onclick="openTierModal('stag')" class="fruit-trigger js-double-tap">
+					<span class="tooltip-text fruit-tooltip">Squish it!</span>
+					<img src="assets/images/berry.webp" alt="Berry" class="fruit-sprite">
+				</a>
+			</div>
+		</div>
+	
+		<div id="nut-section">
+			<h2>The Special Nut</h2>
+			<p>No rank? No stress. Take it easy.<br>We haven't forgotten you!</p>
+			<div class="fruit-interaction-wrapper">
+				<a href="javascript:void(0)" id="nut-secret" onclick="openTierModal('squirrel')" class="fruit-trigger js-double-tap">
+					<span class="tooltip-text fruit-tooltip">Crack it!</span>
+					<img src="assets/images/nut.webp" alt="Nut" class="fruit-sprite">
+				</a>
+			</div>
+		</div>
+	</div>
+		
+	<div class="exit-door">	
+		<a href="javascript:void(0)" id="leave-secrets" class="secret-btn js-double-tap">
+			Leave and forget this place
+			<span class="tooltip-text">Return to the simple order of the Woodland.</span>
+		</a>
+	</div>
+	
+	
+</div>
+
+{% endblock %}
