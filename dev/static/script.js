@@ -627,13 +627,19 @@ if (btnConfirm) {
         const name = document.getElementById('visitor-name').value || "Anonymous Watcher";
         const date = new Date().toLocaleDateString();
 
-        document.querySelector('#visitor-name-display strong').textContent = name;
+        const nameDisplay = document.querySelector('.visitor-name');
+        if (nameDisplay) {
+            nameDisplay.textContent = name;
+        }
         
-        document.getElementById('visitor-date-display').textContent = `on ${date}`;
+        const dateDisplay = document.getElementById('visitor-date-display');
+        if (dateDisplay) {
+            dateDisplay.textContent = `on ${date}`;
+        }
 
         document.querySelectorAll('.is-visitor').forEach(el => {
             el.classList.remove('is-visitor');
-            el.style.display = 'table-row';
+            el.style.setProperty('display', 'table-row', 'important');
         });
 
         document.getElementById('visitor-recognition').innerHTML = "<h2>Your presence is recorded.</h2>";
