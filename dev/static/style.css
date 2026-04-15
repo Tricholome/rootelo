@@ -1373,5 +1373,16 @@ body.hof-unlocked .hof-section {
     display: none;
 }
 
+.visitor-column {
+    white-space: nowrap; 
+    overflow: visible;
+}
+
+.visitor-phrase {
+    margin-left: 8px;
+    font-weight: normal;
+    font-style: italic;
+    opacity: 0.8;
+}
 
 {% block extra_css %}{% endblock %}
