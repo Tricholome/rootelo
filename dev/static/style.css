@@ -632,7 +632,7 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 	font-weight: var(--medium) !important;
     letter-spacing: var(--track-wide) !important;
     text-transform: uppercase !important; 
-    padding: 10px; 
+    padding: 10px !important; 
     border-bottom: 1px solid var(--border-soft); 
 }
 
@@ -690,7 +690,7 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 
 #visitor_table {
     display: none;
-	margin-top: 0; 
+	margin-top: 0 !important; 
 }
 
 .visitor-cell {
