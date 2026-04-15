@@ -54,8 +54,10 @@
 							
 							<td {% if s.is_visitor %}class="visitor-column"{% endif %}>
 								{% if s.is_visitor %}
-									<span class="visitor-name"></span>
-									<span class="visitor-phrase">has passed through here and discovered all the hidden secrets.</span>
+									<div class="visitor-phrase-wrapper">
+										<span class="visitor-name"></span>
+										<span class="visitor-phrase">has passed through here and discovered all the hidden secrets.</span>
+									</div>
 								{% else %}
 									{{ s.player }}
 								{% endif %}
