@@ -675,9 +675,9 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 }
 
 .rank-cell {
-	width: 56px !important;
-    min-width: 56px !important;
-    max-width: 56px !important;
+	width: 100px !important;
+    min-width: 100px !important;
+    max-width: 100px !important;
 	font-weight: var(--medium);
 	color: var(--text-muted) !important;
 }
