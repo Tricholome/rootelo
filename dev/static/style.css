@@ -680,6 +680,7 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 	width: 60px !important;
     min-width: 60px !important;
     max-width: 60px !important;
+	box-sizing: border-box !important;
 	font-weight: var(--medium);
 	color: var(--text-muted) !important;
 }
