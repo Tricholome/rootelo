@@ -627,17 +627,17 @@ if (btnConfirm) {
         const name = document.getElementById('visitor-name').value || "Anonymous Watcher";
         const date = new Date().toLocaleDateString();
 
-        // 1. On remplit les données
         document.querySelector('#visitor-name-display strong').textContent = name;
-        document.getElementById('visitor-date-display').textContent = `Revealed on ${date}`;
+        
+        document.getElementById('visitor-date-display').textContent = `on ${date}`;
 
-        // 2. On retire la classe qui cache les lignes
         document.querySelectorAll('.is-visitor').forEach(el => {
             el.classList.remove('is-visitor');
+            el.style.display = 'table-row';
         });
 
-        // 3. Feedback et sauvegarde
-        document.getElementById('visitor-recognition').innerHTML = "<p>Your presence is recorded.</p>";
+        document.getElementById('visitor-recognition').innerHTML = "<h2>Your presence is recorded.</h2>";
+        
         localStorage.setItem('visitor_name', name);
         localStorage.setItem('discovery_date', date);
     });
