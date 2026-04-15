@@ -721,7 +721,7 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 }
 
 .visitor-date {
-	color: var(--text-main);
+	color: var(--text-muted);
 	font-weight: var(--normal);
 }
 
