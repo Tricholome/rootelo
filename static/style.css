@@ -1374,8 +1374,8 @@ body.hof-unlocked .hof-section {
 }
 
 .visitor-column {
-    white-space: nowrap; 
-    overflow: visible;
+    white-space: nowrap !important;
+    overflow: visible !important;
 }
 
 .visitor-phrase {
