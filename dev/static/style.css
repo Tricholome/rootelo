@@ -720,15 +720,13 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 
 .visitor-cell {
 	text-align: left;
-	font-size: var(--size-base);
-	color: var(--text-muted);
-    font-weight: var(--normal);
+	color: var(--text-muted) !important;
 	font-style: italic !important;
 }
 
 .visitor-name {
-	font-weight: var(--medium);
-	color: var(--text-main);
+	font-weight: var(--medium) !important;
+	color: var(--text-main) !important;
 	font-style: normal !important;
 }
 
