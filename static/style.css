@@ -1374,25 +1374,36 @@ body.hof-unlocked .hof-section {
     display: none;
 }
 
+/* 1. On prépare la cellule cible */
 .visitor-column {
-    position: relative;
-    overflow: visible !important; 
+    position: relative !important; /* Force la cellule à être le point d'ancrage */
+    height: 48px; /* Hauteur min pour contenir texte (24px) + padding (12+12) */
 }
 
+/* 2. On ajuste le wrapper */
 .visitor-phrase-wrapper {
     position: absolute;
     left: calc(var(--window-padding) + 10px);
-    top: 12px;
-    bottom: 12px;
+    
+    /* On utilise top + une hauteur fixe ou un centrage flex */
+    top: 50%;
+    transform: translateY(-50%); /* Le retour du translateY, mais sans top/bottom fixes */
+    
     display: flex;
     align-items: center;
+    
     z-index: 20;
     pointer-events: none;
     white-space: normal;
+    
+    /* LARGEUR : On utilise 100vw pour ignorer la largeur de la cellule */
+    /* On soustrait le décalage gauche et le padding droit voulu */
     width: calc(var(--window-max-width) - (var(--window-padding) + 10px) * 2);
     max-width: calc(100vw - (var(--window-padding) + 10px) * 2);
-	font-family: var(--font-hand);
-	color: var(--color-squirrel);
+
+    font-family: var(--font-hand);
+    color: var(--color-squirrel);
+    line-height: 1.2;
 }
 
 .visitor-phrase {
