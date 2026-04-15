@@ -475,6 +475,18 @@ for t in TIER_HIERARCHY:
             s['rank_display'] = ["", "I", "II", "III", "IV", "V"][rank]
             s['timespan'] = format_smart_timespan(s['start_date'], s['end_date'])
             hall_of_fame_final.append(s)
+            
+hall_of_fame_final.append({
+    'is_section': True,
+    'tier': 'squirrel',
+    'is_visitor': True
+})
+
+hall_of_fame_final.append({
+    'is_section': False,
+    'tier': 'squirrel',
+    'is_visitor': True
+})
 
 hall_of_fame_data = hall_of_fame_final
     
