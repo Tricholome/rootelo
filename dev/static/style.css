@@ -622,7 +622,6 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     border-top: 1px solid var(--glass-border) !important;
 	table-layout: fixed !important;
     width: 100% !important;
-    border-collapse: collapse !important;
 }
 
 .tier-header-row td,
