@@ -702,16 +702,17 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 
 .visitor-name {
 	font-weight: var(--medium);
+	color: var(--color-squirrel);
 }
 
 .visitor-phrase {
-    font-weight: normal;
-    font-family: var(--font-hand);
+	color: var(--text-muted);
+    font-weight: var(--normal);
 }
 
 .visitor-date {
 	color: var(--text-bright);
-	font-family: var(--font-hand);
+	font-weight: var(--normal);
 }
 
 /* --- G. Responsive --- */
