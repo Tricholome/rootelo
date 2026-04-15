@@ -606,46 +606,25 @@ function initStardust() {
    --- 9. VISITOR RECOGNITION ---
    ========================================================================= */
 
-const visitorArea = document.getElementById('visitor-recognition');
-const btnEngrave = document.getElementById('btn-engrave');
-const inputZone = document.getElementById('input-zone');
 const btnConfirm = document.getElementById('btn-confirm');
-const visitorNameInput = document.getElementById('visitor-name');
 
-
-// 1. Input button
-if (btnEngrave) {
-    btnEngrave.addEventListener('click', () => {
-        btnEngrave.style.display = 'none';
-        inputZone.style.display = 'block';
-    });
-}
-
-// 2. Confirmation
 if (btnConfirm) {
     btnConfirm.addEventListener('click', () => {
-        const name = document.getElementById('visitor-name').value || "Anonymous Watcher";
-        const now = new Date();
-        const options = { month: 'short', day: '2-digit', year: 'numeric' };
-        const formattedDate = now.toLocaleDateString('en-US', options);
+        const nameInput = document.getElementById('visitor-name');
+        const name = nameInput.value || "Anonymous Watcher";
+        const date = new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
 
-        const nameDisplay = document.querySelector('.visitor-name');
-        if (nameDisplay) {
-            nameDisplay.textContent = name;
-        }
-        
-        const dateValueSpan = document.getElementById('visitor-date-value');
-        if (dateValueSpan) {
-            dateValueSpan.textContent = formattedDate;
-        }
-
-        document.querySelectorAll('.is-visitor').forEach(el => {
-            el.classList.remove('is-visitor');
-            el.style.setProperty('display', 'table-row', 'important');
+        document.querySelectorAll('.is-visitor').forEach(row => {
+            row.style.setProperty('display', 'table-row', 'important');
+            
+            const spanName = row.querySelector('.visitor-name');
+            const spanDate = row.querySelector('#visitor-date');
+            
+            if (spanName) spanName.textContent = name;
+            if (spanDate) spanDate.textContent = date;
         });
 
         document.getElementById('visitor-recognition').innerHTML = "<h2>Your presence is recorded.</h2>";
-        
         localStorage.setItem('visitor_name', name);
         localStorage.setItem('discovery_date', date);
     });
