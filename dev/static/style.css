@@ -1390,7 +1390,7 @@ body.hof-unlocked .hof-section {
     pointer-events: none;
     white-space: normal;
     width: auto; 
-    max-width: calc(100% - (var(--window-padding) + 10px) * 2);
+    max-width: calc(var(--window-max-width) - (var(--window-padding) + 10px) * 2);
 }
 
 .visitor-phrase {
