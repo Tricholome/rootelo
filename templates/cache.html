@@ -52,7 +52,7 @@
 						<tr data-tier="{{ s.tier }}" {% if s.is_visitor %}id="is-visitor-row" class="is-visitor"{% endif %}>
 							<td>{{ s.rank_display if not s.is_visitor }}</td>
 							<td {% if s.is_visitor %}id="visitor-name-display" class="visitor-column"{% endif %}>
-								{{ s.player }}{% if s.is_visitor %}<span class="visitor-phrase"></span>{% endif %}
+								{{ s.player }}{% if s.is_visitor %}<span class="visitor-phrase">has passed through here and discovered all the hidden secrets.</span>{% endif %}
 							</td>
 							<td>{{ s.streak_count if not s.is_visitor }}</td>
 							<td>{{ s.peak if not s.is_visitor }}</td>
