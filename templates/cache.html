@@ -56,8 +56,8 @@
 								{% if s.is_visitor %}
 									<div class="visitor-phrase-wrapper">
 										<span class="visitor-name"></span>
-										<span class="visitor-phrase">has passed through here and discovered all the hidden secrets.</span>
-									</div>
+										<span class="visitor-phrase">has passed through here and discovered all the hidden secrets on</span>
+										<span class="visitor-date"></span> </div>
 								{% else %}
 									{{ s.player }}
 								{% endif %}
@@ -67,9 +67,7 @@
 							<td>{{ s.peak if not s.is_visitor }}</td>
 							
 							<td>
-								{% if s.is_visitor %}
-									Revealed on <span class="visitor-date"></span>
-								{% else %}
+								{% if not s.is_visitor %}
 									{{ s.start_date | smart_date(s.end_date) }}
 								{% endif %}
 							</td>
