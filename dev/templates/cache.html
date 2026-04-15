@@ -49,7 +49,7 @@
 							<td>Active Timeframe</td>
 						</tr>
 					{% else %}
-						<tr {% if s.is_visitor %}class="is-visitor"{% endif %}>
+						<tr data-tier="{{ s.tier }}" {% if s.is_visitor %}class="is-visitor"{% endif %}>
 							<td>{{ s.rank_display if not s.is_visitor }}</td>
 							
 							<td {% if s.is_visitor %}class="visitor-column"{% endif %}>
@@ -66,7 +66,7 @@
 							
 							<td>
 								{% if s.is_visitor %}
-									Revealed on <span id="visitor-date"></span>
+									Revealed on <span class="visitor-date"></span>
 								{% else %}
 									{{ s.start_date | smart_date(s.end_date) }}
 								{% endif %}
