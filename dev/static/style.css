@@ -707,17 +707,14 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 
 .visitor-cell {
 	text-align: left;
-	font-size: var(--size-base) !important;
+	font-size: var(--size-base);
+	color: var(--text-muted);
+    font-weight: var(--normal)
 }
 
 .visitor-name {
 	font-weight: var(--medium);
 	color: var(--text-bright);
-}
-
-.visitor-phrase {
-	color: var(--text-muted);
-    font-weight: var(--normal);
 }
 
 .visitor-date {
