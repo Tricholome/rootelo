@@ -651,7 +651,7 @@ if (btnConfirm) {
 
         const recognitionZone = document.getElementById('visitor-recognition');
         if (recognitionZone) {
-            recognitionZone.innerHTML = "<h2>Your presence is recorded.</h2>";
+            recognitionZone.style.display = 'none'; 
         }
         
         localStorage.setItem('visitor_name', name);
