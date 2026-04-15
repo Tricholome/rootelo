@@ -35,7 +35,7 @@
 			<tbody>
 				{% for s in hall_of_fame %}
 					{% if s.is_section %}
-						<tr class="tier-header-row" {% if s.is_visitor %}id="is-visitor-header"{% endif %}>
+						<tr class="tier-header-row {% if s.is_visitor %}is-visitor{% endif %}">
 							<td>
 								<a href="javascript:void(0)" onclick="handleTierClick(event, '{{ s.tier }}')" class="tier-anchor-link">
 									<div class="tier-icon-container">
@@ -49,7 +49,7 @@
 							<td>Active Timeframe</td>
 						</tr>
 					{% else %}
-						<tr data-tier="{{ s.tier }}">
+						<tr data-tier="{{ s.tier }}" {% if s.is_visitor %}class="is-visitor"{% endif %}>
 							<td>{{ s.rank_display if not s.is_visitor else "?" }}</td>
 							<td {% if s.is_visitor %}id="visitor-name-display"{% endif %}><strong>{{ s.player }}</strong></td>
 							<td>{{ s.streak_count if not s.is_visitor else "?" }}</td>
