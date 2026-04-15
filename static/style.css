@@ -696,6 +696,9 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 
 #input-zone {
     display: none;
+}
+
+#visitor-name {
 	background: var(--dt-input-bg);
     color: var(--text-main);
     border: 1px solid var(--border-soft);
