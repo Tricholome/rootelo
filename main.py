@@ -493,7 +493,10 @@ hall_of_fame_final.append({
 hall_of_fame_final.append({
     'is_section': False,
     'tier': 'squirrel',
-    'is_visitor': True
+    'is_visitor': True,
+    'player': '', 
+    'start_date': '',
+    'end_date': ''
 })
 
 hall_of_fame_data = hall_of_fame_final
