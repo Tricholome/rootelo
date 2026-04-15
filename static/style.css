@@ -1386,13 +1386,11 @@ body.hof-unlocked .hof-section {
     bottom: 12px;
     display: flex;
     align-items: center;
-    transform: translateY(-50%);
-    white-space: nowrap;
     z-index: 20;
     pointer-events: none;
-	white-space: normal;
-    width: max-content;
-	max-width: calc(var(--window-max-width) - (var(--window-padding) + 10px) * 2);
+    white-space: normal;
+    width: auto; 
+    max-width: calc(100% - (var(--window-padding) + 10px) * 2);
 }
 
 .visitor-phrase {
