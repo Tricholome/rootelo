@@ -23,6 +23,25 @@ CORRECTIONS_FILE = os.path.join(DATA_DIR, f"{CURRENT_SEASON_TAG}_corrections.csv
 # =========================================================================
 env = Environment(loader=FileSystemLoader('templates'))
 
+def smart_date_filter(d1, d2=None):
+    if not d1: return ""
+    try:
+        d1_str = str(d1)
+        dt1 = datetime.strptime(d1_str, '%Y-%m-%d')
+        if not d2 or d1 == d2:
+            return dt1.strftime('%b %d, %Y')
+        
+        d2_str = str(d2)
+        dt2 = datetime.strptime(d2_str, '%Y-%m-%d')
+        
+        if dt1.year != dt2.year:
+            return f"{dt1.strftime('%b %d, %Y')} — {dt2.strftime('%b %d, %Y')}"
+        return f"{dt1.strftime('%b %d')} — {dt2.strftime('%b %d, %Y')}"
+    except:
+        return d1
+
+env.filters['smart_date'] = smart_date_filter
+
 NAV_ITEMS = [
     {'id': 'index', 'url': 'index.html', 'label': 'Leaderboard'},
     {'id': 'matches', 'url': 'matches.html', 'label': 'Top Tables'},
@@ -448,18 +467,6 @@ all_sorted_streaks = sorted(
         -x['peak']
     )
 )
-    
-def format_smart_timespan(d1_str, d2_str):
-    try:
-        dt1 = datetime.strptime(d1_str, '%Y-%m-%d')
-        dt2 = datetime.strptime(d2_str, '%Y-%m-%d')
-        if d1_str == d2_str:
-            return dt1.strftime('%b %d, %Y')
-        if dt1.year != dt2.year:
-            return f"{dt1.strftime('%b %d, %Y')} — {dt2.strftime('%b %d, %Y')}"
-        return f"{dt1.strftime('%b %d')} — {dt2.strftime('%b %d, %Y')}"
-    except:
-        return d1_str
 
 hall_of_fame_final = []
 
@@ -468,12 +475,13 @@ for t in TIER_HIERARCHY:
     if tier_top_5:
         hall_of_fame_final.append({
             'is_section': True,
+            'is_visitor': False,
             'tier': t
         })
         for rank, s in enumerate(tier_top_5, 1):
-            s['is_section'] = False
+            s['is_section'] = False,
+            'is_visitor': False,
             s['rank_display'] = ["", "I", "II", "III", "IV", "V"][rank]
-            s['timespan'] = format_smart_timespan(s['start_date'], s['end_date'])
             hall_of_fame_final.append(s)
             
 hall_of_fame_final.append({
