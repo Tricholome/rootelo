@@ -479,8 +479,8 @@ for t in TIER_HIERARCHY:
             'tier': t
         })
         for rank, s in enumerate(tier_top_5, 1):
-            s['is_section'] = False,
-            'is_visitor': False,
+            s['is_section'] = False
+            'is_visitor': False
             s['rank_display'] = ["", "I", "II", "III", "IV", "V"][rank]
             hall_of_fame_final.append(s)
             
