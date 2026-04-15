@@ -1389,9 +1389,10 @@ body.hof-unlocked .hof-section {
     z-index: 20;
     pointer-events: none;
     white-space: normal;
-    width: max-content;
-    max-width: calc(100% - (var(--window-padding) + 10px) * 2);
+    width: calc(var(--window-max-width) - (var(--window-padding) + 10px) * 2);
+    max-width: calc(100vw - (var(--window-padding) + 10px) * 2);
 	font-family: var(--font-hand);
+	color: var(--color-squirrel);
 }
 
 .visitor-phrase {
