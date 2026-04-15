@@ -625,16 +625,18 @@ if (btnEngrave) {
 if (btnConfirm) {
     btnConfirm.addEventListener('click', () => {
         const name = document.getElementById('visitor-name').value || "Anonymous Watcher";
-        const date = new Date().toLocaleDateString();
+        const now = new Date();
+        const options = { month: 'short', day: '2-digit', year: 'numeric' };
+        const formattedDate = now.toLocaleDateString('en-US', options);
 
         const nameDisplay = document.querySelector('.visitor-name');
         if (nameDisplay) {
             nameDisplay.textContent = name;
         }
         
-        const dateDisplay = document.getElementById('visitor-date-display');
-        if (dateDisplay) {
-            dateDisplay.textContent = `on ${date}`;
+        const dateValueSpan = document.getElementById('visitor-date-value');
+        if (dateValueSpan) {
+            dateValueSpan.textContent = formattedDate;
         }
 
         document.querySelectorAll('.is-visitor').forEach(el => {
