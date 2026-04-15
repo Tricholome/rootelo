@@ -475,26 +475,12 @@ for t in TIER_HIERARCHY:
     if tier_top_5:
         hall_of_fame_final.append({
             'is_section': True,
-            'is_visitor': False,
             'tier': t
         })
         for rank, s in enumerate(tier_top_5, 1):
             s['is_section'] = False
-            s['is_visitor'] = False
             s['rank_display'] = ["", "I", "II", "III", "IV", "V"][rank]
             hall_of_fame_final.append(s)
-            
-hall_of_fame_final.append({
-    'is_section': True,
-    'tier': 'squirrel',
-    'is_visitor': True
-})
-
-hall_of_fame_final.append({
-    'is_section': False,
-    'tier': 'squirrel',
-    'is_visitor': True
-})
 
 hall_of_fame_data = hall_of_fame_final
     
