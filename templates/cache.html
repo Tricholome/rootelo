@@ -33,9 +33,9 @@
 				</tr>
 			</thead>
 			<tbody>
-				{% for s in hall_of_fame %}
+				{% for s in hall_of_fame if not s.is_visitor %}
 					{% if s.is_section %}
-						<tr class="tier-header-row {% if s.is_visitor %}is-visitor{% endif %}">
+						<tr class="tier-header-row">
 							<td>
 								<a href="javascript:void(0)" onclick="handleTierClick(event, '{{ s.tier }}')" class="tier-anchor-link">
 									<div class="tier-icon-container">
@@ -49,29 +49,40 @@
 							<td>Active Timeframe</td>
 						</tr>
 					{% else %}
-						<tr data-tier="{{ s.tier }}" {% if s.is_visitor %}class="is-visitor"{% endif %}>				
-							<td {% if s.is_visitor %}class="visitor-column"{% endif %}>
-								{% if s.is_visitor %}
-									<div class="visitor-phrase-wrapper">
-										<span class="visitor-name"></span>
-										<span class="visitor-phrase">has passed through here and discovered all the hidden secrets on</span>
-										<span class="visitor-date"></span> </div>
-								{% else %}
-									{{ s.rank_display }}
-								{% endif %}
-							</td>
-							<td>{{ s.player if not s.is_visitor }}</td>
-							<td>{{ s.streak_count if not s.is_visitor }}</td>
-							<td>{{ s.peak if not s.is_visitor }}</td>
-							
-							<td>
-								{% if not s.is_visitor %}
-									{{ s.start_date | smart_date(s.end_date) }}
-								{% endif %}
-							</td>
+						<tr data-tier="{{ s.tier }}">				
+							<td>{{ s.rank_display }}</td>
+							<td>{{ s.player }}</td>
+							<td>{{ s.streak_count }}</td>
+							<td>{{ s.peak }}</td>
+							<td>{{ s.start_date | smart_date(s.end_date) }}</td>
 						</tr>
 					{% endif %}
 				{% endfor %}
+			</tbody>
+		</table>
+
+		<table id="visitor_table" class="display nowrap" style="width:100%; margin-top: -1px;">
+			<thead>
+				<tr>
+					<th>
+						<a href="javascript:void(0)" onclick="handleTierClick(event, '{{ s.tier }}')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="{{ config.assets.icons[s.tier] }}" alt="{{ s.tier }}">
+							</div>
+						</a>
+					</th>
+					<th>{{ tier_titles['squirrel'] }}</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td></td>
+					<td class="visitor-cell">
+						<span class="visitor-name"></span>
+						<span class="visitor-phrase">has passed through here and discovered all the hidden secrets on</span>
+						<span class="visitor-date"></span>
+					</td>
+				</tr>
 			</tbody>
 		</table>
 		
