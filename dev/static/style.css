@@ -702,7 +702,7 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 }
 
 #hall_of_fame .tier-icon-container,
-#visitor_table { 
+#visitor_table .tier-icon-container,{ 
     margin: 0 !important; 
 }
 
@@ -713,6 +713,7 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 
 .visitor-name {
 	font-weight: var(--medium);
+	color: var(--text-bright);
 }
 
 .visitor-phrase {
@@ -721,7 +722,7 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 }
 
 .visitor-date {
-	color: var(--text-bright);
+	color: var(--text-main);
 	font-weight: var(--normal);
 }
 
