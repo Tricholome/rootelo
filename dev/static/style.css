@@ -675,23 +675,25 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 }
 
 .rank-cell {
-	color: var(--text-muted) !important;
 	width: 56px !important;
+    min-width: 56px !important;
+    max-width: 56px !important;
 	font-weight: var(--medium);
+	color: var(--text-muted) !important;
 }
 
 .hide-mobile {
     display: inline;
 }
 
-/* --- F. Specifics (Visitor) --- */
+/* --- G. Specifics (Visitor) --- */
 #input-zone {
     display: none;
 }
 
 #visitor_table {
     display: none;
-	margin-top: 0 !important; 
+	margin-top: 5px !important; 
 }
 
 .visitor-cell {
@@ -703,16 +705,13 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 }
 
 .visitor-phrase {
-    margin-left: 8px;
     font-weight: normal;
-    font-style: italic;
-    opacity: 0.8;
+    font-family: var(--font-hand);
 }
 
 .visitor-date {
-	color: var(--text-muted) !important;
-	font-size: var(--size-sm) !important;
-	font-family: var(--font-mono);
+	color: var(--text-bright);
+	font-family: var(--font-hand);
 }
 
 /* --- G. Responsive --- */
