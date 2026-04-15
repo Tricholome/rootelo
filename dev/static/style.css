@@ -1382,7 +1382,10 @@ body.hof-unlocked .hof-section {
 .visitor-phrase-wrapper {
     position: absolute;
     left: calc(var(--window-padding) + 10px);
-    top: 50%;
+    top: 12px;
+    bottom: 12px;
+    display: flex;
+    align-items: center;
     transform: translateY(-50%);
     white-space: nowrap;
     z-index: 20;
