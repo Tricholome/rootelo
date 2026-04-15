@@ -620,7 +620,9 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 
 #hall_of_fame {
     border-top: 1px solid var(--glass-border) !important;
-	overflow: visible !important;
+	table-layout: fixed !important;
+    width: 100% !important;
+    border-collapse: collapse !important;
 }
 
 .tier-header-row td,
@@ -675,9 +677,9 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 }
 
 .rank-cell {
-	width: 100px !important;
-    min-width: 100px !important;
-    max-width: 100px !important;
+	width: 60px !important;
+    min-width: 60px !important;
+    max-width: 60px !important;
 	font-weight: var(--medium);
 	color: var(--text-muted) !important;
 }
@@ -693,7 +695,10 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 
 #visitor_table {
     display: none;
-	margin-top: 5px !important; 
+	margin-top: 5px !important;
+	table-layout: fixed !important;
+    width: 100% !important;
+    border-collapse: collapse !important;
 }
 
 .visitor-cell {
