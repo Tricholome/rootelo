@@ -1387,6 +1387,9 @@ body.hof-unlocked .hof-section {
     white-space: nowrap;
     z-index: 20;
     pointer-events: none;
+	white-space: normal;
+    width: max-content;
+	max-width: var(--window-max-width);
 }
 
 .visitor-phrase {
