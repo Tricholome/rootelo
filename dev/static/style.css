@@ -620,6 +620,7 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 
 #hall_of_fame {
     border-top: 1px solid var(--glass-border) !important;
+	overflow: visible !important;
 }
 
 .tier-header-row td { 
@@ -1374,8 +1375,18 @@ body.hof-unlocked .hof-section {
 }
 
 .visitor-column {
-    white-space: nowrap !important;
-    overflow: visible !important;
+    position: relative;
+    overflow: visible !important; 
+}
+
+.visitor-phrase-wrapper {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    white-space: nowrap;
+    z-index: 20;
+    pointer-events: none;
 }
 
 .visitor-phrase {
