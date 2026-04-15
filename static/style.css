@@ -1369,5 +1369,9 @@ body.hof-unlocked .hof-section {
     display: none;
 }
 
+.is-visitor {
+    display: none;
+}
+
 
 {% block extra_css %}{% endblock %}
