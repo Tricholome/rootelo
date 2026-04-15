@@ -62,7 +62,9 @@
 							<td>{{ s.streak_count if not s.is_visitor }}</td>
 							<td>{{ s.peak if not s.is_visitor }}</td>
 							<td {% if s.is_visitor %}id="visitor-date-display"{% endif %}>
-								{% if not s.is_visitor %}
+								{% if s.is_visitor %}
+									Revealed on <span id="visitor-date-value"></span>
+								{% else %}
 									{{ s.start_date | smart_date(s.end_date) }}
 								{% endif %}
 							</td>
