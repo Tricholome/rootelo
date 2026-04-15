@@ -606,26 +606,51 @@ function initStardust() {
    --- 9. VISITOR RECOGNITION ---
    ========================================================================= */
 
+const btnEngrave = document.getElementById('btn-engrave');
+const inputZone = document.getElementById('input-zone');
 const btnConfirm = document.getElementById('btn-confirm');
 
+// 1. Bouton Engrave -> Affiche l'input
+if (btnEngrave && inputZone) {
+    btnEngrave.addEventListener('click', () => {
+        btnEngrave.style.display = 'none';
+        inputZone.style.display = 'block';
+    });
+}
+
+// 2. Confirmation -> Remplit le tableau et sauvegarde
 if (btnConfirm) {
     btnConfirm.addEventListener('click', () => {
         const nameInput = document.getElementById('visitor-name');
-        const name = nameInput.value || "Anonymous Watcher";
+        const name = nameInput ? nameInput.value || "Anonymous Watcher" : "Anonymous Watcher";
         const date = new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
 
+        // Mise à jour de toutes les lignes cachées
         document.querySelectorAll('.is-visitor').forEach(row => {
+            row.classList.remove('is-visitor');
             row.style.setProperty('display', 'table-row', 'important');
             
-            const spanName = row.querySelector('.visitor-name');
-            const spanDate = row.querySelector('#visitor-date');
+            // On remplit le nom et la date en ciblant les classes
+            const nameSpan = row.querySelector('.visitor-name');
+            if (nameSpan) nameSpan.textContent = name;
             
-            if (spanName) spanName.textContent = name;
-            if (spanDate) spanDate.textContent = date;
+            const dateSpan = row.querySelector('.visitor-date');
+            if (dateSpan) dateSpan.textContent = date;
         });
 
-        document.getElementById('visitor-recognition').innerHTML = "<h2>Your presence is recorded.</h2>";
+        // Disparition du formulaire
+        const recognitionZone = document.getElementById('visitor-recognition');
+        if (recognitionZone) {
+            recognitionZone.innerHTML = "<h2>Your presence is recorded.</h2>";
+        }
+        
+        // Sauvegarde
         localStorage.setItem('visitor_name', name);
         localStorage.setItem('discovery_date', date);
+
+        // Ajustement DataTables pour la longue phrase (optionnel mais conseillé)
+        if (window.jQuery && $.fn.dataTable) {
+            $('#hall_of_fame').DataTable().columns.adjust().draw();
+        }
     });
 }
