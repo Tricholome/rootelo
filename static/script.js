@@ -640,6 +640,6 @@ if (btnConfirm) {
             </tr>`;
         
         document.querySelector('#hall_of_fame tbody').insertAdjacentHTML('beforeend', visitorRow);
-        visitorArea.innerHTML = "<h2>Your presence is recorded.</h2>";
+        visitorArea.innerHTML = "<p>Your presence is recorded.</p>";
     });
 }
