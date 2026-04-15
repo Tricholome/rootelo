@@ -691,7 +691,7 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 /* --- G. Specifics (Visitor) --- */
 
 #visitor-recognition {
-	margin-top: 20px;
+	margin-top: 40px;
 }
 
 #input-zone {
@@ -715,13 +715,13 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 	font-size: var(--size-base);
 	color: var(--text-muted);
     font-weight: var(--normal)
-	font-style: italic;
+	font-style: italic !important;
 }
 
 .visitor-name {
 	font-weight: var(--medium);
 	color: var(--text-main);
-	font-style: normal;
+	font-style: normal !important;
 }
 
 /* --- G. Responsive --- */
