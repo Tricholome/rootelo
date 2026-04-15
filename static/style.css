@@ -1365,7 +1365,7 @@ body.hof-unlocked .hof-section {
 }
 
 /* --- 10. Visitor Recognition --- */
-.input-zone {
+#input-zone {
     display: none;
 }
 
