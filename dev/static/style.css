@@ -701,6 +701,11 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     width: 100% !important;
 }
 
+#hall_of_fame .tier-icon-container,
+#visitor_table { 
+    margin: 0 !important; 
+}
+
 .visitor-cell {
 	text-align: left;
 	font-size: var(--size-base) !important;
