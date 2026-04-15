@@ -623,7 +623,8 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 	overflow: visible !important;
 }
 
-.tier-header-row td { 
+.tier-header-row td,
+.tier-header-row thead th { 
     background: var(--dt-header-bg); 
     color: var(--text-muted) !important;
 	font-family: var(--font-ui) !important;	
@@ -1370,8 +1371,9 @@ body.hof-unlocked .hof-section {
     display: none;
 }
 
-.is-visitor {
+#visitor_table {
     display: none;
+	margin-top: -1px !important; 
 }
 
 /* 1. On prépare la cellule cible */
