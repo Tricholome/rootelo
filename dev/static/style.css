@@ -1381,7 +1381,7 @@ body.hof-unlocked .hof-section {
 
 .visitor-phrase-wrapper {
     position: absolute;
-    left: 10px;
+    left: calc(var(--window-padding) + 10px);
     top: 50%;
     transform: translateY(-50%);
     white-space: nowrap;
@@ -1389,7 +1389,7 @@ body.hof-unlocked .hof-section {
     pointer-events: none;
 	white-space: normal;
     width: max-content;
-	max-width: calc(var(--window-max-width) - (var(--window-padding) * 2));
+	max-width: calc(var(--window-max-width) - (var(--window-padding) + 10px) * 2);
 }
 
 .visitor-phrase {
