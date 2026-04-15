@@ -1364,4 +1364,10 @@ body.hof-unlocked .hof-section {
     }
 }
 
+/* --- 10. Visitor Recognition --- */
+.input-zone {
+    display: none;
+}
+
+
 {% block extra_css %}{% endblock %}
