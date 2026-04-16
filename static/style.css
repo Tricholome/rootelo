@@ -639,12 +639,8 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     background: var(--dt-header-bg) !important; 
 }
 
-#hall_of_fame tr {
+#hall_of_fame {
     pointer-events: none !important;
-}
-
-#hall_of_fame tr[data-tier] {
-    pointer-events: auto !important;
 }
 
 #hall_of_fame .tier-anchor-link,
@@ -707,6 +703,10 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 #visitor_table {
     display: none;
 	margin-top: 5px !important;
+}
+
+#visitor_table tr[data-tier] {
+    pointer-events: none !important;
 }
 
 #hall_of_fame .tier-icon-container,
