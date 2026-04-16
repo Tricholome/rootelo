@@ -915,6 +915,7 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     background: var(--bg-overlay-bottom); backdrop-filter: blur(8px);
     z-index: 9999; align-items: center; justify-content: center;
+	overflow-x: hidden;
 }
 
 .modal-content {
