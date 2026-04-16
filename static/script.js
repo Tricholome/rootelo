@@ -203,21 +203,13 @@ document.addEventListener('DOMContentLoaded', function() {
 	};
 
 	const closeModal = () => {
-		// 1. On cache la modale
 		modal.style.display = 'none';
-
-		// 2. On réactive le scroll vertical tout en verrouillant l'horizontal
-		// Cela empêche le navigateur de "s'étirer" si les icônes débordent
 		document.body.style.overflowY = 'auto';
 		document.body.style.overflowX = 'hidden';
-
-		// 3. Petit "reset" de sécurité pour mobile
 		if (window.innerWidth < 1100) {
 			window.scrollTo(window.scrollX, window.scrollY);
 		}
 	};
-
-	// Événements
 	if (closeBtn) closeBtn.onclick = closeModal;
 
 	window.onclick = (event) => { 
