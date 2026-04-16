@@ -640,7 +640,7 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 }
 
 #hall_of_fame td {
-    pointer-events: none !important;
+    pointer-events: none;
 }
 
 #hall_of_fame td a, 
