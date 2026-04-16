@@ -639,8 +639,7 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     background: var(--dt-header-bg) !important; 
 }
 
-
-#hall_of_fame td {
+#hall_of_fame .tier-header-row td {
     pointer-events: none !important;
 }
 
@@ -650,8 +649,8 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     pointer-events: auto !important;
 }
 
-#hall_of_fame td::before, 
-#hall_of_fame td::after {
+#hall_of_fame .tier-header-row td::before, 
+#hall_of_fame .tier-header-row td::after {
     display: none !important;
     content: "" !important;
 }
@@ -674,9 +673,6 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 }
 
 .rank-cell {
-	width: 60px !important;
-    min-width: 60px !important;
-    max-width: 60px !important;
 	box-sizing: border-box !important;
 	font-weight: var(--medium);
 	color: var(--text-muted) !important;
@@ -707,8 +703,6 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 #visitor_table {
     display: none;
 	margin-top: 5px !important;
-	table-layout: fixed !important;
-    width: 100% !important;
 }
 
 #hall_of_fame .tier-icon-container,
