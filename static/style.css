@@ -639,18 +639,19 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     background: var(--dt-header-bg) !important; 
 }
 
-#hall_of_fame .tier-header-row td {
+#hall_of_fame td {
     pointer-events: none !important;
 }
 
 #hall_of_fame td a, 
 #hall_of_fame td button,
+#hall_of_fame tr[data-tier],
 #hall_of_fame .tier-anchor-link {
     pointer-events: auto !important;
 }
 
-#hall_of_fame .tier-header-row td::before, 
-#hall_of_fame .tier-header-row td::after {
+#hall_of_fame td::before, 
+#hall_of_fame td::after {
     display: none !important;
     content: "" !important;
 }
