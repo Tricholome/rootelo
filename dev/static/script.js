@@ -625,6 +625,15 @@ const btnEngrave = document.getElementById('btn-engrave');
 const inputZone = document.getElementById('input-zone');
 const btnConfirm = document.getElementById('btn-confirm');
 
+// --- AJOUT : Charger les données au démarrage ---
+window.addEventListener('DOMContentLoaded', () => {
+    const savedName = localStorage.getItem('visitor_name');
+    const savedDate = localStorage.getItem('discovery_date');
+    if (savedName && savedDate) {
+        showVisitorRow(savedName, savedDate);
+    }
+});
+
 // 1. Bouton Engrave -> Affiche l'input
 if (btnEngrave && inputZone) {
     btnEngrave.addEventListener('click', () => {
@@ -637,25 +646,36 @@ if (btnEngrave && inputZone) {
 if (btnConfirm) {
     btnConfirm.addEventListener('click', () => {
         const nameInput = document.getElementById('visitor-name');
-        const name = nameInput ? nameInput.value || "Anonymous Watcher" : "Anonymous Watcher";
-        const date = new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
-        const visitorTable = document.getElementById('visitor_table');
-        
-        if (visitorTable) {
-            const nameSpan = visitorTable.querySelector('.visitor-name');
-            if (nameSpan) nameSpan.textContent = name;
-            const dateSpan = visitorTable.querySelector('.visitor-date');
-            if (dateSpan) dateSpan.textContent = date;
-            visitorTable.style.setProperty('display', 'table', 'important');
-        }
+        const name = nameInput ? nameInput.value.trim() : ""; // Suppression du nom par défaut
 
-        const recognitionZone = document.getElementById('visitor-recognition');
-        if (recognitionZone) {
-            recognitionZone.style.display = 'none'; 
-        }
+        // --- AJOUT : Interdire si vide ---
+        if (name === "") return;
+
+        const date = new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
         
+        showVisitorRow(name, date);
+
         localStorage.setItem('visitor_name', name);
         localStorage.setItem('discovery_date', date);
-
     });
+}
+
+// --- FONCTION POUR EVITER LA REDONDANCE ET RECALCULER ---
+function showVisitorRow(name, date) {
+    const visitorTable = document.getElementById('visitor_table');
+    if (visitorTable) {
+        visitorTable.querySelector('.visitor-name').textContent = name;
+        visitorTable.querySelector('.visitor-date').textContent = date;
+        visitorTable.style.setProperty('display', 'table', 'important');
+        
+        // --- AJOUT : Recalcul des colonnes pour corriger la taille ---
+        setTimeout(() => {
+            if ($.fn.dataTable.isDataTable('#visitor_table')) {
+                $('#visitor_table').DataTable().columns.adjust();
+            }
+        }, 10);
+    }
+
+    const recognitionZone = document.getElementById('visitor-recognition');
+    if (recognitionZone) recognitionZone.style.display = 'none';
 }
