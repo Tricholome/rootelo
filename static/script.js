@@ -552,11 +552,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (leaveBtn) {
         leaveBtn.addEventListener('click', () => {
             localStorage.clear();
-            body.classList.remove(
-                'is-at-bottom', 'is-scrolled',
-                'watcher-found', 'nut-found', 'berry-found', 
-                'ciphers-found', 'secrets-ended', 'hof-unlocked'
-            );
+            body.className = '';
             window.location.href = 'index.html'; 
         });
     }
