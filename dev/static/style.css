@@ -944,6 +944,12 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     z-index: 10;
 }
 
+body.modal-open {
+    overflow: hidden !important;
+    padding-right: 0 !important;
+    width: 100% !important;
+}
+
 /* --- INTERNAL ELEMENTS --- */
 #modalBody { display: flex; flex-direction: column; align-items: center; text-align: center; }
 
