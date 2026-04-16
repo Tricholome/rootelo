@@ -747,6 +747,10 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 	font-style: normal !important;
 }
 
+.visitor-date {
+	white-space: nowrap;
+}
+
 /* --- G. Responsive --- */
 @media (max-width: 600px) {
     table.dataTable tbody td { font-size: var(--size-sm); padding: 8px 4px !important; }
