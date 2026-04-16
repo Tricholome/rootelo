@@ -43,7 +43,10 @@
 									</div>
 								</a>
 							</td>
-							<td>{{ tier_titles[s.tier] }}</td>
+							<td>
+								{% set words = tier_titles[s.tier].split(' ') %}
+								<span class="hide-mobile">{{ words[0] }}</span> {{ words[1] }}
+							</td>
 							<td><span class="hide-mobile">Longest</span> Run</td>
 							<td>Peak <span class="hide-mobile">Elo</span></td>
 							<td>Active Timeframe</td>
@@ -71,14 +74,17 @@
 							</div>
 						</a>
 					</th>
-					<th>{{ tier_titles['squirrel'] }}</th>
+					<th>
+						{% set words = tier_titles['squirrel'].split(' ') %}
+						<span class="hide-mobile">{{ words[0] }}</span> {{ words[1] }}
+					</th>
 				</tr>
 			</thead>
 			<tbody>
 				<tr data-tier="squirrel">
 					<td></td>
 					<td class="visitor-cell">
-						<span class="visitor-name"></span> reached this place and uncovered its secrets on <span class="visitor-date"></span>!
+						<span class="visitor-name"></span> reached this place and uncovered its secrets on <span class="visitor-date"></span>.
 					</td>
 				</tr>
 			</tbody>
