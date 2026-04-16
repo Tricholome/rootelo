@@ -544,14 +544,20 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- 8. THE EXIT DOOR ---
-    const leaveBtn = document.querySelector('#leave-secrets');
-    if (leaveBtn) {
-        leaveBtn.addEventListener('click', () => {
-            localStorage.clear();
-            body.className = '';
-            window.location.href = 'index.html'; 
-        });
-    }
+	const leaveBtn = document.querySelector('#leave-secrets');
+	if (leaveBtn) {
+		leaveBtn.addEventListener('click', () => {
+			if (typeof createMysticGate === "function") {
+				createMysticGate();
+			}
+
+			setTimeout(() => {
+				localStorage.clear();
+				document.body.className = ''; 
+				window.location.href = 'index.html'; 
+			}, 1000); 
+		});
+	}
 });
 
 /* =========================================================================
