@@ -696,8 +696,13 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 	background: var(--dt-input-bg);
     color: var(--text-main);
     border: 1px solid var(--border-soft);
-    padding: 4px 8px;
+    padding: 6px 8px;
     border-radius: 6px;
+}
+
+#visitor-name:focus {
+    border-color: var(--main-color) !important;
+    background: var(--dt-row-hover) !important;
 }
 
 #visitor_table {
