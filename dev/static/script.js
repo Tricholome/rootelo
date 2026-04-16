@@ -424,10 +424,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Final state
     if (isEnded) body.classList.add('secrets-ended');
-    if (isHofUnlocked) {
-        body.classList.add('hof-unlocked');
-        if (typeof initStardust === "function") initStardust();
-    }
+    if (isHofUnlocked) body.classList.add('hof-unlocked');
 
     // --- 2. UI TRANSFORMATION FUNCTION ---
     function updateMysticUI() {
@@ -543,7 +540,6 @@ document.addEventListener('DOMContentLoaded', () => {
             body.classList.add('hof-unlocked');
             localStorage.setItem('hof-unlocked', 'true');
             $('#hall_of_fame').DataTable().responsive.recalc();
-            if (typeof initStardust === "function") initStardust();
         });
     }
 
@@ -580,48 +576,13 @@ function handleTierClick(event, tier) {
 }
 
 /* =========================================================================
-   --- 8. STARDUST GENERATOR ---
-   ========================================================================= */
-
-function initStardust() {
-    $('.window-box').each(function() {
-        const box = $(this);
-        
-        // Ensure only one container exists per box
-        if (box.find('.stardust-container').length === 0) {
-            box.prepend('<div class="stardust-container"></div>');
-        }
-        
-        const container = box.find('.stardust-container');
-        const boxHeight = box.innerHeight();
-        
-        // Star density based on box height
-        const starCount = Math.floor(boxHeight / 30); 
-
-        for (let i = 0; i < starCount; i++) {
-            const size = (Math.random() * 2 + 1) + 'px';
-            const star = $('<div class="star"></div>').css({
-                'width': size,
-                'height': size,
-                'left': Math.random() * 100 + '%',
-                'top': Math.random() * 100 + '%',
-                '--duration': (Math.random() * 3 + 2) + 's',
-                'animation-delay': (Math.random() * 5) + 's'
-            });
-            container.append(star);
-        }
-    });
-}
-
-/* =========================================================================
-   --- 9. VISITOR RECOGNITION ---
+   --- 8. VISITOR RECOGNITION ---
    ========================================================================= */
 
 const btnEngrave = document.getElementById('btn-engrave');
 const inputZone = document.getElementById('input-zone');
 const btnConfirm = document.getElementById('btn-confirm');
 
-// --- AJOUT : Charger les données au démarrage ---
 window.addEventListener('DOMContentLoaded', () => {
     const savedName = localStorage.getItem('visitor_name');
     const savedDate = localStorage.getItem('discovery_date');
@@ -630,7 +591,7 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// 1. Bouton Engrave -> Affiche l'input
+// 1. Bouton Engrave
 if (btnEngrave && inputZone) {
     btnEngrave.addEventListener('click', () => {
         btnEngrave.style.display = 'none';
@@ -638,13 +599,12 @@ if (btnEngrave && inputZone) {
     });
 }
 
-// 2. Confirmation -> Remplit le tableau et sauvegarde
+// 2. Confirmation
 if (btnConfirm) {
     btnConfirm.addEventListener('click', () => {
         const nameInput = document.getElementById('visitor-name');
-        const name = nameInput ? nameInput.value.trim() : ""; // Suppression du nom par défaut
+        const name = nameInput ? nameInput.value.trim() : ""; 
 
-        // --- AJOUT : Interdire si vide ---
         if (name === "") return;
 
         const date = new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
@@ -656,7 +616,6 @@ if (btnConfirm) {
     });
 }
 
-// --- FONCTION POUR EVITER LA REDONDANCE ET RECALCULER ---
 function showVisitorRow(name, date) {
     const visitorTable = document.getElementById('visitor_table');
     if (visitorTable) {
@@ -664,7 +623,6 @@ function showVisitorRow(name, date) {
         visitorTable.querySelector('.visitor-date').textContent = date;
         visitorTable.style.setProperty('display', 'table', 'important');
         
-        // --- AJOUT : Recalcul des colonnes pour corriger la taille ---
         setTimeout(() => {
             if ($.fn.dataTable.isDataTable('#visitor_table')) {
                 $('#visitor_table').DataTable().columns.adjust();
