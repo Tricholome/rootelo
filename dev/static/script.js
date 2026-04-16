@@ -404,8 +404,17 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.setItem('secrets-ended', 'true');
         }
     }
+	
+	// --- 1. MYSTIC TRANSITION ---
+	function triggerMysticTransition(callback) {
+		const gate = document.getElementById('mystic-gate');
+		$(gate).fadeIn(600, function() {
+			if (callback) callback();
+			$(gate).fadeOut(1000);
+		});
+	}
 
-    // --- 1. PERSISTENCE CHECK ---
+    // --- 2. PERSISTENCE CHECK ---
     const isEnded = localStorage.getItem('secrets-ended') === 'true';
     const isWatcherFound = localStorage.getItem('watcher-found') === 'true';
     const isNutFound = localStorage.getItem('nut-found') === 'true';
@@ -426,7 +435,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (isEnded) body.classList.add('secrets-ended');
     if (isHofUnlocked) body.classList.add('hof-unlocked');
 
-    // --- 2. UI TRANSFORMATION FUNCTION ---
+    // --- 3. UI TRANSFORMATION FUNCTION ---
     function updateMysticUI() {
         if (body.getAttribute('data-page') === 'cache') {
             const intro = document.querySelector('.page-intro');
@@ -445,7 +454,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 	
-    // --- 3. THE WATCHER SECRET ---
+    // --- 4. THE WATCHER SECRET ---
     const watcherBtn = document.getElementById('watcher-secret');
     if (watcherBtn) {
         watcherBtn.addEventListener('click', () => {
@@ -456,7 +465,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- 4. THE NUT SECRET ---
+    // --- 5. THE NUT SECRET ---
     if (window.location.hash === '#nut-section') {
         const nutSection = document.getElementById('nut-section');
         if (nutSection) nutSection.style.display = 'block';
@@ -472,7 +481,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 	
-    // --- 5. THE BERRY SECRET ---
+    // --- 6. THE BERRY SECRET ---
     if (window.location.hash === '#berry-section') {
         const berrySection = document.getElementById('berry-section');
         if (berrySection) berrySection.style.display = 'block';
@@ -488,7 +497,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- 6. THE CIPHER SEQUENCE ---
+    // --- 7. THE CIPHER SEQUENCE ---
     const secretSequence = ['silent', 'roots', 'remember', 'every', 'crown'];
     let userProgress = [];
     let isResetting = false;
@@ -505,15 +514,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 userProgress.push(word);
 
                 if (userProgress.length === secretSequence.length) {
-                    const gate = document.getElementById('mystic-gate');
-                    $(gate).fadeIn(600, function() {
-                        body.classList.add('ciphers-found');
-                        localStorage.setItem('ciphers-found', 'true');
-                        updateMysticUI();
-                        checkFinalCompletion();
-                        $(gate).fadeOut(1000);
-                    });
-                }
+					triggerMysticTransition(() => {
+						body.classList.add('ciphers-found');
+						localStorage.setItem('ciphers-found', 'true');
+						updateMysticUI();
+						checkFinalCompletion();
+					});
+				}
             } else {
                 setTimeout(() => {
                     document.querySelectorAll('.cipher').forEach(c => {
@@ -531,7 +538,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 	
-    // --- 7. HALL OF FAME FINAL UNLOCK ---
+    // --- 8. HALL OF FAME FINAL UNLOCK ---
     const hofBtn = document.getElementById('hof-access');
     if (hofBtn) {
         hofBtn.addEventListener('click', () => {
@@ -543,19 +550,17 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- 8. THE EXIT DOOR ---
+    // --- 9. THE EXIT DOOR ---
 	const leaveBtn = document.querySelector('#leave-secrets');
 	if (leaveBtn) {
-		leaveBtn.addEventListener('click', () => {
-			if (typeof createMysticGate === "function") {
-				createMysticGate();
-			}
-
-			setTimeout(() => {
+		leaveBtn.addEventListener('click', (e) => {
+			e.preventDefault(); 
+			
+			triggerMysticTransition(() => {
 				localStorage.clear();
 				document.body.className = ''; 
 				window.location.href = 'index.html'; 
-			}, 1000); 
+			});
 		});
 	}
 });
