@@ -260,13 +260,6 @@ a.cl:hover { border-bottom: 1px solid var(--main-color); color: var(--main-color
     gap: 5px;
     margin-bottom: 20px;
     flex-wrap: nowrap;
-	max-width: 100vw;
-    overflow-x: auto;
-    scrollbar-width: none;
-}
-
-.banner-container::-webkit-scrollbar {
-    display: none;
 }
 
 .banner-icons { display: flex; gap: -10px; align-items: center; }
@@ -922,7 +915,6 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     background: var(--bg-overlay-bottom); backdrop-filter: blur(8px);
     z-index: 9999; align-items: center; justify-content: center;
-	overflow-x: hidden;
 }
 
 .modal-content {
@@ -950,12 +942,6 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     position: absolute; top: 15px; right: 15px; background: none; border: none;
     color: var(--text-muted); font-size: var(--size-lg); cursor: pointer; line-height: 1;
     z-index: 10;
-}
-
-body.modal-open {
-    overflow: hidden !important;
-    padding-right: 0 !important;
-    width: 100% !important;
 }
 
 /* --- INTERNAL ELEMENTS --- */
