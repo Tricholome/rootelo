@@ -696,7 +696,7 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 	background: var(--dt-input-bg);
     color: var(--text-main);
     border: 1px solid var(--border-soft);
-    padding: 12px 20px;
+    padding: 4px 8px;
     border-radius: 6px;
 }
 
@@ -709,9 +709,24 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     pointer-events: none !important;
 }
 
+#hall_of_fame td:first-child,
+#visitor_table td:first-child,
+#hall_of_fame th:first-child,
+#visitor_table th:first-child {
+    width: 60px !important;
+    min-width: 60px !important;
+    max-width: 60px !important;
+    text-align: center !important;
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+    box-sizing: border-box !important;
+}
+
+
 #hall_of_fame .tier-icon-container,
-#visitor_table .tier-icon-container,{ 
-    margin: 0 !important; 
+#visitor_table .tier-icon-container {
+    width: 36px;
+    margin: 0 auto !important;
 }
 
 .visitor-cell {
