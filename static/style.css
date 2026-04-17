@@ -344,45 +344,14 @@ a.cl:hover { border-bottom: 1px solid var(--main-color); color: var(--main-color
 
 /* Banner Mobile Adjustments */
 @media (max-width: 768px) and (orientation: portrait) {
-    .banner-container { 
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 0; 
-    }
-	
-    .banner-center { 
-        order: 1; /* Le titre monte en premier */
-        width: 100%;
-        margin-bottom: 5px; 
-    }
-	
-    .banner-icons.left, 
-    .banner-icons.right { 
-        display: flex;
-        flex-direction: row;
-        flex-wrap: nowrap;
-        order: 2; /* Les deux groupes se placent en dessous du titre */
-        justify-content: center;
-    }
-	
-	.banner-icons.left { padding-right: 0; }
-    .banner-icons.right { padding-left: 0; }
+    .banner-container { flex-wrap: wrap; gap: 10px; }
+    .banner-center { order: 1; width: 100%; margin-bottom: 10px; }
+    .banner-icons { order: 2; flex-wrap: nowrap; gap: 5px; }
     
     .banner-icons a.tooltip-link, 
-    .banner-icons a.tooltip-link.expanded { 
-        display: block;
-        flex-shrink: 0;
-        width: 55px;      /* Largeur fixe "au sol" pour que 6 icônes tiennent (45px * 6 = 270px) */
-        margin: 0 -2px;    /* Petite marge fixe qui ne change JAMAIS */
-        position: relative;
-    }
+    .banner-icons a.tooltip-link.expanded { margin: 0 -3px; display: inline-block; }
     
-    .banner-icons a.tooltip-link.expanded img { 
-        transform: translateY(-8px) scale(1.4) !important; 
-        z-index: 100;
-        position: relative;
-    }
+    .banner-icons a.tooltip-link.expanded img { transform: translateY(-8px) scale(1.4) !important; position: relative; z-index: 100; }
 
     .banner-icons a.tooltip-link.expanded .tooltip-text {
         display: block !important;
