@@ -16,7 +16,7 @@
 			<tr>
 				<td>{{ m.rank }}</td>
 				<td>{{ m.elo_sum }}</td>
-				<td>{{ smart_date(m.date) }}</td>
+				<td>{{ m.date | smart_date }}</td>
 				<td class="lineup-cell">
 					<span class="winner-name">{{ m.winner }}</span>, 
 					<span class="others-names">{{ m.others }}</span>
