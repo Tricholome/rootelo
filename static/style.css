@@ -344,9 +344,9 @@ a.cl:hover { border-bottom: 1px solid var(--main-color); color: var(--main-color
 
 /* Banner Mobile Adjustments */
 @media (max-width: 768px) and (orientation: portrait) {
-    .banner-container { flex-wrap: wrap; gap: 0; }
+    .banner-container { flex-wrap: wrap; gap: 5px; }
     .banner-center { order: 1; width: 100%; margin-bottom: 10px; }
-    .banner-icons { order: 2; flex-wrap: nowrap; gap: 0; }
+    .banner-icons { order: 2; flex-wrap: nowrap; gap: 5px; }
     
     .banner-icons a.tooltip-link, 
     .banner-icons a.tooltip-link.expanded { margin: 0 -5px; display: inline-block; }
