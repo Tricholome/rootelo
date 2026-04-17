@@ -548,6 +548,10 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 }
 
 /* --- D. Columns & Cells styles --- */
+.numeric-cell {
+	font-variant-numeric: tabular-nums;
+}
+
 .rank-cell {
 	box-sizing: border-box !important;
 	font-weight: var(--medium);
@@ -562,19 +566,16 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 .elo-cell {
 	font-size: var(--size-lg); 
 	font-weight: var(--bold);
-	font-variant-numeric: tabular-nums;
 }
 
 .elo-sum-cell {
 	color: var(--main-color) !important;
     font-weight: var(--bold);
-	font-variant-numeric: tabular-nums;
 }
 
 .date-cell {
 	color: var(--text-muted) !important;
 	font-size: var(--size-sm) !important;
-	font-variant-numeric: tabular-nums;
 }
 
 .tier-icon-container { 
@@ -612,7 +613,6 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     color: var(--text-muted); 
     text-decoration: none; 
     font-size: var(--size-sm);
-	font-variant-numeric: tabular-nums;
     border: 1px solid var(--border-soft); 
     padding: 2px 6px; 
     border-radius: 4px; 
@@ -683,7 +683,6 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 	color: var(--text-bright);
 	font-size: var(--size-md);
     font-weight: var(--bold);
-	font-family: var(--font-mono);
 }
 
 /* --- H. Specifics (Visitor) --- */
