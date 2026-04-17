@@ -346,13 +346,29 @@ a.cl:hover { border-bottom: 1px solid var(--main-color); color: var(--main-color
 @media (max-width: 768px) and (orientation: portrait) {
     .banner-container { flex-wrap: wrap; gap: 10px; }
     .banner-center { order: 1; width: 100%; margin-bottom: 10px; }
-    .banner-icons { order: 2; flex-wrap: nowrap; gap: 5px; }
+    .banner-icons { 
+        order: 2; 
+        display: flex; /* Force le flex pour le contrôle */
+        flex-wrap: nowrap; /* Interdiction formelle de sauter à la ligne */
+        gap: 0px; /* On gère l'espace avec les marges négatives uniquement */
+        justify-content: center;
+        width: 100%;
+    }
     
     .banner-icons a.tooltip-link, 
-    .banner-icons a.tooltip-link.expanded { margin: 0 -5px; display: inline-block; }
+    .banner-icons a.tooltip-link.expanded { 
+        display: block;
+        flex-shrink: 0;
+        width: 55px;      /* Largeur fixe "au sol" pour que 6 icônes tiennent (45px * 6 = 270px) */
+        margin: 0 2px;    /* Petite marge fixe qui ne change JAMAIS */
+        position: relative;
+    }
     
-    .banner-icons.left a.tooltip-link.expanded img { transform: translateY(-8px) scale(1.4) !important; position: relative; z-index: 100; }
-    .banner-icons.right a.tooltip-link.expanded img { transform: translateY(-8px) scale(1.4) !important; position: relative; z-index: 100; }
+    .banner-icons a.tooltip-link.expanded img { 
+        transform: translateY(-8px) scale(1.4) !important; 
+        z-index: 100;
+        position: relative;
+    }
 
     .banner-icons a.tooltip-link.expanded .tooltip-text {
         display: block !important;
