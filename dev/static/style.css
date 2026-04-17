@@ -584,7 +584,7 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 .date-cell {
 	color: var(--text-muted) !important;
 	font-size: var(--size-sm) !important;
-	font-family: var(--font-title);
+	font-variant-numeric: tabular-nums;
 }
 
 .lineup-cell { 
