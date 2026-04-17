@@ -375,7 +375,7 @@ a.cl:hover { border-bottom: 1px solid var(--main-color); color: var(--main-color
 nav {
     display: flex;
     justify-content: center;
-    gap: 12px;
+    gap: 4px 12px;
     flex-wrap: wrap;
 }
 
