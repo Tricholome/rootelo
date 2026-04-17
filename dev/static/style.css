@@ -404,7 +404,7 @@ nav a.active {
 .nav-separator {
     width: 90%; 
     height: 0; 
-    margin: 30px auto;
+    margin: 15px auto;
     border-top: 1px solid var(--border-dark);
     border-bottom: 1px solid var(--border-light);
 }
