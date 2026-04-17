@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block extra_head %}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
+{% block content %}
+    <div class="search-box">
+        <input type="search" list="playerList" id="playerName" placeholder="Search Player..." oninput="updateChart()">
+        <datalist id="playerList">
+            {% for name in player_names %}
+                <option value="{{ name }}">
+            {% endfor %}
+        </datalist>
+    </div>
+    
+    <div class="chart-wrapper">
+        <div class="chart-container">
+            <canvas id="progressionChart"></canvas>
+        </div>
+    </div>
+{% endblock %}
