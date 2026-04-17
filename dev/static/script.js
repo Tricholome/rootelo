@@ -546,15 +546,22 @@ document.addEventListener('DOMContentLoaded', () => {
 	
     // --- 8. HALL OF FAME FINAL UNLOCK ---
     const hofBtn = document.getElementById('hof-access');
-    if (hofBtn) {
-        hofBtn.addEventListener('click', () => {
-            if (localStorage.getItem('secrets-ended') !== 'true') return;
+	if (hofBtn) {
+		hofBtn.addEventListener('click', () => {
+			if (localStorage.getItem('secrets-ended') !== 'true') return;
 
-            body.classList.add('hof-unlocked');
-            localStorage.setItem('hof-unlocked', 'true');
-            $('#hall_of_fame').DataTable().responsive.recalc();
-        });
-    }
+			body.classList.add('hof-unlocked');
+			localStorage.setItem('hof-unlocked', 'true');
+
+			setTimeout(() => {
+				if ($.fn.dataTable.isDataTable('#hall_of_fame')) {
+					$('#hall_of_fame').DataTable()
+						.columns.adjust()
+						.responsive.recalc();
+				}
+			}, 50);
+		});
+	}
 
     // --- 9. THE EXIT DOOR ---
 	const leaveBtn = document.querySelector('#leave-secrets');
