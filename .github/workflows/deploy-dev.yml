@@ -3,7 +3,7 @@ name: Update Rootelo DEV Mirror
 on:
   push:
     branches:
-      - dev  # Se lance quand tu pousses sur dev
+      - dev
   workflow_dispatch:
 
 jobs:
@@ -35,13 +35,18 @@ jobs:
       - name: Run ELO calculation and site generation
         env:
           API_TOKEN: ${{ secrets.API_TOKEN }}
-        run: python main.py
+        run: |
+          python main.py
+          mkdir mirror_site
+          cp *.html mirror_site/
+          cp -r static mirror_site/
+          cp -r assets mirror_site/
 
       - name: Deploy to GitHub Pages (Subfolder /dev)
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: .
+          publish_dir: ./mirror_site
           publish_branch: gh-pages
           destination_dir: dev
           keep_files: true
