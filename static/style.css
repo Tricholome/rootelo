@@ -349,7 +349,7 @@ a.cl:hover { border-bottom: 1px solid var(--main-color); color: var(--main-color
     .banner-icons { order: 2; flex-wrap: nowrap; gap: 5px; }
     
     .banner-icons a.tooltip-link, 
-    .banner-icons a.tooltip-link.expanded { margin: 0 -2px !important; display: inline-block; }
+    .banner-icons a.tooltip-link.expanded { margin: 0 5px; display: inline-block; }
     
     .banner-icons.left a.tooltip-link.expanded img { transform: translateY(-8px) scale(1.4) !important; position: relative; z-index: 100; }
     .banner-icons.right a.tooltip-link.expanded img { transform: translateY(-8px) scale(1.4) !important; position: relative; z-index: 100; }
