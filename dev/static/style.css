@@ -258,7 +258,6 @@ a.cl:hover { border-bottom: 1px solid var(--main-color); color: var(--main-color
     align-items: center;
     justify-content: center;
     gap: 5px;
-    margin-bottom: 20px;
     flex-wrap: nowrap;
 }
 
@@ -374,7 +373,6 @@ a.cl:hover { border-bottom: 1px solid var(--main-color); color: var(--main-color
    --- 6. NAVIGATION & BUTTONS ---
    ========================================================================= */
 nav {
-    margin: 15px 0;
     display: flex;
     justify-content: center;
     gap: 12px;
@@ -406,7 +404,7 @@ nav a.active {
 .nav-separator {
     width: 90%; 
     height: 0; 
-    margin: 15px auto;
+    margin: 30px auto;
     border-top: 1px solid var(--border-dark);
     border-bottom: 1px solid var(--border-light);
 }
