@@ -307,6 +307,17 @@ $(document).ready(function() {
 			]
 		});
 	}
+	
+	// --- 5. GLOBAL FIX FOR ORIENTATION & RESIZE ---
+    window.addEventListener('resize', () => {
+        $('.dataTable').each(function() {
+            if ($.fn.dataTable.isDataTable(this)) {
+                $(this).DataTable()
+                    .columns.adjust()
+                    .responsive.recalc();
+            }
+        });
+    });
 
 });
 
