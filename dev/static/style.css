@@ -602,7 +602,8 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 .match-id-link { 
     color: var(--text-muted); 
     text-decoration: none; 
-    font-size: var(--size-sm); 
+    font-size: var(--size-sm);
+	font-variant-numeric: tabular-nums;
     border: 1px solid var(--border-soft); 
     padding: 2px 6px; 
     border-radius: 4px; 
