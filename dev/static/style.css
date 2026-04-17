@@ -577,14 +577,14 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 
 /* --- E. Specifics (Matches) --- */
 .elo-sum-cell {
-	color: var(--main-color);
+	color: var(--main-color) !important;
     font-weight: var(--bold);
 }
 
 .date-cell {
 	color: var(--text-muted) !important;
 	font-size: var(--size-sm) !important;
-	font-family: var(--font-mono);
+	font-family: var(--font-title);
 }
 
 .lineup-cell { 
