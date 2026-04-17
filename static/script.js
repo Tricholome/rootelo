@@ -8,7 +8,7 @@
    5. Chart
    6. Secrets Engine
    7. Nut & Berry
-   8. Stardust Generator
+   8. Visitor Recognition
 
    ========================================================================= */
    
@@ -258,8 +258,9 @@ $(document).ready(function() {
             "responsive": true,
             "pageLength": 25,
             "columnDefs": [
-                { "className": "lineup-cell", "targets": 3 },
                 { "className": "elo-sum-cell", "targets": 1 },
+				{ "className": "date-cell", "targets": 2 },
+				{ "className": "lineup-cell", "targets": 3 },
                 { "responsivePriority": 1, "targets": [0, 3] },
                 { "responsivePriority": 2, "targets": 1 },
                 { "responsivePriority": 3, "targets": 2 },
