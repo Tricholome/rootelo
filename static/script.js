@@ -559,7 +559,17 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 	
-    // --- 8. HALL OF FAME FINAL UNLOCK ---
+	// --- 8. THE WITNESS SECRET ---
+    const witnessBtn = document.getElementById('witness-secret');
+    if (witnessBtn) {
+        witnessBtn.addEventListener('click', () => {
+            body.classList.add('witness-found');
+            localStorage.setItem('witness-found', 'true');
+            checkFinalCompletion();
+        });
+    }
+	
+    // --- 9. HALL OF FAME FINAL UNLOCK ---
     const hofBtn = document.getElementById('hof-access');
 	if (hofBtn) {
 		hofBtn.addEventListener('click', () => {
@@ -578,7 +588,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		});
 	}
 
-    // --- 9. THE EXIT DOOR ---
+    // --- 10. THE EXIT DOOR ---
 	const leaveBtn = document.querySelector('#leave-secrets');
 	if (leaveBtn) {
 		leaveBtn.addEventListener('click', (e) => {
