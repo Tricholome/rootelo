@@ -1093,8 +1093,11 @@ body.watcher-found #leave-secrets {
 
 /* --- 2. Watcher & Witness Secret --- */
 .enigma {
-    margin-top: 0 !important;
     text-align: center !important;
+}
+
+.enigma-green {
+    margin-top: 0 !important;
 }
 
 .enigma span { display: block !important; }
