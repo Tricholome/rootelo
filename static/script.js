@@ -441,6 +441,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const isNutFound = localStorage.getItem('nut-found') === 'true';
     const isBerryFound = localStorage.getItem('berry-found') === 'true';
     const isCiphersFound = localStorage.getItem('ciphers-found') === 'true';
+	const isWitnessFound = localStorage.getItem('witness-found') === 'true';
     const isHofUnlocked = localStorage.getItem('hof-unlocked') === 'true';
 
     // Specific states
@@ -451,6 +452,7 @@ document.addEventListener('DOMContentLoaded', () => {
         body.classList.add('ciphers-found');
         updateMysticUI();
     }
+	if (isWitnessFound) body.classList.add('witness-found');
     
     // Final state
     if (isEnded) body.classList.add('secrets-ended');
