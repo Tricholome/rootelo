@@ -1137,6 +1137,11 @@ body[data-page="cache"].watcher-found .right-deco img {
     pointer-events: auto;
 }
 
+body[data-page="cache"].witness-found .left-deco img {
+    opacity: 1;
+    pointer-events: auto;
+}
+
 body[data-page="cache"] .screen-deco {
     height: 0;
 	overflow: hidden;
