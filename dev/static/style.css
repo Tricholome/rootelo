@@ -1123,7 +1123,7 @@ body .artist-story-purple {
 
 body[data-page="cache"].watcher-found .page-intro, 
 body.watcher-found:not(.ciphers-found) .artist-story-green,
-body.ciphers-found .artist-story-purple {
+body.witness-found .artist-story-purple {
     display: block;
     opacity: 1;
     transform: translateY(0);
