@@ -1126,7 +1126,7 @@ body[data-page="cache"] .screen-deco img {
     transition: all 1s ease;
 }
 
-body[data-page="cache"].watcher-found .screen-deco img {
+body[data-page="cache"].watcher-found .right-deco img {
     opacity: 1;
     pointer-events: auto;
 }
