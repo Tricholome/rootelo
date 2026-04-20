@@ -1091,7 +1091,7 @@ body.watcher-found #leave-secrets {
     display: inline-block;
 }
 
-/* --- 2. Watcher Secret --- */
+/* --- 2. Watcher & Witness Secret --- */
 .enigma {
     margin-top: 0 !important;
     text-align: center !important;
@@ -1099,8 +1099,14 @@ body.watcher-found #leave-secrets {
 
 .enigma span { display: block !important; }
 
-body[data-page="cache"].watcher-found .enigma {
+body[data-page="cache"].watcher-found .enigma-green,
+body[data-page="cache"].witness-found .enigma-purple,
+.enigma-purple {
     display: none;
+}
+
+body[data-page="cache"].ciphers-found .enigma-purple {
+    display: block;
 }
 
 body[data-page="cache"] .page-intro, 
