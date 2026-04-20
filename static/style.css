@@ -1102,13 +1102,13 @@ body.watcher-found #leave-secrets {
 
 .enigma span { display: block !important; }
 
-body[data-page="cache"].watcher-found .enigma-green,
-body[data-page="cache"].witness-found .enigma-purple,
+body.watcher-found .enigma-green,
+body.witness-found .enigma-purple,
 .enigma-purple {
     display: none;
 }
 
-body[data-page="cache"].ciphers-found .enigma-purple {
+body.ciphers-found:not(.witness-found) .enigma-purple {
     display: block;
 }
 
