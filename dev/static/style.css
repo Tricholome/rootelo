@@ -1156,6 +1156,11 @@ body[data-page="cache"].watcher-found .right-deco {
 	overflow: visible;
 }
 
+body[data-page="cache"].warden-found .left-deco {
+    height: 200px;
+	overflow: visible;
+}
+
 @media (min-width: 1300px) {
 body[data-page="cache"].watcher-found .screen-deco { 
         height: 100vh; 
