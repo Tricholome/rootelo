@@ -1154,6 +1154,17 @@ body[data-page="cache"].warden-found .left-deco {
 	overflow: visible;
 }
 
+body.watcher-found .footer-credits a.cl {
+    pointer-events: none !important;
+    cursor: default !important;
+    border-bottom: none !important;
+}
+
+body.watcher-found .footer-credits a.cl:hover {
+    color: var(--text-main) !important;
+    border-bottom: none !important;
+}
+
 @media (min-width: 1300px) {
 body[data-page="cache"].watcher-found .screen-deco { 
         height: 100vh; 
