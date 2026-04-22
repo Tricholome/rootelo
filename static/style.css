@@ -1088,7 +1088,8 @@ body.ciphers-found:not(.witness-found) #leave-secrets {
     display: none;
 }
 
-body.watcher-found #leave-secrets {
+body.watcher-found #leave-secrets,
+body.witness-found #leave-secrets {
     display: inline-block;
 }
 
