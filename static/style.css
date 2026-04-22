@@ -1083,7 +1083,8 @@ tr[data-tier="stag"] td:nth-child(4)     { color: var(--color-stag) !important; 
 	margin-bottom: 20px;
 }
 
-#leave-secrets {
+#leave-secrets,
+body.ciphers-found:not(.warden-found) #leave-secrets {
     display: none;
 }
 
