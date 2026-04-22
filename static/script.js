@@ -441,7 +441,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const isNutFound = localStorage.getItem('nut-found') === 'true';
     const isBerryFound = localStorage.getItem('berry-found') === 'true';
     const isCiphersFound = localStorage.getItem('ciphers-found') === 'true';
-	const isWitnessFound = localStorage.getItem('witness-found') === 'true';
+	const isWardenFound = localStorage.getItem('warden-found') === 'true';
     const isHofUnlocked = localStorage.getItem('hof-unlocked') === 'true';
 
     // Specific states
@@ -452,7 +452,7 @@ document.addEventListener('DOMContentLoaded', () => {
         body.classList.add('ciphers-found');
         updateMysticUI();
     }
-	if (isWitnessFound) body.classList.add('witness-found');
+	if (isWardenFound) body.classList.add('warden-found');
     
     // Final state
     if (isEnded) body.classList.add('secrets-ended');
@@ -561,12 +561,12 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 	
-	// --- 8. THE WITNESS SECRET ---
-    const witnessBtn = document.getElementById('witness-secret');
-    if (witnessBtn) {
-        witnessBtn.addEventListener('click', () => {
-            body.classList.add('witness-found');
-            localStorage.setItem('witness-found', 'true');
+	// --- 8. THE WARDEN SECRET ---
+    const wardenBtn = document.getElementById('warden-secret');
+    if (wardenBtn) {
+        wardenBtn.addEventListener('click', () => {
+            body.classList.add('warden-found');
+            localStorage.setItem('warden-found', 'true');
             checkFinalCompletion();
         });
     }
