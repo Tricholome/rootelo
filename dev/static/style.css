@@ -1323,20 +1323,21 @@ body.berry-found .banner-icons a.tooltip-link.banner-icon-stag {
 
 /* --- 5. Ciphers --- */
 .cipher {
+    display: inline-block;
     cursor: pointer;
-    transition: color 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .cipher:hover:not(.active-cipher) {
-    font-weight: var(--bold);
-	color: var(--color-squirrel);
+    color: var(--color-squirrel);
+    transform: scale(1.05);
 }
 
 .cipher.active-cipher {
-	font-weight: var(--bold);
-	font-size: var(--size-md);
-	letter-spacing: var(--track-wide);
+    font-weight: var(--bold);
     color: var(--color-stag);
+    letter-spacing: var(--track-wide);
+    transform: scale(1.1);
 }
 
 @keyframes cipher-reject {
