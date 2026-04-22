@@ -1091,7 +1091,7 @@ body.watcher-found #leave-secrets {
     display: inline-block;
 }
 
-/* --- 2. Watcher & Witness Secret --- */
+/* --- 2. Watcher & Warden Secret --- */
 .enigma {
     text-align: center !important;
 }
@@ -1103,12 +1103,12 @@ body.watcher-found #leave-secrets {
 .enigma span { display: block !important; }
 
 body.watcher-found .enigma-green,
-body.witness-found .enigma-purple,
+body.warden-found .enigma-purple,
 .enigma-purple {
     display: none;
 }
 
-body.ciphers-found:not(.witness-found) .enigma-purple {
+body.ciphers-found:not(.warden-found) .enigma-purple {
     display: block;
 }
 
@@ -1123,7 +1123,7 @@ body .artist-story-purple {
 
 body[data-page="cache"].watcher-found .page-intro, 
 body.watcher-found:not(.ciphers-found) .artist-story-green,
-body.witness-found .artist-story-purple {
+body.warden-found .artist-story-purple {
     display: block;
     opacity: 1;
     transform: translateY(0);
@@ -1140,7 +1140,7 @@ body[data-page="cache"].watcher-found .right-deco img {
     pointer-events: auto;
 }
 
-body[data-page="cache"].witness-found .left-deco img {
+body[data-page="cache"].warden-found .left-deco img {
     opacity: 1;
     pointer-events: auto;
 }
