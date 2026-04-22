@@ -23,6 +23,25 @@ CORRECTIONS_FILE = os.path.join(DATA_DIR, f"{CURRENT_SEASON_TAG}_corrections.csv
 # =========================================================================
 env = Environment(loader=FileSystemLoader('templates'))
 
+def smart_date_filter(d1, d2=None):
+    if not d1: return ""
+    try:
+        d1_str = str(d1)
+        dt1 = datetime.strptime(d1_str, '%Y-%m-%d')
+        if not d2 or d1 == d2:
+            return dt1.strftime('%b %d, %Y')
+        
+        d2_str = str(d2)
+        dt2 = datetime.strptime(d2_str, '%Y-%m-%d')
+        
+        if dt1.year != dt2.year:
+            return f"{dt1.strftime('%b %d, %Y')} — {dt2.strftime('%b %d, %Y')}"
+        return f"{dt1.strftime('%b %d')} — {dt2.strftime('%b %d, %Y')}"
+    except:
+        return d1
+
+env.filters['smart_date'] = smart_date_filter
+
 NAV_ITEMS = [
     {'id': 'index', 'url': 'index.html', 'label': 'Leaderboard'},
     {'id': 'matches', 'url': 'matches.html', 'label': 'Top Tables'},
@@ -44,6 +63,7 @@ print(f"Update started. Filtering matches closed before: {today}")
 def get_tier_icon(rating, games):
     if games < 10: return None, "unranked"  
     r = round(rating) # Ensure tier is based on visual score
+    if r >= 1600: return None, "stag"
     if r >= 1500: return None, "bird"
     if r >= 1400: return None, "fox"
     if r >= 1300: return None, "rabbit"
@@ -371,9 +391,101 @@ for tag in ARCHIVE_SEASONS:
         'matches': match_data,
         'trends': prepare_trends_data(raw['history'])
     }
-
+    
 # =========================================================================
-# --- 9. SITE GENERATION (JINJA2 RENDERING) ---
+# --- 9. HALL OF FAME : BEST INDIVIDUAL STREAK PER TIER ---
+# =========================================================================
+print("  > Compiling Hall of Fame...")
+
+def extract_all_streaks(history, player_full_name):
+    streaks = []
+    if len(history) < 11: return streaks
+    short_name = player_full_name.split('+')[0].split('#')[0]
+    current_s = None
+
+    for i in range(10, len(history)):
+        date_str, elo_val = history[i][0], history[i][1]
+        if "-" not in str(date_str): continue
+        _, tier_now = get_tier_icon(elo_val, 11)
+
+        authorized_tiers = ['stag', 'bird', 'fox', 'rabbit', 'mouse']
+        if tier_now not in authorized_tiers:
+            tier_now = None
+
+        if tier_now != (current_s['tier'] if current_s else None):
+            if current_s: streaks.append(current_s)
+            if tier_now:
+                current_s = {
+                    'player': short_name, 
+                    'tier': tier_now, 
+                    'start_date': date_str,
+                    'end_date': date_str,                    
+                    'peak': elo_val, 
+                    'streak_count': 1
+                }
+            else:
+                current_s = None
+        elif current_s:
+            current_s['streak_count'] += 1
+            current_s['end_date'] = date_str
+            current_s['peak'] = max(current_s['peak'], elo_val)
+
+    if current_s: streaks.append(current_s)
+    return streaks
+
+best_streaks_only = {}
+sources = []
+
+if not current_final_df.empty:
+    for _, row in current_final_df.iterrows():
+        sources.append((row['Player'], player_history.get(row['Player'], [])))
+
+for tag in ARCHIVE_SEASONS:
+    raw = archives_raw_data.get(tag, {})
+    for p_name, h in raw.get('history', {}).items():
+        sources.append((p_name, h))
+
+for p_name, h in sources:
+    player_streaks = extract_all_streaks(h, p_name)
+    for s in player_streaks:
+        key = (s['player'], s['tier'])
+        if key not in best_streaks_only:
+            best_streaks_only[key] = s
+        else:
+            current_best = best_streaks_only[key]
+            if (s['streak_count'] > current_best['streak_count']) or \
+               (s['streak_count'] == current_best['streak_count'] and s['peak'] > current_best['peak']):
+                best_streaks_only[key] = s
+
+TIER_HIERARCHY = ['stag', 'bird', 'fox', 'rabbit', 'mouse']
+
+all_sorted_streaks = sorted(
+    best_streaks_only.values(), 
+    key=lambda x: (
+        TIER_HIERARCHY.index(x['tier']) if x['tier'] in TIER_HIERARCHY else 99, 
+        -x['streak_count'], 
+        -x['peak']
+    )
+)
+
+hall_of_fame_final = []
+
+for t in TIER_HIERARCHY:
+    tier_top_5 = [s for s in all_sorted_streaks if s['tier'] == t][:5]
+    if tier_top_5:
+        hall_of_fame_final.append({
+            'is_section': True,
+            'tier': t
+        })
+        for rank, s in enumerate(tier_top_5, 1):
+            s['is_section'] = False
+            s['rank_display'] = ["", "I", "II", "III", "IV", "V"][rank]
+            hall_of_fame_final.append(s)
+
+hall_of_fame_data = hall_of_fame_final
+    
+# =========================================================================
+# --- 10. SITE GENERATION (JINJA2 RENDERING) ---
 # =========================================================================
 print("\n=== GENERATING HTML PAGES ===")
 
@@ -448,7 +560,8 @@ render_page(
 render_page(
     "cache.html", "cache.html", title="Undergrowth • Rootelo", page_id="cache",
     is_archive=False, has_seasons=False, page_heading="Undergrowth",
-    description="A sanctuary for the critters who&nbsp;never&nbsp;sought&nbsp;a&nbsp;crown."
+    description="A sanctuary for the critters who&nbsp;never&nbsp;sought&nbsp;a&nbsp;<span class='cipher' data-word='crown'>crown</span>.",
+    hall_of_fame=hall_of_fame_data
 )
 
 print("✨ Website generated successfully!")

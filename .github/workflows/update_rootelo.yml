@@ -28,11 +28,16 @@ jobs:
       - name: Run ELO calculation and site generation
         env:
           API_TOKEN: ${{ secrets.API_TOKEN }}
-        run: python main.py
+        run: |
+          python main.py
+          mkdir rootelo_site
+          cp *.html rootelo_site/
+          cp -r static rootelo_site/
+          cp -r assets rootelo_site/
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: .
+          publish_dir: ./rootelo_site
           publish_branch: gh-pages

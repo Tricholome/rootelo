@@ -1,3 +1,21 @@
+/* =========================================================================
+   ROOTELO - JAVASCRIPT
+   Table of Contents:
+   1. Dynamic Scroll
+   2. Double-tap
+   3. Tier Modal
+   4. Data Tables
+   5. Chart
+   6. Secrets Engine
+   7. Nut & Berry
+   8. Visitor Recognition
+
+   ========================================================================= */
+   
+/* =========================================================================
+   --- 1. DYNAMIC SCROLL ---
+   ========================================================================= */
+
 // Dynamic Scroll & Gesture Management
 // Variables to track touch positions and scroll direction
 let touchStartY = 0;
@@ -58,6 +76,49 @@ window.addEventListener('scroll', () => {
     // Update last scroll position for the next event check
     lastScrollY = currentScrollY;
 }, { passive: true });
+
+/* =========================================================================
+   --- 2. DOUBLE-TAP ---
+   ========================================================================= */
+   
+document.addEventListener("DOMContentLoaded", function() {
+    const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (window.matchMedia("(hover: none)").matches);
+
+    if (isTouchDevice) {
+        // On écoute sur le body pour capter même les icônes créées par DataTables
+        document.body.addEventListener('click', function(e) {
+            // On cherche si on a cliqué sur un lien double-tap
+            const link = e.target.closest('.js-double-tap');
+
+            // 1. Si on clique ailleurs : on ferme tout
+            if (!link) {
+                document.querySelectorAll('.js-double-tap.expanded').forEach(l => l.classList.remove('expanded'));
+                return;
+            }
+
+            // 2. Si on clique sur une icône
+            if (!link.classList.contains('expanded')) {
+                // PREMIER TAP
+                e.preventDefault();
+                e.stopPropagation();
+
+                // On ferme les autres
+                document.querySelectorAll('.js-double-tap.expanded').forEach(l => l.classList.remove('expanded'));
+                
+                // On ouvre celle-ci
+                link.classList.add('expanded');
+            } else {
+                // DEUXIÈME TAP
+                // On laisse le comportement naturel (onclick du HTML ou href)
+                link.classList.remove('expanded');
+            }
+        }, true); // Le "true" ici permet d'intercepter avant DataTables
+    }
+});
+
+/* =========================================================================
+   --- 3. TIER MODAL ---
+   ========================================================================= */
 		
 // Tier Modal		
 document.addEventListener('DOMContentLoaded', function() {
@@ -71,7 +132,7 @@ document.addEventListener('DOMContentLoaded', function() {
 			name: 'Bird',
 			elo: '1500+',
 			subtitle: 'The Grandmasters',
-			desc: 'These elite sovereigns sit at the absolute pinnacle of the Woodland canopy. Remaining on this prestigious throne is a dizzying battle against shifting winds and ambitious rivals. They rule the skies by maintaining flawless execution and absolute perfection under pressure.'
+			desc: 'These elite sovereigns sit at the absolute pinnacle of the Woodland canopy. Remaining on this prestigious throne is a dizzying battle against shifting winds and ambitious rivals. They rule the skies by maintaining flawless execution and unerring control under pressure.'
 		},
 		'fox': {
 			name: 'Fox',
@@ -83,19 +144,25 @@ document.addEventListener('DOMContentLoaded', function() {
 			name: 'Rabbit',
 			elo: '1300+',
 			subtitle: 'The Agile Contenders',
-			desc: 'These nimble wanderers gracefully weave through the crowded and shifting paths of the rankings. Routine strategies falter here, threatening to trap anyone who cannot adapt to sudden chaos. They leap ahead where others see only barriers, turning dead ends into daring escapes.'
+			desc: 'These nimble wanderers gracefully weave through the crowded paths of the rankings. Routine strategies falter here, threatening to trap anyone who cannot adapt to sudden chaos. They leap ahead where others see only barriers, turning dead ends into daring escapes.'
 		},
 		'mouse': {
 			name: 'Mouse',
 			elo: '1200+',
 			subtitle: 'The Steady Foragers',
-			desc: 'These resilient souls rise above the casual fray to mark a true milestone of mastery. The wild now demands true stamina, where early momentum easily fades into exhaustion. They hold their ground through quiet consistency, proving that steady patience outlasts blind luck.'
+			desc: 'These resilient souls rise above the casual fray to mark a milestone of mastery. The wild now demands pure stamina, where early momentum easily fades into exhaustion. They hold their ground through quiet consistency, proving that patience outlasts blind luck.'
 		},
 		'squirrel': {
 			name: 'Squirrel',
 			elo: '< 1200',
 			subtitle: 'The Hapless Stragglers',
 			desc: 'These frantic collectors dwell in the tangled undergrowth of the ranking system. Clumsy errors and brutal defeats often force them to fall back while fiercer beasts surge ahead. Yet, they bravely endure by turning every painful lesson into a seed for next season’s harvest.'
+		},
+		'stag': {
+			name: 'Stag',
+			elo: '1600+',
+			subtitle: 'The Legend',
+			desc: 'Has anyone truly seen this mythical beast, or is it only an echo of the wild? What happens to the predator when the woods turn hollow and every path leads back to a mirror of its own perfection? With nothing left to be claimed, is the true crown the silence that follows the chase?'
 		}
 	};
 
@@ -137,71 +204,493 @@ document.addEventListener('DOMContentLoaded', function() {
 
 	const closeModal = () => {
 		modal.style.display = 'none';
-		document.body.style.overflow = 'auto';
+		document.body.style.overflowY = 'auto';
+		document.body.style.overflowX = 'hidden';
+		if (window.innerWidth < 1100) {
+			window.scrollTo(window.scrollX, window.scrollY);
+		}
 	};
-
 	if (closeBtn) closeBtn.onclick = closeModal;
-	window.onclick = (event) => { if (event.target == modal) closeModal(); };
+
+	window.onclick = (event) => { 
+		if (event.target == modal) closeModal(); 
+	};
 });
 
-// Double-tap
-document.addEventListener("DOMContentLoaded", function() {
-    const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (window.matchMedia("(hover: none)").matches);
+/* =========================================================================
+   --- 4. DATA TABLES ---
+   ========================================================================= */
 
-    if (isTouchDevice) {
-        // On écoute sur le body pour capter même les icônes créées par DataTables
-        document.body.addEventListener('click', function(e) {
-            // On cherche si on a cliqué sur un lien double-tap
-            const link = e.target.closest('.js-double-tap');
+$(document).ready(function() {
 
-            // 1. Si on clique ailleurs : on ferme tout
-            if (!link) {
-                document.querySelectorAll('.js-double-tap.expanded').forEach(l => l.classList.remove('expanded'));
-                return;
+    // --- 1. LEADERBOARD ---
+    if ($('#leaderboard').length > 0) {
+        // Sort "-" at the end
+        $.extend($.fn.dataTable.ext.type.order, { 
+            "rank-pre": function (d) { return d === "-" ? 9999 : parseInt(d); } 
+        });
+
+        $('#leaderboard').DataTable({
+            "order": [[3, "desc"]],
+            "responsive": true, 
+            "pageLength": 50,
+            "dom": '<"top"lf>rt<"bottom"ip><"clear">',
+            "columnDefs": [ 
+                { "targets": 0, "type": "rank" },
+                { "targets": 2, "className": "player-name-cell" },
+                { "targets": 3, "className": "elo-cell" },
+				{ "className": "numeric-cell", "targets": [0, 3, 4, 5, 6, 7, 8] },
+                { "responsivePriority": 1, "targets": [2, 3] },
+                { "responsivePriority": 2, "targets": 0 },
+                { "responsivePriority": 3, "targets": 1 },
+                { "responsivePriority": 8, "targets": 6 },
+                { "responsivePriority": 10, "targets": [4, 5, 7, 8] }
+            ],
+            "language": {
+                "searchPlaceholder": "Player name"
             }
-
-            // 2. Si on clique sur une icône
-            if (!link.classList.contains('expanded')) {
-                // PREMIER TAP
-                e.preventDefault();
-                e.stopPropagation();
-
-                // On ferme les autres
-                document.querySelectorAll('.js-double-tap.expanded').forEach(l => l.classList.remove('expanded'));
-                
-                // On ouvre celle-ci
-                link.classList.add('expanded');
-            } else {
-                // DEUXIÈME TAP
-                // On laisse le comportement naturel (onclick du HTML ou href)
-                link.classList.remove('expanded');
-            }
-        }, true); // Le "true" ici permet d'intercepter avant DataTables
-    }
-});
-
-// Nut surprise
-document.addEventListener('DOMContentLoaded', () => {
-	
-	// --- BLOC 1 : Feature "Nut" ---
-    if (window.location.hash === '#nut-section') {
-        const nutSection = document.getElementById('nut-section');
-        if (nutSection) {
-            nutSection.style.display = 'block';
-        }
-    }
-	
-	// --- BLOC 2 : Feature "Deco" ---
-    const btn = document.getElementById('deco-toggle');
-    if (btn) {
-        btn.addEventListener('click', () => {
-            // On ajoute ou on enlève la classe "show-deco" au body
-            document.body.classList.toggle('show-deco');
-			
-			setTimeout(() => {
-                window.dispatchEvent(new Event('scroll'));
-            }, 600);
         });
     }
 	
+	// --- 2. MATCHES ---
+    if ($('#matchesTable').length > 0) {
+        $('#matchesTable').DataTable({
+            "order": [[1, "desc"]], 
+            "responsive": true,
+            "pageLength": 25,
+            "columnDefs": [
+				{ "className": "rank-cell", "targets": 0 },
+                { "className": "elo-sum-cell", "targets": 1 },
+				{ "className": "date-cell", "targets": 2 },
+				{ "className": "numeric-cell", "targets": [0, 1, 2, 4] },
+                { "responsivePriority": 1, "targets": [0, 3] },
+                { "responsivePriority": 2, "targets": 1 },
+                { "responsivePriority": 3, "targets": 2 },
+                { "responsivePriority": 4, "targets": 4 }
+            ],
+            "language": {
+                "searchPlaceholder": "Player name, Game ID..."
+            }
+        });
+    }
+
+    // --- 3. HALL OF FAME ---
+	if ($('#hall_of_fame').length > 0) {
+		$('#hall_of_fame').DataTable({
+			"responsive": true,
+			"ordering": false,
+			"paging": false,
+			"searching": false,
+			"info": false,
+			"dom": 'rt',
+			"columnDefs": [
+				{ "targets": 0, "className": "rank-cell" },
+				{ "targets": 1, "className": "player-name-cell" },
+				{ "targets": 2, "className": "streak-cell" },
+				{ "targets": 3, "className": "elo-cell" },
+				{ "targets": 4, "className": "date-cell" },
+				{ "className": "numeric-cell", "targets": [2, 3, 4] },
+				{ "responsivePriority": 1, "targets": [0, 1] },
+				{ "responsivePriority": 2, "targets": [2, 3] },
+				{ "responsivePriority": 3, "targets": 4 },
+			]
+		});
+	}
+	
+	// --- 4. VISITOR TABLE ---
+	if ($('#visitor_table').length > 0) {
+		$('#visitor_table').DataTable({
+			"responsive": true,
+			"ordering": false,
+			"paging": false,
+			"searching": false,
+			"info": false,
+			"dom": 'rt',
+			"columnDefs": [
+				{ "targets": 0, "className": "rank-cell" },
+			]
+		});
+	}
+	
+	// --- 5. GLOBAL FIX FOR ORIENTATION & RESIZE ---
+    window.addEventListener('resize', () => {
+        $('.dataTable').each(function() {
+            if ($.fn.dataTable.isDataTable(this)) {
+                $(this).DataTable()
+                    .columns.adjust()
+                    .responsive.recalc();
+            }
+        });
+    });
+
 });
+
+/* =========================================================================
+   --- 5. CHART (TRENDS) ---
+   ========================================================================= */
+
+let myChart;
+
+function updateChart() {
+    const input = document.getElementById('playerName');
+    const canvas = document.getElementById('progressionChart');
+    if (!input || !canvas) return;
+
+    const name = input.value;
+    const allData = CONFIG.chartData;
+
+    if (name === "" || !allData[name]) {
+        if (myChart) myChart.destroy();
+        localStorage.removeItem('selectedPlayer');
+        return;
+    }
+
+    const ctx = canvas.getContext('2d');
+    const rabbitColor = getComputedStyle(document.documentElement).getPropertyValue('--color-rabbit').trim() || '#E0B634';
+    
+    if (typeof allData !== 'undefined' && allData[name]) {
+        localStorage.setItem('selectedPlayer', name);
+
+        const rawData = allData[name];
+        const labels = rawData.map(d => {
+            const dateObj = new Date(d[0]);
+            return !isNaN(dateObj.getTime()) 
+                ? dateObj.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) 
+                : d[0];
+        });
+        const eloScores = rawData.map(d => d[1]);
+
+        if (myChart) myChart.destroy();
+        
+        myChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: eloScores,
+                    borderColor: rabbitColor,
+                    backgroundColor: rabbitColor + '22',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.3,
+                    pointRadius: 3,
+                    pointBackgroundColor: rabbitColor,
+                    pointHitRadius: 20
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: { enabled: true, backgroundColor: '#222', titleColor: rabbitColor }
+                },
+                scales: {
+                    y: { grid: { color: '#252525' }, ticks: { color: '#888' } },
+                    x: { grid: { display: false }, ticks: { color: '#888', maxTicksLimit: 6 } }
+                }
+            }
+        });
+    }
+}
+
+$(document).ready(function() {
+    if ($('#progressionChart').length > 0) {
+        const input = document.getElementById('playerName');
+        const savedPlayer = localStorage.getItem('selectedPlayer');
+
+        if (savedPlayer && CONFIG.chartData[savedPlayer]) {
+            input.value = savedPlayer;
+            updateChart();
+        }
+        $(input).on('input', updateChart);
+    }
+});
+
+
+/* =========================================================================
+   --- 6. SECRETS ENGINE ---
+   ========================================================================= */
+
+document.addEventListener('DOMContentLoaded', () => {
+    const body = document.body;
+	
+    // --- 0. FINAL COMPLETION ---
+    function checkFinalCompletion() {
+        const required = ['watcher-found', 'nut-found', 'berry-found', 'ciphers-found'];
+        const allFound = required.every(key => localStorage.getItem(key) === 'true');
+
+        if (allFound) {
+            body.classList.add('secrets-ended');
+            localStorage.setItem('secrets-ended', 'true');
+        }
+    }
+	
+	// --- 1. MYSTIC TRANSITION ---
+	function triggerMysticTransition(callback) {
+		const gate = document.getElementById('mystic-gate');
+		$(gate).fadeIn(600, function() {
+			if (callback) callback();
+			$(gate).fadeOut(1000);
+		});
+	}
+
+    // --- 2. PERSISTENCE CHECK ---
+    const isEnded = localStorage.getItem('secrets-ended') === 'true';
+    const isWatcherFound = localStorage.getItem('watcher-found') === 'true';
+    const isNutFound = localStorage.getItem('nut-found') === 'true';
+    const isBerryFound = localStorage.getItem('berry-found') === 'true';
+    const isCiphersFound = localStorage.getItem('ciphers-found') === 'true';
+	const isWardenFound = localStorage.getItem('warden-found') === 'true';
+    const isHofUnlocked = localStorage.getItem('hof-unlocked') === 'true';
+
+    // Specific states
+    if (isWatcherFound) body.classList.add('watcher-found');
+    if (isNutFound) body.classList.add('nut-found');
+    if (isBerryFound) body.classList.add('berry-found');
+    if (isCiphersFound) {
+        body.classList.add('ciphers-found');
+        updateMysticUI();
+    }
+	if (isWardenFound) body.classList.add('warden-found');
+    
+    // Final state
+    if (isEnded) body.classList.add('secrets-ended');
+    if (isHofUnlocked) body.classList.add('hof-unlocked');
+
+    // --- 3. UI TRANSFORMATION FUNCTION ---
+    function updateMysticUI() {
+        if (body.getAttribute('data-page') === 'cache') {
+            const intro = document.querySelector('.page-intro');
+            if (intro) {
+                const titleEl = intro.querySelector('h2');
+                const descEl = intro.querySelector('p');
+                if (titleEl) titleEl.textContent = "Glade of Fame";
+                if (descEl) descEl.textContent = "Silent roots remember every crown.";
+            }
+            document.title = "Glade of Fame • Rootelo";
+        }
+
+        const navSecretLink = document.querySelector('.nav-secret');
+        if (navSecretLink) {
+            navSecretLink.textContent = 'Glade of Fame';
+        }
+    }
+	
+    // --- 4. THE WATCHER SECRET ---
+    const watcherBtn = document.getElementById('watcher-secret');
+    if (watcherBtn) {
+        watcherBtn.addEventListener('click', () => {
+            body.classList.add('watcher-found');
+            localStorage.setItem('watcher-found', 'true');
+            checkFinalCompletion();
+            window.dispatchEvent(new Event('scroll'));
+        });
+    }
+
+    // --- 5. THE NUT SECRET ---
+    if (window.location.hash === '#nut-section') {
+        const nutSection = document.getElementById('nut-section');
+        if (nutSection) nutSection.style.display = 'block';
+    }
+
+    const nutBtn = document.getElementById('nut-secret');
+    if (nutBtn) {
+        nutBtn.addEventListener('click', () => {
+            body.classList.add('nut-found');
+            localStorage.setItem('nut-found', 'true');
+			nutBtn.removeAttribute('onclick');
+            checkFinalCompletion();
+        });
+    }
+	
+    // --- 6. THE BERRY SECRET ---
+    if (window.location.hash === '#berry-section') {
+        const berrySection = document.getElementById('berry-section');
+        if (berrySection) berrySection.style.display = 'block';
+    }
+
+    const berryBtn = document.getElementById('berry-secret');
+    if (berryBtn) {
+        berryBtn.addEventListener('click', () => {
+            body.classList.add('berry-found');
+            localStorage.setItem('berry-found', 'true');
+			berryBtn.removeAttribute('onclick');
+            checkFinalCompletion();
+        });
+    }
+
+    // --- 7. THE CIPHER SEQUENCE ---
+    const secretSequence = ['silent', 'roots', 'remember', 'every', 'crown'];
+    let userProgress = [];
+    let isResetting = false;
+
+    document.querySelectorAll('.cipher').forEach(el => {
+        el.addEventListener('click', () => {
+            const isAlreadySolved = body.classList.contains('ciphers-found');
+            
+            if (isAlreadySolved || isResetting) return;
+
+            el.classList.add('active-cipher');
+            const word = el.getAttribute('data-word');
+            
+            if (word === secretSequence[userProgress.length]) {
+                userProgress.push(word);
+
+                if (userProgress.length === secretSequence.length) {
+                    triggerMysticTransition(() => {
+                        body.classList.add('ciphers-found');
+                        localStorage.setItem('ciphers-found', 'true');
+                        updateMysticUI();
+                        checkFinalCompletion();
+                    });
+                }
+            } else {
+                isResetting = true; 
+
+                setTimeout(() => {
+                    document.querySelectorAll('.cipher').forEach(c => {
+                        if (c.classList.contains('active-cipher')) c.classList.add('cipher-blink');
+                    });
+                    
+                    setTimeout(() => {
+                        userProgress = [];
+                        document.querySelectorAll('.cipher').forEach(c => {
+                            c.classList.remove('active-cipher', 'cipher-blink');
+                        });
+                        isResetting = false; 
+                    }, 500);
+                }, 800);
+            }
+        });
+    });
+	
+	// --- 8. THE WARDEN SECRET ---
+    const wardenBtn = document.getElementById('warden-secret');
+    if (wardenBtn) {
+        wardenBtn.addEventListener('click', () => {
+            body.classList.add('warden-found');
+            localStorage.setItem('warden-found', 'true');
+            checkFinalCompletion();
+            requestAnimationFrame(() => {
+                window.scrollTo({
+                    top: document.body.scrollHeight,
+                    behavior: 'smooth'
+                });
+            });
+        });
+    }
+	
+    // --- 9. HALL OF FAME FINAL UNLOCK ---
+    const hofBtn = document.getElementById('hof-access');
+	if (hofBtn) {
+		hofBtn.addEventListener('click', () => {
+			if (localStorage.getItem('secrets-ended') !== 'true') return;
+
+			body.classList.add('hof-unlocked');
+			localStorage.setItem('hof-unlocked', 'true');
+
+			setTimeout(() => {
+				if ($.fn.dataTable.isDataTable('#hall_of_fame')) {
+					$('#hall_of_fame').DataTable()
+						.columns.adjust()
+						.responsive.recalc();
+				}
+			}, 50);
+		});
+	}
+
+    // --- 10. THE EXIT DOOR ---
+	const leaveBtn = document.querySelector('#leave-secrets');
+	if (leaveBtn) {
+		leaveBtn.addEventListener('click', (e) => {
+			e.preventDefault(); 
+			
+			triggerMysticTransition(() => {
+				localStorage.clear();
+				document.body.className = ''; 
+				window.location.href = 'index.html'; 
+			});
+		});
+	}
+});
+
+/* =========================================================================
+   --- 7. NUT & BERRY ---
+   ========================================================================= */
+
+function handleTierClick(event, tier) {
+    const isNutFound = localStorage.getItem('nut-found') === 'true';
+    const isBerryFound = localStorage.getItem('berry-found') === 'true';
+
+    if (tier === 'squirrel' && !isNutFound) {
+        window.location.href = 'cache.html#nut-section';
+    } 
+    else if (tier === 'stag' && !isBerryFound) {
+        window.location.href = 'cache.html#berry-section';
+    } 
+    else {
+        if (typeof openTierModal === "function") {
+            openTierModal(tier);
+        }
+    }
+}
+
+/* =========================================================================
+   --- 8. VISITOR RECOGNITION ---
+   ========================================================================= */
+
+const btnEngrave = document.getElementById('btn-engrave');
+const inputZone = document.getElementById('input-zone');
+const btnConfirm = document.getElementById('btn-confirm');
+
+window.addEventListener('DOMContentLoaded', () => {
+    const savedName = localStorage.getItem('visitor_name');
+    const savedDate = localStorage.getItem('discovery_date');
+    if (savedName && savedDate) {
+        showVisitorRow(savedName, savedDate);
+    }
+});
+
+// 1. Bouton Engrave
+if (btnEngrave && inputZone) {
+    btnEngrave.addEventListener('click', () => {
+        btnEngrave.style.display = 'none';
+        inputZone.style.display = 'block';
+    });
+}
+
+// 2. Confirmation
+if (btnConfirm) {
+    btnConfirm.addEventListener('click', () => {
+        const nameInput = document.getElementById('visitor-name');
+        const name = nameInput ? nameInput.value.trim() : ""; 
+
+        if (name === "") return;
+
+        const date = new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
+        
+        showVisitorRow(name, date);
+
+        localStorage.setItem('visitor_name', name);
+        localStorage.setItem('discovery_date', date);
+    });
+}
+
+function showVisitorRow(name, date) {
+    const visitorTable = document.getElementById('visitor_table');
+    if (visitorTable) {
+        visitorTable.querySelector('.visitor-name').textContent = name;
+        visitorTable.querySelector('.visitor-date').textContent = date;
+        visitorTable.style.setProperty('display', 'table', 'important');
+        
+        setTimeout(() => {
+            if ($.fn.dataTable.isDataTable('#visitor_table')) {
+                $('#visitor_table').DataTable().columns.adjust();
+            }
+        }, 10);
+    }
+
+    const recognitionZone = document.getElementById('visitor-recognition');
+    if (recognitionZone) recognitionZone.style.display = 'none';
+}

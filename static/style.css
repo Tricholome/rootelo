@@ -258,7 +258,6 @@ a.cl:hover { border-bottom: 1px solid var(--main-color); color: var(--main-color
     align-items: center;
     justify-content: center;
     gap: 5px;
-    margin-bottom: 20px;
     flex-wrap: nowrap;
 }
 
@@ -275,34 +274,43 @@ a.cl:hover { border-bottom: 1px solid var(--main-color); color: var(--main-color
     transition: margin 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-/* Hover & Active States */
+/* Hover & Active States (Spacing) */
 @media (hover: hover) {
     .banner-icons a.tooltip-link:hover { margin: 0 15px; z-index: 50; }
 }
 .banner-icons a.tooltip-link.expanded { margin: 0 15px; z-index: 50; }
 
-/* Icons */
+/* Icons - Base State */
 .banner-icons a.tooltip-link img {
-    width: 85px; height: 85px; object-fit: contain;
+    width: clamp(55px, 7vw, 85px);
+    height: clamp(55px, 7vw, 85px);
+    object-fit: contain;
     filter: drop-shadow(0 4px 6px rgba(0,0,0,0.6));
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     display: block;
 }
 
+/* Icons - Expanded/Hover State (Common properties) */
 @media (hover: hover) {
     .banner-icons a.tooltip-link:hover img {
-        width: 140px; height: 140px;
+        width: clamp(100px, 12vw, 140px); 
+        height: clamp(100px, 12vw, 140px);
         filter: drop-shadow(0 15px 25px rgba(0,0,0,0.9));
         transform: translateY(-10px) scale(1.15);
     }
-    .banner-icons.left a.tooltip-link:hover img { transform: translateY(-10px) scale(1.15) rotate(-8deg); }
-    .banner-icons.right a.tooltip-link:hover img { transform: translateY(-10px) scale(1.15) rotate(8deg); }
 }
 
 .banner-icons a.tooltip-link.expanded img {
-    width: 140px; height: 140px;
+    width: clamp(100px, 12vw, 140px); 
+    height: clamp(100px, 12vw, 140px);
     filter: drop-shadow(0 15px 25px rgba(0,0,0,0.9));
     transform: translateY(-10px) scale(1.15);
+}
+
+/* Rotations (Specific) */
+@media (hover: hover) {
+    .banner-icons.left a.tooltip-link:hover img { transform: translateY(-10px) scale(1.15) rotate(-8deg); }
+    .banner-icons.right a.tooltip-link:hover img { transform: translateY(-10px) scale(1.15) rotate(8deg); }
 }
 .banner-icons.left a.tooltip-link.expanded img { transform: translateY(-10px) scale(1.15) rotate(-8deg); }
 .banner-icons.right a.tooltip-link.expanded img { transform: translateY(-10px) scale(1.15) rotate(8deg); }
@@ -335,17 +343,22 @@ a.cl:hover { border-bottom: 1px solid var(--main-color); color: var(--main-color
 
 /* Banner Mobile Adjustments */
 @media (max-width: 768px) and (orientation: portrait) {
-    .banner-container { flex-wrap: wrap; gap: 10px; }
+    .banner-container { flex-wrap: wrap; gap: 5px; }
     .banner-center { order: 1; width: 100%; margin-bottom: 10px; }
     .banner-icons { order: 2; flex-wrap: nowrap; gap: 5px; }
     
-    .banner-icons a.tooltip-link, .banner-icons a.tooltip-link.expanded { margin: 0; display: inline-block; }
-    .banner-icons a.tooltip-link img { width: 60px !important; height: 60px !important; }
+    .banner-icons a.tooltip-link, 
+    .banner-icons a.tooltip-link.expanded { margin: 0; display: inline-block; }
+	
+	body.nut-found:not(.berry-found) .banner-icons a.tooltip-link,
+    body.berry-found:not(.nut-found) .banner-icons a.tooltip-link,
+    body.nut-found:not(.berry-found) .banner-icons a.tooltip-link.expanded,
+    body.berry-found:not(.nut-found) .banner-icons a.tooltip-link.expanded {
+        margin: 0 -5px;
+    }
     
-    .banner-icons.left a.tooltip-link.expanded img { transform: translateY(-8px) scale(1.4) rotate(-8deg) !important; position: relative; z-index: 100; }
-    .banner-icons.right a.tooltip-link.expanded img { transform: translateY(-8px) scale(1.4) rotate(8deg) !important; position: relative; z-index: 100; }
-    
-    .tooltip-text { display: none; }
+    .banner-icons a.tooltip-link.expanded img { transform: translateY(-8px) scale(1.4) !important; position: relative; z-index: 100; }
+
     .banner-icons a.tooltip-link.expanded .tooltip-text {
         display: block !important;
         bottom: 115%; transform: none; width: 150px;
@@ -356,15 +369,13 @@ a.cl:hover { border-bottom: 1px solid var(--main-color); color: var(--main-color
     .tooltip-text strong { display: block; margin-bottom: 2px; }
 }
 
-
 /* =========================================================================
    --- 6. NAVIGATION & BUTTONS ---
    ========================================================================= */
 nav {
-    margin: 15px 0;
     display: flex;
     justify-content: center;
-    gap: 12px;
+    gap: 4px 12px;
     flex-wrap: wrap;
 }
 
@@ -536,7 +547,37 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     cursor: default !important;
 }
 
-/* --- D. Specifics (Leaderboard) --- */
+/* --- D. Columns & Cells styles --- */
+.numeric-cell {
+	font-variant-numeric: tabular-nums;
+}
+
+.rank-cell {
+	box-sizing: border-box !important;
+	font-weight: var(--medium);
+	color: var(--text-muted) !important;
+}
+
+.player-name-cell {
+	text-align: left;
+	font-weight: var(--medium);
+}
+
+.elo-cell {
+	font-size: var(--size-lg); 
+	font-weight: var(--bold);
+}
+
+.elo-sum-cell {
+	color: var(--main-color) !important;
+    font-weight: var(--bold);
+}
+
+.date-cell {
+	color: var(--text-muted) !important;
+	font-size: var(--size-sm) !important;
+}
+
 .tier-icon-container { 
     width: 36px; 
     height: 36px; 
@@ -548,14 +589,14 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 
 .tier-icon-container img { max-width: 100%; max-height: 100%; object-fit: contain; }
 
+/* --- E. Specifics (Leaderboard) --- */
 .unranked { 
     opacity: 0.4; 
     font-style: italic; 
     filter: grayscale(1); 
-    font-weight: var(--medium) !important; 
 }
 
-/* --- E. Specifics (Matches) --- */
+/* --- F. Specifics (Matches) --- */
 .lineup-cell { 
     white-space: normal !important; 
     word-wrap: break-word; 
@@ -571,16 +612,11 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 .match-id-link { 
     color: var(--text-muted); 
     text-decoration: none; 
-    font-size: var(--size-sm); 
+    font-size: var(--size-sm);
     border: 1px solid var(--border-soft); 
     padding: 2px 6px; 
     border-radius: 4px; 
     white-space: nowrap;
-}
-
-#matchesTable td:nth-child(2) {
-    color: var(--main-color);
-    font-weight: var(--bold);
 }
 
 #matchesTable th, 
@@ -590,7 +626,137 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     white-space: nowrap !important; 
 }
 
-/* --- F. Responsive --- */
+/* --- G. Specifics (Hall of Fame) --- */
+##hall_of_fame thead {
+    visibility: collapse;
+}
+
+#hall_of_fame thead th {
+    padding: 0 !important;
+    border: none !important;
+    line-height: 0 !important;
+    font-size: 0 !important;
+}
+
+#hall_of_fame {
+    border-top: 1px solid var(--glass-border) !important;
+}
+
+.tier-header-row td,
+#visitor_table thead th { 
+    background: var(--dt-header-bg); 
+    color: var(--text-muted) !important;
+	font-family: var(--font-ui) !important;	
+    font-size: var(--size-xs) !important;
+	font-weight: var(--medium) !important;
+    letter-spacing: var(--track-wide) !important;
+    text-transform: uppercase !important; 
+    padding: 10px !important; 
+    border-bottom: 1px solid var(--border-soft); 
+}
+
+.tier-header-row tr:hover td { 
+    background: var(--dt-header-bg) !important; 
+}
+
+#hall_of_fame {
+    pointer-events: none !important;
+}
+
+#hall_of_fame .tier-anchor-link,
+#hall_of_fame a, 
+#hall_of_fame button {
+    pointer-events: auto !important;
+}
+
+#hall_of_fame td::before, 
+#hall_of_fame td::after {
+    display: none !important;
+    content: "" !important;
+}
+
+#hall_of_fame tr {
+    cursor: default !important;
+}
+
+.streak-cell {
+	color: var(--text-bright);
+	font-size: var(--size-md);
+    font-weight: var(--bold);
+}
+
+/* --- H. Specifics (Visitor) --- */
+#visitor-recognition {
+	margin-top: 40px;
+}
+
+#input-zone {
+    display: none;
+}
+
+#visitor-name {
+	background: var(--dt-input-bg);
+    color: var(--text-main);
+    border: 1px solid var(--border-soft);
+    padding: 6px 8px;
+    border-radius: 4px;
+	outline: none;
+}
+
+#visitor-name:focus {
+    border-color: var(--main-color) !important;
+    background: var(--dt-row-hover) !important;
+}
+
+#visitor_table {
+    display: none;
+	margin-top: 5px !important;
+}
+
+#visitor_table tr[data-tier] {
+    pointer-events: none !important;
+}
+
+#hall_of_fame td:first-child,
+#visitor_table td:first-child,
+#hall_of_fame th:first-child,
+#visitor_table th:first-child {
+    width: 60px !important;
+    min-width: 60px !important;
+    max-width: 60px !important;
+    text-align: center !important;
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+    box-sizing: border-box !important;
+}
+
+#hall_of_fame .tier-icon-container,
+#visitor_table .tier-icon-container {
+    width: 36px;
+    margin: 0 auto !important;
+}
+
+.visitor-cell {
+	text-align: left;
+	color: var(--text-muted) !important;
+	font-style: italic !important;
+}
+
+.visitor-name {
+	font-weight: var(--medium) !important;
+	color: var(--text-main) !important;
+	font-style: normal !important;
+}
+
+.visitor-date {
+	white-space: nowrap;
+}
+
+/* --- H. Responsive --- */
+.hide-mobile {
+    display: inline;
+}
+
 @media (max-width: 600px) {
     table.dataTable tbody td { font-size: var(--size-sm); padding: 8px 4px !important; }
     .player-name-cell { 
@@ -601,6 +767,8 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     }
     table.dataTable td:nth-child(4) { padding-right: 10px !important; min-width: 55px; }
     .lineup-cell { padding-left: 10px !important; }
+	.streak-cell { font-size: var(--size-base) !important; }
+	.hide-mobile { display: none; }
 }
 
 /* =========================================================================
@@ -849,6 +1017,7 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 .tier-rabbit   { color: var(--color-rabbit) !important; }
 .tier-mouse    { color: var(--color-mouse) !important; }
 .tier-squirrel { color: var(--color-squirrel) !important; }
+.tier-stag 	   { color: var(--color-stag) !important; }
 
 /* Background and border for each tier row */
 table.dataTable tbody tr[data-tier="bird"]     { background-color: var(--color-bird-bg) !important; border-left: 4px solid var(--color-bird) !important; }
@@ -856,6 +1025,7 @@ table.dataTable tbody tr[data-tier="fox"]      { background-color: var(--color-f
 table.dataTable tbody tr[data-tier="rabbit"]   { background-color: var(--color-rabbit-bg) !important; border-left: 4px solid var(--color-rabbit) !important; }
 table.dataTable tbody tr[data-tier="mouse"]    { background-color: var(--color-mouse-bg) !important; border-left: 4px solid var(--color-mouse) !important; }
 table.dataTable tbody tr[data-tier="squirrel"] { background-color: var(--color-squirrel-bg) !important; border-left: 4px solid var(--color-squirrel) !important; }
+table.dataTable tbody tr[data-tier="stag"] { background-color: var(--color-stag-bg) !important; border-left: 4px solid var(--color-stag) !important; }
 
 /* Text color for the 4th column (Elo) based on tier */
 tr[data-tier="bird"] td:nth-child(4)     { color: var(--color-bird) !important; }
@@ -863,142 +1033,400 @@ tr[data-tier="fox"] td:nth-child(4)      { color: var(--color-fox) !important; }
 tr[data-tier="rabbit"] td:nth-child(4)   { color: var(--color-rabbit) !important; }
 tr[data-tier="mouse"] td:nth-child(4)    { color: var(--color-mouse) !important; }
 tr[data-tier="squirrel"] td:nth-child(4) { color: var(--color-squirrel) !important; }
+tr[data-tier="stag"] td:nth-child(4)     { color: var(--color-stag) !important; }
 
 /* =========================================================================
-   --- 12. HIDDEN CONTENT & SECRETS ---
+   --- 12. HIDDEN CONTENT: UNDERGROWTH ---
    ========================================================================= */
 
-/* --- 1. Text --- */
+/* --- 0. Secret Button --- */
+.secret-btn {
+    display: inline-block;
+    position: relative;
+    cursor: pointer;
+    text-decoration: none;
+    font-size: var(--size-sm);
+    font-weight: var(--medium);
+    text-transform: uppercase;
+    letter-spacing: var(--track-wide);
+    color: var(--text-muted);
+    padding: 6px 14px;
+    border-radius: 4px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-soft);
+    transition: 0.2s;
+}
+
+.secret-btn:hover {
+    color: var(--main-color);
+    background: var(--bg-hover);
+    border-color: var(--main-color);
+}
+
+.secret-btn:hover .tooltip-text,
+.secret-btn.expanded .tooltip-text {
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+.secret-btn .tooltip-text {
+    position: absolute;
+    top: 90%;
+	bottom: auto;
+    text-transform: none;
+    letter-spacing: normal;
+}
+
+/* --- 1. Exit Door --- */
+.exit-door {
+	margin-top: 40px;
+	margin-bottom: 20px;
+}
+
+#leave-secrets,
+body.ciphers-found:not(.warden-found) #leave-secrets {
+    display: none;
+}
+
+body.watcher-found #leave-secrets {
+    display: inline-block;
+}
+
+/* --- 2. Watcher & Warden Secret --- */
+.enigma {
+    text-align: center !important;
+}
+
+.enigma-green {
+    margin-top: 0 !important;
+}
+
+.enigma span { display: block !important; }
+
+body.watcher-found .enigma-green,
+body.warden-found .enigma-purple,
+.enigma-purple {
+    display: none;
+}
+
+body.ciphers-found:not(.warden-found) .enigma-purple {
+    display: block;
+}
+
 body[data-page="cache"] .page-intro, 
-body[data-page="cache"] .artist-story {
+body .artist-story-green,
+body .artist-story-purple {
     display: none;
     opacity: 0;
     transform: translateY(20px);
     transition: all 1s ease;
 }
 
-body[data-page="cache"].show-deco .page-intro, 
-body[data-page="cache"].show-deco .artist-story {
-    display: revert;
+body[data-page="cache"].watcher-found .page-intro, 
+body.watcher-found:not(.ciphers-found) .artist-story-green,
+body.warden-found .artist-story-purple {
+    display: block;
     opacity: 1;
     transform: translateY(0);
 }
 
-/* --- 2. Images --- */
 body[data-page="cache"] .screen-deco img {
     opacity: 0;
     pointer-events: none;
     transition: all 1s ease;
 }
 
-body[data-page="cache"].show-deco .screen-deco img {
+body[data-page="cache"].watcher-found .right-deco img,
+body[data-page="cache"].warden-found .left-deco img {
     opacity: 1;
     pointer-events: auto;
 }
 
-/* --- 3. Enigma --- */
-.enigma {
-    margin-top: 0 !important;
-    text-align: center !important;
-}
-
-.enigma span { display: block !important; }
-
-body[data-page="cache"].show-deco .enigma {
-    display: none;
-}
-
-/* --- 4. App gap --- */
 body[data-page="cache"] .screen-deco {
     height: 0;
+	overflow: hidden;
     transition: height 0.5s ease;
 }
 
-body[data-page="cache"].show-deco .screen-deco {
+body[data-page="cache"].watcher-found .right-deco,
+body[data-page="cache"].warden-found .left-deco {
     height: 200px;
+	overflow: visible;
+}
+
+body.watcher-found .footer-credits a.cl {
+    pointer-events: none !important;
+    cursor: default !important;
+    border-bottom: none !important;
+}
+
+body.watcher-found .footer-credits a.cl:hover {
+    color: var(--text-main) !important;
+    border-bottom: none !important;
 }
 
 @media (min-width: 1300px) {
-body[data-page="cache"].show-deco .screen-deco { 
+body[data-page="cache"].watcher-found .screen-deco { 
         height: 100vh; 
     }
 }
 
-body[data-page="cache"] .app-footer {
-    margin-top: 30vh ; 
+.nav-secret {
+    display: none;
 }
 
-body[data-page="cache"].show-deco .app-footer {
-    margin-top: 40px ; 
+body.watcher-found .nav-secret {
+    display: inline-block;
 }
 
-/* --- 5. Nut interaction --- */
-.tier-interaction-wrapper {
+/* --- 3. Fruits Styles --- */
+.fruit-interaction-wrapper {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 40px 0;
     width: 100%;
+    box-sizing: border-box;
+	padding-bottom: 30px;
 }
 
-.nut-trigger {
+.fruit-trigger {
     position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
     text-decoration: none;
     cursor: pointer;
-    transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    -webkit-tap-highlight-color: transparent;
+    transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), 
+                padding 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.nut-sprite {
-    width: clamp(90px, 12vw, 130px);
+.fruit-sprite {
+    width: 130px;
     height: auto;
     filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.5));
-	margin-top: 40px;
-    margin-bottom: 80px;
-    transition: filter 0.4s ease;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.4s ease;
+    backface-visibility: hidden;
+    perspective: 1000px;
+    transform: translateZ(0); 
+    will-change: transform, filter;
 }
 
-.nut-tooltip {
-    position: absolute;
-    background: var(--bg-container);
-    border: 1px solid var(--border-soft);
-    color: var(--main-color);
-	font-weight: var(--medium);
-    padding: 6px 12px;
-    border-radius: 6px;
-    font-size: var(--size-xs);
-    white-space: nowrap;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-    z-index: 100;
-    bottom: auto;
-    top: 40%; 
+.fruit-tooltip {
+    top: 45%;
+	bottom: auto;
     left: 50%;
-    opacity: 0;
-    pointer-events: none;
     transform: translate(-50%, -50%) scale(0.4);
-    transition: all 0.3s ease;
 }
 
-/* --- HOVER STATES --- */
-
-.nut-trigger:hover {
-    transform: scale(1.6);
+@media (hover: hover) and (pointer: fine) {
+    .fruit-trigger:hover {
+        transform: scale(1.6);
+        padding-top: 40px;
+        padding-bottom: 80px;
+    }
+	
+    .fruit-trigger:hover .fruit-sprite {
+        filter: drop-shadow(0 20px 25px rgba(0, 0, 0, 0.6));
+    }
+	
+    .fruit-trigger:hover .fruit-tooltip {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(0.65);
+    }
 }
 
-.nut-trigger:hover .nut-sprite {
-    filter: drop-shadow(0 25px 40px rgba(0, 0, 0, 0.7));
+@media (min-width: 769px) {
+    .fruit-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+		flex-direction: row;
+        gap: 0;
+        width: 100%;
+    }
+
+    #berry-section, #nut-section {
+		width: 50%;
+        max-width: 50%;
+		margin-left: 0;
+        margin-right: 0;
+    }
 }
 
-.nut-trigger:hover .nut-tooltip {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(0.65);
+@media (max-width: 768px) {
+	
+	.fruit-trigger.expanded {
+        transform: scale(1.6) translateY(10px); 
+        z-index: 50;
+    }
+	
+	.fruit-trigger.expanded .fruit-sprite {
+        filter: drop-shadow(0 15px 20px rgba(0, 0, 0, 0.5));
+    }
+
+	
+	.fruit-trigger.expanded .fruit-tooltip {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(0.65);
+    }
+
+    .fruit-trigger:active {
+        transform: scale(1.4);
+    }
 }
 
-.nut-trigger:active {
-    transform: scale(1.45);
-    transition: transform 0.1s;
+/* --- 3b. Fruits Specific --- */
+
+#nut-section h2,
+#nut-section .fruit-tooltip {
+        color: var(--color-squirrel);
+}
+
+body.nut-found #nut-secret:active .fruit-sprite {
+    transform: rotate(-120deg);
+}
+
+#berry-section h2,
+#berry-section .fruit-tooltip {
+        color: var(--color-stag);
+}
+
+body.berry-found #berry-secret:active .fruit-sprite {
+    transform: scale(1.2, 0.75);
+}
+
+/* --- 4. Fruits Secrets --- */
+#nut-section,
+#berry-section {
+    display: none;
+}
+
+body.nut-found #nut-section,
+body.berry-found #berry-section,
+body.ciphers-found #berry-section {
+    display: block;
+}
+
+.banner-icons a.tooltip-link.banner-icon-squirrel,
+.banner-icons a.tooltip-link.banner-icon-stag { 
+    display: none; 
+}
+
+body.nut-found .banner-icons a.tooltip-link.banner-icon-squirrel {
+    display: inline-block;
+}
+
+body.berry-found .banner-icons a.tooltip-link.banner-icon-stag {
+    display: inline-block;
+}
+
+/* --- 5. Ciphers --- */
+.cipher {
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.cipher:hover:not(.active-cipher) {
+    font-weight: var(--bold);
+	color: var(--color-squirrel);
+}
+
+.cipher.active-cipher {
+	font-weight: var(--bold);
+	font-size: var(--size-md);
+	letter-spacing: var(--track-wide);
+    color: var(--color-stag);
+}
+
+@keyframes cipher-reject {
+    0%, 100% { opacity: 1; }
+    25%, 75% { opacity: 0; }
+    50% { opacity: 1; }
+}
+
+.cipher-blink {
+    animation: cipher-reject 0.5s ease-in-out;
+    color: var(--color-squirrel) !important;
+}
+
+body.ciphers-found .cipher {
+    cursor: default;
+    pointer-events: none;
+	font-weight: inherit;
+    font-size: inherit;
+    letter-spacing: inherit;
+    color: inherit;
+}
+
+/* --- 6. Mystic Gate --- */
+#mystic-gate {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: var(--bg-container);
+    z-index: 1000;
+    display: none;
+    pointer-events: none;
+}
+
+body[data-page="cache"].ciphers-found {
+    --main-color: var(--color-stag);
+}
+
+/* --- 7. Final Button --- */
+#hof-access {
+    display: none;
+    cursor: help;
+}
+
+body.watcher-found #hof-access {
+    display: inline-block;
+}
+
+body.secrets-ended #hof-access {
+    cursor: pointer;
+    color: var(--main-color);
+    border-color: var(--main-color);
+}
+
+#hof-access:hover {
+    color: var(--text-muted);
+    background: var(--bg-surface);
+    border-color: var(--border-soft);
+}
+
+body.secrets-ended #hof-access:hover {
+    background: var(--bg-hover);
+}
+
+body.secrets-ended #hof-access .tooltip-text,
+body.hof-unlocked #hof-access {
+    display: none !important;
+}
+
+/* --- 8. Hall of Fame Reveal --- */
+.hof-section {
+    display: none;
+}
+
+body.hof-unlocked .hof-section {
+    display: block;
+    animation: reveal-hof 1.2s ease-out forwards;
+}
+
+
+@keyframes reveal-hof {
+    0% {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 {% block extra_css %}{% endblock %}

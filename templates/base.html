@@ -61,7 +61,11 @@
 		
             <div class="banner-container">
                 <div class="banner-icons left">
-                    <a href="javascript:void(0)" onclick="openTierModal('bird')" class="tooltip-link js-double-tap">
+                    <a href="javascript:void(0)" onclick="openTierModal('stag')" class="tooltip-link js-double-tap banner-icon-stag">
+                        <img src="{{ config.assets.icons.stag }}" alt="Stag">
+                        <span class="tooltip-text"><strong class="tier-stag">Stag (1600+)</strong> — The Legend</span>
+                    </a>
+					<a href="javascript:void(0)" onclick="openTierModal('bird')" class="tooltip-link js-double-tap">
                         <img src="{{ config.assets.icons.bird }}" alt="Bird">
                         <span class="tooltip-text"><strong class="tier-bird">Bird (1500+)</strong> — The Grandmasters</span>
                     </a>
@@ -83,6 +87,10 @@
                         <img src="{{ config.assets.icons.mouse }}" alt="Mouse">
                         <span class="tooltip-text"><strong class="tier-mouse">Mouse (1200+)</strong> — The Steady Foragers</span>
                     </a>
+					<a href="javascript:void(0)" onclick="openTierModal('squirrel')" class="tooltip-link js-double-tap banner-icon-squirrel">
+                        <img src="{{ config.assets.icons.squirrel }}" alt="Squirrel">
+                        <span class="tooltip-text"><strong class="tier-squirrel">Squirrel (&lt; 1200)</strong> — The Hapless Stragglers</span>
+                    </a>
                 </div>
             </div>
             
@@ -90,9 +98,6 @@
 
             <nav>
 				{% set nav_links = [('index', 'Leaderboard'), ('matches', 'Top Tables'), ('trends', "Player's Journey"), ('about', 'Codex')] %}
-				{% if page_id == 'cache' %}
-					{% set nav_links = nav_links + [('cache', 'Undergrowth')] %}
-				{% endif %}
 
 				{% for base, label in nav_links %}
 					{% if is_archive and base in ['index', 'matches', 'trends'] %}
@@ -102,6 +107,7 @@
 					{% endif %}
 					<a href="{{ target }}" class="{{ 'active' if page_id == base else '' }}">{{ label }}</a>
 				{% endfor %}
+				<a href="cache.html" class="nav-secret {{ 'active' if page_id == 'cache' else '' }}">Undergrowth</a>
 			</nav>
 			
         </header>
@@ -157,35 +163,37 @@
     
     <div id="tierModal" class="modal-overlay">
 		<div class="modal-content window-box">
-		<button class="modal-close" aria-label="Close">&times;</button>
-		<div id="modalBody">
-			<div class="modal-image-side">
-				<img id="modalIcon" src="" alt="Tier Icon">
-			</div>
-			
-			<div class="modal-text-side">
-				<div class="title-row">
-					<h2 id="modalTitle"></h2>
-					<h3 id="modalElo"></h3>
+			<button class="modal-close" aria-label="Close">&times;</button>
+			<div id="modalBody">
+				<div class="modal-image-side">
+					<img id="modalIcon" src="" alt="Tier Icon">
 				</div>
-				<div id="modalSubtitle"></div>
-				<div class="modal-divider"></div>
-				<div id="modalText"></div>
+				
+				<div class="modal-text-side">
+					<div class="title-row">
+						<h2 id="modalTitle"></h2>
+						<h3 id="modalElo"></h3>
+					</div>
+					<div id="modalSubtitle"></div>
+					<div class="modal-divider"></div>
+					<div id="modalText"></div>
+				</div>
 			</div>
 		</div>
 	</div>
-	</div>
+	
+	<div id="mystic-gate"></div>
 
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-	
 	<script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
     
     <script>
 		const CONFIG = {
 			colors: {{ config.colors.tiers|tojson }},
 			icons: {{ config.assets.icons|tojson }},
-			currentTier: "{{ current_tier }}"
+			currentTier: "{{ current_tier }}",
+			chartData: {{ history_json | safe if history_json is defined else '{}' }}
 		};
 	</script>
 		

@@ -16,7 +16,7 @@
 			<tr>
 				<td>{{ m.rank }}</td>
 				<td>{{ m.elo_sum }}</td>
-				<td>{{ m.date }}</td>
+				<td>{{ m.date | smart_date }}</td>
 				<td class="lineup-cell">
 					<span class="winner-name">{{ m.winner }}</span>, 
 					<span class="others-names">{{ m.others }}</span>
@@ -30,29 +30,4 @@
 			{% endfor %}
 		</tbody>
     </table>
-{% endblock %}
-
-{% block custom_js %}
-<script>
-$(document).ready(function() {
-    $('#matchesTable').DataTable({
-        "order": [[1, "desc"]], 
-        "responsive": true,
-        "pageLength": 25,
-        "columnDefs": [
-            { "className": "lineup-cell", "targets": 3 },
-            { "className": "elo-sum-cell", "targets": 1 },
-            
-            /* Responsive Priorities */
-            { "responsivePriority": 1, "targets": [0, 3] }, // Rank & Lineup stay
-            { "responsivePriority": 2, "targets": 1 },      // Elo stays if possible
-            { "responsivePriority": 3, "targets": 2 },      // Date is hidden first
-            { "responsivePriority": 4, "targets": 4 }       // ID is hidden first
-        ],
-        "language": {
-        "searchPlaceholder": "Player name, Game ID..."
-        }
-    });
-});
-</script>
 {% endblock %}

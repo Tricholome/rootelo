@@ -1,32 +1,160 @@
+{% set tier_titles = {
+    'stag': 'Sacred Stag',
+    'bird': 'Brilliant Birds',
+    'fox': 'Fearless Foxes',
+    'rabbit': 'Radiant Rabbits',
+    'mouse': 'Mighty Mice',
+	'squirrel': 'Scattered Squirrels'
+} %}
+
 {% extends "base.html" %}
 
 {% block content %}
 
 <div class="codex-section">
 
-	<p class="enigma">
+	<div class="entry-door">
+		<a href="javascript:void(0)" id="hof-access" class="secret-btn">
+			Reveal what is hidden
+			<span class="tooltip-text">This is not all... keep looking around.</span>
+		</a>
+	</div>
+	
+	<div class="hof-section">
+		
+		<table id="hall_of_fame" class="display nowrap responsive">
+			<thead>
+				<tr>
+					<th>Rank</th>
+					<th>Player</th>
+					<th>Longest Run</th>
+					<th>Peak Elo</th>
+					<th>Active Timeframe</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for s in hall_of_fame if not s.is_visitor %}
+					{% if s.is_section %}
+						<tr class="tier-header-row">
+							<td>
+								<a href="javascript:void(0)" onclick="handleTierClick(event, '{{ s.tier }}')" class="tier-anchor-link">
+									<div class="tier-icon-container">
+										<img src="{{ config.assets.icons[s.tier] }}" alt="{{ s.tier }}">
+									</div>
+								</a>
+							</td>
+							<td>
+								{% set words = tier_titles[s.tier].split(' ') %}
+								<span class="hide-mobile">{{ words[0] }}</span> {{ words[1] }}
+							</td>
+							<td><span class="hide-mobile">Longest</span> Run</td>
+							<td>Peak <span class="hide-mobile">Elo</span></td>
+							<td>Active Timeframe</td>
+						</tr>
+					{% else %}
+						<tr data-tier="{{ s.tier }}">				
+							<td>{{ s.rank_display }}</td>
+							<td>{{ s.player }}</td>
+							<td>{{ s.streak_count }}</td>
+							<td>{{ s.peak }}</td>
+							<td>{{ s.start_date | smart_date(s.end_date) }}</td>
+						</tr>
+					{% endif %}
+				{% endfor %}
+			</tbody>
+		</table>
+
+		<table id="visitor_table" class="display">
+			<thead>
+				<tr>
+					<th>
+						<a href="javascript:void(0)" onclick="handleTierClick(event, 'squirrel')" class="tier-anchor-link">
+							<div class="tier-icon-container">
+								<img src="{{ config.assets.icons['squirrel'] }}" alt="squirrel">
+							</div>
+						</a>
+					</th>
+					<th>
+						{% set words = tier_titles['squirrel'].split(' ') %}
+						<span class="hide-mobile">{{ words[0] }}</span> {{ words[1] }}
+					</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr data-tier="squirrel">
+					<td></td>
+					<td class="visitor-cell">
+						<span class="visitor-name"></span> reached this place and uncovered its secrets on <span class="visitor-date"></span>.
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		
+		<div id="visitor-recognition">
+			<button id="btn-engrave" class="secret-btn">Engrave your presence here?</button>
+			
+			<div id="input-zone"> <input type="text" id="visitor-name" placeholder="Your name..." maxlength="20">
+				<button id="btn-confirm" class="secret-btn">Confirm</button>
+			</div>
+		</div>
+		
+	</div>
+	
+	<p class="enigma enigma-green">
 		<span>What is this place?</span>
 		<span>Step into the shade.</span>
 		<span>Look beneath the leaves.</span>
-		<a class="cl" href="javascript:void(0)" id="deco-toggle">Seek the silent watcher.</a>
+		<a class="cl" href="javascript:void(0)" id="watcher-secret">Seek the silent watcher.</a>
 	</p>
 	
-    <div class="artist-story">
-        <h2>The Silent Chronicler</h2>
-        <p>Here, where the roots run deep and the wild grows dense, <strong>𝕩𝕝𝕦𝕖𝕧𝕚</strong> sits hidden in the green. With a prolific brush and a warm smile, he captures the flutter of every wing and the twitch of every whisker. He breathes life into the spirit of the Woodland, celebrating its teeming diversity with every stroke.</p>
-		<p>A quiet reminder that beyond the league's grand stakes, no critter is too small to be seen!</p>
+    <div class="artist-story-green">
+        <h2>The <span class="cipher" data-word="silent">Silent</span> Chronicler</h2>
+        <p>Here, where <span class="cipher" data-word="roots">roots</span> run deep and the wild grows dense, <strong>𝕩𝕝𝕦𝕖𝕧𝕚</strong> sits hidden in the green. He captures <span class="cipher" data-word="every">every</span> fluttering wing and <span class="cipher" data-word="every">every</span> twitching whisker. He breathes life into the Woodland’s teeming diversity with <span class="cipher" data-word="every">every</span> stroke. It is a quiet call to <span class="cipher" data-word="remember">remember</span>: beyond the League’s grand stakes, nothing small goes unseen.</p>
     </div>
 	
-	<div id="nut-section" style="display: none;">
-		<h2>The Secret Nut</h2>
-		<p>No rank? No stress. We haven't forgotten you!</p>
-		<div class="tier-interaction-wrapper">
-			<a href="javascript:void(0)" onclick="openTierModal('squirrel')" class="nut-trigger js-double-tap">
-				<span class="nut-tooltip">Crack it!</span>
-				<img src="assets/images/nut.webp" alt="Giant Nut" class="nut-sprite">
-			</a>
+	<div class="fruit-container">
+		<div id="berry-section">
+			<h2>The Mystic Berry</h2>
+			<p>Some secrets are juicier than others.<br>Can you feel the pulse?</p>
+			<div class="fruit-interaction-wrapper">
+				<a href="javascript:void(0)" id="berry-secret" onclick="openTierModal('stag')" class="fruit-trigger js-double-tap">
+					<span class="tooltip-text fruit-tooltip">Squish it!</span>
+					<img src="assets/images/berry.webp" alt="Berry" class="fruit-sprite">
+				</a>
+			</div>
+		</div>
+	
+		<div id="nut-section">
+			<h2>The Special Nut</h2>
+			<p>No rank? No stress. Take it easy.<br>We haven't forgotten you!</p>
+			<div class="fruit-interaction-wrapper">
+				<a href="javascript:void(0)" id="nut-secret" onclick="openTierModal('squirrel')" class="fruit-trigger js-double-tap">
+					<span class="tooltip-text fruit-tooltip">Crack it!</span>
+					<img src="assets/images/nut.webp" alt="Nut" class="fruit-sprite">
+				</a>
+			</div>
 		</div>
 	</div>
+	
+	<p class="enigma enigma-purple">
+		<span>What is this place?</span>
+		<span>Walk into the dusk.</span>
+		<span>Tread upon the heath.</span>
+		<a class="cl" href="javascript:void(0)" id="warden-secret">Meet the faithful warden.</a>
+	</p>
+	
+	<div class="artist-story-purple">
+        <h2>The Faithful Archivist</h2>
+        <p>Here, where the mist hangs thin and light turns to velvet, <strong>Tʀɪᴄʜᴏʟᴏᴍᴇ</strong> lingers beneath the purple bloom. Every feat, every triumph, every half-remembered tale is carefully preserved. It is a lasting vow to celebrate: beyond the League’s vain stir, nothing great is ever truly lost.</p>
+    </div>
+		
+	<div class="exit-door">	
+		<a href="javascript:void(0)" id="leave-secrets" class="secret-btn js-double-tap">
+			Leave and forget this place
+			<span class="tooltip-text">Return to the simple order of the Woodland.</span>
+		</a>
+	</div>
+	
 	
 </div>
 
