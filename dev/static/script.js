@@ -572,6 +572,12 @@ document.addEventListener('DOMContentLoaded', () => {
             body.classList.add('warden-found');
             localStorage.setItem('warden-found', 'true');
             checkFinalCompletion();
+            requestAnimationFrame(() => {
+                window.scrollTo({
+                    top: document.body.scrollHeight,
+                    behavior: 'smooth'
+                });
+            });
         });
     }
 	
