@@ -528,6 +528,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.cipher').forEach(el => {
         el.addEventListener('click', () => {
             const isAlreadySolved = body.classList.contains('ciphers-found');
+            
             if (isAlreadySolved || isResetting) return;
 
             el.classList.add('active-cipher');
@@ -537,14 +538,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 userProgress.push(word);
 
                 if (userProgress.length === secretSequence.length) {
-					triggerMysticTransition(() => {
-						body.classList.add('ciphers-found');
-						localStorage.setItem('ciphers-found', 'true');
-						updateMysticUI();
-						checkFinalCompletion();
-					});
-				}
+                    triggerMysticTransition(() => {
+                        body.classList.add('ciphers-found');
+                        localStorage.setItem('ciphers-found', 'true');
+                        updateMysticUI();
+                        checkFinalCompletion();
+                    });
+                }
             } else {
+                isResetting = true; 
+
                 setTimeout(() => {
                     document.querySelectorAll('.cipher').forEach(c => {
                         if (c.classList.contains('active-cipher')) c.classList.add('cipher-blink');
@@ -555,6 +558,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         document.querySelectorAll('.cipher').forEach(c => {
                             c.classList.remove('active-cipher', 'cipher-blink');
                         });
+                        isResetting = false; 
                     }, 500);
                 }, 800);
             }
