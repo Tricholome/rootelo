@@ -1151,7 +1151,7 @@ body[data-page="cache"] .screen-deco {
     transition: height 0.5s ease;
 }
 
-body[data-page="cache"].watcher-found .screen-deco {
+body[data-page="cache"].watcher-found .right-deco {
     height: 200px;
 	overflow: visible;
 }
