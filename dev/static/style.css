@@ -1123,16 +1123,11 @@ body .artist-story-purple {
 }
 
 body[data-page="cache"].watcher-found .page-intro, 
-body.watcher-found .artist-story-green,
+body.watcher-found:not(.ciphers-found) .artist-story-green,
 body.warden-found .artist-story-purple {
     display: block;
     opacity: 1;
     transform: translateY(0);
-}
-
-body.ciphers-found .artist-story-green h2 {
-	color: var(--color-squirrel) !important;
-	text-align: right !important;
 }
 
 body[data-page="cache"] .screen-deco img {
