@@ -1328,7 +1328,10 @@ body.berry-found .banner-icons a.tooltip-link.banner-icon-stag {
 }
 
 .cipher:hover:not(.active-cipher) {
-    color: var(--color-squirrel);
+    font-weight: var(--bold);
+	font-size: var(--size-md);
+	letter-spacing: var(--track-wide);
+	color: var(--color-squirrel);
 }
 
 .cipher.active-cipher {
@@ -1356,10 +1359,6 @@ body.ciphers-found .cipher {
     font-size: inherit;
     letter-spacing: inherit;
     color: inherit;
-}
-
-body[data-page="cache"].ciphers-found .page-intro p:hover {
-    color: var(--color-squirrel);
 }
 
 /* --- 6. Mystic Gate --- */
