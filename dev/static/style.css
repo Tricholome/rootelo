@@ -1083,8 +1083,7 @@ tr[data-tier="stag"] td:nth-child(4)     { color: var(--color-stag) !important; 
 	margin-bottom: 20px;
 }
 
-#leave-secrets,
-body.ciphers-found:not(.warden-found) #leave-secrets {
+#leave-secrets {
     display: none;
 }
 
@@ -1301,7 +1300,7 @@ body.berry-found #berry-secret:active .fruit-sprite {
 
 body.nut-found #nut-section,
 body.berry-found #berry-section,
-body.warden-found #berry-section {
+body.ciphers-found #berry-section {
     display: block;
 }
 
