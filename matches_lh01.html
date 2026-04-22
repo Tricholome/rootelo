@@ -34,6 +34,8 @@
 			
 			--font-mono: 'JetBrains Mono', monospace;
 			
+			--font-hand: 'Segoe Print', 'Bradley Hand', 'Apple Chancery', 'Comic Sans MS', cursive;
+			
 			--bold: 900;
 			
 			--medium: 600;
@@ -123,6 +125,9 @@
 			--color-squirrel: #94C160;
 			--color-squirrel-bg: #94C16014;
 			
+			--color-stag: #C686FF;
+			--color-stag-bg: #C686FF14;
+			
 			--color-default: #7A7347;
 			--color-default-bg: #7A734714;
 			
@@ -150,7 +155,11 @@
 		
             <div class="banner-container">
                 <div class="banner-icons left">
-                    <a href="javascript:void(0)" onclick="openTierModal('bird')" class="tooltip-link js-double-tap">
+                    <a href="javascript:void(0)" onclick="openTierModal('stag')" class="tooltip-link js-double-tap banner-icon-stag">
+                        <img src="assets/icons/stag.webp" alt="Stag">
+                        <span class="tooltip-text"><strong class="tier-stag">Stag (1600+)</strong> — The Legend</span>
+                    </a>
+					<a href="javascript:void(0)" onclick="openTierModal('bird')" class="tooltip-link js-double-tap">
                         <img src="assets/icons/bird_new.webp" alt="Bird">
                         <span class="tooltip-text"><strong class="tier-bird">Bird (1500+)</strong> — The Grandmasters</span>
                     </a>
@@ -172,13 +181,16 @@
                         <img src="assets/icons/mouse_new.webp" alt="Mouse">
                         <span class="tooltip-text"><strong class="tier-mouse">Mouse (1200+)</strong> — The Steady Foragers</span>
                     </a>
+					<a href="javascript:void(0)" onclick="openTierModal('squirrel')" class="tooltip-link js-double-tap banner-icon-squirrel">
+                        <img src="assets/icons/squirrel.webp" alt="Squirrel">
+                        <span class="tooltip-text"><strong class="tier-squirrel">Squirrel (&lt; 1200)</strong> — The Hapless Stragglers</span>
+                    </a>
                 </div>
             </div>
             
             <div class="nav-separator"></div>
 
             <nav>
-				
 				
 
 				
@@ -202,6 +214,7 @@
 					
 					<a href="about.html" class="">Codex</a>
 				
+				<a href="cache.html" class="nav-secret ">Undergrowth</a>
 			</nav>
 			
         </header>
@@ -250,7 +263,7 @@
 			<tr>
 				<td>1</td>
 				<td>5671</td>
-				<td>2026-03-03</td>
+				<td>Mar 03, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">ShuShuBana</span>, 
 					<span class="others-names">kayajam, Led_Slash, Schkitz</span>
@@ -265,7 +278,7 @@
 			<tr>
 				<td>2</td>
 				<td>5520</td>
-				<td>2026-03-15</td>
+				<td>Mar 15, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">Led_Slash</span>, 
 					<span class="others-names">Tricholome, KFull, matemato</span>
@@ -280,7 +293,7 @@
 			<tr>
 				<td>3</td>
 				<td>5500</td>
-				<td>2026-02-09</td>
+				<td>Feb 09, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">ShuShuBana</span>, 
 					<span class="others-names">ImJustExisting, Silver, KFull</span>
@@ -295,7 +308,7 @@
 			<tr>
 				<td>4</td>
 				<td>5489</td>
-				<td>2026-02-15</td>
+				<td>Feb 15, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">kayajam</span>, 
 					<span class="others-names">Led_Slash, ShuShuBana, cliuless</span>
@@ -310,7 +323,7 @@
 			<tr>
 				<td>5</td>
 				<td>5487</td>
-				<td>2026-03-23</td>
+				<td>Mar 23, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">Led_Slash</span>, 
 					<span class="others-names">BMPerJMPer, Tad604, Mouseman</span>
@@ -325,7 +338,7 @@
 			<tr>
 				<td>6</td>
 				<td>5482</td>
-				<td>2026-03-08</td>
+				<td>Mar 08, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">TurkeyNoNo</span>, 
 					<span class="others-names">Led_Slash, Tad604, Mouseman</span>
@@ -340,7 +353,7 @@
 			<tr>
 				<td>7</td>
 				<td>5471</td>
-				<td>2026-03-25</td>
+				<td>Mar 25, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">Mossfusion</span>, 
 					<span class="others-names">DarthPuniceus, Rabbitwarlord, Ctfox</span>
@@ -355,7 +368,7 @@
 			<tr>
 				<td>8</td>
 				<td>5450</td>
-				<td>2026-02-26</td>
+				<td>Feb 26, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">FavorOfTheRabbits</span>, 
 					<span class="others-names">DanzigMF, Led_Slash, KFull</span>
@@ -370,7 +383,7 @@
 			<tr>
 				<td>9</td>
 				<td>5434</td>
-				<td>2026-03-18</td>
+				<td>Mar 18, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">DarthPuniceus</span>, 
 					<span class="others-names">TonyDeloreanESQ, Ctfox, Led_Slash</span>
@@ -385,7 +398,7 @@
 			<tr>
 				<td>10</td>
 				<td>5426</td>
-				<td>2026-02-22</td>
+				<td>Feb 22, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">Led_Slash</span>, 
 					<span class="others-names">Xar149, Cookies, Lokfok</span>
@@ -400,7 +413,7 @@
 			<tr>
 				<td>11</td>
 				<td>5424</td>
-				<td>2026-03-31</td>
+				<td>Mar 31, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">Seiza</span>, 
 					<span class="others-names">Nefkano, Kmahussier, RootiredRooter</span>
@@ -415,7 +428,7 @@
 			<tr>
 				<td>12</td>
 				<td>5412</td>
-				<td>2026-03-06</td>
+				<td>Mar 06, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">Bapgo</span>, 
 					<span class="others-names">Pandapapst, ShuShuBana, Tricholome</span>
@@ -430,7 +443,7 @@
 			<tr>
 				<td>13</td>
 				<td>5411</td>
-				<td>2026-03-09</td>
+				<td>Mar 09, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">cliuless</span>, 
 					<span class="others-names">LucianTheFak, TurkeyNoNo, Led_Slash</span>
@@ -445,7 +458,7 @@
 			<tr>
 				<td>14</td>
 				<td>5411</td>
-				<td>2026-01-31</td>
+				<td>Jan 31, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">doejurko</span>, 
 					<span class="others-names">ShuShuBana, Schkitz, Klishu</span>
@@ -460,7 +473,7 @@
 			<tr>
 				<td>15</td>
 				<td>5411</td>
-				<td>2026-03-06</td>
+				<td>Mar 06, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">Bitto</span>, 
 					<span class="others-names">Led_Slash, Tricholome, AERotters</span>
@@ -475,7 +488,7 @@
 			<tr>
 				<td>16</td>
 				<td>5408</td>
-				<td>2026-01-28</td>
+				<td>Jan 28, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">KFull</span>, 
 					<span class="others-names">Tricholome, ShuShuBana, 1coolguy</span>
@@ -490,7 +503,7 @@
 			<tr>
 				<td>17</td>
 				<td>5405</td>
-				<td>2026-03-09</td>
+				<td>Mar 09, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">cliuless</span>, 
 					<span class="others-names">Nefkano, Tricholome, Antiproject</span>
@@ -505,7 +518,7 @@
 			<tr>
 				<td>18</td>
 				<td>5401</td>
-				<td>2026-02-06</td>
+				<td>Feb 06, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">TurkeyNoNo, KFull</span>, 
 					<span class="others-names">BMPerJMPer, dindane</span>
@@ -520,7 +533,7 @@
 			<tr>
 				<td>19</td>
 				<td>5401</td>
-				<td>2026-01-20</td>
+				<td>Jan 20, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">Killerstorm17</span>, 
 					<span class="others-names">MangoBlade11, Led_Slash, Tolfan</span>
@@ -535,7 +548,7 @@
 			<tr>
 				<td>20</td>
 				<td>5397</td>
-				<td>2026-03-19</td>
+				<td>Mar 19, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">Mossfusion</span>, 
 					<span class="others-names">Pliskin, pooge, Led_Slash</span>
@@ -550,7 +563,7 @@
 			<tr>
 				<td>21</td>
 				<td>5395</td>
-				<td>2026-01-29</td>
+				<td>Jan 29, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">cliuless</span>, 
 					<span class="others-names">kayajam, Pandapapst, ShuShuBana</span>
@@ -565,7 +578,7 @@
 			<tr>
 				<td>22</td>
 				<td>5387</td>
-				<td>2026-03-24</td>
+				<td>Mar 24, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">cliuless</span>, 
 					<span class="others-names">tofuwater, TonyDeloreanESQ, Led_Slash</span>
@@ -580,7 +593,7 @@
 			<tr>
 				<td>23</td>
 				<td>5385</td>
-				<td>2026-03-23</td>
+				<td>Mar 23, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">NadtyLite</span>, 
 					<span class="others-names">Led_Slash, Kmahussier, Nefkano</span>
@@ -595,7 +608,7 @@
 			<tr>
 				<td>24</td>
 				<td>5382</td>
-				<td>2026-01-31</td>
+				<td>Jan 31, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">ShuShuBana</span>, 
 					<span class="others-names">Tricholome, Pandapapst, BMPerJMPer</span>
@@ -610,7 +623,7 @@
 			<tr>
 				<td>25</td>
 				<td>5379</td>
-				<td>2026-03-15</td>
+				<td>Mar 15, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">Tricholome</span>, 
 					<span class="others-names">Led_Slash, kayajam, Wriggleroom</span>
@@ -625,7 +638,7 @@
 			<tr>
 				<td>26</td>
 				<td>5349</td>
-				<td>2026-03-26</td>
+				<td>Mar 26, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">Dramsss</span>, 
 					<span class="others-names">KFull, Ctfox, Bitto</span>
@@ -640,7 +653,7 @@
 			<tr>
 				<td>27</td>
 				<td>5336</td>
-				<td>2026-02-18</td>
+				<td>Feb 18, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">Led_Slash</span>, 
 					<span class="others-names">Tricholome, tippop, Pandapapst</span>
@@ -655,7 +668,7 @@
 			<tr>
 				<td>28</td>
 				<td>5333</td>
-				<td>2026-03-14</td>
+				<td>Mar 14, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">DarthPuniceus</span>, 
 					<span class="others-names">Tad604, KFull, Tolfan</span>
@@ -670,7 +683,7 @@
 			<tr>
 				<td>29</td>
 				<td>5330</td>
-				<td>2026-02-18</td>
+				<td>Feb 18, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">kayajam</span>, 
 					<span class="others-names">Led_Slash, DarthOblivius, ShuShuBana</span>
@@ -685,7 +698,7 @@
 			<tr>
 				<td>30</td>
 				<td>5327</td>
-				<td>2026-03-02</td>
+				<td>Mar 02, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">ShuShuBana</span>, 
 					<span class="others-names">HobGungan, pooge, Bapgo</span>
@@ -700,7 +713,7 @@
 			<tr>
 				<td>31</td>
 				<td>5324</td>
-				<td>2026-02-10</td>
+				<td>Feb 10, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">KFull</span>, 
 					<span class="others-names">dindane, radiantchaos, Killerstorm17</span>
@@ -715,7 +728,7 @@
 			<tr>
 				<td>32</td>
 				<td>5320</td>
-				<td>2026-03-06</td>
+				<td>Mar 06, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">Led_Slash</span>, 
 					<span class="others-names">Excitedteapot, ShuShuBana, lumpyprol</span>
@@ -730,7 +743,7 @@
 			<tr>
 				<td>33</td>
 				<td>5312</td>
-				<td>2026-02-25</td>
+				<td>Feb 25, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">TurkeyNoNo</span>, 
 					<span class="others-names">ShuShuBana, cringelordirl, Tolfan</span>
@@ -745,7 +758,7 @@
 			<tr>
 				<td>34</td>
 				<td>5312</td>
-				<td>2026-02-01</td>
+				<td>Feb 01, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">ShuShuBana</span>, 
 					<span class="others-names">1coolguy, KFull, Klishu</span>
@@ -760,7 +773,7 @@
 			<tr>
 				<td>35</td>
 				<td>5311</td>
-				<td>2026-02-01</td>
+				<td>Feb 01, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">KFull</span>, 
 					<span class="others-names">HobGungan, ShuShuBana, ninjacat536</span>
@@ -775,7 +788,7 @@
 			<tr>
 				<td>36</td>
 				<td>5308</td>
-				<td>2026-02-27</td>
+				<td>Feb 27, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">cliuless</span>, 
 					<span class="others-names">Led_Slash, TurkeyNoNo, cringelordirl</span>
@@ -790,7 +803,7 @@
 			<tr>
 				<td>37</td>
 				<td>5307</td>
-				<td>2026-03-25</td>
+				<td>Mar 25, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">Seiza</span>, 
 					<span class="others-names">Led_Slash, cliuless, NadtyLite</span>
@@ -805,7 +818,7 @@
 			<tr>
 				<td>38</td>
 				<td>5306</td>
-				<td>2026-03-13</td>
+				<td>Mar 13, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">tofuwater</span>, 
 					<span class="others-names">Xar149, Tolfan, alevGO</span>
@@ -820,7 +833,7 @@
 			<tr>
 				<td>39</td>
 				<td>5300</td>
-				<td>2026-03-15</td>
+				<td>Mar 15, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">KFull</span>, 
 					<span class="others-names">Seiza, DarthPuniceus, TurkeyNoNo</span>
@@ -835,7 +848,7 @@
 			<tr>
 				<td>40</td>
 				<td>5300</td>
-				<td>2026-01-30</td>
+				<td>Jan 30, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">ShuShuBana</span>, 
 					<span class="others-names">Lobster, Pandapapst, Silver</span>
@@ -850,7 +863,7 @@
 			<tr>
 				<td>41</td>
 				<td>5298</td>
-				<td>2026-02-11</td>
+				<td>Feb 11, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">FavorOfTheRabbits</span>, 
 					<span class="others-names">Led_Slash, mouseinabox, ShuShuBana</span>
@@ -865,7 +878,7 @@
 			<tr>
 				<td>42</td>
 				<td>5297</td>
-				<td>2026-02-19</td>
+				<td>Feb 19, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">ChippZamoose</span>, 
 					<span class="others-names">DanzigMF, KFull, Led_Slash</span>
@@ -880,7 +893,7 @@
 			<tr>
 				<td>43</td>
 				<td>5296</td>
-				<td>2026-03-26</td>
+				<td>Mar 26, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">Nefkano</span>, 
 					<span class="others-names">Seiza, Dramsss, KFull</span>
@@ -895,7 +908,7 @@
 			<tr>
 				<td>44</td>
 				<td>5294</td>
-				<td>2026-03-19</td>
+				<td>Mar 19, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">TonyDeloreanESQ</span>, 
 					<span class="others-names">Ctfox, Led_Slash, deejaythink</span>
@@ -910,7 +923,7 @@
 			<tr>
 				<td>45</td>
 				<td>5287</td>
-				<td>2026-02-13</td>
+				<td>Feb 13, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">NadtyLite</span>, 
 					<span class="others-names">Led_Slash, Nefkano, TurkeyNoNo</span>
@@ -925,7 +938,7 @@
 			<tr>
 				<td>46</td>
 				<td>5282</td>
-				<td>2026-03-11</td>
+				<td>Mar 11, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">Nefkano</span>, 
 					<span class="others-names">KFull, Schkitz, NadtyLite</span>
@@ -940,7 +953,7 @@
 			<tr>
 				<td>47</td>
 				<td>5281</td>
-				<td>2026-02-03</td>
+				<td>Feb 03, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">Led_Slash</span>, 
 					<span class="others-names">Tad604, EmbryoticDeth, kayajam</span>
@@ -955,7 +968,7 @@
 			<tr>
 				<td>48</td>
 				<td>5279</td>
-				<td>2026-03-14</td>
+				<td>Mar 14, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">Kmahussier</span>, 
 					<span class="others-names">Led_Slash, Seiza, BMPerJMPer</span>
@@ -970,7 +983,7 @@
 			<tr>
 				<td>49</td>
 				<td>5276</td>
-				<td>2026-02-12</td>
+				<td>Feb 12, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">Antiproject</span>, 
 					<span class="others-names">secretpaths, tippop, Led_Slash</span>
@@ -985,7 +998,7 @@
 			<tr>
 				<td>50</td>
 				<td>5270</td>
-				<td>2026-02-19</td>
+				<td>Feb 19, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">Led_Slash</span>, 
 					<span class="others-names">Pandapapst, Nymmer, matemato</span>
@@ -1000,7 +1013,7 @@
 			<tr>
 				<td>51</td>
 				<td>5270</td>
-				<td>2026-03-11</td>
+				<td>Mar 11, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">Led_Slash</span>, 
 					<span class="others-names">Tricholome, BMPerJMPer, Seiza</span>
@@ -1015,7 +1028,7 @@
 			<tr>
 				<td>52</td>
 				<td>5268</td>
-				<td>2026-03-05</td>
+				<td>Mar 05, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">Nudraxon</span>, 
 					<span class="others-names">Led_Slash, AERotters, Rabbitwarlord</span>
@@ -1030,7 +1043,7 @@
 			<tr>
 				<td>53</td>
 				<td>5265</td>
-				<td>2026-02-18</td>
+				<td>Feb 18, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">ImJustExisting</span>, 
 					<span class="others-names">cringelordirl, Led_Slash, Nefkano</span>
@@ -1045,7 +1058,7 @@
 			<tr>
 				<td>54</td>
 				<td>5263</td>
-				<td>2026-03-12</td>
+				<td>Mar 12, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">Led_Slash</span>, 
 					<span class="others-names">Nymmer, cliuless, cringelordirl</span>
@@ -1060,7 +1073,7 @@
 			<tr>
 				<td>55</td>
 				<td>5263</td>
-				<td>2026-01-16</td>
+				<td>Jan 16, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">doejurko</span>, 
 					<span class="others-names">MrDrouf, DarthPuniceus, Led_Slash</span>
@@ -1075,7 +1088,7 @@
 			<tr>
 				<td>56</td>
 				<td>5262</td>
-				<td>2026-03-07</td>
+				<td>Mar 07, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">Led_Slash</span>, 
 					<span class="others-names">TheSillyBilly, Mouseman, Piechu</span>
@@ -1090,7 +1103,7 @@
 			<tr>
 				<td>57</td>
 				<td>5261</td>
-				<td>2026-03-08</td>
+				<td>Mar 08, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">Led_Slash</span>, 
 					<span class="others-names">Seiza, Mossfusion, pooge</span>
@@ -1105,7 +1118,7 @@
 			<tr>
 				<td>58</td>
 				<td>5260</td>
-				<td>2026-01-17</td>
+				<td>Jan 17, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">Led_Slash</span>, 
 					<span class="others-names">FakeSki, DarthPuniceus, kayajam</span>
@@ -1120,7 +1133,7 @@
 			<tr>
 				<td>59</td>
 				<td>5258</td>
-				<td>2026-02-15</td>
+				<td>Feb 15, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">Tolfan</span>, 
 					<span class="others-names">Schkitz, Led_Slash, sparrowhawk</span>
@@ -1135,7 +1148,7 @@
 			<tr>
 				<td>60</td>
 				<td>5257</td>
-				<td>2026-03-30</td>
+				<td>Mar 30, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">Led_Slash</span>, 
 					<span class="others-names">cringelordirl, Wubba, Nadav253</span>
@@ -1150,7 +1163,7 @@
 			<tr>
 				<td>61</td>
 				<td>5253</td>
-				<td>2026-03-01</td>
+				<td>Mar 01, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">Led_Slash</span>, 
 					<span class="others-names">Pliskin, micherin, Schkitz</span>
@@ -1165,7 +1178,7 @@
 			<tr>
 				<td>62</td>
 				<td>5253</td>
-				<td>2026-03-27</td>
+				<td>Mar 27, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">Led_Slash</span>, 
 					<span class="others-names">Schkitz, Fearteiler, Nefkano</span>
@@ -1180,7 +1193,7 @@
 			<tr>
 				<td>63</td>
 				<td>5251</td>
-				<td>2026-01-29</td>
+				<td>Jan 29, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">AERotters</span>, 
 					<span class="others-names">Xman1997, matemato, Led_Slash</span>
@@ -1195,7 +1208,7 @@
 			<tr>
 				<td>64</td>
 				<td>5250</td>
-				<td>2026-03-17</td>
+				<td>Mar 17, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">Tricholome</span>, 
 					<span class="others-names">cringelordirl, Nefkano, cliuless</span>
@@ -1210,7 +1223,7 @@
 			<tr>
 				<td>65</td>
 				<td>5247</td>
-				<td>2026-02-06</td>
+				<td>Feb 06, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">kaiser</span>, 
 					<span class="others-names">Tolfan, Killerstorm17, mouseinabox</span>
@@ -1225,7 +1238,7 @@
 			<tr>
 				<td>66</td>
 				<td>5246</td>
-				<td>2026-01-24</td>
+				<td>Jan 24, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">ShuShuBana</span>, 
 					<span class="others-names">ChippZamoose, Led_Slash, DarthPuniceus</span>
@@ -1240,7 +1253,7 @@
 			<tr>
 				<td>67</td>
 				<td>5246</td>
-				<td>2026-01-21</td>
+				<td>Jan 21, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">Killerstorm17</span>, 
 					<span class="others-names">Hydro033, FausDav, kaiser</span>
@@ -1255,7 +1268,7 @@
 			<tr>
 				<td>68</td>
 				<td>5242</td>
-				<td>2026-03-19</td>
+				<td>Mar 19, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">DarthOblivius</span>, 
 					<span class="others-names">Led_Slash, Bapgo, Seiza</span>
@@ -1270,7 +1283,7 @@
 			<tr>
 				<td>69</td>
 				<td>5237</td>
-				<td>2026-03-26</td>
+				<td>Mar 26, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">Tad604</span>, 
 					<span class="others-names">Led_Slash, Emperia, TheSillyBilly</span>
@@ -1285,7 +1298,7 @@
 			<tr>
 				<td>70</td>
 				<td>5231</td>
-				<td>2026-03-13</td>
+				<td>Mar 13, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">Tad604</span>, 
 					<span class="others-names">Banzai7000, Bitto, Bapgo</span>
@@ -1300,7 +1313,7 @@
 			<tr>
 				<td>71</td>
 				<td>5230</td>
-				<td>2026-02-06</td>
+				<td>Feb 06, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">Tricholome</span>, 
 					<span class="others-names">MrDrouf, kayajam, Pandapapst</span>
@@ -1315,7 +1328,7 @@
 			<tr>
 				<td>72</td>
 				<td>5230</td>
-				<td>2026-02-23</td>
+				<td>Feb 23, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">Led_Slash</span>, 
 					<span class="others-names">tippop, DemaRogue, Piechu</span>
@@ -1330,7 +1343,7 @@
 			<tr>
 				<td>73</td>
 				<td>5230</td>
-				<td>2026-01-20</td>
+				<td>Jan 20, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">tippop</span>, 
 					<span class="others-names">FakeSki, BMPerJMPer, Tricholome</span>
@@ -1345,7 +1358,7 @@
 			<tr>
 				<td>74</td>
 				<td>5229</td>
-				<td>2026-01-25</td>
+				<td>Jan 25, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">Killerstorm17</span>, 
 					<span class="others-names">ellbelle, Blurr, FVMLion</span>
@@ -1360,7 +1373,7 @@
 			<tr>
 				<td>75</td>
 				<td>5224</td>
-				<td>2026-02-19</td>
+				<td>Feb 19, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">lumpyprol</span>, 
 					<span class="others-names">ShuShuBana, pooge, DemaRogue</span>
@@ -1375,7 +1388,7 @@
 			<tr>
 				<td>76</td>
 				<td>5220</td>
-				<td>2026-02-26</td>
+				<td>Feb 26, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">ShuShuBana</span>, 
 					<span class="others-names">KFull, mouseinabox, TheFourthJesse</span>
@@ -1390,7 +1403,7 @@
 			<tr>
 				<td>77</td>
 				<td>5218</td>
-				<td>2026-02-24</td>
+				<td>Feb 24, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">KFull</span>, 
 					<span class="others-names">Schkitz, kaiser, NadtyLite</span>
@@ -1405,7 +1418,7 @@
 			<tr>
 				<td>78</td>
 				<td>5217</td>
-				<td>2026-02-11</td>
+				<td>Feb 11, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">Led_Slash</span>, 
 					<span class="others-names">Furry0329, HobGungan, ShuShuBana</span>
@@ -1420,7 +1433,7 @@
 			<tr>
 				<td>79</td>
 				<td>5215</td>
-				<td>2026-02-20</td>
+				<td>Feb 20, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">tippop</span>, 
 					<span class="others-names">secretpaths, cliuless, Led_Slash</span>
@@ -1435,7 +1448,7 @@
 			<tr>
 				<td>80</td>
 				<td>5212</td>
-				<td>2026-02-14</td>
+				<td>Feb 14, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">Led_Slash</span>, 
 					<span class="others-names">RFMerlo, KFull, BaconBoy</span>
@@ -1450,7 +1463,7 @@
 			<tr>
 				<td>81</td>
 				<td>5209</td>
-				<td>2026-03-29</td>
+				<td>Mar 29, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">LucianTheFak</span>, 
 					<span class="others-names">cliuless, Schkitz, Nefkano</span>
@@ -1465,7 +1478,7 @@
 			<tr>
 				<td>82</td>
 				<td>5208</td>
-				<td>2026-03-01</td>
+				<td>Mar 01, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">Nefkano</span>, 
 					<span class="others-names">KFull, Schkitz, Pi314</span>
@@ -1480,7 +1493,7 @@
 			<tr>
 				<td>83</td>
 				<td>5208</td>
-				<td>2026-03-03</td>
+				<td>Mar 03, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">Led_Slash</span>, 
 					<span class="others-names">cliuless, kaiser, Wriggleroom</span>
@@ -1495,7 +1508,7 @@
 			<tr>
 				<td>84</td>
 				<td>5208</td>
-				<td>2026-02-23</td>
+				<td>Feb 23, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">kayajam</span>, 
 					<span class="others-names">DarthPuniceus, cjahwon, ShuShuBana</span>
@@ -1510,7 +1523,7 @@
 			<tr>
 				<td>85</td>
 				<td>5207</td>
-				<td>2026-02-04</td>
+				<td>Feb 04, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">Pandapapst</span>, 
 					<span class="others-names">ImJustExisting, KFull, DelSol</span>
@@ -1525,7 +1538,7 @@
 			<tr>
 				<td>86</td>
 				<td>5205</td>
-				<td>2026-02-07</td>
+				<td>Feb 07, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">Antiproject</span>, 
 					<span class="others-names">Tricholome, Cheesecake271, Led_Slash</span>
@@ -1540,7 +1553,7 @@
 			<tr>
 				<td>87</td>
 				<td>5205</td>
-				<td>2026-03-15</td>
+				<td>Mar 15, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">Led_Slash</span>, 
 					<span class="others-names">Munchking, MylesMoose, Ctfox</span>
@@ -1555,7 +1568,7 @@
 			<tr>
 				<td>88</td>
 				<td>5203</td>
-				<td>2026-02-04</td>
+				<td>Feb 04, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">Led_Slash</span>, 
 					<span class="others-names">NadtyLite, TurkeyNoNo, DarthPuniceus</span>
@@ -1570,7 +1583,7 @@
 			<tr>
 				<td>89</td>
 				<td>5203</td>
-				<td>2026-02-01</td>
+				<td>Feb 01, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">KFull</span>, 
 					<span class="others-names">TurkeyNoNo, Schkitz, KargDemiau</span>
@@ -1585,7 +1598,7 @@
 			<tr>
 				<td>90</td>
 				<td>5202</td>
-				<td>2026-02-14</td>
+				<td>Feb 14, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">Led_Slash</span>, 
 					<span class="others-names">TheDolphinman, Tricholome, StoneOfShame</span>
@@ -1600,7 +1613,7 @@
 			<tr>
 				<td>91</td>
 				<td>5198</td>
-				<td>2026-01-24</td>
+				<td>Jan 24, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">kayajam</span>, 
 					<span class="others-names">cliuless, ChippZamoose, Tad604</span>
@@ -1615,7 +1628,7 @@
 			<tr>
 				<td>92</td>
 				<td>5196</td>
-				<td>2026-03-16</td>
+				<td>Mar 16, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">Led_Slash</span>, 
 					<span class="others-names">Bapgo, Seiza, DarthOblivius</span>
@@ -1630,7 +1643,7 @@
 			<tr>
 				<td>93</td>
 				<td>5195</td>
-				<td>2026-02-01</td>
+				<td>Feb 01, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">TurkeyNoNo</span>, 
 					<span class="others-names">Schkitz, Led_Slash, NadtyLite</span>
@@ -1645,7 +1658,7 @@
 			<tr>
 				<td>94</td>
 				<td>5189</td>
-				<td>2026-02-08</td>
+				<td>Feb 08, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">Nefkano</span>, 
 					<span class="others-names">VanKaiserman, Led_Slash, Wrestler</span>
@@ -1660,7 +1673,7 @@
 			<tr>
 				<td>95</td>
 				<td>5189</td>
-				<td>2026-02-06</td>
+				<td>Feb 06, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">FavorOfTheRabbits</span>, 
 					<span class="others-names">NadtyLite, KFull, BMPerJMPer</span>
@@ -1675,7 +1688,7 @@
 			<tr>
 				<td>96</td>
 				<td>5184</td>
-				<td>2026-03-02</td>
+				<td>Mar 02, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">Led_Slash</span>, 
 					<span class="others-names">cjahwon, KFull, lumpyprol</span>
@@ -1690,7 +1703,7 @@
 			<tr>
 				<td>97</td>
 				<td>5183</td>
-				<td>2026-01-27</td>
+				<td>Jan 27, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">KFull</span>, 
 					<span class="others-names">Doordecat, ShuShuBana, Xman1997</span>
@@ -1705,7 +1718,7 @@
 			<tr>
 				<td>98</td>
 				<td>5183</td>
-				<td>2026-03-18</td>
+				<td>Mar 18, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">DarthOblivius</span>, 
 					<span class="others-names">Led_Slash, FavorOfTheRabbits, NadtyLite</span>
@@ -1720,7 +1733,7 @@
 			<tr>
 				<td>99</td>
 				<td>5176</td>
-				<td>2026-02-13</td>
+				<td>Feb 13, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">Led_Slash</span>, 
 					<span class="others-names">Schkitz, NadtyLite, Nefkano</span>
@@ -1735,7 +1748,7 @@
 			<tr>
 				<td>100</td>
 				<td>5174</td>
-				<td>2026-01-30</td>
+				<td>Jan 30, 2026</td>
 				<td class="lineup-cell">
 					<span class="winner-name">ShuShuBana</span>, 
 					<span class="others-names">Pandapapst, NadtyLite, Tricholome</span>
@@ -1765,69 +1778,48 @@
 					<span>Powered by <strong>Tʀɪᴄʜᴏʟᴏᴍᴇ</strong></span>
 					<span>Woodland visions by <a class="cl" href="cache.html">𝕩𝕝𝕦𝕖𝕧𝕚</a></span>
 				</div>
-				<div class="footer-date">Updated on 2026-04-22 00:27 UTC</div>
+				<div class="footer-date">Updated on 2026-04-22 20:41 UTC</div>
 			</div>
 		</footer>
     </div>
     
     <div id="tierModal" class="modal-overlay">
 		<div class="modal-content window-box">
-		<button class="modal-close" aria-label="Close">&times;</button>
-		<div id="modalBody">
-			<div class="modal-image-side">
-				<img id="modalIcon" src="" alt="Tier Icon">
-			</div>
-			
-			<div class="modal-text-side">
-				<div class="title-row">
-					<h2 id="modalTitle"></h2>
-					<h3 id="modalElo"></h3>
+			<button class="modal-close" aria-label="Close">&times;</button>
+			<div id="modalBody">
+				<div class="modal-image-side">
+					<img id="modalIcon" src="" alt="Tier Icon">
 				</div>
-				<div id="modalSubtitle"></div>
-				<div class="modal-divider"></div>
-				<div id="modalText"></div>
+				
+				<div class="modal-text-side">
+					<div class="title-row">
+						<h2 id="modalTitle"></h2>
+						<h3 id="modalElo"></h3>
+					</div>
+					<div id="modalSubtitle"></div>
+					<div class="modal-divider"></div>
+					<div id="modalText"></div>
+				</div>
 			</div>
 		</div>
 	</div>
-	</div>
+	
+	<div id="mystic-gate"></div>
 
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-	
 	<script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
     
     <script>
 		const CONFIG = {
-			colors: {"bird": "#7AB5E0", "default": "#7A7347", "fox": "#E55555", "mouse": "#F49E52", "rabbit": "#F2C14E", "squirrel": "#94C160"},
-			icons: {"bird": "assets/icons/bird_new.webp", "fox": "assets/icons/fox_new.webp", "mouse": "assets/icons/mouse_new.webp", "rabbit": "assets/icons/rabbit_new.webp", "squirrel": "assets/icons/squirrel.webp"},
-			currentTier: "fox"
+			colors: {"bird": "#7AB5E0", "default": "#7A7347", "fox": "#E55555", "mouse": "#F49E52", "rabbit": "#F2C14E", "squirrel": "#94C160", "stag": "#C686FF"},
+			icons: {"bird": "assets/icons/bird_new.webp", "fox": "assets/icons/fox_new.webp", "mouse": "assets/icons/mouse_new.webp", "rabbit": "assets/icons/rabbit_new.webp", "squirrel": "assets/icons/squirrel.webp", "stag": "assets/icons/stag.webp"},
+			currentTier: "fox",
+			chartData: {}
 		};
 	</script>
 		
     <script src="static/script.js"></script>
     
-<script>
-$(document).ready(function() {
-    $('#matchesTable').DataTable({
-        "order": [[1, "desc"]], 
-        "responsive": true,
-        "pageLength": 25,
-        "columnDefs": [
-            { "className": "lineup-cell", "targets": 3 },
-            { "className": "elo-sum-cell", "targets": 1 },
-            
-            /* Responsive Priorities */
-            { "responsivePriority": 1, "targets": [0, 3] }, // Rank & Lineup stay
-            { "responsivePriority": 2, "targets": 1 },      // Elo stays if possible
-            { "responsivePriority": 3, "targets": 2 },      // Date is hidden first
-            { "responsivePriority": 4, "targets": 4 }       // ID is hidden first
-        ],
-        "language": {
-        "searchPlaceholder": "Player name, Game ID..."
-        }
-    });
-});
-</script>
-
 </body>
 </html>
