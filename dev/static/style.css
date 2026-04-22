@@ -1083,13 +1083,12 @@ tr[data-tier="stag"] td:nth-child(4)     { color: var(--color-stag) !important; 
 	margin-bottom: 20px;
 }
 
-body:not(.watcher-found) #leave-secrets,
-body.ciphers-found:not(.witness-found) #leave-secrets {
+#leave-secrets,
+body.ciphers-found:not(.warden-found) #leave-secrets {
     display: none;
 }
 
-body.watcher-found #leave-secrets,
-body.witness-found #leave-secrets {
+body.watcher-found #leave-secrets {
     display: inline-block;
 }
 
@@ -1302,7 +1301,7 @@ body.berry-found #berry-secret:active .fruit-sprite {
 
 body.nut-found #nut-section,
 body.berry-found #berry-section,
-body.witness-found #berry-section {
+body.warden-found #berry-section {
     display: block;
 }
 
