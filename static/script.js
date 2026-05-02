@@ -417,7 +417,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	
     // --- 0. FINAL COMPLETION ---
     function checkFinalCompletion() {
-        const required = ['watcher-found', 'nut-found', 'berry-found', 'ciphers-found'];
+        const required = ['watcher-found', 'nut-found', 'berry-found', 'ciphers-found', 'warden-found'];
         const allFound = required.every(key => localStorage.getItem(key) === 'true');
 
         if (allFound) {
