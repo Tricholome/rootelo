@@ -362,49 +362,84 @@ function updateChart() {
 
         if (myChart) myChart.destroy();
         
-        myChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: labels,
-                datasets: [{
-                    data: eloScores,
-                    borderColor: rabbitColor,
-                    backgroundColor: rabbitColor + '22',
-                    borderWidth: 3,
-                    fill: true,
-                    tension: 0.3,
-                    pointRadius: 3,
-                    pointBackgroundColor: rabbitColor,
-                    pointHitRadius: 20
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                // 1. Rendre le point cliquable pour ouvrir le lien du match
-                onClick: (e, elements) => {
-                    if (elements.length > 0) {
-                        const index = elements[0].index;
-                        const matchUrl = rawData[index][3]; // Récupère l'URL du match
-                        if (matchUrl) {
-                            window.open(matchUrl, '_blank'); // Ouvre dans un nouvel onglet
-                        }
-                    }
-                },
-                // 2. Changer le curseur en "main" (pointer) au survol d'un point
-                onHover: (e, elements) => {
-                    e.native.target.style.cursor = elements.length > 0 ? 'pointer' : 'default';
-                },
-                plugins: {
-                    legend: { display: false },
-                    tooltip: { enabled: true, backgroundColor: '#222', titleColor: rabbitColor } // Ton infobulle d'origine reste intacte !
-                },
-                scales: {
-                    y: { grid: { color: '#252525' }, ticks: { color: '#888' } },
-                    x: { grid: { display: false }, ticks: { color: '#888', maxTicksLimit: 6 } }
-                }
-            }
-        });
+        let lastClickTime = 0;
+		let lastClickedIndex = -1;
+
+		myChart = new Chart(ctx, {
+			type: 'line',
+			data: {
+				labels: labels,
+				datasets: [{
+					data: eloScores,
+					borderColor: rabbitColor,
+					backgroundColor: rabbitColor + '22',
+					borderWidth: 3,
+					fill: true,
+					tension: 0.3,
+					pointRadius: 3,
+					pointBackgroundColor: rabbitColor,
+					pointHitRadius: 20
+				}]
+			},
+			options: {
+				responsive: true,
+				maintainAspectRatio: false,
+				onClick: (e, elements) => {
+					if (elements.length > 0) {
+						const index = elements[0].index;
+						const matchUrl = rawData[index][3];
+						
+						if (matchUrl) {
+							if (e.native.pointerType === 'touch') {
+								const currentTime = Date.now();
+								const timeDiff = currentTime - lastClickTime;
+								
+								if (index === lastClickedIndex && timeDiff < 400) {
+									window.open(matchUrl, '_blank');
+									lastClickedIndex = -1;
+								} else {
+									lastClickedIndex = index;
+								}
+								lastClickTime = currentTime;
+							} else {
+								window.open(matchUrl, '_blank');
+							}
+						}
+					}
+				},
+				onHover: (e, elements) => {
+					e.native.target.style.cursor = elements.length > 0 ? 'pointer' : 'default';
+				},
+				plugins: {
+					legend: { display: false },
+					tooltip: { 
+						enabled: true, 
+						backgroundColor: '#222', 
+						titleColor: rabbitColor,
+						callbacks: {
+							footer: (tooltipItems) => {
+								const index = tooltipItems[0].dataIndex;
+								const matchUrl = rawData[index][3];
+								
+								if (matchUrl) {
+									const isTouch = window.matchMedia('(pointer: coarse)').matches;
+									return isTouch ? '👉 Double-tap pour les détails' : '👉 Clic pour les détails';
+								}
+								return '';
+							}
+						},
+						footerColor: '#aaa',
+						footerFont: { size: 11, weight: 'normal' },
+						footerSpacing: 4,
+						marginSpacing: 6
+					}
+				},
+				scales: {
+					y: { grid: { color: '#252525' }, ticks: { color: '#888' } },
+					x: { grid: { display: false }, ticks: { color: '#888', maxTicksLimit: 6 } }
+				}
+			}
+		});
     }
 }
 
