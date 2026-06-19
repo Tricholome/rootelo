@@ -120,7 +120,7 @@ player_history = {}
 
 for p, r in elo_ratings.items():
     start_label = f"{PREVIOUS_SEASON_TAG.upper()} Final" if PREVIOUS_SEASON_TAG and p in inherited_elo else "Start"
-    player_history[p] = [[start_label, round(r)]]
+    player_history[p] = [[start_label, round(r), None, None]]
 
 for game_id, group in df.groupby('GameID', sort=False):
     match_participants = group.to_dict('records')
@@ -155,8 +155,8 @@ for game_id, group in df.groupby('GameID', sort=False):
         last_diff[name] = change
         if elo_ratings[name] > peak_elo[name]: peak_elo[name] = elo_ratings[name]
         
-        # UI Graph history : we keep rounded integers to save space/clarity
-        player_history[name].append([current_date, round(elo_ratings[name])])
+        match_url = f"https://rootleague.pliskin.dev/match/{game_id}"
+        player_history[name].append([current_date, round(elo_ratings[name]), game_id, match_url])
         
 # =========================================================================
 # --- 6. SEASON END REBALANCING ---
@@ -178,7 +178,7 @@ if num_players > 0:
         elo_ratings[p] += bonus_per_player
         if elo_ratings[p] > peak_elo[p]:
             peak_elo[p] = elo_ratings[p]
-        player_history[p].append(["Final", round(elo_ratings[p])])            
+        player_history[p].append(["Final", round(elo_ratings[p]), None, None])           
 
 # =========================================================================
 # --- 7. EXPORT FINAL RATINGS (LEADERBOARD) ---
