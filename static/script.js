@@ -423,7 +423,7 @@ function updateChart() {
 								
 								if (matchUrl) {
 									const isTouch = window.matchMedia('(pointer: coarse)').matches;
-									return isTouch ? '👉 Double-tap pour les détails' : '👉 Clic pour les détails';
+									return isTouch ? 'Double-tap for game details' : 'Click for game details';
 								}
 								return '';
 							}
