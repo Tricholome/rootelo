@@ -267,7 +267,7 @@ for p, r in elo_ratings.items():
         label = f"{ARCHIVE_SEASONS[-1].upper()} Final"
     else:
         label = "Start"
-    player_history[p] = [[label, round(r), None]]
+    player_history[p] = [[label, round(r), None, None]]
 
 if not df.empty:
     for game_id, group in df.groupby('GameID', sort=False):
@@ -301,7 +301,8 @@ if not df.empty:
             last_diff[name] = change
             if elo_ratings[name] > peak_elo[name]: 
                 peak_elo[name] = elo_ratings[name]
-            player_history[name].append([current_date, round(elo_ratings[name]), int(game_id)])
+            match_url = f"https://rootleague.pliskin.dev/match/{game_id}/"
+            player_history[name].append([current_date, round(elo_ratings[name]), int(game_id), match_url])
 
 current_matches_df = pd.DataFrame(match_history_data)
 if not current_matches_df.empty:
