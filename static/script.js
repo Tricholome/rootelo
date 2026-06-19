@@ -342,6 +342,10 @@ function updateChart() {
     if (name === "" || !allData[name]) {
         if (myChart) myChart.destroy();
         localStorage.removeItem('selectedPlayer');
+        
+        // Nettoyage de l'infobulle si le joueur est effacé
+        const oldTooltip = document.getElementById('chartjs-tooltip');
+        if (oldTooltip) oldTooltip.remove();
         return;
     }
 
@@ -373,7 +377,8 @@ function updateChart() {
                     borderWidth: 3,
                     fill: true,
                     tension: 0.3,
-                    pointRadius: 3,
+                    pointRadius: 4,
+                    pointHoverRadius: 6,
                     pointBackgroundColor: rabbitColor,
                     pointHitRadius: 20
                 }]
@@ -383,7 +388,100 @@ function updateChart() {
                 maintainAspectRatio: false,
                 plugins: {
                     legend: { display: false },
-                    tooltip: { enabled: true, backgroundColor: '#222', titleColor: rabbitColor }
+                    tooltip: {
+                        enabled: false, // 1. Désactive l'infobulle Canvas par défaut
+                        external: function(context) {
+                            // 2. Création ou récupération de l'infobulle HTML externe
+                            let tooltipEl = document.getElementById('chartjs-tooltip');
+
+                            if (!tooltipEl) {
+                                tooltipEl = document.createElement('div');
+                                tooltipEl.id = 'chartjs-tooltip';
+                                // Styles calqués sur ton thème sombre
+                                tooltipEl.style.background = '#222';
+                                tooltipEl.style.borderRadius = '6px';
+                                tooltipEl.style.color = '#fff';
+                                tooltipEl.style.opacity = 0;
+                                tooltipEl.style.visibility = 'hidden';
+                                tooltipEl.style.pointerEvents = 'auto'; // RAGEUR CRUCIAL : Permet de cliquer sur le lien !
+                                tooltipEl.style.position = 'absolute';
+                                tooltipEl.style.transition = 'opacity 0.15s ease, visibility 0.15s ease';
+                                tooltipEl.style.padding = '10px 12px';
+                                tooltipEl.style.border = '1px solid #333';
+                                tooltipEl.style.boxShadow = '0 4px 15px rgba(0,0,0,0.6)';
+                                tooltipEl.style.fontSize = '13px';
+                                tooltipEl.style.zIndex = '100';
+                                
+                                if (canvas.parentNode) {
+                                    canvas.parentNode.style.position = 'relative';
+                                    canvas.parentNode.appendChild(tooltipEl);
+                                }
+
+                                // Événements pour empêcher l'infobulle de se fermer quand la souris va dessus pour cliquer
+                                tooltipEl.addEventListener('mouseenter', () => {
+                                    tooltipEl.isMouseOver = true;
+                                    if (tooltipEl.hideTimeout) clearTimeout(tooltipEl.hideTimeout);
+                                    tooltipEl.style.opacity = 1;
+                                    tooltipEl.style.visibility = 'visible';
+                                });
+
+                                tooltipEl.addEventListener('mouseleave', () => {
+                                    tooltipEl.isMouseOver = false;
+                                    tooltipEl.style.opacity = 0;
+                                    tooltipEl.style.visibility = 'hidden';
+                                });
+                            }
+
+                            const tooltipModel = context.tooltip;
+
+                            // Gestion de la fermeture avec un léger délai pour laisser le temps à la souris d'atteindre l'infobulle
+                            if (tooltipModel.opacity === 0) {
+                                if (!tooltipEl.isMouseOver) {
+                                    if (tooltipEl.hideTimeout) clearTimeout(tooltipEl.hideTimeout);
+                                    tooltipEl.hideTimeout = setTimeout(() => {
+                                        if (!tooltipEl.isMouseOver) {
+                                            tooltipEl.style.opacity = 0;
+                                            tooltipEl.style.visibility = 'hidden';
+                                        }
+                                    }, 200);
+                                }
+                                return;
+                            }
+
+                            if (tooltipEl.hideTimeout) clearTimeout(tooltipEl.hideTimeout);
+
+                            // 3. Remplissage des données dynamiques
+                            if (tooltipModel.body) {
+                                const dataPoint = tooltipModel.dataPoints[0];
+                                const index = dataPoint.dataIndex;
+                                
+                                const dateLabel = labels[index];
+                                const eloValue = eloScores[index];
+                                const matchId = rawData[index][2];
+                                const matchUrl = rawData[index][3];
+
+                                let html = `<div style="font-weight: 600; margin-bottom: 4px; color: #aaa;">${dateLabel}</div>`;
+                                html += `<div style="margin-bottom: 2px;">Elo: <span style="color: ${rabbitColor}; font-weight: bold;">${eloValue}</span></div>`;
+                                
+                                if (matchId && matchUrl) {
+                                    html += `<div style="margin-top: 8px; border-top: 1px solid #333; padding-top: 6px; font-size: 12px;">`;
+                                    html += `Match: <a href="${matchUrl}" target="_blank" class="match-id-link" style="color: ${rabbitColor}; text-decoration: none; font-weight: 600;">${matchId} ↗</a>`;
+                                    html += `</div>`;
+                                } else {
+                                    html += `<div style="margin-top: 6px; border-top: 1px solid #333; padding-top: 4px; font-style: italic; color: #666; font-size: 11px;">Initial Rating</div>`;
+                                }
+
+                                tooltipEl.innerHTML = html;
+                            }
+
+                            // 4. Positionnement précis de l'infobulle par rapport au point
+                            tooltipEl.style.opacity = 1;
+                            tooltipEl.style.visibility = 'visible';
+                            tooltipEl.style.left = tooltipModel.caretX + 'px';
+                            tooltipEl.style.top = tooltipModel.caretY + 'px';
+                            tooltipEl.style.transform = 'translate(-50%, -115%)'; // Aligné au-dessus du point
+                        }
+                    }
                 },
                 scales: {
                     y: { grid: { color: '#252525' }, ticks: { color: '#888' } },
