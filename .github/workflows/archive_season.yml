@@ -2,6 +2,23 @@ name: Archive Season Data
 
 on:
   workflow_dispatch:
+    inputs:
+      season_tag:
+        description: 'Season tag to archive (e.g., lh02)'
+        required: true
+        default: 'lh02'
+      previous_season_tag:
+        description: 'Previous season tag (e.g., lh01) - Leave empty if none'
+        required: false
+        default: 'lh01'
+      tournament_id:
+        description: 'Tournament ID on the API (e.g., 25)'
+        required: true
+        default: '25'
+      cutoff_date:
+        description: 'Cutoff date in YYYY-MM-DD format'
+        required: true
+        default: '2026-06-30'
 
 jobs:
   build:
@@ -25,6 +42,10 @@ jobs:
       - name: Run Archive Script
         env:
           API_TOKEN: ${{ secrets.API_TOKEN }}
+          SEASON_TAG: ${{ github.event.inputs.season_tag }}
+          PREVIOUS_SEASON_TAG: ${{ github.event.inputs.previous_season_tag }}
+          TOURNAMENT_ID: ${{ github.event.inputs.tournament_id }}
+          CUTOFF_DATE_STR: ${{ github.event.inputs.cutoff_date }}
         run: python archive_season.py
 
       - name: Commit and Push changes
@@ -34,5 +55,5 @@ jobs:
           
           git add data/*.csv data/*.json
           
-          git commit -m "Automated update of season archives" || echo "No changes to commit"
+          git commit -m "Automated update of season archives (${{ github.event.inputs.season_tag }})" || echo "No changes to commit"
           git push
