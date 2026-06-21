@@ -7,11 +7,14 @@ from datetime import datetime, date
 # =========================================================================
 # --- 0. SETTINGS & AUTHENTICATION ---
 # =========================================================================
-# --- CHANGE FOR THE SEASON TO ARCHIVE ---
-SEASON_TAG = "lh01"
-PREVIOUS_SEASON_TAG = None
-TOURNAMENT_ID = 24
-CUTOFF_DATE_STR = "2026-03-31"
+# --- DYNAMIC CONFIGURATION VIA ENVIRONMENT VARIABLES ---
+SEASON_TAG = os.getenv('SEASON_TAG', 'lh01').strip().lower()
+PREVIOUS_SEASON_TAG = os.getenv('PREVIOUS_SEASON_TAG', '').strip().lower()
+if not PREVIOUS_SEASON_TAG:
+    PREVIOUS_SEASON_TAG = None
+
+TOURNAMENT_ID = int(os.getenv('TOURNAMENT_ID', 24))
+CUTOFF_DATE_STR = os.getenv('CUTOFF_DATE_STR', '2026-03-31').strip()
 
 # --- API TOKEN RECOVERY ---
 API_TOKEN = os.getenv('API_TOKEN')
@@ -67,7 +70,7 @@ except Exception as e:
 all_matches = []
 next_url = f"https://rootleague.pliskin.dev/api/match/?format=json&limit=500&tournament={TOURNAMENT_ID}"
 
-print(f"🌐 Fetching LH01 data...")
+print(f"🌐 Fetching {SEASON_TAG.upper()} data...")
 while next_url:
     try:
         res = requests.get(next_url, headers=HEADERS)
