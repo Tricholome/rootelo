@@ -89,31 +89,16 @@ def prepare_leaderboard_data(df):
         })
     return players_list
 
-def prepare_matches_data(df):
+def prepare_matches_data(matches_list):
     prepared = []
-    if df.empty: return []
-
-    def clean_names(name_str):
-        if pd.isna(name_str) or not str(name_str).strip(): return ""
-        parts = []
-        for n in str(name_str).split(','):
-            item = n.strip()
-            if not item: continue
-            if '|' in item:
-                item = item.split('|')[0]
-            clean_item = item.split('+')[0].split('#')[0]
-            parts.append(clean_item)
-        return ", ".join(parts)
-
-    for _, row in df.iterrows():
+    for m in matches_list:
         prepared.append({
-            'rank': row['Rank'],
-            'elo_sum': row['ELO_Sum'],
-            'date': row['Date'],
-            'winner': clean_names(row.get("Winner", "")),
-            'others': clean_names(row.get("Other Players", "")),
-            'match_id': row['MatchID'],
-            'match_url': f"https://rootleague.pliskin.dev/match/{row['MatchID']}/"
+            'rank': m.get('Rank'),
+            'elo_sum': m.get('ELO_Sum'),
+            'date': m.get('Date'),
+            'players': m.get('players'),  # Liste d'objets directement transmise au HTML !
+            'match_id': m.get('MatchID'),
+            'match_url': f"https://rootleague.pliskin.dev/match/{m.get('MatchID')}/"
         })
     return prepared
 
@@ -160,12 +145,12 @@ for tag in ARCHIVE_SEASONS:
     print(f"📂 Loading archive: {tag.upper()}")
     archives_raw_data[tag] = {
         'final_df': pd.DataFrame(),
-        'matches_df': pd.DataFrame(),
+        'matches_list': [],
         'history': {}
     }
     
     path_ratings = os.path.join(DATA_DIR, f"{tag}_final_ratings.csv")
-    path_matches = os.path.join(DATA_DIR, f"{tag}_matches_fixed.csv")
+    path_matches = os.path.join(DATA_DIR, f"{tag}_matches_fixed.json")
     path_trends  = os.path.join(DATA_DIR, f"{tag}_history_full.json")
     path_meta = os.path.join(DATA_DIR, f"{tag}_metadata.json")
     archives_raw_data[tag]['metadata'] = {"cutoff_date": "N/A", "match_count": 0}
@@ -190,7 +175,8 @@ for tag in ARCHIVE_SEASONS:
             archives_raw_data[tag]['final_df'] = df_ratings
         
         if os.path.exists(path_matches):
-            archives_raw_data[tag]['matches_df'] = pd.read_csv(path_matches)
+            with open(path_matches, "r", encoding="utf-8") as f:
+                archives_raw_data[tag]['matches_list'] = json.load(f)
         
         if os.path.exists(path_trends):
             with open(path_trends, "r", encoding="utf-8") as f:
@@ -303,20 +289,19 @@ if not df.empty:
             match_url = f"https://rootleague.pliskin.dev/match/{game_id}/"
             player_history[name].append([current_date, round(elo_ratings[name]), int(game_id), match_url])
 
-        winner_strings = [
-            f"{p['Player']}|+{deltas_this_match[p['Player']]}" if deltas_this_match[p['Player']] > 0 else f"{p['Player']}|{deltas_this_match[p['Player']]}"
-            for p in match_participants if p['Score'] >= 0.5
-        ]
-        other_strings = [
-            f"{p['Player']}|+{deltas_this_match[p['Player']]}" if deltas_this_match[p['Player']] > 0 else f"{p['Player']}|{deltas_this_match[p['Player']]}"
-            for p in match_participants if p['Score'] == 0.0
-        ]
+        players_list = []
+        for p in match_participants:
+            clean_name = p['Player'].split('+')[0].split('#')[0].strip()
+            players_list.append({
+                'name': clean_name,
+                'delta': int(deltas_this_match[p['Player']]),
+                'is_winner': bool(p['Score'] >= 0.5)
+            })
 
         match_history_data.append({
             'MatchID': game_id, 
             'Date': current_date, 
-            'Winner': ", ".join(winner_strings),
-            'Other Players': ", ".join(other_strings), 
+            'players': players_list, 
             'ELO_Sum': current_match_sum
         })
 
@@ -385,7 +370,7 @@ if not current_final_df.empty:
 
 display_matches_current = []
 if not current_matches_df.empty:
-    display_matches_current = prepare_matches_data(current_matches_df)[:100]
+    display_matches_current = prepare_matches_data(current_matches_df.to_dict('records'))
 
 display_trends_current = prepare_trends_data(current_history)
 
@@ -400,8 +385,8 @@ for tag in ARCHIVE_SEASONS:
         lb_data = prepare_leaderboard_data(filtered_df)
         
     match_data = []
-    if not raw['matches_df'].empty:
-        match_data = prepare_matches_data(raw['matches_df'])[:100]
+    if raw['matches_list']:
+        match_data = prepare_matches_data(raw['matches_list'])
         
     display_archives[tag] = {
         'leaderboard': lb_data,
