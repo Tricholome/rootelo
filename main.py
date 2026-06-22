@@ -93,14 +93,27 @@ def prepare_matches_data(df):
     prepared = []
     if df.empty: return []
 
+    def clean_names(name_str):
+        if pd.isna(name_str) or not str(name_str).strip(): return ""
+        parts = []
+        for n in str(name_str).split(','):
+            item = n.strip()
+            if not item: continue
+            if '|' in item:
+                item = item.split('|')[0]
+            clean_item = item.split('+')[0].split('#')[0]
+            parts.append(clean_item)
+        return ", ".join(parts)
+
     for _, row in df.iterrows():
         prepared.append({
             'rank': row['Rank'],
             'elo_sum': row['ELO_Sum'],
             'date': row['Date'],
+            'winner': clean_names(row.get("Winner", "")),
+            'others': clean_names(row.get("Other Players", "")),
             'match_id': row['MatchID'],
-            'match_url': f"https://rootleague.pliskin.dev/match/{row['MatchID']}/",
-            'players': row['Players']
+            'match_url': f"https://rootleague.pliskin.dev/match/{row['MatchID']}/"
         })
     return prepared
 
@@ -264,43 +277,48 @@ for p, r in elo_ratings.items():
     player_history[p] = [[label, round(r), None, None]]
 
 if not df.empty:
-        for game_id, group in df.groupby('GameID', sort=False):
-            match_participants = group.to_dict('records')
-            current_match_sum = round(sum([elo_ratings[p['Player']] for p in match_participants]))
-            current_date = pd.to_datetime(match_participants[0]['Date_Closed']).strftime('%Y-%m-%d')
-            players_in_match = []
+    for game_id, group in df.groupby('GameID', sort=False):
+        match_participants = group.to_dict('records')
+        current_match_sum = round(sum([elo_ratings[p['Player']] for p in match_participants]))
+        current_date = pd.to_datetime(match_participants[0]['Date_Closed']).strftime('%Y-%m-%d')
+        
+        deltas_this_match = {}
+        total_q = sum([10**(elo_ratings[p['Player']]/400) for p in match_participants])
+        for p in match_participants:
+            name = p['Player']
+            actual = p['Score']
+            expected = (10**(elo_ratings[name]/400)) / total_q
+            player_stats[name]['games'] += 1
+            player_stats[name]['wins'] += actual
+            
+            k = 80 if player_stats[name]['games'] <= 10 else (40 if player_stats[name]['games'] <= 50 else 20)
+            change = k * (actual - expected)
+            
+            elo_ratings[name] += change
+            last_diff[name] = change
+            deltas_this_match[name] = round(change)
+            
+            if elo_ratings[name] > peak_elo[name]: 
+                peak_elo[name] = elo_ratings[name]
+            match_url = f"https://rootleague.pliskin.dev/match/{game_id}/"
+            player_history[name].append([current_date, round(elo_ratings[name]), int(game_id), match_url])
 
-            total_q = sum([10**(elo_ratings[p['Player']]/400) for p in match_participants])
-            for p in match_participants:
-                name = p['Player']
-                actual = p['Score']
-                expected = (10**(elo_ratings[name]/400)) / total_q
-                player_stats[name]['games'] += 1
-                player_stats[name]['wins'] += actual
-                
-                k = 80 if player_stats[name]['games'] <= 10 else (40 if player_stats[name]['games'] <= 50 else 20)
-                change = k * (actual - expected)
-                
-                elo_ratings[name] += change
-                last_diff[name] = change
-                if elo_ratings[name] > peak_elo[name]: 
-                    peak_elo[name] = elo_ratings[name]
-                match_url = f"https://rootleague.pliskin.dev/match/{game_id}/"
-                player_history[name].append([current_date, round(elo_ratings[name]), int(game_id), match_url])
-                
-                players_in_match.append({
-                    'name': name.split('+')[0].split('#')[0],
-                    'delta': round(change),
-                    'is_winner': (actual >= 0.5)
-                })
+        winner_strings = [
+            f"{p['Player']}|+{deltas_this_match[p['Player']]}" if deltas_this_match[p['Player']] > 0 else f"{p['Player']}|{deltas_this_match[p['Player']]}"
+            for p in match_participants if p['Score'] >= 0.5
+        ]
+        other_strings = [
+            f"{p['Player']}|+{deltas_this_match[p['Player']]}" if deltas_this_match[p['Player']] > 0 else f"{p['Player']}|{deltas_this_match[p['Player']]}"
+            for p in match_participants if p['Score'] == 0.0
+        ]
 
-            players_in_match.sort(key=lambda x: x['is_winner'], reverse=True)
-            match_history_data.append({
-                'MatchID': game_id, 
-                'Date': current_date, 
-                'ELO_Sum': current_match_sum,
-                'Players': players_in_match
-            })
+        match_history_data.append({
+            'MatchID': game_id, 
+            'Date': current_date, 
+            'Winner': ", ".join(winner_strings),
+            'Other Players': ", ".join(other_strings), 
+            'ELO_Sum': current_match_sum
+        })
 
 current_matches_df = pd.DataFrame(match_history_data)
 if not current_matches_df.empty:
