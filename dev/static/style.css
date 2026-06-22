@@ -606,8 +606,20 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     text-align: left !important;
 }
 
-.lineup-cell .winner-name { color: var(--text-bright); font-weight: var(--bold); }
-.lineup-cell .others-names { color: var(--text-muted); }
+.player-name {
+    color: var(--text-muted);
+}
+
+.player-delta {
+    float: right;
+    font-size: var(--size-sm);
+    margin-left: 10px;
+}
+
+.player-item.winner .player-name {
+    color: var(--text-bright);
+    font-weight: var(--bold);
+}
 
 .match-id-link { 
     color: var(--text-muted); 
