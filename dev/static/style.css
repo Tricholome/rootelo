@@ -614,9 +614,11 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     float: right;
     font-size: var(--size-sm);
     margin-left: 10px;
+	color: var(--text-muted);
 }
 
-.player-item.winner .player-name {
+.player-item.winner .player-name,
+.player-item.winner .player-delta {
     color: var(--text-bright);
     font-weight: var(--bold);
 }
