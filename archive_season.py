@@ -152,8 +152,14 @@ for game_id, group in df.groupby('GameID', sort=False):
         match_url = f"https://rootleague.pliskin.dev/match/{game_id}"
         player_history[name].append([current_date, round(elo_ratings[name]), game_id, match_url])
 
-    winner_strings = [f"{p['Player']}|{deltas_this_match[p['Player']]}" for p in match_participants if p['Score'] >= 0.5]
-    other_strings = [f"{p['Player']}|{deltas_this_match[p['Player']]}" for p in match_participants if p['Score'] == 0.0]
+    winner_strings = [
+        f"{p['Player']}|{f'+{deltas_this_match[p['Player']]}' if deltas_this_match[p['Player']] > 0 else deltas_this_match[p['Player']]}" 
+        for p in match_participants if p['Score'] >= 0.5
+    ]
+    other_strings = [
+        f"{p['Player']}|{f'+{deltas_this_match[p['Player']]}' if deltas_this_match[p['Player']] > 0 else deltas_this_match[p['Player']]}" 
+        for p in match_participants if p['Score'] == 0.0
+    ]
     
     archive_matches_list.append({
         'MatchID': game_id,
