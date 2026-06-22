@@ -92,11 +92,13 @@ def prepare_leaderboard_data(df):
 def prepare_matches_data(matches_list):
     prepared = []
     for m in matches_list:
+        sorted_players = sorted(m.get('players', []), key=lambda x: x['is_winner'], reverse=True)
+        
         prepared.append({
             'rank': m.get('Rank'),
             'elo_sum': m.get('ELO_Sum'),
             'date': m.get('Date'),
-            'players': m.get('players'),  # Liste d'objets directement transmise au HTML !
+            'players': sorted_players,
             'match_id': m.get('MatchID'),
             'match_url': f"https://rootleague.pliskin.dev/match/{m.get('MatchID')}/"
         })
