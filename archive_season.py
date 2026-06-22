@@ -127,21 +127,10 @@ for p, r in elo_ratings.items():
 
 for game_id, group in df.groupby('GameID', sort=False):
     match_participants = group.to_dict('records')
-    # Sum based on floats, rounded for display
     current_match_sum = round(sum([elo_ratings[p['Player']] for p in match_participants]))
     current_date = pd.to_datetime(match_participants[0]['Date_Closed']).strftime('%Y-%m-%d')
     
-    winners = [p['Player'] for p in match_participants if p['Score'] >= 0.5]
-    others = [p['Player'] for p in match_participants if p['Score'] == 0.0]
-    
-    archive_matches_list.append({
-        'MatchID': game_id,
-        'Date': current_date,
-        'Winner': ", ".join(winners),
-        'Other Players': ", ".join(others),
-        'ELO_Sum': current_match_sum
-    })
-
+    deltas_this_match = {}
     total_q = sum([10**(elo_ratings[p['Player']]/400) for p in match_participants])
     for p in match_participants:
         name = p['Player']
@@ -156,10 +145,23 @@ for game_id, group in df.groupby('GameID', sort=False):
         change = k * (actual - expected)
         elo_ratings[name] += change
         last_diff[name] = change
+        deltas_this_match[name] = round(change)
+        
         if elo_ratings[name] > peak_elo[name]: peak_elo[name] = elo_ratings[name]
         
         match_url = f"https://rootleague.pliskin.dev/match/{game_id}"
         player_history[name].append([current_date, round(elo_ratings[name]), game_id, match_url])
+
+    winner_strings = [f"{p['Player']}|{deltas_this_match[p['Player']]}" for p in match_participants if p['Score'] >= 0.5]
+    other_strings = [f"{p['Player']}|{deltas_this_match[p['Player']]}" for p in match_participants if p['Score'] == 0.0]
+    
+    archive_matches_list.append({
+        'MatchID': game_id,
+        'Date': current_date,
+        'Winner': ", ".join(winner_strings),
+        'Other Players': ", ".join(other_strings),
+        'ELO_Sum': current_match_sum
+    })
         
 # =========================================================================
 # --- 6. SEASON END REBALANCING ---
