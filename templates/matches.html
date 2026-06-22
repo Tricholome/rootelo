@@ -16,7 +16,7 @@
 			<tr>
 				<td>{{ m.rank }}</td>
 				<td>{{ m.elo_sum }}</td>
-				<td>{{ m.date | smart_date }}</td>
+				<td data-order="{{ m.date }}">{{ m.date | smart_date }}</td>
 				<td class="lineup-cell">
 					<div class="player-list">
 						{% for p in m.players %}
