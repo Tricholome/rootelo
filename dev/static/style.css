@@ -770,7 +770,8 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     table.dataTable tbody td { font-size: var(--size-sm); padding: 8px 4px !important; }
     .player-name-cell,
 	.player-name { 
-        max-width: 110px; 
+        display: inline-block;
+		max-width: 110px; 
         overflow: hidden; 
         text-overflow: ellipsis; 
         white-space: nowrap; 
