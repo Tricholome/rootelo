@@ -257,14 +257,14 @@ $(document).ready(function() {
         $('#matchesTable').DataTable({
             "order": [[1, "desc"]], 
             "responsive": true,
-            "pageLength": 25,
+            "pageLength": 50,
             "columnDefs": [
 				{ "className": "rank-cell", "targets": 0 },
                 { "className": "elo-sum-cell", "targets": 1 },
 				{ "className": "date-cell", "targets": 2 },
 				{ "className": "numeric-cell", "targets": [0, 1, 2, 4] },
-                { "responsivePriority": 1, "targets": [0, 1, 3] },
-                { "responsivePriority": 2, "targets": 2 },
+                { "responsivePriority": 1, "targets": [1, 3] },
+                { "responsivePriority": 2, "targets": [0, 2] },
                 { "responsivePriority": 3, "targets": 4 }
             ],
             "language": {
