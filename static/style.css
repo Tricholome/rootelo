@@ -597,15 +597,6 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 }
 
 /* --- F. Specifics (Matches) --- */
-.lineup-cell { 
-    white-space: normal !important; 
-    word-wrap: break-word; 
-    min-width: 150px; 
-    max-width: 400px; 
-    line-height: 1.4; 
-    text-align: left !important;
-}
-
 .player-name {
     color: var(--text-muted);
 }
