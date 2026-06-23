@@ -768,10 +768,15 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 
 @media (max-width: 600px) {
     table.dataTable tbody td { font-size: var(--size-sm); padding: 8px 4px !important; }
-    .player-name-cell,
+    .player-name-cell { 
+		max-width: 110px; 
+        overflow: hidden; 
+        text-overflow: ellipsis; 
+        white-space: nowrap; 
+    }
 	.player-name { 
         display: inline-block;
-		max-width: 110px; 
+		max-width: 90px; 
         overflow: hidden; 
         text-overflow: ellipsis; 
         white-space: nowrap; 
