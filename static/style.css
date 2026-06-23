@@ -597,6 +597,10 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 }
 
 /* --- F. Specifics (Matches) --- */
+.lineup-cell { 
+    text-align: left !important;
+}
+
 .player-name {
     color: var(--text-muted);
 }
