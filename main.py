@@ -511,7 +511,7 @@ def render_core_pages(file_suffix, is_archive, tag, lb_data, match_data, trends_
     render_page(
         "matches.html", f"matches{file_suffix}.html", page_id="matches",
         title="Top Tables • Rootelo", page_heading="Top Tables",
-        description="Top 100 games ranked by total Elo. Click&nbsp;a&nbsp;Game&nbsp;ID&nbsp;for&nbsp;match&nbsp;details.",
+        description="Season games ranked by total Elo. Click&nbsp;a&nbsp;Game&nbsp;ID&nbsp;for&nbsp;match&nbsp;details.<br><br><i><small>Includes {meta.get('match_count', 0)} matches up to {meta.get('cutoff_date', 'N/A')}.</i></small>",
         is_archive=is_archive, has_seasons=True, season_tag=tag,
         archive_seasons=ARCHIVE_SEASONS,
         current_season_tag=CURRENT_SEASON_TAG,
