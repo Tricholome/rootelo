@@ -263,10 +263,9 @@ $(document).ready(function() {
                 { "className": "elo-sum-cell", "targets": 1 },
 				{ "className": "date-cell", "targets": 2 },
 				{ "className": "numeric-cell", "targets": [0, 1, 2, 4] },
-                { "responsivePriority": 1, "targets": [0, 3] },
-                { "responsivePriority": 2, "targets": 1 },
-                { "responsivePriority": 3, "targets": 2 },
-                { "responsivePriority": 4, "targets": 4 }
+                { "responsivePriority": 1, "targets": [0, 1, 3] },
+                { "responsivePriority": 2, "targets": 2 },
+                { "responsivePriority": 3, "targets": 4 }
             ],
             "language": {
                 "searchPlaceholder": "Player name, Game ID..."
