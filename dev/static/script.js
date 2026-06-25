@@ -24,6 +24,7 @@ $(document).on('touchstart', function(e) {
 
 // 2. Handle double-click to save player and redirect to Trends
 $(document).on('dblclick', '.player-click-target', function() {
+    // Récupère le texte sélectionné ou le texte brut de la cellule en secours
     const selectedText = window.getSelection().toString().trim() || $(this).text().trim();
     
     if (selectedText && selectedText.length > 1 && selectedText.length < 30 && !selectedText.includes('\n')) {
@@ -31,7 +32,6 @@ $(document).on('dblclick', '.player-click-target', function() {
         localStorage.setItem('selectedPlayer', selectedText);
         
         // 2. On redirige instantanément vers la page Trends
-        // (Ajuste 'trends.html' si ton fichier ou ta route a un autre nom)
         window.location.href = 'trends.html'; 
     }
 });
