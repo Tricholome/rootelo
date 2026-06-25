@@ -787,22 +787,18 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 	.hide-mobile { display: none; }
 }
 
-/* --- 9. GLOBAL FILTER SYNC & PLAYER TOOLTIPS --- */
+/* --- J. Player tooltip --- */
 
 .player-click-target {
     cursor: pointer;
-    position: relative; /* Indispensable pour ancrer le tooltip au-dessus de la cellule */
 }
 
-/* Base du tooltip calquée fidèlement sur .tooltip-text */
 .player-click-target[data-tooltip]::after {
     content: attr(data-tooltip);
     position: absolute;
     bottom: 100%; 
     left: 50%;
     transform: translateX(-50%) translateY(10px);
-    
-    /* Réutilisation de tes variables de thème sombre */
     background: var(--bg-container);
     border: 1px solid var(--border-soft);
     color: var(--text-muted);
@@ -810,7 +806,6 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     border-radius: 6px;
     font-size: var(--size-xs);
     white-space: nowrap;
-    
     opacity: 0;
     pointer-events: none;
     transition: all 0.3s ease;
@@ -818,7 +813,6 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     z-index: 100;
 }
 
-/* Affichage au survol sur Desktop */
 @media (hover: hover) {
     .player-click-target[data-tooltip]:hover::after {
         opacity: 1;
@@ -826,7 +820,6 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     }
 }
 
-/* Affichage sur Mobile via la classe standard .expanded */
 .player-click-target[data-tooltip].expanded::after {
     opacity: 1;
     transform: translateX(-50%) translateY(-6px);
