@@ -171,8 +171,8 @@ for game_id, group in df.groupby('GameID', sort=False):
 # =========================================================================
 # --- 6. SEASON END REBALANCING ---
 # =========================================================================
-active_players = [p for p in elo_ratings if player_stats[p]['games'] >= 10]
-inactive_players = [p for p in elo_ratings if player_stats[p]['games'] < 10]
+active_players = [p for p in elo_ratings if player_stats[p]['games'] >= 1]
+inactive_players = [p for p in elo_ratings if player_stats[p]['games'] == 0]
 
 num_players = len(elo_ratings)
 num_active = len(active_players)
