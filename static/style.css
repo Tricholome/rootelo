@@ -787,12 +787,6 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 	.hide-mobile { display: none; }
 }
 
-/* --- J. Player click --- */
-
-.player-click-target {
-    cursor: pointer;
-}
-
 
 /* =========================================================================
    --- 8. CHART (TRENDS) ---
