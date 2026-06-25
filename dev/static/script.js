@@ -749,21 +749,41 @@ function showVisitorRow(name, date) {
 }
 
 /* =========================================================================
-   --- 9. GLOBAL FILTER SYNC & TRENDS REDIRECTION ---
+   --- 9. GLOBAL FILTER SYNC & DYNAMIC TRENDS REDIRECTION ---
    ========================================================================= */
 
-// 1. Handle double-click to save player and redirect directly to the chart
+// 1. Handle double-click to save player and redirect directly to their seasonal chart
 $(document).on('dblclick', '.player-click-target', function() {
+    // Récupère le texte sélectionné par l'utilisateur ou le texte de la cellule par défaut
     const selectedText = window.getSelection().toString().trim() || $(this).text().trim();
     
+    // VALIDATION : Vérification de la longueur et absence de sauts de ligne
     if (selectedText && selectedText.length > 1 && selectedText.length < 30 && !selectedText.includes('\n')) {
+        
+        // RECONNAISSANCE DE NOM : Bloque si c'est un score, un gain/perte d'Elo (+15, -8) ou s'il n'y a aucune lettre
+        if (/^[+-]?\d+$/.test(selectedText) || !/[a-zA-ZÀ-ÿ]/.test(selectedText)) {
+            return; // On ignore le clic sur un chiffre ou une statistique
+        }
+        
+        // 1. Stockage du joueur sélectionné dans le localStorage
         localStorage.setItem('selectedPlayer', selectedText);
         
-        window.location.href = 'trends.html#progressionChart'; 
+        // 2. ROUTING DYNAMIQUE UNIVERSEL : Extrait tout ce qui suit le premier "_"
+        let trendsPage = 'trends.html';
+        const pageName = window.location.pathname.split('/').pop() || ''; // Ex: "leaderboard_lh01.html" ou "index_saison3.html"
+        
+        if (pageName.includes('_')) {
+            // Découpe après le premier "_" et nettoie l'extension ".html"
+            const seasonSuffix = pageName.substring(pageName.indexOf('_') + 1).replace(/\.html$/i, '');
+            trendsPage = `trends_${seasonSuffix}.html`; // Devient "trends_lh01.html" ou "trends_saison3.html"
+        }
+        
+        // 3. Redirection directe appliquée au canvas du graphique
+        window.location.href = `${trendsPage}#progressionChart`; 
     }
 });
 
-// 2. Global Input Sync & Cleanup
+// 2. Global Input Sync & Cleanup (Utile si on vide le champ directement sur la page Trends)
 $(document).on('input search', '.dataTables_filter input, #playerName', function() {
     const value = $(this).val().trim();
     
