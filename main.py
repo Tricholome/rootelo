@@ -142,7 +142,6 @@ except Exception as e:
 # =========================================================================
 archives_raw_data = {}
 elo_ratings = {} # Engine baseline Elo
-players_previously_qualified = set()
 
 for tag in ARCHIVE_SEASONS:
     print(f"📂 Loading archive: {tag.upper()}")
@@ -169,11 +168,6 @@ for tag in ARCHIVE_SEASONS:
             for _, row in df_ratings.iterrows():
                 p_name = str(row['Player'])
                 elo_ratings[p_name] = float(row.get('ELO', 1200.0))
-                
-                if tag == ARCHIVE_SEASONS[-1]:
-                    rank_val = str(row.get('Rank', '-')).strip()
-                    if rank_val != '-' and rank_val != '':
-                        players_previously_qualified.add(p_name)
                 
             # Clean archive DF for web display: Round ELO to integers
             df_ratings['ELO'] = df_ratings['ELO'].round().astype(int)
@@ -285,10 +279,7 @@ if not df.empty:
             player_stats[name]['games'] += 1
             player_stats[name]['wins'] += actual
             
-            if player_stats[name]['games'] <= 10:
-                k = 60 if name in players_previously_qualified else 80
-            else:
-                k = 40 if player_stats[name]['games'] <= 50 else 20
+            k = 80 if player_stats[name]['games'] <= 10 else (40 if player_stats[name]['games'] <= 50 else 20)
             change = k * (actual - expected)
             
             elo_ratings[name] += change
