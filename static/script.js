@@ -749,21 +749,23 @@ function showVisitorRow(name, date) {
 }
 
 /* =========================================================================
-   --- 9. GLOBAL FILTER SYNC (DOUBLE-CLICK & INPUTS) ---
+   --- 9. GLOBAL FILTER SYNC & TOOLTIPS ---
    ========================================================================= */
 
-// 1. Handle double-click on a player cell to set the global filter
+// 1. Dynamically add a native tooltip on hover
+$(document).on('mouseenter', '.player-click-target', function() {
+    if (!this.hasAttribute('title')) {
+        $(this).attr('title', 'Double-click to filter by this player');
+    }
+});
+
+// 2. Handle double-click to set the global filter
 $(document).on('dblclick', '.player-click-target', function() {
-    // Retrieve the exact double-clicked text selected by the browser
-    const selectedText = window.getSelection().toString().trim();
+    const selectedText = window.getSelection().toString().trim() || $(this).text().trim();
     
-    // Guard clause to ensure a valid player name format
     if (selectedText && selectedText.length > 1 && selectedText.length < 30 && !selectedText.includes('\n')) {
-        
-        // Persist the selection as the new global shared filter
         localStorage.setItem('selectedPlayer', selectedText);
         
-        // Instantly apply the search filter to all active DataTables on the current page
         $('.dataTable').each(function() {
             if ($.fn.dataTable.isDataTable(this)) {
                 $(this).DataTable().search(selectedText).draw();
@@ -772,15 +774,13 @@ $(document).on('dblclick', '.player-click-target', function() {
     }
 });
 
-// 2. Synchronize or clear localStorage when a user manually types in any DataTable search box
-$(document).on('input', '.dataTables_filter input', function() {
+// 3. Global Input Sync & Cleanup (Triggered by typing, deleting, or clicking the "x")
+$(document).on('input search', '.dataTables_filter input, #playerName', function() {
     const value = $(this).val().trim();
-    // If the input is cleared, it saves an empty string "", effectively resetting the filter
-    localStorage.setItem('selectedPlayer', value);
-});
-
-// 3. Synchronize or clear localStorage when a user manually types in the Trends input field
-$(document).on('input', '#playerName', function() {
-    const value = $(this).val().trim();
-    localStorage.setItem('selectedPlayer', value);
+    
+    if (value) {
+        localStorage.setItem('selectedPlayer', value);
+    } else {
+        localStorage.removeItem('selectedPlayer'); // Nettoyage actif !
+    }
 });
