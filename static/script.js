@@ -222,6 +222,8 @@ document.addEventListener('DOMContentLoaded', function() {
    ========================================================================= */
 
 $(document).ready(function() {
+	
+	const savedPlayer = localStorage.getItem('selectedPlayer') || "";
 
     // --- 1. LEADERBOARD ---
     if ($('#leaderboard').length > 0) {
@@ -235,9 +237,10 @@ $(document).ready(function() {
             "responsive": true, 
             "pageLength": 50,
             "dom": '<"top"lf>rt<"bottom"ip><"clear">',
+			"search": { "search": savedPlayer },
             "columnDefs": [ 
                 { "targets": 0, "type": "rank" },
-                { "targets": 2, "className": "player-name-cell" },
+                { "targets": 2, "className": "player-name-cell player-click-target" },
                 { "targets": 3, "className": "elo-cell" },
 				{ "className": "numeric-cell", "targets": [0, 3, 4, 5, 6, 7, 8] },
                 { "responsivePriority": 1, "targets": [2, 3] },
@@ -258,10 +261,12 @@ $(document).ready(function() {
             "order": [[1, "desc"]], 
             "responsive": true,
             "pageLength": 50,
+			"search": { "search": savedPlayer },
             "columnDefs": [
 				{ "className": "rank-cell", "targets": 0 },
                 { "className": "elo-sum-cell", "targets": 1 },
 				{ "className": "date-cell", "targets": 2 },
+				{ "className": "player-click-target", "targets": 3 },
 				{ "className": "numeric-cell", "targets": [0, 1, 2, 4] },
                 { "responsivePriority": 1, "targets": [1, 3] },
                 { "responsivePriority": 2, "targets": [0, 2] },
@@ -284,7 +289,7 @@ $(document).ready(function() {
 			"dom": 'rt',
 			"columnDefs": [
 				{ "targets": 0, "className": "rank-cell" },
-				{ "targets": 1, "className": "player-name-cell" },
+				{ "targets": 1, "className": "player-name-cell player-click-target" },
 				{ "targets": 2, "className": "streak-cell" },
 				{ "targets": 3, "className": "elo-cell" },
 				{ "targets": 4, "className": "date-cell" },
@@ -742,3 +747,25 @@ function showVisitorRow(name, date) {
     const recognitionZone = document.getElementById('visitor-recognition');
     if (recognitionZone) recognitionZone.style.display = 'none';
 }
+
+/* =========================================================================
+   --- 9. DOUBLE-CLICK COPY AND FILTER ---
+   ========================================================================= */
+$(document).on('dblclick', '.player-click-target', function() {
+    // Retrieve the exact double-clicked text selected by the browser
+    const selectedText = window.getSelection().toString().trim();
+    
+    // Guard clause to ensure a valid player name format (no line breaks, reasonable length)
+    if (selectedText && selectedText.length > 1 && selectedText.length < 30 && !selectedText.includes('\n')) {
+        
+        // Persist the selection as the new global shared filter
+        localStorage.setItem('selectedPlayer', selectedText);
+        
+        // Instantly apply the search filter to all active DataTables on the current page
+        $('.dataTable').each(function() {
+            if ($.fn.dataTable.isDataTable(this)) {
+                $(this).DataTable().search(selectedText).draw();
+            }
+        });
+    }
+});
