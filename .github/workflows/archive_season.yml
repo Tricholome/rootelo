@@ -10,7 +10,6 @@ on:
       previous_season_tag:
         description: 'Previous season tag (e.g., lh01) - Leave empty if none'
         required: false
-        default: 'lh01'
       tournament_id:
         description: 'Tournament ID on the API (e.g., 25)'
         required: true

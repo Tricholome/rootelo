@@ -5,9 +5,9 @@
         <thead>
             <tr>
                 <th>Rank</th>
-                <th>ELO Sum</th>
+                <th>Elo <span class="hide-mobile">Sum</span></th>
                 <th>Date</th>
-                <th>Lineup (Winner First)</th>
+                <th>Lineup & Changes</th>
                 <th>Game ID</th>
             </tr>
         </thead>
@@ -16,10 +16,16 @@
 			<tr>
 				<td>{{ m.rank }}</td>
 				<td>{{ m.elo_sum }}</td>
-				<td>{{ m.date | smart_date }}</td>
+				<td data-order="{{ m.date }}">{{ m.date | smart_date }}</td>
 				<td class="lineup-cell">
-					<span class="winner-name">{{ m.winner }}</span>, 
-					<span class="others-names">{{ m.others }}</span>
+					<div class="player-list">
+						{% for p in m.players %}
+						<div class="player-item {% if p.is_winner %}winner{% endif %}">
+							<span class="player-name">{{ p.name }}</span>
+							<span class="player-delta">{% if p.delta > 0 %}+{% endif %}{{ p.delta }}</span>
+						</div>
+						{% endfor %}
+					</div>
 				</td>
 				<td>
 					<a href="{{ m.match_url }}" target="_blank" class="match-id-link">

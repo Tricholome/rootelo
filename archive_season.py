@@ -30,7 +30,7 @@ CUTOFF_DATE = datetime.strptime(CUTOFF_DATE_STR, "%Y-%m-%d").date()
 CORRECTIONS_PATH = os.path.join(DATA_DIR, f"{SEASON_TAG}_corrections.csv")
 OUTPUT_RATINGS   = os.path.join(DATA_DIR, f"{SEASON_TAG}_final_ratings.csv")
 OUTPUT_HISTORY   = os.path.join(DATA_DIR, f"{SEASON_TAG}_history_full.json")
-OUTPUT_MATCHES   = os.path.join(DATA_DIR, f"{SEASON_TAG}_matches_fixed.csv")
+OUTPUT_MATCHES   = os.path.join(DATA_DIR, f"{SEASON_TAG}_matches_fixed.json")
 OUTPUT_METADATA  = os.path.join(DATA_DIR, f"{SEASON_TAG}_metadata.json")
 
 # =========================================================================
@@ -127,21 +127,10 @@ for p, r in elo_ratings.items():
 
 for game_id, group in df.groupby('GameID', sort=False):
     match_participants = group.to_dict('records')
-    # Sum based on floats, rounded for display
     current_match_sum = round(sum([elo_ratings[p['Player']] for p in match_participants]))
     current_date = pd.to_datetime(match_participants[0]['Date_Closed']).strftime('%Y-%m-%d')
     
-    winners = [p['Player'] for p in match_participants if p['Score'] >= 0.5]
-    others = [p['Player'] for p in match_participants if p['Score'] == 0.0]
-    
-    archive_matches_list.append({
-        'MatchID': game_id,
-        'Date': current_date,
-        'Winner': ", ".join(winners),
-        'Other Players': ", ".join(others),
-        'ELO_Sum': current_match_sum
-    })
-
+    deltas_this_match = {}
     total_q = sum([10**(elo_ratings[p['Player']]/400) for p in match_participants])
     for p in match_participants:
         name = p['Player']
@@ -156,10 +145,28 @@ for game_id, group in df.groupby('GameID', sort=False):
         change = k * (actual - expected)
         elo_ratings[name] += change
         last_diff[name] = change
+        deltas_this_match[name] = round(change)
+        
         if elo_ratings[name] > peak_elo[name]: peak_elo[name] = elo_ratings[name]
         
         match_url = f"https://rootleague.pliskin.dev/match/{game_id}"
         player_history[name].append([current_date, round(elo_ratings[name]), game_id, match_url])
+
+    players_list = []
+    for p in match_participants:
+        clean_name = p['Player'].split('+')[0].split('#')[0].strip()
+        players_list.append({
+            'name': clean_name,
+            'delta': int(deltas_this_match[p['Player']]),
+            'is_winner': bool(p['Score'] >= 0.5)
+        })
+    
+    archive_matches_list.append({
+        'MatchID': int(game_id),
+        'Date': current_date,
+        'players': players_list,
+        'ELO_Sum': int(current_match_sum)
+    })
         
 # =========================================================================
 # --- 6. SEASON END REBALANCING ---
@@ -241,11 +248,12 @@ def safe_save(path, data, is_json=False):
 safe_save(OUTPUT_RATINGS, final_df)
 
 # B. Save Matches 
-df_archive_matches = pd.DataFrame(archive_matches_list)
-if not df_archive_matches.empty:
-    df_archive_matches = df_archive_matches.sort_values(by='ELO_Sum', ascending=False).reset_index(drop=True)
-    df_archive_matches.insert(0, 'Rank', range(1, len(df_archive_matches) + 1))
-safe_save(OUTPUT_MATCHES, df_archive_matches)
+if archive_matches_list:
+    archive_matches_list = sorted(archive_matches_list, key=lambda x: x['ELO_Sum'], reverse=True)
+    for idx, m in enumerate(archive_matches_list, start=1):
+        m['Rank'] = idx
+
+safe_save(OUTPUT_MATCHES, archive_matches_list, is_json=True)
 
 # C. Save History Graph
 safe_save(OUTPUT_HISTORY, player_history, is_json=True)

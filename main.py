@@ -89,24 +89,18 @@ def prepare_leaderboard_data(df):
         })
     return players_list
 
-def prepare_matches_data(df):
+def prepare_matches_data(matches_list):
     prepared = []
-    if df.empty: return []
-
-    def clean_names(name_str):
-        if pd.isna(name_str) or not str(name_str).strip(): return ""
-        parts = [str(n).strip().split('+')[0].split('#')[0] for n in str(name_str).split(',')]
-        return ", ".join(parts)
-
-    for _, row in df.iterrows():
+    for m in matches_list:
+        sorted_players = sorted(m.get('players', []), key=lambda x: x['is_winner'], reverse=True)
+        
         prepared.append({
-            'rank': row['Rank'],
-            'elo_sum': row['ELO_Sum'],
-            'date': row['Date'],
-            'winner': clean_names(row.get("Winner", "")),
-            'others': clean_names(row.get("Other Players", "")),
-            'match_id': row['MatchID'],
-            'match_url': f"https://rootleague.pliskin.dev/match/{row['MatchID']}/"
+            'rank': m.get('Rank'),
+            'elo_sum': m.get('ELO_Sum'),
+            'date': m.get('Date'),
+            'players': sorted_players,
+            'match_id': m.get('MatchID'),
+            'match_url': f"https://rootleague.pliskin.dev/match/{m.get('MatchID')}/"
         })
     return prepared
 
@@ -153,12 +147,12 @@ for tag in ARCHIVE_SEASONS:
     print(f"📂 Loading archive: {tag.upper()}")
     archives_raw_data[tag] = {
         'final_df': pd.DataFrame(),
-        'matches_df': pd.DataFrame(),
+        'matches_list': [],
         'history': {}
     }
     
     path_ratings = os.path.join(DATA_DIR, f"{tag}_final_ratings.csv")
-    path_matches = os.path.join(DATA_DIR, f"{tag}_matches_fixed.csv")
+    path_matches = os.path.join(DATA_DIR, f"{tag}_matches_fixed.json")
     path_trends  = os.path.join(DATA_DIR, f"{tag}_history_full.json")
     path_meta = os.path.join(DATA_DIR, f"{tag}_metadata.json")
     archives_raw_data[tag]['metadata'] = {"cutoff_date": "N/A", "match_count": 0}
@@ -183,7 +177,8 @@ for tag in ARCHIVE_SEASONS:
             archives_raw_data[tag]['final_df'] = df_ratings
         
         if os.path.exists(path_matches):
-            archives_raw_data[tag]['matches_df'] = pd.read_csv(path_matches)
+            with open(path_matches, "r", encoding="utf-8") as f:
+                archives_raw_data[tag]['matches_list'] = json.load(f)
         
         if os.path.exists(path_trends):
             with open(path_trends, "r", encoding="utf-8") as f:
@@ -275,17 +270,7 @@ if not df.empty:
         current_match_sum = round(sum([elo_ratings[p['Player']] for p in match_participants]))
         current_date = pd.to_datetime(match_participants[0]['Date_Closed']).strftime('%Y-%m-%d')
         
-        winners = [p['Player'] for p in match_participants if p['Score'] >= 0.5]
-        others = [p['Player'] for p in match_participants if p['Score'] == 0.0]
-        
-        match_history_data.append({
-            'MatchID': game_id, 
-            'Date': current_date, 
-            'Winner': ", ".join(winners),
-            'Other Players': ", ".join(others), 
-            'ELO_Sum': current_match_sum
-        })
-
+        deltas_this_match = {}
         total_q = sum([10**(elo_ratings[p['Player']]/400) for p in match_participants])
         for p in match_participants:
             name = p['Player']
@@ -299,10 +284,28 @@ if not df.empty:
             
             elo_ratings[name] += change
             last_diff[name] = change
+            deltas_this_match[name] = round(change)
+            
             if elo_ratings[name] > peak_elo[name]: 
                 peak_elo[name] = elo_ratings[name]
             match_url = f"https://rootleague.pliskin.dev/match/{game_id}/"
             player_history[name].append([current_date, round(elo_ratings[name]), int(game_id), match_url])
+
+        players_list = []
+        for p in match_participants:
+            clean_name = p['Player'].split('+')[0].split('#')[0].strip()
+            players_list.append({
+                'name': clean_name,
+                'delta': int(deltas_this_match[p['Player']]),
+                'is_winner': bool(p['Score'] >= 0.5)
+            })
+
+        match_history_data.append({
+            'MatchID': game_id, 
+            'Date': current_date, 
+            'players': players_list, 
+            'ELO_Sum': current_match_sum
+        })
 
 current_matches_df = pd.DataFrame(match_history_data)
 if not current_matches_df.empty:
@@ -369,7 +372,7 @@ if not current_final_df.empty:
 
 display_matches_current = []
 if not current_matches_df.empty:
-    display_matches_current = prepare_matches_data(current_matches_df)[:100]
+    display_matches_current = prepare_matches_data(current_matches_df.to_dict('records'))
 
 display_trends_current = prepare_trends_data(current_history)
 
@@ -384,8 +387,8 @@ for tag in ARCHIVE_SEASONS:
         lb_data = prepare_leaderboard_data(filtered_df)
         
     match_data = []
-    if not raw['matches_df'].empty:
-        match_data = prepare_matches_data(raw['matches_df'])[:100]
+    if raw['matches_list']:
+        match_data = prepare_matches_data(raw['matches_list'])
         
     display_archives[tag] = {
         'leaderboard': lb_data,
@@ -496,7 +499,7 @@ def render_core_pages(file_suffix, is_archive, tag, lb_data, match_data, trends_
     render_page(
         "leaderboard.html", f"index{file_suffix}.html", page_id="index", current_page_base="index",
         title="Leaderboard • Rootelo", page_heading="Leaderboard",
-        description=f"Minimum 1 win required for display. Only&nbsp;players&nbsp;with&nbsp;a&nbsp;Tier&nbsp;are&nbsp;ranked.<br><br><i><small>Includes {meta.get('match_count', 0)} matches up to {meta.get('cutoff_date', 'N/A')}.</i></small>",
+        description=f"Minimum 1 win required for display. Only&nbsp;players&nbsp;with&nbsp;a&nbsp;Tier&nbsp;are&nbsp;ranked.<br><br><i><small>Double-click any player to see their Journey.</i></small>",
         is_archive=is_archive, has_seasons=True, season_tag=tag,
         archive_seasons=ARCHIVE_SEASONS,
         current_season_tag=CURRENT_SEASON_TAG,
@@ -508,7 +511,7 @@ def render_core_pages(file_suffix, is_archive, tag, lb_data, match_data, trends_
     render_page(
         "matches.html", f"matches{file_suffix}.html", page_id="matches",
         title="Top Tables • Rootelo", page_heading="Top Tables",
-        description="Top 100 games ranked by total Elo. Click&nbsp;a&nbsp;Game&nbsp;ID&nbsp;for&nbsp;match&nbsp;details.",
+        description=f"Season games ranked by total Elo. Click&nbsp;a&nbsp;Game&nbsp;ID&nbsp;for&nbsp;match&nbsp;details.<br><br><i><small>Includes {meta.get('match_count', 0)} matches up to {meta.get('cutoff_date', 'N/A')}.</i></small>",
         is_archive=is_archive, has_seasons=True, season_tag=tag,
         archive_seasons=ARCHIVE_SEASONS,
         current_season_tag=CURRENT_SEASON_TAG,

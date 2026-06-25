@@ -257,16 +257,15 @@ $(document).ready(function() {
         $('#matchesTable').DataTable({
             "order": [[1, "desc"]], 
             "responsive": true,
-            "pageLength": 25,
+            "pageLength": 50,
             "columnDefs": [
 				{ "className": "rank-cell", "targets": 0 },
                 { "className": "elo-sum-cell", "targets": 1 },
 				{ "className": "date-cell", "targets": 2 },
 				{ "className": "numeric-cell", "targets": [0, 1, 2, 4] },
-                { "responsivePriority": 1, "targets": [0, 3] },
-                { "responsivePriority": 2, "targets": 1 },
-                { "responsivePriority": 3, "targets": 2 },
-                { "responsivePriority": 4, "targets": 4 }
+                { "responsivePriority": 1, "targets": [1, 3] },
+                { "responsivePriority": 2, "targets": [0, 2] },
+                { "responsivePriority": 3, "targets": 4 }
             ],
             "language": {
                 "searchPlaceholder": "Player name, Game ID..."
@@ -743,3 +742,29 @@ function showVisitorRow(name, date) {
     const recognitionZone = document.getElementById('visitor-recognition');
     if (recognitionZone) recognitionZone.style.display = 'none';
 }
+
+/* =========================================================================
+   --- 9. DYNAMIC TRENDS REDIRECTION ---
+   ========================================================================= */
+
+// Double-clic sur une cellule de nom de joueur
+$(document).on('dblclick', '.player-name-cell', function() {
+    const playerName = $(this).text().trim();
+    
+    if (playerName) {
+        // 1. On stocke le joueur uniquement pour la page Trends
+        localStorage.setItem('selectedPlayer', playerName);
+        
+        // 2. Routage dynamique universel selon la saison (ex: index_lh01.html -> trends_lh01.html)
+        let trendsPage = 'trends.html';
+        const pageName = window.location.pathname.split('/').pop() || '';
+        
+        if (pageName.includes('_')) {
+            const seasonSuffix = pageName.substring(pageName.indexOf('_') + 1).replace(/\.html$/i, '');
+            trendsPage = `trends_${seasonSuffix}.html`;
+        }
+        
+        // 3. Redirection directe vers le graphique de tendances
+        window.location.href = `${trendsPage}#progressionChart`;
+    }
+});
