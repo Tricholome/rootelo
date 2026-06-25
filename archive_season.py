@@ -186,12 +186,12 @@ if num_active > 0 and num_players > 0:
     
     print(f"📊 Rebalancing Season {SEASON_TAG.upper()}:")
     print(f"   - Total database players: {num_players}")
-    print(f"   - Active Players (Tier unlocked, >= 10 games): {num_active}")
-    print(f"   - Inactive/Unqualified Players (< 10 games): {len(inactive_players)}")
+    print(f"   - Active Players (with tier or progress, >= 1 game): {num_active}")
+    print(f"   - Inactive Players (skipped season, 0 games): {len(inactive_players)}")
     print(f"   - Actual Total Elo: {actual_sum:.2f}")
     print(f"   - Theoretical Total: {theoretical_sum:.2f}")
     print(f"   - Global Deficit to inject: {total_deficit:.2f} points")
-    print(f"   - Individual Loyalty Bonus: +{bonus_per_player:.4f} Elo per qualified player")
+    print(f"   - Individual Loyalty Bonus: +{bonus_per_player:.4f} Elo per active player")
     
     for p in active_players:
         elo_ratings[p] += bonus_per_player
