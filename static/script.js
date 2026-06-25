@@ -752,35 +752,70 @@ function showVisitorRow(name, date) {
    --- 9. GLOBAL FILTER SYNC & DYNAMIC TRENDS REDIRECTION ---
    ========================================================================= */
 
-// 1. Handle double-click to save player and redirect directly to their seasonal chart
-$(document).on('dblclick', '.player-click-target', function() {
-    // Récupère le texte sélectionné par l'utilisateur ou le texte de la cellule par défaut
-    const selectedText = window.getSelection().toString().trim() || $(this).text().trim();
+// Fonction centrale de redirection vers les graphiques d'un joueur
+function redirectToPlayerTrends(element) {
+    // Récupère le texte sélectionné par l'utilisateur (idéal pour double-clic/double-tap sur un mot)
+    let selectedText = window.getSelection().toString().trim();
     
-    // VALIDATION : Vérification de la longueur et absence de sauts de ligne
-    if (selectedText && selectedText.length > 1 && selectedText.length < 30 && !selectedText.includes('\n')) {
-        
-        // RECONNAISSANCE DE NOM : Bloque si c'est un score, un gain/perte d'Elo (+15, -8) ou s'il n'y a aucune lettre
+    // Fallback : si aucune sélection textuelle, on prend le texte brut de la cellule cliquée
+    if (!selectedText) {
+        selectedText = $(element).text().trim();
+    }
+    
+    // Si la cellule contient plusieurs lignes (comme dans la table matches),
+    // on extrait la première ligne non vide pour éviter de bloquer la validation.
+    if (selectedText.includes('\n')) {
+        const lines = selectedText.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+        if (lines.length > 0) {
+            selectedText = lines[0];
+        }
+    }
+
+    // VALIDATIONS : Longueur cohérente, présence de lettres, et exclusion des scores/Elo (ex: +15, -8, 1250)
+    if (selectedText && selectedText.length > 1 && selectedText.length < 50) {
         if (/^[+-]?\d+$/.test(selectedText) || !/[a-zA-ZÀ-ÿ]/.test(selectedText)) {
-            return; // On ignore le clic sur un chiffre ou une statistique
+            return; // On ignore les chiffres purs et les statistiques d'Elo
         }
         
         // 1. Stockage du joueur sélectionné dans le localStorage
         localStorage.setItem('selectedPlayer', selectedText);
         
-        // 2. ROUTING DYNAMIQUE UNIVERSEL : Extrait tout ce qui suit le premier "_"
+        // 2. ROUTING DYNAMIQUE UNIVERSEL : Extrait le suffixe après le premier "_"
         let trendsPage = 'trends.html';
-        const pageName = window.location.pathname.split('/').pop() || ''; // Ex: "leaderboard_lh01.html" ou "index_saison3.html"
+        const pageName = window.location.pathname.split('/').pop() || '';
         
         if (pageName.includes('_')) {
-            // Découpe après le premier "_" et nettoie l'extension ".html"
             const seasonSuffix = pageName.substring(pageName.indexOf('_') + 1).replace(/\.html$/i, '');
-            trendsPage = `trends_${seasonSuffix}.html`; // Devient "trends_lh01.html" ou "trends_saison3.html"
+            trendsPage = `trends_${seasonSuffix}.html`;
         }
         
-        // 3. Redirection directe appliquée au canvas du graphique
-        window.location.href = `${trendsPage}#progressionChart`; 
+        // 3. Redirection instantanée vers l'ancre du graphique
+        window.location.href = `${trendsPage}#progressionChart`;
     }
+}
+
+// SIMULATEUR DE DOUBLE-TAP (Mobile) & DOUBLE-CLIC (Desktop)
+let lastTargetClickTime = 0;
+let lastTargetElement = null;
+
+$(document).on('click', '.player-click-target', function(e) {
+    const currentTime = new Date().getTime();
+    const timeDiff = currentTime - lastTargetClickTime;
+    
+    // Détection du double-clic/double-tap (intervalle standard entre 40ms et 300ms sur le même élément)
+    if (timeDiff < 300 && timeDiff > 40 && lastTargetElement === this) {
+        e.preventDefault();
+        redirectToPlayerTrends(this);
+    }
+    
+    lastTargetClickTime = currentTime;
+    lastTargetElement = this;
+});
+
+// Sécurité : on garde l'écouteur natif dblclick pour les ordinateurs de bureau
+$(document).on('dblclick', '.player-click-target', function(e) {
+    e.preventDefault();
+    redirectToPlayerTrends(this);
 });
 
 // 2. Global Input Sync & Cleanup (Utile si on vide le champ directement sur la page Trends)
