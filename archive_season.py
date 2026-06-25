@@ -167,28 +167,40 @@ for game_id, group in df.groupby('GameID', sort=False):
         'players': players_list,
         'ELO_Sum': int(current_match_sum)
     })
-        
+
 # =========================================================================
 # --- 6. SEASON END REBALANCING ---
 # =========================================================================
+active_players = [p for p in elo_ratings if player_stats[p]['games'] >= 10]
+inactive_players = [p for p in elo_ratings if player_stats[p]['games'] < 10]
+
 num_players = len(elo_ratings)
-if num_players > 0:
+num_active = len(active_players)
+
+if num_active > 0 and num_players > 0:
     actual_sum = sum(elo_ratings.values())
     theoretical_sum = num_players * 1200.0
     total_deficit = theoretical_sum - actual_sum
-    bonus_per_player = total_deficit / num_players
+    
+    bonus_per_player = total_deficit / num_active
     
     print(f"📊 Rebalancing Season {SEASON_TAG.upper()}:")
+    print(f"   - Total database players: {num_players}")
+    print(f"   - Active Players (Tier unlocked, >= 10 games): {num_active}")
+    print(f"   - Inactive/Unqualified Players (< 10 games): {len(inactive_players)}")
     print(f"   - Actual Total Elo: {actual_sum:.2f}")
     print(f"   - Theoretical Total: {theoretical_sum:.2f}")
-    print(f"   - Global Bonus: {total_deficit:.2f} points redistributed")
-    print(f"   - Individual Bonus: +{bonus_per_player:.4f} Elo per player")
+    print(f"   - Global Deficit to inject: {total_deficit:.2f} points")
+    print(f"   - Individual Loyalty Bonus: +{bonus_per_player:.4f} Elo per qualified player")
     
-    for p in elo_ratings:
+    for p in active_players:
         elo_ratings[p] += bonus_per_player
         if elo_ratings[p] > peak_elo[p]:
             peak_elo[p] = elo_ratings[p]
         player_history[p].append(["Final", round(elo_ratings[p]), None, None])           
+
+for p in inactive_players:
+    player_history[p].append(["Final", round(elo_ratings[p]), None, None])        
 
 # =========================================================================
 # --- 7. EXPORT FINAL RATINGS (LEADERBOARD) ---
