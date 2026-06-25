@@ -752,84 +752,36 @@ function showVisitorRow(name, date) {
    --- 9. GLOBAL FILTER SYNC & DYNAMIC TRENDS REDIRECTION ---
    ========================================================================= */
 
-// Fonction de ciblage chirurgical pour extraire le nom exact sous le clic/tap
-function getClickedPlayerName(e, cellElement) {
-    // 1. Priorité à la sélection native (fonctionne parfaitement sur Desktop au double-clic)
-    let sel = window.getSelection().toString().trim();
-    if (sel && !sel.includes('\n') && sel.length > 1 && sel.length < 30) {
-        if (/[a-zA-ZÀ-ÿ]/.test(sel) && !/^[+-]?\d+$/.test(sel)) {
-            return sel;
+let lastTapTime = 0;
+
+$(document).on('click dblclick', '.player-click-target', function(e) {
+    // 1. Gestionnaire de double-tap léger pour Mobile (sans bloquer le thread principal)
+    if (e.type === 'click') {
+        const now = Date.now();
+        if (now - lastTapTime > 300) {
+            lastTapTime = now;
+            return; // Simple clic : on ne fait rien
         }
     }
 
-    // 2. Analyse précise par coordonnées de pointage (Idéal pour le double-tap Mobile)
-    const x = e.clientX;
-    const y = e.clientY;
-    
-    if (x && y) {
-        let range, textNode, offset;
-        
-        // Support cross-browser pour récupérer le point exact dans le texte
-        if (document.caretRangeFromPoint) {
-            range = document.caretRangeFromPoint(x, y);
-            if (range) {
-                textNode = range.startContainer;
-                offset = range.startOffset;
-            }
-        } else if (document.caretPositionFromPoint) {
-            const pos = document.caretPositionFromPoint(x, y);
-            if (pos) {
-                textNode = pos.offsetNode;
-                offset = pos.offset;
-            }
-        }
-        
-        // Si on a trouvé le nœud de texte précis sous le clic
-        if (textNode && textNode.nodeType === 3) {
-            let text = textNode.nodeValue;
-            
-            // On s'étend à gauche et à droite de l'offset pour isoler le nom complet
-            // en s'arrêtant aux séparateurs de listes courants (saut de ligne, virgule, etc.)
-            let start = offset;
-            while (start > 0 && !/[\n,;|•\t]/.test(text[start - 1])) {
-                start--;
-            }
-            let end = offset;
-            while (end < text.length && !/[\n,;|•\t]/.test(text[end])) {
-                end++;
-            }
-            
-            let name = text.substring(start, end).trim();
-            // Nettoyage d'éventuels résidus "vs" de la table des matchs
-            name = name.replace(/^vs\s+/i, '').replace(/\s+vs$/i, '').trim();
-            
-            // Validation du nom extrait
-            if (name.length > 1 && name.length < 30 && /[a-zA-ZÀ-ÿ]/.test(name) && !/^[+-]?\d+$/.test(name)) {
-                return name;
-            }
-        }
+    // 2. Récupération du mot sélectionné nativement par le double-clic/double-tap
+    let selectedText = window.getSelection().toString().trim();
+
+    // Fallback : Si aucune sélection (ex: leaderboard général où la cellule ne contient qu'un seul nom sans retour à la ligne)
+    if (!selectedText && !$(this).text().includes('\n')) {
+        selectedText = $(this).text().trim();
     }
 
-    // 3. Dernier recours : si le clic a visé une balise enfant directe (ex: un <span> ou une ligne isolée)
-    let targetText = $(e.target).text().trim();
-    if (targetText && !targetText.includes('\n') && targetText.length > 1 && targetText.length < 30) {
-        if (/[a-zA-ZÀ-ÿ]/.test(targetText) && !/^[+-]?\d+$/.test(targetText)) {
-            return targetText;
+    // 3. Validation stricte du nom (Exclut les scores, gains d'Elo et cellules vides)
+    if (selectedText && selectedText.length > 1 && selectedText.length < 30) {
+        if (/^[+-]?\d+$/.test(selectedText) || !/[a-zA-ZÀ-ÿ]/.test(selectedText)) {
+            return; // C'est un chiffre ou un score, on ignore
         }
-    }
 
-    return null;
-}
+        // Stockage du joueur valide
+        localStorage.setItem('selectedPlayer', selectedText);
 
-// Gestionnaire de redirection unifiée
-function handlePlayerRedirection(e, element) {
-    const playerName = getClickedPlayerName(e, element);
-    
-    if (playerName) {
-        // 1. Stockage du joueur ciblé
-        localStorage.setItem('selectedPlayer', playerName);
-        
-        // 2. Routage dynamique par suffixe de saison (ex: _lh01)
+        // 4. Routage dynamique universel pour les saisons futures (ex: _lh01)
         let trendsPage = 'trends.html';
         const pageName = window.location.pathname.split('/').pop() || '';
         
@@ -837,36 +789,13 @@ function handlePlayerRedirection(e, element) {
             const seasonSuffix = pageName.substring(pageName.indexOf('_') + 1).replace(/\.html$/i, '');
             trendsPage = `trends_${seasonSuffix}.html`;
         }
-        
-        // 3. Redirection directe vers le graphique
+
+        // Redirection vers le graphique de la bonne page de tendances
         window.location.href = `${trendsPage}#progressionChart`;
     }
-}
-
-// SIMULATEUR DE DOUBLE-TAP (Mobile)
-let lastTargetClickTime = 0;
-let lastTargetElement = null;
-
-$(document).on('click', '.player-click-target', function(e) {
-    const currentTime = new Date().getTime();
-    const timeDiff = currentTime - lastTargetClickTime;
-    
-    if (timeDiff < 300 && timeDiff > 40 && lastTargetElement === this) {
-        e.preventDefault();
-        handlePlayerRedirection(e, this);
-    }
-    
-    lastTargetClickTime = currentTime;
-    lastTargetElement = this;
 });
 
-// ÉCOUTEUR DOUBLE-CLIC NATIF (Desktop)
-$(document).on('dblclick', '.player-click-target', function(e) {
-    e.preventDefault();
-    handlePlayerRedirection(e, this);
-});
-
-// 2. Global Input Sync & Cleanup
+// 5. Synchronisation de la barre de recherche globale
 $(document).on('input search', '.dataTables_filter input, #playerName', function() {
     const value = $(this).val().trim();
     if (value) {
