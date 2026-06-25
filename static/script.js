@@ -240,7 +240,7 @@ $(document).ready(function() {
 			"search": { "search": savedPlayer },
             "columnDefs": [ 
                 { "targets": 0, "type": "rank" },
-                { "targets": 2, "className": "player-name-cell player-click-target" },
+                { "targets": 2, "className": "player-name-cell" },
                 { "targets": 3, "className": "elo-cell" },
 				{ "className": "numeric-cell", "targets": [0, 3, 4, 5, 6, 7, 8] },
                 { "responsivePriority": 1, "targets": [2, 3] },
@@ -266,7 +266,6 @@ $(document).ready(function() {
 				{ "className": "rank-cell", "targets": 0 },
                 { "className": "elo-sum-cell", "targets": 1 },
 				{ "className": "date-cell", "targets": 2 },
-				{ "className": "player-click-target", "targets": 3 },
 				{ "className": "numeric-cell", "targets": [0, 1, 2, 4] },
                 { "responsivePriority": 1, "targets": [1, 3] },
                 { "responsivePriority": 2, "targets": [0, 2] },
@@ -289,7 +288,7 @@ $(document).ready(function() {
 			"dom": 'rt',
 			"columnDefs": [
 				{ "targets": 0, "className": "rank-cell" },
-				{ "targets": 1, "className": "player-name-cell player-click-target" },
+				{ "targets": 1, "className": "player-name-cell" },
 				{ "targets": 2, "className": "streak-cell" },
 				{ "targets": 3, "className": "elo-cell" },
 				{ "targets": 4, "className": "date-cell" },
@@ -749,39 +748,18 @@ function showVisitorRow(name, date) {
 }
 
 /* =========================================================================
-   --- 9. GLOBAL FILTER SYNC & DYNAMIC TRENDS REDIRECTION ---
+   --- 9. DYNAMIC TRENDS REDIRECTION ---
    ========================================================================= */
 
-let lastTapTime = 0;
-
-$(document).on('click dblclick', '.player-click-target', function(e) {
-    // 1. Gestionnaire de double-tap léger pour Mobile (sans bloquer le thread principal)
-    if (e.type === 'click') {
-        const now = Date.now();
-        if (now - lastTapTime > 300) {
-            lastTapTime = now;
-            return; // Simple clic : on ne fait rien
-        }
-    }
-
-    // 2. Récupération du mot sélectionné nativement par le double-clic/double-tap
-    let selectedText = window.getSelection().toString().trim();
-
-    // Fallback : Si aucune sélection (ex: leaderboard général où la cellule ne contient qu'un seul nom sans retour à la ligne)
-    if (!selectedText && !$(this).text().includes('\n')) {
-        selectedText = $(this).text().trim();
-    }
-
-    // 3. Validation stricte du nom (Exclut les scores, gains d'Elo et cellules vides)
-    if (selectedText && selectedText.length > 1 && selectedText.length < 30) {
-        if (/^[+-]?\d+$/.test(selectedText) || !/[a-zA-ZÀ-ÿ]/.test(selectedText)) {
-            return; // C'est un chiffre ou un score, on ignore
-        }
-
-        // Stockage du joueur valide
-        localStorage.setItem('selectedPlayer', selectedText);
-
-        // 4. Routage dynamique universel pour les saisons futures (ex: _lh01)
+// Double-clic sur une cellule de nom de joueur
+$(document).on('dblclick', '.player-name-cell', function() {
+    const playerName = $(this).text().trim();
+    
+    if (playerName) {
+        // 1. On stocke le joueur uniquement pour la page Trends
+        localStorage.setItem('selectedPlayer', playerName);
+        
+        // 2. Routage dynamique universel selon la saison (ex: index_lh01.html -> trends_lh01.html)
         let trendsPage = 'trends.html';
         const pageName = window.location.pathname.split('/').pop() || '';
         
@@ -789,18 +767,8 @@ $(document).on('click dblclick', '.player-click-target', function(e) {
             const seasonSuffix = pageName.substring(pageName.indexOf('_') + 1).replace(/\.html$/i, '');
             trendsPage = `trends_${seasonSuffix}.html`;
         }
-
-        // Redirection vers le graphique de la bonne page de tendances
+        
+        // 3. Redirection directe vers le graphique de tendances
         window.location.href = `${trendsPage}#progressionChart`;
-    }
-});
-
-// 5. Synchronisation de la barre de recherche globale
-$(document).on('input search', '.dataTables_filter input, #playerName', function() {
-    const value = $(this).val().trim();
-    if (value) {
-        localStorage.setItem('selectedPlayer', value);
-    } else {
-        localStorage.removeItem('selectedPlayer');
     }
 });
