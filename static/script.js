@@ -752,35 +752,84 @@ function showVisitorRow(name, date) {
    --- 9. GLOBAL FILTER SYNC & DYNAMIC TRENDS REDIRECTION ---
    ========================================================================= */
 
-// Fonction centrale de redirection vers les graphiques d'un joueur
-function redirectToPlayerTrends(element) {
-    // Récupère le texte sélectionné par l'utilisateur (idéal pour double-clic/double-tap sur un mot)
-    let selectedText = window.getSelection().toString().trim();
-    
-    // Fallback : si aucune sélection textuelle, on prend le texte brut de la cellule cliquée
-    if (!selectedText) {
-        selectedText = $(element).text().trim();
-    }
-    
-    // Si la cellule contient plusieurs lignes (comme dans la table matches),
-    // on extrait la première ligne non vide pour éviter de bloquer la validation.
-    if (selectedText.includes('\n')) {
-        const lines = selectedText.split('\n').map(l => l.trim()).filter(l => l.length > 0);
-        if (lines.length > 0) {
-            selectedText = lines[0];
+// Fonction de ciblage chirurgical pour extraire le nom exact sous le clic/tap
+function getClickedPlayerName(e, cellElement) {
+    // 1. Priorité à la sélection native (fonctionne parfaitement sur Desktop au double-clic)
+    let sel = window.getSelection().toString().trim();
+    if (sel && !sel.includes('\n') && sel.length > 1 && sel.length < 30) {
+        if (/[a-zA-ZÀ-ÿ]/.test(sel) && !/^[+-]?\d+$/.test(sel)) {
+            return sel;
         }
     }
 
-    // VALIDATIONS : Longueur cohérente, présence de lettres, et exclusion des scores/Elo (ex: +15, -8, 1250)
-    if (selectedText && selectedText.length > 1 && selectedText.length < 50) {
-        if (/^[+-]?\d+$/.test(selectedText) || !/[a-zA-ZÀ-ÿ]/.test(selectedText)) {
-            return; // On ignore les chiffres purs et les statistiques d'Elo
+    // 2. Analyse précise par coordonnées de pointage (Idéal pour le double-tap Mobile)
+    const x = e.clientX;
+    const y = e.clientY;
+    
+    if (x && y) {
+        let range, textNode, offset;
+        
+        // Support cross-browser pour récupérer le point exact dans le texte
+        if (document.caretRangeFromPoint) {
+            range = document.caretRangeFromPoint(x, y);
+            if (range) {
+                textNode = range.startContainer;
+                offset = range.startOffset;
+            }
+        } else if (document.caretPositionFromPoint) {
+            const pos = document.caretPositionFromPoint(x, y);
+            if (pos) {
+                textNode = pos.offsetNode;
+                offset = pos.offset;
+            }
         }
         
-        // 1. Stockage du joueur sélectionné dans le localStorage
-        localStorage.setItem('selectedPlayer', selectedText);
+        // Si on a trouvé le nœud de texte précis sous le clic
+        if (textNode && textNode.nodeType === 3) {
+            let text = textNode.nodeValue;
+            
+            // On s'étend à gauche et à droite de l'offset pour isoler le nom complet
+            // en s'arrêtant aux séparateurs de listes courants (saut de ligne, virgule, etc.)
+            let start = offset;
+            while (start > 0 && !/[\n,;|•\t]/.test(text[start - 1])) {
+                start--;
+            }
+            let end = offset;
+            while (end < text.length && !/[\n,;|•\t]/.test(text[end])) {
+                end++;
+            }
+            
+            let name = text.substring(start, end).trim();
+            // Nettoyage d'éventuels résidus "vs" de la table des matchs
+            name = name.replace(/^vs\s+/i, '').replace(/\s+vs$/i, '').trim();
+            
+            // Validation du nom extrait
+            if (name.length > 1 && name.length < 30 && /[a-zA-ZÀ-ÿ]/.test(name) && !/^[+-]?\d+$/.test(name)) {
+                return name;
+            }
+        }
+    }
+
+    // 3. Dernier recours : si le clic a visé une balise enfant directe (ex: un <span> ou une ligne isolée)
+    let targetText = $(e.target).text().trim();
+    if (targetText && !targetText.includes('\n') && targetText.length > 1 && targetText.length < 30) {
+        if (/[a-zA-ZÀ-ÿ]/.test(targetText) && !/^[+-]?\d+$/.test(targetText)) {
+            return targetText;
+        }
+    }
+
+    return null;
+}
+
+// Gestionnaire de redirection unifiée
+function handlePlayerRedirection(e, element) {
+    const playerName = getClickedPlayerName(e, element);
+    
+    if (playerName) {
+        // 1. Stockage du joueur ciblé
+        localStorage.setItem('selectedPlayer', playerName);
         
-        // 2. ROUTING DYNAMIQUE UNIVERSEL : Extrait le suffixe après le premier "_"
+        // 2. Routage dynamique par suffixe de saison (ex: _lh01)
         let trendsPage = 'trends.html';
         const pageName = window.location.pathname.split('/').pop() || '';
         
@@ -789,12 +838,12 @@ function redirectToPlayerTrends(element) {
             trendsPage = `trends_${seasonSuffix}.html`;
         }
         
-        // 3. Redirection instantanée vers l'ancre du graphique
+        // 3. Redirection directe vers le graphique
         window.location.href = `${trendsPage}#progressionChart`;
     }
 }
 
-// SIMULATEUR DE DOUBLE-TAP (Mobile) & DOUBLE-CLIC (Desktop)
+// SIMULATEUR DE DOUBLE-TAP (Mobile)
 let lastTargetClickTime = 0;
 let lastTargetElement = null;
 
@@ -802,26 +851,24 @@ $(document).on('click', '.player-click-target', function(e) {
     const currentTime = new Date().getTime();
     const timeDiff = currentTime - lastTargetClickTime;
     
-    // Détection du double-clic/double-tap (intervalle standard entre 40ms et 300ms sur le même élément)
     if (timeDiff < 300 && timeDiff > 40 && lastTargetElement === this) {
         e.preventDefault();
-        redirectToPlayerTrends(this);
+        handlePlayerRedirection(e, this);
     }
     
     lastTargetClickTime = currentTime;
     lastTargetElement = this;
 });
 
-// Sécurité : on garde l'écouteur natif dblclick pour les ordinateurs de bureau
+// ÉCOUTEUR DOUBLE-CLIC NATIF (Desktop)
 $(document).on('dblclick', '.player-click-target', function(e) {
     e.preventDefault();
-    redirectToPlayerTrends(this);
+    handlePlayerRedirection(e, this);
 });
 
-// 2. Global Input Sync & Cleanup (Utile si on vide le champ directement sur la page Trends)
+// 2. Global Input Sync & Cleanup
 $(document).on('input search', '.dataTables_filter input, #playerName', function() {
     const value = $(this).val().trim();
-    
     if (value) {
         localStorage.setItem('selectedPlayer', value);
     } else {
