@@ -752,10 +752,10 @@ function showVisitorRow(name, date) {
    --- 9. GLOBAL FILTER SYNC & TOOLTIPS ---
    ========================================================================= */
 
-// 1. Dynamically add a native tooltip on hover
-$(document).on('mouseenter', '.player-click-target', function() {
-    if (!this.hasAttribute('title')) {
-        $(this).attr('title', 'Double-click to filter by this player');
+// 1. Dynamically add a custom dark tooltip on hover or mobile tap
+$(document).on('mouseenter touchstart', '.player-click-target', function() {
+    if (!this.hasAttribute('data-tooltip')) {
+        $(this).attr('data-tooltip', 'Double-click to filter by this player');
     }
 });
 
