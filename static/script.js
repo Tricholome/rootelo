@@ -235,7 +235,6 @@ $(document).ready(function() {
             "responsive": true, 
             "pageLength": 50,
             "dom": '<"top"lf>rt<"bottom"ip><"clear">',
-			"search": { "search": savedPlayer },
             "columnDefs": [ 
                 { "targets": 0, "type": "rank" },
                 { "targets": 2, "className": "player-name-cell" },
@@ -259,7 +258,6 @@ $(document).ready(function() {
             "order": [[1, "desc"]], 
             "responsive": true,
             "pageLength": 50,
-			"search": { "search": savedPlayer },
             "columnDefs": [
 				{ "className": "rank-cell", "targets": 0 },
                 { "className": "elo-sum-cell", "targets": 1 },
