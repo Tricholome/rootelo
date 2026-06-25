@@ -222,8 +222,6 @@ document.addEventListener('DOMContentLoaded', function() {
    ========================================================================= */
 
 $(document).ready(function() {
-	
-	const savedPlayer = localStorage.getItem('selectedPlayer') || "";
 
     // --- 1. LEADERBOARD ---
     if ($('#leaderboard').length > 0) {
