@@ -16,7 +16,7 @@
     
     <div class="chart-wrapper">
         <div class="chart-container">
-            <canvas id=\"progressionChart\"></canvas>
+            <canvas id="progressionChart"></canvas>
         </div>
     </div>
 
@@ -59,6 +59,4 @@
         window.CONFIG = {{ backend_config_json | safe }};
         window.relationsData = {{ relations_json | safe }};
     </script>
-
-    <script src="/static/script.js"></script>
 {% endblock %}
