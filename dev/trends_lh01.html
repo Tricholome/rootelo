@@ -1058,7 +1058,7 @@
             
             <div class="left-column">
                 <div class="node central-node">
-                    <div class="narrative-text">During their journey,</div>
+                    <div class="narrative-text">On this winding journey,</div>
                     <div class="player-name" id="centerPlayerName">Select a player</div>
                     <div id="centerPlayerMeta"></div>
                 </div>
@@ -1073,14 +1073,14 @@
 
             <div class="right-column">
                 <div class="node target-node" id="nodeTarget" onclick="selectPlayerFromTree(this)" data-player="">
-                    <div class="narrative-text">...and defeated</div>
+                    <div class="narrative-text">...brought down the mighty</div>
                     <div id="textTarget">
                         <div class="player-name">...</div>
                     </div>
                 </div>
 
                 <div class="node target-node" id="nodeNemesis" onclick="selectPlayerFromTree(this)" data-player="">
-                    <div class="narrative-text">...and shamefully lost against</div>
+                    <div class="narrative-text">...and fell before the humble</div>
                     <div id="textNemesis">
                         <div class="player-name">...</div>
                     </div>
@@ -1107,7 +1107,7 @@
                 // Update Central Node
                 document.getElementById('centerPlayerName').innerText = playerName;
                 document.getElementById('centerPlayerMeta').innerHTML = `
-                    <div class="player-opponents">encountered ${data.unique_opponents} different opponents...</div>
+                    <div class="player-opponents">faced ${data.unique_opponents} unique opponents...</div>
                 `;
                 
                 // Highest ELO Defeated (Top)
@@ -1120,7 +1120,7 @@
                     document.getElementById('nodeTarget').setAttribute('data-player', data.trophy.name);
                 } else {
                     document.getElementById('textTarget').innerHTML = `
-                        <div class="player-name narrative-empty">no notable opponent yet</div>
+                        <div class="player-name narrative-empty">...but failed to claim a single victory</div>
                     `;
                     document.getElementById('nodeTarget').setAttribute('data-player', '');
                 }
@@ -1135,7 +1135,7 @@
                     document.getElementById('nodeNemesis').setAttribute('data-player', data.bane.name);
                 } else {
                     document.getElementById('textNemesis').innerHTML = `
-                        <div class="player-name narrative-empty">never tasted defeat</div>
+                        <div class="player-name narrative-empty">...and never once tasted defeat</div>
                     `;
                     document.getElementById('nodeNemesis').setAttribute('data-player', '');
                 }
@@ -1178,7 +1178,7 @@
 					<span>Powered by <strong>Tʀɪᴄʜᴏʟᴏᴍᴇ</strong></span>
 					<span>Woodland visions by <a class="cl" href="cache.html">𝕩𝕝𝕦𝕖𝕧𝕚</a></span>
 				</div>
-				<div class="footer-date">Updated on 2026-06-28 20:14 UTC</div>
+				<div class="footer-date">Updated on 2026-06-28 20:34 UTC</div>
 			</div>
 		</footer>
     </div>
