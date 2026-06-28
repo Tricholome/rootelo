@@ -4,6 +4,7 @@ import pandas as pd
 from datetime import datetime, timedelta, date, timezone
 import json
 from jinja2 import Environment, FileSystemLoader
+from collections import defaultdict
 
 # =========================================================================
 # --- 0. PATH CONFIGURATION & SEASON SETTINGS ---
@@ -110,6 +111,28 @@ def prepare_trends_data(history_dict):
         "history_json": json.dumps(history_dict),
         "player_names": sorted(list(history_dict.keys()))
     }
+    
+def extract_relations(matches_list):
+    transfers = defaultdict(lambda: defaultdict(float))
+    for m in matches_list:
+        gainers = {p['name']: p.get('delta', 0) for p in m.get('players', []) if p.get('delta', 0) > 0}
+        losers = {p['name']: -p.get('delta', 0) for p in m.get('players', []) if p.get('delta', 0) < 0}
+        tot = sum(gainers.values())
+        if tot > 0:
+            for l, l_loss in losers.items():
+                for g, g_gain in gainers.items():
+                    transfers[l][g] += l_loss * (g_gain / tot)
+    relations = {}
+    all_players = set(transfers.keys()).union(g for l in transfers for g in transfers[l])
+    for p in all_players:
+        p_gains = {opp: opp_l[p] for opp, opp_l in transfers.items() if p in opp_l}
+        n = max(transfers[p], key=transfers[p].get, default="?")
+        t = max(p_gains, key=p_gains.get, default="?")
+        relations[p] = {
+            "nemesis": {"name": n, "elo": int(round(transfers[p].get(n, 0)))},
+            "target": {"name": t, "elo": int(round(p_gains.get(t, 0)))}
+        }
+    return relations
 
 def render_page(template_name, output_name, **kwargs):
     template = env.get_template(template_name)
@@ -305,6 +328,8 @@ if not df.empty:
             'players': players_list, 
             'ELO_Sum': current_match_sum
         })
+        
+current_relations = extract_relations(match_history_data)
 
 current_matches_df = pd.DataFrame(match_history_data)
 if not current_matches_df.empty:
@@ -492,7 +517,7 @@ hall_of_fame_data = hall_of_fame_final
 # =========================================================================
 print("\n=== GENERATING HTML PAGES ===")
 
-def render_core_pages(file_suffix, is_archive, tag, lb_data, match_data, trends_data, meta):
+def render_core_pages(file_suffix, is_archive, tag, lb_data, match_data, trends_data, meta, relations_json="{}"):
     """Helper to generate the 3 main pages identically for live and archives."""
     
     render_page(
@@ -524,7 +549,8 @@ def render_core_pages(file_suffix, is_archive, tag, lb_data, match_data, trends_
         is_archive=is_archive, has_seasons=True, season_tag=tag,
         archive_seasons=ARCHIVE_SEASONS,
         current_season_tag=CURRENT_SEASON_TAG,
-        history_json=trends_data['history_json'], player_names=trends_data['player_names']
+        history_json=trends_data['history_json'], player_names=trends_data['player_names'],
+        relations_json=relations_json
     )
 
 # --- A. Render Current Season Pages ---
@@ -537,6 +563,7 @@ render_core_pages(
     match_data=display_matches_current, 
     trends_data=display_trends_current,
     meta=current_meta
+    relations_json=json.dumps(current_relations)
 )
 
 # --- B. Render Archives Pages ---
