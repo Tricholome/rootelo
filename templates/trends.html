@@ -3,21 +3,21 @@
 {% block extra_head %}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* --- Styles pour l'organigramme des relations --- */
+        /* --- Organigramme binaire épuré (Jaune Lapin) --- */
         .relations-wrapper {
             margin-top: 40px;
             padding: 20px;
-            background-color: rgba(43, 37, 27, 0.3); /* Fond sombre transparent assorti */
+            background-color: rgba(43, 37, 27, 0.3);
             border-radius: 12px;
             color: #f7f5f0;
         }
 
         .relations-title {
             text-align: center;
-            font-family: inherit;
-            color: #f3c64f; /* Jaune Root */
+            color: #f3c64f; /* Jaune Lapin */
             margin-bottom: 25px;
             font-size: 1.4rem;
+            font-weight: bold;
         }
 
         .relations-container {
@@ -27,34 +27,35 @@
             position: relative;
             max-width: 600px;
             margin: 0 auto;
-            height: 280px;
+            height: 200px; /* Hauteur réduite pour 2 branches */
         }
 
-        /* Style commun des vignettes (Clairières) */
+        /* Style unique des vignettes */
         .node {
             background: #2c2416;
             border: 2px solid #a1814c;
             border-radius: 8px;
             padding: 12px 18px;
-            min-width: 150px;
-            text-align: center;
+            min-width: 200px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.2);
             transition: all 0.3s ease;
             position: relative;
-            cursor: pointer;
-        }
-
-        .node:hover {
-            border-color: #f3c64f;
-            transform: scale(1.03);
         }
 
         .central-node {
             border-color: #f3c64f;
             background: #3a301d;
-            cursor: default;
+            text-align: center;
         }
-        .central-node:hover { transform: none; }
+
+        .target-node {
+            cursor: pointer;
+        }
+
+        .target-node:hover {
+            border-color: #f3c64f;
+            transform: scale(1.02);
+        }
 
         .player-name {
             font-weight: bold;
@@ -62,7 +63,7 @@
             font-size: 1.1rem;
         }
 
-        /* Colonne de droite pour les 3 cibles */
+        /* Colonne de droite (Branches) */
         .target-nodes {
             display: flex;
             flex-direction: column;
@@ -70,112 +71,83 @@
             height: 100%;
         }
 
-        .target-node {
-            padding: 8px 14px;
-        }
-
         .role-tag {
-            font-size: 0.75rem;
+            font-size: 0.8rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             margin-bottom: 4px;
             font-weight: bold;
+            color: #f3c64f; /* Tout en Jaune Lapin */
         }
 
-        /* Couleurs thématiques pour les rôles */
-        .node[data-role="despote"] .role-tag { color: #2b78bc; }  /* Bleu Canopée */
-        .node[data-role="coalition"] .role-tag { color: #3da85e; }/* Vert Alliance/Vagabond */
-        .node[data-role="client"] .role-tag { color: #e0a93c; }   /* Brun/Or Compagnie */
+        .action-text {
+            font-size: 0.95rem;
+            color: #e6e2da;
+        }
 
-        /* Les fils SVG */
+        /* Les fils SVG Jaune Lapin */
         .relations-lines {
             position: absolute;
-            left: 170px; /* Ajusté selon la largeur du nœud central */
-            right: 170px; /* Ajusté selon la largeur des nœuds cibles */
+            left: 215px; /* Ajusté selon la largeur du bloc central */
+            right: 215px; /* Ajusté selon la largeur des blocs cibles */
             height: 100%;
-            width: calc(100% - 340px);
+            width: calc(100% - 430px);
             pointer-events: none;
-        }
-
-        /* Tooltips simples au survol */
-        .node .tooltip {
-            visibility: hidden;
-            background-color: #1a140a;
-            color: #fff;
-            text-align: center;
-            border-radius: 6px;
-            padding: 6px 10px;
-            position: absolute;
-            z-index: 10;
-            bottom: 125%;
-            left: 50%;
-            transform: translateX(-50%);
-            opacity: 0;
-            transition: opacity 0.2s;
-            font-size: 0.8rem;
-            white-space: nowrap;
-            border: 1px solid #a1814c;
-        }
-
-        .node:hover .tooltip {
-            visibility: visible;
-            opacity: 1;
         }
     </style>
 {% endblock %}
 
 {% block content %}
     <div class="search-box">
-        <input type="search" list="playerList" id="playerName" value="Potatosgonnacrushya" placeholder="Search Player..." oninput="updatePlayerView()">
-        <datalist id="playerList">
-            {% for name in player_names %}
-                <option value="{{ name }}">
-            {% endfor %}
+        <input type="search" list="playerList" id="playerName" value="Potatosgonnacrushya" placeholder="Search Player..." oninput="updatePlayerView()">[cite: 1]
+        <datalist id="playerList">[cite: 1]
+            {% for name in player_names %}[cite: 1]
+                <option value="{{ name }}">[cite: 1]
+            {% endfor %}[cite: 1]
             <option value="Potatosgonnacrushya">
             <option value="KingTalon">
             <option value="MiceWillRise">
-            <option value="Adrien">
+            <option value="TradeMaster">
         </datalist>
     </div>
     
-    <div class="chart-wrapper">
-        <div class="chart-container">
-            <canvas id="progressionChart"></canvas>
-        </div>
-    </div>
+    <div class="chart-wrapper">[cite: 1]
+        <div class="chart-container">[cite: 1]
+            <canvas id="progressionChart"></canvas>[cite: 1]
+        </div>[cite: 1]
+    </div>[cite: 1]
 
+    <!-- --- MODULE DES RELATIONS ÉPURÉ --- -->
     <div class="relations-wrapper">
         <div class="relations-title">Chroniques des Clairières</div>
         <div class="relations-container">
             
+            <!-- Gauche : Joueur Sélectionné -->
             <div class="node central-node">
-                <div class="role-tag" style="color: #a1814c;">Profil Actuel</div>
+                <div class="role-tag">Active Player</div>
                 <span class="player-name" id="centerPlayerName">Potatosgonnacrushya</span>
             </div>
 
+            <!-- Milieu : Fils de liaison (2 branches) -->
             <svg class="relations-lines" viewBox="0 0 100 100" preserveAspectRatio="none">
-                <path d="M 0 50 C 50 50, 50 12, 100 12" stroke="#2b78bc" stroke-width="2.5" fill="none" />
-                <path d="M 0 50 C 50 50, 50 50, 100 50" stroke="#3da85e" stroke-width="2.5" fill="none" />
-                <path d="M 0 50 C 50 50, 50 88, 100 88" stroke="#e0a93c" stroke-width="2.5" fill="none" />
+                <!-- Branche du Haut (Nemesis) -->
+                <path d="M 0 50 C 50 50, 50 20, 100 20" stroke="#f3c64f" stroke-width="2.5" fill="none" />
+                <!-- Branche du Bas (Target) -->
+                <path d="M 0 50 C 50 50, 50 80, 100 80" stroke="#f3c64f" stroke-width="2.5" fill="none" />
             </svg>
 
+            <!-- Droite : Les deux vignettes de statistiques -->
             <div class="target-nodes">
-                <div class="node target-node" data-role="despote" id="nodeDespote" onclick="selectPlayerFromTree(this)">
-                    <div class="role-tag">Despote de la Canopée</div>
-                    <span class="player-name" id="nameDespote">KingTalon</span>
-                    <div class="tooltip" id="tipDespote">Ratio: 15% • Décret implacable</div>
+                <!-- Haut : Top Nemesis -->
+                <div class="node target-node" id="nodeNemesis" onclick="selectPlayerFromTree(this)" data-player="">
+                    <div class="role-tag">Top Nemesis</div>
+                    <span class="action-text" id="textNemesis">...</span>
                 </div>
                 
-                <div class="node target-node" data-role="coalition" id="nodeCoalition" onclick="selectPlayerFromTree(this)">
-                    <div class="role-tag">Partenaire de Coalition</div>
-                    <span class="player-name" id="nameCoalition">MiceWillRise</span>
-                    <div class="tooltip" id="tipCoalition">12 matchs partagés cette saison</div>
-                </div>
-                
-                <div class="node target-node" data-role="client" id="nodeClient" onclick="selectPlayerFromTree(this)">
-                    <div class="role-tag">Client de la Compagnie</div>
-                    <span class="player-name" id="nameClient">TradeMaster</span>
-                    <div class="tooltip" id="tipClient">+42 Elo extorqués</div>
+                <!-- Bas : Favorite Target -->
+                <div class="node target-node" id="nodeTarget" onclick="selectPlayerFromTree(this)" data-player="">
+                    <div class="role-tag">Favorite Target</div>
+                    <span class="action-text" id="textTarget">...</span>
                 </div>
             </div>
 
@@ -183,84 +155,63 @@
     </div>
 
     <script>
-        // 1. Base de données fictive pour tester les changements d'arbres
+        // Base de données fictive mise à jour avec la logique inversée
         const fakeRelationsDb = {
             "Potatosgonnacrushya": {
-                despote: { name: "KingTalon", tip: "Taux de victoire: 12% • Tyran des airs" },
-                coalition: { name: "MiceWillRise", tip: "14 parties jouées côte à côte" },
-                client: { name: "Adrien", tip: "Lui a subtilisé 48 points d'Elo" }
+                nemesis: { name: "KingTalon", elo: 52 },
+                target: { name: "TradeMaster", elo: 45 }
             },
             "KingTalon": {
-                despote: { name: "Adrien", tip: "Taux de victoire: 25% • Insaisissable" },
-                coalition: { name: "Potatosgonnacrushya", tip: "18 combats épiques" },
-                client: { name: "VisiteurForêt", tip: "Un client très régulier (+60 Elo)" }
+                nemesis: { name: "MiceWillRise", elo: 30 },
+                target: { name: "Potatosgonnacrushya", elo: 52 }
             },
             "MiceWillRise": {
-                despote: { name: "KingTalon", tip: "Taux de victoire: 8% • Nid impénétrable" },
-                coalition: { name: "Adrien", tip: "Partagent souvent la même clairière" },
-                client: { name: "Potatosgonnacrushya", tip: "A profité de ses erreurs (+30 Elo)" }
+                nemesis: { name: "TradeMaster", elo: 15 },
+                target: { name: "KingTalon", elo: 30 }
             },
-            "Adrien": {
-                despote: { name: "Potatosgonnacrushya", tip: "Taux de victoire: 0% • Écrasement total" },
-                coalition: { name: "KingTalon", tip: "Se partagent le contrôle des sommets" },
-                client: { name: "MiceWillRise", tip: "+52 Elo récoltés avec le sourire" }
+            "TradeMaster": {
+                nemesis: { name: "Potatosgonnacrushya", elo: 45 },
+                target: { name: "MiceWillRise", elo: 15 }
             }
         };
 
-        // 2. Fonction pour mettre à jour l'organigramme visuel
         function updateRelationsTree(playerName) {
             const data = fakeRelationsDb[playerName];
             
-            // Si le joueur existe dans notre fausse base
             if (data) {
                 document.getElementById('centerPlayerName').innerText = playerName;
                 
-                // Mise à jour Despote
-                document.getElementById('nameDespote').innerText = data.despote.name;
-                document.getElementById('tipDespote').innerText = data.despote.tip;
+                // Rendu Top Nemesis
+                document.getElementById('textNemesis').innerHTML = `<strong>${data.nemesis.name}</strong> drained ${data.nemesis.elo} Elo`;
+                document.getElementById('nodeNemesis').setAttribute('data-player', data.nemesis.name);
                 
-                // Mise à jour Coalition
-                document.getElementById('nameCoalition').innerText = data.coalition.name;
-                document.getElementById('tipCoalition').innerText = data.coalition.tip;
-                
-                // Mise à jour Client
-                document.getElementById('nameClient').innerText = data.client.name;
-                document.getElementById('tipClient').innerText = data.client.tip;
+                // Rendu Favorite Target
+                document.getElementById('textTarget').innerHTML = `<strong>${data.target.name}</strong> yielded ${data.target.elo} Elo`;
+                document.getElementById('nodeTarget').setAttribute('data-player', data.target.name);
             } else {
-                // Fallback si pas de données (ex: début de saison LH03)
+                // Fallback si aucune donnée trouvée
                 document.getElementById('centerPlayerName').innerText = playerName;
-                document.getElementById('nameDespote').innerText = "?";
-                document.getElementById('tipDespote').innerText = "En quête de rivaux...";
-                document.getElementById('nameCoalition').innerText = "?";
-                document.getElementById('tipCoalition').innerText = "Aucune alliance détectée";
-                document.getElementById('nameClient').innerText = "?";
-                document.getElementById('tipClient').innerText = "Aucun profit récent";
+                document.getElementById('textNemesis').innerText = "No nemesis recorded";
+                document.getElementById('nodeNemesis').setAttribute('data-player', '');
+                document.getElementById('textTarget').innerText = "No target recorded";
+                document.getElementById('nodeTarget').setAttribute('data-player', '');
             }
         }
 
-        // 3. Action lors du clic sur une vignette de droite (Navigation dynamique)
         function selectPlayerFromTree(element) {
-            const clickedName = element.querySelector('.player-name').innerText;
-            if (clickedName && clickedName !== "?") {
-                // Met à jour la barre de recherche principale
-                document.getElementById('playerName').value = clickedName;
-                // Déclenche la mise à jour globale
+            const clickedName = element.getAttribute('data-player');
+            if (clickedName) {
+                document.getElementById('playerName').value = clickedName;[cite: 1]
                 updatePlayerView();
             }
         }
 
-        // 4. Fonction pivot appelée au changement de joueur (Input ou Clic)
         function updatePlayerView() {
-            const currentPlayer = document.getElementById('playerName').value;
-            
-            // Met à jour l'organigramme
+            const currentPlayer = document.getElementById('playerName').value;[cite: 1]
             updateRelationsTree(currentPlayer);
-            
-            // Laisse ici ton ancienne logique pour Chart.js :
-            // updateChart(); 
+            // Intègre ici ton appel d'origine : updateChart();[cite: 1]
         }
 
-        // Initialisation au premier chargement
         window.onload = function() {
             updatePlayerView();
         };
