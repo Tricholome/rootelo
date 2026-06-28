@@ -4,7 +4,6 @@ import pandas as pd
 from datetime import datetime, timedelta, date, timezone
 import json
 from jinja2 import Environment, FileSystemLoader
-from collections import defaultdict
 
 # =========================================================================
 # --- 0. PATH CONFIGURATION & SEASON SETTINGS ---
@@ -113,35 +112,35 @@ def prepare_trends_data(history_dict):
     }
     
 def get_elo_for_match(player_name, game_id, full_history):
-    history = full_history.get(player_name, [])
-    
-    for entry in history:
-        if entry[2] == game_id:
+    # Recherche l'Elo du joueur à l'ID du match précis
+    if player_name not in full_history:
+        raise ValueError(f"Player {player_name} not found in history.")
+    for entry in full_history[player_name]:
+        if entry[2] == game_id: # entry[2] est le game_id
             return entry[1]
-            
-    raise ValueError(f"Elo non trouvé pour le joueur {player_name} au match {game_id}")
-    
+    raise ValueError(f"GameID {game_id} not found for player {player_name}.")
+
 def extract_relations(matches_list, full_history):
-    relations = {}
-    
+    # Initialisation
+    all_players = set()
     for m in matches_list:
-        for p in m['players']:
-            relations[p['name']] = {
-                "trophy": {"name": None, "elo": -1}, 
-                "bane": {"name": None, "elo": 99999}
-            }
+        for p in m['players']: all_players.add(p['name'])
+    
+    relations = {p: {"trophy": {"name": None, "elo": -1}, "bane": {"name": None, "elo": 99999}} for p in all_players}
             
     for m in matches_list:
         match_id = m['MatchID']
         winners = [p for p in m['players'] if p['is_winner']]
         losers = [p for p in m['players'] if not p['is_winner']]
 
+        # Trophy: Meilleur Elo parmi les perdants
         for w in winners:
             for l in losers:
                 l_elo = get_elo_for_match(l['name'], match_id, full_history)
                 if l_elo > relations[w['name']]['trophy']['elo']:
                     relations[w['name']]['trophy'] = {"name": l['name'], "elo": l_elo}
 
+        # Bane: Plus bas Elo parmi les gagnants
         for l in losers:
             for w in winners:
                 w_elo = get_elo_for_match(w['name'], match_id, full_history)
@@ -344,13 +343,14 @@ if not df.empty:
             'players': players_list, 
             'ELO_Sum': current_match_sum
         })
-        
-current_relations = extract_relations(match_history_data, current_history)
 
 current_matches_df = pd.DataFrame(match_history_data)
 if not current_matches_df.empty:
     current_matches_df = current_matches_df.sort_values(by='ELO_Sum', ascending=False).reset_index(drop=True)
     current_matches_df.insert(0, 'Rank', range(1, len(current_matches_df) + 1))
+    
+current_history = {k.split('+')[0].split('#')[0]: v for k, v in player_history.items()}
+current_relations = extract_relations(match_history_data, current_history)
 
 # =========================================================================
 # --- 7. FINAL LEADERBOARD GENERATION ---
@@ -533,7 +533,7 @@ hall_of_fame_data = hall_of_fame_final
 # =========================================================================
 print("\n=== GENERATING HTML PAGES ===")
 
-def render_core_pages(file_suffix, is_archive, tag, lb_data, match_data, trends_data, meta, relations_json="{}"):
+def render_core_pages(file_suffix, is_archive, tag, lb_data, match_data, trends_data, meta, relations_data=None):
     """Helper to generate the 3 main pages identically for live and archives."""
     
     render_page(
@@ -565,8 +565,8 @@ def render_core_pages(file_suffix, is_archive, tag, lb_data, match_data, trends_
         is_archive=is_archive, has_seasons=True, season_tag=tag,
         archive_seasons=ARCHIVE_SEASONS,
         current_season_tag=CURRENT_SEASON_TAG,
-        history_json=trends_data['history_json'], player_names=trends_data['player_names'],
-        relations_json=relations_json
+        history_json=trends_data['history_json'], player_names=trends_data['player_names']
+        relations_json=json.dumps(relations_data) if relations_data else "{}"
     )
 
 # --- A. Render Current Season Pages ---
@@ -579,7 +579,7 @@ render_core_pages(
     match_data=display_matches_current, 
     trends_data=display_trends_current,
     meta=current_meta,
-    relations_json=json.dumps(current_relations)
+    relations_data=current_relations
 )
 
 # --- B. Render Archives Pages ---
