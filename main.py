@@ -562,7 +562,7 @@ render_core_pages(
     lb_data=display_leaderboard_current, 
     match_data=display_matches_current, 
     trends_data=display_trends_current,
-    meta=current_meta
+    meta=current_meta,
     relations_json=json.dumps(current_relations)
 )
 
