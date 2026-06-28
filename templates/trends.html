@@ -27,7 +27,7 @@
             justify-content: center;
             max-width: 750px;
             margin: 0 auto;
-            height: 260px;
+            height: 280px;
         }
 
         .left-column {
@@ -42,7 +42,7 @@
         }
 
         .right-column {
-            flex: 0 0 240px;
+            flex: 0 0 260px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -71,21 +71,34 @@
             cursor: pointer;
         }
 
+        .target-node:hover {
+            border-color: #f3c64f;
+            background: #3a301e;
+        }
+
         .node.central-node {
             border-color: #f3c64f;
         }
 
         .role-tag {
-            font-size: 0.75rem;
+            font-size: 0.8rem;
             text-transform: uppercase;
             letter-spacing: 1px;
-            color: #a1814c;
+            color: #f3c64f;
             margin-bottom: 4px;
+            font-weight: bold;
         }
 
         .action-text, .player-name {
             font-size: 1.1rem;
             font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .node-desc {
+            font-size: 0.75rem;
+            color: #a1814c;
+            font-style: italic;
         }
 
         .relations-lines {
@@ -119,8 +132,8 @@
             
             <div class="left-column">
                 <div class="node central-node">
-                    <div class="role-tag">Active Player</div>
-                    <span class="player-name" id="centerPlayerName">Select a player</span>
+                    <div class="role-tag">Joueur Actif</div>
+                    <span class="player-name" id="centerPlayerName">Sélectionnez un joueur</span>
                 </div>
             </div>
 
@@ -133,13 +146,15 @@
 
             <div class="right-column">
                 <div class="node target-node" id="nodeTarget" onclick="selectPlayerFromTree(this)" data-player="">
-                    <div class="role-tag">Top Nemesis (Trophy)</div>
+                    <div class="role-tag">⚔️ Plus grand exploit</div>
                     <div class="action-text" id="textTarget">...</div>
+                    <div class="node-desc">Meilleur ELO battu cette saison</div>
                 </div>
 
                 <div class="node target-node" id="nodeNemesis" onclick="selectPlayerFromTree(this)" data-player="">
-                    <div class="role-tag">Favorite Target (Bane)</div>
+                    <div class="role-tag">⚠️ Pire défaite</div>
                     <div class="action-text" id="textNemesis">...</div>
+                    <div class="node-desc">Plus faible ELO concédé cette saison</div>
                 </div>
             </div>
             
@@ -162,15 +177,15 @@
             if (data) {
                 document.getElementById('centerPlayerName').innerText = playerName;
                 
-                // Trophy (Haut Droite)
-                const trophyName = data.trophy.name || "None";
+                // Plus grand exploit (Haut)
+                const trophyName = data.trophy.name || "Aucun";
                 const trophyElo = data.trophy.name ? ` (${data.trophy.elo} ELO)` : "";
                 const trophyIcon = data.trophy.tier ? getIconHtml(data.trophy.tier) : "";
                 document.getElementById('textTarget').innerHTML = `${trophyIcon} <strong>${trophyName}</strong>${trophyElo}`;
                 document.getElementById('nodeTarget').setAttribute('data-player', data.trophy.name || '');
                 
-                // Bane (Bas Droite)
-                const baneName = data.bane.name || "None";
+                // Pire défaite (Bas)
+                const baneName = data.bane.name || "Aucune";
                 const baneElo = data.bane.name ? ` (${data.bane.elo} ELO)` : "";
                 const baneIcon = data.bane.tier ? getIconHtml(data.bane.tier) : "";
                 document.getElementById('textNemesis').innerHTML = `${baneIcon} <strong>${baneName}</strong>${baneElo}`;
@@ -180,7 +195,7 @@
 		
         function selectPlayerFromTree(element) {
             const clickedName = element.getAttribute('data-player');
-            if (clickedName) {
+            if (clickedName && clickedName !== "Aucun" && clickedName !== "Aucune") {
                 document.getElementById('playerName').value = clickedName;
                 updatePlayerView();
             }
