@@ -768,3 +768,72 @@ $(document).on('dblclick', '.player-name-cell', function() {
         window.location.href = `${trendsPage}#progressionChart`;
     }
 });
+
+/* =========================================================================
+   --- 10. NARRATIVE JOURNEY RELATIONS TREE ---
+   ========================================================================= */
+
+function getRelationsIconHtml(tier) {
+    if (!tier || tier === 'unranked' || !window.tierIcons || !window.tierIcons[tier]) return '';
+    const iconUrl = window.tierIcons[tier];
+    return `<img src="${iconUrl}" class="tier-icon" alt="${tier}">`;
+}
+
+window.updateRelationsTree = function(playerName) {
+    if (!window.relationsData) return;
+    const data = window.relationsData[playerName];
+    
+    if (data) {
+        // Mise à jour du nœud central
+        document.getElementById('centerPlayerName').innerText = playerName;
+        document.getElementById('centerPlayerMeta').innerHTML = `
+            <div class="player-opponents">faced ${data.unique_opponents} different opponents...</div>
+        `;
+        
+        // Plus haut ELO battu (Top Right - Trophy)
+        const nodeTrophy = document.getElementById('nodeTrophy');
+        if (data.trophy && data.trophy.name) {
+            const trophyIcon = data.trophy.tier ? getRelationsIconHtml(data.trophy.tier) : "";
+            const eloColor = data.trophy.tier ? `var(--color-${data.trophy.tier})` : 'var(--text-main)';
+            
+            nodeTrophy.innerHTML = `
+                <div class="narrative-text">...brought down the mighty</div>
+                <div id="textTrophy">
+                    <div class="player-name">${data.trophy.name}</div>
+                    <div class="player-meta" style="color: ${eloColor};">${trophyIcon}${data.trophy.elo}</div>
+                </div>
+            `;
+            nodeTrophy.setAttribute('data-player', data.trophy.name);
+        } else {
+            nodeTrophy.innerHTML = `
+                <div id="textTrophy">
+                    <div class="player-name narrative-empty">...but failed to claim a single victory</div>
+                </div>
+            `;
+            nodeTrophy.setAttribute('data-player', '');
+        }
+        
+        // Plus bas ELO perdu (Bottom Right - Bane)
+        const nodeBane = document.getElementById('nodeBane');
+        if (data.bane && data.bane.name) {
+            const baneIcon = data.bane.tier ? getRelationsIconHtml(data.bane.tier) : "";
+            const eloColor = data.bane.tier ? `var(--color-${data.bane.tier})` : 'var(--text-main)';
+            
+            nodeBane.innerHTML = `
+                <div class="narrative-text">...and fell before the humble</div>
+                <div id="textBane">
+                    <div class="player-name">${data.bane.name}</div>
+                    <div class="player-meta" style="color: ${eloColor};">${baneIcon}${data.bane.elo}</div>
+                </div>
+            `;
+            nodeBane.setAttribute('data-player', data.bane.name);
+        } else {
+            nodeBane.innerHTML = `
+                <div id="textBane">
+                    <div class="player-name narrative-empty">...and never once tasted defeat</div>
+                </div>
+            `;
+            nodeBane.setAttribute('data-player', '');
+        }
+    }
+};
