@@ -565,7 +565,7 @@ def render_core_pages(file_suffix, is_archive, tag, lb_data, match_data, trends_
         is_archive=is_archive, has_seasons=True, season_tag=tag,
         archive_seasons=ARCHIVE_SEASONS,
         current_season_tag=CURRENT_SEASON_TAG,
-        history_json=trends_data['history_json'], player_names=trends_data['player_names']
+        history_json=trends_data['history_json'], player_names=trends_data['player_names'],
         relations_json=json.dumps(relations_data) if relations_data else "{}"
     )
 
