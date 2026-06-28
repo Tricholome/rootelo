@@ -165,13 +165,13 @@
 
         .relations-container {
             display: flex;
-            flex-direction: column; /* Passage en vertical */
+            flex-direction: column; /* Alignement vertical */
             align-items: center;
             justify-content: space-between;
             position: relative;
-            max-width: 300px; /* Plus étroit pour le vertical */
+            max-width: 300px;
             margin: 0 auto;
-            height: 350px; /* Hauteur ajustée */
+            height: 350px;
         }
 
         .tier-icon {
@@ -182,15 +182,41 @@
             filter: drop-shadow(0 2px 2px rgba(0,0,0,0.5));
         }
 
-        .node { /* Ajustement mineur pour le vertical */
+        .node { 
             min-width: 240px; 
             text-align: center;
+            background: #2c2416;
+            border: 2px solid #a1814c;
+            border-radius: 8px;
+            padding: 12px 18px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .node.central-node {
+            cursor: default;
+            border-color: #f3c64f;
+        }
+
+        .role-tag {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #a1814c;
+            margin-bottom: 4px;
+        }
+
+        .action-text, .player-name {
+            font-size: 1.1rem;
+            font-weight: 600;
         }
 
         .relations-lines {
             position: absolute;
-            top: 60px; /* Début après le premier node */
-            bottom: 60px; /* Fin avant le dernier node */
+            top: 60px;
+            bottom: 60px;
             width: 100px;
             left: calc(50% - 50px);
             pointer-events: none;
@@ -984,29 +1010,23 @@
         <div class="relations-title">Chroniques des Clairières</div>
         <div class="relations-container">
             
-            <!-- TROPHY (Haut) -->
-            <div class="node target-node" id="nodeTarget" onclick="selectPlayerFromTree(this)" data-player="">
-                <div class="role-tag">Top Nemesis (Trophy)</div>
-                <div class="action-text" id="textTarget">...</div>
+            <div class="node target-node" id="nodeNemesis" onclick="selectPlayerFromTree(this)" data-player="">
+                <div class="role-tag">Top Nemesis (Bane)</div>
+                <div class="action-text" id="textNemesis">...</div>
             </div>
 
-            <!-- CENTRAL (Milieu) -->
             <div class="node central-node">
                 <div class="role-tag">Active Player</div>
                 <span class="player-name" id="centerPlayerName">Select a player</span>
             </div>
 
-            <!-- BANE (Bas) -->
-            <div class="node target-node" id="nodeNemesis" onclick="selectPlayerFromTree(this)" data-player="">
-                <div class="role-tag">Favorite Target (Bane)</div>
-                <div class="action-text" id="textNemesis">...</div>
+            <div class="node target-node" id="nodeTarget" onclick="selectPlayerFromTree(this)" data-player="">
+                <div class="role-tag">Favorite Target (Trophy)</div>
+                <div class="action-text" id="textTarget">...</div>
             </div>
 
-            <!-- SVG lines -->
             <svg class="relations-lines" viewBox="0 0 100 100" preserveAspectRatio="none">
-                <!-- Ligne vers le haut -->
                 <path d="M 50 100 L 50 60" stroke="#f3c64f" stroke-width="2" fill="none" />
-                <!-- Ligne vers le bas -->
                 <path d="M 50 0 L 50 40" stroke="#f3c64f" stroke-width="2" fill="none" />
             </svg>
         </div>
@@ -1014,11 +1034,12 @@
 
     <script>
         const relationsData = {};
-        // Mapping des icônes depuis la config Jinja
+        // Récupération dynamique du mapping du leaderboard
         const tierIcons = {"bird": "assets/icons/bird_new.webp", "fox": "assets/icons/fox_new.webp", "mouse": "assets/icons/mouse_new.webp", "rabbit": "assets/icons/rabbit_new.webp", "squirrel": "assets/icons/squirrel.webp", "stag": "assets/icons/stag.webp"};
 
         function getIconHtml(tier) {
-            const iconUrl = tierIcons[tier] || tierIcons['default'];
+            if (!tier || tier === 'unranked' || !tierIcons[tier]) return '';
+            const iconUrl = tierIcons[tier];
             return `<img src="${iconUrl}" class="tier-icon" alt="${tier}">`;
         }
 
@@ -1028,17 +1049,17 @@
             if (data) {
                 document.getElementById('centerPlayerName').innerText = playerName;
                 
-                // Trophy (Top)
-                const trophyName = data.trophy.name || "None";
-                const trophyIcon = data.trophy.tier ? getIconHtml(data.trophy.tier) : "";
-                document.getElementById('textTarget').innerHTML = `${trophyIcon} <strong>${trophyName}</strong>`;
-                document.getElementById('nodeTarget').setAttribute('data-player', trophyName);
-                
-                // Bane (Bottom)
+                // Bane (Haut)
                 const baneName = data.bane.name || "None";
                 const baneIcon = data.bane.tier ? getIconHtml(data.bane.tier) : "";
                 document.getElementById('textNemesis').innerHTML = `${baneIcon} <strong>${baneName}</strong>`;
-                document.getElementById('nodeNemesis').setAttribute('data-player', baneName);
+                document.getElementById('nodeNemesis').setAttribute('data-player', data.bane.name || '');
+                
+                // Trophy (Bas)
+                const trophyName = data.trophy.name || "None";
+                const trophyIcon = data.trophy.tier ? getIconHtml(data.trophy.tier) : "";
+                document.getElementById('textTarget').innerHTML = `${trophyIcon} <strong>${trophyName}</strong>`;
+                document.getElementById('nodeTarget').setAttribute('data-player', data.trophy.name || '');
             }
         }
 		
@@ -1054,13 +1075,10 @@
             const currentPlayer = document.getElementById('playerName').value;
             if (currentPlayer) {
                 updateRelationsTree(currentPlayer);
-                // Si tu as une fonction updateChart existante, appelle-la ici :
-                // updateChart(currentPlayer); 
             }
         }
 
         window.onload = function() {
-            // Initialisation si besoin
             const firstPlayer = document.getElementById('playerName').value;
             if (firstPlayer) updatePlayerView();
         };
@@ -1081,7 +1099,7 @@
 					<span>Powered by <strong>Tʀɪᴄʜᴏʟᴏᴍᴇ</strong></span>
 					<span>Woodland visions by <a class="cl" href="cache.html">𝕩𝕝𝕦𝕖𝕧𝕚</a></span>
 				</div>
-				<div class="footer-date">Updated on 2026-06-28 19:32 UTC</div>
+				<div class="footer-date">Updated on 2026-06-28 19:33 UTC</div>
 			</div>
 		</footer>
     </div>
