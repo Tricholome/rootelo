@@ -856,10 +856,18 @@ window.updatePlayerView = function() {
     }
 };
 
-// Initialisation simple
+// Initialisation intelligente
 $(document).ready(function() {
+    const input = document.getElementById('playerName');
     const savedPlayer = localStorage.getItem('selectedPlayer');
-    if (savedPlayer) {
+    
+    // 1. Si la barre de recherche a une valeur (cache navigateur ou backend)
+    if (input && input.value) {
+        window.updatePlayerView();
+    } 
+    // 2. Sinon, on se rabat sur le localStorage
+    else if (savedPlayer) {
+        if (input) input.value = savedPlayer;
         window.updateRelationsTree(savedPlayer);
     }
 });
