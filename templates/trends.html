@@ -56,7 +56,7 @@
     </div>
 
     <script>
-        window.CONFIG = {{ backend_config_json | safe }};
-        window.relationsData = {{ relations_json | safe }};
-    </script>
+		window.CONFIG = {{ backend_config_json | default('{}') | safe }};
+		window.relationsData = {{ relations_json | default('{}') | safe }};
+	</script>
 {% endblock %}
