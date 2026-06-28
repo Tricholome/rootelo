@@ -854,6 +854,129 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     .search-box { padding: 0 15px; }
 }
 
+/* --- Narrative Journey Relations Chart --- */
+.relations-wrapper {
+    margin-top: 40px;
+    padding: 30px 20px;
+    background-color: rgba(43, 37, 27, 0.3);
+    border: 1px solid var(--border-soft);
+    border-radius: 12px;
+    color: var(--text-muted);
+}
+
+.relations-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    max-width: 800px;
+    margin: 0 auto;
+    height: 240px;
+}
+
+.left-column {
+    flex: 0 0 250px;
+}
+
+.middle-space {
+    flex: 1;
+    height: 100%;
+    min-width: 60px;
+    position: relative;
+}
+
+.right-column {
+    flex: 0 0 270px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+}
+
+.node {
+    background: var(--bg-surface);
+    border: 2px solid var(--border-soft);
+    border-radius: 8px;
+    padding: 16px 18px;
+    box-shadow: var(--glass-shadow);
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.interactive-node {
+    cursor: pointer;
+}
+
+.interactive-node:hover {
+    border-color: var(--main-color);
+    background: var(--bg-hover);
+}
+
+.node.central-node {
+    border-color: var(--main-color);
+}
+
+/* Style des connecteurs narratifs */
+.narrative-text {
+    font-size: var(--size-sm);
+    font-style: italic;
+    color: var(--border-soft);
+    margin-bottom: 6px;
+}
+
+.left-column .narrative-text {
+    margin-bottom: 4px;
+}
+
+.player-name {
+    font-size: var(--size-lg);
+    font-weight: var(--bold);
+    display: block;
+    margin-bottom: 4px;
+    color: var(--text-main);
+}
+
+.node.central-node .player-name {
+    color: var(--main-color);
+}
+
+.narrative-empty {
+    font-size: var(--size-base);
+    font-style: italic;
+    color: var(--border-soft) !important;
+    font-weight: var(--normal);
+}
+
+.player-meta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--size-base);
+    font-weight: var(--bold);
+}
+
+.player-opponents {
+    font-size: var(--size-sm);
+    color: var(--border-soft);
+    margin-top: 4px;
+    font-style: italic;
+}
+
+.tier-icon {
+    width: 24px;
+    height: 24px;
+    vertical-align: middle;
+    margin-right: 6px;
+    filter: drop-shadow(0 2px 2px rgba(0,0,0,0.5));
+}
+
+.relations-lines {
+    width: 100%;
+    height: 100%;
+    display: block;
+    pointer-events: none;
+}
+
 /* =========================================================================
    --- 9. CODEX & STATIC CONTENT (ABOUT PAGE) ---
    ========================================================================= */
