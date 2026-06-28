@@ -6,7 +6,7 @@
 
 {% block content %}
     <div class="search-box">
-        <input type="search" list="playerList" id="playerName" value="" placeholder="Search Player..." oninput="updatePlayerView()">
+        <input type="search" list="playerList" id="playerName" value="" placeholder="Search Player...">
         <datalist id="playerList">
             {% for name in player_names %}
                 <option value="{{ name }}">
@@ -16,7 +16,7 @@
     
     <div class="chart-wrapper">
         <div class="chart-container">
-            <canvas id="progressionChart"></canvas>
+            <canvas id=\"progressionChart\"></canvas>
         </div>
     </div>
 
@@ -39,26 +39,26 @@
             </div>
 
             <div class="right-column">
-				<div class="node interactive-node" id="nodeTrophy" onclick="selectPlayerFromTree(this)" data-player="">
-					<div id="textTrophy">
-						<div class="player-name">...</div>
-					</div>
-				</div>
+                <div class="node interactive-node" id="nodeTrophy" data-player="">
+                    <div id="textTrophy">
+                        <div class="player-name">...</div>
+                    </div>
+                </div>
 
-				<div class="node interactive-node" id="nodeBane" onclick="selectPlayerFromTree(this)" data-player="">
-					<div id="textBane">
-						<div class="player-name">...</div>
-					</div>
-				</div>
-			</div>
+                <div class="node interactive-node" id="nodeBane" data-player="">
+                    <div id="textBane">
+                        <div class="player-name">...</div>
+                    </div>
+                </div>
+            </div>
             
         </div>
     </div>
 
     <script>
-		window.CONFIG = {{ backend_config_json | safe }}; 
-		window.relationsData = {{ relations_json | safe }};
-	</script>
+        window.CONFIG = {{ backend_config_json | safe }};
+        window.relationsData = {{ relations_json | safe }};
+    </script>
 
-	<script src="/static/script.js"></script>
+    <script src="static/script.js"></script>
 {% endblock %}
