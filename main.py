@@ -59,6 +59,9 @@ today = date.today()
 CUTOFF_DATE = today - timedelta(days=1)
 print(f"Update started. Filtering matches closed before: {today}")
 
+def get_clean_name(name):
+    return name.split('+')[0].split('#')[0].strip()
+
 def get_tier_icon(rating, games):
     if games < 10: return None, "unranked"  
     r = round(rating) # Ensure tier is based on visual score
@@ -112,13 +115,13 @@ def prepare_trends_data(history_dict):
     }
     
 def get_elo_for_match(player_name, game_id, full_history):
-    # Recherche l'Elo du joueur à l'ID du match précis
-    if player_name not in full_history:
-        raise ValueError(f"Player {player_name} not found in history.")
-    for entry in full_history[player_name]:
-        if entry[2] == game_id: # entry[2] est le game_id
+    clean_p = get_clean_name(player_name)
+    if clean_p not in full_history:
+        return None
+    for entry in full_history[clean_p]:
+        if entry[2] == game_id:
             return entry[1]
-    raise ValueError(f"GameID {game_id} not found for player {player_name}.")
+    return None
 
 def extract_relations(matches_list, full_history):
     # Initialisation
@@ -137,14 +140,14 @@ def extract_relations(matches_list, full_history):
         for w in winners:
             for l in losers:
                 l_elo = get_elo_for_match(l['name'], match_id, full_history)
-                if l_elo > relations[w['name']]['trophy']['elo']:
+                if l_elo is not None and l_elo > relations[w['name']]['trophy']['elo']:
                     relations[w['name']]['trophy'] = {"name": l['name'], "elo": l_elo}
 
         # Bane: Plus bas Elo parmi les gagnants
         for l in losers:
             for w in winners:
                 w_elo = get_elo_for_match(w['name'], match_id, full_history)
-                if w_elo < relations[l['name']]['bane']['elo']:
+                if w_elo is not None and w_elo < relations[l['name']]['bane']['elo']:
                     relations[l['name']]['bane'] = {"name": w['name'], "elo": w_elo}
     
     return relations
@@ -349,7 +352,8 @@ if not current_matches_df.empty:
     current_matches_df = current_matches_df.sort_values(by='ELO_Sum', ascending=False).reset_index(drop=True)
     current_matches_df.insert(0, 'Rank', range(1, len(current_matches_df) + 1))
     
-current_history = {k.split('+')[0].split('#')[0]: v for k, v in player_history.items()}
+current_history = {get_clean_name(k): v for k, v in player_history.items()}
+    
 current_relations = extract_relations(match_history_data, current_history)
 
 # =========================================================================
