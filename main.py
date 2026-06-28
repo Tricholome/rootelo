@@ -129,26 +129,31 @@ def extract_relations(matches_list, full_history):
     for m in matches_list:
         for p in m['players']: all_players.add(p['name'])
     
-    relations = {p: {"trophy": {"name": None, "elo": -1}, "bane": {"name": None, "elo": 99999}} for p in all_players}
+    relations = {p: {
+        "trophy": {"name": None, "elo": -1, "tier": "unranked"}, 
+        "bane": {"name": None, "elo": 99999, "tier": "unranked"}
+    } for p in all_players}
             
     for m in matches_list:
         match_id = m['MatchID']
         winners = [p for p in m['players'] if p['is_winner']]
         losers = [p for p in m['players'] if not p['is_winner']]
 
-        # Trophy: Meilleur Elo parmi les perdants
+        # Trophy: Meilleur Elo parmi les perdants au moment du match
         for w in winners:
             for l in losers:
                 l_elo = get_elo_for_match(l['name'], match_id, full_history)
                 if l_elo is not None and l_elo > relations[w['name']]['trophy']['elo']:
-                    relations[w['name']]['trophy'] = {"name": l['name'], "elo": l_elo}
+                    _, l_tier = get_tier_icon(l_elo, 10)  # On passe 10 pour évaluer directement le palier de l'Elo
+                    relations[w['name']]['trophy'] = {"name": l['name'], "elo": l_elo, "tier": l_tier}
 
-        # Bane: Plus bas Elo parmi les gagnants
+        # Bane: Plus bas Elo parmi les gagnants au moment du match
         for l in losers:
             for w in winners:
                 w_elo = get_elo_for_match(w['name'], match_id, full_history)
                 if w_elo is not None and w_elo < relations[l['name']]['bane']['elo']:
-                    relations[l['name']]['bane'] = {"name": w['name'], "elo": w_elo}
+                    _, w_tier = get_tier_icon(w_elo, 10)  # On passe 10 pour évaluer directement le palier de l'Elo
+                    relations[l['name']]['bane'] = {"name": w['name'], "elo": w_elo, "tier": w_tier}
     
     return relations
 
