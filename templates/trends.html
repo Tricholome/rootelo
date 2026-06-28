@@ -2,130 +2,6 @@
 
 {% block extra_head %}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        /* --- Narrative Journey Relations Chart --- */
-        .relations-wrapper {
-            margin-top: 40px;
-            padding: 40px 20px;
-            background-color: rgba(43, 37, 27, 0.3);
-            border-radius: 12px;
-            color: #f7f5f0;
-        }
-
-        .relations-container {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            justify-content: center;
-            max-width: 800px;
-            margin: 0 auto;
-            height: 240px;
-        }
-
-        .left-column {
-            flex: 0 0 250px;
-        }
-
-        .middle-space {
-            flex: 1;
-            height: 100%;
-            min-width: 60px;
-            position: relative;
-        }
-
-        .right-column {
-            flex: 0 0 270px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            height: 100%;
-        }
-
-        .node {
-            background: #2c2416;
-            border: 2px solid #a1814c;
-            border-radius: 8px;
-            padding: 16px 18px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
-            transition: all 0.3s ease;
-            text-align: center;
-        }
-
-        .target-node {
-            cursor: pointer;
-        }
-
-        .target-node:hover {
-            border-color: #f3c64f;
-            background: #3a301e;
-        }
-
-        .node.central-node {
-            border-color: #f3c64f;
-        }
-
-        /* Narrative connectors style */
-        .narrative-text {
-            font-size: 0.85rem;
-            font-style: italic;
-            color: #a1814c;
-            margin-bottom: 6px;
-        }
-        
-        .left-column .narrative-text {
-            margin-bottom: 4px;
-        }
-
-        .player-name {
-            font-size: 1.15rem;
-            font-weight: 600;
-            display: block;
-            margin-bottom: 4px;
-            color: #f7f5f0;
-        }
-        
-        .node.central-node .player-name {
-            color: #f3c64f;
-        }
-
-        .narrative-empty {
-            font-size: 1rem;
-            font-style: italic;
-            color: #a1814c !important;
-            font-weight: normal;
-        }
-
-        .player-meta {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1rem;
-            font-weight: bold;
-            color: #f7f5f0;
-        }
-
-        .player-opponents {
-            font-size: 0.85rem;
-            color: #a1814c;
-            margin-top: 4px;
-            font-style: italic;
-        }
-
-        .tier-icon {
-            width: 24px;
-            height: 24px;
-            vertical-align: middle;
-            margin-right: 6px;
-            filter: drop-shadow(0 2px 2px rgba(0,0,0,0.5));
-        }
-
-        .relations-lines {
-            width: 100%;
-            height: 100%;
-            display: block;
-            pointer-events: none;
-        }
-    </style>
 {% endblock %}
 
 {% block content %}
@@ -163,94 +39,24 @@
             </div>
 
             <div class="right-column">
-                <div class="node target-node" id="nodeTarget" onclick="selectPlayerFromTree(this)" data-player="">
-                    <div class="narrative-text">...brought down the mighty</div>
-                    <div id="textTarget">
-                        <div class="player-name">...</div>
-                    </div>
-                </div>
+				<div class="node interactive-node" id="nodeTrophy" onclick="selectPlayerFromTree(this)" data-player="">
+					<div id="textTrophy">
+						<div class="player-name">...</div>
+					</div>
+				</div>
 
-                <div class="node target-node" id="nodeNemesis" onclick="selectPlayerFromTree(this)" data-player="">
-                    <div class="narrative-text">...and fell before the humble</div>
-                    <div id="textNemesis">
-                        <div class="player-name">...</div>
-                    </div>
-                </div>
-            </div>
+				<div class="node interactive-node" id="nodeBane" onclick="selectPlayerFromTree(this)" data-player="">
+					<div id="textBane">
+						<div class="player-name">...</div>
+					</div>
+				</div>
+			</div>
             
         </div>
     </div>
 
     <script>
-        const relationsData = {{ relations_json | safe }};
-        const tierIcons = {{ config.assets.icons | tojson }};
-
-        function getIconHtml(tier) {
-            if (!tier || tier === 'unranked' || !tierIcons[tier]) return '';
-            const iconUrl = tierIcons[tier];
-            return `<img src="${iconUrl}" class="tier-icon" alt="${tier}">`;
-        }
-
-        function updateRelationsTree(playerName) {
-            const data = relationsData[playerName];
-            
-            if (data) {
-                // Update Central Node
-                document.getElementById('centerPlayerName').innerText = playerName;
-                document.getElementById('centerPlayerMeta').innerHTML = `
-                    <div class="player-opponents">faced ${data.unique_opponents} unique opponents...</div>
-                `;
-                
-                // Highest ELO Defeated (Top)
-                if (data.trophy && data.trophy.name) {
-                    const trophyIcon = data.trophy.tier ? getIconHtml(data.trophy.tier) : "";
-                    document.getElementById('textTarget').innerHTML = `
-                        <div class="player-name">${data.trophy.name}</div>
-                        <div class="player-meta">${trophyIcon}${data.trophy.elo}</div>
-                    `;
-                    document.getElementById('nodeTarget').setAttribute('data-player', data.trophy.name);
-                } else {
-                    document.getElementById('textTarget').innerHTML = `
-                        <div class="player-name narrative-empty">...but failed to claim a single victory</div>
-                    `;
-                    document.getElementById('nodeTarget').setAttribute('data-player', '');
-                }
-                
-                // Lowest ELO Lost To (Bottom)
-                if (data.bane && data.bane.name) {
-                    const baneIcon = data.bane.tier ? getIconHtml(data.bane.tier) : "";
-                    document.getElementById('textNemesis').innerHTML = `
-                        <div class="player-name">${data.bane.name}</div>
-                        <div class="player-meta">${baneIcon}${data.bane.elo}</div>
-                    `;
-                    document.getElementById('nodeNemesis').setAttribute('data-player', data.bane.name);
-                } else {
-                    document.getElementById('textNemesis').innerHTML = `
-                        <div class="player-name narrative-empty">...and never once tasted defeat</div>
-                    `;
-                    document.getElementById('nodeNemesis').setAttribute('data-player', '');
-                }
-            }
-        }
-		
-        function selectPlayerFromTree(element) {
-            const clickedName = element.getAttribute('data-player');
-            if (clickedName) {
-                document.getElementById('playerName').value = clickedName;
-                updatePlayerView();
-            }
-        }
-
-        function updatePlayerView() {
-            const currentPlayer = document.getElementById('playerName').value;
-            if (currentPlayer) {
-                updateRelationsTree(currentPlayer);
-            }
-        }
-
-        window.onload = function() {
-            const firstPlayer = document.getElementById('playerName').value;
-            if (firstPlayer) updatePlayerView();
-        };
+        window.relationsData = {{ relations_json | safe }};
+        window.tierIcons = {{ config.assets.icons | tojson }};
     </script>
 {% endblock %}
