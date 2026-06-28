@@ -840,33 +840,47 @@ window.updateRelationsTree = function(playerName) {
     }
 };
 
-/* --- ÉCOUTEURS D'ÉVÉNEMENTS ET INITIALISATION AUTONOME --- */
+/* --- ÉCOUTEURS D'ÉVÉNEMENTS ET INITIALISATION SÉCURISÉE --- */
 
-// 1. Écoute automatique de la barre de recherche
-$(document).on('input', '#playerName', function() {
+// 1. Écoute des modifications manuelles dans la barre de recherche
+$(document).on('input change', '#playerName', function() {
     const currentPlayer = $(this).val();
     if (currentPlayer) {
         window.updateRelationsTree(currentPlayer);
     }
 });
 
-// 2. Écoute automatique des clics sur les nœuds interactifs de l'arbre (Trophy & Bane)
+// 2. Écoute des clics sur les nœuds Trophy & Bane (Navigation fluide)
 $(document).on('click', '.interactive-node', function() {
     const clickedName = $(this).attr('data-player');
     if (clickedName) {
-        // On change la valeur de l'input et on déclenche l'événement 'input'
-        // pour avertir à la fois le graphique (Section 5) et notre arbre de se mettre à jour
-        $('#playerName').val(clickedName).trigger('input');
+        // On met à jour l'input principale et on déclenche les événements pour le graphique
+        $('#playerName').val(clickedName).trigger('change').trigger('input');
+        // On force la mise à jour immédiate de notre arbre
+        window.updateRelationsTree(clickedName);
     }
 });
 
-// 3. Initialisation automatique de l'arbre au chargement de la page
+// 3. Initialisation automatique blindée contre le chargement asynchrone
 $(document).ready(function() {
-    // Un mini-délai pour s'assurer que la Section 5 a eu le temps de préremplir l'input depuis le localStorage
-    setTimeout(() => {
-        const initialPlayer = $('#playerName').val();
-        if (initialPlayer) {
-            window.updateRelationsTree(initialPlayer);
+    // Sécurité A : On se synchronise directement sur le localStorage du graphique dès le départ
+    const savedPlayer = localStorage.getItem('selectedPlayer');
+    if (savedPlayer) {
+        window.updateRelationsTree(savedPlayer);
+    }
+
+    // Sécurité B : Surveillance active pendant les 3 premières secondes pour intercepter le remplissage auto
+    let lastValue = $('#playerName').val();
+    const checkInterval = setInterval(() => {
+        const currentValue = $('#playerName').val();
+        if (currentValue !== lastValue) {
+            lastValue = currentValue;
+            if (currentValue) {
+                window.updateRelationsTree(currentValue);
+            }
         }
-    }, 50);
+    }, 100);
+
+    // On arrête la surveillance après 3 secondes pour libérer la mémoire du navigateur
+    setTimeout(() => clearInterval(checkInterval), 3000);
 });
