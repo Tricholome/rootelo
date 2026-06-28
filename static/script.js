@@ -786,18 +786,14 @@ window.updateRelationsTree = function(playerName) {
     const data = window.relationsData[playerName];
     
     if (data) {
-        // Mise à jour du nœud central
         document.getElementById('centerPlayerName').innerText = playerName;
-        document.getElementById('centerPlayerMeta').innerHTML = `
-            <div class="player-opponents">faced ${data.unique_opponents} different opponents...</div>
-        `;
+        document.getElementById('centerPlayerMeta').innerHTML = `<div class="player-opponents">faced ${data.unique_opponents} different opponents...</div>`;
         
-        // Plus haut ELO battu (Top Right - Trophy)
+        // Trophy (Top Right)
         const nodeTrophy = document.getElementById('nodeTrophy');
         if (data.trophy && data.trophy.name) {
             const trophyIcon = data.trophy.tier ? getRelationsIconHtml(data.trophy.tier) : "";
             const eloColor = data.trophy.tier ? `var(--color-${data.trophy.tier})` : 'var(--text-main)';
-            
             nodeTrophy.innerHTML = `
                 <div class="narrative-text">...brought down the mighty</div>
                 <div id="textTrophy">
@@ -815,12 +811,11 @@ window.updateRelationsTree = function(playerName) {
             nodeTrophy.setAttribute('data-player', '');
         }
         
-        // Plus bas ELO perdu (Bottom Right - Bane)
+        // Bane (Bottom Right)
         const nodeBane = document.getElementById('nodeBane');
         if (data.bane && data.bane.name) {
             const baneIcon = data.bane.tier ? getRelationsIconHtml(data.bane.tier) : "";
             const eloColor = data.bane.tier ? `var(--color-${data.bane.tier})` : 'var(--text-main)';
-            
             nodeBane.innerHTML = `
                 <div class="narrative-text">...and fell before the humble</div>
                 <div id="textBane">
@@ -840,47 +835,31 @@ window.updateRelationsTree = function(playerName) {
     }
 };
 
-/* --- ÉCOUTEURS D'ÉVÉNEMENTS ET INITIALISATION SÉCURISÉE --- */
+// Fonction déclenchée quand on clique sur l'arbre (onclick)
+window.selectPlayerFromTree = function(element) {
+    const clickedName = element.getAttribute('data-player');
+    if (clickedName) {
+        const input = document.getElementById('playerName');
+        input.value = clickedName;
+        // Met à jour l'arbre
+        window.updateRelationsTree(clickedName);
+        // Force Chart.js à voir le changement
+        input.dispatchEvent(new Event('input')); 
+    }
+};
 
-// 1. Écoute des modifications manuelles dans la barre de recherche
-$(document).on('input change', '#playerName', function() {
-    const currentPlayer = $(this).val();
+// Fonction déclenchée quand on tape dans la barre (oninput)
+window.updatePlayerView = function() {
+    const currentPlayer = document.getElementById('playerName').value;
     if (currentPlayer) {
         window.updateRelationsTree(currentPlayer);
     }
-});
+};
 
-// 2. Écoute des clics sur les nœuds Trophy & Bane (Navigation fluide)
-$(document).on('click', '.interactive-node', function() {
-    const clickedName = $(this).attr('data-player');
-    if (clickedName) {
-        // On met à jour l'input principale et on déclenche les événements pour le graphique
-        $('#playerName').val(clickedName).trigger('change').trigger('input');
-        // On force la mise à jour immédiate de notre arbre
-        window.updateRelationsTree(clickedName);
-    }
-});
-
-// 3. Initialisation automatique blindée contre le chargement asynchrone
+// Initialisation simple
 $(document).ready(function() {
-    // Sécurité A : On se synchronise directement sur le localStorage du graphique dès le départ
     const savedPlayer = localStorage.getItem('selectedPlayer');
     if (savedPlayer) {
         window.updateRelationsTree(savedPlayer);
     }
-
-    // Sécurité B : Surveillance active pendant les 3 premières secondes pour intercepter le remplissage auto
-    let lastValue = $('#playerName').val();
-    const checkInterval = setInterval(() => {
-        const currentValue = $('#playerName').val();
-        if (currentValue !== lastValue) {
-            lastValue = currentValue;
-            if (currentValue) {
-                window.updateRelationsTree(currentValue);
-            }
-        }
-    }, 100);
-
-    // On arrête la surveillance après 3 secondes pour libérer la mémoire du navigateur
-    setTimeout(() => clearInterval(checkInterval), 3000);
 });
