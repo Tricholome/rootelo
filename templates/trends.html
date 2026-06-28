@@ -89,6 +89,13 @@
             color: #f7f5f0;
         }
 
+        .player-opponents {
+            font-size: 0.85rem;
+            color: #a1814c;
+            margin-top: 4px;
+            font-style: italic;
+        }
+
         .tier-icon {
             width: 24px;
             height: 24px;
@@ -130,15 +137,14 @@
                 <div class="node central-node">
                     <div class="role-tag">Active Player</div>
                     <div class="player-name" id="centerPlayerName">Select a player</div>
+                    <div id="centerPlayerMeta"></div>
                 </div>
             </div>
 
             <!-- MIDDLE: SVG WITH SMOOTH BEZIER CURVES -->
             <div class="middle-space">
                 <svg class="relations-lines" viewBox="0 0 100 100" preserveAspectRatio="none">
-                    <!-- Smooth S-curve branching up to Top Right -->
                     <path d="M 0 50 C 50 50, 50 20, 100 20" stroke="#f3c64f" stroke-width="2.5" fill="none" />
-                    <!-- Smooth S-curve branching down to Bottom Right -->
                     <path d="M 0 50 C 50 50, 50 80, 100 80" stroke="#f3c64f" stroke-width="2.5" fill="none" />
                 </svg>
             </div>
@@ -179,7 +185,11 @@
             const data = relationsData[playerName];
             
             if (data) {
+                // Update Central Node
                 document.getElementById('centerPlayerName').innerText = playerName;
+                document.getElementById('centerPlayerMeta').innerHTML = `
+                    <div class="player-opponents">Opponents faced: ${data.unique_opponents}</div>
+                `;
                 
                 // Highest ELO Defeated (Top)
                 const trophyName = data.trophy.name || "None";
