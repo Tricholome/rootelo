@@ -774,8 +774,9 @@ $(document).on('dblclick', '.player-name-cell', function() {
    ========================================================================= */
 
 function getRelationsIconHtml(tier) {
-    if (!tier || tier === 'unranked' || !window.tierIcons || !window.tierIcons[tier]) return '';
-    const iconUrl = window.tierIcons[tier];
+    // Correction : On cherche de manière sécurisée dans CONFIG.icons au lieu de window.tierIcons
+    if (!tier || tier === 'unranked' || typeof CONFIG === 'undefined' || !CONFIG.icons || !CONFIG.icons[tier]) return '';
+    const iconUrl = CONFIG.icons[tier];
     return `<img src="${iconUrl}" class="tier-icon" alt="${tier}">`;
 }
 
