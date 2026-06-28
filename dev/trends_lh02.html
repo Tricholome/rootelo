@@ -1335,23 +1335,17 @@
         function updateRelationsTree(playerName) {
             const data = relationsData[playerName];
             
-            if (data) {
-                document.getElementById('centerPlayerName').innerText = playerName;
-                
-                // Rendu Top Nemesis
-                document.getElementById('textNemesis').innerHTML = `<strong>${data.nemesis.name}</strong> drained ${data.nemesis.elo} Elo`;
-                document.getElementById('nodeNemesis').setAttribute('data-player', data.nemesis.name);
-                
-                // Rendu Favorite Target
-                document.getElementById('textTarget').innerHTML = `<strong>${data.target.name}</strong> yielded ${data.target.elo} Elo`;
-                document.getElementById('nodeTarget').setAttribute('data-player', data.target.name);
-            } else {
-                document.getElementById('centerPlayerName').innerText = playerName;
-                document.getElementById('textNemesis').innerText = "No nemesis recorded";
-                document.getElementById('nodeNemesis').setAttribute('data-player', '');
-                document.getElementById('textTarget').innerText = "No target recorded";
-                document.getElementById('nodeTarget').setAttribute('data-player', '');
-            }
+			if (data) {
+				document.getElementById('centerPlayerName').innerText = playerName;
+				
+				const trophy = data.trophy.name ? `${data.trophy.name} (${data.trophy.elo} Elo)` : "None yet";
+				document.getElementById('textTarget').innerHTML = `<strong>My Trophy:</strong> ${trophy}`;
+				document.getElementById('nodeTarget').setAttribute('data-player', data.trophy.name || '');
+				
+				const bane = data.bane.name ? `${data.bane.name} (${data.bane.elo} Elo)` : "No bane yet";
+				document.getElementById('textNemesis').innerHTML = `<strong>My Bane:</strong> ${bane}`;
+				document.getElementById('nodeNemesis').setAttribute('data-player', data.bane.name || '');
+			}
         }
 
         function selectPlayerFromTree(element) {
@@ -1393,7 +1387,7 @@
 					<span>Powered by <strong>Tʀɪᴄʜᴏʟᴏᴍᴇ</strong></span>
 					<span>Woodland visions by <a class="cl" href="cache.html">𝕩𝕝𝕦𝕖𝕧𝕚</a></span>
 				</div>
-				<div class="footer-date">Updated on 2026-06-28 17:42 UTC</div>
+				<div class="footer-date">Updated on 2026-06-28 19:09 UTC</div>
 			</div>
 		</footer>
     </div>
