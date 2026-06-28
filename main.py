@@ -131,11 +131,23 @@ def extract_relations(matches_list, full_history):
     
     relations = {p: {
         "trophy": {"name": None, "elo": -1, "tier": "unranked"}, 
-        "bane": {"name": None, "elo": 99999, "tier": "unranked"}
+        "bane": {"name": None, "elo": 99999, "tier": "unranked"},
+        "unique_opponents": 0
     } for p in all_players}
+    
+    # Dictionnaire de sets pour compter les adversaires uniques
+    opponents_track = {p: set() for p in all_players}
             
     for m in matches_list:
         match_id = m['MatchID']
+        player_names = [p['name'] for p in m['players']]
+        
+        # Enregistrement des adversaires uniques pour ce match
+        for p_name in player_names:
+            for opp_name in player_names:
+                if p_name != opp_name:
+                    opponents_track[p_name].add(opp_name)
+                    
         winners = [p for p in m['players'] if p['is_winner']]
         losers = [p for p in m['players'] if not p['is_winner']]
 
@@ -144,17 +156,21 @@ def extract_relations(matches_list, full_history):
             for l in losers:
                 l_elo = get_elo_for_match(l['name'], match_id, full_history)
                 if l_elo is not None and l_elo > relations[w['name']]['trophy']['elo']:
-                    _, l_tier = get_tier_icon(l_elo, 10)  # On passe 10 pour évaluer directement le palier de l'Elo
-                    relations[w['name']]['trophy'] = {"name": l['name'], "elo": l_elo, "tier": l_tier}
+                    _, l_tier = get_tier_icon(l_elo, 10)
+                    relations[w['name']]['trophy'] = {"name": l['name'], "elo": int(round(l_elo)), "tier": l_tier}
 
         # Bane: Plus bas Elo parmi les gagnants au moment du match
         for l in losers:
             for w in winners:
                 w_elo = get_elo_for_match(w['name'], match_id, full_history)
                 if w_elo is not None and w_elo < relations[l['name']]['bane']['elo']:
-                    _, w_tier = get_tier_icon(w_elo, 10)  # On passe 10 pour évaluer directement le palier de l'Elo
-                    relations[l['name']]['bane'] = {"name": w['name'], "elo": w_elo, "tier": w_tier}
+                    _, w_tier = get_tier_icon(w_elo, 10)
+                    relations[l['name']]['bane'] = {"name": w['name'], "elo": int(round(w_elo)), "tier": w_tier}
     
+    # Injection du compte final
+    for p in all_players:
+        relations[p]["unique_opponents"] = len(opponents_track[p])
+        
     return relations
 
 def render_page(template_name, output_name, **kwargs):
