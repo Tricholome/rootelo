@@ -15,7 +15,7 @@ DATA_DIR = "data"
 ARCHIVE_SEASONS = ["lh01", "lh02"] 
 
 CURRENT_SEASON_TAG = "lh03"
-TOURNAMENT_ID = 26
+TOURNAMENT_ID = 25
 
 CORRECTIONS_FILE = os.path.join(DATA_DIR, f"{CURRENT_SEASON_TAG}_corrections.csv")
 
