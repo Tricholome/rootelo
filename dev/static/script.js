@@ -9,6 +9,8 @@
    6. Secrets Engine
    7. Nut & Berry
    8. Visitor Recognition
+   9. Dynamic Trends
+   10. Narrative Journey
 
    ========================================================================= */
    
@@ -774,7 +776,6 @@ $(document).on('dblclick', '.player-name-cell', function() {
    ========================================================================= */
 
 function getRelationsIconHtml(tier) {
-    // Correction : On cherche de manière sécurisée dans CONFIG.icons au lieu de window.tierIcons
     if (!tier || tier === 'unranked' || typeof CONFIG === 'undefined' || !CONFIG.icons || !CONFIG.icons[tier]) return '';
     const iconUrl = CONFIG.icons[tier];
     return `<img src="${iconUrl}" class="tier-icon" alt="${tier}">`;
@@ -838,3 +839,34 @@ window.updateRelationsTree = function(playerName) {
         }
     }
 };
+
+/* --- ÉCOUTEURS D'ÉVÉNEMENTS ET INITIALISATION AUTONOME --- */
+
+// 1. Écoute automatique de la barre de recherche
+$(document).on('input', '#playerName', function() {
+    const currentPlayer = $(this).val();
+    if (currentPlayer) {
+        window.updateRelationsTree(currentPlayer);
+    }
+});
+
+// 2. Écoute automatique des clics sur les nœuds interactifs de l'arbre (Trophy & Bane)
+$(document).on('click', '.interactive-node', function() {
+    const clickedName = $(this).attr('data-player');
+    if (clickedName) {
+        // On change la valeur de l'input et on déclenche l'événement 'input'
+        // pour avertir à la fois le graphique (Section 5) et notre arbre de se mettre à jour
+        $('#playerName').val(clickedName).trigger('input');
+    }
+});
+
+// 3. Initialisation automatique de l'arbre au chargement de la page
+$(document).ready(function() {
+    // Un mini-délai pour s'assurer que la Section 5 a eu le temps de préremplir l'input depuis le localStorage
+    setTimeout(() => {
+        const initialPlayer = $('#playerName').val();
+        if (initialPlayer) {
+            window.updateRelationsTree(initialPlayer);
+        }
+    }, 50);
+});
