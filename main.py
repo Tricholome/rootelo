@@ -112,26 +112,42 @@ def prepare_trends_data(history_dict):
         "player_names": sorted(list(history_dict.keys()))
     }
     
-def extract_relations(matches_list):
-    transfers = defaultdict(lambda: defaultdict(float))
-    for m in matches_list:
-        gainers = {p['name']: p.get('delta', 0) for p in m.get('players', []) if p.get('delta', 0) > 0}
-        losers = {p['name']: -p.get('delta', 0) for p in m.get('players', []) if p.get('delta', 0) < 0}
-        tot = sum(gainers.values())
-        if tot > 0:
-            for l, l_loss in losers.items():
-                for g, g_gain in gainers.items():
-                    transfers[l][g] += l_loss * (g_gain / tot)
+def get_elo_for_match(player_name, game_id, full_history):
+    history = full_history.get(player_name, [])
+    
+    for entry in history:
+        if entry[2] == game_id:
+            return entry[1]
+            
+    raise ValueError(f"Elo non trouvé pour le joueur {player_name} au match {game_id}")
+    
+def extract_relations(matches_list, full_history):
     relations = {}
-    all_players = set(transfers.keys()).union(g for l in transfers for g in transfers[l])
-    for p in all_players:
-        p_gains = {opp: opp_l[p] for opp, opp_l in transfers.items() if p in opp_l}
-        n = max(transfers[p], key=transfers[p].get, default="?")
-        t = max(p_gains, key=p_gains.get, default="?")
-        relations[p] = {
-            "nemesis": {"name": n, "elo": int(round(transfers[p].get(n, 0)))},
-            "target": {"name": t, "elo": int(round(p_gains.get(t, 0)))}
-        }
+    
+    for m in matches_list:
+        for p in m['players']:
+            relations[p['name']] = {
+                "trophy": {"name": None, "elo": -1}, 
+                "bane": {"name": None, "elo": 99999}
+            }
+            
+    for m in matches_list:
+        match_id = m['MatchID']
+        winners = [p for p in m['players'] if p['is_winner']]
+        losers = [p for p in m['players'] if not p['is_winner']]
+
+        for w in winners:
+            for l in losers:
+                l_elo = get_elo_for_match(l['name'], match_id, full_history)
+                if l_elo > relations[w['name']]['trophy']['elo']:
+                    relations[w['name']]['trophy'] = {"name": l['name'], "elo": l_elo}
+
+        for l in losers:
+            for w in winners:
+                w_elo = get_elo_for_match(w['name'], match_id, full_history)
+                if w_elo < relations[l['name']]['bane']['elo']:
+                    relations[l['name']]['bane'] = {"name": w['name'], "elo": w_elo}
+    
     return relations
 
 def render_page(template_name, output_name, **kwargs):
@@ -329,7 +345,7 @@ if not df.empty:
             'ELO_Sum': current_match_sum
         })
         
-current_relations = extract_relations(match_history_data)
+current_relations = extract_relations(match_history_data, current_history)
 
 current_matches_df = pd.DataFrame(match_history_data)
 if not current_matches_df.empty:
