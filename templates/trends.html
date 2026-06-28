@@ -6,7 +6,7 @@
 
 {% block content %}
     <div class="search-box">
-        <input type="search" list="playerList" id="playerName" value="" placeholder="Search Player...">
+        <input type="search" list="playerList" id="playerName" value="" placeholder="Search Player..." oninput="updatePlayerView()">
         <datalist id="playerList">
             {% for name in player_names %}
                 <option value="{{ name }}">
@@ -39,13 +39,13 @@
             </div>
 
             <div class="right-column">
-                <div class="node interactive-node" id="nodeTrophy" data-player="">
+                <div class="node interactive-node" id="nodeTrophy" onclick="selectPlayerFromTree(this)" data-player="">
                     <div id="textTrophy">
                         <div class="player-name">...</div>
                     </div>
                 </div>
 
-                <div class="node interactive-node" id="nodeBane" data-player="">
+                <div class="node interactive-node" id="nodeBane" onclick="selectPlayerFromTree(this)" data-player="">
                     <div id="textBane">
                         <div class="player-name">...</div>
                     </div>
