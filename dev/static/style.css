@@ -871,6 +871,7 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     justify-content: center;
     max-width: 800px;
     margin: 0 auto;
+	padding: 40px;
     height: 240px;
 }
 
@@ -908,7 +909,7 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     flex-direction: row;
     align-items: center;
     justify-content: center; 
-    gap: 12px;
+    gap: 6px;
     margin-top: 6px;
 }
 
