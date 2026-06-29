@@ -889,8 +889,8 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     flex: 0 0 270px;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    height: 100%;
+    justify-content: center;
+    gap: 20px;
 }
 
 .node {
@@ -923,10 +923,6 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     margin-bottom: 6px;
 }
 
-.left-column .narrative-text {
-    margin-bottom: 4px;
-}
-
 .player-name {
     font-size: var(--size-md);
     font-weight: var(--medium);
@@ -939,26 +935,13 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     color: var(--main-color);
 }
 
-.narrative-empty {
-    font-size: var(--size-base);
-    font-style: italic;
-    color: var(--border-soft) !important;
-    font-weight: var(--normal);
-}
-
 .player-meta {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: var(--size-base);
+    font-size: var(--size-md);
     font-weight: var(--bold);
-}
-
-.player-opponents {
-    font-size: var(--size-base);
-    color: var(--text-main);
-    margin-top: 4px;
-    font-style: italic;
+	font-variant-numeric: tabular-nums;
 }
 
 .tier-icon {
