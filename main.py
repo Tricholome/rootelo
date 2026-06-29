@@ -455,7 +455,7 @@ for tag in ARCHIVE_SEASONS:
     
     lb_data = []
     if not raw['final_df'].empty:
-        filtered_df = raw['final_df'][raw['final_df']['Wins'].astype(float) >= 1].copy()
+        filtered_df = raw['final_df'][raw['final_df']['Games'].astype(int) > 0].copy()
         lb_data = prepare_leaderboard_data(filtered_df)
         
     match_data = []
