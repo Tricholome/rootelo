@@ -249,6 +249,7 @@ $(document).ready(function() {
                         <input type="checkbox" id="tierFilterCheckbox"> Show unranked players
                     </label>
                 `);
+				table.draw();
             }
         });
 
