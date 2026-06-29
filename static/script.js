@@ -228,7 +228,7 @@ $(document).ready(function() {
     // --- 1. LEADERBOARD ---
 	if ($('#leaderboard').length > 0) {
 		
-		let showAll = false; 
+		let showAllPlayers = false; 
 
 		$.extend($.fn.dataTable.ext.type.order, { 
 			"rank-pre": function (d) { return d === "-" ? 9999 : parseInt(d); } 
@@ -247,7 +247,6 @@ $(document).ready(function() {
 			],
 			"language": { "searchPlaceholder": "Player name" },
 			"initComplete": function(settings, json) {
-
 				$('.dataTables_length').append(`
 					<label class="dt-checkbox-label">
 						<input type="checkbox" id="tierFilterCheckbox"> Show unranked players
@@ -256,16 +255,17 @@ $(document).ready(function() {
 			}
 		});
 
+
 		$.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
 			if (settings.nTable.id !== 'leaderboard') return true;
 			
-			if (showAll) return true; 
+			if (showAllPlayers) return true; 
 			
 			return data[0].trim() !== "-";
 		});
 
 		$(document).on('change', '#tierFilterCheckbox', function() {
-			showAll = $(this).is(':checked');
+			showAllPlayers = $(this).is(':checked');
 			table.draw();
 		});
 	}
