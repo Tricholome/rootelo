@@ -857,7 +857,7 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 /* --- Narrative Journey Relations Chart --- */
 .relations-wrapper {
     margin-top: 40px;
-    padding: 30px 20px;
+    padding: 40px;
     background-color: rgba(43, 37, 27, 0.3);
     border: 1px solid var(--border-soft);
     border-radius: 12px;
@@ -943,7 +943,7 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     font-size: var(--size-md);
     font-weight: var(--medium);
     display: block;
-    margin-bottom: 4px;
+    margin: 4px;
     color: var(--text-main);
 }
 
@@ -961,14 +961,13 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 }
 
 .opponents-count {
-    font-size: var(--size-md);
     color: var(--text-main);
     font-weight: var(--medium);
 }
 
 .tier-icon {
-    width: 36px;
-    height: 36px;
+    width: 48px;
+    height: 48px;
     vertical-align: middle;
     margin-right: 6px;
     filter: drop-shadow(0 2px 2px rgba(0,0,0,0.5));
