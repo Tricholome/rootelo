@@ -787,7 +787,7 @@ window.updateRelationsTree = function(playerName) {
     
     if (data) {
         document.getElementById('centerPlayerName').innerText = playerName;
-        document.getElementById('centerPlayerMeta').innerHTML = `<div class="player-opponents">faced ${data.unique_opponents} different opponents...</div>`;
+        document.getElementById('centerPlayerMeta').innerHTML = `<div class="narrative-text">faced ${data.unique_opponents} different opponents...</div>`;
         
         // Trophy (Top Right)
         const nodeTrophy = document.getElementById('nodeTrophy');
@@ -805,7 +805,7 @@ window.updateRelationsTree = function(playerName) {
         } else {
             nodeTrophy.innerHTML = `
                 <div id="textTrophy">
-                    <div class="player-name narrative-empty">...but failed to claim a single victory</div>
+                    <div class="narrative-text">...but failed to claim a single victory</div>
                 </div>
             `;
             nodeTrophy.setAttribute('data-player', '');
@@ -827,7 +827,7 @@ window.updateRelationsTree = function(playerName) {
         } else {
             nodeBane.innerHTML = `
                 <div id="textBane">
-                    <div class="player-name narrative-empty">...and never once tasted defeat</div>
+                    <div class="narrative-text">...and never once tasted defeat</div>
                 </div>
             `;
             nodeBane.setAttribute('data-player', '');
