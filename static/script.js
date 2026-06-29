@@ -842,7 +842,7 @@ window.updateRelationsTree = function(playerName) {
     } else {
         nodeTrophy.innerHTML = `
             <div id="textTrophy">
-                <div class="narrative-text">...but failed to claim a single victory</div>
+                <div class="narrative-text">...but suffered only bitter loss</div>
             </div>
         `;
         nodeTrophy.setAttribute('data-player', '');
