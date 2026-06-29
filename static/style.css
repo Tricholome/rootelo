@@ -1014,7 +1014,7 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     .relations-container {
         flex-direction: column;
         height: auto;
-        padding: 0;
+        padding: 0 0 20px;
         gap: 24px; 
         max-width: 100%;
     }
