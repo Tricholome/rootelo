@@ -854,11 +854,49 @@ window.selectPlayerFromTree = function(element) {
     }
 };
 
-// Fonction déclenchée quand on tape dans la barre (oninput)
+// Fonction déclenchée quand on tape dans la barre (oninput) ou qu'on la vide
 window.updatePlayerView = function() {
-    const currentPlayer = document.getElementById('playerName').value;
+    const input = document.getElementById('playerName');
+    const currentPlayer = input ? input.value.trim() : "";
+    
+    const chartWrapper = document.querySelector('.chart-wrapper');
+    const relationsWrapper = document.querySelector('.relations-wrapper');
+
     if (currentPlayer) {
+        // Un joueur est saisi : on affiche les blocs et on charge l'arbre
+        if (chartWrapper) chartWrapper.style.display = 'block';
+        if (relationsWrapper) relationsWrapper.style.display = 'block';
         window.updateRelationsTree(currentPlayer);
+    } else {
+        // La barre est vide : on masque complètement le graphique et les relations
+        if (chartWrapper) chartWrapper.style.display = 'none';
+        if (relationsWrapper) relationsWrapper.style.display = 'none';
+        
+        // Remise à zéro propre respectant la structure HTML d'origine (trends.html)
+        const centerName = document.getElementById('centerPlayerName');
+        const centerMeta = document.getElementById('centerPlayerMeta');
+        if (centerName) centerName.innerText = 'Select a player';
+        if (centerMeta) centerMeta.innerHTML = '';
+
+        const nodeTrophy = document.getElementById('nodeTrophy');
+        if (nodeTrophy) {
+            nodeTrophy.innerHTML = `
+                <div id="textTrophy">
+                    <div class="player-name">...</div>
+                </div>
+            `;
+            nodeTrophy.setAttribute('data-player', '');
+        }
+
+        const nodeBane = document.getElementById('nodeBane');
+        if (nodeBane) {
+            nodeBane.innerHTML = `
+                <div id="textBane">
+                    <div class="player-name">...</div>
+                </div>
+            `;
+            nodeBane.setAttribute('data-player', '');
+        }
     }
 };
 
@@ -867,13 +905,17 @@ $(document).ready(function() {
     const input = document.getElementById('playerName');
     const savedPlayer = localStorage.getItem('selectedPlayer');
     
-    // 1. Si la barre de recherche a une valeur (cache navigateur ou backend)
-    if (input && input.value) {
+    // 1. Si la barre de recherche a déjà une valeur (cache ou pré-remplissage)
+    if (input && input.value.trim()) {
         window.updatePlayerView();
     } 
-    // 2. Sinon, on se rabat sur le localStorage
+    // 2. Sinon, on regarde le localStorage
     else if (savedPlayer) {
         if (input) input.value = savedPlayer;
-        window.updateRelationsTree(savedPlayer);
+        window.updatePlayerView();
+    }
+    // 3. Si aucun joueur n'est actif au départ, on appelle updatePlayerView pour tout masquer proprement
+    else {
+        window.updatePlayerView();
     }
 });
