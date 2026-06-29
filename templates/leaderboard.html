@@ -2,7 +2,13 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <table id="leaderboard" class="display nowrap" style="width:100%">
+    <div class="leaderboard-controls">
+        <label class="filter-label">
+            <input type="checkbox" id="tierFilterCheckbox">
+            Show ranked tiers only
+        </label>
+    </div>
+	<table id="leaderboard" class="display nowrap" style="width:100%">
         <thead>
             <tr>
                 <th>Rank</th>
