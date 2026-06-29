@@ -787,7 +787,7 @@ window.updateRelationsTree = function(playerName) {
     
     if (data) {
         document.getElementById('centerPlayerName').innerText = playerName;
-        document.getElementById('centerPlayerMeta').innerHTML = `<div class="narrative-text">faced ${data.unique_opponents} different opponents...</div>`;
+        document.getElementById('centerPlayerMeta').innerHTML = `<div class="narrative-text">faced <span class="opponents-count">${data.unique_opponents}</span> different opponents...</div>`;
         
         // Trophy (Top Right)
         const nodeTrophy = document.getElementById('nodeTrophy');
@@ -796,10 +796,13 @@ window.updateRelationsTree = function(playerName) {
             const eloColor = data.trophy.tier ? `var(--color-${data.trophy.tier})` : 'var(--text-main)';
             nodeTrophy.innerHTML = `
                 <div class="narrative-text">...brought down the mighty</div>
-                <div id="textTrophy">
-                    <div class="player-name">${data.trophy.name}</div>
-                    <div class="player-meta" style="color: ${eloColor};">${trophyIcon}${data.trophy.elo}</div>
-                </div>
+                <div id="textTrophy" class="node-content-flex">
+					${trophyIcon ? `<div class="node-icon-side">${trophyIcon}</div>` : ''}
+					<div class="node-text-side">
+						<div class="player-name">${data.trophy.name}</div>
+						<div class="player-meta" style="color: ${eloColor};">${data.trophy.elo}</div>
+					</div>
+				</div>
             `;
             nodeTrophy.setAttribute('data-player', data.trophy.name);
         } else {
@@ -818,10 +821,13 @@ window.updateRelationsTree = function(playerName) {
             const eloColor = data.bane.tier ? `var(--color-${data.bane.tier})` : 'var(--text-main)';
             nodeBane.innerHTML = `
                 <div class="narrative-text">...and fell before the humble</div>
-                <div id="textBane">
-                    <div class="player-name">${data.bane.name}</div>
-                    <div class="player-meta" style="color: ${eloColor};">${baneIcon}${data.bane.elo}</div>
-                </div>
+                <div id="textBane" class="node-content-flex">
+					${baneIcon ? `<div class="node-icon-side">${baneIcon}</div>` : ''}
+					<div class="node-text-side">
+						<div class="player-name">${data.bane.name}</div>
+						<div class="player-meta" style="color: ${eloColor};">${data.bane.elo}</div>
+					</div>
+				</div>
             `;
             nodeBane.setAttribute('data-player', data.bane.name);
         } else {
