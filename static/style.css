@@ -916,8 +916,6 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 .node-text-side {
     display: flex;
     flex-direction: column; 
-    align-items: flex-start;
-    text-align: left;
 }
 
 .interactive-node {
@@ -955,9 +953,8 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 .player-meta {
     display: flex;
     align-items: center;
-	text-align: center;
     justify-content: center;
-    font-size: var(--size-md);
+    font-size: var(--size-normal);
     font-weight: var(--bold);
 	font-variant-numeric: tabular-nums;
 }
@@ -1016,10 +1013,6 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 	
 	.relations-container .player-name {
 		max-width: 220px;
-	}
-
-	.player-meta {
-		font-size: var(--size-normal);
 	}
 }
 
