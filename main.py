@@ -9,9 +9,9 @@ from jinja2 import Environment, FileSystemLoader
 # --- 0. CONFIGURATION & CONSTANTS ---
 # =========================================================================
 DATA_DIR = "data"
-ARCHIVE_SEASONS = ["lh01", "lh02"] 
-CURRENT_SEASON_TAG = "lh03"
-TOURNAMENT_ID = 26
+ARCHIVE_SEASONS = ["lh01"] 
+CURRENT_SEASON_TAG = "lh02"
+TOURNAMENT_ID = 25
 CORRECTIONS_FILE = os.path.join(DATA_DIR, f"{CURRENT_SEASON_TAG}_corrections.csv")
 
 NAV_ITEMS = [
