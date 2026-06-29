@@ -571,7 +571,7 @@ def render_core_pages(file_suffix, is_archive, tag, lb_data, match_data, trends_
     render_page(
         "leaderboard.html", f"index{file_suffix}.html", page_id="index", current_page_base="index",
         title="Leaderboard • Rootelo", page_heading="Leaderboard",
-        description=f"Double-click any player to see their Journey. Only&nbsp;players&nbsp;with&nbsp;a&nbsp;Tier&nbsp;are&nbsp;ranked.<br><br><i><small>Includes {meta.get('match_count', 0)} matches up to {meta.get('cutoff_date', 'N/A')}.</i></small>",
+        description=f"Only players with a Tier are ranked. Double-click&nbsp;to&nbsp;see&nbsp;individual&nbsp;Journeys.<br><br><i><small>Includes {meta.get('match_count', 0)} matches up to {meta.get('cutoff_date', 'N/A')}.</i></small>",
         is_archive=is_archive, has_seasons=True, season_tag=tag,
         archive_seasons=ARCHIVE_SEASONS,
         current_season_tag=CURRENT_SEASON_TAG,
