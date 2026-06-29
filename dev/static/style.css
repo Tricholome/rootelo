@@ -1052,6 +1052,13 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
         text-align: center;
     }
 	
+	.interactive-node:active {
+        transform: scale(0.96);
+        border-color: var(--main-color);
+        box-shadow: inset 0 2px 10px rgba(0,0,0,0.2);
+        transition: transform 0.1s ease;
+    }
+	
     .relations-container .player-name {
         max-width: 100%;
     }
