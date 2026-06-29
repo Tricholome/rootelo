@@ -261,9 +261,20 @@ def get_elo_for_match(player_name, game_id, full_history):
     clean_p = get_clean_name(player_name)
     if clean_p not in full_history:
         return None
-    for entry in full_history[clean_p]:
+    
+    history_list = full_history[clean_p]
+    
+    # On itère avec l'index pour pouvoir regarder l'entrée précédente
+    for i, entry in enumerate(history_list):
         if entry[2] == game_id:
-            return entry[1]
+            # Si on a trouvé le match, on retourne l'Elo de l'entrée i-1
+            # (l'état du joueur juste avant ce match)
+            if i > 0:
+                return history_list[i-1][1]
+            else:
+                # Si c'est le premier match (i=0), on retourne le Elo de départ
+                return history_list[0][1]
+                
     return None
 
 def extract_relations(matches_list, full_history):
