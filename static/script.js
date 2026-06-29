@@ -225,15 +225,24 @@ document.addEventListener('DOMContentLoaded', function() {
 
 $(document).ready(function() {
 
-    // --- 1. LEADERBOARD ---
+	// --- 1. LEADERBOARD ---
 	if ($('#leaderboard').length > 0) {
 		
 		let showAllPlayers = false; 
 
+		// Définition du tri personnalisé
 		$.extend($.fn.dataTable.ext.type.order, { 
 			"rank-pre": function (d) { return d === "-" ? 9999 : parseInt(d); } 
 		});
 
+		// 1. ON DÉCLARE LE FILTRE EN PREMIER
+		$.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
+			if (settings.nTable.id !== 'leaderboard') return true;
+			if (showAllPlayers) return true; 
+			return data[0].trim() !== "-"; // Masque les tirets si showAllPlayers est faux
+		});
+
+		// 2. ON INITIALISE LA TABLE (elle utilisera le filtre tout de suite)
 		const table = $('#leaderboard').DataTable({
 			"order": [[3, "desc"]],
 			"responsive": true, 
@@ -255,15 +264,7 @@ $(document).ready(function() {
 			}
 		});
 
-
-		$.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
-			if (settings.nTable.id !== 'leaderboard') return true;
-			
-			if (showAllPlayers) return true; 
-			
-			return data[0].trim() !== "-";
-		});
-
+		// 3. ON ÉCOUTE LE CLIC SUR LA CHECKBOX
 		$(document).on('change', '#tierFilterCheckbox', function() {
 			showAllPlayers = $(this).is(':checked');
 			table.draw();
