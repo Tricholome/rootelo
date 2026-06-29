@@ -996,6 +996,14 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
         width: 100%;
         max-width: 100%;
     }
+	.central-node {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        max-width: 270px;
+        margin: 0 auto;
+    }
 
     .right-column {
         gap: 16px;
@@ -1004,10 +1012,11 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     .middle-space {
         display: none;
     }
-
-    .narrative-text {
-        white-space: normal;
-    }
+	
+	.player-meta {
+		font-size: var(--size-normal);
+		font-weight: var(--medium);
+	}
 }
 
 /* =========================================================================
