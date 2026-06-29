@@ -230,30 +230,32 @@ $(document).ready(function() {
 		
 		let showAllPlayers = false; 
 
-		// Définition du tri personnalisé
 		$.extend($.fn.dataTable.ext.type.order, { 
 			"rank-pre": function (d) { return d === "-" ? 9999 : parseInt(d); } 
 		});
 
-		// 1. ON DÉCLARE LE FILTRE EN PREMIER
 		$.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
 			if (settings.nTable.id !== 'leaderboard') return true;
 			if (showAllPlayers) return true; 
-			return data[0].trim() !== "-"; // Masque les tirets si showAllPlayers est faux
+			return data[0].trim() !== "-";
 		});
 
-		// 2. ON INITIALISE LA TABLE (elle utilisera le filtre tout de suite)
 		const table = $('#leaderboard').DataTable({
 			"order": [[3, "desc"]],
 			"responsive": true, 
 			"pageLength": 50,
 			"dom": '<"top"lf>rt<"bottom"ip><"clear">',
 			"columnDefs": [ 
-				{ "targets": 0, "type": "rank" },
-				{ "targets": 2, "className": "player-name-cell" },
-				{ "className": "elo-cell" },
-				{ "className": "numeric-cell", "targets": [0, 3, 4, 5, 6, 7, 8] }
-			],
+                { "targets": 0, "type": "rank" },
+                { "targets": 2, "className": "player-name-cell" },
+                { "targets": 3, "className": "elo-cell" },
+				{ "className": "numeric-cell", "targets": [0, 3, 4, 5, 6, 7, 8] },
+                { "responsivePriority": 1, "targets": [2, 3] },
+                { "responsivePriority": 2, "targets": 0 },
+                { "responsivePriority": 3, "targets": 1 },
+                { "responsivePriority": 8, "targets": 6 },
+                { "responsivePriority": 10, "targets": [4, 5, 7, 8] }
+            ],
 			"language": { "searchPlaceholder": "Player name" },
 			"initComplete": function(settings, json) {
 				$('.dataTables_length').append(`
