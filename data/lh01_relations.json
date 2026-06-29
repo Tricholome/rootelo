@@ -1,21 +1,346 @@
 {
-    "Nuttsy": {
+    "Munchking": {
+        "trophy": {
+            "name": "Tad604",
+            "elo": 1440,
+            "tier": "fox"
+        },
+        "bane": {
+            "name": "PlagueCarrier",
+            "elo": 1070,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 54
+    },
+    "tunnndz": {
+        "trophy": {
+            "name": "TheDolphinman",
+            "elo": 1258,
+            "tier": "mouse"
+        },
+        "bane": {
+            "name": "Youdge",
+            "elo": 1081,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 44
+    },
+    "PlagueCarrier": {
+        "trophy": {
+            "name": "Nefkano",
+            "elo": 1389,
+            "tier": "rabbit"
+        },
+        "bane": {
+            "name": "HobGungan",
+            "elo": 1107,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 46
+    },
+    "Odinius": {
+        "trophy": {
+            "name": "Led_Slash",
+            "elo": 1348,
+            "tier": "rabbit"
+        },
+        "bane": {
+            "name": "DawnDiVito",
+            "elo": 1021,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 68
+    },
+    "Dizzz": {
         "trophy": {
             "name": null,
             "elo": -1,
             "tier": "unranked"
         },
         "bane": {
-            "name": "Mossfusion",
-            "elo": 1260,
+            "name": "Oppapi",
+            "elo": 1117,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 18
+    },
+    "Gabobs": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "hauntedpebbles2",
+            "elo": 1096,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 7
+    },
+    "Octavius": {
+        "trophy": {
+            "name": "Hossain2020",
+            "elo": 1200,
+            "tier": "mouse"
+        },
+        "bane": {
+            "name": "KuperMeister",
+            "elo": 1179,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 5
+    },
+    "KuperMeister": {
+        "trophy": {
+            "name": "Octavius",
+            "elo": 1259,
+            "tier": "mouse"
+        },
+        "bane": {
+            "name": "mouseinabox",
+            "elo": 1137,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 24
+    },
+    "NattyKash": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "tjudge",
+            "elo": 1241,
+            "tier": "mouse"
+        },
+        "unique_opponents": 10
+    },
+    "Marcus": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "PlagueCarrier",
+            "elo": 1080,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 6
+    },
+    "lumpyprol": {
+        "trophy": {
+            "name": "ShuShuBana",
+            "elo": 1409,
+            "tier": "fox"
+        },
+        "bane": {
+            "name": "NadtyLite",
+            "elo": 1031,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 64
+    },
+    "100pctskillz": {
+        "trophy": {
+            "name": "cliuless",
+            "elo": 1303,
+            "tier": "rabbit"
+        },
+        "bane": {
+            "name": "LHlegend",
+            "elo": 1085,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 72
+    },
+    "FavorOfTheRabbits": {
+        "trophy": {
+            "name": "Led_Slash",
+            "elo": 1506,
+            "tier": "bird"
+        },
+        "bane": {
+            "name": "DarthOblivius",
+            "elo": 1040,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 36
+    },
+    "DelSol": {
+        "trophy": {
+            "name": "Led_Slash",
+            "elo": 1390,
+            "tier": "rabbit"
+        },
+        "bane": {
+            "name": "secretpaths",
+            "elo": 1145,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 27
+    },
+    "FungusMouse": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "Perdita",
+            "elo": 1212,
             "tier": "mouse"
         },
         "unique_opponents": 3
     },
-    "NadtyLite": {
+    "Schkitz": {
         "trophy": {
-            "name": "Led_Slash",
-            "elo": 1487,
+            "name": "tofuwater",
+            "elo": 1499,
+            "tier": "fox"
+        },
+        "bane": {
+            "name": "NadtyLite",
+            "elo": 1031,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 95
+    },
+    "Rabbitwarlord": {
+        "trophy": {
+            "name": "KFull",
+            "elo": 1379,
+            "tier": "rabbit"
+        },
+        "bane": {
+            "name": "Podge0303",
+            "elo": 1055,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 34
+    },
+    "HoosierDaddy": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "MrDrouf",
+            "elo": 1206,
+            "tier": "mouse"
+        },
+        "unique_opponents": 3
+    },
+    "VanKaiserman": {
+        "trophy": {
+            "name": "MrDrouf",
+            "elo": 1286,
+            "tier": "mouse"
+        },
+        "bane": {
+            "name": "Dramsss",
+            "elo": 1124,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 35
+    },
+    "secretpaths": {
+        "trophy": {
+            "name": "swiftsusan",
+            "elo": 1327,
+            "tier": "rabbit"
+        },
+        "bane": {
+            "name": "ellbelle",
+            "elo": 1077,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 26
+    },
+    "clp10033": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "Nefkano",
+            "elo": 1186,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 3
+    },
+    "uwtron": {
+        "trophy": {
+            "name": "MrDrouf",
+            "elo": 1331,
+            "tier": "rabbit"
+        },
+        "bane": {
+            "name": "NadtyLite",
+            "elo": 1087,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 32
+    },
+    "vanillapoppy": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "Tolfan",
+            "elo": 1347,
+            "tier": "rabbit"
+        },
+        "unique_opponents": 3
+    },
+    "Mohammad": {
+        "trophy": {
+            "name": "KuperMeister",
+            "elo": 1200,
+            "tier": "mouse"
+        },
+        "bane": {
+            "name": "MrDrouf",
+            "elo": 1219,
+            "tier": "mouse"
+        },
+        "unique_opponents": 6
+    },
+    "SMenefee": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "TonyDeloreanESQ",
+            "elo": 1106,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 3
+    },
+    "Antiproject": {
+        "trophy": {
+            "name": "Nadav253",
+            "elo": 1480,
+            "tier": "fox"
+        },
+        "bane": {
+            "name": "WyvernElement",
+            "elo": 1101,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 43
+    },
+    "Bapgo": {
+        "trophy": {
+            "name": "ShuShuBana",
+            "elo": 1434,
             "tier": "fox"
         },
         "bane": {
@@ -23,33 +348,85 @@
             "elo": 1079,
             "tier": "squirrel"
         },
-        "unique_opponents": 127
+        "unique_opponents": 37
     },
-    "Jboooooooooooooooooooom": {
+    "Gregoola": {
         "trophy": {
             "name": null,
             "elo": -1,
             "tier": "unranked"
         },
         "bane": {
-            "name": "tunnndz",
-            "elo": 1209,
+            "name": "cliuless",
+            "elo": 1219,
             "tier": "mouse"
+        },
+        "unique_opponents": 3
+    },
+    "Drinken": {
+        "trophy": {
+            "name": "HobGungan",
+            "elo": 1151,
+            "tier": "squirrel"
+        },
+        "bane": {
+            "name": "Oppapi",
+            "elo": 1122,
+            "tier": "squirrel"
         },
         "unique_opponents": 17
     },
-    "CodPieceZ": {
+    "HobGungan": {
+        "trophy": {
+            "name": "Silver",
+            "elo": 1360,
+            "tier": "rabbit"
+        },
+        "bane": {
+            "name": "DawnDiVito",
+            "elo": 1008,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 94
+    },
+    "MangoBlade11": {
         "trophy": {
             "name": null,
             "elo": -1,
             "tier": "unranked"
         },
         "bane": {
-            "name": "100pctskillz",
-            "elo": 1190,
+            "name": "FVMLion",
+            "elo": 1178,
             "tier": "squirrel"
         },
-        "unique_opponents": 13
+        "unique_opponents": 8
+    },
+    "Led_Slash": {
+        "trophy": {
+            "name": "Xar149",
+            "elo": 1499,
+            "tier": "fox"
+        },
+        "bane": {
+            "name": "DarthOblivius",
+            "elo": 1040,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 141
+    },
+    "Shuuhey": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "time2orush",
+            "elo": 1303,
+            "tier": "rabbit"
+        },
+        "unique_opponents": 3
     },
     "PsychologicalBox": {
         "trophy": {
@@ -58,37 +435,50 @@
             "tier": "unranked"
         },
         "bane": {
-            "name": "FrancescoBr",
-            "elo": 1302,
-            "tier": "rabbit"
+            "name": "complexartichoke",
+            "elo": 1247,
+            "tier": "mouse"
         },
         "unique_opponents": 6
     },
-    "tippop": {
+    "ForkMaster": {
         "trophy": {
-            "name": "Led_Slash",
-            "elo": 1445,
-            "tier": "fox"
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
         },
         "bane": {
-            "name": "Silver",
-            "elo": 1366,
-            "tier": "rabbit"
+            "name": "tjudge",
+            "elo": 1200,
+            "tier": "mouse"
         },
-        "unique_opponents": 17
+        "unique_opponents": 3
     },
-    "Lobster": {
+    "MisterGume": {
         "trophy": {
-            "name": "Tricholome",
-            "elo": 1291,
-            "tier": "mouse"
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
         },
         "bane": {
-            "name": "Nymmer",
-            "elo": 1243,
+            "name": "Schkitz",
+            "elo": 1260,
             "tier": "mouse"
         },
-        "unique_opponents": 19
+        "unique_opponents": 3
+    },
+    "Lynxtek": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "BadScra",
+            "elo": 1293,
+            "tier": "mouse"
+        },
+        "unique_opponents": 3
     },
     "StatzoryTheMad": {
         "trophy": {
@@ -98,116 +488,337 @@
         },
         "bane": {
             "name": "KFull",
-            "elo": 1381,
+            "elo": 1361,
             "tier": "rabbit"
         },
         "unique_opponents": 3
     },
-    "TurkeyNoNo": {
+    "Aleph": {
         "trophy": {
-            "name": "Led_Slash",
-            "elo": 1519,
-            "tier": "bird"
+            "name": "MrDrouf",
+            "elo": 1238,
+            "tier": "mouse"
         },
         "bane": {
-            "name": "cjahwon",
-            "elo": 1037,
-            "tier": "squirrel"
+            "name": "MrDrouf",
+            "elo": 1280,
+            "tier": "mouse"
         },
-        "unique_opponents": 61
+        "unique_opponents": 7
     },
-    "Elijah": {
+    "WWren": {
         "trophy": {
             "name": null,
             "elo": -1,
             "tier": "unranked"
         },
         "bane": {
-            "name": "Wrestler",
-            "elo": 1186,
+            "name": "BaconBoy",
+            "elo": 1194,
             "tier": "squirrel"
         },
-        "unique_opponents": 21
+        "unique_opponents": 3
     },
-    "secretpaths": {
+    "TheRedViper": {
         "trophy": {
-            "name": "swiftsusan",
-            "elo": 1308,
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "vinnie",
+            "elo": 1177,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 7
+    },
+    "Libitina114": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "matemato",
+            "elo": 1324,
             "tier": "rabbit"
         },
-        "bane": {
-            "name": "ellbelle",
-            "elo": 1113,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 26
+        "unique_opponents": 3
     },
-    "DarthPuniceus": {
-        "trophy": {
-            "name": "Led_Slash",
-            "elo": 1528,
-            "tier": "bird"
-        },
-        "bane": {
-            "name": "Wrestler",
-            "elo": 1107,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 66
-    },
-    "silverfox": {
+    "EdacM": {
         "trophy": {
             "name": null,
             "elo": -1,
             "tier": "unranked"
         },
         "bane": {
-            "name": "cjahwon",
-            "elo": 1037,
+            "name": "cliuless",
+            "elo": 1219,
+            "tier": "mouse"
+        },
+        "unique_opponents": 8
+    },
+    "FausDav": {
+        "trophy": {
+            "name": "MrDrouf",
+            "elo": 1273,
+            "tier": "mouse"
+        },
+        "bane": {
+            "name": "TimidTailwind",
+            "elo": 1145,
             "tier": "squirrel"
         },
         "unique_opponents": 12
     },
-    "Rachel997": {
+    "BuliBaka": {
+        "trophy": {
+            "name": "Rabbitwarlord",
+            "elo": 1256,
+            "tier": "mouse"
+        },
+        "bane": {
+            "name": "StoneOfShame",
+            "elo": 1153,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 12
+    },
+    "Dramsss": {
+        "trophy": {
+            "name": "Ctfox",
+            "elo": 1456,
+            "tier": "fox"
+        },
+        "bane": {
+            "name": "Piechu",
+            "elo": 1077,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 71
+    },
+    "Nadav253": {
+        "trophy": {
+            "name": "Killerstorm17",
+            "elo": 1503,
+            "tier": "bird"
+        },
+        "bane": {
+            "name": "Oppapi",
+            "elo": 1111,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 43
+    },
+    "ZachB": {
         "trophy": {
             "name": null,
             "elo": -1,
             "tier": "unranked"
         },
         "bane": {
-            "name": "mouseinabox",
-            "elo": 1159,
+            "name": "DarthPuniceus",
+            "elo": 1149,
             "tier": "squirrel"
         },
         "unique_opponents": 3
     },
-    "Pi314": {
+    "CroCroCro": {
         "trophy": {
             "name": null,
             "elo": -1,
             "tier": "unranked"
         },
         "bane": {
-            "name": "Nefkano",
+            "name": "KuperMeister",
+            "elo": 1194,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 3
+    },
+    "hakoo": {
+        "trophy": {
+            "name": "Pandapapst",
+            "elo": 1310,
+            "tier": "rabbit"
+        },
+        "bane": {
+            "name": "NadtyLite",
+            "elo": 1196,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 9
+    },
+    "ToasterTrash": {
+        "trophy": {
+            "name": "buurn",
+            "elo": 1255,
+            "tier": "mouse"
+        },
+        "bane": {
+            "name": "mouseinabox",
+            "elo": 1168,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 18
+    },
+    "Xar149": {
+        "trophy": {
+            "name": "Tolfan",
             "elo": 1367,
             "tier": "rabbit"
         },
-        "unique_opponents": 6
+        "bane": {
+            "name": "CowOnAPlane",
+            "elo": 1129,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 19
     },
-    "MoxJet": {
+    "NaySmith": {
         "trophy": {
             "name": null,
             "elo": -1,
             "tier": "unranked"
         },
         "bane": {
-            "name": "Munchking",
-            "elo": 1045,
+            "name": "Dandel",
+            "elo": 1060,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 10
+    },
+    "MOMOGA": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "Emperia",
+            "elo": 1179,
             "tier": "squirrel"
         },
         "unique_opponents": 6
     },
-    "Actionman2222": {
+    "bigcathedral": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "MrDrouf",
+            "elo": 1278,
+            "tier": "mouse"
+        },
+        "unique_opponents": 3
+    },
+    "Kmahussier": {
+        "trophy": {
+            "name": "Led_Slash",
+            "elo": 1548,
+            "tier": "bird"
+        },
+        "bane": {
+            "name": "Podge0303",
+            "elo": 1080,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 62
+    },
+    "Sharkskln": {
+        "trophy": {
+            "name": "DemaRogue",
+            "elo": 1252,
+            "tier": "mouse"
+        },
+        "bane": {
+            "name": "Odinius",
+            "elo": 1105,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 24
+    },
+    "Gagneto": {
+        "trophy": {
+            "name": "Tricholome",
+            "elo": 1302,
+            "tier": "rabbit"
+        },
+        "bane": {
+            "name": "DanzigMF",
+            "elo": 1137,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 30
+    },
+    "LucianTheFak": {
+        "trophy": {
+            "name": "Killerstorm17",
+            "elo": 1554,
+            "tier": "bird"
+        },
+        "bane": {
+            "name": "PlagueCarrier",
+            "elo": 1080,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 82
+    },
+    "Ctfox": {
+        "trophy": {
+            "name": "Pliskin",
+            "elo": 1342,
+            "tier": "rabbit"
+        },
+        "bane": {
+            "name": "HobGungan",
+            "elo": 1102,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 41
+    },
+    "pashatherussian": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "MrDrouf",
+            "elo": 1180,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 6
+    },
+    "Fearteiler": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "NadtyLite",
+            "elo": 1170,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 10
+    },
+    "Oppapi": {
+        "trophy": {
+            "name": "Cookies",
+            "elo": 1245,
+            "tier": "mouse"
+        },
+        "bane": {
+            "name": "100pctskillz",
+            "elo": 1135,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 44
+    },
+    "Gibbs": {
         "trophy": {
             "name": null,
             "elo": -1,
@@ -215,12 +826,51 @@
         },
         "bane": {
             "name": "buurn",
-            "elo": 1047,
+            "elo": 1030,
             "tier": "squirrel"
         },
         "unique_opponents": 3
     },
-    "BuckeyeNation": {
+    "TimidTailwind": {
+        "trophy": {
+            "name": "Tolfan",
+            "elo": 1364,
+            "tier": "rabbit"
+        },
+        "bane": {
+            "name": "ToasterTrash",
+            "elo": 1114,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 21
+    },
+    "Podge0303": {
+        "trophy": {
+            "name": "Schkitz",
+            "elo": 1293,
+            "tier": "mouse"
+        },
+        "bane": {
+            "name": "Klishu",
+            "elo": 1112,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 50
+    },
+    "Youdge": {
+        "trophy": {
+            "name": "Tricholome",
+            "elo": 1317,
+            "tier": "rabbit"
+        },
+        "bane": {
+            "name": "tippop",
+            "elo": 1183,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 30
+    },
+    "TheSillyBilly": {
         "trophy": {
             "name": null,
             "elo": -1,
@@ -228,34 +878,138 @@
         },
         "bane": {
             "name": "mouseinabox",
-            "elo": 1175,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 3
-    },
-    "BareGammon": {
-        "trophy": {
-            "name": "Killerstorm17",
-            "elo": 1410,
-            "tier": "fox"
-        },
-        "bane": {
-            "name": "100pctskillz",
             "elo": 1168,
             "tier": "squirrel"
         },
-        "unique_opponents": 20
+        "unique_opponents": 10
     },
-    "MrRiceGuy": {
+    "benruff": {
         "trophy": {
             "name": null,
             "elo": -1,
             "tier": "unranked"
         },
         "bane": {
-            "name": "Hydro033",
-            "elo": 1259,
+            "name": "VanKaiserman",
+            "elo": 1244,
             "tier": "mouse"
+        },
+        "unique_opponents": 6
+    },
+    "DanielJeun": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "alevGO",
+            "elo": 1166,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 5
+    },
+    "StarhardFishrinse": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "kaiser",
+            "elo": 1200,
+            "tier": "mouse"
+        },
+        "unique_opponents": 5
+    },
+    "Mossfusion": {
+        "trophy": {
+            "name": "Led_Slash",
+            "elo": 1517,
+            "tier": "bird"
+        },
+        "bane": {
+            "name": "Dramsss",
+            "elo": 1201,
+            "tier": "mouse"
+        },
+        "unique_opponents": 32
+    },
+    "BMPerJMPer": {
+        "trophy": {
+            "name": "kaiser",
+            "elo": 1372,
+            "tier": "rabbit"
+        },
+        "bane": {
+            "name": "buurn",
+            "elo": 1012,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 51
+    },
+    "NonStInc.": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "Wriggleroom",
+            "elo": 1029,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 12
+    },
+    "Seiza": {
+        "trophy": {
+            "name": "Led_Slash",
+            "elo": 1479,
+            "tier": "fox"
+        },
+        "bane": {
+            "name": "DarthOblivius",
+            "elo": 996,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 49
+    },
+    "Ptitmxz": {
+        "trophy": {
+            "name": "Nefkano",
+            "elo": 1389,
+            "tier": "rabbit"
+        },
+        "bane": {
+            "name": "DarthOblivius",
+            "elo": 1007,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 38
+    },
+    "dindane": {
+        "trophy": {
+            "name": "Led_Slash",
+            "elo": 1405,
+            "tier": "fox"
+        },
+        "bane": {
+            "name": "TurkeyNoNo",
+            "elo": 1396,
+            "tier": "rabbit"
+        },
+        "unique_opponents": 13
+    },
+    "Plasma": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "Oppapi",
+            "elo": 1122,
+            "tier": "squirrel"
         },
         "unique_opponents": 3
     },
@@ -266,156 +1020,130 @@
             "tier": "unranked"
         },
         "bane": {
-            "name": "HobGungan",
-            "elo": 1173,
+            "name": "benssoon",
+            "elo": 1113,
             "tier": "squirrel"
         },
         "unique_opponents": 13
     },
-    "Jasiu\u0144cio": {
+    "WyvernElement": {
         "trophy": {
-            "name": "Seiza",
-            "elo": 1291,
-            "tier": "mouse"
-        },
-        "bane": {
-            "name": "WyvernElement",
-            "elo": 1134,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 33
-    },
-    "Clink": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "TimidTailwind",
-            "elo": 1270,
-            "tier": "mouse"
-        },
-        "unique_opponents": 3
-    },
-    "McMayo": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "HobGungan",
-            "elo": 1187,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 12
-    },
-    "Munchking": {
-        "trophy": {
-            "name": "Tad604",
-            "elo": 1414,
-            "tier": "fox"
-        },
-        "bane": {
-            "name": "PlagueCarrier",
-            "elo": 1103,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 54
-    },
-    "Hossain2020": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "marksoz00",
-            "elo": 1223,
-            "tier": "mouse"
-        },
-        "unique_opponents": 9
-    },
-    "Cuagodking": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "tjudge",
-            "elo": 1291,
-            "tier": "mouse"
-        },
-        "unique_opponents": 6
-    },
-    "NonStInc.": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "Wriggleroom",
-            "elo": 1064,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 12
-    },
-    "Klishu": {
-        "trophy": {
-            "name": "matemato",
-            "elo": 1378,
+            "name": "Antiproject",
+            "elo": 1395,
             "tier": "rabbit"
         },
         "bane": {
-            "name": "Pandapapst",
+            "name": "Banzai7000",
+            "elo": 1086,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 41
+    },
+    "CptAlex": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "Emperia",
+            "elo": 1222,
+            "tier": "mouse"
+        },
+        "unique_opponents": 7
+    },
+    "Rabbi": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "Munchking",
+            "elo": 1007,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 6
+    },
+    "Ljaz7": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "vinnie",
             "elo": 1177,
             "tier": "squirrel"
         },
-        "unique_opponents": 49
+        "unique_opponents": 8
     },
-    "Darkwonderer": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "Dandel",
-            "elo": 1119,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 14
-    },
-    "ShuShuBana": {
+    "tofuwater": {
         "trophy": {
             "name": "Led_Slash",
-            "elo": 1542,
-            "tier": "bird"
+            "elo": 1468,
+            "tier": "fox"
         },
         "bane": {
-            "name": "NadtyLite",
-            "elo": 1150,
+            "name": "Wriggleroom",
+            "elo": 1033,
             "tier": "squirrel"
         },
-        "unique_opponents": 66
+        "unique_opponents": 34
     },
-    "FalconBird": {
+    "tjudge": {
+        "trophy": {
+            "name": "Tolfan",
+            "elo": 1396,
+            "tier": "rabbit"
+        },
+        "bane": {
+            "name": "CowOnAPlane",
+            "elo": 1129,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 44
+    },
+    "ChusGG": {
         "trophy": {
             "name": null,
             "elo": -1,
             "tier": "unranked"
         },
         "bane": {
-            "name": "DemaRogue",
-            "elo": 1254,
-            "tier": "mouse"
+            "name": "AERotters",
+            "elo": 1177,
+            "tier": "squirrel"
         },
-        "unique_opponents": 5
+        "unique_opponents": 3
     },
-    "Plush2": {
+    "pooge": {
+        "trophy": {
+            "name": "Led_Slash",
+            "elo": 1397,
+            "tier": "rabbit"
+        },
+        "bane": {
+            "name": "Odinius",
+            "elo": 1112,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 41
+    },
+    "Soluna": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "cringelordirl",
+            "elo": 1191,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 8
+    },
+    "shurgs": {
         "trophy": {
             "name": null,
             "elo": -1,
@@ -428,395 +1156,57 @@
         },
         "unique_opponents": 3
     },
-    "Mossfusion": {
-        "trophy": {
-            "name": "Led_Slash",
-            "elo": 1506,
-            "tier": "bird"
-        },
-        "bane": {
-            "name": "Dramsss",
-            "elo": 1234,
-            "tier": "mouse"
-        },
-        "unique_opponents": 32
-    },
-    "darkcat": {
-        "trophy": {
-            "name": "kayajam",
-            "elo": 1252,
-            "tier": "mouse"
-        },
-        "bane": {
-            "name": "NadtyLite",
-            "elo": 1087,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 35
-    },
-    "DanielJeun": {
+    "Hossain2020": {
         "trophy": {
             "name": null,
             "elo": -1,
             "tier": "unranked"
         },
         "bane": {
-            "name": "alevGO",
-            "elo": 1230,
-            "tier": "mouse"
-        },
-        "unique_opponents": 5
-    },
-    "Rabbitwarlord": {
-        "trophy": {
-            "name": "KFull",
-            "elo": 1361,
-            "tier": "rabbit"
-        },
-        "bane": {
-            "name": "Podge0303",
-            "elo": 1090,
+            "name": "marksoz00",
+            "elo": 1163,
             "tier": "squirrel"
-        },
-        "unique_opponents": 34
-    },
-    "GameProfit": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "Led_Slash",
-            "elo": 1373,
-            "tier": "rabbit"
-        },
-        "unique_opponents": 3
-    },
-    "Wolvane": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "Octavius",
-            "elo": 1259,
-            "tier": "mouse"
-        },
-        "unique_opponents": 3
-    },
-    "Whats02": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "Snivylover12",
-            "elo": 1252,
-            "tier": "mouse"
-        },
-        "unique_opponents": 17
-    },
-    "DemaRogue": {
-        "trophy": {
-            "name": "KFull",
-            "elo": 1358,
-            "tier": "rabbit"
-        },
-        "bane": {
-            "name": "cjahwon",
-            "elo": 1045,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 80
-    },
-    "ermactually": {
-        "trophy": {
-            "name": "Sirius",
-            "elo": 1177,
-            "tier": "squirrel"
-        },
-        "bane": {
-            "name": "BareGammon",
-            "elo": 1323,
-            "tier": "rabbit"
-        },
-        "unique_opponents": 6
-    },
-    "Piechu": {
-        "trophy": {
-            "name": "LucianTheFak",
-            "elo": 1268,
-            "tier": "mouse"
-        },
-        "bane": {
-            "name": "buurn",
-            "elo": 1012,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 66
-    },
-    "AJIJIi": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "mouseinabox",
-            "elo": 1194,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 3
-    },
-    "Excitedteapot": {
-        "trophy": {
-            "name": "ShuShuBana",
-            "elo": 1481,
-            "tier": "fox"
-        },
-        "bane": {
-            "name": "Odinius",
-            "elo": 1146,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 25
-    },
-    "chosennuttso": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "Mossfusion",
-            "elo": 1260,
-            "tier": "mouse"
-        },
-        "unique_opponents": 3
-    },
-    "Wrestler": {
-        "trophy": {
-            "name": "Led_Slash",
-            "elo": 1390,
-            "tier": "rabbit"
-        },
-        "bane": {
-            "name": "ellbelle",
-            "elo": 1113,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 76
-    },
-    "MylesMoose": {
-        "trophy": {
-            "name": "Tricholome",
-            "elo": 1327,
-            "tier": "rabbit"
-        },
-        "bane": {
-            "name": "buurn",
-            "elo": 1032,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 46
-    },
-    "Potet": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "CowOnAPlane",
-            "elo": 1200,
-            "tier": "mouse"
         },
         "unique_opponents": 9
     },
-    "lgtw3450": {
+    "Dandel": {
         "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "pwarren8590",
-            "elo": 1260,
-            "tier": "mouse"
-        },
-        "unique_opponents": 3
-    },
-    "GlisteningGeetus": {
-        "trophy": {
-            "name": "KFull",
-            "elo": 1217,
+            "name": "Snivylover12",
+            "elo": 1231,
             "tier": "mouse"
         },
         "bane": {
-            "name": "NadtyLite",
-            "elo": 1087,
+            "name": "cjahwon",
+            "elo": 1001,
             "tier": "squirrel"
         },
-        "unique_opponents": 12
+        "unique_opponents": 45
     },
-    "Bodnamax": {
+    "cjahwon": {
         "trophy": {
-            "name": "uwtron",
+            "name": "TurkeyNoNo",
             "elo": 1254,
             "tier": "mouse"
         },
         "bane": {
-            "name": "100pctskillz",
-            "elo": 1204,
-            "tier": "mouse"
-        },
-        "unique_opponents": 8
-    },
-    "LHlegend": {
-        "trophy": {
-            "name": "Nadav253",
-            "elo": 1410,
-            "tier": "fox"
-        },
-        "bane": {
-            "name": "Hadjiya",
-            "elo": 1104,
+            "name": "Dandel",
+            "elo": 1060,
             "tier": "squirrel"
         },
-        "unique_opponents": 52
+        "unique_opponents": 65
     },
-    "Mohammad": {
+    "ellbelle": {
         "trophy": {
-            "name": "KuperMeister",
-            "elo": 1179,
-            "tier": "squirrel"
-        },
-        "bane": {
-            "name": "MrDrouf",
-            "elo": 1280,
-            "tier": "mouse"
-        },
-        "unique_opponents": 6
-    },
-    "Lante": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "Pandapapst",
-            "elo": 1192,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 5
-    },
-    "DarthOblivius": {
-        "trophy": {
-            "name": "Led_Slash",
-            "elo": 1538,
-            "tier": "bird"
-        },
-        "bane": {
-            "name": "NadtyLite",
-            "elo": 1127,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 69
-    },
-    "Acelet": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "Drinken",
-            "elo": 1158,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 15
-    },
-    "HobGungan": {
-        "trophy": {
-            "name": "Silver",
-            "elo": 1316,
+            "name": "swiftsusan",
+            "elo": 1348,
             "tier": "rabbit"
-        },
-        "bane": {
-            "name": "DawnDiVito",
-            "elo": 1044,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 94
-    },
-    "idk123": {
-        "trophy": {
-            "name": "IMPERATOR",
-            "elo": 1382,
-            "tier": "rabbit"
-        },
-        "bane": {
-            "name": "Peppy",
-            "elo": 1189,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 14
-    },
-    "TimidTailwind": {
-        "trophy": {
-            "name": "Tolfan",
-            "elo": 1347,
-            "tier": "rabbit"
-        },
-        "bane": {
-            "name": "ToasterTrash",
-            "elo": 1179,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 21
-    },
-    "Seiza": {
-        "trophy": {
-            "name": "Led_Slash",
-            "elo": 1468,
-            "tier": "fox"
-        },
-        "bane": {
-            "name": "DarthOblivius",
-            "elo": 1032,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 49
-    },
-    "ImJustExisting": {
-        "trophy": {
-            "name": "Led_Slash",
-            "elo": 1482,
-            "tier": "fox"
-        },
-        "bane": {
-            "name": "mkcy3",
-            "elo": 1142,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 37
-    },
-    "Doordecat": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
         },
         "bane": {
             "name": "HobGungan",
-            "elo": 1125,
+            "elo": 1137,
             "tier": "squirrel"
         },
-        "unique_opponents": 26
+        "unique_opponents": 23
     },
     "goodgamepat": {
         "trophy": {
@@ -826,205 +1216,36 @@
         },
         "bane": {
             "name": "lumpyprol",
-            "elo": 1163,
+            "elo": 1131,
             "tier": "squirrel"
         },
         "unique_opponents": 6
     },
-    "Shuuhey": {
+    "darkcat": {
         "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "time2orush",
-            "elo": 1351,
-            "tier": "rabbit"
-        },
-        "unique_opponents": 3
-    },
-    "Libitina114": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "matemato",
-            "elo": 1367,
-            "tier": "rabbit"
-        },
-        "unique_opponents": 3
-    },
-    "Karcher": {
-        "trophy": {
-            "name": "matemato",
-            "elo": 1282,
+            "name": "kayajam",
+            "elo": 1279,
             "tier": "mouse"
-        },
-        "bane": {
-            "name": "TheFourthJesse",
-            "elo": 1163,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 12
-    },
-    "Octavius": {
-        "trophy": {
-            "name": "Hossain2020",
-            "elo": 1179,
-            "tier": "squirrel"
-        },
-        "bane": {
-            "name": "KuperMeister",
-            "elo": 1240,
-            "tier": "mouse"
-        },
-        "unique_opponents": 5
-    },
-    "vinnie": {
-        "trophy": {
-            "name": "matemato",
-            "elo": 1269,
-            "tier": "mouse"
-        },
-        "bane": {
-            "name": "Klishu",
-            "elo": 1178,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 9
-    },
-    "ellbelle": {
-        "trophy": {
-            "name": "swiftsusan",
-            "elo": 1327,
-            "tier": "rabbit"
-        },
-        "bane": {
-            "name": "HobGungan",
-            "elo": 1169,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 23
-    },
-    "BjarkeHuse": {
-        "trophy": {
-            "name": "FrancescoBr",
-            "elo": 1223,
-            "tier": "mouse"
-        },
-        "bane": {
-            "name": "Sebby",
-            "elo": 1226,
-            "tier": "mouse"
-        },
-        "unique_opponents": 13
-    },
-    "MOMOGA": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "Emperia",
-            "elo": 1209,
-            "tier": "mouse"
-        },
-        "unique_opponents": 6
-    },
-    "ZachB": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "DarthPuniceus",
-            "elo": 1212,
-            "tier": "mouse"
-        },
-        "unique_opponents": 3
-    },
-    "TheDolphinman": {
-        "trophy": {
-            "name": "ShuShuBana",
-            "elo": 1429,
-            "tier": "fox"
-        },
-        "bane": {
-            "name": "LucianTheFak",
-            "elo": 1087,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 48
-    },
-    "TheWiseFox": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
         },
         "bane": {
             "name": "NadtyLite",
-            "elo": 1145,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 14
-    },
-    "mouseinabox": {
-        "trophy": {
-            "name": "matemato",
-            "elo": 1387,
-            "tier": "rabbit"
-        },
-        "bane": {
-            "name": "Hadjiya",
-            "elo": 1071,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 107
-    },
-    "Antiproject": {
-        "trophy": {
-            "name": "Nadav253",
-            "elo": 1459,
-            "tier": "fox"
-        },
-        "bane": {
-            "name": "WyvernElement",
-            "elo": 1137,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 43
-    },
-    "chux88": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "aelisheneithlon",
-            "elo": 1249,
-            "tier": "mouse"
-        },
-        "unique_opponents": 9
-    },
-    "VanKaiserman": {
-        "trophy": {
-            "name": "MrDrouf",
-            "elo": 1273,
-            "tier": "mouse"
-        },
-        "bane": {
-            "name": "Dramsss",
-            "elo": 1189,
+            "elo": 1052,
             "tier": "squirrel"
         },
         "unique_opponents": 35
+    },
+    "radiantchaos": {
+        "trophy": {
+            "name": "KFull",
+            "elo": 1366,
+            "tier": "rabbit"
+        },
+        "bane": {
+            "name": "DawnDiVito",
+            "elo": 1021,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 50
     },
     "Lex25": {
         "trophy": {
@@ -1034,231 +1255,218 @@
         },
         "bane": {
             "name": "Piechu",
-            "elo": 1121,
+            "elo": 1089,
             "tier": "squirrel"
         },
         "unique_opponents": 28
     },
-    "brrrlinguist": {
+    "cliuless": {
         "trophy": {
-            "name": "MrDrouf",
-            "elo": 1238,
-            "tier": "mouse"
+            "name": "Led_Slash",
+            "elo": 1533,
+            "tier": "bird"
         },
         "bane": {
-            "name": "Oppapi",
-            "elo": 1145,
+            "name": "DarthOblivius",
+            "elo": 996,
             "tier": "squirrel"
         },
-        "unique_opponents": 11
+        "unique_opponents": 107
     },
-    "FVMLion": {
+    "BareGammon": {
         "trophy": {
-            "name": "BaconBoy",
-            "elo": 1278,
-            "tier": "mouse"
+            "name": "Killerstorm17",
+            "elo": 1459,
+            "tier": "fox"
         },
         "bane": {
-            "name": "LHlegend",
-            "elo": 1118,
+            "name": "100pctskillz",
+            "elo": 1135,
             "tier": "squirrel"
         },
-        "unique_opponents": 36
+        "unique_opponents": 20
     },
-    "Dizzz": {
+    "complexartichoke": {
+        "trophy": {
+            "name": "matemato",
+            "elo": 1315,
+            "tier": "rabbit"
+        },
+        "bane": {
+            "name": "ShuShuBana",
+            "elo": 1388,
+            "tier": "rabbit"
+        },
+        "unique_opponents": 8
+    },
+    "RexCow": {
         "trophy": {
             "name": null,
             "elo": -1,
             "tier": "unranked"
         },
         "bane": {
-            "name": "Oppapi",
-            "elo": 1149,
+            "name": "MrDrouf",
+            "elo": 1236,
+            "tier": "mouse"
+        },
+        "unique_opponents": 9
+    },
+    "chosennuttso": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "Mossfusion",
+            "elo": 1200,
+            "tier": "mouse"
+        },
+        "unique_opponents": 3
+    },
+    "kaiser": {
+        "trophy": {
+            "name": "Killerstorm17",
+            "elo": 1524,
+            "tier": "bird"
+        },
+        "bane": {
+            "name": "LutherStr",
+            "elo": 1109,
             "tier": "squirrel"
         },
-        "unique_opponents": 18
+        "unique_opponents": 78
     },
-    "doejurko": {
+    "Snivylover12": {
         "trophy": {
-            "name": "ShuShuBana",
-            "elo": 1479,
-            "tier": "fox"
+            "name": "Cookies",
+            "elo": 1269,
+            "tier": "mouse"
+        },
+        "bane": {
+            "name": "Dandel",
+            "elo": 1060,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 27
+    },
+    "McMayo": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "HobGungan",
+            "elo": 1154,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 12
+    },
+    "Wubba": {
+        "trophy": {
+            "name": "Nefkano",
+            "elo": 1370,
+            "tier": "rabbit"
+        },
+        "bane": {
+            "name": "DawnDiVito",
+            "elo": 1008,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 43
+    },
+    "Silver": {
+        "trophy": {
+            "name": "Tricholome",
+            "elo": 1326,
+            "tier": "rabbit"
+        },
+        "bane": {
+            "name": "AERotters",
+            "elo": 1145,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 24
+    },
+    "lazarus210": {
+        "trophy": {
+            "name": "DemaRogue",
+            "elo": 1254,
+            "tier": "mouse"
         },
         "bane": {
             "name": null,
             "elo": 99999,
             "tier": "unranked"
         },
-        "unique_opponents": 21
-    },
-    "kaiser": {
-        "trophy": {
-            "name": "Killerstorm17",
-            "elo": 1500,
-            "tier": "bird"
-        },
-        "bane": {
-            "name": "LucianTheFak",
-            "elo": 1169,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 78
-    },
-    "tunnndz": {
-        "trophy": {
-            "name": "TheDolphinman",
-            "elo": 1242,
-            "tier": "mouse"
-        },
-        "bane": {
-            "name": "mouseinabox",
-            "elo": 1124,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 44
-    },
-    "sleepylabone": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "Dramsss",
-            "elo": 1241,
-            "tier": "mouse"
-        },
-        "unique_opponents": 14
-    },
-    "Marcus": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "PlagueCarrier",
-            "elo": 1113,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 6
-    },
-    "mishaelh1": {
-        "trophy": {
-            "name": "FrancescoBr",
-            "elo": 1260,
-            "tier": "mouse"
-        },
-        "bane": {
-            "name": "Hadjiya",
-            "elo": 1138,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 20
-    },
-    "Bengal3": {
-        "trophy": {
-            "name": "NadtyLite",
-            "elo": 1244,
-            "tier": "mouse"
-        },
-        "bane": {
-            "name": "buurn",
-            "elo": 1030,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 25
-    },
-    "Emperia": {
-        "trophy": {
-            "name": "Nefkano",
-            "elo": 1361,
-            "tier": "rabbit"
-        },
-        "bane": {
-            "name": "WyvernElement",
-            "elo": 1137,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 61
-    },
-    "Snivylover12": {
-        "trophy": {
-            "name": "Cookies",
-            "elo": 1254,
-            "tier": "mouse"
-        },
-        "bane": {
-            "name": "Dandel",
-            "elo": 1093,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 27
-    },
-    "bigcathedral": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "MrDrouf",
-            "elo": 1306,
-            "tier": "rabbit"
-        },
         "unique_opponents": 3
     },
-    "Perdita": {
-        "trophy": {
-            "name": "BareGammon",
-            "elo": 1335,
-            "tier": "rabbit"
-        },
-        "bane": {
-            "name": "Klishu",
-            "elo": 1137,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 45
-    },
-    "NaySmith": {
+    "byzeke": {
         "trophy": {
             "name": null,
             "elo": -1,
             "tier": "unranked"
         },
         "bane": {
-            "name": "Dandel",
-            "elo": 1093,
+            "name": "time2orush",
+            "elo": 1200,
+            "tier": "mouse"
+        },
+        "unique_opponents": 5
+    },
+    "FrancescoBr": {
+        "trophy": {
+            "name": "KFull",
+            "elo": 1437,
+            "tier": "fox"
+        },
+        "bane": {
+            "name": "Hurple",
+            "elo": 1104,
             "tier": "squirrel"
         },
-        "unique_opponents": 10
+        "unique_opponents": 41
     },
-    "sda1611": {
+    "Sjepeal": {
+        "trophy": {
+            "name": "FVMLion",
+            "elo": 1204,
+            "tier": "mouse"
+        },
+        "bane": {
+            "name": "PokerFace126",
+            "elo": 1256,
+            "tier": "mouse"
+        },
+        "unique_opponents": 12
+    },
+    "mwcrabtree": {
         "trophy": {
             "name": null,
             "elo": -1,
             "tier": "unranked"
         },
         "bane": {
-            "name": "alevGO",
-            "elo": 1250,
+            "name": "VanKaiserman",
+            "elo": 1268,
             "tier": "mouse"
         },
         "unique_opponents": 3
     },
-    "re_al_": {
+    "RootiredRooter": {
         "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
+            "name": "Nadav253",
+            "elo": 1471,
+            "tier": "fox"
         },
         "bane": {
-            "name": "RFMerlo",
-            "elo": 1181,
+            "name": "idk123",
+            "elo": 1140,
             "tier": "squirrel"
         },
-        "unique_opponents": 15
+        "unique_opponents": 16
     },
     "oshwott2844": {
         "trophy": {
@@ -1268,605 +1476,163 @@
         },
         "bane": {
             "name": "DemaRogue",
-            "elo": 1240,
-            "tier": "mouse"
-        },
-        "unique_opponents": 3
-    },
-    "HowDoYouDrew": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "LucianTheFak",
-            "elo": 1294,
-            "tier": "mouse"
-        },
-        "unique_opponents": 5
-    },
-    "Nudraxon": {
-        "trophy": {
-            "name": "Led_Slash",
-            "elo": 1521,
-            "tier": "bird"
-        },
-        "bane": {
-            "name": null,
-            "elo": 99999,
-            "tier": "unranked"
-        },
-        "unique_opponents": 3
-    },
-    "Ctfox": {
-        "trophy": {
-            "name": "Pliskin",
-            "elo": 1330,
-            "tier": "rabbit"
-        },
-        "bane": {
-            "name": "HobGungan",
-            "elo": 1119,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 41
-    },
-    "SSR_Mike": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "mouseinabox",
-            "elo": 1152,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 6
-    },
-    "Tad604": {
-        "trophy": {
-            "name": "Led_Slash",
-            "elo": 1468,
-            "tier": "fox"
-        },
-        "bane": {
-            "name": "buurn",
-            "elo": 1012,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 75
-    },
-    "KeyserSoze": {
-        "trophy": {
-            "name": "Tolfan",
-            "elo": 1227,
-            "tier": "mouse"
-        },
-        "bane": {
-            "name": null,
-            "elo": 99999,
-            "tier": "unranked"
-        },
-        "unique_opponents": 3
-    },
-    "residentevil": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "MrDrouf",
-            "elo": 1241,
-            "tier": "mouse"
-        },
-        "unique_opponents": 6
-    },
-    "FungusMouse": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "Perdita",
-            "elo": 1241,
-            "tier": "mouse"
-        },
-        "unique_opponents": 3
-    },
-    "CoxyNormus": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "Biggins96",
-            "elo": 1155,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 7
-    },
-    "Cheesecake271": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "LutherStr",
-            "elo": 1159,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 14
-    },
-    "Drinken": {
-        "trophy": {
-            "name": "HobGungan",
-            "elo": 1140,
-            "tier": "squirrel"
-        },
-        "bane": {
-            "name": "Oppapi",
-            "elo": 1187,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 17
-    },
-    "ReoWulf": {
-        "trophy": {
-            "name": "Excitedteapot",
-            "elo": 1240,
-            "tier": "mouse"
-        },
-        "bane": {
-            "name": "Hadjiya",
-            "elo": 1138,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 38
-    },
-    "GamerTower": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "Tolfan",
-            "elo": 1349,
-            "tier": "rabbit"
-        },
-        "unique_opponents": 3
-    },
-    "Yragael": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "Sharkskln",
-            "elo": 1187,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 6
-    },
-    "marksoz00": {
-        "trophy": {
-            "name": "100pctskillz",
-            "elo": 1170,
-            "tier": "squirrel"
-        },
-        "bane": {
-            "name": "uwtron",
-            "elo": 1178,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 23
-    },
-    "EmbryoticDeth": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "ImJustExisting",
-            "elo": 1242,
-            "tier": "mouse"
-        },
-        "unique_opponents": 6
-    },
-    "CroCroCro": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "KuperMeister",
-            "elo": 1253,
-            "tier": "mouse"
-        },
-        "unique_opponents": 3
-    },
-    "hanban": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "Oppapi",
-            "elo": 1149,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 15
-    },
-    "Schkitz": {
-        "trophy": {
-            "name": "tofuwater",
-            "elo": 1473,
-            "tier": "fox"
-        },
-        "bane": {
-            "name": "NadtyLite",
-            "elo": 1067,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 95
-    },
-    "buurn": {
-        "trophy": {
-            "name": "time2orush",
-            "elo": 1311,
-            "tier": "rabbit"
-        },
-        "bane": {
-            "name": "DarthOblivius",
-            "elo": 1045,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 106
-    },
-    "Jerry": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "Pandapapst",
-            "elo": 1137,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 9
-    },
-    "BugMuff44": {
-        "trophy": {
-            "name": "ImEpy",
-            "elo": 1179,
-            "tier": "squirrel"
-        },
-        "bane": {
-            "name": "ToasterTrash",
-            "elo": 1179,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 15
-    },
-    "KarmaBurn": {
-        "trophy": {
-            "name": "re_al_",
-            "elo": 1178,
-            "tier": "squirrel"
-        },
-        "bane": {
-            "name": "Tolfan",
-            "elo": 1293,
-            "tier": "mouse"
-        },
-        "unique_opponents": 6
-    },
-    "LutherStr": {
-        "trophy": {
-            "name": "Led_Slash",
-            "elo": 1469,
-            "tier": "fox"
-        },
-        "bane": {
-            "name": "LucianTheFak",
-            "elo": 1121,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 32
-    },
-    "BMPerJMPer": {
-        "trophy": {
-            "name": "kaiser",
-            "elo": 1353,
-            "tier": "rabbit"
-        },
-        "bane": {
-            "name": "buurn",
-            "elo": 1030,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 51
-    },
-    "Axolatal": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "Killerstorm17",
-            "elo": 1450,
-            "tier": "fox"
-        },
-        "unique_opponents": 3
-    },
-    "Blank": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "secretpaths",
-            "elo": 1208,
-            "tier": "mouse"
-        },
-        "unique_opponents": 12
-    },
-    "Dandel": {
-        "trophy": {
-            "name": "Snivylover12",
-            "elo": 1214,
-            "tier": "mouse"
-        },
-        "bane": {
-            "name": "cjahwon",
-            "elo": 1037,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 45
-    },
-    "TheSillyBilly": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "mouseinabox",
-            "elo": 1185,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 10
-    },
-    "Dumbledore": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "deejaythink",
-            "elo": 1231,
-            "tier": "mouse"
-        },
-        "unique_opponents": 10
-    },
-    "ChusGG": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "AERotters",
             "elo": 1210,
             "tier": "mouse"
         },
         "unique_opponents": 3
     },
-    "kayajam": {
+    "Mouseman": {
         "trophy": {
             "name": "Led_Slash",
-            "elo": 1493,
-            "tier": "fox"
+            "elo": 1388,
+            "tier": "rabbit"
         },
         "bane": {
-            "name": "Wriggleroom",
-            "elo": 1126,
+            "name": "StoneOfShame",
+            "elo": 1153,
             "tier": "squirrel"
         },
-        "unique_opponents": 49
+        "unique_opponents": 33
     },
-    "hauntedpebbles2": {
-        "trophy": {
-            "name": "Gabobs",
-            "elo": 1156,
-            "tier": "squirrel"
-        },
-        "bane": {
-            "name": "benssoon",
-            "elo": 1156,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 23
-    },
-    "Julien": {
+    "OUSlaughter": {
         "trophy": {
             "name": null,
             "elo": -1,
             "tier": "unranked"
         },
         "bane": {
-            "name": "Mossfusion",
-            "elo": 1260,
+            "name": "fadingnovel",
+            "elo": 1129,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 6
+    },
+    "Bjoda": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "Antiproject",
+            "elo": 1234,
             "tier": "mouse"
         },
-        "unique_opponents": 3
+        "unique_opponents": 6
     },
-    "FausDav": {
+    "ermactually": {
         "trophy": {
-            "name": "MrDrouf",
-            "elo": 1257,
+            "name": "Sirius",
+            "elo": 1200,
             "tier": "mouse"
+        },
+        "bane": {
+            "name": "BareGammon",
+            "elo": 1265,
+            "tier": "mouse"
+        },
+        "unique_opponents": 6
+    },
+    "optimusprawn": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "Piechu",
+            "elo": 1047,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 9
+    },
+    "Killerstorm17": {
+        "trophy": {
+            "name": "Led_Slash",
+            "elo": 1449,
+            "tier": "fox"
+        },
+        "bane": {
+            "name": "LucianTheFak",
+            "elo": 1049,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 44
+    },
+    "Ironic": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "NadtyLite",
+            "elo": 1199,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 13
+    },
+    "marksoz00": {
+        "trophy": {
+            "name": "100pctskillz",
+            "elo": 1180,
+            "tier": "squirrel"
+        },
+        "bane": {
+            "name": "uwtron",
+            "elo": 1112,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 23
+    },
+    "Clink": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
         },
         "bane": {
             "name": "TimidTailwind",
             "elo": 1211,
             "tier": "mouse"
         },
-        "unique_opponents": 12
+        "unique_opponents": 3
     },
-    "catscat": {
+    "ShowStopperW": {
         "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
+            "name": "Drinken",
+            "elo": 1200,
+            "tier": "mouse"
         },
         "bane": {
-            "name": "Perdita",
-            "elo": 1223,
-            "tier": "mouse"
+            "name": null,
+            "elo": 99999,
+            "tier": "unranked"
         },
         "unique_opponents": 3
     },
-    "Sjepeal": {
-        "trophy": {
-            "name": "FVMLion",
-            "elo": 1192,
-            "tier": "squirrel"
-        },
-        "bane": {
-            "name": "PokerFace126",
-            "elo": 1310,
-            "tier": "rabbit"
-        },
-        "unique_opponents": 12
-    },
-    "GAFE15": {
+    "KargDemiau": {
         "trophy": {
             "name": null,
             "elo": -1,
             "tier": "unranked"
         },
         "bane": {
-            "name": "DemaRogue",
-            "elo": 1208,
-            "tier": "mouse"
-        },
-        "unique_opponents": 3
-    },
-    "tofuwater": {
-        "trophy": {
-            "name": "Led_Slash",
-            "elo": 1455,
-            "tier": "fox"
-        },
-        "bane": {
-            "name": "Wriggleroom",
-            "elo": 1071,
+            "name": "Odinius",
+            "elo": 1146,
             "tier": "squirrel"
         },
-        "unique_opponents": 34
+        "unique_opponents": 14
     },
-    "Komasan": {
+    "evancomposer": {
         "trophy": {
             "name": null,
             "elo": -1,
             "tier": "unranked"
         },
         "bane": {
-            "name": "Xar149",
-            "elo": 1316,
-            "tier": "rabbit"
-        },
-        "unique_opponents": 6
-    },
-    "MisterGume": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "Schkitz",
-            "elo": 1275,
-            "tier": "mouse"
-        },
-        "unique_opponents": 3
-    },
-    "Tolfan": {
-        "trophy": {
-            "name": "kayajam",
-            "elo": 1456,
-            "tier": "fox"
-        },
-        "bane": {
-            "name": "Hadjiya",
-            "elo": 1139,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 96
-    },
-    "1coolguy": {
-        "trophy": {
-            "name": "swiftsusan",
-            "elo": 1403,
-            "tier": "fox"
-        },
-        "bane": {
-            "name": "Hadjiya",
-            "elo": 1104,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 39
-    },
-    "uwtron": {
-        "trophy": {
-            "name": "MrDrouf",
-            "elo": 1297,
-            "tier": "mouse"
-        },
-        "bane": {
-            "name": "NadtyLite",
-            "elo": 1122,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 32
-    },
-    "Mindger": {
-        "trophy": {
-            "name": "Klishu",
-            "elo": 1180,
-            "tier": "squirrel"
-        },
-        "bane": {
-            "name": "Silver",
-            "elo": 1318,
-            "tier": "rabbit"
-        },
-        "unique_opponents": 11
-    },
-    "sedlak87": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "Silver",
-            "elo": 1264,
+            "name": "Bapgo",
+            "elo": 1200,
             "tier": "mouse"
         },
         "unique_opponents": 3
@@ -1879,23 +1645,673 @@
         },
         "bane": {
             "name": "FavorOfTheRabbits",
-            "elo": 1180,
+            "elo": 1116,
             "tier": "squirrel"
         },
         "unique_opponents": 12
     },
-    "lumpyprol": {
+    "FVMLion": {
+        "trophy": {
+            "name": "BaconBoy",
+            "elo": 1294,
+            "tier": "mouse"
+        },
+        "bane": {
+            "name": "LHlegend",
+            "elo": 1085,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 36
+    },
+    "Napalminthebirdsong": {
+        "trophy": {
+            "name": "TurkeyNoNo",
+            "elo": 1241,
+            "tier": "mouse"
+        },
+        "bane": {
+            "name": "Pandapapst",
+            "elo": 1069,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 10
+    },
+    "Cuagodking": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "tjudge",
+            "elo": 1229,
+            "tier": "mouse"
+        },
+        "unique_opponents": 6
+    },
+    "HowDoYouDrew": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "LucianTheFak",
+            "elo": 1283,
+            "tier": "mouse"
+        },
+        "unique_opponents": 5
+    },
+    "Furry0329": {
+        "trophy": {
+            "name": "cliuless",
+            "elo": 1275,
+            "tier": "mouse"
+        },
+        "bane": {
+            "name": "Led_Slash",
+            "elo": 1402,
+            "tier": "fox"
+        },
+        "unique_opponents": 9
+    },
+    "swiftsusan": {
+        "trophy": {
+            "name": "Led_Slash",
+            "elo": 1436,
+            "tier": "fox"
+        },
+        "bane": {
+            "name": "ellbelle",
+            "elo": 1077,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 22
+    },
+    "Nudraxon": {
+        "trophy": {
+            "name": "Led_Slash",
+            "elo": 1534,
+            "tier": "bird"
+        },
+        "bane": {
+            "name": null,
+            "elo": 99999,
+            "tier": "unranked"
+        },
+        "unique_opponents": 3
+    },
+    "Acecreamsundae": {
+        "trophy": {
+            "name": "LHlegend",
+            "elo": 1210,
+            "tier": "mouse"
+        },
+        "bane": {
+            "name": "100pctskillz",
+            "elo": 1159,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 7
+    },
+    "sedlak87": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "Silver",
+            "elo": 1200,
+            "tier": "mouse"
+        },
+        "unique_opponents": 3
+    },
+    "XxD4RK_W0LFxX": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "swiftsusan",
+            "elo": 1166,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 3
+    },
+    "Tolfan": {
+        "trophy": {
+            "name": "kayajam",
+            "elo": 1479,
+            "tier": "fox"
+        },
+        "bane": {
+            "name": "Hadjiya",
+            "elo": 1104,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 96
+    },
+    "BaconBoy": {
+        "trophy": {
+            "name": "Led_Slash",
+            "elo": 1493,
+            "tier": "fox"
+        },
+        "bane": {
+            "name": "Baradhas",
+            "elo": 1137,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 93
+    },
+    "Demand": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "TimidTailwind",
+            "elo": 1211,
+            "tier": "mouse"
+        },
+        "unique_opponents": 3
+    },
+    "TurkeyNoNo": {
+        "trophy": {
+            "name": "Led_Slash",
+            "elo": 1529,
+            "tier": "bird"
+        },
+        "bane": {
+            "name": "cjahwon",
+            "elo": 1001,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 61
+    },
+    "lgtw3450": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "pwarren8590",
+            "elo": 1200,
+            "tier": "mouse"
+        },
+        "unique_opponents": 3
+    },
+    "Jboooooooooooooooooooom": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "tunnndz",
+            "elo": 1145,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 17
+    },
+    "Nefkano": {
         "trophy": {
             "name": "ShuShuBana",
-            "elo": 1393,
+            "elo": 1468,
+            "tier": "fox"
+        },
+        "bane": {
+            "name": "TonyDeloreanESQ",
+            "elo": 1070,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 82
+    },
+    "mouseinabox": {
+        "trophy": {
+            "name": "matemato",
+            "elo": 1396,
+            "tier": "rabbit"
+        },
+        "bane": {
+            "name": "Hadjiya",
+            "elo": 1036,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 107
+    },
+    "ninjacat536": {
+        "trophy": {
+            "name": "Nefkano",
+            "elo": 1344,
             "tier": "rabbit"
         },
         "bane": {
             "name": "NadtyLite",
-            "elo": 1067,
+            "elo": 1113,
             "tier": "squirrel"
         },
-        "unique_opponents": 64
+        "unique_opponents": 23
+    },
+    "Piechu": {
+        "trophy": {
+            "name": "Sebby",
+            "elo": 1291,
+            "tier": "mouse"
+        },
+        "bane": {
+            "name": "buurn",
+            "elo": 994,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 66
+    },
+    "FatBoyyy": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "mishaelh1",
+            "elo": 1123,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 6
+    },
+    "EmbryoticDeth": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "ImJustExisting",
+            "elo": 1180,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 6
+    },
+    "TheFourthJesse": {
+        "trophy": {
+            "name": "BMPerJMPer",
+            "elo": 1286,
+            "tier": "mouse"
+        },
+        "bane": {
+            "name": "cringelordirl",
+            "elo": 1113,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 40
+    },
+    "MrDrouf": {
+        "trophy": {
+            "name": "kayajam",
+            "elo": 1431,
+            "tier": "fox"
+        },
+        "bane": {
+            "name": "Dandel",
+            "elo": 1096,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 86
+    },
+    "Blank": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "secretpaths",
+            "elo": 1145,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 12
+    },
+    "DanzigMF": {
+        "trophy": {
+            "name": "kayajam",
+            "elo": 1451,
+            "tier": "fox"
+        },
+        "bane": {
+            "name": "DawnDiVito",
+            "elo": 1008,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 62
+    },
+    "Mcauthor": {
+        "trophy": {
+            "name": "NadtyLite",
+            "elo": 1185,
+            "tier": "squirrel"
+        },
+        "bane": {
+            "name": "Tad604",
+            "elo": 1281,
+            "tier": "mouse"
+        },
+        "unique_opponents": 10
+    },
+    "Biggins96": {
+        "trophy": {
+            "name": "CoxyNormus",
+            "elo": 1163,
+            "tier": "squirrel"
+        },
+        "bane": {
+            "name": "Killerstorm17",
+            "elo": 1200,
+            "tier": "mouse"
+        },
+        "unique_opponents": 19
+    },
+    "brrrlinguist": {
+        "trophy": {
+            "name": "MrDrouf",
+            "elo": 1265,
+            "tier": "mouse"
+        },
+        "bane": {
+            "name": "Oppapi",
+            "elo": 1111,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 11
+    },
+    "idk123": {
+        "trophy": {
+            "name": "IMPERATOR",
+            "elo": 1403,
+            "tier": "fox"
+        },
+        "bane": {
+            "name": "Peppy",
+            "elo": 1158,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 14
+    },
+    "Lobster": {
+        "trophy": {
+            "name": "Tricholome",
+            "elo": 1306,
+            "tier": "rabbit"
+        },
+        "bane": {
+            "name": "Nymmer",
+            "elo": 1181,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 19
+    },
+    "Lambo": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "Wriggleroom",
+            "elo": 1029,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 10
+    },
+    "Emperia": {
+        "trophy": {
+            "name": "Nefkano",
+            "elo": 1369,
+            "tier": "rabbit"
+        },
+        "bane": {
+            "name": "WyvernElement",
+            "elo": 1101,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 61
+    },
+    "micherin": {
+        "trophy": {
+            "name": "kaiser",
+            "elo": 1312,
+            "tier": "rabbit"
+        },
+        "bane": {
+            "name": "Tad604",
+            "elo": 1205,
+            "tier": "mouse"
+        },
+        "unique_opponents": 20
+    },
+    "chux88": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "aelisheneithlon",
+            "elo": 1178,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 9
+    },
+    "DarthOblivius": {
+        "trophy": {
+            "name": "Led_Slash",
+            "elo": 1551,
+            "tier": "bird"
+        },
+        "bane": {
+            "name": "NadtyLite",
+            "elo": 1096,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 69
+    },
+    "Perdita": {
+        "trophy": {
+            "name": "BareGammon",
+            "elo": 1376,
+            "tier": "rabbit"
+        },
+        "bane": {
+            "name": "Dandel",
+            "elo": 1096,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 45
+    },
+    "Baradhas": {
+        "trophy": {
+            "name": "DemaRogue",
+            "elo": 1216,
+            "tier": "mouse"
+        },
+        "bane": {
+            "name": "Hadjiya",
+            "elo": 1105,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 16
+    },
+    "hanban": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "Biggins96",
+            "elo": 1093,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 15
+    },
+    "Sebby": {
+        "trophy": {
+            "name": "BjarkeHuse",
+            "elo": 1279,
+            "tier": "mouse"
+        },
+        "bane": {
+            "name": "BaliHoo",
+            "elo": 1031,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 24
+    },
+    "Oriol": {
+        "trophy": {
+            "name": "tjudge",
+            "elo": 1315,
+            "tier": "rabbit"
+        },
+        "bane": {
+            "name": "Valzaan",
+            "elo": 1188,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 12
+    },
+    "DemaRogue": {
+        "trophy": {
+            "name": "KFull",
+            "elo": 1375,
+            "tier": "rabbit"
+        },
+        "bane": {
+            "name": "cjahwon",
+            "elo": 1010,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 80
+    },
+    "Jasiu\u0144cio": {
+        "trophy": {
+            "name": "Bitto",
+            "elo": 1320,
+            "tier": "rabbit"
+        },
+        "bane": {
+            "name": "WyvernElement",
+            "elo": 1099,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 33
+    },
+    "KyloBot": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "Nefkano",
+            "elo": 1270,
+            "tier": "mouse"
+        },
+        "unique_opponents": 3
+    },
+    "Potet": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "CowOnAPlane",
+            "elo": 1129,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 9
+    },
+    "Komasan": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "Xar149",
+            "elo": 1267,
+            "tier": "mouse"
+        },
+        "unique_opponents": 6
+    },
+    "NadtyLite": {
+        "trophy": {
+            "name": "Led_Slash",
+            "elo": 1497,
+            "tier": "fox"
+        },
+        "bane": {
+            "name": "DarthOblivius",
+            "elo": 1040,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 127
+    },
+    "RangerEpic": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "Schkitz",
+            "elo": 1181,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 11
+    },
+    "DrCheeseFiend": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "LHlegend",
+            "elo": 1085,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 31
+    },
+    "Bitto": {
+        "trophy": {
+            "name": "Led_Slash",
+            "elo": 1531,
+            "tier": "bird"
+        },
+        "bane": {
+            "name": "TonyDeloreanESQ",
+            "elo": 1106,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 22
+    },
+    "Hurple": {
+        "trophy": {
+            "name": "FrancescoBr",
+            "elo": 1284,
+            "tier": "mouse"
+        },
+        "bane": {
+            "name": "Dramsss",
+            "elo": 1178,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 32
     },
     "Krooter": {
         "trophy": {
@@ -1905,73 +2321,34 @@
         },
         "bane": {
             "name": "LucianTheFak",
-            "elo": 1169,
+            "elo": 1135,
             "tier": "squirrel"
         },
         "unique_opponents": 14
     },
-    "micherin": {
-        "trophy": {
-            "name": "kaiser",
-            "elo": 1297,
-            "tier": "mouse"
-        },
-        "bane": {
-            "name": "Tad604",
-            "elo": 1236,
-            "tier": "mouse"
-        },
-        "unique_opponents": 20
-    },
-    "Musicalwoofy": {
+    "Akayami": {
         "trophy": {
             "name": null,
             "elo": -1,
             "tier": "unranked"
         },
         "bane": {
-            "name": "Oppapi",
-            "elo": 1187,
+            "name": "MrDrouf",
+            "elo": 1193,
             "tier": "squirrel"
         },
-        "unique_opponents": 6
+        "unique_opponents": 3
     },
-    "Trumpet": {
+    "Cabbage0642": {
         "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
+            "name": "AxlPrototype",
+            "elo": 1313,
+            "tier": "rabbit"
         },
         "bane": {
-            "name": "BaconBoy",
-            "elo": 1158,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 17
-    },
-    "nikkan": {
-        "trophy": {
             "name": null,
-            "elo": -1,
+            "elo": 99999,
             "tier": "unranked"
-        },
-        "bane": {
-            "name": "Piechu",
-            "elo": 1082,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 14
-    },
-    "pikeline": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "mouseinabox",
-            "elo": 1170,
-            "tier": "squirrel"
         },
         "unique_opponents": 3
     },
@@ -1983,751 +2360,36 @@
         },
         "bane": {
             "name": "kayajam",
-            "elo": 1427,
+            "elo": 1411,
             "tier": "fox"
         },
         "unique_opponents": 3
     },
-    "EdacM": {
+    "KarmaBurn": {
         "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "cliuless",
-            "elo": 1249,
-            "tier": "mouse"
-        },
-        "unique_opponents": 8
-    },
-    "ToasterTrash": {
-        "trophy": {
-            "name": "buurn",
-            "elo": 1225,
+            "name": "re_al_",
+            "elo": 1200,
             "tier": "mouse"
         },
         "bane": {
-            "name": "mouseinabox",
-            "elo": 1232,
+            "name": "Tolfan",
+            "elo": 1240,
             "tier": "mouse"
         },
-        "unique_opponents": 18
+        "unique_opponents": 6
     },
-    "ShowStopperW": {
-        "trophy": {
-            "name": "Drinken",
-            "elo": 1178,
-            "tier": "squirrel"
-        },
-        "bane": {
-            "name": null,
-            "elo": 99999,
-            "tier": "unranked"
-        },
-        "unique_opponents": 3
-    },
-    "RootiredRooter": {
+    "LHlegend": {
         "trophy": {
             "name": "Nadav253",
-            "elo": 1448,
+            "elo": 1459,
             "tier": "fox"
         },
         "bane": {
-            "name": "idk123",
-            "elo": 1211,
-            "tier": "mouse"
-        },
-        "unique_opponents": 16
-    },
-    "mysti": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "PokerFace126",
-            "elo": 1310,
-            "tier": "rabbit"
-        },
-        "unique_opponents": 3
-    },
-    "shurgs": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "Led_Slash",
-            "elo": 1388,
-            "tier": "rabbit"
-        },
-        "unique_opponents": 3
-    },
-    "Nadav253": {
-        "trophy": {
-            "name": "Killerstorm17",
-            "elo": 1476,
-            "tier": "fox"
-        },
-        "bane": {
-            "name": "Oppapi",
-            "elo": 1145,
+            "name": "Hadjiya",
+            "elo": 1069,
             "tier": "squirrel"
         },
-        "unique_opponents": 43
-    },
-    "Nymmer": {
-        "trophy": {
-            "name": "Nefkano",
-            "elo": 1270,
-            "tier": "mouse"
-        },
-        "bane": {
-            "name": "Gagneto",
-            "elo": 1176,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 22
-    },
-    "Raybit": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "DawnDiVito",
-            "elo": 1075,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 23
-    },
-    "Cloudere": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "TheDolphinman",
-            "elo": 1204,
-            "tier": "mouse"
-        },
-        "unique_opponents": 9
-    },
-    "tjudge": {
-        "trophy": {
-            "name": "Tolfan",
-            "elo": 1375,
-            "tier": "rabbit"
-        },
-        "bane": {
-            "name": "mouseinabox",
-            "elo": 1159,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 44
-    },
-    "Cookies": {
-        "trophy": {
-            "name": "Xar149",
-            "elo": 1419,
-            "tier": "fox"
-        },
-        "bane": {
-            "name": "mouseinabox",
-            "elo": 1143,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 31
-    },
-    "pooge": {
-        "trophy": {
-            "name": "Led_Slash",
-            "elo": 1388,
-            "tier": "rabbit"
-        },
-        "bane": {
-            "name": "Odinius",
-            "elo": 1146,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 41
-    },
-    "ImEpy": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "TheDolphinman",
-            "elo": 1246,
-            "tier": "mouse"
-        },
-        "unique_opponents": 5
-    },
-    "Cheetah32": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "DawnDiVito",
-            "elo": 1075,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 6
-    },
-    "deriokle": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "matemato",
-            "elo": 1396,
-            "tier": "rabbit"
-        },
-        "unique_opponents": 3
-    },
-    "BadScra": {
-        "trophy": {
-            "name": "IMPERATOR",
-            "elo": 1403,
-            "tier": "fox"
-        },
-        "bane": {
-            "name": "Piechu",
-            "elo": 1082,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 28
-    },
-    "Dramsss": {
-        "trophy": {
-            "name": "Ctfox",
-            "elo": 1438,
-            "tier": "fox"
-        },
-        "bane": {
-            "name": "Piechu",
-            "elo": 1111,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 71
-    },
-    "HoosierDaddy": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "MrDrouf",
-            "elo": 1236,
-            "tier": "mouse"
-        },
-        "unique_opponents": 3
-    },
-    "Biggins96": {
-        "trophy": {
-            "name": "CoxyNormus",
-            "elo": 1136,
-            "tier": "squirrel"
-        },
-        "bane": {
-            "name": "BugMuff44",
-            "elo": 1259,
-            "tier": "mouse"
-        },
-        "unique_opponents": 19
-    },
-    "Zeldamon": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "HobGungan",
-            "elo": 1119,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 8
-    },
-    "OUSlaughter": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "fadingnovel",
-            "elo": 1160,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 6
-    },
-    "voltigeur": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "AERotters",
-            "elo": 1210,
-            "tier": "mouse"
-        },
-        "unique_opponents": 17
-    },
-    "Mati92": {
-        "trophy": {
-            "name": "Odinius",
-            "elo": 1159,
-            "tier": "squirrel"
-        },
-        "bane": {
-            "name": "Mindger",
-            "elo": 1260,
-            "tier": "mouse"
-        },
-        "unique_opponents": 12
-    },
-    "alevGO": {
-        "trophy": {
-            "name": "Led_Slash",
-            "elo": 1384,
-            "tier": "rabbit"
-        },
-        "bane": {
-            "name": "secretpaths",
-            "elo": 1183,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 23
-    },
-    "StoneOfShame": {
-        "trophy": {
-            "name": "Mouseman",
-            "elo": 1449,
-            "tier": "fox"
-        },
-        "bane": {
-            "name": "NadtyLite",
-            "elo": 1150,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 17
-    },
-    "hakoo": {
-        "trophy": {
-            "name": "Pandapapst",
-            "elo": 1293,
-            "tier": "mouse"
-        },
-        "bane": {
-            "name": "NadtyLite",
-            "elo": 1211,
-            "tier": "mouse"
-        },
-        "unique_opponents": 9
-    },
-    "TAKSpx": {
-        "trophy": {
-            "name": "hanban",
-            "elo": 1178,
-            "tier": "squirrel"
-        },
-        "bane": {
-            "name": "Bodnamax",
-            "elo": 1209,
-            "tier": "mouse"
-        },
-        "unique_opponents": 10
-    },
-    "Bitto": {
-        "trophy": {
-            "name": "Led_Slash",
-            "elo": 1520,
-            "tier": "bird"
-        },
-        "bane": {
-            "name": "TonyDeloreanESQ",
-            "elo": 1142,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 22
-    },
-    "Wubba": {
-        "trophy": {
-            "name": "Nefkano",
-            "elo": 1347,
-            "tier": "rabbit"
-        },
-        "bane": {
-            "name": "DawnDiVito",
-            "elo": 1044,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 43
-    },
-    "FelipeRocha": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "RootiredRooter",
-            "elo": 1261,
-            "tier": "mouse"
-        },
-        "unique_opponents": 3
-    },
-    "themikeman": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "Odinius",
-            "elo": 1137,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 3
-    },
-    "Napalminthebirdsong": {
-        "trophy": {
-            "name": "TurkeyNoNo",
-            "elo": 1210,
-            "tier": "mouse"
-        },
-        "bane": {
-            "name": "Pandapapst",
-            "elo": 1137,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 10
-    },
-    "Bapgo": {
-        "trophy": {
-            "name": "ShuShuBana",
-            "elo": 1426,
-            "tier": "fox"
-        },
-        "bane": {
-            "name": "DarthOblivius",
-            "elo": 1117,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 37
-    },
-    "DawnDiVito": {
-        "trophy": {
-            "name": "HobGungan",
-            "elo": 1175,
-            "tier": "squirrel"
-        },
-        "bane": {
-            "name": "buurn",
-            "elo": 1030,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 78
-    },
-    "Oriol": {
-        "trophy": {
-            "name": "tjudge",
-            "elo": 1297,
-            "tier": "mouse"
-        },
-        "bane": {
-            "name": "Valzaan",
-            "elo": 1224,
-            "tier": "mouse"
-        },
-        "unique_opponents": 12
-    },
-    "Aleph": {
-        "trophy": {
-            "name": "MrDrouf",
-            "elo": 1214,
-            "tier": "mouse"
-        },
-        "bane": {
-            "name": "MrDrouf",
-            "elo": 1331,
-            "tier": "rabbit"
-        },
-        "unique_opponents": 7
-    },
-    "TonyDeloreanESQ": {
-        "trophy": {
-            "name": "Led_Slash",
-            "elo": 1517,
-            "tier": "bird"
-        },
-        "bane": {
-            "name": "Odinius",
-            "elo": 1146,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 77
-    },
-    "benruff": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "VanKaiserman",
-            "elo": 1293,
-            "tier": "mouse"
-        },
-        "unique_opponents": 6
-    },
-    "Gabobs": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "hauntedpebbles2",
-            "elo": 1122,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 7
-    },
-    "RexCow": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "NadtyLite",
-            "elo": 1253,
-            "tier": "mouse"
-        },
-        "unique_opponents": 9
-    },
-    "MangoBlade11": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "FVMLion",
-            "elo": 1241,
-            "tier": "mouse"
-        },
-        "unique_opponents": 8
-    },
-    "kurtfisto": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "HobGungan",
-            "elo": 1139,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 3
-    },
-    "Mouseman": {
-        "trophy": {
-            "name": "Led_Slash",
-            "elo": 1372,
-            "tier": "rabbit"
-        },
-        "bane": {
-            "name": "StoneOfShame",
-            "elo": 1226,
-            "tier": "mouse"
-        },
-        "unique_opponents": 33
-    },
-    "MrDrouf": {
-        "trophy": {
-            "name": "kayajam",
-            "elo": 1408,
-            "tier": "fox"
-        },
-        "bane": {
-            "name": "Dandel",
-            "elo": 1163,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 86
-    },
-    "TheRedViper": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "vinnie",
-            "elo": 1239,
-            "tier": "mouse"
-        },
-        "unique_opponents": 7
-    },
-    "Demand": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "TimidTailwind",
-            "elo": 1270,
-            "tier": "mouse"
-        },
-        "unique_opponents": 3
-    },
-    "ninjacat536": {
-        "trophy": {
-            "name": "Nefkano",
-            "elo": 1329,
-            "tier": "rabbit"
-        },
-        "bane": {
-            "name": "NadtyLite",
-            "elo": 1145,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 23
-    },
-    "ThoseTeeff": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "VanKaiserman",
-            "elo": 1260,
-            "tier": "mouse"
-        },
-        "unique_opponents": 3
-    },
-    "optimusprawn": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "Piechu",
-            "elo": 1082,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 9
-    },
-    "XxD4RK_W0LFxX": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "swiftsusan",
-            "elo": 1236,
-            "tier": "mouse"
-        },
-        "unique_opponents": 3
-    },
-    "Riverman": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "Vagabond Glazer",
-            "elo": 1254,
-            "tier": "mouse"
-        },
-        "unique_opponents": 9
-    },
-    "BuliBaka": {
-        "trophy": {
-            "name": "Rabbitwarlord",
-            "elo": 1225,
-            "tier": "mouse"
-        },
-        "bane": {
-            "name": "StoneOfShame",
-            "elo": 1226,
-            "tier": "mouse"
-        },
-        "unique_opponents": 12
-    },
-    "Acecreamsundae": {
-        "trophy": {
-            "name": "LHlegend",
-            "elo": 1188,
-            "tier": "squirrel"
-        },
-        "bane": {
-            "name": "100pctskillz",
-            "elo": 1190,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 7
-    },
-    "pwarren8590": {
-        "trophy": {
-            "name": "KFull",
-            "elo": 1385,
-            "tier": "rabbit"
-        },
-        "bane": {
-            "name": "Podge0303",
-            "elo": 1146,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 22
-    },
-    "RangerEpic": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "FVMLion",
-            "elo": 1229,
-            "tier": "mouse"
-        },
-        "unique_opponents": 11
-    },
-    "Rabbi": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "Munchking",
-            "elo": 1045,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 6
+        "unique_opponents": 52
     },
     "DanielDandaniel": {
         "trophy": {
@@ -2737,1232 +2399,114 @@
         },
         "bane": {
             "name": "100pctskillz",
-            "elo": 1168,
+            "elo": 1135,
             "tier": "squirrel"
         },
         "unique_opponents": 3
     },
-    "Kmahussier": {
-        "trophy": {
-            "name": "Led_Slash",
-            "elo": 1535,
-            "tier": "bird"
-        },
-        "bane": {
-            "name": "Podge0303",
-            "elo": 1115,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 62
-    },
-    "Sharkskln": {
-        "trophy": {
-            "name": "DemaRogue",
-            "elo": 1236,
-            "tier": "mouse"
-        },
-        "bane": {
-            "name": "Odinius",
-            "elo": 1137,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 24
-    },
-    "Gregoola": {
+    "ImEpy": {
         "trophy": {
             "name": null,
             "elo": -1,
             "tier": "unranked"
         },
         "bane": {
-            "name": "cliuless",
-            "elo": 1249,
-            "tier": "mouse"
-        },
-        "unique_opponents": 3
-    },
-    "Led_Slash": {
-        "trophy": {
-            "name": "Xar149",
-            "elo": 1464,
-            "tier": "fox"
-        },
-        "bane": {
-            "name": "DarthOblivius",
-            "elo": 1079,
+            "name": "TheDolphinman",
+            "elo": 1179,
             "tier": "squirrel"
         },
-        "unique_opponents": 141
-    },
-    "QuixArtagnan": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "NadtyLite",
-            "elo": 1211,
-            "tier": "mouse"
-        },
-        "unique_opponents": 3
-    },
-    "dindane": {
-        "trophy": {
-            "name": "Led_Slash",
-            "elo": 1384,
-            "tier": "rabbit"
-        },
-        "bane": {
-            "name": "TurkeyNoNo",
-            "elo": 1404,
-            "tier": "fox"
-        },
-        "unique_opponents": 13
-    },
-    "Pliskin": {
-        "trophy": {
-            "name": "Tricholome",
-            "elo": 1349,
-            "tier": "rabbit"
-        },
-        "bane": {
-            "name": "radiantchaos",
-            "elo": 1154,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 39
-    },
-    "Killerstorm17": {
-        "trophy": {
-            "name": "Led_Slash",
-            "elo": 1436,
-            "tier": "fox"
-        },
-        "bane": {
-            "name": "LucianTheFak",
-            "elo": 1087,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 44
-    },
-    "BoMa85": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "Pandapapst",
-            "elo": 1137,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 12
-    },
-    "evancomposer": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "Bapgo",
-            "elo": 1262,
-            "tier": "mouse"
-        },
-        "unique_opponents": 3
-    },
-    "FakeSki": {
-        "trophy": {
-            "name": "Pliskin",
-            "elo": 1356,
-            "tier": "rabbit"
-        },
-        "bane": {
-            "name": "LutherStr",
-            "elo": 1121,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 38
-    },
-    "IndifferentFish": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "NadtyLite",
-            "elo": 1215,
-            "tier": "mouse"
-        },
-        "unique_opponents": 3
-    },
-    "TheFourthJesse": {
-        "trophy": {
-            "name": "BMPerJMPer",
-            "elo": 1274,
-            "tier": "mouse"
-        },
-        "bane": {
-            "name": "HobGungan",
-            "elo": 1139,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 40
-    },
-    "PokerFace126": {
-        "trophy": {
-            "name": "BaconBoy",
-            "elo": 1246,
-            "tier": "mouse"
-        },
-        "bane": {
-            "name": "Nadav253",
-            "elo": 1244,
-            "tier": "mouse"
-        },
-        "unique_opponents": 13
+        "unique_opponents": 5
     },
     "Peppy": {
         "trophy": {
             "name": "Tricholome",
-            "elo": 1317,
+            "elo": 1327,
             "tier": "rabbit"
         },
         "bane": {
             "name": "cringelordirl",
-            "elo": 1191,
+            "elo": 1157,
             "tier": "squirrel"
         },
         "unique_opponents": 45
     },
-    "IMPERATOR": {
+    "Mati92": {
         "trophy": {
-            "name": "Tolfan",
-            "elo": 1276,
-            "tier": "mouse"
-        },
-        "bane": {
-            "name": "BadScra",
-            "elo": 1185,
+            "name": "Odinius",
+            "elo": 1180,
             "tier": "squirrel"
         },
-        "unique_opponents": 19
-    },
-    "Akayami": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
         "bane": {
-            "name": "MrDrouf",
-            "elo": 1223,
+            "name": "Mindger",
+            "elo": 1200,
             "tier": "mouse"
         },
-        "unique_opponents": 3
+        "unique_opponents": 12
     },
-    "Bjoda": {
+    "Mindger": {
         "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "Antiproject",
-            "elo": 1288,
-            "tier": "mouse"
-        },
-        "unique_opponents": 6
-    },
-    "tubaking": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "ImJustExisting",
-            "elo": 1242,
-            "tier": "mouse"
-        },
-        "unique_opponents": 3
-    },
-    "RFMerlo": {
-        "trophy": {
-            "name": "ChippZamoose",
-            "elo": 1342,
-            "tier": "rabbit"
-        },
-        "bane": {
-            "name": "BaliHoo",
-            "elo": 1066,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 36
-    },
-    "deejaythink": {
-        "trophy": {
-            "name": "Tolfan",
-            "elo": 1263,
+            "name": "Klishu",
+            "elo": 1200,
             "tier": "mouse"
         },
         "bane": {
-            "name": "Hadjiya",
-            "elo": 1139,
-            "tier": "squirrel"
+            "name": "Silver",
+            "elo": 1264,
+            "tier": "mouse"
         },
-        "unique_opponents": 24
+        "unique_opponents": 11
     },
-    "Hurple": {
+    "BjarkeHuse": {
         "trophy": {
             "name": "FrancescoBr",
             "elo": 1252,
             "tier": "mouse"
         },
         "bane": {
-            "name": "Dramsss",
-            "elo": 1236,
-            "tier": "mouse"
-        },
-        "unique_opponents": 32
-    },
-    "TheIndustrialRevoloution": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "NadtyLite",
-            "elo": 1067,
+            "name": "Sebby",
+            "elo": 1196,
             "tier": "squirrel"
-        },
-        "unique_opponents": 10
-    },
-    "CowOnAPlane": {
-        "trophy": {
-            "name": "Xar149",
-            "elo": 1370,
-            "tier": "rabbit"
-        },
-        "bane": {
-            "name": "IMPERATOR",
-            "elo": 1310,
-            "tier": "rabbit"
-        },
-        "unique_opponents": 19
-    },
-    "ForkMaster": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "tjudge",
-            "elo": 1258,
-            "tier": "mouse"
-        },
-        "unique_opponents": 3
-    },
-    "bootle": {
-        "trophy": {
-            "name": "Tolfan",
-            "elo": 1339,
-            "tier": "rabbit"
-        },
-        "bane": {
-            "name": "fadingnovel",
-            "elo": 1240,
-            "tier": "mouse"
-        },
-        "unique_opponents": 14
-    },
-    "udon66": {
-        "trophy": {
-            "name": "tofuwater",
-            "elo": 1401,
-            "tier": "fox"
-        },
-        "bane": {
-            "name": "tofuwater",
-            "elo": 1390,
-            "tier": "rabbit"
-        },
-        "unique_opponents": 8
-    },
-    "Ironic": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "NadtyLite",
-            "elo": 1215,
-            "tier": "mouse"
         },
         "unique_opponents": 13
     },
-    "100pctskillz": {
-        "trophy": {
-            "name": "cliuless",
-            "elo": 1269,
-            "tier": "mouse"
-        },
-        "bane": {
-            "name": "LHlegend",
-            "elo": 1118,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 72
-    },
-    "byzeke": {
+    "Acelet": {
         "trophy": {
             "name": null,
             "elo": -1,
             "tier": "unranked"
         },
         "bane": {
-            "name": "Mohammad",
-            "elo": 1259,
-            "tier": "mouse"
+            "name": "Drinken",
+            "elo": 1095,
+            "tier": "squirrel"
         },
-        "unique_opponents": 5
+        "unique_opponents": 15
     },
-    "Plasma": {
+    "CoxyNormus": {
         "trophy": {
             "name": null,
             "elo": -1,
             "tier": "unranked"
         },
         "bane": {
-            "name": "Oppapi",
-            "elo": 1187,
+            "name": "Biggins96",
+            "elo": 1093,
             "tier": "squirrel"
         },
-        "unique_opponents": 3
-    },
-    "Lambo": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "Wriggleroom",
-            "elo": 1064,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 10
-    },
-    "Lynxtek": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "BadScra",
-            "elo": 1344,
-            "tier": "rabbit"
-        },
-        "unique_opponents": 3
-    },
-    "Oppapi": {
-        "trophy": {
-            "name": "Nadav253",
-            "elo": 1218,
-            "tier": "mouse"
-        },
-        "bane": {
-            "name": "100pctskillz",
-            "elo": 1168,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 44
-    },
-    "fadingnovel": {
-        "trophy": {
-            "name": "TurkeyNoNo",
-            "elo": 1417,
-            "tier": "fox"
-        },
-        "bane": {
-            "name": "LucianTheFak",
-            "elo": 1152,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 47
-    },
-    "KFull": {
-        "trophy": {
-            "name": "Killerstorm17",
-            "elo": 1480,
-            "tier": "fox"
-        },
-        "bane": {
-            "name": "DarthOblivius",
-            "elo": 1045,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 92
-    },
-    "FireFox": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "mkcy3",
-            "elo": 1142,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 3
+        "unique_opponents": 7
     },
     "Sirius": {
         "trophy": {
             "name": "tjudge",
-            "elo": 1260,
+            "elo": 1273,
             "tier": "mouse"
         },
         "bane": {
             "name": "BaliHoo",
-            "elo": 1071,
+            "elo": 1037,
             "tier": "squirrel"
         },
         "unique_opponents": 13
-    },
-    "pashatherussian": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "MrDrouf",
-            "elo": 1241,
-            "tier": "mouse"
-        },
-        "unique_opponents": 6
-    },
-    "DegenerateIan": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "Mouseman",
-            "elo": 1258,
-            "tier": "mouse"
-        },
-        "unique_opponents": 3
-    },
-    "Pandapapst": {
-        "trophy": {
-            "name": "Led_Slash",
-            "elo": 1458,
-            "tier": "fox"
-        },
-        "bane": {
-            "name": "Wriggleroom",
-            "elo": 1126,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 90
-    },
-    "KyloBot": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "Nefkano",
-            "elo": 1297,
-            "tier": "mouse"
-        },
-        "unique_opponents": 3
-    },
-    "vanillapoppy": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "Tolfan",
-            "elo": 1367,
-            "tier": "rabbit"
-        },
-        "unique_opponents": 3
-    },
-    "Cabbage0642": {
-        "trophy": {
-            "name": "AxlPrototype",
-            "elo": 1278,
-            "tier": "mouse"
-        },
-        "bane": {
-            "name": null,
-            "elo": 99999,
-            "tier": "unranked"
-        },
-        "unique_opponents": 3
-    },
-    "DelSol": {
-        "trophy": {
-            "name": "Led_Slash",
-            "elo": 1370,
-            "tier": "rabbit"
-        },
-        "bane": {
-            "name": "secretpaths",
-            "elo": 1208,
-            "tier": "mouse"
-        },
-        "unique_opponents": 27
-    },
-    "AxlPrototype": {
-        "trophy": {
-            "name": "BareGammon",
-            "elo": 1293,
-            "tier": "mouse"
-        },
-        "bane": {
-            "name": "100pctskillz",
-            "elo": 1166,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 16
-    },
-    "Furry0329": {
-        "trophy": {
-            "name": "cliuless",
-            "elo": 1268,
-            "tier": "mouse"
-        },
-        "bane": {
-            "name": "Led_Slash",
-            "elo": 1413,
-            "tier": "fox"
-        },
-        "unique_opponents": 9
-    },
-    "Soluna": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "cringelordirl",
-            "elo": 1225,
-            "tier": "mouse"
-        },
-        "unique_opponents": 8
-    },
-    "Nefkano": {
-        "trophy": {
-            "name": "Led_Slash",
-            "elo": 1447,
-            "tier": "fox"
-        },
-        "bane": {
-            "name": "TonyDeloreanESQ",
-            "elo": 1106,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 82
-    },
-    "cliuless": {
-        "trophy": {
-            "name": "Led_Slash",
-            "elo": 1521,
-            "tier": "bird"
-        },
-        "bane": {
-            "name": "DarthOblivius",
-            "elo": 1032,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 107
-    },
-    "Shadyferret": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "Nadav253",
-            "elo": 1244,
-            "tier": "mouse"
-        },
-        "unique_opponents": 3
-    },
-    "Hydro033": {
-        "trophy": {
-            "name": "darkcat",
-            "elo": 1220,
-            "tier": "mouse"
-        },
-        "bane": {
-            "name": "NadtyLite",
-            "elo": 1150,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 23
-    },
-    "complexartichoke": {
-        "trophy": {
-            "name": "matemato",
-            "elo": 1299,
-            "tier": "mouse"
-        },
-        "bane": {
-            "name": "ShuShuBana",
-            "elo": 1409,
-            "tier": "fox"
-        },
-        "unique_opponents": 8
-    },
-    "sparrowhawk": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "LucianTheFak",
-            "elo": 1191,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 20
-    },
-    "AERotters": {
-        "trophy": {
-            "name": "Led_Slash",
-            "elo": 1449,
-            "tier": "fox"
-        },
-        "bane": {
-            "name": "buurn",
-            "elo": 1032,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 84
-    },
-    "Tricholome": {
-        "trophy": {
-            "name": "Led_Slash",
-            "elo": 1525,
-            "tier": "bird"
-        },
-        "bane": {
-            "name": "mouseinabox",
-            "elo": 1164,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 95
-    },
-    "matemato": {
-        "trophy": {
-            "name": "Led_Slash",
-            "elo": 1534,
-            "tier": "bird"
-        },
-        "bane": {
-            "name": "Wrestler",
-            "elo": 1154,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 81
-    },
-    "mkcy3": {
-        "trophy": {
-            "name": "ImJustExisting",
-            "elo": 1227,
-            "tier": "mouse"
-        },
-        "bane": {
-            "name": "HobGungan",
-            "elo": 1139,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 32
-    },
-    "Ptitmxz": {
-        "trophy": {
-            "name": "Nefkano",
-            "elo": 1381,
-            "tier": "rabbit"
-        },
-        "bane": {
-            "name": "DarthOblivius",
-            "elo": 1045,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 38
-    },
-    "BaliHoo": {
-        "trophy": {
-            "name": "Sirius",
-            "elo": 1195,
-            "tier": "squirrel"
-        },
-        "bane": {
-            "name": "DawnDiVito",
-            "elo": 1075,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 60
-    },
-    "Sebby": {
-        "trophy": {
-            "name": "BjarkeHuse",
-            "elo": 1248,
-            "tier": "mouse"
-        },
-        "bane": {
-            "name": "BaliHoo",
-            "elo": 1066,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 24
-    },
-    "Hadjiya": {
-        "trophy": {
-            "name": "Tolfan",
-            "elo": 1343,
-            "tier": "rabbit"
-        },
-        "bane": {
-            "name": "BaliHoo",
-            "elo": 1066,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 65
-    },
-    "BaconBoy": {
-        "trophy": {
-            "name": "Led_Slash",
-            "elo": 1479,
-            "tier": "fox"
-        },
-        "bane": {
-            "name": "radiantchaos",
-            "elo": 1171,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 93
-    },
-    "clp10033": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "Nefkano",
-            "elo": 1250,
-            "tier": "mouse"
-        },
-        "unique_opponents": 3
-    },
-    "Baradhas": {
-        "trophy": {
-            "name": "DemaRogue",
-            "elo": 1202,
-            "tier": "mouse"
-        },
-        "bane": {
-            "name": "Hadjiya",
-            "elo": 1138,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 16
-    },
-    "KargDemiau": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "Odinius",
-            "elo": 1161,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 14
-    },
-    "Valzaan": {
-        "trophy": {
-            "name": "IMPERATOR",
-            "elo": 1450,
-            "tier": "fox"
-        },
-        "bane": {
-            "name": "cjahwon",
-            "elo": 1045,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 32
-    },
-    "swiftsusan": {
-        "trophy": {
-            "name": "Led_Slash",
-            "elo": 1414,
-            "tier": "fox"
-        },
-        "bane": {
-            "name": "ellbelle",
-            "elo": 1113,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 22
-    },
-    "FatBoyyy": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "mishaelh1",
-            "elo": 1189,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 6
-    },
-    "Hiyoshi": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "Tricholome",
-            "elo": 1236,
-            "tier": "mouse"
-        },
-        "unique_opponents": 9
-    },
-    "DanzigMF": {
-        "trophy": {
-            "name": "kayajam",
-            "elo": 1427,
-            "tier": "fox"
-        },
-        "bane": {
-            "name": "DawnDiVito",
-            "elo": 1044,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 62
-    },
-    "FrancescoBr": {
-        "trophy": {
-            "name": "KFull",
-            "elo": 1427,
-            "tier": "fox"
-        },
-        "bane": {
-            "name": "Hurple",
-            "elo": 1173,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 41
-    },
-    "LucianTheFak": {
-        "trophy": {
-            "name": "Killerstorm17",
-            "elo": 1524,
-            "tier": "bird"
-        },
-        "bane": {
-            "name": "PlagueCarrier",
-            "elo": 1113,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 82
-    },
-    "ConeMan": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "Intraceptor",
-            "elo": 1295,
-            "tier": "mouse"
-        },
-        "unique_opponents": 3
-    },
-    "Vagabond Glazer": {
-        "trophy": {
-            "name": "chux88",
-            "elo": 1159,
-            "tier": "squirrel"
-        },
-        "bane": {
-            "name": null,
-            "elo": 99999,
-            "tier": "unranked"
-        },
-        "unique_opponents": 3
-    },
-    "Alexispc": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "100pctskillz",
-            "elo": 1180,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 9
-    },
-    "cringelordirl": {
-        "trophy": {
-            "name": "ShuShuBana",
-            "elo": 1472,
-            "tier": "fox"
-        },
-        "bane": {
-            "name": "WyvernElement",
-            "elo": 1134,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 64
-    },
-    "Fearteiler": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "NadtyLite",
-            "elo": 1188,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 10
-    },
-    "SMenefee": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "TonyDeloreanESQ",
-            "elo": 1142,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 3
-    },
-    "Xar149": {
-        "trophy": {
-            "name": "Tolfan",
-            "elo": 1350,
-            "tier": "rabbit"
-        },
-        "bane": {
-            "name": "CowOnAPlane",
-            "elo": 1200,
-            "tier": "mouse"
-        },
-        "unique_opponents": 19
-    },
-    "Ljaz7": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "vinnie",
-            "elo": 1239,
-            "tier": "mouse"
-        },
-        "unique_opponents": 8
-    },
-    "saintstonet": {
-        "trophy": {
-            "name": "Nadav253",
-            "elo": 1480,
-            "tier": "fox"
-        },
-        "bane": {
-            "name": null,
-            "elo": 99999,
-            "tier": "unranked"
-        },
-        "unique_opponents": 3
-    },
-    "Banzai7000": {
-        "trophy": {
-            "name": "cliuless",
-            "elo": 1285,
-            "tier": "mouse"
-        },
-        "bane": {
-            "name": "DawnDiVito",
-            "elo": 1056,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 33
-    },
-    "Odinius": {
-        "trophy": {
-            "name": "Led_Slash",
-            "elo": 1326,
-            "tier": "rabbit"
-        },
-        "bane": {
-            "name": "DawnDiVito",
-            "elo": 1056,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 68
-    },
-    "Wriggleroom": {
-        "trophy": {
-            "name": "tofuwater",
-            "elo": 1449,
-            "tier": "fox"
-        },
-        "bane": {
-            "name": "buurn",
-            "elo": 1032,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 63
-    },
-    "HungryJeff": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "Emperia",
-            "elo": 1251,
-            "tier": "mouse"
-        },
-        "unique_opponents": 9
-    },
-    "weirdone": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "cringelordirl",
-            "elo": 1247,
-            "tier": "mouse"
-        },
-        "unique_opponents": 8
-    },
-    "Gibbs": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "buurn",
-            "elo": 1047,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 3
-    },
-    "Silver": {
-        "trophy": {
-            "name": "Tricholome",
-            "elo": 1312,
-            "tier": "rabbit"
-        },
-        "bane": {
-            "name": "HobGungan",
-            "elo": 1187,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 24
-    },
-    "time2orush": {
-        "trophy": {
-            "name": "LHlegend",
-            "elo": 1236,
-            "tier": "mouse"
-        },
-        "bane": {
-            "name": "buurn",
-            "elo": 1259,
-            "tier": "mouse"
-        },
-        "unique_opponents": 16
-    },
-    "Intraceptor": {
-        "trophy": {
-            "name": "Tolfan",
-            "elo": 1311,
-            "tier": "rabbit"
-        },
-        "bane": {
-            "name": "mouseinabox",
-            "elo": 1185,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 13
-    },
-    "WWren": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "BaconBoy",
-            "elo": 1252,
-            "tier": "mouse"
-        },
-        "unique_opponents": 3
-    },
-    "Aceosd": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "buurn",
-            "elo": 1012,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 34
-    },
-    "cjahwon": {
-        "trophy": {
-            "name": "TurkeyNoNo",
-            "elo": 1234,
-            "tier": "mouse"
-        },
-        "bane": {
-            "name": "Dandel",
-            "elo": 1093,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 65
     },
     "metalnooze": {
         "trophy": {
@@ -3972,49 +2516,140 @@
         },
         "bane": {
             "name": "LHlegend",
-            "elo": 1260,
+            "elo": 1200,
             "tier": "mouse"
         },
         "unique_opponents": 9
     },
-    "Youdge": {
+    "Intraceptor": {
         "trophy": {
-            "name": "Tricholome",
-            "elo": 1310,
+            "name": "Tolfan",
+            "elo": 1325,
             "tier": "rabbit"
         },
         "bane": {
-            "name": "MrDrouf",
-            "elo": 1236,
-            "tier": "mouse"
+            "name": "mouseinabox",
+            "elo": 1168,
+            "tier": "squirrel"
         },
-        "unique_opponents": 30
+        "unique_opponents": 13
     },
-    "FavorOfTheRabbits": {
+    "Actionman2222": {
         "trophy": {
-            "name": "Led_Slash",
-            "elo": 1496,
-            "tier": "fox"
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "buurn",
+            "elo": 1030,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 3
+    },
+    "Trumpet": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "BaconBoy",
+            "elo": 1140,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 17
+    },
+    "Vagabond Glazer": {
+        "trophy": {
+            "name": "chux88",
+            "elo": 1182,
+            "tier": "squirrel"
+        },
+        "bane": {
+            "name": null,
+            "elo": 99999,
+            "tier": "unranked"
+        },
+        "unique_opponents": 3
+    },
+    "buurn": {
+        "trophy": {
+            "name": "time2orush",
+            "elo": 1351,
+            "tier": "rabbit"
         },
         "bane": {
             "name": "DarthOblivius",
-            "elo": 1079,
+            "elo": 1007,
             "tier": "squirrel"
         },
-        "unique_opponents": 36
+        "unique_opponents": 106
     },
-    "KuperMeister": {
+    "LutherStr": {
         "trophy": {
-            "name": "Octavius",
-            "elo": 1228,
+            "name": "Led_Slash",
+            "elo": 1482,
+            "tier": "fox"
+        },
+        "bane": {
+            "name": "LucianTheFak",
+            "elo": 1085,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 32
+    },
+    "Karcher": {
+        "trophy": {
+            "name": "matemato",
+            "elo": 1299,
             "tier": "mouse"
         },
         "bane": {
-            "name": "mouseinabox",
-            "elo": 1170,
+            "name": "TheFourthJesse",
+            "elo": 1131,
             "tier": "squirrel"
         },
-        "unique_opponents": 24
+        "unique_opponents": 12
+    },
+    "themikeman": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "Odinius",
+            "elo": 1105,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 3
+    },
+    "BugMuff44": {
+        "trophy": {
+            "name": "ImEpy",
+            "elo": 1200,
+            "tier": "mouse"
+        },
+        "bane": {
+            "name": "ToasterTrash",
+            "elo": 1114,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 15
+    },
+    "pwarren8590": {
+        "trophy": {
+            "name": "KFull",
+            "elo": 1408,
+            "tier": "fox"
+        },
+        "bane": {
+            "name": "Podge0303",
+            "elo": 1112,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 22
     },
     "Lucat": {
         "trophy": {
@@ -4024,34 +2659,450 @@
         },
         "bane": {
             "name": "trollone1993",
-            "elo": 1258,
+            "elo": 1200,
             "tier": "mouse"
         },
         "unique_opponents": 3
     },
-    "Blurr": {
+    "gord20": {
         "trophy": {
-            "name": "Perdita",
-            "elo": 1197,
-            "tier": "squirrel"
+            "name": "Soluna",
+            "elo": 1200,
+            "tier": "mouse"
         },
         "bane": {
-            "name": "Killerstorm17",
-            "elo": 1554,
-            "tier": "bird"
+            "name": null,
+            "elo": 99999,
+            "tier": "unranked"
         },
-        "unique_opponents": 8
+        "unique_opponents": 3
     },
-    "mwcrabtree": {
+    "IndifferentFish": {
         "trophy": {
             "name": null,
             "elo": -1,
             "tier": "unranked"
         },
         "bane": {
-            "name": "VanKaiserman",
-            "elo": 1319,
+            "name": "NadtyLite",
+            "elo": 1199,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 3
+    },
+    "Tad604": {
+        "trophy": {
+            "name": "Led_Slash",
+            "elo": 1481,
+            "tier": "fox"
+        },
+        "bane": {
+            "name": "buurn",
+            "elo": 994,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 75
+    },
+    "Dumbledore": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "deejaythink",
+            "elo": 1167,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 10
+    },
+    "Axolatal": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "Killerstorm17",
+            "elo": 1410,
+            "tier": "fox"
+        },
+        "unique_opponents": 3
+    },
+    "MrRiceGuy": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "Hydro033",
+            "elo": 1207,
+            "tier": "mouse"
+        },
+        "unique_opponents": 3
+    },
+    "Raineweather05": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "TheDolphinman",
+            "elo": 1173,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 3
+    },
+    "CowOnAPlane": {
+        "trophy": {
+            "name": "Xar149",
+            "elo": 1388,
             "tier": "rabbit"
+        },
+        "bane": {
+            "name": "IMPERATOR",
+            "elo": 1253,
+            "tier": "mouse"
+        },
+        "unique_opponents": 19
+    },
+    "MylesMoose": {
+        "trophy": {
+            "name": "Tricholome",
+            "elo": 1337,
+            "tier": "rabbit"
+        },
+        "bane": {
+            "name": "buurn",
+            "elo": 1015,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 46
+    },
+    "deejaythink": {
+        "trophy": {
+            "name": "Tolfan",
+            "elo": 1278,
+            "tier": "mouse"
+        },
+        "bane": {
+            "name": "Hadjiya",
+            "elo": 1104,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 24
+    },
+    "Yragael": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "Sharkskln",
+            "elo": 1122,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 6
+    },
+    "Cookies": {
+        "trophy": {
+            "name": "Xar149",
+            "elo": 1464,
+            "tier": "fox"
+        },
+        "bane": {
+            "name": "mouseinabox",
+            "elo": 1107,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 31
+    },
+    "Shadyferret": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "Nadav253",
+            "elo": 1179,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 3
+    },
+    "HungryJeff": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "Emperia",
+            "elo": 1186,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 9
+    },
+    "CodPieceZ": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "Bodnamax",
+            "elo": 1144,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 13
+    },
+    "Riverman": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "BaconBoy",
+            "elo": 1200,
+            "tier": "mouse"
+        },
+        "unique_opponents": 9
+    },
+    "Rachel997": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "mouseinabox",
+            "elo": 1143,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 3
+    },
+    "TheDolphinman": {
+        "trophy": {
+            "name": "ShuShuBana",
+            "elo": 1452,
+            "tier": "fox"
+        },
+        "bane": {
+            "name": "LucianTheFak",
+            "elo": 1049,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 48
+    },
+    "doejurko": {
+        "trophy": {
+            "name": "ShuShuBana",
+            "elo": 1495,
+            "tier": "fox"
+        },
+        "bane": {
+            "name": null,
+            "elo": 99999,
+            "tier": "unranked"
+        },
+        "unique_opponents": 21
+    },
+    "silverfox": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "cjahwon",
+            "elo": 1001,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 12
+    },
+    "ShuShuBana": {
+        "trophy": {
+            "name": "Led_Slash",
+            "elo": 1551,
+            "tier": "bird"
+        },
+        "bane": {
+            "name": "cringelordirl",
+            "elo": 1113,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 66
+    },
+    "TheWiseFox": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "Tricholome",
+            "elo": 1105,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 14
+    },
+    "Valzaan": {
+        "trophy": {
+            "name": "IMPERATOR",
+            "elo": 1501,
+            "tier": "bird"
+        },
+        "bane": {
+            "name": "cjahwon",
+            "elo": 1010,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 32
+    },
+    "udon66": {
+        "trophy": {
+            "name": "tofuwater",
+            "elo": 1444,
+            "tier": "fox"
+        },
+        "bane": {
+            "name": "tofuwater",
+            "elo": 1346,
+            "tier": "rabbit"
+        },
+        "unique_opponents": 8
+    },
+    "Wriggleroom": {
+        "trophy": {
+            "name": "tofuwater",
+            "elo": 1473,
+            "tier": "fox"
+        },
+        "bane": {
+            "name": "buurn",
+            "elo": 1015,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 63
+    },
+    "sleepylabone": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "Nadav253",
+            "elo": 1197,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 14
+    },
+    "alevGO": {
+        "trophy": {
+            "name": "Led_Slash",
+            "elo": 1392,
+            "tier": "rabbit"
+        },
+        "bane": {
+            "name": "secretpaths",
+            "elo": 1150,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 23
+    },
+    "sparrowhawk": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "LucianTheFak",
+            "elo": 1160,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 20
+    },
+    "BoMa85": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "Pandapapst",
+            "elo": 1069,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 12
+    },
+    "TAKSpx": {
+        "trophy": {
+            "name": "hanban",
+            "elo": 1200,
+            "tier": "mouse"
+        },
+        "bane": {
+            "name": "Bodnamax",
+            "elo": 1144,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 10
+    },
+    "Xman1997": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "NadtyLite",
+            "elo": 1186,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 14
+    },
+    "ImJustExisting": {
+        "trophy": {
+            "name": "Led_Slash",
+            "elo": 1493,
+            "tier": "fox"
+        },
+        "bane": {
+            "name": "mkcy3",
+            "elo": 1108,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 37
+    },
+    "ChippZamoose": {
+        "trophy": {
+            "name": "Led_Slash",
+            "elo": 1491,
+            "tier": "fox"
+        },
+        "bane": {
+            "name": "LHlegend",
+            "elo": 1091,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 68
+    },
+    "ConeMan": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "Intraceptor",
+            "elo": 1232,
+            "tier": "mouse"
         },
         "unique_opponents": 3
     },
@@ -4063,101 +3114,36 @@
         },
         "bane": {
             "name": "Emperia",
-            "elo": 1209,
-            "tier": "mouse"
-        },
-        "unique_opponents": 16
-    },
-    "aelisheneithlon": {
-        "trophy": {
-            "name": "tofuwater",
-            "elo": 1455,
-            "tier": "fox"
-        },
-        "bane": {
-            "name": "tofuwater",
-            "elo": 1452,
-            "tier": "fox"
-        },
-        "unique_opponents": 6
-    },
-    "Mcauthor": {
-        "trophy": {
-            "name": "NadtyLite",
             "elo": 1179,
             "tier": "squirrel"
         },
-        "bane": {
-            "name": "Tad604",
-            "elo": 1307,
-            "tier": "rabbit"
-        },
-        "unique_opponents": 10
+        "unique_opponents": 16
     },
-    "gord20": {
+    "RFMerlo": {
         "trophy": {
-            "name": "Soluna",
-            "elo": 1176,
-            "tier": "squirrel"
-        },
-        "bane": {
-            "name": null,
-            "elo": 99999,
-            "tier": "unranked"
-        },
-        "unique_opponents": 3
-    },
-    "ChippZamoose": {
-        "trophy": {
-            "name": "Led_Slash",
-            "elo": 1481,
-            "tier": "fox"
-        },
-        "bane": {
-            "name": "LHlegend",
-            "elo": 1127,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 68
-    },
-    "WyvernElement": {
-        "trophy": {
-            "name": "Antiproject",
-            "elo": 1372,
+            "name": "ChippZamoose",
+            "elo": 1359,
             "tier": "rabbit"
         },
         "bane": {
-            "name": "HobGungan",
-            "elo": 1139,
+            "name": "BaliHoo",
+            "elo": 1031,
             "tier": "squirrel"
         },
-        "unique_opponents": 41
+        "unique_opponents": 36
     },
-    "Raineweather05": {
+    "Hydro033": {
         "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "TheDolphinman",
-            "elo": 1204,
+            "name": "darkcat",
+            "elo": 1247,
             "tier": "mouse"
         },
-        "unique_opponents": 3
-    },
-    "trollone1993": {
-        "trophy": {
-            "name": "Lucat",
-            "elo": 1178,
+        "bane": {
+            "name": "NadtyLite",
+            "elo": 1116,
             "tier": "squirrel"
         },
-        "bane": {
-            "name": null,
-            "elo": 99999,
-            "tier": "unranked"
-        },
-        "unique_opponents": 3
+        "unique_opponents": 23
     },
     "Lokfok": {
         "trophy": {
@@ -4167,12 +3153,415 @@
         },
         "bane": {
             "name": "BaconBoy",
-            "elo": 1155,
+            "elo": 1123,
             "tier": "squirrel"
         },
         "unique_opponents": 10
     },
-    "StarhardFishrinse": {
+    "Musicalwoofy": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "Oppapi",
+            "elo": 1122,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 6
+    },
+    "Nuttsy": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "Mossfusion",
+            "elo": 1200,
+            "tier": "mouse"
+        },
+        "unique_opponents": 3
+    },
+    "sda1611": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "alevGO",
+            "elo": 1179,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 3
+    },
+    "1coolguy": {
+        "trophy": {
+            "name": "swiftsusan",
+            "elo": 1424,
+            "tier": "fox"
+        },
+        "bane": {
+            "name": "Hadjiya",
+            "elo": 1069,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 39
+    },
+    "nikkan": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "Piechu",
+            "elo": 1047,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 14
+    },
+    "Doordecat": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "HobGungan",
+            "elo": 1109,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 26
+    },
+    "Cloudere": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "BuliBaka",
+            "elo": 1169,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 9
+    },
+    "Zeldamon": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "HobGungan",
+            "elo": 1102,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 8
+    },
+    "aelisheneithlon": {
+        "trophy": {
+            "name": "tofuwater",
+            "elo": 1482,
+            "tier": "fox"
+        },
+        "bane": {
+            "name": "tofuwater",
+            "elo": 1409,
+            "tier": "fox"
+        },
+        "unique_opponents": 6
+    },
+    "catscat": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "Perdita",
+            "elo": 1161,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 3
+    },
+    "re_al_": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "RFMerlo",
+            "elo": 1148,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 15
+    },
+    "FireFox": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "mkcy3",
+            "elo": 1108,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 3
+    },
+    "BadScra": {
+        "trophy": {
+            "name": "IMPERATOR",
+            "elo": 1450,
+            "tier": "fox"
+        },
+        "bane": {
+            "name": "Piechu",
+            "elo": 1047,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 28
+    },
+    "fadingnovel": {
+        "trophy": {
+            "name": "TurkeyNoNo",
+            "elo": 1443,
+            "tier": "fox"
+        },
+        "bane": {
+            "name": "LucianTheFak",
+            "elo": 1121,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 47
+    },
+    "ThoseTeeff": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "VanKaiserman",
+            "elo": 1200,
+            "tier": "mouse"
+        },
+        "unique_opponents": 3
+    },
+    "Cheesecake271": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "LutherStr",
+            "elo": 1126,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 14
+    },
+    "FalconBird": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "DemaRogue",
+            "elo": 1196,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 5
+    },
+    "IMPERATOR": {
+        "trophy": {
+            "name": "Tolfan",
+            "elo": 1283,
+            "tier": "mouse"
+        },
+        "bane": {
+            "name": "idk123",
+            "elo": 1140,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 19
+    },
+    "BaliHoo": {
+        "trophy": {
+            "name": "Sirius",
+            "elo": 1233,
+            "tier": "mouse"
+        },
+        "bane": {
+            "name": "DawnDiVito",
+            "elo": 1040,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 60
+    },
+    "Pandapapst": {
+        "trophy": {
+            "name": "Led_Slash",
+            "elo": 1470,
+            "tier": "fox"
+        },
+        "bane": {
+            "name": "Youdge",
+            "elo": 1081,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 90
+    },
+    "weirdone": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "cringelordirl",
+            "elo": 1217,
+            "tier": "mouse"
+        },
+        "unique_opponents": 8
+    },
+    "QuixArtagnan": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "NadtyLite",
+            "elo": 1196,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 3
+    },
+    "Nymmer": {
+        "trophy": {
+            "name": "Nefkano",
+            "elo": 1287,
+            "tier": "mouse"
+        },
+        "bane": {
+            "name": "Gagneto",
+            "elo": 1108,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 22
+    },
+    "bootle": {
+        "trophy": {
+            "name": "Tolfan",
+            "elo": 1358,
+            "tier": "rabbit"
+        },
+        "bane": {
+            "name": "fadingnovel",
+            "elo": 1179,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 14
+    },
+    "GamerTower": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "Tolfan",
+            "elo": 1325,
+            "tier": "rabbit"
+        },
+        "unique_opponents": 3
+    },
+    "Plush2": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "Led_Slash",
+            "elo": 1319,
+            "tier": "rabbit"
+        },
+        "unique_opponents": 3
+    },
+    "Aceosd": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "buurn",
+            "elo": 994,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 34
+    },
+    "Bodnamax": {
+        "trophy": {
+            "name": "uwtron",
+            "elo": 1286,
+            "tier": "mouse"
+        },
+        "bane": {
+            "name": "100pctskillz",
+            "elo": 1140,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 8
+    },
+    "FelipeRocha": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "RootiredRooter",
+            "elo": 1200,
+            "tier": "mouse"
+        },
+        "unique_opponents": 3
+    },
+    "hauntedpebbles2": {
+        "trophy": {
+            "name": "Gabobs",
+            "elo": 1178,
+            "tier": "squirrel"
+        },
+        "bane": {
+            "name": "benssoon",
+            "elo": 1126,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 23
+    },
+    "Whats02": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "Snivylover12",
+            "elo": 1190,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 17
+    },
+    "mysti": {
         "trophy": {
             "name": null,
             "elo": -1,
@@ -4183,74 +3572,100 @@
             "elo": 1256,
             "tier": "mouse"
         },
-        "unique_opponents": 5
+        "unique_opponents": 3
     },
-    "benssoon": {
+    "DarthPuniceus": {
         "trophy": {
-            "name": "Pandapapst",
-            "elo": 1263,
-            "tier": "mouse"
+            "name": "Led_Slash",
+            "elo": 1538,
+            "tier": "bird"
         },
         "bane": {
-            "name": "Hadjiya",
-            "elo": 1138,
+            "name": "Wrestler",
+            "elo": 1071,
             "tier": "squirrel"
         },
-        "unique_opponents": 40
+        "unique_opponents": 66
     },
-    "DrCheeseFiend": {
+    "tippop": {
         "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
+            "name": "Led_Slash",
+            "elo": 1455,
+            "tier": "fox"
         },
         "bane": {
-            "name": "LHlegend",
-            "elo": 1118,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 31
-    },
-    "CptAlex": {
-        "trophy": {
-            "name": null,
-            "elo": -1,
-            "tier": "unranked"
-        },
-        "bane": {
-            "name": "Emperia",
-            "elo": 1254,
-            "tier": "mouse"
-        },
-        "unique_opponents": 7
-    },
-    "Podge0303": {
-        "trophy": {
-            "name": "Schkitz",
-            "elo": 1278,
-            "tier": "mouse"
-        },
-        "bane": {
-            "name": "Klishu",
-            "elo": 1178,
-            "tier": "squirrel"
-        },
-        "unique_opponents": 50
-    },
-    "PlagueCarrier": {
-        "trophy": {
-            "name": "Nefkano",
-            "elo": 1379,
+            "name": "Silver",
+            "elo": 1318,
             "tier": "rabbit"
         },
+        "unique_opponents": 17
+    },
+    "voltigeur": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
         "bane": {
-            "name": "HobGungan",
-            "elo": 1124,
+            "name": "Jasiu\u0144cio",
+            "elo": 1173,
             "tier": "squirrel"
         },
-        "unique_opponents": 46
+        "unique_opponents": 17
     },
-    "Xman1997": {
+    "Blurr": {
+        "trophy": {
+            "name": "Perdita",
+            "elo": 1218,
+            "tier": "mouse"
+        },
+        "bane": {
+            "name": "Killerstorm17",
+            "elo": 1539,
+            "tier": "bird"
+        },
+        "unique_opponents": 8
+    },
+    "time2orush": {
+        "trophy": {
+            "name": "LHlegend",
+            "elo": 1260,
+            "tier": "mouse"
+        },
+        "bane": {
+            "name": "buurn",
+            "elo": 1195,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 16
+    },
+    "Lante": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "Pandapapst",
+            "elo": 1159,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 5
+    },
+    "AERotters": {
+        "trophy": {
+            "name": "Led_Slash",
+            "elo": 1472,
+            "tier": "fox"
+        },
+        "bane": {
+            "name": "buurn",
+            "elo": 1015,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 84
+    },
+    "TheIndustrialRevoloution": {
         "trophy": {
             "name": null,
             "elo": -1,
@@ -4258,41 +3673,106 @@
         },
         "bane": {
             "name": "NadtyLite",
-            "elo": 1201,
-            "tier": "mouse"
-        },
-        "unique_opponents": 14
-    },
-    "radiantchaos": {
-        "trophy": {
-            "name": "KFull",
-            "elo": 1356,
-            "tier": "rabbit"
-        },
-        "bane": {
-            "name": "DawnDiVito",
-            "elo": 1056,
+            "elo": 1031,
             "tier": "squirrel"
-        },
-        "unique_opponents": 50
-    },
-    "Awesem": {
-        "trophy": {
-            "name": "radiantchaos",
-            "elo": 1194,
-            "tier": "squirrel"
-        },
-        "bane": {
-            "name": "DarthPuniceus",
-            "elo": 1239,
-            "tier": "mouse"
         },
         "unique_opponents": 10
     },
-    "lazarus210": {
+    "mishaelh1": {
         "trophy": {
-            "name": "DemaRogue",
-            "elo": 1229,
+            "name": "FrancescoBr",
+            "elo": 1278,
+            "tier": "mouse"
+        },
+        "bane": {
+            "name": "Hadjiya",
+            "elo": 1105,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 20
+    },
+    "Klishu": {
+        "trophy": {
+            "name": "matemato",
+            "elo": 1402,
+            "tier": "fox"
+        },
+        "bane": {
+            "name": "Pandapapst",
+            "elo": 1149,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 49
+    },
+    "saintstonet": {
+        "trophy": {
+            "name": "Nadav253",
+            "elo": 1506,
+            "tier": "bird"
+        },
+        "bane": {
+            "name": null,
+            "elo": 99999,
+            "tier": "unranked"
+        },
+        "unique_opponents": 3
+    },
+    "StoneOfShame": {
+        "trophy": {
+            "name": "Mouseman",
+            "elo": 1472,
+            "tier": "fox"
+        },
+        "bane": {
+            "name": "NadtyLite",
+            "elo": 1120,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 17
+    },
+    "DawnDiVito": {
+        "trophy": {
+            "name": "DanzigMF",
+            "elo": 1200,
+            "tier": "mouse"
+        },
+        "bane": {
+            "name": "DarthOblivius",
+            "elo": 996,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 78
+    },
+    "GameProfit": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "Led_Slash",
+            "elo": 1323,
+            "tier": "rabbit"
+        },
+        "unique_opponents": 3
+    },
+    "mkcy3": {
+        "trophy": {
+            "name": "ImJustExisting",
+            "elo": 1240,
+            "tier": "mouse"
+        },
+        "bane": {
+            "name": "HobGungan",
+            "elo": 1124,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 32
+    },
+    "KeyserSoze": {
+        "trophy": {
+            "name": "Tolfan",
+            "elo": 1232,
             "tier": "mouse"
         },
         "bane": {
@@ -4302,30 +3782,550 @@
         },
         "unique_opponents": 3
     },
-    "NattyKash": {
+    "AJIJIi": {
         "trophy": {
             "name": null,
             "elo": -1,
             "tier": "unranked"
         },
         "bane": {
-            "name": "Tad604",
+            "name": "mouseinabox",
+            "elo": 1163,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 3
+    },
+    "Wrestler": {
+        "trophy": {
+            "name": "Led_Slash",
+            "elo": 1414,
+            "tier": "fox"
+        },
+        "bane": {
+            "name": "ellbelle",
+            "elo": 1077,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 76
+    },
+    "AxlPrototype": {
+        "trophy": {
+            "name": "BareGammon",
+            "elo": 1323,
+            "tier": "rabbit"
+        },
+        "bane": {
+            "name": "100pctskillz",
+            "elo": 1135,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 16
+    },
+    "Jerry": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "Pandapapst",
+            "elo": 1069,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 9
+    },
+    "PokerFace126": {
+        "trophy": {
+            "name": "BaconBoy",
             "elo": 1270,
             "tier": "mouse"
         },
-        "unique_opponents": 10
+        "bane": {
+            "name": "Nadav253",
+            "elo": 1179,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 13
     },
-    "Gagneto": {
+    "Elijah": {
         "trophy": {
-            "name": "Tricholome",
-            "elo": 1285,
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "Wrestler",
+            "elo": 1155,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 21
+    },
+    "Darkwonderer": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "Dandel",
+            "elo": 1087,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 14
+    },
+    "Awesem": {
+        "trophy": {
+            "name": "radiantchaos",
+            "elo": 1219,
             "tier": "mouse"
         },
         "bane": {
-            "name": "DanzigMF",
-            "elo": 1171,
+            "name": "100pctskillz",
+            "elo": 1180,
             "tier": "squirrel"
         },
-        "unique_opponents": 30
+        "unique_opponents": 10
+    },
+    "GAFE15": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "DemaRogue",
+            "elo": 1193,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 3
+    },
+    "Banzai7000": {
+        "trophy": {
+            "name": "cliuless",
+            "elo": 1294,
+            "tier": "mouse"
+        },
+        "bane": {
+            "name": "DawnDiVito",
+            "elo": 1021,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 33
+    },
+    "KFull": {
+        "trophy": {
+            "name": "ShuShuBana",
+            "elo": 1500,
+            "tier": "bird"
+        },
+        "bane": {
+            "name": "DarthOblivius",
+            "elo": 1007,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 92
+    },
+    "pikeline": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "mouseinabox",
+            "elo": 1137,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 3
+    },
+    "Hadjiya": {
+        "trophy": {
+            "name": "Tolfan",
+            "elo": 1364,
+            "tier": "rabbit"
+        },
+        "bane": {
+            "name": "BaliHoo",
+            "elo": 1031,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 65
+    },
+    "MoxJet": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "Munchking",
+            "elo": 1007,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 6
+    },
+    "kayajam": {
+        "trophy": {
+            "name": "Led_Slash",
+            "elo": 1502,
+            "tier": "bird"
+        },
+        "bane": {
+            "name": "DanzigMF",
+            "elo": 1085,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 49
+    },
+    "DegenerateIan": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "Mouseman",
+            "elo": 1198,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 3
+    },
+    "Tricholome": {
+        "trophy": {
+            "name": "Led_Slash",
+            "elo": 1535,
+            "tier": "bird"
+        },
+        "bane": {
+            "name": "Gagneto",
+            "elo": 1108,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 95
+    },
+    "deriokle": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "matemato",
+            "elo": 1385,
+            "tier": "rabbit"
+        },
+        "unique_opponents": 3
+    },
+    "BuckeyeNation": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "mouseinabox",
+            "elo": 1160,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 3
+    },
+    "Wolvane": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "Octavius",
+            "elo": 1200,
+            "tier": "mouse"
+        },
+        "unique_opponents": 3
+    },
+    "tubaking": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "ImJustExisting",
+            "elo": 1180,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 3
+    },
+    "GlisteningGeetus": {
+        "trophy": {
+            "name": "KFull",
+            "elo": 1243,
+            "tier": "mouse"
+        },
+        "bane": {
+            "name": "NadtyLite",
+            "elo": 1052,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 12
+    },
+    "kurtfisto": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "HobGungan",
+            "elo": 1123,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 3
+    },
+    "Hiyoshi": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "Tricholome",
+            "elo": 1179,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 9
+    },
+    "matemato": {
+        "trophy": {
+            "name": "Led_Slash",
+            "elo": 1548,
+            "tier": "bird"
+        },
+        "bane": {
+            "name": "DanzigMF",
+            "elo": 1085,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 81
+    },
+    "Pliskin": {
+        "trophy": {
+            "name": "Tricholome",
+            "elo": 1356,
+            "tier": "rabbit"
+        },
+        "bane": {
+            "name": "radiantchaos",
+            "elo": 1120,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 39
+    },
+    "ReoWulf": {
+        "trophy": {
+            "name": "Excitedteapot",
+            "elo": 1270,
+            "tier": "mouse"
+        },
+        "bane": {
+            "name": "Wubba",
+            "elo": 1092,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 38
+    },
+    "Raybit": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "DawnDiVito",
+            "elo": 1040,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 23
+    },
+    "FakeSki": {
+        "trophy": {
+            "name": "Pliskin",
+            "elo": 1374,
+            "tier": "rabbit"
+        },
+        "bane": {
+            "name": "LutherStr",
+            "elo": 1088,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 38
+    },
+    "Excitedteapot": {
+        "trophy": {
+            "name": "ShuShuBana",
+            "elo": 1511,
+            "tier": "bird"
+        },
+        "bane": {
+            "name": "Odinius",
+            "elo": 1115,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 25
+    },
+    "Bengal3": {
+        "trophy": {
+            "name": "NadtyLite",
+            "elo": 1250,
+            "tier": "mouse"
+        },
+        "bane": {
+            "name": "buurn",
+            "elo": 1012,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 25
+    },
+    "vinnie": {
+        "trophy": {
+            "name": "matemato",
+            "elo": 1295,
+            "tier": "mouse"
+        },
+        "bane": {
+            "name": "Klishu",
+            "elo": 1112,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 9
+    },
+    "Pi314": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "Nefkano",
+            "elo": 1337,
+            "tier": "rabbit"
+        },
+        "unique_opponents": 6
+    },
+    "TonyDeloreanESQ": {
+        "trophy": {
+            "name": "Led_Slash",
+            "elo": 1528,
+            "tier": "bird"
+        },
+        "bane": {
+            "name": "DanzigMF",
+            "elo": 1085,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 77
+    },
+    "trollone1993": {
+        "trophy": {
+            "name": "Lucat",
+            "elo": 1200,
+            "tier": "mouse"
+        },
+        "bane": {
+            "name": null,
+            "elo": 99999,
+            "tier": "unranked"
+        },
+        "unique_opponents": 3
+    },
+    "Julien": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "Mossfusion",
+            "elo": 1200,
+            "tier": "mouse"
+        },
+        "unique_opponents": 3
+    },
+    "residentevil": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "MrDrouf",
+            "elo": 1180,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 6
+    },
+    "Cheetah32": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "DawnDiVito",
+            "elo": 1040,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 6
+    },
+    "cringelordirl": {
+        "trophy": {
+            "name": "ShuShuBana",
+            "elo": 1500,
+            "tier": "bird"
+        },
+        "bane": {
+            "name": "Banzai7000",
+            "elo": 1086,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 64
+    },
+    "SSR_Mike": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "mouseinabox",
+            "elo": 1136,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 6
+    },
+    "Alexispc": {
+        "trophy": {
+            "name": null,
+            "elo": -1,
+            "tier": "unranked"
+        },
+        "bane": {
+            "name": "100pctskillz",
+            "elo": 1146,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 9
+    },
+    "benssoon": {
+        "trophy": {
+            "name": "Pandapapst",
+            "elo": 1272,
+            "tier": "mouse"
+        },
+        "bane": {
+            "name": "Hadjiya",
+            "elo": 1105,
+            "tier": "squirrel"
+        },
+        "unique_opponents": 40
     }
 }
