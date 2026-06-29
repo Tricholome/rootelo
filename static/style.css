@@ -955,6 +955,7 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 .player-meta {
     display: flex;
     align-items: center;
+	text-align: center;
     justify-content: center;
     font-size: var(--size-md);
     font-weight: var(--bold);
@@ -1013,9 +1014,12 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
         display: none;
     }
 	
+	.relations-container .player-name {
+		max-width: 220px;
+	}
+
 	.player-meta {
 		font-size: var(--size-normal);
-		font-weight: var(--medium);
 	}
 }
 
