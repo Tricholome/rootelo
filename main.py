@@ -625,7 +625,7 @@ for tag in ARCHIVE_SEASONS:
         lb_data=data['leaderboard'], 
         match_data=data['matches'], 
         trends_data=data['trends'],
-        meta=archives_raw_data[tag]['metadata']
+        meta=archives_raw_data[tag]['metadata'],
         relations_data=archives_raw_data[tag].get('relations', {})
     )
 
