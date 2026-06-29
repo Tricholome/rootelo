@@ -32,6 +32,7 @@ OUTPUT_RATINGS   = os.path.join(DATA_DIR, f"{SEASON_TAG}_final_ratings.csv")
 OUTPUT_HISTORY   = os.path.join(DATA_DIR, f"{SEASON_TAG}_history_full.json")
 OUTPUT_MATCHES   = os.path.join(DATA_DIR, f"{SEASON_TAG}_matches_fixed.json")
 OUTPUT_METADATA  = os.path.join(DATA_DIR, f"{SEASON_TAG}_metadata.json")
+OUTPUT_RELATIONS = os.path.join(DATA_DIR, f"{SEASON_TAG}_relations.json")
 
 # =========================================================================
 # --- 2. LOAD PREVIOUS SEASON BASELINE ---
@@ -241,7 +242,88 @@ final_df.insert(0, 'Rank', ranks)
 final_df = final_df.drop(columns=['Display_ELO'])
 
 # =========================================================================
-# --- 8. FINAL EXPORTS ---
+# --- 8. GENERATE NARRATIVE JOURNEY RELATIONS DATA ---
+# =========================================================================
+def get_clean_name(name):
+    return name.split('+')[0].split('#')[0].strip()
+
+def get_tier_icon(rating, games):
+    if games < 10: return None, "unranked"  
+    r = round(rating)
+    if r >= 1600: return None, "stag"
+    if r >= 1500: return None, "bird"
+    if r >= 1400: return None, "fox"
+    if r >= 1300: return None, "rabbit"
+    if r >= 1200: return None, "mouse"
+    return None, "squirrel"
+
+def get_elo_for_match(player_name, game_id, full_history):
+    clean_p = get_clean_name(player_name)
+    if clean_p not in full_history:
+        return None
+    for entry in full_history[clean_p]:
+        if entry[2] == game_id:
+            return entry[1]
+    return None
+
+def extract_relations(matches_list, full_history):
+    # Initialisation
+    all_players = set()
+    for m in matches_list:
+        for p in m['players']: all_players.add(p['name'])
+    
+    relations = {p: {
+        "trophy": {"name": None, "elo": -1, "tier": "unranked"}, 
+        "bane": {"name": None, "elo": 99999, "tier": "unranked"},
+        "unique_opponents": 0
+    } for p in all_players}
+    
+    # Dictionnaire de sets pour compter les adversaires uniques
+    opponents_track = {p: set() for p in all_players}
+            
+    for m in matches_list:
+        match_id = m['MatchID']
+        player_names = [p['name'] for p in m['players']]
+        
+        # Enregistrement des adversaires uniques pour ce match
+        for p_name in player_names:
+            for opp_name in player_names:
+                if p_name != opp_name:
+                    opponents_track[p_name].add(opp_name)
+                    
+        winners = [p for p in m['players'] if p['is_winner']]
+        losers = [p for p in m['players'] if not p['is_winner']]
+
+        # Trophy: Meilleur Elo parmi les perdants au moment du match
+        for w in winners:
+            for l in losers:
+                l_elo = get_elo_for_match(l['name'], match_id, full_history)
+                if l_elo is not None and l_elo > relations[w['name']]['trophy']['elo']:
+                    _, l_tier = get_tier_icon(l_elo, 10) # 10 pour forcer l'affichage de l'icône dans l'historique
+                    relations[w['name']]['trophy'] = {"name": l['name'], "elo": int(round(l_elo)), "tier": l_tier}
+
+        # Bane: Plus bas Elo parmi les gagnants au moment du match
+        for l in losers:
+            for w in winners:
+                w_elo = get_elo_for_match(w['name'], match_id, full_history)
+                if w_elo is not None and w_elo < relations[l['name']]['bane']['elo']:
+                    _, w_tier = get_tier_icon(w_elo, 10)
+                    relations[l['name']]['bane'] = {"name": w['name'], "elo": int(round(w_elo)), "tier": w_tier}
+    
+    # Injection du compte final
+    for p in all_players:
+        relations[p]["unique_opponents"] = len(opponents_track[p])
+        
+    return relations
+
+# Préparation de l'historique nettoyé (exactement comme dans main.py)
+clean_history = {get_clean_name(k): v for k, v in player_history.items()}
+
+# Calcul final du dictionnaire map
+relations_map = extract_relations(archive_matches_list, clean_history)
+
+# =========================================================================
+# --- 9. FINAL EXPORTS ---
 # =========================================================================
 os.makedirs(DATA_DIR, exist_ok=True)
 
@@ -270,7 +352,10 @@ safe_save(OUTPUT_MATCHES, archive_matches_list, is_json=True)
 # C. Save History Graph
 safe_save(OUTPUT_HISTORY, player_history, is_json=True)
 
-# D. Save Metadata
+# D. Save Relations Tree Data
+safe_save(OUTPUT_RELATIONS, relations_map, is_json=True)
+
+# E. Save Metadata
 metadata = {
     "season_tag": SEASON_TAG.upper(),
     "cutoff_date": CUTOFF_DATE_STR,
