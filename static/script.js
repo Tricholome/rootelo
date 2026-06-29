@@ -226,49 +226,49 @@ document.addEventListener('DOMContentLoaded', function() {
 $(document).ready(function() {
 
     // --- 1. LEADERBOARD ---
-    if ($('#leaderboard').length > 0) {
-        $.extend($.fn.dataTable.ext.type.order, { 
-            "rank-pre": function (d) { return d === "-" ? 9999 : parseInt(d); } 
-        });
+	if ($('#leaderboard').length > 0) {
+		
+		let showAll = false; 
 
-        const table = $('#leaderboard').DataTable({
-            "order": [[3, "desc"]],
-            "responsive": true, 
-            "pageLength": 50,
-            "dom": '<"top"lf>rt<"bottom"ip><"clear">',
-            "columnDefs": [ 
-                { "targets": 0, "type": "rank" },
-                { "targets": 2, "className": "player-name-cell" },
-                { "className": "elo-cell" },
-                { "className": "numeric-cell", "targets": [0, 3, 4, 5, 6, 7, 8] }
-            ],
-            "language": { "searchPlaceholder": "Player name" },
-            "initComplete": function(settings, json) {
+		$.extend($.fn.dataTable.ext.type.order, { 
+			"rank-pre": function (d) { return d === "-" ? 9999 : parseInt(d); } 
+		});
 
-                $('.dataTables_length').append(`
-                    <label class="dt-checkbox-label">
-                        <input type="checkbox" id="tierFilterCheckbox"> Show all players
-                    </label>
-                `);
-            }
-        });
+		const table = $('#leaderboard').DataTable({
+			"order": [[3, "desc"]],
+			"responsive": true, 
+			"pageLength": 50,
+			"dom": '<"top"lf>rt<"bottom"ip><"clear">',
+			"columnDefs": [ 
+				{ "targets": 0, "type": "rank" },
+				{ "targets": 2, "className": "player-name-cell" },
+				{ "className": "elo-cell" },
+				{ "className": "numeric-cell", "targets": [0, 3, 4, 5, 6, 7, 8] }
+			],
+			"language": { "searchPlaceholder": "Player name" },
+			"initComplete": function(settings, json) {
 
-        $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
-            if (settings.nTable.id !== 'leaderboard') return true;
+				$('.dataTables_length').append(`
+					<label class="dt-checkbox-label">
+						<input type="checkbox" id="tierFilterCheckbox"> Show unranked players
+					</label>
+				`);
+			}
+		});
 
-            const $checkbox = $('#tierFilterCheckbox');
-            
-            if ($checkbox.length && $checkbox.is(':checked')) {
-                return true;
-            }
+		$.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
+			if (settings.nTable.id !== 'leaderboard') return true;
+			
+			if (showAll) return true; 
+			
+			return data[0].trim() !== "-";
+		});
 
-            return data[0].trim() !== "-";
-        });
-
-        $(document).on('change', '#tierFilterCheckbox', function() {
-            table.draw();
-        });
-    }
+		$(document).on('change', '#tierFilterCheckbox', function() {
+			showAll = $(this).is(':checked');
+			table.draw();
+		});
+	}
 	
 	// --- 2. MATCHES ---
     if ($('#matchesTable').length > 0) {
