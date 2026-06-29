@@ -257,13 +257,13 @@ $(document).ready(function() {
             if (settings.nTable.id !== 'leaderboard') return true;
             if ($('#tierFilterCheckbox').is(':checked')) return true;
 
-            const isQualified = data[0].trim() !== "-"; 
-            return isQualified;
+            return data[0].trim() !== "-";
         });
 
         $('#tierFilterCheckbox').on('change', function() {
             table.draw();
         });
+		table.draw();
     }
 	
 	// --- 2. MATCHES ---
