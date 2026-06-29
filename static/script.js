@@ -246,7 +246,7 @@ $(document).ready(function() {
             "initComplete": function(settings, json) {
                 $('.dataTables_length').append(`
                     <label class="dt-checkbox-label">
-                        <input type="checkbox" id="tierFilterCheckbox"> Show all
+                        <input type="checkbox" id="tierFilterCheckbox"> Show unranked players
                     </label>
                 `);
             }
