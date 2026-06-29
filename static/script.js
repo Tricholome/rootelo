@@ -782,62 +782,76 @@ function getRelationsIconHtml(tier) {
 }
 
 window.updateRelationsTree = function(playerName) {
-    if (!window.relationsData) return;
+    const relationsWrapper = document.querySelector('.relations-wrapper');
+    
+    if (!window.relationsData) {
+        if (relationsWrapper) relationsWrapper.style.display = 'none';
+        return;
+    }
+    
     const data = window.relationsData[playerName];
     
-    if (data) {
-        document.getElementById('centerPlayerName').innerText = playerName;
-        document.getElementById('centerPlayerMeta').innerHTML = `<div class="narrative-text">faced <span class="opponents-count">${data.unique_opponents}</span> different opponents...</div>`;
-        
-        // Trophy (Top Right)
-        const nodeTrophy = document.getElementById('nodeTrophy');
-        if (data.trophy && data.trophy.name) {
-            const trophyIcon = data.trophy.tier ? getRelationsIconHtml(data.trophy.tier) : "";
-            const eloColor = data.trophy.tier ? `var(--color-${data.trophy.tier})` : 'var(--text-main)';
-            nodeTrophy.innerHTML = `
-                <div class="narrative-text">...brought down the mighty</div>
-                <div id="textTrophy" class="node-content-flex">
-					${trophyIcon ? `<div class="node-icon-side">${trophyIcon}</div>` : ''}
-					<div class="node-text-side">
-						<div class="player-name">${data.trophy.name}</div>
-						<div class="player-meta" style="color: ${eloColor};">Elo ${data.trophy.elo}</div>
-					</div>
-				</div>
-            `;
-            nodeTrophy.setAttribute('data-player', data.trophy.name);
-        } else {
-            nodeTrophy.innerHTML = `
-                <div id="textTrophy">
-                    <div class="narrative-text">...but failed to claim a single victory</div>
+    // --- CORRECTION : Si le joueur n'a pas de données ou n'a aucun adversaire cette saison ---
+    if (!data || !data.unique_opponents || data.unique_opponents === 0) {
+        if (relationsWrapper) relationsWrapper.style.display = 'none';
+        return; // On stoppe l'exécution ici pour ne pas dessiner un arbre vide
+    }
+    
+    // Si le joueur a joué, on s'assure que le bloc est bien affiché
+    if (relationsWrapper) relationsWrapper.style.display = 'block';
+    
+    // Début du rendu de l'arbre
+    document.getElementById('centerPlayerName').innerText = playerName;
+    document.getElementById('centerPlayerMeta').innerHTML = `<div class="narrative-text">faced <span class="opponents-count">${data.unique_opponents}</span> different opponents...</div>`;
+    
+    // Trophy (Top Right)
+    const nodeTrophy = document.getElementById('nodeTrophy');
+    if (data.trophy && data.trophy.name) {
+        const trophyIcon = data.trophy.tier ? getRelationsIconHtml(data.trophy.tier) : "";
+        const eloColor = data.trophy.tier ? `var(--color-${data.trophy.tier})` : 'var(--text-main)';
+        nodeTrophy.innerHTML = `
+            <div class="narrative-text">...brought down the mighty</div>
+            <div id="textTrophy" class="node-content-flex">
+                ${trophyIcon ? `<div class="node-icon-side">${trophyIcon}</div>` : ''}
+                <div class="node-text-side">
+                    <div class="player-name">${data.trophy.name}</div>
+                    <div class="player-meta" style="color: ${eloColor};">Elo ${data.trophy.elo}</div>
                 </div>
-            `;
-            nodeTrophy.setAttribute('data-player', '');
-        }
-        
-        // Bane (Bottom Right)
-        const nodeBane = document.getElementById('nodeBane');
-        if (data.bane && data.bane.name) {
-            const baneIcon = data.bane.tier ? getRelationsIconHtml(data.bane.tier) : "";
-            const eloColor = data.bane.tier ? `var(--color-${data.bane.tier})` : 'var(--text-main)';
-            nodeBane.innerHTML = `
-                <div class="narrative-text">...and fell before the humble</div>
-                <div id="textBane" class="node-content-flex">
-					${baneIcon ? `<div class="node-icon-side">${baneIcon}</div>` : ''}
-					<div class="node-text-side">
-						<div class="player-name">${data.bane.name}</div>
-						<div class="player-meta" style="color: ${eloColor};">Elo ${data.bane.elo}</div>
-					</div>
-				</div>
-            `;
-            nodeBane.setAttribute('data-player', data.bane.name);
-        } else {
-            nodeBane.innerHTML = `
-                <div id="textBane">
-                    <div class="narrative-text">...and never once tasted defeat</div>
+            </div>
+        `;
+        nodeTrophy.setAttribute('data-player', data.trophy.name);
+    } else {
+        nodeTrophy.innerHTML = `
+            <div id="textTrophy">
+                <div class="narrative-text">...but failed to claim a single victory</div>
+            </div>
+        `;
+        nodeTrophy.setAttribute('data-player', '');
+    }
+    
+    // Bane (Bottom Right)
+    const nodeBane = document.getElementById('nodeBane');
+    if (data.bane && data.bane.name) {
+        const baneIcon = data.bane.tier ? getRelationsIconHtml(data.bane.tier) : "";
+        const eloColor = data.bane.tier ? `var(--color-${data.bane.tier})` : 'var(--text-main)';
+        nodeBane.innerHTML = `
+            <div class="narrative-text">...and fell before the humble</div>
+            <div id="textBane" class="node-content-flex">
+                ${baneIcon ? `<div class="node-icon-side">${baneIcon}</div>` : ''}
+                <div class="node-text-side">
+                    <div class="player-name">${data.bane.name}</div>
+                    <div class="player-meta" style="color: ${eloColor};">Elo ${data.bane.elo}</div>
                 </div>
-            `;
-            nodeBane.setAttribute('data-player', '');
-        }
+            </div>
+        `;
+        nodeBane.setAttribute('data-player', data.bane.name);
+    } else {
+        nodeBane.innerHTML = `
+            <div id="textBane">
+                <div class="narrative-text">...and never once tasted defeat</div>
+            </div>
+        `;
+        nodeBane.setAttribute('data-player', '');
     }
 };
 
@@ -863,9 +877,10 @@ window.updatePlayerView = function() {
     const relationsWrapper = document.querySelector('.relations-wrapper');
 
     if (currentPlayer) {
-        // Un joueur est saisi : on affiche les blocs et on charge l'arbre
+        // Un joueur est saisi : on affiche les blocs de base
         if (chartWrapper) chartWrapper.style.display = 'block';
         if (relationsWrapper) relationsWrapper.style.display = 'block';
+        // updateRelationsTree écrasera le display de relationsWrapper si le joueur n'a pas joué
         window.updateRelationsTree(currentPlayer);
     } else {
         // La barre est vide : on masque complètement le graphique et les relations
