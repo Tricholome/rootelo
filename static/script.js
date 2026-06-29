@@ -232,7 +232,7 @@ $(document).ready(function() {
             "rank-pre": function (d) { return d === "-" ? 9999 : parseInt(d); } 
         });
 
-        $('#leaderboard').DataTable({
+        const table = $('#leaderboard').DataTable({
             "order": [[3, "desc"]],
             "responsive": true, 
             "pageLength": 50,
@@ -241,7 +241,7 @@ $(document).ready(function() {
                 { "targets": 0, "type": "rank" },
                 { "targets": 2, "className": "player-name-cell" },
                 { "targets": 3, "className": "elo-cell" },
-				{ "className": "numeric-cell", "targets": [0, 3, 4, 5, 6, 7, 8] },
+                { "className": "numeric-cell", "targets": [0, 3, 4, 5, 6, 7, 8] },
                 { "responsivePriority": 1, "targets": [2, 3] },
                 { "responsivePriority": 2, "targets": 0 },
                 { "responsivePriority": 3, "targets": 1 },
@@ -251,6 +251,18 @@ $(document).ready(function() {
             "language": {
                 "searchPlaceholder": "Player name"
             }
+        });
+
+        $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
+            if (settings.nTable.id !== 'leaderboard') return true;
+            if ($('#tierFilterCheckbox').is(':checked')) return true;
+
+            const isQualified = data[0].trim() !== "-"; 
+            return isQualified;
+        });
+
+        $('#tierFilterCheckbox').on('change', function() {
+            table.draw();
         });
     }
 	
