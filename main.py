@@ -11,10 +11,10 @@ from jinja2 import Environment, FileSystemLoader
 DATA_DIR = "data"
 
 # Add future seasons here when they are archived (e.g., ["lh01", "lh02"])
-ARCHIVE_SEASONS = ["lh01"] 
+ARCHIVE_SEASONS = ["lh01", "lh02"] 
 
-CURRENT_SEASON_TAG = "lh02"
-TOURNAMENT_ID = 25
+CURRENT_SEASON_TAG = "lh03"
+TOURNAMENT_ID = 26
 
 CORRECTIONS_FILE = os.path.join(DATA_DIR, f"{CURRENT_SEASON_TAG}_corrections.csv")
 
@@ -216,10 +216,17 @@ for tag in ARCHIVE_SEASONS:
     path_matches = os.path.join(DATA_DIR, f"{tag}_matches_fixed.json")
     path_trends  = os.path.join(DATA_DIR, f"{tag}_history_full.json")
     path_meta = os.path.join(DATA_DIR, f"{tag}_metadata.json")
+    path_relations = os.path.join(DATA_DIR, f"{tag}_relations.json")
+    
     archives_raw_data[tag]['metadata'] = {"cutoff_date": "N/A", "match_count": 0}
     if os.path.exists(path_meta):
         with open(path_meta, "r", encoding="utf-8") as f:
             archives_raw_data[tag]['metadata'] = json.load(f)
+            
+    archives_raw_data[tag]['relations'] = {}
+    if os.path.exists(path_relations):
+        with open(path_relations, "r", encoding="utf-8") as f:
+            archives_raw_data[tag]['relations'] = json.load(f)
     
     try:
         if os.path.exists(path_ratings):
@@ -619,6 +626,7 @@ for tag in ARCHIVE_SEASONS:
         match_data=data['matches'], 
         trends_data=data['trends'],
         meta=archives_raw_data[tag]['metadata']
+        relations_data=archives_raw_data[tag].get('relations', {})
     )
 
 # --- C. Render Static Pages ---
