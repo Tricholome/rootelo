@@ -857,7 +857,7 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 /* --- Narrative Journey Relations Chart --- */
 .relations-wrapper {
     margin-top: 40px;
-    padding: 40px;
+    padding: 30px 20px;
     background-color: rgba(43, 37, 27, 0.3);
     border: 1px solid var(--border-soft);
     border-radius: 12px;
@@ -871,7 +871,7 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     justify-content: center;
     max-width: 800px;
     margin: 0 auto;
-	padding: 40px;
+	padding: 30px 20px;
     height: 240px;
 }
 
@@ -979,6 +979,35 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     height: 100%;
     display: block;
     pointer-events: none;
+}
+
+/* --- Responsive Layout --- */
+@media (max-width: 768px) {
+    .relations-container {
+        flex-direction: column;
+        height: auto;
+        padding: 10px 0;
+        gap: 24px;
+    }
+
+    .left-column, 
+    .right-column {
+        flex: none;
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .right-column {
+        gap: 16px;
+    }
+
+    .middle-space {
+        display: none;
+    }
+
+    .narrative-text {
+        white-space: normal;
+    }
 }
 
 /* =========================================================================
