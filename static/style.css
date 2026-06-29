@@ -597,6 +597,38 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     filter: grayscale(1); 
 }
 
+.leaderboard-controls {
+    margin-bottom: 15px;
+    text-align: right;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.leaderboard-controls .filter-label {
+    display: inline-flex;
+    align-items: center;
+    color: var(--text-muted) !important;
+    padding: 5px 12px !important;
+    cursor: pointer;
+    border-radius: 4px !important;
+    border: 1px solid transparent !important;
+    transition: 0.3s;
+    font-size: var(--size-sm);
+    user-select: none;
+}
+
+.leaderboard-controls .filter-label:hover {
+    background: var(--bg-hover) !important;
+    color: var(--text-main) !important;
+    border: 1px solid var(--border-soft) !important;
+}
+
+.leaderboard-controls .filter-label input[type="checkbox"] {
+    margin-right: 8px;
+    cursor: pointer;
+    accent-color: var(--text-main);
+}
+
 /* --- F. Specifics (Matches) --- */
 .lineup-cell { 
     text-align: left !important;
