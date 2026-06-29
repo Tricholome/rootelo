@@ -938,7 +938,7 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     white-space: nowrap;
 }
 
-.player-name {
+.relations-container .player-name {
     font-size: var(--size-md);
     font-weight: var(--medium);
     display: block;
