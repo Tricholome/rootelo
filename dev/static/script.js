@@ -800,7 +800,7 @@ window.updateRelationsTree = function(playerName) {
 					${trophyIcon ? `<div class="node-icon-side">${trophyIcon}</div>` : ''}
 					<div class="node-text-side">
 						<div class="player-name">${data.trophy.name}</div>
-						<div class="player-meta" style="color: ${eloColor};">${data.trophy.elo}</div>
+						<div class="player-meta" style="color: ${eloColor};">Elo ${data.trophy.elo}</div>
 					</div>
 				</div>
             `;
@@ -825,7 +825,7 @@ window.updateRelationsTree = function(playerName) {
 					${baneIcon ? `<div class="node-icon-side">${baneIcon}</div>` : ''}
 					<div class="node-text-side">
 						<div class="player-name">${data.bane.name}</div>
-						<div class="player-meta" style="color: ${eloColor};">${data.bane.elo}</div>
+						<div class="player-meta" style="color: ${eloColor};">Elo ${data.bane.elo}</div>
 					</div>
 				</div>
             `;
