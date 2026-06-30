@@ -849,7 +849,7 @@ window.updateRelationsTree = function(playerName) {
         const trophyText = (vars && vars.trophy) ? getRandomVariation(vars.trophy) : "";
         
         nodeTrophy.innerHTML = `
-            ${trophyText ? `<div class="narrative-text">...${trophyText}</div>` : ''}
+            ${trophyText ? `<div class="narrative-text">${trophyText}</div>` : ''}
             <div id="textTrophy" class="node-content-flex">
                 ${trophyIcon ? `<div class="node-icon-side">${trophyIcon}</div>` : ''}
                 <div class="node-text-side">
@@ -877,7 +877,7 @@ window.updateRelationsTree = function(playerName) {
         const baneText = (vars && vars.bane) ? getRandomVariation(vars.bane) : "";
         
         nodeBane.innerHTML = `
-            ${baneText ? `<div class="narrative-text">...${baneText}</div>` : ''}
+            ${baneText ? `<div class="narrative-text">${baneText}</div>` : ''}
             <div id="textBane" class="node-content-flex">
                 ${baneIcon ? `<div class="node-icon-side">${baneIcon}</div>` : ''}
                 <div class="node-text-side">
