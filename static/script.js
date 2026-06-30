@@ -840,11 +840,9 @@ window.updateRelationsTree = function(playerName) {
         if (metaEl) metaEl.innerHTML = "";
     }
     
-    // Logique du nœud Trophy (Sauvegarde et restaure le tooltip)
+    // Logique du nœud Trophy
     const nodeTrophy = document.getElementById('nodeTrophy');
     if (nodeTrophy) {
-        const preservedTooltip = nodeTrophy.querySelector('.tooltip-text');
-        
         if (data.trophy && data.trophy.name) {
             const trophyIcon = data.trophy.tier ? getRelationsIconHtml(data.trophy.tier) : "";
             const eloColor = data.trophy.tier ? `var(--color-${data.trophy.tier})` : 'var(--text-main)';
@@ -859,6 +857,7 @@ window.updateRelationsTree = function(playerName) {
                         <div class="player-meta" style="color: ${eloColor};">Elo ${data.trophy.elo}</div>
                     </div>
                 </div>
+                <span class="tooltip-text">Highest-ranked opponent defeated this season</span>
             `;
             nodeTrophy.setAttribute('data-player', data.trophy.name);
         } else {
@@ -867,18 +866,15 @@ window.updateRelationsTree = function(playerName) {
                 <div id="textTrophy">
                     ${trophyEmptyText ? `<div class="narrative-text">${trophyEmptyText}</div>` : ''}
                 </div>
+                <span class="tooltip-text">Highest-ranked opponent defeated this season</span>
             `;
             nodeTrophy.setAttribute('data-player', '');
         }
-        
-        if (preservedTooltip) nodeTrophy.appendChild(preservedTooltip);
     }
     
-    // Logique du nœud Bane (Sauvegarde et restaure le tooltip)
+    // Logique du nœud Bane
     const nodeBane = document.getElementById('nodeBane');
     if (nodeBane) {
-        const preservedTooltip = nodeBane.querySelector('.tooltip-text');
-        
         if (data.bane && data.bane.name) {
             const baneIcon = data.bane.tier ? getRelationsIconHtml(data.bane.tier) : "";
             const eloColor = data.bane.tier ? `var(--color-${data.bane.tier})` : 'var(--text-main)';
@@ -893,6 +889,7 @@ window.updateRelationsTree = function(playerName) {
                         <div class="player-meta" style="color: ${eloColor};">Elo ${data.bane.elo}</div>
                     </div>
                 </div>
+                <span class="tooltip-text">Lowest-ranked opponent lost to this season</span>
             `;
             nodeBane.setAttribute('data-player', data.bane.name);
         } else {
@@ -901,11 +898,10 @@ window.updateRelationsTree = function(playerName) {
                 <div id="textBane">
                     ${baneEmptyText ? `<div class="narrative-text">${baneEmptyText}</div>` : ''}
                 </div>
+                <span class="tooltip-text">Lowest-ranked opponent lost to this season</span>
             `;
             nodeBane.setAttribute('data-player', '');
         }
-        
-        if (preservedTooltip) nodeBane.appendChild(preservedTooltip);
     }
 };
 
@@ -944,26 +940,24 @@ window.updatePlayerView = function() {
 
         const nodeTrophy = document.getElementById('nodeTrophy');
         if (nodeTrophy) {
-            const preservedTooltip = nodeTrophy.querySelector('.tooltip-text');
             nodeTrophy.innerHTML = `
                 <div id="textTrophy">
                     <div class="player-name">...</div>
                 </div>
+                <span class="tooltip-text">Highest-ranked opponent defeated this season</span>
             `;
             nodeTrophy.setAttribute('data-player', '');
-            if (preservedTooltip) nodeTrophy.appendChild(preservedTooltip);
         }
 
         const nodeBane = document.getElementById('nodeBane');
         if (nodeBane) {
-            const preservedTooltip = nodeBane.querySelector('.tooltip-text');
             nodeBane.innerHTML = `
                 <div id="textBane">
                     <div class="player-name">...</div>
                 </div>
+                <span class="tooltip-text">Lowest-ranked opponent lost to this season</span>
             `;
             nodeBane.setAttribute('data-player', '');
-            if (preservedTooltip) nodeBane.appendChild(preservedTooltip);
         }
     }
 };
