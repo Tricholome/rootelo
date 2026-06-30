@@ -9,10 +9,18 @@ from jinja2 import Environment, FileSystemLoader
 # --- 0. CONFIGURATION & CONSTANTS ---
 # =========================================================================
 DATA_DIR = "data"
-ARCHIVE_SEASONS = ["lh01"] 
-CURRENT_SEASON_TAG = "lh02"
-TOURNAMENT_ID = 25
+ARCHIVE_SEASONS = ["lh01", "lh02"] 
+CURRENT_SEASON_TAG = "lh03"
+TOURNAMENT_ID = 26
+
 CORRECTIONS_FILE = os.path.join(DATA_DIR, f"{CURRENT_SEASON_TAG}_corrections.csv")
+
+CONTENT_FILE = os.path.join(DATA_DIR, "pages_content.json")
+if os.path.exists(CONTENT_FILE):
+    with open(CONTENT_FILE, "r", encoding="utf-8") as f:
+        PAGES = json.load(f)
+else:
+    PAGES = {}
 
 NAV_ITEMS = [
     {'id': 'index', 'url': 'index.html', 'label': 'Leaderboard'},
@@ -168,7 +176,7 @@ def render_page(template_name, output_name, **kwargs):
     }
     with open(output_name, "w", encoding="utf-8") as f:
         f.write(template.render(**full_vars))
-    print(f"  > {output_name} généré.")
+    print(f"  > {output_name} generated.")
 
 # =========================================================================
 # --- 3. DATA LOADERS ---
@@ -384,7 +392,8 @@ else:
 # =========================================================================
 # --- 7. ASSET PREPARATION ---
 # =========================================================================
-print("\n=== GENERATING SITE ASSETS ===")
+print("\n=== PREPARING SITE ASSETS ===")
+print("  > Processing current season data...")
 
 current_meta = {
     'match_count': df['GameID'].nunique() if not df.empty else 0, 'cutoff_date': CUTOFF_DATE.strftime('%Y-%m-%d')
@@ -399,6 +408,7 @@ if not current_matches_df.empty:
 
 display_trends_current = prepare_trends_data(current_history)
 
+print("  > Processing historical archive data...")
 display_archives = {}
 for tag in ARCHIVE_SEASONS:
     raw = archives_raw_data[tag]
@@ -410,7 +420,7 @@ for tag in ARCHIVE_SEASONS:
 # =========================================================================
 # --- 8. HALL OF FAME (STREAKS CODES) ---
 # =========================================================================
-print("  > Compiling Hall of Fame...")
+print("  > Compiling historical tier streaks...")
 
 def extract_all_streaks(history, player_full_name):
     streaks = []
@@ -483,34 +493,45 @@ for t in TIER_HIERARCHY:
 print("\n=== GENERATING HTML PAGES ===")
 
 def render_core_pages(file_suffix, is_archive, tag, lb_data, match_data, trends_data, meta, relations_data=None):
-    """Helper to generate the 3 main pages identically for live and archives."""
     
+    # 1. Leaderboard
     render_page(
         "leaderboard.html", f"index{file_suffix}.html", page_id="index", current_page_base="index",
-        title="Leaderboard • Rootelo", page_heading="Leaderboard",
-        description=f"Only players with a Tier are ranked. Double-click&nbsp;to&nbsp;see&nbsp;individual&nbsp;Journeys.<br><br><i><small>Includes {meta.get('match_count', 0)} matches up to {meta.get('cutoff_date', 'N/A')}.</i></small>",
+        title=PAGES["index"]["title"], 
+        page_heading=PAGES["index"]["page_heading"],
+        description=PAGES["index"]["description"].format(
+            match_count=meta.get('match_count', 0), 
+            cutoff_date=meta.get('cutoff_date', 'N/A')
+        ),
         is_archive=is_archive, has_seasons=True, season_tag=tag,
         archive_seasons=ARCHIVE_SEASONS,
         current_season_tag=CURRENT_SEASON_TAG,
         num_matches=meta.get('match_count', 0),
-        cutoff_date=meta.get('cutoff_date', "N/A"),
+        cutoff_date=meta.get('cutoff_date', 'N/A'),
         players=lb_data
     )
 
+    # 2. Matches
     render_page(
         "matches.html", f"matches{file_suffix}.html", page_id="matches",
-        title="Top Tables • Rootelo", page_heading="Top Tables",
-        description=f"Season games ranked by total Elo. Click&nbsp;a&nbsp;Game&nbsp;ID&nbsp;for&nbsp;match&nbsp;details.<br><br><i><small>Includes {meta.get('match_count', 0)} matches up to {meta.get('cutoff_date', 'N/A')}.</i></small>",
+        title=PAGES["matches"]["title"], 
+        page_heading=PAGES["matches"]["page_heading"],
+        description=PAGES["matches"]["description"].format(
+            match_count=meta.get('match_count', 0), 
+            cutoff_date=meta.get('cutoff_date', 'N/A')
+        ),
         is_archive=is_archive, has_seasons=True, season_tag=tag,
         archive_seasons=ARCHIVE_SEASONS,
         current_season_tag=CURRENT_SEASON_TAG,
         matches=match_data
     )
 
+    # 3. Trends
     render_page(
         "trends.html", f"trends{file_suffix}.html", page_id="trends",
-        title="Player's Journey • Rootelo", page_heading="Player's Journey",
-        description="Search for a player to see their Elo&nbsp;evolution&nbsp;over&nbsp;the&nbsp;season.",
+        title=PAGES["trends"]["title"], 
+        page_heading=PAGES["trends"]["page_heading"],
+        description=PAGES["trends"]["description"],
         is_archive=is_archive, has_seasons=True, season_tag=tag,
         archive_seasons=ARCHIVE_SEASONS,
         current_season_tag=CURRENT_SEASON_TAG,
@@ -525,7 +546,19 @@ for tag in ARCHIVE_SEASONS:
     render_core_pages(f"_{tag}", True, tag, display_archives[tag]['leaderboard'], display_archives[tag]['matches'], display_archives[tag]['trends'], archives_raw_data[tag]['metadata'], archives_raw_data[tag].get('relations', {}))
 
 # --- Render Static Pages ---
-render_page("about.html", "about.html", title="Codex • Rootelo", page_id="about", is_archive=False, has_seasons=False, page_heading="Codex", description="Understanding the fundamental rules and&nbsp;mechanics&nbsp;of&nbsp;Rootelo.")
-render_page("cache.html", "cache.html", title="Undergrowth • Rootelo", page_id="cache", is_archive=False, has_seasons=False, page_heading="Undergrowth", description="A sanctuary for the critters who&nbsp;never&nbsp;sought&nbsp;a&nbsp;<span class='cipher' data-word='crown'>crown</span>.", hall_of_fame=hall_of_fame_data)
+render_page(
+    "about.html", "about.html", page_id="about", is_archive=False, has_seasons=False,
+    title=PAGES["about"]["title"], 
+    page_heading=PAGES["about"]["page_heading"], 
+    description=PAGES["about"]["description"]
+)
+
+render_page(
+    "cache.html", "cache.html", page_id="cache", is_archive=False, has_seasons=False,
+    title=PAGES["cache"]["title"], 
+    page_heading=PAGES["cache"]["page_heading"], 
+    description=PAGES["cache"]["description"], 
+    hall_of_fame=hall_of_fame_data
+)
 
 print("✨ Website generated successfully!")
