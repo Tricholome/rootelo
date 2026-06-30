@@ -829,7 +829,6 @@ window.updateRelationsTree = function(playerName) {
     const metaEl = document.getElementById('centerPlayerMeta');
     const formattedCount = `<span class="opponents-count">${data.unique_opponents}</span>`;
     
-    // Logique du nœud central (Intro en haut, Stats en bas)
     if (vars && vars.center && vars.opponents) {
         const centerIntro = getRandomVariation(vars.center);
         const opponentPhrase = getRandomVariation(vars.opponents).replace('{count}', formattedCount);
@@ -841,64 +840,73 @@ window.updateRelationsTree = function(playerName) {
         if (metaEl) metaEl.innerHTML = "";
     }
     
-    // Logique du nœud Trophy
+    // Logique du nœud Trophy (Cible le .node-body)
     const nodeTrophy = document.getElementById('nodeTrophy');
-    if (data.trophy && data.trophy.name) {
-        const trophyIcon = data.trophy.tier ? getRelationsIconHtml(data.trophy.tier) : "";
-        const eloColor = data.trophy.tier ? `var(--color-${data.trophy.tier})` : 'var(--text-main)';
-        const trophyText = (vars && vars.trophy) ? getRandomVariation(vars.trophy) : "";
-        
-        nodeTrophy.innerHTML = `
-            ${trophyText ? `<div class="narrative-text">${trophyText}</div>` : ''}
-            <div id="textTrophy" class="node-content-flex">
-                ${trophyIcon ? `<div class="node-icon-side">${trophyIcon}</div>` : ''}
-                <div class="node-text-side">
-                    <div class="player-name">${data.trophy.name}</div>
-                    <div class="player-meta" style="color: ${eloColor};">Elo ${data.trophy.elo}</div>
+    if (nodeTrophy) {
+        const trophyBody = nodeTrophy.querySelector('.node-body');
+        if (data.trophy && data.trophy.name) {
+            const trophyIcon = data.trophy.tier ? getRelationsIconHtml(data.trophy.tier) : "";
+            const eloColor = data.trophy.tier ? `var(--color-${data.trophy.tier})` : 'var(--text-main)';
+            const trophyText = (vars && vars.trophy) ? getRandomVariation(vars.trophy) : "";
+            
+            trophyBody.innerHTML = `
+                ${trophyText ? `<div class="narrative-text">${trophyText}</div>` : ''}
+                <div id="textTrophy" class="node-content-flex">
+                    ${trophyIcon ? `<div class="node-icon-side">${trophyIcon}</div>` : ''}
+                    <div class="node-text-side">
+                        <div class="player-name">${data.trophy.name}</div>
+                        <div class="player-meta" style="color: ${eloColor};">Elo ${data.trophy.elo}</div>
+                    </div>
                 </div>
-            </div>
-        `;
-        nodeTrophy.setAttribute('data-player', data.trophy.name);
-    } else {
-        const trophyEmptyText = (vars && vars.trophy_empty) ? getRandomVariation(vars.trophy_empty) : "";
-        nodeTrophy.innerHTML = `
-            <div id="textTrophy">
-                ${trophyEmptyText ? `<div class="narrative-text">${trophyEmptyText}</div>` : ''}
-            </div>
-        `;
-        nodeTrophy.setAttribute('data-player', '');
+            `;
+            nodeTrophy.setAttribute('data-player', data.trophy.name);
+        } else {
+            const trophyEmptyText = (vars && vars.trophy_empty) ? getRandomVariation(vars.trophy_empty) : "";
+            trophyBody.innerHTML = `
+                <div id="textTrophy">
+                    ${trophyEmptyText ? `<div class="narrative-text">${trophyEmptyText}</div>` : ''}
+                </div>
+            `;
+            nodeTrophy.setAttribute('data-player', '');
+        }
     }
     
-    // Logique du nœud Bane
+    // Logique du nœud Bane (Cible le .node-body)
     const nodeBane = document.getElementById('nodeBane');
-    if (data.bane && data.bane.name) {
-        const baneIcon = data.bane.tier ? getRelationsIconHtml(data.bane.tier) : "";
-        const eloColor = data.bane.tier ? `var(--color-${data.bane.tier})` : 'var(--text-main)';
-        const baneText = (vars && vars.bane) ? getRandomVariation(vars.bane) : "";
-        
-        nodeBane.innerHTML = `
-            ${baneText ? `<div class="narrative-text">${baneText}</div>` : ''}
-            <div id="textBane" class="node-content-flex">
-                ${baneIcon ? `<div class="node-icon-side">${baneIcon}</div>` : ''}
-                <div class="node-text-side">
-                    <div class="player-name">${data.bane.name}</div>
-                    <div class="player-meta" style="color: ${eloColor};">Elo ${data.bane.elo}</div>
+    if (nodeBane) {
+        const baneBody = nodeBane.querySelector('.node-body');
+        if (data.bane && data.bane.name) {
+            const baneIcon = data.bane.tier ? getRelationsIconHtml(data.bane.tier) : "";
+            const eloColor = data.bane.tier ? `var(--color-${data.bane.tier})` : 'var(--text-main)';
+            const baneText = (vars && vars.bane) ? getRandomVariation(vars.bane) : "";
+            
+            baneBody.innerHTML = `
+                ${baneText ? `<div class="narrative-text">${baneText}</div>` : ''}
+                <div id="textBane" class="node-content-flex">
+                    ${baneIcon ? `<div class="node-icon-side">${baneIcon}</div>` : ''}
+                    <div class="node-text-side">
+                        <div class="player-name">${data.bane.name}</div>
+                        <div class="player-meta" style="color: ${eloColor};">Elo ${data.bane.elo}</div>
+                    </div>
                 </div>
-            </div>
-        `;
-        nodeBane.setAttribute('data-player', data.bane.name);
-    } else {
-        const baneEmptyText = (vars && vars.bane_empty) ? getRandomVariation(vars.bane_empty) : "";
-        nodeBane.innerHTML = `
-            <div id="textBane">
-                ${baneEmptyText ? `<div class="narrative-text">${baneEmptyText}</div>` : ''}
-            </div>
-        `;
-        nodeBane.setAttribute('data-player', '');
+            `;
+            nodeBane.setAttribute('data-player', data.bane.name);
+        } else {
+            const baneEmptyText = (vars && vars.bane_empty) ? getRandomVariation(vars.bane_empty) : "";
+            baneBody.innerHTML = `
+                <div id="textBane">
+                    ${baneEmptyText ? `<div class="narrative-text">${baneEmptyText}</div>` : ''}
+                </div>
+            `;
+            nodeBane.setAttribute('data-player', '');
+        }
     }
 };
 
 window.selectPlayerFromTree = function(element) {
+    // Si l'élément est en mode double-tap étendu (premier clic mobile), on bloque la redirection
+    if (element.classList.contains('expanded')) return;
+
     const clickedName = element.getAttribute('data-player');
     if (clickedName) {
         const input = document.getElementById('playerName');
@@ -931,24 +939,33 @@ window.updatePlayerView = function() {
         if (centerIntro) centerIntro.innerHTML = '';
         if (centerMeta) centerMeta.innerHTML = '';
 
+        // Nettoyage propre sans toucher au tooltip HTML
         const nodeTrophy = document.getElementById('nodeTrophy');
         if (nodeTrophy) {
-            nodeTrophy.innerHTML = `
-                <div id="textTrophy">
-                    <div class="player-name">...</div>
-                </div>
-            `;
+            const trophyBody = nodeTrophy.querySelector('.node-body');
+            if (trophyBody) {
+                trophyBody.innerHTML = `
+                    <div id="textTrophy">
+                        <div class="player-name">...</div>
+                    </div>
+                `;
+            }
             nodeTrophy.setAttribute('data-player', '');
+            nodeTrophy.classList.remove('expanded');
         }
 
         const nodeBane = document.getElementById('nodeBane');
         if (nodeBane) {
-            nodeBane.innerHTML = `
-                <div id="textBane">
-                    <div class="player-name">...</div>
-                </div>
-            `;
+            const baneBody = nodeBane.querySelector('.node-body');
+            if (baneBody) {
+                baneBody.innerHTML = `
+                    <div id="textBane">
+                        <div class="player-name">...</div>
+                    </div>
+                `;
+            }
             nodeBane.setAttribute('data-player', '');
+            nodeBane.classList.remove('expanded');
         }
     }
 };
