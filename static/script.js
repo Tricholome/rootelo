@@ -840,15 +840,17 @@ window.updateRelationsTree = function(playerName) {
         if (metaEl) metaEl.innerHTML = "";
     }
     
-    // Logique du nœud Trophy
+    // Logique du nœud Trophy (cible uniquement .node-content)
     const nodeTrophy = document.getElementById('nodeTrophy');
     if (nodeTrophy) {
+        const target = nodeTrophy.querySelector('.node-content') || nodeTrophy;
+        
         if (data.trophy && data.trophy.name) {
             const trophyIcon = data.trophy.tier ? getRelationsIconHtml(data.trophy.tier) : "";
             const eloColor = data.trophy.tier ? `var(--color-${data.trophy.tier})` : 'var(--text-main)';
             const trophyText = (vars && vars.trophy) ? getRandomVariation(vars.trophy) : "";
             
-            nodeTrophy.innerHTML = `
+            target.innerHTML = `
                 ${trophyText ? `<div class="narrative-text">${trophyText}</div>` : ''}
                 <div id="textTrophy" class="node-content-flex">
                     ${trophyIcon ? `<div class="node-icon-side">${trophyIcon}</div>` : ''}
@@ -857,30 +859,30 @@ window.updateRelationsTree = function(playerName) {
                         <div class="player-meta" style="color: ${eloColor};">Elo ${data.trophy.elo}</div>
                     </div>
                 </div>
-                <span class="tooltip-text">Highest-ranked opponent defeated this season</span>
             `;
             nodeTrophy.setAttribute('data-player', data.trophy.name);
         } else {
             const trophyEmptyText = (vars && vars.trophy_empty) ? getRandomVariation(vars.trophy_empty) : "";
-            nodeTrophy.innerHTML = `
+            target.innerHTML = `
                 <div id="textTrophy">
                     ${trophyEmptyText ? `<div class="narrative-text">${trophyEmptyText}</div>` : ''}
                 </div>
-                <span class="tooltip-text">Highest-ranked opponent defeated this season</span>
             `;
             nodeTrophy.setAttribute('data-player', '');
         }
     }
     
-    // Logique du nœud Bane
+    // Logique du nœud Bane (cible uniquement .node-content)
     const nodeBane = document.getElementById('nodeBane');
     if (nodeBane) {
+        const target = nodeBane.querySelector('.node-content') || nodeBane;
+        
         if (data.bane && data.bane.name) {
             const baneIcon = data.bane.tier ? getRelationsIconHtml(data.bane.tier) : "";
             const eloColor = data.bane.tier ? `var(--color-${data.bane.tier})` : 'var(--text-main)';
             const baneText = (vars && vars.bane) ? getRandomVariation(vars.bane) : "";
             
-            nodeBane.innerHTML = `
+            target.innerHTML = `
                 ${baneText ? `<div class="narrative-text">${baneText}</div>` : ''}
                 <div id="textBane" class="node-content-flex">
                     ${baneIcon ? `<div class="node-icon-side">${baneIcon}</div>` : ''}
@@ -889,16 +891,14 @@ window.updateRelationsTree = function(playerName) {
                         <div class="player-meta" style="color: ${eloColor};">Elo ${data.bane.elo}</div>
                     </div>
                 </div>
-                <span class="tooltip-text">Lowest-ranked opponent lost to this season</span>
             `;
             nodeBane.setAttribute('data-player', data.bane.name);
         } else {
             const baneEmptyText = (vars && vars.bane_empty) ? getRandomVariation(vars.bane_empty) : "";
-            nodeBane.innerHTML = `
+            target.innerHTML = `
                 <div id="textBane">
                     ${baneEmptyText ? `<div class="narrative-text">${baneEmptyText}</div>` : ''}
                 </div>
-                <span class="tooltip-text">Lowest-ranked opponent lost to this season</span>
             `;
             nodeBane.setAttribute('data-player', '');
         }
@@ -940,22 +940,22 @@ window.updatePlayerView = function() {
 
         const nodeTrophy = document.getElementById('nodeTrophy');
         if (nodeTrophy) {
-            nodeTrophy.innerHTML = `
+            const target = nodeTrophy.querySelector('.node-content') || nodeTrophy;
+            target.innerHTML = `
                 <div id="textTrophy">
                     <div class="player-name">...</div>
                 </div>
-                <span class="tooltip-text">Highest-ranked opponent defeated this season</span>
             `;
             nodeTrophy.setAttribute('data-player', '');
         }
 
         const nodeBane = document.getElementById('nodeBane');
         if (nodeBane) {
-            nodeBane.innerHTML = `
+            const target = nodeBane.querySelector('.node-content') || nodeBane;
+            target.innerHTML = `
                 <div id="textBane">
                     <div class="player-name">...</div>
                 </div>
-                <span class="tooltip-text">Lowest-ranked opponent lost to this season</span>
             `;
             nodeBane.setAttribute('data-player', '');
         }
