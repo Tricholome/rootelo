@@ -56,7 +56,58 @@
     </div>
 
     <script>
-		window.CONFIG = {{ backend_config_json | default('{}') | safe }};
+		window.NARRATIVE_VARIATIONS = {
+			center: [
+				"On this winding journey,",
+				"Deep within the Woodland,",
+				"Following the hidden paths,",
+				"Beneath the Great Tree's shadow,",
+				"Through thickets and clearings,",
+				"As seasons turn and change"
+			],
+			trophy: [
+				"claimed their proudest trophy by outsmarting",
+				"brought down the Woodland's towering giant,",
+				"secured a legendary triumph against",
+				"scored a masterclass victory over",
+				"left their permanent mark by defeating",
+				"won a historic battle of wits against"
+			],
+			trophy_empty: [
+				"No trophies claimed this season.",
+				"The trophy room remains quiet for now.",
+				"No legendary triumphs recorded yet.",
+				"No towering giants were brought down this season.",
+				"Yet to leave a permanent mark on a top-ranked rival.",
+				"Still hunting for that definitive, historic victory."
+			],
+			bane: [
+				"yet suffered their bitterest defeat against",
+				"but met their ultimate match in",
+				"while their grand plans were foiled by",
+				"only to be cornered in the briars by",
+				"yet fell before the cunning tactics of",
+				"but met an unstoppable nemesis named"
+			],
+			bane_empty: [
+				"Remained undefeated by lower-ranked rivals.",
+				"Left no openings for lesser foes to exploit.",
+				"Maintained a flawless defense against the underdogs.",
+				"Walked through the briars completely unscathed.",
+				"Successfully parried every ambush this season.",
+				"Suffered no bitter upsets along the way."
+			],
+			opponents: [
+				"after testing their mettle against {count} unique rivals.",
+				"having crossed blades with {count} different wanderers.",
+				"leaving a trail of {count} unique opponents in their wake.",
+				"forging a legacy across encounters with {count} distinct souls.",
+				"after challenging {count} diverse factions of the forest.",
+				"proving their worth against {count} unique adversaries."
+			]
+		};
+
+		window.CONFIG = {{ backend_config_json | default('{}') }};
 		window.relationsData = {{ relations_json | default('{}') | safe }};
 	</script>
 {% endblock %}
