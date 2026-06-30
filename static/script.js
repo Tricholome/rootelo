@@ -903,6 +903,12 @@ window.updateRelationsTree = function(playerName) {
             nodeBane.setAttribute('data-player', '');
         }
     }
+    if (nodeTrophy && !nodeTrophy.querySelector('.tooltip-text')) {
+        nodeTrophy.insertAdjacentHTML('beforeend', '<span class="tooltip-text">Highest-ranked opponent defeated this season</span>');
+    }
+    if (nodeBane && !nodeBane.querySelector('.tooltip-text')) {
+        nodeBane.insertAdjacentHTML('beforeend', '<span class="tooltip-text">Lowest-ranked opponent lost to this season</span>');
+    }
 };
 
 window.selectPlayerFromTree = function(element) {
