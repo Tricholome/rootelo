@@ -840,16 +840,17 @@ window.updateRelationsTree = function(playerName) {
         if (metaEl) metaEl.innerHTML = "";
     }
     
-    // Logique du nœud Trophy (Cible uniquement .node-dynamic)
+    // Logique du nœud Trophy (Sauvegarde et restaure le tooltip)
     const nodeTrophy = document.getElementById('nodeTrophy');
     if (nodeTrophy) {
-        const targetContainer = nodeTrophy.querySelector('.node-dynamic') || nodeTrophy;
+        const preservedTooltip = nodeTrophy.querySelector('.tooltip-text');
+        
         if (data.trophy && data.trophy.name) {
             const trophyIcon = data.trophy.tier ? getRelationsIconHtml(data.trophy.tier) : "";
             const eloColor = data.trophy.tier ? `var(--color-${data.trophy.tier})` : 'var(--text-main)';
             const trophyText = (vars && vars.trophy) ? getRandomVariation(vars.trophy) : "";
             
-            targetContainer.innerHTML = `
+            nodeTrophy.innerHTML = `
                 ${trophyText ? `<div class="narrative-text">${trophyText}</div>` : ''}
                 <div id="textTrophy" class="node-content-flex">
                     ${trophyIcon ? `<div class="node-icon-side">${trophyIcon}</div>` : ''}
@@ -862,25 +863,28 @@ window.updateRelationsTree = function(playerName) {
             nodeTrophy.setAttribute('data-player', data.trophy.name);
         } else {
             const trophyEmptyText = (vars && vars.trophy_empty) ? getRandomVariation(vars.trophy_empty) : "";
-            targetContainer.innerHTML = `
+            nodeTrophy.innerHTML = `
                 <div id="textTrophy">
                     ${trophyEmptyText ? `<div class="narrative-text">${trophyEmptyText}</div>` : ''}
                 </div>
             `;
             nodeTrophy.setAttribute('data-player', '');
         }
+        
+        if (preservedTooltip) nodeTrophy.appendChild(preservedTooltip);
     }
     
-    // Logique du nœud Bane (Cible uniquement .node-dynamic)
+    // Logique du nœud Bane (Sauvegarde et restaure le tooltip)
     const nodeBane = document.getElementById('nodeBane');
     if (nodeBane) {
-        const targetContainer = nodeBane.querySelector('.node-dynamic') || nodeBane;
+        const preservedTooltip = nodeBane.querySelector('.tooltip-text');
+        
         if (data.bane && data.bane.name) {
             const baneIcon = data.bane.tier ? getRelationsIconHtml(data.bane.tier) : "";
             const eloColor = data.bane.tier ? `var(--color-${data.bane.tier})` : 'var(--text-main)';
             const baneText = (vars && vars.bane) ? getRandomVariation(vars.bane) : "";
             
-            targetContainer.innerHTML = `
+            nodeBane.innerHTML = `
                 ${baneText ? `<div class="narrative-text">${baneText}</div>` : ''}
                 <div id="textBane" class="node-content-flex">
                     ${baneIcon ? `<div class="node-icon-side">${baneIcon}</div>` : ''}
@@ -893,13 +897,15 @@ window.updateRelationsTree = function(playerName) {
             nodeBane.setAttribute('data-player', data.bane.name);
         } else {
             const baneEmptyText = (vars && vars.bane_empty) ? getRandomVariation(vars.bane_empty) : "";
-            targetContainer.innerHTML = `
+            nodeBane.innerHTML = `
                 <div id="textBane">
                     ${baneEmptyText ? `<div class="narrative-text">${baneEmptyText}</div>` : ''}
                 </div>
             `;
             nodeBane.setAttribute('data-player', '');
         }
+        
+        if (preservedTooltip) nodeBane.appendChild(preservedTooltip);
     }
 };
 
@@ -938,24 +944,26 @@ window.updatePlayerView = function() {
 
         const nodeTrophy = document.getElementById('nodeTrophy');
         if (nodeTrophy) {
-            const targetContainer = nodeTrophy.querySelector('.node-dynamic') || nodeTrophy;
-            targetContainer.innerHTML = `
+            const preservedTooltip = nodeTrophy.querySelector('.tooltip-text');
+            nodeTrophy.innerHTML = `
                 <div id="textTrophy">
                     <div class="player-name">...</div>
                 </div>
             `;
             nodeTrophy.setAttribute('data-player', '');
+            if (preservedTooltip) nodeTrophy.appendChild(preservedTooltip);
         }
 
         const nodeBane = document.getElementById('nodeBane');
         if (nodeBane) {
-            const targetContainer = nodeBane.querySelector('.node-dynamic') || nodeBane;
-            targetContainer.innerHTML = `
+            const preservedTooltip = nodeBane.querySelector('.tooltip-text');
+            nodeBane.innerHTML = `
                 <div id="textBane">
                     <div class="player-name">...</div>
                 </div>
             `;
             nodeBane.setAttribute('data-player', '');
+            if (preservedTooltip) nodeBane.appendChild(preservedTooltip);
         }
     }
 };
