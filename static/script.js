@@ -825,22 +825,30 @@ window.updateRelationsTree = function(playerName) {
     
     document.getElementById('centerPlayerName').innerText = playerName;
     
+    const introEl = document.getElementById('centerPlayerIntro');
+    const metaEl = document.getElementById('centerPlayerMeta');
+    const formattedCount = `<span class="opponents-count">${data.unique_opponents}</span>`;
+    
+    // Logique du nœud central (Intro en haut, Stats en bas avec style CSS)
     if (vars && vars.center && vars.opponents) {
         const centerIntro = getRandomVariation(vars.center);
-        const opponentPhrase = getRandomVariation(vars.opponents).replace('{count}', data.unique_opponents);
-        document.getElementById('centerPlayerMeta').innerHTML = `<div class="narrative-text">${centerIntro} ${opponentPhrase}</div>`;
+        const opponentPhrase = getRandomVariation(vars.opponents).replace('{count}', formattedCount);
+        if (introEl) introEl.innerHTML = centerIntro;
+        if (metaEl) metaEl.innerHTML = opponentPhrase;
     } else {
-        document.getElementById('centerPlayerMeta').innerHTML = `<div class="narrative-text">faced <span class="opponents-count">${data.unique_opponents}</span> different opponents...</div>`;
+        if (introEl) introEl.innerHTML = "";
+        if (metaEl) metaEl.innerHTML = "";
     }
     
+    // Logique du nœud Trophy
     const nodeTrophy = document.getElementById('nodeTrophy');
     if (data.trophy && data.trophy.name) {
         const trophyIcon = data.trophy.tier ? getRelationsIconHtml(data.trophy.tier) : "";
         const eloColor = data.trophy.tier ? `var(--color-${data.trophy.tier})` : 'var(--text-main)';
-        const trophyText = vars && vars.trophy ? getRandomVariation(vars.trophy) : "...brought down the mighty";
+        const trophyText = (vars && vars.trophy) ? getRandomVariation(vars.trophy) : "";
         
         nodeTrophy.innerHTML = `
-            <div class="narrative-text">...${trophyText}</div>
+            <div class="narrative-text">${trophyText ? `...${trophyText}` : ''}</div>
             <div id="textTrophy" class="node-content-flex">
                 ${trophyIcon ? `<div class="node-icon-side">${trophyIcon}</div>` : ''}
                 <div class="node-text-side">
@@ -851,7 +859,7 @@ window.updateRelationsTree = function(playerName) {
         `;
         nodeTrophy.setAttribute('data-player', data.trophy.name);
     } else {
-        const trophyEmptyText = vars && vars.trophy_empty ? getRandomVariation(vars.trophy_empty) : "...but failed to claim a single victory";
+        const trophyEmptyText = (vars && vars.trophy_empty) ? getRandomVariation(vars.trophy_empty) : "";
         nodeTrophy.innerHTML = `
             <div id="textTrophy">
                 <div class="narrative-text">${trophyEmptyText}</div>
@@ -860,14 +868,15 @@ window.updateRelationsTree = function(playerName) {
         nodeTrophy.setAttribute('data-player', '');
     }
     
+    // Logique du nœud Bane
     const nodeBane = document.getElementById('nodeBane');
     if (data.bane && data.bane.name) {
         const baneIcon = data.bane.tier ? getRelationsIconHtml(data.bane.tier) : "";
         const eloColor = data.bane.tier ? `var(--color-${data.bane.tier})` : 'var(--text-main)';
-        const baneText = vars && vars.bane ? getRandomVariation(vars.bane) : "...and fell before the humble";
+        const baneText = (vars && vars.bane) ? getRandomVariation(vars.bane) : "";
         
         nodeBane.innerHTML = `
-            <div class="narrative-text">...${baneText}</div>
+            <div class="narrative-text">${baneText ? `...${baneText}` : ''}</div>
             <div id="textBane" class="node-content-flex">
                 ${baneIcon ? `<div class="node-icon-side">${baneIcon}</div>` : ''}
                 <div class="node-text-side">
@@ -878,7 +887,7 @@ window.updateRelationsTree = function(playerName) {
         `;
         nodeBane.setAttribute('data-player', data.bane.name);
     } else {
-        const baneEmptyText = vars && vars.bane_empty ? getRandomVariation(vars.bane_empty) : "...and never once tasted defeat";
+        const baneEmptyText = (vars && vars.bane_empty) ? getRandomVariation(vars.bane_empty) : "";
         nodeBane.innerHTML = `
             <div id="textBane">
                 <div class="narrative-text">${baneEmptyText}</div>
@@ -914,8 +923,11 @@ window.updatePlayerView = function() {
         if (relationsWrapper) relationsWrapper.style.display = 'none';
         
         const centerName = document.getElementById('centerPlayerName');
+        const centerIntro = document.getElementById('centerPlayerIntro');
         const centerMeta = document.getElementById('centerPlayerMeta');
+        
         if (centerName) centerName.innerText = 'Select a player';
+        if (centerIntro) centerIntro.innerHTML = '';
         if (centerMeta) centerMeta.innerHTML = '';
 
         const nodeTrophy = document.getElementById('nodeTrophy');
