@@ -952,18 +952,23 @@
             </div>
 
             <div class="right-column">
-                <div class="node interactive-node" id="nodeTrophy" onclick="selectPlayerFromTree(this)" data-player="">
-                    <div id="textTrophy">
-                        <div class="player-name">...</div>
-                    </div>
-                </div>
-
-                <div class="node interactive-node" id="nodeBane" onclick="selectPlayerFromTree(this)" data-player="">
-                    <div id="textBane">
-                        <div class="player-name">...</div>
-                    </div>
-                </div>
-            </div>
+				<div class="node interactive-node js-double-tap" id="nodeTrophy" onclick="selectPlayerFromTree(this)" data-player="">
+					<div class="node-body">
+						<div id="textTrophy">
+							<div class="player-name">...</div>
+						</div>
+					</div>
+					<span class="tooltip-text">Highest-ranked opponent defeated this season</span>
+				</div>
+				<div class="node interactive-node js-double-tap" id="nodeBane" onclick="selectPlayerFromTree(this)" data-player="">
+					<div class="node-body">
+						<div id="textBane">
+							<div class="player-name">...</div>
+						</div>
+					</div>
+					<span class="tooltip-text">Lowest-ranked opponent lost to this season</span>
+				</div>
+			</div>
             
         </div>
     </div>
@@ -1044,7 +1049,7 @@
 					<span>Powered by <strong>Tʀɪᴄʜᴏʟᴏᴍᴇ</strong></span>
 					<span>Woodland visions by <a class="cl" href="cache.html">𝕩𝕝𝕦𝕖𝕧𝕚</a></span>
 				</div>
-				<div class="footer-date">Updated on 2026-06-30 14:04 UTC</div>
+				<div class="footer-date">Updated on 2026-06-30 14:05 UTC</div>
 			</div>
 		</footer>
     </div>
