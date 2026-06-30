@@ -1,50 +1,27 @@
 {
-  "static_pages": [
-    {
-      "template": "about.html",
-      "output": "about.html",
-      "page_id": "about",
-      "title": "Codex • Rootelo",
-      "page_heading": "Codex",
-      "description": "Understanding the fundamental rules and&nbsp;mechanics&nbsp;of&nbsp;Rootelo.",
-      "is_archive": false,
-      "has_seasons": false
-    },
-    {
-      "template": "cache.html",
-      "output": "cache.html",
-      "page_id": "cache",
-      "title": "Undergrowth • Rootelo",
-      "page_heading": "Undergrowth",
-      "description": "A sanctuary for the critters who&nbsp;never&nbsp;sought&nbsp;a&nbsp;<span class='cipher' data-word='crown'>crown</span>.",
-      "is_archive": false,
-      "has_seasons": false
-    }
-  ],
-  "core_pages": [
-    {
-      "page_id": "index",
-      "template": "leaderboard.html",
-      "base_output": "index{file_suffix}.html",
-      "title": "Leaderboard • Rootelo",
-      "page_heading": "Leaderboard",
-      "description": "Only players with a Tier are ranked. Double-click&nbsp;to&nbsp;see&nbsp;individual&nbsp;Journeys.<br><br><i><small>Includes {match_count} matches up to {cutoff_date}.</i></small>"
-    },
-    {
-      "page_id": "matches",
-      "template": "matches.html",
-      "base_output": "matches{file_suffix}.html",
-      "title": "Top Tables • Rootelo",
-      "page_heading": "Top Tables",
-      "description": "Season games ranked by total Elo. Click&nbsp;a&nbsp;Game&nbsp;ID&nbsp;for&nbsp;match&nbsp;details.<br><br><i><small>Includes {match_count} matches up to {cutoff_date}.</i></small>"
-    },
-    {
-      "page_id": "trends",
-      "template": "trends.html",
-      "base_output": "trends{file_suffix}.html",
-      "title": "Player's Journey • Rootelo",
-      "page_heading": "Player's Journey",
-      "description": "Search for a player to see their Elo&nbsp;evolution&nbsp;over&nbsp;the&nbsp;season."
-    }
-  ]
+  "index": {
+    "title": "Leaderboard • Rootelo",
+    "page_heading": "Leaderboard",
+    "description": "Only players with a Tier are ranked. Double-click&nbsp;to&nbsp;see&nbsp;individual&nbsp;Journeys.<br><br><i><small>Includes {match_count} matches up to {cutoff_date}.</i></small>"
+  },
+  "matches": {
+    "title": "Top Tables • Rootelo",
+    "page_heading": "Top Tables",
+    "description": "Season games ranked by total Elo. Click&nbsp;a&nbsp;Game&nbsp;ID&nbsp;for&nbsp;match&nbsp;details.<br><br><i><small>Includes {match_count} matches up to {cutoff_date}.</i></small>"
+  },
+  "trends": {
+    "title": "Player's Journey • Rootelo",
+    "page_heading": "Player's Journey",
+    "description": "Search for a player to see their Elo&nbsp;evolution&nbsp;over&nbsp;the&nbsp;season."
+  },
+  "about": {
+    "title": "Codex • Rootelo",
+    "page_heading": "Codex",
+    "description": "Understanding the fundamental rules and&nbsp;mechanics&nbsp;of&nbsp;Rootelo."
+  },
+  "cache": {
+    "title": "Undergrowth • Rootelo",
+    "page_heading": "Undergrowth",
+    "description": "A sanctuary for the critters who&nbsp;never&nbsp;sought&nbsp;a&nbsp;<span class='cipher' data-word='crown'>crown</span>."
+  }
 }
