@@ -800,6 +800,11 @@ function getRelationsIconHtml(tier) {
     return `<img src="${iconUrl}" class="tier-icon" alt="${tier}">`;
 }
 
+function getRandomVariation(array) {
+    if (!array || array.length === 0) return "";
+    return array[Math.floor(Math.random() * array.length)];
+}
+
 window.updateRelationsTree = function(playerName) {
     const relationsWrapper = document.querySelector('.relations-wrapper');
     
@@ -809,27 +814,33 @@ window.updateRelationsTree = function(playerName) {
     }
     
     const data = window.relationsData[playerName];
+    const vars = window.NARRATIVE_VARIATIONS;
     
-    // --- CORRECTION : Si le joueur n'a pas de données ou n'a aucun adversaire cette saison ---
     if (!data || !data.unique_opponents || data.unique_opponents === 0) {
         if (relationsWrapper) relationsWrapper.style.display = 'none';
-        return; // On stoppe l'exécution ici pour ne pas dessiner un arbre vide
+        return; 
     }
     
-    // Si le joueur a joué, on s'assure que le bloc est bien affiché
     if (relationsWrapper) relationsWrapper.style.display = 'block';
     
-    // Début du rendu de l'arbre
     document.getElementById('centerPlayerName').innerText = playerName;
-    document.getElementById('centerPlayerMeta').innerHTML = `<div class="narrative-text">faced <span class="opponents-count">${data.unique_opponents}</span> different opponents...</div>`;
     
-    // Trophy (Top Right)
+    if (vars && vars.center && vars.opponents) {
+        const centerIntro = getRandomVariation(vars.center);
+        const opponentPhrase = getRandomVariation(vars.opponents).replace('{count}', data.unique_opponents);
+        document.getElementById('centerPlayerMeta').innerHTML = `<div class="narrative-text">${centerIntro} ${opponentPhrase}</div>`;
+    } else {
+        document.getElementById('centerPlayerMeta').innerHTML = `<div class="narrative-text">faced <span class="opponents-count">${data.unique_opponents}</span> different opponents...</div>`;
+    }
+    
     const nodeTrophy = document.getElementById('nodeTrophy');
     if (data.trophy && data.trophy.name) {
         const trophyIcon = data.trophy.tier ? getRelationsIconHtml(data.trophy.tier) : "";
         const eloColor = data.trophy.tier ? `var(--color-${data.trophy.tier})` : 'var(--text-main)';
+        const trophyText = vars && vars.trophy ? getRandomVariation(vars.trophy) : "...brought down the mighty";
+        
         nodeTrophy.innerHTML = `
-            <div class="narrative-text">...brought down the mighty</div>
+            <div class="narrative-text">...${trophyText}</div>
             <div id="textTrophy" class="node-content-flex">
                 ${trophyIcon ? `<div class="node-icon-side">${trophyIcon}</div>` : ''}
                 <div class="node-text-side">
@@ -840,21 +851,23 @@ window.updateRelationsTree = function(playerName) {
         `;
         nodeTrophy.setAttribute('data-player', data.trophy.name);
     } else {
+        const trophyEmptyText = vars && vars.trophy_empty ? getRandomVariation(vars.trophy_empty) : "...but failed to claim a single victory";
         nodeTrophy.innerHTML = `
             <div id="textTrophy">
-                <div class="narrative-text">...but suffered only bitter loss</div>
+                <div class="narrative-text">${trophyEmptyText}</div>
             </div>
         `;
         nodeTrophy.setAttribute('data-player', '');
     }
     
-    // Bane (Bottom Right)
     const nodeBane = document.getElementById('nodeBane');
     if (data.bane && data.bane.name) {
         const baneIcon = data.bane.tier ? getRelationsIconHtml(data.bane.tier) : "";
         const eloColor = data.bane.tier ? `var(--color-${data.bane.tier})` : 'var(--text-main)';
+        const baneText = vars && vars.bane ? getRandomVariation(vars.bane) : "...and fell before the humble";
+        
         nodeBane.innerHTML = `
-            <div class="narrative-text">...and fell before the humble</div>
+            <div class="narrative-text">...${baneText}</div>
             <div id="textBane" class="node-content-flex">
                 ${baneIcon ? `<div class="node-icon-side">${baneIcon}</div>` : ''}
                 <div class="node-text-side">
@@ -865,29 +878,26 @@ window.updateRelationsTree = function(playerName) {
         `;
         nodeBane.setAttribute('data-player', data.bane.name);
     } else {
+        const baneEmptyText = vars && vars.bane_empty ? getRandomVariation(vars.bane_empty) : "...and never once tasted defeat";
         nodeBane.innerHTML = `
             <div id="textBane">
-                <div class="narrative-text">...and never once tasted defeat</div>
+                <div class="narrative-text">${baneEmptyText}</div>
             </div>
         `;
         nodeBane.setAttribute('data-player', '');
     }
 };
 
-// Fonction déclenchée quand on clique sur l'arbre (onclick)
 window.selectPlayerFromTree = function(element) {
     const clickedName = element.getAttribute('data-player');
     if (clickedName) {
         const input = document.getElementById('playerName');
         input.value = clickedName;
-        // Met à jour l'arbre
         window.updateRelationsTree(clickedName);
-        // Force Chart.js à voir le changement
         input.dispatchEvent(new Event('input')); 
     }
 };
 
-// Fonction déclenchée quand on tape dans la barre (oninput) ou qu'on la vide
 window.updatePlayerView = function() {
     const input = document.getElementById('playerName');
     const currentPlayer = input ? input.value.trim() : "";
@@ -896,17 +906,13 @@ window.updatePlayerView = function() {
     const relationsWrapper = document.querySelector('.relations-wrapper');
 
     if (currentPlayer) {
-        // Un joueur est saisi : on affiche les blocs de base
         if (chartWrapper) chartWrapper.style.display = 'block';
         if (relationsWrapper) relationsWrapper.style.display = 'block';
-        // updateRelationsTree écrasera le display de relationsWrapper si le joueur n'a pas joué
         window.updateRelationsTree(currentPlayer);
     } else {
-        // La barre est vide : on masque complètement le graphique et les relations
         if (chartWrapper) chartWrapper.style.display = 'none';
         if (relationsWrapper) relationsWrapper.style.display = 'none';
         
-        // Remise à zéro propre respectant la structure HTML d'origine (trends.html)
         const centerName = document.getElementById('centerPlayerName');
         const centerMeta = document.getElementById('centerPlayerMeta');
         if (centerName) centerName.innerText = 'Select a player';
@@ -934,21 +940,17 @@ window.updatePlayerView = function() {
     }
 };
 
-// Initialisation intelligente
 $(document).ready(function() {
     const input = document.getElementById('playerName');
     const savedPlayer = localStorage.getItem('selectedPlayer');
     
-    // 1. Si la barre de recherche a déjà une valeur (cache ou pré-remplissage)
     if (input && input.value.trim()) {
         window.updatePlayerView();
     } 
-    // 2. Sinon, on regarde le localStorage
     else if (savedPlayer) {
         if (input) input.value = savedPlayer;
         window.updatePlayerView();
     }
-    // 3. Si aucun joueur n'est actif au départ, on appelle updatePlayerView pour tout masquer proprement
     else {
         window.updatePlayerView();
     }
