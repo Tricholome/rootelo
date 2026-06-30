@@ -525,7 +525,7 @@ for tag in ARCHIVE_SEASONS:
     render_core_pages(f"_{tag}", True, tag, display_archives[tag]['leaderboard'], display_archives[tag]['matches'], display_archives[tag]['trends'], archives_raw_data[tag]['metadata'], archives_raw_data[tag].get('relations', {}))
 
 # --- Render Static Pages ---
-render_page("about.html", "about.html", title="Codex • Rootelo", page_id="about", is_archive=False, has_seasons=False, page_heading="Codex", description="Understanding the fundamental rules of Rootelo.")
-render_page("cache.html", "cache.html", title="Undergrowth • Rootelo", page_id="cache", is_archive=False, has_seasons=False, page_heading="Undergrowth", description="A sanctuary for the critters.", hall_of_fame=hall_of_fame_data)
+render_page("about.html", "about.html", title="Codex • Rootelo", page_id="about", is_archive=False, has_seasons=False, page_heading="Codex", description="Understanding the fundamental rules and&nbsp;mechanics&nbsp;of&nbsp;Rootelo.")
+render_page("cache.html", "cache.html", title="Undergrowth • Rootelo", page_id="cache", is_archive=False, has_seasons=False, page_heading="Undergrowth", description="A sanctuary for the critters who&nbsp;never&nbsp;sought&nbsp;a&nbsp;<span class='cipher' data-word='crown'>crown</span>.", hall_of_fame=hall_of_fame_data)
 
 print("✨ Website generated successfully!")
