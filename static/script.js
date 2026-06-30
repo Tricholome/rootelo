@@ -904,10 +904,10 @@ window.updateRelationsTree = function(playerName) {
         }
     }
     if (nodeTrophy && !nodeTrophy.querySelector('.tooltip-text')) {
-        nodeTrophy.insertAdjacentHTML('beforeend', '<span class="tooltip-text">Highest-ranked opponent defeated this season</span>');
+        nodeTrophy.insertAdjacentHTML('beforeend', '<span class="toltip-text">Highest-ranked opponent defeated this season</span>');
     }
     if (nodeBane && !nodeBane.querySelector('.tooltip-text')) {
-        nodeBane.insertAdjacentHTML('beforeend', '<span class="tooltip-text">Lowest-ranked opponent lost to this season</span>');
+        nodeBane.insertAdjacentHTML('beforeend', '<span class="toltip-text">Lowest-ranked opponent lost to this season</span>');
     }
 };
 
