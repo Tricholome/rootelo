@@ -1002,6 +1002,21 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     pointer-events: none;
 }
 
+.node {
+    position: relative; 
+}
+
+@media (hover: hover) {
+    .interactive-node:hover .tooltip-text { 
+        opacity: 1; 
+        transform: translateX(-50%) translateY(-15px); 
+    }
+}
+.interactive-node.expanded .tooltip-text { 
+    opacity: 1; 
+    transform: translateX(-50%) translateY(-15px); 
+}
+
 /* --- Responsive Layout --- */
 @media (max-width: 1200px) {
     .relations-wrapper {
