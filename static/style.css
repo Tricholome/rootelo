@@ -1028,7 +1028,7 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 }
 
 .overlay-desc {
-    color: var(--text-muted);
+    color: var(--text-main);
     font-size: var(--size-base);
     margin: 0 0 6px 0;
     line-height: 1.3;
