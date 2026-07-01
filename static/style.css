@@ -1002,19 +1002,66 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     pointer-events: none;
 }
 
+/* --- Interactive Node Overlays --- */
+
+/* Assure le clipping de l'overlay sur les bords arrondis de la boîte */
 .node {
-    position: relative; 
+    position: relative;
+    overflow: hidden; 
 }
 
+/* Structure globale de l'overlay plein écran */
+.node-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    
+    /* Fond sombre tamisé en accord avec le design system glassmorphism */
+    background: rgba(25, 20, 16, 0.96); 
+    z-index: 5;
+    
+    /* Alignement vertical sur deux lignes */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+    box-sizing: border-box;
+    
+    /* Masqué par défaut */
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+}
+
+/* Style de la première ligne (L'information) */
+.overlay-desc {
+    color: var(--text-bright);
+    font-size: var(--size-base);
+    font-weight: var(--medium);
+    margin: 0 0 6px 0;
+    line-height: 1.3;
+}
+
+/* Style de la deuxième ligne (L'action utilisateur) */
+.overlay-action {
+    color: var(--main-color); /* Utilise la couleur accentuée du thème */
+    font-size: var(--size-sm);
+    font-style: italic;
+    margin: 0;
+    opacity: 0.85;
+}
+
+/* Déclencheurs d'affichage (Hover et Tactile) */
 @media (hover: hover) {
-    .interactive-node:hover .tooltip-text { 
+    .interactive-node:hover .node-overlay { 
         opacity: 1; 
-        transform: translateX(-50%) translateY(-15px); 
     }
 }
-.interactive-node.expanded .tooltip-text { 
+.interactive-node.expanded .node-overlay { 
     opacity: 1; 
-    transform: translateX(-50%) translateY(-15px); 
 }
 
 /* --- Responsive Layout --- */
