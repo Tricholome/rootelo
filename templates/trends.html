@@ -6,7 +6,7 @@
 
 {% block content %}
     <div class="search-box">
-        <input type="search" list="playerList" id="playerName" placeholder="Search Player..." oninput="updateChart()">
+        <input type="search" list="playerList" id="playerName" value="" placeholder="Search Player..." oninput="updatePlayerView()">
         <datalist id="playerList">
             {% for name in player_names %}
                 <option value="{{ name }}">
@@ -19,4 +19,114 @@
             <canvas id="progressionChart"></canvas>
         </div>
     </div>
+
+    <div class="relations-wrapper">
+        <div class="relations-container">
+            
+            <div class="left-column">
+				<div class="node central-node">
+					<div id="centerPlayerIntro"></div>
+					<div class="player-name" id="centerPlayerName">Select a player</div>
+					<div id="centerPlayerMeta"></div>
+				</div>
+			</div>
+
+            <div class="middle-space">
+                <svg class="relations-lines" viewBox="0 0 100 100" preserveAspectRatio="none">
+                    <path d="M 0 50 C 50 50, 50 20, 100 20" stroke="#f3c64f" stroke-width="2.5" fill="none" />
+                    <path d="M 0 50 C 50 50, 50 80, 100 80" stroke="#f3c64f" stroke-width="2.5" fill="none" />
+                </svg>
+            </div>
+
+            <div class="right-column">
+				<!-- Trophy Node -->
+				<div class="node interactive-node js-double-tap" id="nodeTrophy" onclick="selectPlayerFromTree(this)" data-player="">
+					<div class="node-content">
+						<div id="textTrophy">
+							<div class="player-name">...</div>
+						</div>
+					</div>
+					<div class="node-overlay">
+						<p class="overlay-desc">Highest-ranked opponent<br>defeated this season</p>
+						<p class="overlay-action">Click to see their progress</p>
+					</div>
+				</div>
+
+				<!-- Bane Node -->
+				<div class="node interactive-node js-double-tap" id="nodeBane" onclick="selectPlayerFromTree(this)" data-player="">
+					<div class="node-content">
+						<div id="textBane">
+							<div class="player-name">...</div>
+						</div>
+					</div>
+					<div class="node-overlay">
+						<p class="overlay-desc">Lowest-ranked opponent<br>lost to this season</p>
+						<p class="overlay-action">Click to see their progress</p>
+					</div>
+				</div>
+			</div>
+            
+        </div>
+    </div>
+
+    <script>
+		window.NARRATIVE_VARIATIONS = {
+			center: [
+				"On this winding journey,",
+				"During this epic season,",
+				"Deep within the Woodland,",
+				"From clearing to clearing,",
+				"Through briar and bramble,",
+				"Across the many paths,",
+				"Amidst the rustling leaves,"
+			],
+			opponents: [
+				"faced {count} different opponents…",
+				"engaged with {count} other souls…",
+				"matched up with {count} rivals…",
+				"took on {count} competitors…",
+				"met {count} other wanderers…",
+				"clashed with {count} contenders…"
+			],
+			trophy: [
+				"…brought down the mighty",
+				"…found a way to defeat",
+				"…secured a big upset against",
+				"…earned a major win over",
+				"…proved their worth by beating",
+				"…toppled the towering",
+				"…shattered the reign of",
+				"…outsmarted the giant"
+			],
+			trophy_empty: [
+				"…but suffered only bitter losses…",
+				"…but couldn't secure any victories…",
+				"…but found no glory this time…",
+				"…but couldn't find a breakthrough…",
+				"…but failed to claim any ground…",
+				"…but returned empty-handed…"
+			],
+			bane: [
+				"…and fell before the humble",
+				"…and succumbed to the lesser",
+				"…and bowed to the obscure",
+				"…and broke against the unproven",
+				"…only to be defeated by",
+				"…and gave way to the modest",
+				"…and was caught off guard by",
+				"…only to stumble against"
+			],
+			bane_empty: [
+				"…and never once tasted defeat.",
+				"…and refused to concede any losses.",
+				"…and held their ground perfectly.",
+				"…and walked away unscathed.",
+				"…and proved completely invincible.",
+				"…and reigned supreme without failure."
+			]
+		};
+
+		window.CONFIG = {{ backend_config_json | default('{}') }};
+		window.relationsData = {{ relations_json | default('{}') | safe }};
+	</script>
 {% endblock %}
