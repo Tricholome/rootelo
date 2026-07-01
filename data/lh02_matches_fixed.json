@@ -309,18 +309,8 @@
     },
     {
         "MatchID": 47440,
-        "Date": "2026-06-30",
+        "Date": "2026-06-25",
         "players": [
-            {
-                "name": "NadtyLite",
-                "delta": -3,
-                "is_winner": false
-            },
-            {
-                "name": "PestoEmporium",
-                "delta": -4,
-                "is_winner": false
-            },
             {
                 "name": "LucianTheFak",
                 "delta": -5,
@@ -328,11 +318,21 @@
             },
             {
                 "name": "matemato",
-                "delta": 24,
+                "delta": 26,
                 "is_winner": true
+            },
+            {
+                "name": "PestoEmporium",
+                "delta": -8,
+                "is_winner": false
+            },
+            {
+                "name": "NadtyLite",
+                "delta": -4,
+                "is_winner": false
             }
         ],
-        "ELO_Sum": 5464,
+        "ELO_Sum": 5462,
         "Rank": 12
     },
     {
@@ -1708,34 +1708,6 @@
         "Rank": 61
     },
     {
-        "MatchID": 47413,
-        "Date": "2026-06-27",
-        "players": [
-            {
-                "name": "uFancyHUH",
-                "delta": -13,
-                "is_winner": false
-            },
-            {
-                "name": "kurtfisto",
-                "delta": -9,
-                "is_winner": false
-            },
-            {
-                "name": "KyloBot",
-                "delta": -11,
-                "is_winner": false
-            },
-            {
-                "name": "LucianTheFak",
-                "delta": 14,
-                "is_winner": true
-            }
-        ],
-        "ELO_Sum": 5316,
-        "Rank": 62
-    },
-    {
         "MatchID": 46722,
         "Date": "2026-05-03",
         "players": [
@@ -1761,7 +1733,7 @@
             }
         ],
         "ELO_Sum": 5315,
-        "Rank": 63
+        "Rank": 62
     },
     {
         "MatchID": 46485,
@@ -1789,7 +1761,7 @@
             }
         ],
         "ELO_Sum": 5314,
-        "Rank": 64
+        "Rank": 63
     },
     {
         "MatchID": 46993,
@@ -1814,6 +1786,34 @@
                 "name": "DemaRogue",
                 "delta": -5,
                 "is_winner": false
+            }
+        ],
+        "ELO_Sum": 5311,
+        "Rank": 64
+    },
+    {
+        "MatchID": 47413,
+        "Date": "2026-06-27",
+        "players": [
+            {
+                "name": "uFancyHUH",
+                "delta": -13,
+                "is_winner": false
+            },
+            {
+                "name": "KyloBot",
+                "delta": -11,
+                "is_winner": false
+            },
+            {
+                "name": "kurtfisto",
+                "delta": -9,
+                "is_winner": false
+            },
+            {
+                "name": "LucianTheFak",
+                "delta": 14,
+                "is_winner": true
             }
         ],
         "ELO_Sum": 5311,
@@ -2300,6 +2300,11 @@
         "Date": "2026-06-26",
         "players": [
             {
+                "name": "Waferseeker95",
+                "delta": -5,
+                "is_winner": false
+            },
+            {
                 "name": "oshwott2844",
                 "delta": -22,
                 "is_winner": false
@@ -2312,11 +2317,6 @@
             {
                 "name": "1coolguy",
                 "delta": -6,
-                "is_winner": false
-            },
-            {
-                "name": "Waferseeker95",
-                "delta": -5,
                 "is_winner": false
             }
         ],
@@ -2692,6 +2692,11 @@
         "Date": "2026-06-24",
         "players": [
             {
+                "name": "Manpanzee",
+                "delta": -23,
+                "is_winner": false
+            },
+            {
                 "name": "PestoEmporium",
                 "delta": -12,
                 "is_winner": false
@@ -2705,11 +2710,6 @@
                 "name": "NadtyLite",
                 "delta": 16,
                 "is_winner": true
-            },
-            {
-                "name": "Manpanzee",
-                "delta": -23,
-                "is_winner": false
             }
         ],
         "ELO_Sum": 5265,
@@ -2828,34 +2828,6 @@
         "Rank": 101
     },
     {
-        "MatchID": 47401,
-        "Date": "2026-06-26",
-        "players": [
-            {
-                "name": "LucianTheFak",
-                "delta": -5,
-                "is_winner": false
-            },
-            {
-                "name": "NadtyLite",
-                "delta": -4,
-                "is_winner": false
-            },
-            {
-                "name": "Jack432",
-                "delta": 22,
-                "is_winner": true
-            },
-            {
-                "name": "TheFourthJesse",
-                "delta": -3,
-                "is_winner": false
-            }
-        ],
-        "ELO_Sum": 5257,
-        "Rank": 102
-    },
-    {
         "MatchID": 47425,
         "Date": "2026-06-29",
         "players": [
@@ -2880,8 +2852,8 @@
                 "is_winner": false
             }
         ],
-        "ELO_Sum": 5254,
-        "Rank": 103
+        "ELO_Sum": 5253,
+        "Rank": 102
     },
     {
         "MatchID": 46378,
@@ -2909,6 +2881,34 @@
             }
         ],
         "ELO_Sum": 5251,
+        "Rank": 103
+    },
+    {
+        "MatchID": 47401,
+        "Date": "2026-06-26",
+        "players": [
+            {
+                "name": "Jack432",
+                "delta": 22,
+                "is_winner": true
+            },
+            {
+                "name": "TheFourthJesse",
+                "delta": -3,
+                "is_winner": false
+            },
+            {
+                "name": "NadtyLite",
+                "delta": -4,
+                "is_winner": false
+            },
+            {
+                "name": "LucianTheFak",
+                "delta": -5,
+                "is_winner": false
+            }
+        ],
+        "ELO_Sum": 5249,
         "Rank": 104
     },
     {
@@ -3532,6 +3532,11 @@
         "Date": "2026-06-29",
         "players": [
             {
+                "name": "Musicalwoofy",
+                "delta": -10,
+                "is_winner": false
+            },
+            {
                 "name": "Cookies",
                 "delta": -24,
                 "is_winner": false
@@ -3540,11 +3545,6 @@
                 "name": "Tolfan",
                 "delta": 17,
                 "is_winner": true
-            },
-            {
-                "name": "Musicalwoofy",
-                "delta": -10,
-                "is_winner": false
             },
             {
                 "name": "1coolguy",
@@ -4942,14 +4942,14 @@
                 "is_winner": false
             },
             {
-                "name": "Cotton",
-                "delta": -15,
-                "is_winner": false
-            },
-            {
                 "name": "AcolyteOfRoot",
                 "delta": 67,
                 "is_winner": true
+            },
+            {
+                "name": "Cotton",
+                "delta": -15,
+                "is_winner": false
             }
         ],
         "ELO_Sum": 5169,
@@ -5600,34 +5600,6 @@
         "Rank": 200
     },
     {
-        "MatchID": 47398,
-        "Date": "2026-06-26",
-        "players": [
-            {
-                "name": "uFancyHUH",
-                "delta": 28,
-                "is_winner": true
-            },
-            {
-                "name": "NadtyLite",
-                "delta": -5,
-                "is_winner": false
-            },
-            {
-                "name": "PestoEmporium",
-                "delta": -13,
-                "is_winner": false
-            },
-            {
-                "name": "buurn",
-                "delta": -2,
-                "is_winner": false
-            }
-        ],
-        "ELO_Sum": 5157,
-        "Rank": 201
-    },
-    {
         "MatchID": 46472,
         "Date": "2026-04-14",
         "players": [
@@ -5653,7 +5625,7 @@
             }
         ],
         "ELO_Sum": 5156,
-        "Rank": 202
+        "Rank": 201
     },
     {
         "MatchID": 47162,
@@ -5681,7 +5653,7 @@
             }
         ],
         "ELO_Sum": 5156,
-        "Rank": 203
+        "Rank": 202
     },
     {
         "MatchID": 46370,
@@ -5709,7 +5681,7 @@
             }
         ],
         "ELO_Sum": 5152,
-        "Rank": 204
+        "Rank": 203
     },
     {
         "MatchID": 46468,
@@ -5737,7 +5709,7 @@
             }
         ],
         "ELO_Sum": 5152,
-        "Rank": 205
+        "Rank": 204
     },
     {
         "MatchID": 46537,
@@ -5765,7 +5737,7 @@
             }
         ],
         "ELO_Sum": 5152,
-        "Rank": 206
+        "Rank": 205
     },
     {
         "MatchID": 46692,
@@ -5793,7 +5765,7 @@
             }
         ],
         "ELO_Sum": 5151,
-        "Rank": 207
+        "Rank": 206
     },
     {
         "MatchID": 46374,
@@ -5821,7 +5793,7 @@
             }
         ],
         "ELO_Sum": 5150,
-        "Rank": 208
+        "Rank": 207
     },
     {
         "MatchID": 46851,
@@ -5849,7 +5821,7 @@
             }
         ],
         "ELO_Sum": 5150,
-        "Rank": 209
+        "Rank": 208
     },
     {
         "MatchID": 46263,
@@ -5877,7 +5849,7 @@
             }
         ],
         "ELO_Sum": 5149,
-        "Rank": 210
+        "Rank": 209
     },
     {
         "MatchID": 46699,
@@ -5905,7 +5877,7 @@
             }
         ],
         "ELO_Sum": 5149,
-        "Rank": 211
+        "Rank": 210
     },
     {
         "MatchID": 46705,
@@ -5933,7 +5905,7 @@
             }
         ],
         "ELO_Sum": 5149,
-        "Rank": 212
+        "Rank": 211
     },
     {
         "MatchID": 46259,
@@ -5961,7 +5933,7 @@
             }
         ],
         "ELO_Sum": 5148,
-        "Rank": 213
+        "Rank": 212
     },
     {
         "MatchID": 47447,
@@ -5989,7 +5961,7 @@
             }
         ],
         "ELO_Sum": 5148,
-        "Rank": 214
+        "Rank": 213
     },
     {
         "MatchID": 46347,
@@ -6017,7 +5989,7 @@
             }
         ],
         "ELO_Sum": 5146,
-        "Rank": 215
+        "Rank": 214
     },
     {
         "MatchID": 46913,
@@ -6042,6 +6014,34 @@
                 "name": "Schkitz",
                 "delta": -4,
                 "is_winner": false
+            }
+        ],
+        "ELO_Sum": 5145,
+        "Rank": 215
+    },
+    {
+        "MatchID": 47398,
+        "Date": "2026-06-26",
+        "players": [
+            {
+                "name": "PestoEmporium",
+                "delta": -12,
+                "is_winner": false
+            },
+            {
+                "name": "NadtyLite",
+                "delta": -5,
+                "is_winner": false
+            },
+            {
+                "name": "buurn",
+                "delta": -2,
+                "is_winner": false
+            },
+            {
+                "name": "uFancyHUH",
+                "delta": 27,
+                "is_winner": true
             }
         ],
         "ELO_Sum": 5145,
@@ -7336,34 +7336,6 @@
         "Rank": 262
     },
     {
-        "MatchID": 47441,
-        "Date": "2026-06-30",
-        "players": [
-            {
-                "name": "matemato",
-                "delta": 17,
-                "is_winner": true
-            },
-            {
-                "name": "radiantchaos",
-                "delta": -4,
-                "is_winner": false
-            },
-            {
-                "name": "TheFourthJesse",
-                "delta": -3,
-                "is_winner": false
-            },
-            {
-                "name": "Luclid",
-                "delta": -10,
-                "is_winner": false
-            }
-        ],
-        "ELO_Sum": 5106,
-        "Rank": 263
-    },
-    {
         "MatchID": 46621,
         "Date": "2026-04-25",
         "players": [
@@ -7389,7 +7361,7 @@
             }
         ],
         "ELO_Sum": 5105,
-        "Rank": 264
+        "Rank": 263
     },
     {
         "MatchID": 47040,
@@ -7417,7 +7389,7 @@
             }
         ],
         "ELO_Sum": 5105,
-        "Rank": 265
+        "Rank": 264
     },
     {
         "MatchID": 46642,
@@ -7445,7 +7417,7 @@
             }
         ],
         "ELO_Sum": 5104,
-        "Rank": 266
+        "Rank": 265
     },
     {
         "MatchID": 46496,
@@ -7473,7 +7445,7 @@
             }
         ],
         "ELO_Sum": 5103,
-        "Rank": 267
+        "Rank": 266
     },
     {
         "MatchID": 46757,
@@ -7501,7 +7473,7 @@
             }
         ],
         "ELO_Sum": 5103,
-        "Rank": 268
+        "Rank": 267
     },
     {
         "MatchID": 47206,
@@ -7529,7 +7501,7 @@
             }
         ],
         "ELO_Sum": 5101,
-        "Rank": 269
+        "Rank": 268
     },
     {
         "MatchID": 46662,
@@ -7557,7 +7529,7 @@
             }
         ],
         "ELO_Sum": 5100,
-        "Rank": 270
+        "Rank": 269
     },
     {
         "MatchID": 46505,
@@ -7585,7 +7557,7 @@
             }
         ],
         "ELO_Sum": 5099,
-        "Rank": 271
+        "Rank": 270
     },
     {
         "MatchID": 47111,
@@ -7613,7 +7585,7 @@
             }
         ],
         "ELO_Sum": 5099,
-        "Rank": 272
+        "Rank": 271
     },
     {
         "MatchID": 47218,
@@ -7641,7 +7613,7 @@
             }
         ],
         "ELO_Sum": 5099,
-        "Rank": 273
+        "Rank": 272
     },
     {
         "MatchID": 46715,
@@ -7669,7 +7641,7 @@
             }
         ],
         "ELO_Sum": 5098,
-        "Rank": 274
+        "Rank": 273
     },
     {
         "MatchID": 46473,
@@ -7697,35 +7669,7 @@
             }
         ],
         "ELO_Sum": 5097,
-        "Rank": 275
-    },
-    {
-        "MatchID": 47436,
-        "Date": "2026-06-30",
-        "players": [
-            {
-                "name": "Jack432",
-                "delta": 20,
-                "is_winner": true
-            },
-            {
-                "name": "Diyana",
-                "delta": -3,
-                "is_winner": false
-            },
-            {
-                "name": "LucianTheFak",
-                "delta": -7,
-                "is_winner": false
-            },
-            {
-                "name": "nyosh8484",
-                "delta": -8,
-                "is_winner": false
-            }
-        ],
-        "ELO_Sum": 5097,
-        "Rank": 276
+        "Rank": 274
     },
     {
         "MatchID": 47100,
@@ -7753,7 +7697,7 @@
             }
         ],
         "ELO_Sum": 5096,
-        "Rank": 277
+        "Rank": 275
     },
     {
         "MatchID": 46544,
@@ -7781,7 +7725,7 @@
             }
         ],
         "ELO_Sum": 5095,
-        "Rank": 278
+        "Rank": 276
     },
     {
         "MatchID": 46740,
@@ -7809,35 +7753,7 @@
             }
         ],
         "ELO_Sum": 5095,
-        "Rank": 279
-    },
-    {
-        "MatchID": 47437,
-        "Date": "2026-06-30",
-        "players": [
-            {
-                "name": "NadtyLite",
-                "delta": -5,
-                "is_winner": false
-            },
-            {
-                "name": "buurn",
-                "delta": -2,
-                "is_winner": false
-            },
-            {
-                "name": "uFancyHUH",
-                "delta": -16,
-                "is_winner": false
-            },
-            {
-                "name": "Scipio",
-                "delta": 30,
-                "is_winner": true
-            }
-        ],
-        "ELO_Sum": 5095,
-        "Rank": 280
+        "Rank": 277
     },
     {
         "MatchID": 46676,
@@ -7865,7 +7781,7 @@
             }
         ],
         "ELO_Sum": 5094,
-        "Rank": 281
+        "Rank": 278
     },
     {
         "MatchID": 47455,
@@ -7893,7 +7809,35 @@
             }
         ],
         "ELO_Sum": 5094,
-        "Rank": 282
+        "Rank": 279
+    },
+    {
+        "MatchID": 47436,
+        "Date": "2026-06-30",
+        "players": [
+            {
+                "name": "LucianTheFak",
+                "delta": -7,
+                "is_winner": false
+            },
+            {
+                "name": "Jack432",
+                "delta": 20,
+                "is_winner": true
+            },
+            {
+                "name": "nyosh8484",
+                "delta": -8,
+                "is_winner": false
+            },
+            {
+                "name": "Diyana",
+                "delta": -3,
+                "is_winner": false
+            }
+        ],
+        "ELO_Sum": 5093,
+        "Rank": 280
     },
     {
         "MatchID": 46555,
@@ -7921,7 +7865,7 @@
             }
         ],
         "ELO_Sum": 5092,
-        "Rank": 283
+        "Rank": 281
     },
     {
         "MatchID": 46775,
@@ -7949,7 +7893,7 @@
             }
         ],
         "ELO_Sum": 5092,
-        "Rank": 284
+        "Rank": 282
     },
     {
         "MatchID": 46725,
@@ -7977,7 +7921,35 @@
             }
         ],
         "ELO_Sum": 5091,
-        "Rank": 285
+        "Rank": 283
+    },
+    {
+        "MatchID": 47441,
+        "Date": "2026-06-27",
+        "players": [
+            {
+                "name": "Luclid",
+                "delta": -11,
+                "is_winner": false
+            },
+            {
+                "name": "matemato",
+                "delta": 18,
+                "is_winner": true
+            },
+            {
+                "name": "radiantchaos",
+                "delta": -4,
+                "is_winner": false
+            },
+            {
+                "name": "TheFourthJesse",
+                "delta": -3,
+                "is_winner": false
+            }
+        ],
+        "ELO_Sum": 5091,
+        "Rank": 284
     },
     {
         "MatchID": 46436,
@@ -8005,7 +7977,7 @@
             }
         ],
         "ELO_Sum": 5090,
-        "Rank": 286
+        "Rank": 285
     },
     {
         "MatchID": 46438,
@@ -8033,7 +8005,7 @@
             }
         ],
         "ELO_Sum": 5089,
-        "Rank": 287
+        "Rank": 286
     },
     {
         "MatchID": 46504,
@@ -8061,7 +8033,7 @@
             }
         ],
         "ELO_Sum": 5089,
-        "Rank": 288
+        "Rank": 287
     },
     {
         "MatchID": 47305,
@@ -8089,7 +8061,7 @@
             }
         ],
         "ELO_Sum": 5089,
-        "Rank": 289
+        "Rank": 288
     },
     {
         "MatchID": 46277,
@@ -8117,7 +8089,7 @@
             }
         ],
         "ELO_Sum": 5088,
-        "Rank": 290
+        "Rank": 289
     },
     {
         "MatchID": 46728,
@@ -8145,7 +8117,7 @@
             }
         ],
         "ELO_Sum": 5088,
-        "Rank": 291
+        "Rank": 290
     },
     {
         "MatchID": 46739,
@@ -8173,7 +8145,7 @@
             }
         ],
         "ELO_Sum": 5087,
-        "Rank": 292
+        "Rank": 291
     },
     {
         "MatchID": 46910,
@@ -8201,7 +8173,7 @@
             }
         ],
         "ELO_Sum": 5086,
-        "Rank": 293
+        "Rank": 292
     },
     {
         "MatchID": 47019,
@@ -8229,7 +8201,7 @@
             }
         ],
         "ELO_Sum": 5086,
-        "Rank": 294
+        "Rank": 293
     },
     {
         "MatchID": 47326,
@@ -8257,7 +8229,7 @@
             }
         ],
         "ELO_Sum": 5086,
-        "Rank": 295
+        "Rank": 294
     },
     {
         "MatchID": 46840,
@@ -8285,7 +8257,7 @@
             }
         ],
         "ELO_Sum": 5085,
-        "Rank": 296
+        "Rank": 295
     },
     {
         "MatchID": 47278,
@@ -8313,7 +8285,7 @@
             }
         ],
         "ELO_Sum": 5084,
-        "Rank": 297
+        "Rank": 296
     },
     {
         "MatchID": 47313,
@@ -8341,7 +8313,7 @@
             }
         ],
         "ELO_Sum": 5084,
-        "Rank": 298
+        "Rank": 297
     },
     {
         "MatchID": 47383,
@@ -8366,6 +8338,34 @@
                 "name": "Nadav253",
                 "delta": 23,
                 "is_winner": true
+            }
+        ],
+        "ELO_Sum": 5084,
+        "Rank": 298
+    },
+    {
+        "MatchID": 47437,
+        "Date": "2026-06-30",
+        "players": [
+            {
+                "name": "Scipio",
+                "delta": 31,
+                "is_winner": true
+            },
+            {
+                "name": "buurn",
+                "delta": -2,
+                "is_winner": false
+            },
+            {
+                "name": "uFancyHUH",
+                "delta": -16,
+                "is_winner": false
+            },
+            {
+                "name": "NadtyLite",
+                "delta": -5,
+                "is_winner": false
             }
         ],
         "ELO_Sum": 5084,
@@ -10024,34 +10024,6 @@
         "Rank": 358
     },
     {
-        "MatchID": 47428,
-        "Date": "2026-06-29",
-        "players": [
-            {
-                "name": "buurn",
-                "delta": -2,
-                "is_winner": false
-            },
-            {
-                "name": "Antiproject",
-                "delta": -16,
-                "is_winner": false
-            },
-            {
-                "name": "LucianTheFak",
-                "delta": 12,
-                "is_winner": true
-            },
-            {
-                "name": "PlagueCarrier",
-                "delta": -4,
-                "is_winner": false
-            }
-        ],
-        "ELO_Sum": 5043,
-        "Rank": 359
-    },
-    {
         "MatchID": 47116,
         "Date": "2026-06-01",
         "players": [
@@ -10077,7 +10049,7 @@
             }
         ],
         "ELO_Sum": 5042,
-        "Rank": 360
+        "Rank": 359
     },
     {
         "MatchID": 46539,
@@ -10105,7 +10077,7 @@
             }
         ],
         "ELO_Sum": 5041,
-        "Rank": 361
+        "Rank": 360
     },
     {
         "MatchID": 46634,
@@ -10133,7 +10105,7 @@
             }
         ],
         "ELO_Sum": 5041,
-        "Rank": 362
+        "Rank": 361
     },
     {
         "MatchID": 47121,
@@ -10161,7 +10133,7 @@
             }
         ],
         "ELO_Sum": 5040,
-        "Rank": 363
+        "Rank": 362
     },
     {
         "MatchID": 47224,
@@ -10189,7 +10161,7 @@
             }
         ],
         "ELO_Sum": 5040,
-        "Rank": 364
+        "Rank": 363
     },
     {
         "MatchID": 46338,
@@ -10217,7 +10189,7 @@
             }
         ],
         "ELO_Sum": 5039,
-        "Rank": 365
+        "Rank": 364
     },
     {
         "MatchID": 46403,
@@ -10241,6 +10213,34 @@
             {
                 "name": "Dramsss",
                 "delta": -16,
+                "is_winner": false
+            }
+        ],
+        "ELO_Sum": 5039,
+        "Rank": 365
+    },
+    {
+        "MatchID": 47428,
+        "Date": "2026-06-29",
+        "players": [
+            {
+                "name": "LucianTheFak",
+                "delta": 12,
+                "is_winner": true
+            },
+            {
+                "name": "Antiproject",
+                "delta": -16,
+                "is_winner": false
+            },
+            {
+                "name": "buurn",
+                "delta": -2,
+                "is_winner": false
+            },
+            {
+                "name": "PlagueCarrier",
+                "delta": -4,
                 "is_winner": false
             }
         ],
@@ -10276,34 +10276,6 @@
         "Rank": 367
     },
     {
-        "MatchID": 47426,
-        "Date": "2026-06-29",
-        "players": [
-            {
-                "name": "NadtyLite",
-                "delta": -5,
-                "is_winner": false
-            },
-            {
-                "name": "LucianTheFak",
-                "delta": -9,
-                "is_winner": false
-            },
-            {
-                "name": "DarthOblivius",
-                "delta": -2,
-                "is_winner": false
-            },
-            {
-                "name": "Scipio",
-                "delta": 32,
-                "is_winner": true
-            }
-        ],
-        "ELO_Sum": 5036,
-        "Rank": 368
-    },
-    {
         "MatchID": 46380,
         "Date": "2026-04-08",
         "players": [
@@ -10329,7 +10301,7 @@
             }
         ],
         "ELO_Sum": 5035,
-        "Rank": 369
+        "Rank": 368
     },
     {
         "MatchID": 46500,
@@ -10357,7 +10329,7 @@
             }
         ],
         "ELO_Sum": 5035,
-        "Rank": 370
+        "Rank": 369
     },
     {
         "MatchID": 46982,
@@ -10385,7 +10357,7 @@
             }
         ],
         "ELO_Sum": 5035,
-        "Rank": 371
+        "Rank": 370
     },
     {
         "MatchID": 47219,
@@ -10413,7 +10385,7 @@
             }
         ],
         "ELO_Sum": 5035,
-        "Rank": 372
+        "Rank": 371
     },
     {
         "MatchID": 47179,
@@ -10441,7 +10413,7 @@
             }
         ],
         "ELO_Sum": 5034,
-        "Rank": 373
+        "Rank": 372
     },
     {
         "MatchID": 46547,
@@ -10469,7 +10441,7 @@
             }
         ],
         "ELO_Sum": 5033,
-        "Rank": 374
+        "Rank": 373
     },
     {
         "MatchID": 46792,
@@ -10497,7 +10469,7 @@
             }
         ],
         "ELO_Sum": 5033,
-        "Rank": 375
+        "Rank": 374
     },
     {
         "MatchID": 46912,
@@ -10525,7 +10497,7 @@
             }
         ],
         "ELO_Sum": 5033,
-        "Rank": 376
+        "Rank": 375
     },
     {
         "MatchID": 46431,
@@ -10553,7 +10525,7 @@
             }
         ],
         "ELO_Sum": 5032,
-        "Rank": 377
+        "Rank": 376
     },
     {
         "MatchID": 46462,
@@ -10581,7 +10553,7 @@
             }
         ],
         "ELO_Sum": 5031,
-        "Rank": 378
+        "Rank": 377
     },
     {
         "MatchID": 47217,
@@ -10609,7 +10581,7 @@
             }
         ],
         "ELO_Sum": 5031,
-        "Rank": 379
+        "Rank": 378
     },
     {
         "MatchID": 47442,
@@ -10637,7 +10609,7 @@
             }
         ],
         "ELO_Sum": 5031,
-        "Rank": 380
+        "Rank": 379
     },
     {
         "MatchID": 46289,
@@ -10665,7 +10637,7 @@
             }
         ],
         "ELO_Sum": 5030,
-        "Rank": 381
+        "Rank": 380
     },
     {
         "MatchID": 47022,
@@ -10693,7 +10665,7 @@
             }
         ],
         "ELO_Sum": 5030,
-        "Rank": 382
+        "Rank": 381
     },
     {
         "MatchID": 47254,
@@ -10721,7 +10693,7 @@
             }
         ],
         "ELO_Sum": 5030,
-        "Rank": 383
+        "Rank": 382
     },
     {
         "MatchID": 47076,
@@ -10749,7 +10721,7 @@
             }
         ],
         "ELO_Sum": 5029,
-        "Rank": 384
+        "Rank": 383
     },
     {
         "MatchID": 46429,
@@ -10777,7 +10749,7 @@
             }
         ],
         "ELO_Sum": 5028,
-        "Rank": 385
+        "Rank": 384
     },
     {
         "MatchID": 46530,
@@ -10805,7 +10777,7 @@
             }
         ],
         "ELO_Sum": 5028,
-        "Rank": 386
+        "Rank": 385
     },
     {
         "MatchID": 46857,
@@ -10833,7 +10805,7 @@
             }
         ],
         "ELO_Sum": 5028,
-        "Rank": 387
+        "Rank": 386
     },
     {
         "MatchID": 46328,
@@ -10861,7 +10833,7 @@
             }
         ],
         "ELO_Sum": 5027,
-        "Rank": 388
+        "Rank": 387
     },
     {
         "MatchID": 46563,
@@ -10889,7 +10861,7 @@
             }
         ],
         "ELO_Sum": 5027,
-        "Rank": 389
+        "Rank": 388
     },
     {
         "MatchID": 46565,
@@ -10917,7 +10889,7 @@
             }
         ],
         "ELO_Sum": 5026,
-        "Rank": 390
+        "Rank": 389
     },
     {
         "MatchID": 47188,
@@ -10945,7 +10917,7 @@
             }
         ],
         "ELO_Sum": 5026,
-        "Rank": 391
+        "Rank": 390
     },
     {
         "MatchID": 46949,
@@ -10973,7 +10945,7 @@
             }
         ],
         "ELO_Sum": 5024,
-        "Rank": 392
+        "Rank": 391
     },
     {
         "MatchID": 47337,
@@ -11001,7 +10973,7 @@
             }
         ],
         "ELO_Sum": 5024,
-        "Rank": 393
+        "Rank": 392
     },
     {
         "MatchID": 46550,
@@ -11029,7 +11001,7 @@
             }
         ],
         "ELO_Sum": 5023,
-        "Rank": 394
+        "Rank": 393
     },
     {
         "MatchID": 46896,
@@ -11057,7 +11029,7 @@
             }
         ],
         "ELO_Sum": 5022,
-        "Rank": 395
+        "Rank": 394
     },
     {
         "MatchID": 46978,
@@ -11085,35 +11057,35 @@
             }
         ],
         "ELO_Sum": 5022,
-        "Rank": 396
+        "Rank": 395
     },
     {
-        "MatchID": 47439,
-        "Date": "2026-06-30",
+        "MatchID": 47426,
+        "Date": "2026-06-29",
         "players": [
             {
-                "name": "Aeliott",
-                "delta": -21,
+                "name": "NadtyLite",
+                "delta": -5,
                 "is_winner": false
-            },
-            {
-                "name": "Wriggleroom",
-                "delta": -1,
-                "is_winner": false
-            },
-            {
-                "name": "matemato",
-                "delta": 21,
-                "is_winner": true
             },
             {
                 "name": "Scipio",
+                "delta": 32,
+                "is_winner": true
+            },
+            {
+                "name": "DarthOblivius",
+                "delta": -2,
+                "is_winner": false
+            },
+            {
+                "name": "LucianTheFak",
                 "delta": -9,
                 "is_winner": false
             }
         ],
         "ELO_Sum": 5022,
-        "Rank": 397
+        "Rank": 396
     },
     {
         "MatchID": 46502,
@@ -11141,7 +11113,7 @@
             }
         ],
         "ELO_Sum": 5019,
-        "Rank": 398
+        "Rank": 397
     },
     {
         "MatchID": 46478,
@@ -11169,7 +11141,7 @@
             }
         ],
         "ELO_Sum": 5018,
-        "Rank": 399
+        "Rank": 398
     },
     {
         "MatchID": 46298,
@@ -11197,7 +11169,7 @@
             }
         ],
         "ELO_Sum": 5018,
-        "Rank": 400
+        "Rank": 399
     },
     {
         "MatchID": 46631,
@@ -11225,7 +11197,7 @@
             }
         ],
         "ELO_Sum": 5017,
-        "Rank": 401
+        "Rank": 400
     },
     {
         "MatchID": 47074,
@@ -11253,12 +11225,22 @@
             }
         ],
         "ELO_Sum": 5017,
-        "Rank": 402
+        "Rank": 401
     },
     {
         "MatchID": 47405,
         "Date": "2026-06-26",
         "players": [
+            {
+                "name": "Tolfan",
+                "delta": -2,
+                "is_winner": false
+            },
+            {
+                "name": "Nadav253",
+                "delta": 20,
+                "is_winner": true
+            },
             {
                 "name": "Munchking",
                 "delta": -1,
@@ -11268,20 +11250,10 @@
                 "name": "AcolyteOfRoot",
                 "delta": -9,
                 "is_winner": false
-            },
-            {
-                "name": "Nadav253",
-                "delta": 20,
-                "is_winner": true
-            },
-            {
-                "name": "Tolfan",
-                "delta": -2,
-                "is_winner": false
             }
         ],
         "ELO_Sum": 5016,
-        "Rank": 403
+        "Rank": 402
     },
     {
         "MatchID": 46290,
@@ -11309,7 +11281,7 @@
             }
         ],
         "ELO_Sum": 5015,
-        "Rank": 404
+        "Rank": 403
     },
     {
         "MatchID": 47223,
@@ -11337,7 +11309,7 @@
             }
         ],
         "ELO_Sum": 5013,
-        "Rank": 405
+        "Rank": 404
     },
     {
         "MatchID": 46281,
@@ -11365,7 +11337,7 @@
             }
         ],
         "ELO_Sum": 5012,
-        "Rank": 406
+        "Rank": 405
     },
     {
         "MatchID": 46386,
@@ -11393,7 +11365,7 @@
             }
         ],
         "ELO_Sum": 5011,
-        "Rank": 407
+        "Rank": 406
     },
     {
         "MatchID": 46680,
@@ -11421,7 +11393,7 @@
             }
         ],
         "ELO_Sum": 5011,
-        "Rank": 408
+        "Rank": 407
     },
     {
         "MatchID": 47002,
@@ -11449,7 +11421,7 @@
             }
         ],
         "ELO_Sum": 5011,
-        "Rank": 409
+        "Rank": 408
     },
     {
         "MatchID": 47050,
@@ -11477,7 +11449,7 @@
             }
         ],
         "ELO_Sum": 5011,
-        "Rank": 410
+        "Rank": 409
     },
     {
         "MatchID": 46313,
@@ -11505,7 +11477,7 @@
             }
         ],
         "ELO_Sum": 5010,
-        "Rank": 411
+        "Rank": 410
     },
     {
         "MatchID": 46461,
@@ -11533,7 +11505,7 @@
             }
         ],
         "ELO_Sum": 5010,
-        "Rank": 412
+        "Rank": 411
     },
     {
         "MatchID": 46397,
@@ -11561,7 +11533,7 @@
             }
         ],
         "ELO_Sum": 5009,
-        "Rank": 413
+        "Rank": 412
     },
     {
         "MatchID": 47310,
@@ -11589,7 +11561,7 @@
             }
         ],
         "ELO_Sum": 5009,
-        "Rank": 414
+        "Rank": 413
     },
     {
         "MatchID": 46251,
@@ -11617,7 +11589,7 @@
             }
         ],
         "ELO_Sum": 5007,
-        "Rank": 415
+        "Rank": 414
     },
     {
         "MatchID": 46522,
@@ -11645,7 +11617,7 @@
             }
         ],
         "ELO_Sum": 5007,
-        "Rank": 416
+        "Rank": 415
     },
     {
         "MatchID": 46779,
@@ -11673,7 +11645,7 @@
             }
         ],
         "ELO_Sum": 5007,
-        "Rank": 417
+        "Rank": 416
     },
     {
         "MatchID": 46797,
@@ -11701,7 +11673,7 @@
             }
         ],
         "ELO_Sum": 5007,
-        "Rank": 418
+        "Rank": 417
     },
     {
         "MatchID": 46965,
@@ -11729,7 +11701,7 @@
             }
         ],
         "ELO_Sum": 5007,
-        "Rank": 419
+        "Rank": 418
     },
     {
         "MatchID": 46358,
@@ -11757,7 +11729,7 @@
             }
         ],
         "ELO_Sum": 5005,
-        "Rank": 420
+        "Rank": 419
     },
     {
         "MatchID": 46632,
@@ -11785,7 +11757,7 @@
             }
         ],
         "ELO_Sum": 5004,
-        "Rank": 421
+        "Rank": 420
     },
     {
         "MatchID": 46964,
@@ -11813,7 +11785,7 @@
             }
         ],
         "ELO_Sum": 5004,
-        "Rank": 422
+        "Rank": 421
     },
     {
         "MatchID": 47011,
@@ -11841,7 +11813,7 @@
             }
         ],
         "ELO_Sum": 5004,
-        "Rank": 423
+        "Rank": 422
     },
     {
         "MatchID": 47168,
@@ -11869,7 +11841,7 @@
             }
         ],
         "ELO_Sum": 5003,
-        "Rank": 424
+        "Rank": 423
     },
     {
         "MatchID": 47400,
@@ -11894,6 +11866,34 @@
                 "name": "mrkent",
                 "delta": 72,
                 "is_winner": true
+            }
+        ],
+        "ELO_Sum": 5003,
+        "Rank": 424
+    },
+    {
+        "MatchID": 47439,
+        "Date": "2026-06-28",
+        "players": [
+            {
+                "name": "matemato",
+                "delta": 17,
+                "is_winner": true
+            },
+            {
+                "name": "Aeliott",
+                "delta": -19,
+                "is_winner": false
+            },
+            {
+                "name": "Scipio",
+                "delta": -6,
+                "is_winner": false
+            },
+            {
+                "name": "Wriggleroom",
+                "delta": -1,
+                "is_winner": false
             }
         ],
         "ELO_Sum": 5003,
@@ -11932,23 +11932,23 @@
         "Date": "2026-06-26",
         "players": [
             {
-                "name": "MunkeyBrewster",
-                "delta": -10,
-                "is_winner": false
-            },
-            {
                 "name": "oshwott2844",
                 "delta": 13,
                 "is_winner": true
             },
             {
-                "name": "Tolfan",
-                "delta": -3,
+                "name": "MunkeyBrewster",
+                "delta": -10,
                 "is_winner": false
             },
             {
                 "name": "DelSol",
                 "delta": -2,
+                "is_winner": false
+            },
+            {
+                "name": "Tolfan",
+                "delta": -3,
                 "is_winner": false
             }
         ],
@@ -12404,34 +12404,6 @@
         "Rank": 443
     },
     {
-        "MatchID": 47418,
-        "Date": "2026-06-28",
-        "players": [
-            {
-                "name": "buurn",
-                "delta": -3,
-                "is_winner": false
-            },
-            {
-                "name": "CowOnAPlane",
-                "delta": -4,
-                "is_winner": false
-            },
-            {
-                "name": "LucianTheFak",
-                "delta": -10,
-                "is_winner": false
-            },
-            {
-                "name": "AERotters",
-                "delta": 16,
-                "is_winner": true
-            }
-        ],
-        "ELO_Sum": 4993,
-        "Rank": 444
-    },
-    {
         "MatchID": 46312,
         "Date": "2026-04-04",
         "players": [
@@ -12457,7 +12429,7 @@
             }
         ],
         "ELO_Sum": 4992,
-        "Rank": 445
+        "Rank": 444
     },
     {
         "MatchID": 47147,
@@ -12485,35 +12457,7 @@
             }
         ],
         "ELO_Sum": 4992,
-        "Rank": 446
-    },
-    {
-        "MatchID": 47410,
-        "Date": "2026-06-27",
-        "players": [
-            {
-                "name": "strypeez",
-                "delta": -4,
-                "is_winner": false
-            },
-            {
-                "name": "IndifferentFish",
-                "delta": -6,
-                "is_winner": false
-            },
-            {
-                "name": "PestoEmporium",
-                "delta": -14,
-                "is_winner": false
-            },
-            {
-                "name": "uFancyHUH",
-                "delta": 23,
-                "is_winner": true
-            }
-        ],
-        "ELO_Sum": 4992,
-        "Rank": 447
+        "Rank": 445
     },
     {
         "MatchID": 46156,
@@ -12541,7 +12485,7 @@
             }
         ],
         "ELO_Sum": 4991,
-        "Rank": 448
+        "Rank": 446
     },
     {
         "MatchID": 46766,
@@ -12569,7 +12513,7 @@
             }
         ],
         "ELO_Sum": 4991,
-        "Rank": 449
+        "Rank": 447
     },
     {
         "MatchID": 46875,
@@ -12597,7 +12541,7 @@
             }
         ],
         "ELO_Sum": 4991,
-        "Rank": 450
+        "Rank": 448
     },
     {
         "MatchID": 46339,
@@ -12625,7 +12569,7 @@
             }
         ],
         "ELO_Sum": 4990,
-        "Rank": 451
+        "Rank": 449
     },
     {
         "MatchID": 46858,
@@ -12653,7 +12597,7 @@
             }
         ],
         "ELO_Sum": 4990,
-        "Rank": 452
+        "Rank": 450
     },
     {
         "MatchID": 46991,
@@ -12681,7 +12625,7 @@
             }
         ],
         "ELO_Sum": 4990,
-        "Rank": 453
+        "Rank": 451
     },
     {
         "MatchID": 46507,
@@ -12709,7 +12653,7 @@
             }
         ],
         "ELO_Sum": 4989,
-        "Rank": 454
+        "Rank": 452
     },
     {
         "MatchID": 46787,
@@ -12737,7 +12681,7 @@
             }
         ],
         "ELO_Sum": 4988,
-        "Rank": 455
+        "Rank": 453
     },
     {
         "MatchID": 46969,
@@ -12765,7 +12709,35 @@
             }
         ],
         "ELO_Sum": 4988,
-        "Rank": 456
+        "Rank": 454
+    },
+    {
+        "MatchID": 47418,
+        "Date": "2026-06-28",
+        "players": [
+            {
+                "name": "CowOnAPlane",
+                "delta": -4,
+                "is_winner": false
+            },
+            {
+                "name": "LucianTheFak",
+                "delta": -9,
+                "is_winner": false
+            },
+            {
+                "name": "buurn",
+                "delta": -3,
+                "is_winner": false
+            },
+            {
+                "name": "AERotters",
+                "delta": 16,
+                "is_winner": true
+            }
+        ],
+        "ELO_Sum": 4988,
+        "Rank": 455
     },
     {
         "MatchID": 46567,
@@ -12793,7 +12765,7 @@
             }
         ],
         "ELO_Sum": 4987,
-        "Rank": 457
+        "Rank": 456
     },
     {
         "MatchID": 46689,
@@ -12821,7 +12793,7 @@
             }
         ],
         "ELO_Sum": 4987,
-        "Rank": 458
+        "Rank": 457
     },
     {
         "MatchID": 46818,
@@ -12849,7 +12821,7 @@
             }
         ],
         "ELO_Sum": 4987,
-        "Rank": 459
+        "Rank": 458
     },
     {
         "MatchID": 46371,
@@ -12877,7 +12849,7 @@
             }
         ],
         "ELO_Sum": 4986,
-        "Rank": 460
+        "Rank": 459
     },
     {
         "MatchID": 47202,
@@ -12905,7 +12877,7 @@
             }
         ],
         "ELO_Sum": 4986,
-        "Rank": 461
+        "Rank": 460
     },
     {
         "MatchID": 46971,
@@ -12933,7 +12905,7 @@
             }
         ],
         "ELO_Sum": 4985,
-        "Rank": 462
+        "Rank": 461
     },
     {
         "MatchID": 47348,
@@ -12961,7 +12933,7 @@
             }
         ],
         "ELO_Sum": 4985,
-        "Rank": 463
+        "Rank": 462
     },
     {
         "MatchID": 46826,
@@ -12985,6 +12957,34 @@
             {
                 "name": "Schkitz",
                 "delta": -6,
+                "is_winner": false
+            }
+        ],
+        "ELO_Sum": 4984,
+        "Rank": 463
+    },
+    {
+        "MatchID": 47410,
+        "Date": "2026-06-27",
+        "players": [
+            {
+                "name": "uFancyHUH",
+                "delta": 23,
+                "is_winner": true
+            },
+            {
+                "name": "strypeez",
+                "delta": -4,
+                "is_winner": false
+            },
+            {
+                "name": "IndifferentFish",
+                "delta": -6,
+                "is_winner": false
+            },
+            {
+                "name": "PestoEmporium",
+                "delta": -13,
                 "is_winner": false
             }
         ],
@@ -13272,34 +13272,6 @@
         "Rank": 474
     },
     {
-        "MatchID": 47416,
-        "Date": "2026-06-28",
-        "players": [
-            {
-                "name": "CocoMocoMan",
-                "delta": -14,
-                "is_winner": false
-            },
-            {
-                "name": "NadtyLite",
-                "delta": -7,
-                "is_winner": false
-            },
-            {
-                "name": "MunkeyBrewster",
-                "delta": -11,
-                "is_winner": false
-            },
-            {
-                "name": "PestoEmporium",
-                "delta": 26,
-                "is_winner": true
-            }
-        ],
-        "ELO_Sum": 4980,
-        "Rank": 475
-    },
-    {
         "MatchID": 46448,
         "Date": "2026-04-12",
         "players": [
@@ -13325,7 +13297,7 @@
             }
         ],
         "ELO_Sum": 4979,
-        "Rank": 476
+        "Rank": 475
     },
     {
         "MatchID": 46828,
@@ -13353,7 +13325,7 @@
             }
         ],
         "ELO_Sum": 4979,
-        "Rank": 477
+        "Rank": 476
     },
     {
         "MatchID": 47062,
@@ -13381,7 +13353,7 @@
             }
         ],
         "ELO_Sum": 4979,
-        "Rank": 478
+        "Rank": 477
     },
     {
         "MatchID": 47092,
@@ -13409,7 +13381,7 @@
             }
         ],
         "ELO_Sum": 4979,
-        "Rank": 479
+        "Rank": 478
     },
     {
         "MatchID": 46352,
@@ -13437,7 +13409,7 @@
             }
         ],
         "ELO_Sum": 4978,
-        "Rank": 480
+        "Rank": 479
     },
     {
         "MatchID": 46356,
@@ -13465,7 +13437,7 @@
             }
         ],
         "ELO_Sum": 4978,
-        "Rank": 481
+        "Rank": 480
     },
     {
         "MatchID": 46524,
@@ -13493,7 +13465,7 @@
             }
         ],
         "ELO_Sum": 4978,
-        "Rank": 482
+        "Rank": 481
     },
     {
         "MatchID": 46920,
@@ -13521,7 +13493,7 @@
             }
         ],
         "ELO_Sum": 4978,
-        "Rank": 483
+        "Rank": 482
     },
     {
         "MatchID": 47200,
@@ -13549,7 +13521,7 @@
             }
         ],
         "ELO_Sum": 4978,
-        "Rank": 484
+        "Rank": 483
     },
     {
         "MatchID": 46360,
@@ -13577,7 +13549,7 @@
             }
         ],
         "ELO_Sum": 4977,
-        "Rank": 485
+        "Rank": 484
     },
     {
         "MatchID": 47149,
@@ -13605,7 +13577,7 @@
             }
         ],
         "ELO_Sum": 4977,
-        "Rank": 486
+        "Rank": 485
     },
     {
         "MatchID": 47322,
@@ -13633,7 +13605,7 @@
             }
         ],
         "ELO_Sum": 4977,
-        "Rank": 487
+        "Rank": 486
     },
     {
         "MatchID": 47115,
@@ -13661,7 +13633,7 @@
             }
         ],
         "ELO_Sum": 4975,
-        "Rank": 488
+        "Rank": 487
     },
     {
         "MatchID": 46278,
@@ -13689,7 +13661,7 @@
             }
         ],
         "ELO_Sum": 4974,
-        "Rank": 489
+        "Rank": 488
     },
     {
         "MatchID": 47142,
@@ -13717,7 +13689,7 @@
             }
         ],
         "ELO_Sum": 4974,
-        "Rank": 490
+        "Rank": 489
     },
     {
         "MatchID": 47282,
@@ -13745,7 +13717,7 @@
             }
         ],
         "ELO_Sum": 4973,
-        "Rank": 491
+        "Rank": 490
     },
     {
         "MatchID": 47293,
@@ -13773,17 +13745,12 @@
             }
         ],
         "ELO_Sum": 4973,
-        "Rank": 492
+        "Rank": 491
     },
     {
         "MatchID": 47424,
         "Date": "2026-06-29",
         "players": [
-            {
-                "name": "Dumbledore",
-                "delta": -7,
-                "is_winner": false
-            },
             {
                 "name": "AcolyteOfRoot",
                 "delta": -25,
@@ -13795,13 +13762,18 @@
                 "is_winner": false
             },
             {
+                "name": "Dumbledore",
+                "delta": -7,
+                "is_winner": false
+            },
+            {
                 "name": "ionou21",
                 "delta": 65,
                 "is_winner": true
             }
         ],
         "ELO_Sum": 4973,
-        "Rank": 493
+        "Rank": 492
     },
     {
         "MatchID": 47358,
@@ -13829,7 +13801,7 @@
             }
         ],
         "ELO_Sum": 4972,
-        "Rank": 494
+        "Rank": 493
     },
     {
         "MatchID": 47102,
@@ -13857,7 +13829,7 @@
             }
         ],
         "ELO_Sum": 4971,
-        "Rank": 495
+        "Rank": 494
     },
     {
         "MatchID": 47153,
@@ -13885,7 +13857,7 @@
             }
         ],
         "ELO_Sum": 4970,
-        "Rank": 496
+        "Rank": 495
     },
     {
         "MatchID": 46416,
@@ -13913,7 +13885,7 @@
             }
         ],
         "ELO_Sum": 4969,
-        "Rank": 497
+        "Rank": 496
     },
     {
         "MatchID": 46447,
@@ -13941,7 +13913,7 @@
             }
         ],
         "ELO_Sum": 4969,
-        "Rank": 498
+        "Rank": 497
     },
     {
         "MatchID": 46723,
@@ -13966,6 +13938,34 @@
                 "name": "KeyserSoze",
                 "delta": -10,
                 "is_winner": false
+            }
+        ],
+        "ELO_Sum": 4969,
+        "Rank": 498
+    },
+    {
+        "MatchID": 47416,
+        "Date": "2026-06-28",
+        "players": [
+            {
+                "name": "CocoMocoMan",
+                "delta": -15,
+                "is_winner": false
+            },
+            {
+                "name": "NadtyLite",
+                "delta": -7,
+                "is_winner": false
+            },
+            {
+                "name": "MunkeyBrewster",
+                "delta": -11,
+                "is_winner": false
+            },
+            {
+                "name": "PestoEmporium",
+                "delta": 13,
+                "is_winner": true
             }
         ],
         "ELO_Sum": 4969,
@@ -15264,6 +15264,11 @@
         "Date": "2026-06-29",
         "players": [
             {
+                "name": "1coolguy",
+                "delta": 33,
+                "is_winner": true
+            },
+            {
                 "name": "Jack432",
                 "delta": -26,
                 "is_winner": false
@@ -15277,11 +15282,6 @@
                 "name": "mouseinabox",
                 "delta": -2,
                 "is_winner": false
-            },
-            {
-                "name": "1coolguy",
-                "delta": 33,
-                "is_winner": true
             }
         ],
         "ELO_Sum": 4948,
@@ -16408,34 +16408,6 @@
         "Rank": 586
     },
     {
-        "MatchID": 47397,
-        "Date": "2026-06-26",
-        "players": [
-            {
-                "name": "uFancyHUH",
-                "delta": 26,
-                "is_winner": true
-            },
-            {
-                "name": "Fearteiler",
-                "delta": -5,
-                "is_winner": false
-            },
-            {
-                "name": "NadtyLite",
-                "delta": -8,
-                "is_winner": false
-            },
-            {
-                "name": "deejaythink",
-                "delta": -6,
-                "is_winner": false
-            }
-        ],
-        "ELO_Sum": 4929,
-        "Rank": 587
-    },
-    {
         "MatchID": 47303,
         "Date": "2026-06-16",
         "players": [
@@ -16461,7 +16433,7 @@
             }
         ],
         "ELO_Sum": 4928,
-        "Rank": 588
+        "Rank": 587
     },
     {
         "MatchID": 47051,
@@ -16489,7 +16461,7 @@
             }
         ],
         "ELO_Sum": 4926,
-        "Rank": 589
+        "Rank": 588
     },
     {
         "MatchID": 47082,
@@ -16517,7 +16489,7 @@
             }
         ],
         "ELO_Sum": 4926,
-        "Rank": 590
+        "Rank": 589
     },
     {
         "MatchID": 47176,
@@ -16545,7 +16517,7 @@
             }
         ],
         "ELO_Sum": 4926,
-        "Rank": 591
+        "Rank": 590
     },
     {
         "MatchID": 46561,
@@ -16573,7 +16545,7 @@
             }
         ],
         "ELO_Sum": 4925,
-        "Rank": 592
+        "Rank": 591
     },
     {
         "MatchID": 47203,
@@ -16601,7 +16573,7 @@
             }
         ],
         "ELO_Sum": 4925,
-        "Rank": 593
+        "Rank": 592
     },
     {
         "MatchID": 47208,
@@ -16625,6 +16597,34 @@
             {
                 "name": "Dumbledore",
                 "delta": -4,
+                "is_winner": false
+            }
+        ],
+        "ELO_Sum": 4925,
+        "Rank": 593
+    },
+    {
+        "MatchID": 47397,
+        "Date": "2026-06-26",
+        "players": [
+            {
+                "name": "uFancyHUH",
+                "delta": 26,
+                "is_winner": true
+            },
+            {
+                "name": "Fearteiler",
+                "delta": -5,
+                "is_winner": false
+            },
+            {
+                "name": "NadtyLite",
+                "delta": -7,
+                "is_winner": false
+            },
+            {
+                "name": "deejaythink",
+                "delta": -6,
                 "is_winner": false
             }
         ],
@@ -16888,23 +16888,23 @@
         "Date": "2026-06-24",
         "players": [
             {
-                "name": "oshwott2844",
-                "delta": 12,
-                "is_winner": true
-            },
-            {
-                "name": "AcolyteOfRoot",
-                "delta": -14,
-                "is_winner": false
-            },
-            {
                 "name": "ermactually",
                 "delta": -3,
                 "is_winner": false
             },
             {
+                "name": "oshwott2844",
+                "delta": 12,
+                "is_winner": true
+            },
+            {
                 "name": "cjahwon",
                 "delta": -1,
+                "is_winner": false
+            },
+            {
+                "name": "AcolyteOfRoot",
+                "delta": -14,
                 "is_winner": false
             }
         ],
@@ -17616,13 +17616,8 @@
         "Date": "2026-06-29",
         "players": [
             {
-                "name": "AcolyteOfRoot",
-                "delta": -13,
-                "is_winner": false
-            },
-            {
-                "name": "Hydro033",
-                "delta": -21,
+                "name": "AERotters",
+                "delta": -5,
                 "is_winner": false
             },
             {
@@ -17631,8 +17626,13 @@
                 "is_winner": true
             },
             {
-                "name": "AERotters",
-                "delta": -5,
+                "name": "Hydro033",
+                "delta": -21,
+                "is_winner": false
+            },
+            {
+                "name": "AcolyteOfRoot",
+                "delta": -13,
                 "is_winner": false
             }
         ],
@@ -17812,14 +17812,14 @@
         "Date": "2026-06-28",
         "players": [
             {
-                "name": "Tolfan",
-                "delta": -3,
-                "is_winner": false
-            },
-            {
                 "name": "Cookies",
                 "delta": 12,
                 "is_winner": true
+            },
+            {
+                "name": "Tolfan",
+                "delta": -3,
+                "is_winner": false
             },
             {
                 "name": "ermactually",
@@ -18960,14 +18960,14 @@
         "Date": "2026-06-30",
         "players": [
             {
-                "name": "AERotters",
-                "delta": -5,
-                "is_winner": false
-            },
-            {
                 "name": "AcolyteOfRoot",
                 "delta": -12,
                 "is_winner": false
+            },
+            {
+                "name": "MylesMoose",
+                "delta": 31,
+                "is_winner": true
             },
             {
                 "name": "Hydro033",
@@ -18975,9 +18975,9 @@
                 "is_winner": false
             },
             {
-                "name": "MylesMoose",
-                "delta": 31,
-                "is_winner": true
+                "name": "AERotters",
+                "delta": -5,
+                "is_winner": false
             }
         ],
         "ELO_Sum": 4887,
@@ -19516,34 +19516,6 @@
         "Rank": 697
     },
     {
-        "MatchID": 47403,
-        "Date": "2026-06-26",
-        "players": [
-            {
-                "name": "DarthOblivius",
-                "delta": -2,
-                "is_winner": false
-            },
-            {
-                "name": "TheFourthJesse",
-                "delta": -5,
-                "is_winner": false
-            },
-            {
-                "name": "Scipio",
-                "delta": -12,
-                "is_winner": false
-            },
-            {
-                "name": "LucianTheFak",
-                "delta": 11,
-                "is_winner": true
-            }
-        ],
-        "ELO_Sum": 4874,
-        "Rank": 698
-    },
-    {
         "MatchID": 46535,
         "Date": "2026-04-18",
         "players": [
@@ -19569,7 +19541,7 @@
             }
         ],
         "ELO_Sum": 4873,
-        "Rank": 699
+        "Rank": 698
     },
     {
         "MatchID": 46600,
@@ -19597,7 +19569,7 @@
             }
         ],
         "ELO_Sum": 4873,
-        "Rank": 700
+        "Rank": 699
     },
     {
         "MatchID": 47357,
@@ -19625,7 +19597,7 @@
             }
         ],
         "ELO_Sum": 4873,
-        "Rank": 701
+        "Rank": 700
     },
     {
         "MatchID": 46307,
@@ -19653,7 +19625,7 @@
             }
         ],
         "ELO_Sum": 4871,
-        "Rank": 702
+        "Rank": 701
     },
     {
         "MatchID": 46972,
@@ -19681,7 +19653,7 @@
             }
         ],
         "ELO_Sum": 4871,
-        "Rank": 703
+        "Rank": 702
     },
     {
         "MatchID": 47290,
@@ -19709,7 +19681,7 @@
             }
         ],
         "ELO_Sum": 4871,
-        "Rank": 704
+        "Rank": 703
     },
     {
         "MatchID": 46392,
@@ -19737,7 +19709,7 @@
             }
         ],
         "ELO_Sum": 4870,
-        "Rank": 705
+        "Rank": 704
     },
     {
         "MatchID": 46729,
@@ -19765,6 +19737,34 @@
             }
         ],
         "ELO_Sum": 4870,
+        "Rank": 705
+    },
+    {
+        "MatchID": 47403,
+        "Date": "2026-06-26",
+        "players": [
+            {
+                "name": "TheFourthJesse",
+                "delta": -5,
+                "is_winner": false
+            },
+            {
+                "name": "DarthOblivius",
+                "delta": -2,
+                "is_winner": false
+            },
+            {
+                "name": "Scipio",
+                "delta": -12,
+                "is_winner": false
+            },
+            {
+                "name": "LucianTheFak",
+                "delta": 11,
+                "is_winner": true
+            }
+        ],
+        "ELO_Sum": 4869,
         "Rank": 706
     },
     {
@@ -19884,8 +19884,8 @@
         "Date": "2026-06-30",
         "players": [
             {
-                "name": "Jalapeno",
-                "delta": -23,
+                "name": "AERotters",
+                "delta": -5,
                 "is_winner": false
             },
             {
@@ -19894,8 +19894,8 @@
                 "is_winner": false
             },
             {
-                "name": "AERotters",
-                "delta": -5,
+                "name": "Jalapeno",
+                "delta": -23,
                 "is_winner": false
             },
             {
@@ -20617,8 +20617,8 @@
                 "is_winner": true
             },
             {
-                "name": "Dumbledore",
-                "delta": -7,
+                "name": "Diyana",
+                "delta": -10,
                 "is_winner": false
             },
             {
@@ -20627,8 +20627,8 @@
                 "is_winner": false
             },
             {
-                "name": "Diyana",
-                "delta": -10,
+                "name": "Dumbledore",
+                "delta": -7,
                 "is_winner": false
             }
         ],
@@ -20972,34 +20972,6 @@
         "Rank": 749
     },
     {
-        "MatchID": 47414,
-        "Date": "2026-06-28",
-        "players": [
-            {
-                "name": "DarthOblivius",
-                "delta": -2,
-                "is_winner": false
-            },
-            {
-                "name": "Antiproject",
-                "delta": 21,
-                "is_winner": true
-            },
-            {
-                "name": "lumpyprol",
-                "delta": -11,
-                "is_winner": false
-            },
-            {
-                "name": "TheFourthJesse",
-                "delta": -5,
-                "is_winner": false
-            }
-        ],
-        "ELO_Sum": 4841,
-        "Rank": 750
-    },
-    {
         "MatchID": 47334,
         "Date": "2026-06-19",
         "players": [
@@ -21025,16 +20997,16 @@
             }
         ],
         "ELO_Sum": 4840,
-        "Rank": 751
+        "Rank": 750
     },
     {
         "MatchID": 47409,
         "Date": "2026-06-27",
         "players": [
             {
-                "name": "pizzamagican",
-                "delta": 68,
-                "is_winner": true
+                "name": "Ctfox",
+                "delta": -27,
+                "is_winner": false
             },
             {
                 "name": "DarthOblivius",
@@ -21042,17 +21014,45 @@
                 "is_winner": false
             },
             {
-                "name": "Ctfox",
-                "delta": -27,
-                "is_winner": false
-            },
-            {
                 "name": "Diyana",
                 "delta": -7,
                 "is_winner": false
+            },
+            {
+                "name": "pizzamagican",
+                "delta": 68,
+                "is_winner": true
             }
         ],
         "ELO_Sum": 4840,
+        "Rank": 751
+    },
+    {
+        "MatchID": 47414,
+        "Date": "2026-06-28",
+        "players": [
+            {
+                "name": "DarthOblivius",
+                "delta": -2,
+                "is_winner": false
+            },
+            {
+                "name": "Antiproject",
+                "delta": 21,
+                "is_winner": true
+            },
+            {
+                "name": "lumpyprol",
+                "delta": -11,
+                "is_winner": false
+            },
+            {
+                "name": "TheFourthJesse",
+                "delta": -5,
+                "is_winner": false
+            }
+        ],
+        "ELO_Sum": 4838,
         "Rank": 752
     },
     {
@@ -21872,11 +21872,6 @@
         "Date": "2026-06-28",
         "players": [
             {
-                "name": "oshwott2844",
-                "delta": -27,
-                "is_winner": false
-            },
-            {
                 "name": "mouseinabox",
                 "delta": 18,
                 "is_winner": true
@@ -21889,6 +21884,11 @@
             {
                 "name": "cjahwon",
                 "delta": -1,
+                "is_winner": false
+            },
+            {
+                "name": "oshwott2844",
+                "delta": -27,
                 "is_winner": false
             }
         ],
@@ -22148,34 +22148,6 @@
         "Rank": 791
     },
     {
-        "MatchID": 47427,
-        "Date": "2026-06-29",
-        "players": [
-            {
-                "name": "DarthPuniceus",
-                "delta": -14,
-                "is_winner": false
-            },
-            {
-                "name": "Pandapapst",
-                "delta": 42,
-                "is_winner": true
-            },
-            {
-                "name": "DarthOblivius",
-                "delta": -2,
-                "is_winner": false
-            },
-            {
-                "name": "DelSol",
-                "delta": -3,
-                "is_winner": false
-            }
-        ],
-        "ELO_Sum": 4814,
-        "Rank": 792
-    },
-    {
         "MatchID": 46501,
         "Date": "2026-04-16",
         "players": [
@@ -22201,7 +22173,7 @@
             }
         ],
         "ELO_Sum": 4813,
-        "Rank": 793
+        "Rank": 792
     },
     {
         "MatchID": 47064,
@@ -22229,7 +22201,7 @@
             }
         ],
         "ELO_Sum": 4813,
-        "Rank": 794
+        "Rank": 793
     },
     {
         "MatchID": 47130,
@@ -22257,7 +22229,7 @@
             }
         ],
         "ELO_Sum": 4813,
-        "Rank": 795
+        "Rank": 794
     },
     {
         "MatchID": 47302,
@@ -22285,7 +22257,7 @@
             }
         ],
         "ELO_Sum": 4813,
-        "Rank": 796
+        "Rank": 795
     },
     {
         "MatchID": 47350,
@@ -22309,6 +22281,34 @@
             {
                 "name": "sontei5",
                 "delta": -15,
+                "is_winner": false
+            }
+        ],
+        "ELO_Sum": 4813,
+        "Rank": 796
+    },
+    {
+        "MatchID": 47427,
+        "Date": "2026-06-29",
+        "players": [
+            {
+                "name": "Pandapapst",
+                "delta": 42,
+                "is_winner": true
+            },
+            {
+                "name": "DelSol",
+                "delta": -3,
+                "is_winner": false
+            },
+            {
+                "name": "DarthPuniceus",
+                "delta": -14,
+                "is_winner": false
+            },
+            {
+                "name": "DarthOblivius",
+                "delta": -2,
                 "is_winner": false
             }
         ],
@@ -23664,8 +23664,13 @@
         "Date": "2026-06-27",
         "players": [
             {
-                "name": "sontei5",
-                "delta": -15,
+                "name": "idk123",
+                "delta": 21,
+                "is_winner": true
+            },
+            {
+                "name": "BLULOBSTR",
+                "delta": -18,
                 "is_winner": false
             },
             {
@@ -23674,14 +23679,9 @@
                 "is_winner": false
             },
             {
-                "name": "BLULOBSTR",
-                "delta": -18,
+                "name": "sontei5",
+                "delta": -15,
                 "is_winner": false
-            },
-            {
-                "name": "idk123",
-                "delta": 21,
-                "is_winner": true
             }
         ],
         "ELO_Sum": 4788,
@@ -27892,16 +27892,6 @@
         "Date": "2026-06-26",
         "players": [
             {
-                "name": "MunkeyBrewster",
-                "delta": -20,
-                "is_winner": false
-            },
-            {
-                "name": "DarthOblivius",
-                "delta": -3,
-                "is_winner": false
-            },
-            {
                 "name": "DarkPortents",
                 "delta": -17,
                 "is_winner": false
@@ -27910,6 +27900,16 @@
                 "name": "Scipio",
                 "delta": 25,
                 "is_winner": true
+            },
+            {
+                "name": "DarthOblivius",
+                "delta": -3,
+                "is_winner": false
+            },
+            {
+                "name": "MunkeyBrewster",
+                "delta": -20,
+                "is_winner": false
             }
         ],
         "ELO_Sum": 4690,
@@ -28004,13 +28004,13 @@
         "Date": "2026-06-27",
         "players": [
             {
-                "name": "cjahwon",
-                "delta": -2,
+                "name": "Fluffy",
+                "delta": -21,
                 "is_winner": false
             },
             {
-                "name": "Fluffy",
-                "delta": -21,
+                "name": "polyphemur",
+                "delta": -8,
                 "is_winner": false
             },
             {
@@ -28019,8 +28019,8 @@
                 "is_winner": true
             },
             {
-                "name": "polyphemur",
-                "delta": -8,
+                "name": "cjahwon",
+                "delta": -2,
                 "is_winner": false
             }
         ],
@@ -29036,34 +29036,6 @@
         "Rank": 1037
     },
     {
-        "MatchID": 47423,
-        "Date": "2026-06-29",
-        "players": [
-            {
-                "name": "DawnDiVito",
-                "delta": -3,
-                "is_winner": false
-            },
-            {
-                "name": "Ljaz7",
-                "delta": -3,
-                "is_winner": false
-            },
-            {
-                "name": "LucianTheFak",
-                "delta": 8,
-                "is_winner": true
-            },
-            {
-                "name": "Niruu",
-                "delta": -5,
-                "is_winner": false
-            }
-        ],
-        "ELO_Sum": 4659,
-        "Rank": 1038
-    },
-    {
         "MatchID": 46317,
         "Date": "2026-04-05",
         "players": [
@@ -29089,7 +29061,7 @@
             }
         ],
         "ELO_Sum": 4658,
-        "Rank": 1039
+        "Rank": 1038
     },
     {
         "MatchID": 46301,
@@ -29117,7 +29089,7 @@
             }
         ],
         "ELO_Sum": 4657,
-        "Rank": 1040
+        "Rank": 1039
     },
     {
         "MatchID": 46735,
@@ -29145,7 +29117,7 @@
             }
         ],
         "ELO_Sum": 4655,
-        "Rank": 1041
+        "Rank": 1040
     },
     {
         "MatchID": 46418,
@@ -29173,7 +29145,7 @@
             }
         ],
         "ELO_Sum": 4654,
-        "Rank": 1042
+        "Rank": 1041
     },
     {
         "MatchID": 46678,
@@ -29197,6 +29169,34 @@
             {
                 "name": "BigHat",
                 "delta": -24,
+                "is_winner": false
+            }
+        ],
+        "ELO_Sum": 4654,
+        "Rank": 1042
+    },
+    {
+        "MatchID": 47423,
+        "Date": "2026-06-29",
+        "players": [
+            {
+                "name": "Niruu",
+                "delta": -5,
+                "is_winner": false
+            },
+            {
+                "name": "LucianTheFak",
+                "delta": 8,
+                "is_winner": true
+            },
+            {
+                "name": "Ljaz7",
+                "delta": -4,
+                "is_winner": false
+            },
+            {
+                "name": "DawnDiVito",
+                "delta": -3,
                 "is_winner": false
             }
         ],
@@ -29768,8 +29768,8 @@
         "Date": "2026-06-26",
         "players": [
             {
-                "name": "SlickAngel",
-                "delta": -10,
+                "name": "Wriggleroom",
+                "delta": -3,
                 "is_winner": false
             },
             {
@@ -29778,13 +29778,13 @@
                 "is_winner": true
             },
             {
-                "name": "MunkeyBrewster",
-                "delta": -21,
+                "name": "SlickAngel",
+                "delta": -10,
                 "is_winner": false
             },
             {
-                "name": "Wriggleroom",
-                "delta": -3,
+                "name": "MunkeyBrewster",
+                "delta": -21,
                 "is_winner": false
             }
         ],
@@ -29941,11 +29941,6 @@
                 "is_winner": false
             },
             {
-                "name": "AERotters",
-                "delta": -7,
-                "is_winner": false
-            },
-            {
                 "name": "SlickAngel",
                 "delta": 30,
                 "is_winner": true
@@ -29953,6 +29948,11 @@
             {
                 "name": "KyloBot",
                 "delta": -26,
+                "is_winner": false
+            },
+            {
+                "name": "AERotters",
+                "delta": -7,
                 "is_winner": false
             }
         ],
@@ -30272,13 +30272,8 @@
         "Date": "2026-06-27",
         "players": [
             {
-                "name": "Tolfan",
-                "delta": 13,
-                "is_winner": true
-            },
-            {
-                "name": "OceanAir",
-                "delta": -27,
+                "name": "Munchking",
+                "delta": -3,
                 "is_winner": false
             },
             {
@@ -30287,9 +30282,14 @@
                 "is_winner": false
             },
             {
-                "name": "Munchking",
-                "delta": -3,
+                "name": "OceanAir",
+                "delta": -27,
                 "is_winner": false
+            },
+            {
+                "name": "Tolfan",
+                "delta": 13,
+                "is_winner": true
             }
         ],
         "ELO_Sum": 4602,
@@ -31341,6 +31341,11 @@
                 "is_winner": true
             },
             {
+                "name": "AERotters",
+                "delta": -7,
+                "is_winner": false
+            },
+            {
                 "name": "DrCheeseFiend",
                 "delta": -3,
                 "is_winner": false
@@ -31348,11 +31353,6 @@
             {
                 "name": "KyloBot",
                 "delta": -25,
-                "is_winner": false
-            },
-            {
-                "name": "AERotters",
-                "delta": -7,
                 "is_winner": false
             }
         ],
@@ -32242,13 +32242,13 @@
                 "is_winner": true
             },
             {
-                "name": "Munchking",
-                "delta": -3,
+                "name": "Dumbledore",
+                "delta": -12,
                 "is_winner": false
             },
             {
-                "name": "Dumbledore",
-                "delta": -12,
+                "name": "Munchking",
+                "delta": -3,
                 "is_winner": false
             }
         ],
@@ -32568,16 +32568,6 @@
         "Date": "2026-06-30",
         "players": [
             {
-                "name": "cjahwon",
-                "delta": -4,
-                "is_winner": false
-            },
-            {
-                "name": "Munchking",
-                "delta": -4,
-                "is_winner": false
-            },
-            {
                 "name": "rhino",
                 "delta": -24,
                 "is_winner": false
@@ -32586,6 +32576,16 @@
                 "name": "ominouscat",
                 "delta": 47,
                 "is_winner": true
+            },
+            {
+                "name": "cjahwon",
+                "delta": -4,
+                "is_winner": false
+            },
+            {
+                "name": "Munchking",
+                "delta": -4,
+                "is_winner": false
             }
         ],
         "ELO_Sum": 4355,
