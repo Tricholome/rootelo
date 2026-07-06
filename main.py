@@ -134,12 +134,23 @@ def prepare_trends_data(history_dict):
     if not history_dict:
         return {"history_json": "{}", "player_names": []}
     
+    enriched_history = {}
+    for player_raw, rows in history_dict.items():
+        clean_rows = []
+        for row in rows:
+            match_id = row[2] if len(row) > 2 else None
+            url = f"https://rootleague.pliskin.dev/match/{match_id}/" if match_id else None
+            
+            clean_rows.append([row[0], row[1], match_id, url])
+            
+        enriched_history[get_clean_name(player_raw)] = clean_rows
+    
     player_names = sorted(
-        [get_clean_name(k) for k in history_dict.keys()],
+        [k for k in enriched_history.keys()],
         key=lambda x: x.lower()
     )
     return {
-        "history_json": json.dumps(history_dict),
+        "history_json": json.dumps(enriched_history),
         "player_names": player_names
     }
     
