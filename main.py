@@ -107,9 +107,14 @@ def prepare_matches_data(matches_list):
 def prepare_trends_data(history_dict):
     if not history_dict:
         return {"history_json": "{}", "player_names": []}
+    
+    player_names = sorted(
+        [{"raw": k, "clean": get_clean_name(k)} for k in history_dict.keys()],
+        key=lambda x: x['clean'].lower()
+    )
     return {
         "history_json": json.dumps(history_dict),
-        "player_names": sorted(list(history_dict.keys()))
+        "player_names": player_names
     }
     
 def get_elo_for_match(player_name, game_id, full_history):
