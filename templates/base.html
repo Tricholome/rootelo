@@ -199,6 +199,11 @@
 		
     <script src="static/script.js"></script>
     {% block custom_js %}{% endblock %}
+	<script>
+		if (window.location.pathname.includes('/dev/')) {
+			window.goatcounter = {no_onload: true};
+		}
+	</script>
 	<script data-goatcounter="https://tricholome.goatcounter.com/count"
             async src="//gc.zgo.at/count.js"></script>
 </body>
