@@ -63,9 +63,35 @@ env.filters['smart_date'] = smart_date_filter
 # =========================================================================
 # --- 2. UTILITIES & HELPERS ---
 # =========================================================================
+PLAYER_MAP = {}
+
+def initialize_player_mapping(all_raw_names):
+    from collections import Counter
+    base_names = [str(n).split('+')[0].split('#')[0].strip() for n in all_raw_names if n]
+    counts = Counter(base_names)
+    
+    for name in all_raw_names:
+        if not name:
+            continue
+        name_str = str(name)
+        base = name_str.split('+')[0].split('#')[0].strip()
+        
+        if counts[base] > 1:
+            tag = ""
+            if '#' in name_str:
+                tag = name_str.split('#')[-1].strip()
+            elif '+' in name_str:
+                tag = name_str.split('+')[-1].strip()
+            
+            PLAYER_MAP[name] = f"{base} ({tag})" if tag else base
+        else:
+            PLAYER_MAP[name] = base
+
 def get_clean_name(name):
     if not name: 
         return ""
+    if name in PLAYER_MAP:
+        return PLAYER_MAP[name]
     return str(name).split('+')[0].split('#')[0].strip()
 
 def get_tier_name(rating, games):
@@ -109,8 +135,8 @@ def prepare_trends_data(history_dict):
         return {"history_json": "{}", "player_names": []}
     
     player_names = sorted(
-        [{"raw": k, "clean": get_clean_name(k)} for k in history_dict.keys()],
-        key=lambda x: x['clean'].lower()
+        [get_clean_name(k) for k in history_dict.keys()],
+        key=lambda x: x.lower()
     )
     return {
         "history_json": json.dumps(history_dict),
@@ -257,7 +283,7 @@ for tag in ARCHIVE_SEASONS:
         if os.path.exists(path_trends):
             with open(path_trends, "r", encoding="utf-8") as f:
                 history = json.load(f)
-                archives_raw_data[tag]['history'] = {get_clean_name(k): v for k, v in history.items()}
+                archives_raw_data[tag]['history'] = history
                 
         print(f"  ✅ Archive {tag.upper()} loaded successfully.")
     except Exception as e:
@@ -314,6 +340,23 @@ if not df.empty:
 
     df = df[df['Date_Closed'].dt.date <= CUTOFF_DATE].copy()
     df = df.sort_values(by='Date_Closed').reset_index(drop=True)
+    
+all_raw_names = set()
+if not df.empty:
+    all_raw_names.update(df['Player'].unique())
+for tag in ARCHIVE_SEASONS:
+    archive_df = archives_raw_data[tag]['final_df']
+    if not archive_df.empty and 'Player' in archive_df.columns:
+        all_raw_names.update(archive_df['Player'].unique())
+    if 'history' in archives_raw_data[tag] and archives_raw_data[tag]['history']:
+        all_raw_names.update(archives_raw_data[tag]['history'].keys())
+
+initialize_player_mapping(all_raw_names)
+
+for tag in ARCHIVE_SEASONS:
+    if 'history' in archives_raw_data[tag]:
+        raw_hist = archives_raw_data[tag]['history']
+        archives_raw_data[tag]['history'] = {get_clean_name(k): v for k, v in raw_hist.items()}
 
 # =========================================================================
 # --- 5. ELO ENGINE ---
