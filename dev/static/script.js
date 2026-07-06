@@ -823,7 +823,11 @@ window.updateRelationsTree = function(playerName) {
     
     if (relationsWrapper) relationsWrapper.style.display = 'block';
     
-    document.getElementById('centerPlayerName').innerText = playerName;
+    // Mise à jour sécurisée du nom du joueur sélectionné au centre
+    const centerNameEl = document.getElementById('centerPlayerName');
+    if (centerNameEl) {
+        centerNameEl.innerText = playerName;
+    }
     
     const introEl = document.getElementById('centerPlayerIntro');
     const metaEl = document.getElementById('centerPlayerMeta');
@@ -840,82 +844,86 @@ window.updateRelationsTree = function(playerName) {
         if (metaEl) metaEl.innerHTML = "";
     }
     
+    // --- LOGIQUE DU NŒUD TROPHY ---
     const nodeTrophy = document.getElementById('nodeTrophy');
-	if (nodeTrophy) {
-		const target = nodeTrophy.querySelector('.node-content') || nodeTrophy;
-		const overlay = nodeTrophy.querySelector('.node-overlay'); // On cible l'overlay
-		
-		if (data.trophy && data.trophy.name) {
-			const trophyIcon = data.trophy.tier ? getRelationsIconHtml(data.trophy.tier) : "";
-			const eloColor = data.trophy.tier ? `var(--color-${data.trophy.tier})` : 'var(--text-main)';
-			const trophyText = (vars && vars.trophy) ? getRandomVariation(vars.trophy) : "";
-			
-			target.innerHTML = `
-				${trophyText ? `<div class="narrative-text">${trophyText}</div>` : ''}
-				<div id="textTrophy" class="node-content-flex">
-					${trophyIcon ? `<div class="node-icon-side">${trophyIcon}</div>` : ''}
-					<div class="node-text-side">
-						<div class="player-name">${data.trophy.name}</div>
-						<div class="player-meta" style="color: ${eloColor};">Elo ${data.trophy.elo}</div>
-					</div>
-				</div>
-			`;
-			nodeTrophy.setAttribute('data-player', data.trophy.name);
-			if (overlay) overlay.style.display = ''; // Affiche l'overlay au survol
-		} else {
-			const trophyEmptyText = (vars && vars.trophy_empty) ? getRandomVariation(vars.trophy_empty) : "";
-			target.innerHTML = `
-				<div id="textTrophy">
-					${trophyEmptyText ? `<div class="narrative-text">${trophyEmptyText}</div>` : ''}
-				</div>
-			`;
-			nodeTrophy.setAttribute('data-player', '');
-			if (overlay) overlay.style.display = 'none'; // Bloque l'overlay complètement
-		}
-	}
+    if (nodeTrophy) {
+        const target = nodeTrophy.querySelector('.node-content') || nodeTrophy;
+        const overlay = nodeTrophy.querySelector('.node-overlay'); // Cible l'overlay sans toucher aux classes
+        
+        if (data.trophy && data.trophy.name) {
+            const trophyIcon = data.trophy.tier ? getRelationsIconHtml(data.trophy.tier) : "";
+            const eloColor = data.trophy.tier ? `var(--color-${data.trophy.tier})` : 'var(--text-main)';
+            const trophyText = (vars && vars.trophy) ? getRandomVariation(vars.trophy) : "";
+            
+            target.innerHTML = `
+                ${trophyText ? `<div class="narrative-text">${trophyText}</div>` : ''}
+                <div id="textTrophy" class="node-content-flex">
+                    ${trophyIcon ? `<div class="node-icon-side">${trophyIcon}</div>` : ''}
+                    <div class="node-text-side">
+                        <div class="player-name">${data.trophy.name}</div>
+                        <div class="player-meta" style="color: ${eloColor};">Elo ${data.trophy.elo}</div>
+                    </div>
+                </div>
+            `;
+            nodeTrophy.setAttribute('data-player', data.trophy.name);
+            if (overlay) overlay.style.style.removeProperty('display'); // Réactive l'overlay normal
+        } else {
+            const trophyEmptyText = (vars && vars.trophy_empty) ? getRandomVariation(vars.trophy_empty) : "";
+            target.innerHTML = `
+                <div id="textTrophy">
+                    ${trophyEmptyText ? `<div class="narrative-text">${trophyEmptyText}</div>` : ''}
+                </div>
+            `;
+            nodeTrophy.setAttribute('data-player', '');
+            if (overlay) overlay.style.display = 'none'; // Masque l'overlay quand le nœud est vide
+        }
+    }
     
+    // --- LOGIQUE DU NŒUD BANE ---
     const nodeBane = document.getElementById('nodeBane');
-	if (nodeBane) {
-		const target = nodeBane.querySelector('.node-content') || nodeBane;
-		const overlay = nodeBane.querySelector('.node-overlay'); // On cible l'overlay
-		
-		if (data.bane && data.bane.name) {
-			const baneIcon = data.bane.tier ? getRelationsIconHtml(data.bane.tier) : "";
-			const eloColor = data.bane.tier ? `var(--color-${data.bane.tier})` : 'var(--text-main)';
-			const baneText = (vars && vars.bane) ? getRandomVariation(vars.bane) : "";
-			
-			target.innerHTML = `
-				${baneText ? `<div class="narrative-text">${baneText}</div>` : ''}
-				<div id="textBane" class="node-content-flex">
-					${baneIcon ? `<div class="node-icon-side">${baneIcon}</div>` : ''}
-					<div class="node-text-side">
-						<div class="player-name">${data.bane.name}</div>
-						<div class="player-meta" style="color: ${eloColor};">Elo ${data.bane.elo}</div>
-					</div>
-				</div>
-			`;
-			nodeBane.setAttribute('data-player', data.bane.name);
-			if (overlay) overlay.style.display = ''; // Affiche l'overlay au survol
-		} else {
-			const baneEmptyText = (vars && vars.bane_empty) ? getRandomVariation(vars.bane_empty) : "";
-			target.innerHTML = `
-				<div id="textBane">
-					${baneEmptyText ? `<div class="narrative-text">${baneEmptyText}</div>` : ''}
-				</div>
-			`;
-			nodeBane.setAttribute('data-player', '');
-			if (overlay) overlay.style.display = 'none'; // Bloque l'overlay complètement
-		}
-	}
+    if (nodeBane) {
+        const target = nodeBane.querySelector('.node-content') || nodeBane;
+        const overlay = nodeBane.querySelector('.node-overlay'); // Cible l'overlay sans toucher aux classes
+        
+        if (data.bane && data.bane.name) {
+            const baneIcon = data.bane.tier ? getRelationsIconHtml(data.bane.tier) : "";
+            const eloColor = data.bane.tier ? `var(--color-${data.bane.tier})` : 'var(--text-main)';
+            const baneText = (vars && vars.bane) ? getRandomVariation(vars.bane) : "";
+            
+            target.innerHTML = `
+                ${baneText ? `<div class="narrative-text">${baneText}</div>` : ''}
+                <div id="textBane" class="node-content-flex">
+                    ${baneIcon ? `<div class="node-icon-side">${baneIcon}</div>` : ''}
+                    <div class="node-text-side">
+                        <div class="player-name">${data.bane.name}</div>
+                        <div class="player-meta" style="color: ${eloColor};">Elo ${data.bane.elo}</div>
+                    </div>
+                </div>
+            `;
+            nodeBane.setAttribute('data-player', data.bane.name);
+            if (overlay) overlay.style.style.removeProperty('display'); // Réactive l'overlay normal
+        } else {
+            const baneEmptyText = (vars && vars.bane_empty) ? getRandomVariation(vars.bane_empty) : "";
+            target.innerHTML = `
+                <div id="textBane">
+                    ${baneEmptyText ? `<div class="narrative-text">${baneEmptyText}</div>` : ''}
+                </div>
+            `;
+            nodeBane.setAttribute('data-player', '');
+            if (overlay) overlay.style.display = 'none'; // Masque l'overlay quand le nœud est vide
+        }
+    }
 };
 
 window.selectPlayerFromTree = function(element) {
     const clickedName = element.getAttribute('data-player');
     if (clickedName) {
         const input = document.getElementById('playerName');
-        input.value = clickedName;
-        window.updateRelationsTree(clickedName);
-        input.dispatchEvent(new Event('input')); 
+        if (input) {
+            input.value = clickedName;
+            window.updateRelationsTree(clickedName);
+            input.dispatchEvent(new Event('input')); 
+        }
     }
 };
 
@@ -945,25 +953,27 @@ window.updatePlayerView = function() {
         const nodeTrophy = document.getElementById('nodeTrophy');
         if (nodeTrophy) {
             const target = nodeTrophy.querySelector('.node-content') || nodeTrophy;
+            const overlay = nodeTrophy.querySelector('.node-overlay');
             target.innerHTML = `
                 <div id="textTrophy">
                     <div class="player-name">...</div>
                 </div>
             `;
             nodeTrophy.setAttribute('data-player', '');
-            nodeTrophy.classList.remove('interactive-node');
+            if (overlay) overlay.style.display = 'none';
         }
 
         const nodeBane = document.getElementById('nodeBane');
         if (nodeBane) {
             const target = nodeBane.querySelector('.node-content') || nodeBane;
+            const overlay = nodeBane.querySelector('.node-overlay');
             target.innerHTML = `
                 <div id="textBane">
                     <div class="player-name">...</div>
                 </div>
             `;
             nodeBane.setAttribute('data-player', '');
-            nodeBane.classList.remove('interactive-node');
+            if (overlay) overlay.style.display = 'none';
         }
     }
 };
