@@ -97,7 +97,9 @@ def prepare_matches_data(matches_list):
         'rank': m.get('Rank'),
         'elo_sum': m.get('ELO_Sum'),
         'date': m.get('Date'),
-        'players': sorted(m.get('players', []), key=lambda x: x['is_winner'], reverse=True),
+        'players': sorted([
+            {**p, 'name': get_clean_name(p['name'])} for p in m.get('players', [])
+        ], key=lambda x: x['is_winner'], reverse=True),
         'match_id': m.get('MatchID'),
         'match_url': f"https://rootleague.pliskin.dev/match/{m.get('MatchID')}/"
     } for m in matches_list]
@@ -167,6 +169,30 @@ def extract_relations(matches_list, full_history):
         
     return relations
 
+def prepare_archive_relations(raw_relations):
+    prepared = {}
+    for p_raw, data in raw_relations.items():
+        p_clean = get_clean_name(p_raw)
+        t_name = data["trophy"]["name"]
+        t_elo = data["trophy"]["elo"]
+        b_name = data["bane"]["name"]
+        b_elo = data["bane"]["elo"]
+        
+        prepared[p_clean] = {
+            "unique_opponents": data.get("unique_opponents", 0),
+            "trophy": {
+                "name": get_clean_name(t_name) if t_name else None,
+                "elo": t_elo,
+                "tier": get_tier_name(t_elo, 10) if t_elo != -1 else "unranked"
+            },
+            "bane": {
+                "name": get_clean_name(b_name) if b_name else None,
+                "elo": b_elo,
+                "tier": get_tier_name(b_elo, 10) if b_elo != 99999 else "unranked"
+            }
+        }
+    return prepared
+
 def render_page(template_name, output_name, **kwargs):
     template = env.get_template(template_name)
     full_vars = {
@@ -207,7 +233,7 @@ for tag in ARCHIVE_SEASONS:
             with open(path, "r", encoding="utf-8") as f:
                 archives_raw_data[tag][key] = json.load(f)
     try:
-        path_ratings = os.path.join(DATA_DIR, f"{tag}_final_ratings.csv")
+        path_ratings = os.path.join(DATA_DIR, f"{tag}_ratings.csv")
         if os.path.exists(path_ratings):
             df_ratings = pd.read_csv(path_ratings)
             for _, row in df_ratings.iterrows():
@@ -217,12 +243,12 @@ for tag in ARCHIVE_SEASONS:
                 df_ratings['Tier'] = None
             archives_raw_data[tag]['final_df'] = df_ratings
         
-        path_matches = os.path.join(DATA_DIR, f"{tag}_matches_fixed.json")
+        path_matches = os.path.join(DATA_DIR, f"{tag}_matches.json")
         if os.path.exists(path_matches):
             with open(path_matches, "r", encoding="utf-8") as f:
                 archives_raw_data[tag]['matches_list'] = json.load(f)
         
-        path_trends = os.path.join(DATA_DIR, f"{tag}_history_full.json")
+        path_trends = os.path.join(DATA_DIR, f"{tag}_history.json")
         if os.path.exists(path_trends):
             with open(path_trends, "r", encoding="utf-8") as f:
                 history = json.load(f)
@@ -303,7 +329,7 @@ player_history = {}
 
 for p, r in elo_ratings.items():
     label = f"{ARCHIVE_SEASONS[-1].upper()} Final" if ARCHIVE_SEASONS and p in archived_player_names else "Start"
-    player_history[p] = [[label, round(r), None, None]]
+    player_history[p] = [[label, round(r), None]]
 
 if not df.empty:
     for game_id, group in df.groupby('GameID', sort=False):
@@ -311,7 +337,6 @@ if not df.empty:
         current_match_sum = round(sum([elo_ratings[p['Player']] for p in match_participants]))
         current_date = pd.to_datetime(match_participants[0]['Date_Closed']).strftime('%Y-%m-%d')
         
-        # Calculate expected values via Q scores
         q_scores = {p['Player']: 10 ** (elo_ratings[p['Player']] / 400) for p in match_participants}
         total_q = sum(q_scores.values())
         
@@ -335,8 +360,7 @@ if not df.empty:
             if elo_ratings[name] > peak_elo[name]: 
                 peak_elo[name] = elo_ratings[name]
                 
-            match_url = f"https://rootleague.pliskin.dev/match/{game_id}/"
-            player_history[name].append([current_date, round(elo_ratings[name]), int(game_id), match_url])
+            player_history[name].append([current_date, round(elo_ratings[name]), int(game_id)])
 
         players_list = [{
             'name': get_clean_name(p['Player']),
@@ -543,7 +567,9 @@ def render_core_pages(file_suffix, is_archive, tag, lb_data, match_data, trends_
 render_core_pages("", False, CURRENT_SEASON_TAG, display_leaderboard_current, display_matches_current, display_trends_current, current_meta, current_relations)
 
 for tag in ARCHIVE_SEASONS:
-    render_core_pages(f"_{tag}", True, tag, display_archives[tag]['leaderboard'], display_archives[tag]['matches'], display_archives[tag]['trends'], archives_raw_data[tag]['metadata'], archives_raw_data[tag].get('relations', {}))
+    archive_relations_clean = prepare_archive_relations(archives_raw_data[tag].get('relations', {}))
+    
+    render_core_pages(f"_{tag}", True, tag, display_archives[tag]['leaderboard'], display_archives[tag]['matches'], display_archives[tag]['trends'], archives_raw_data[tag]['metadata'], archive_relations_clean)
 
 # --- Render Static Pages ---
 render_page(
