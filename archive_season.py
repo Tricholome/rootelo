@@ -5,17 +5,6 @@ import json
 from datetime import datetime
 
 # =========================================================================
-# --- 0. HELPERS & UTILITIES ---
-# =========================================================================
-def get_tier_icon(rating):
-    if rating >= 1600: return "stag"
-    if rating >= 1500: return "bird"
-    if rating >= 1400: return "fox"
-    if rating >= 1300: return "rabbit"
-    if rating >= 1200: return "mouse"
-    return "squirrel"
-
-# =========================================================================
 # --- 1. SETTINGS & PATH CONFIGURATION ---
 # =========================================================================
 SEASON_TAG = os.getenv('SEASON_TAG', 'lh01').strip().lower()
@@ -232,8 +221,8 @@ def extract_relations(matches_list, pre_match_elos):
     all_players = {p['name'] for m in matches_list for p in m['players']}
     
     relations = {p: {
-        "trophy": {"name": None, "elo": -1, "tier": "unranked"}, 
-        "bane": {"name": None, "elo": 99999, "tier": "unranked"},
+        "trophy": {"name": None, "elo": -1}, 
+        "bane": {"name": None, "elo": 99999},
         "unique_opponents": 0
     } for p in all_players}
     
@@ -249,19 +238,17 @@ def extract_relations(matches_list, pre_match_elos):
         winners = [p for p in m['players'] if p['is_winner']]
         losers = [p for p in m['players'] if not p['is_winner']]
 
-        # Trophy: O(1) Instant cache lookup
         for w in winners:
             for l in losers:
                 l_elo = pre_match_elos.get((l['name'], match_id))
                 if l_elo is not None and l_elo > relations[w['name']]['trophy']['elo']:
-                    relations[w['name']]['trophy'] = {"name": l['name'], "elo": l_elo, "tier": get_tier_icon(l_elo)}
+                    relations[w['name']]['trophy'] = {"name": l['name'], "elo": l_elo}
 
-        # Bane: O(1) Instant cache lookup
         for l in losers:
             for w in winners:
                 w_elo = pre_match_elos.get((w['name'], match_id))
                 if w_elo is not None and w_elo < relations[l['name']]['bane']['elo']:
-                    relations[l['name']]['bane'] = {"name": w['name'], "elo": w_elo, "tier": get_tier_icon(w_elo)}
+                    relations[l['name']]['bane'] = {"name": w['name'], "elo": w_elo}
     
     for p in all_players:
         relations[p]["unique_opponents"] = len(opponents_track[p])
