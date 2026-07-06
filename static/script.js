@@ -823,11 +823,9 @@ window.updateRelationsTree = function(playerName) {
     
     if (relationsWrapper) relationsWrapper.style.display = 'block';
     
-    // Mise à jour sécurisée du nom du joueur sélectionné au centre
+    // Mise à jour du nom central
     const centerNameEl = document.getElementById('centerPlayerName');
-    if (centerNameEl) {
-        centerNameEl.innerText = playerName;
-    }
+    if (centerNameEl) centerNameEl.innerText = playerName;
     
     const introEl = document.getElementById('centerPlayerIntro');
     const metaEl = document.getElementById('centerPlayerMeta');
@@ -844,11 +842,10 @@ window.updateRelationsTree = function(playerName) {
         if (metaEl) metaEl.innerHTML = "";
     }
     
-    // --- LOGIQUE DU NŒUD TROPHY ---
+    // --- NŒUD TROPHY ---
     const nodeTrophy = document.getElementById('nodeTrophy');
     if (nodeTrophy) {
         const target = nodeTrophy.querySelector('.node-content') || nodeTrophy;
-        const overlay = nodeTrophy.querySelector('.node-overlay'); // Cible l'overlay sans toucher aux classes
         
         if (data.trophy && data.trophy.name) {
             const trophyIcon = data.trophy.tier ? getRelationsIconHtml(data.trophy.tier) : "";
@@ -866,7 +863,6 @@ window.updateRelationsTree = function(playerName) {
                 </div>
             `;
             nodeTrophy.setAttribute('data-player', data.trophy.name);
-            if (overlay) overlay.style.style.removeProperty('display'); // Réactive l'overlay normal
         } else {
             const trophyEmptyText = (vars && vars.trophy_empty) ? getRandomVariation(vars.trophy_empty) : "";
             target.innerHTML = `
@@ -874,16 +870,14 @@ window.updateRelationsTree = function(playerName) {
                     ${trophyEmptyText ? `<div class="narrative-text">${trophyEmptyText}</div>` : ''}
                 </div>
             `;
-            nodeTrophy.setAttribute('data-player', '');
-            if (overlay) overlay.style.display = 'none'; // Masque l'overlay quand le nœud est vide
+            nodeTrophy.setAttribute('data-player', ''); // Le CSS intercepte ça pour masquer l'overlay
         }
     }
     
-    // --- LOGIQUE DU NŒUD BANE ---
+    // --- NŒUD BANE ---
     const nodeBane = document.getElementById('nodeBane');
     if (nodeBane) {
         const target = nodeBane.querySelector('.node-content') || nodeBane;
-        const overlay = nodeBane.querySelector('.node-overlay'); // Cible l'overlay sans toucher aux classes
         
         if (data.bane && data.bane.name) {
             const baneIcon = data.bane.tier ? getRelationsIconHtml(data.bane.tier) : "";
@@ -901,7 +895,6 @@ window.updateRelationsTree = function(playerName) {
                 </div>
             `;
             nodeBane.setAttribute('data-player', data.bane.name);
-            if (overlay) overlay.style.style.removeProperty('display'); // Réactive l'overlay normal
         } else {
             const baneEmptyText = (vars && vars.bane_empty) ? getRandomVariation(vars.bane_empty) : "";
             target.innerHTML = `
@@ -909,8 +902,7 @@ window.updateRelationsTree = function(playerName) {
                     ${baneEmptyText ? `<div class="narrative-text">${baneEmptyText}</div>` : ''}
                 </div>
             `;
-            nodeBane.setAttribute('data-player', '');
-            if (overlay) overlay.style.display = 'none'; // Masque l'overlay quand le nœud est vide
+            nodeBane.setAttribute('data-player', ''); // Le CSS intercepte ça pour masquer l'overlay
         }
     }
 };
@@ -953,27 +945,23 @@ window.updatePlayerView = function() {
         const nodeTrophy = document.getElementById('nodeTrophy');
         if (nodeTrophy) {
             const target = nodeTrophy.querySelector('.node-content') || nodeTrophy;
-            const overlay = nodeTrophy.querySelector('.node-overlay');
             target.innerHTML = `
                 <div id="textTrophy">
                     <div class="player-name">...</div>
                 </div>
             `;
             nodeTrophy.setAttribute('data-player', '');
-            if (overlay) overlay.style.display = 'none';
         }
 
         const nodeBane = document.getElementById('nodeBane');
         if (nodeBane) {
             const target = nodeBane.querySelector('.node-content') || nodeBane;
-            const overlay = nodeBane.querySelector('.node-overlay');
             target.innerHTML = `
                 <div id="textBane">
                     <div class="player-name">...</div>
                 </div>
             `;
             nodeBane.setAttribute('data-player', '');
-            if (overlay) overlay.style.display = 'none';
         }
     }
 };
