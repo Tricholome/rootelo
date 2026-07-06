@@ -228,7 +228,8 @@ $(document).ready(function() {
 	// --- 1. LEADERBOARD ---
 	if ($('#leaderboard').length > 0) {
 		
-		let showAllPlayers = false; 
+		const pageName = window.location.pathname.split('/').pop() || '';
+		let showAllPlayers = !pageName.includes('_'); 
 
 		$.extend($.fn.dataTable.ext.type.order, { 
 			"rank-pre": function (d) { return d === "-" ? 9999 : parseInt(d); } 
@@ -260,13 +261,12 @@ $(document).ready(function() {
 			"initComplete": function(settings, json) {
 				$('.dataTables_length').append(`
 					<label class="dt-checkbox-label">
-						<input type="checkbox" id="tierFilterCheckbox"> Show unranked players
+						<input type="checkbox" id="tierFilterCheckbox" ${showAllPlayers ? 'checked' : ''}> Show unranked players
 					</label>
 				`);
 			}
 		});
 
-		// 3. ON ÉCOUTE LE CLIC SUR LA CHECKBOX
 		$(document).on('change', '#tierFilterCheckbox', function() {
 			showAllPlayers = $(this).is(':checked');
 			table.draw();
