@@ -840,7 +840,6 @@ window.updateRelationsTree = function(playerName) {
         if (metaEl) metaEl.innerHTML = "";
     }
     
-    // Logique du nœud Trophy (cible uniquement .node-content)
     const nodeTrophy = document.getElementById('nodeTrophy');
     if (nodeTrophy) {
         const target = nodeTrophy.querySelector('.node-content') || nodeTrophy;
@@ -861,6 +860,7 @@ window.updateRelationsTree = function(playerName) {
                 </div>
             `;
             nodeTrophy.setAttribute('data-player', data.trophy.name);
+            nodeTrophy.classList.add('interactive-node');
         } else {
             const trophyEmptyText = (vars && vars.trophy_empty) ? getRandomVariation(vars.trophy_empty) : "";
             target.innerHTML = `
@@ -869,10 +869,10 @@ window.updateRelationsTree = function(playerName) {
                 </div>
             `;
             nodeTrophy.setAttribute('data-player', '');
+            nodeTrophy.classList.remove('interactive-node'); 
         }
     }
     
-    // Logique du nœud Bane (cible uniquement .node-content)
     const nodeBane = document.getElementById('nodeBane');
     if (nodeBane) {
         const target = nodeBane.querySelector('.node-content') || nodeBane;
@@ -893,6 +893,7 @@ window.updateRelationsTree = function(playerName) {
                 </div>
             `;
             nodeBane.setAttribute('data-player', data.bane.name);
+            nodeBane.classList.add('interactive-node');
         } else {
             const baneEmptyText = (vars && vars.bane_empty) ? getRandomVariation(vars.bane_empty) : "";
             target.innerHTML = `
@@ -901,6 +902,7 @@ window.updateRelationsTree = function(playerName) {
                 </div>
             `;
             nodeBane.setAttribute('data-player', '');
+            nodeBane.classList.remove('interactive-node');
         }
     }
 };
@@ -947,6 +949,7 @@ window.updatePlayerView = function() {
                 </div>
             `;
             nodeTrophy.setAttribute('data-player', '');
+            nodeTrophy.classList.remove('interactive-node');
         }
 
         const nodeBane = document.getElementById('nodeBane');
@@ -958,22 +961,7 @@ window.updatePlayerView = function() {
                 </div>
             `;
             nodeBane.setAttribute('data-player', '');
+            nodeBane.classList.remove('interactive-node');
         }
     }
 };
-
-$(document).ready(function() {
-    const input = document.getElementById('playerName');
-    const savedPlayer = localStorage.getItem('selectedPlayer');
-    
-    if (input && input.value.trim()) {
-        window.updatePlayerView();
-    } 
-    else if (savedPlayer) {
-        if (input) input.value = savedPlayer;
-        window.updatePlayerView();
-    }
-    else {
-        window.updatePlayerView();
-    }
-});
