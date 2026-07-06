@@ -7,9 +7,6 @@ from datetime import datetime
 # =========================================================================
 # --- 0. HELPERS & UTILITIES ---
 # =========================================================================
-def get_clean_name(name):
-    return name.split('+')[0].split('#')[0].strip()
-
 def get_tier_icon(rating):
     if rating >= 1600: return "stag"
     if rating >= 1500: return "bird"
@@ -128,7 +125,7 @@ last_diff = {p: 0.0 for p in elo_ratings}
 start_label = f"{PREVIOUS_SEASON_TAG.upper()} Final" if PREVIOUS_SEASON_TAG else "Start"
 player_history = {p: [[start_label if p in inherited_elo else "Start", round(r), None, None]] for p, r in elo_ratings.items()}
 archive_matches_list = []
-pre_match_elos = {}  # Fast O(1) lookup cache for Section 8
+pre_match_elos = {}
 
 for game_id, group in df.groupby('GameID', sort=False):
     match_participants = group.to_dict('records')
@@ -140,12 +137,10 @@ for game_id, group in df.groupby('GameID', sort=False):
     
     for p in match_participants:
         name = p['Player']
-        clean_p = get_clean_name(name)
         actual = p['Score']
         expected = (10**(elo_ratings[name]/400)) / total_q
-        
-        # Cache current Elo before updating it (Fluidifies relationship building)
-        pre_match_elos[(clean_p, game_id)] = round(elo_ratings[name])
+
+        pre_match_elos[(name, game_id)] = round(elo_ratings[name])
         
         stats = player_stats[name]
         stats['games'] += 1
@@ -167,7 +162,7 @@ for game_id, group in df.groupby('GameID', sort=False):
         'MatchID': int(game_id),
         'Date': current_date,
         'players': [{
-            'name': get_clean_name(p['Player']),
+            'name': p['Player'],
             'delta': deltas_this_match[p['Player']],
             'is_winner': bool(p['Score'] >= 0.5)
         } for p in match_participants],
@@ -299,8 +294,7 @@ if archive_matches_list:
 safe_save(OUTPUT_MATCHES, archive_matches_list, is_json=True)
 
 # C. Save History Graph
-clean_history = {get_clean_name(k): v for k, v in player_history.items()}
-safe_save(OUTPUT_HISTORY, clean_history, is_json=True)
+safe_save(OUTPUT_HISTORY, player_history, is_json=True)
 
 # D. Save Relations Tree Data
 safe_save(OUTPUT_RELATIONS, relations_map, is_json=True)
