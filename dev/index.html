@@ -1,0 +1,1429 @@
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Leaderboard • Rootelo</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..900;1,9..144,400..900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
+    
+    <link rel="stylesheet" href="static/style.css">
+    
+    <style>
+        :root {
+			/* --- 1. LAYOUT CONFIG (Automatic loop) --- */
+			
+			--window-max-width: clamp(600px, 60vw, 1600px);
+			
+			--window-padding: clamp(20px, 2.5vw, 40px);
+			
+			--window-gap: 20px;
+			
+
+			/* --- 2. TYPOGRAPHY (Automatic loop) --- */
+			
+			--font-title: 'Fraunces', serif;
+			
+			--font-ui: 'Inter', sans-serif;
+			
+			--font-mono: 'JetBrains Mono', monospace;
+			
+			--font-hand: 'Segoe Print', 'Bradley Hand', 'Apple Chancery', 'Comic Sans MS', cursive;
+			
+			--bold: 900;
+			
+			--medium: 600;
+			
+			--normal: 400;
+			
+			--size-xs: 0.75rem;
+			
+			--size-sm: 0.85rem;
+			
+			--size-modal: 0.90rem;
+			
+			--size-base: 0.95rem;
+			
+			--size-md: 1.2rem;
+			
+			--size-lg: 2.0rem;
+			
+			--size-xl: 2.5rem;
+			
+			--size-display: 2.8rem;
+			
+			--track-slight: 0.5px;
+			
+			--track-wide: 1px;
+			
+			--track-display: 4px;
+			
+
+			/* --- 3. GLOBAL UI (Automatic loop) --- */
+			
+			--bg-overlay-top: rgba(0, 0, 0, 0.1);
+			
+			--bg-overlay-bottom: rgba(0, 0, 0, 0.8);
+			
+			--bg-container: #1c1c1c;
+			
+			--bg-surface: rgba(255, 255, 255, 0.03);
+			
+			--bg-hover: rgba(255, 255, 255, 0.08);
+			
+			--border-soft: #333333;
+			
+			--border-dark: rgba(0, 0, 0, 0.4);
+			
+			--border-light: rgba(255, 255, 255, 0.05);
+			
+			--glass-bg: #1c1c1cd9;
+			
+			--glass-border: rgba(255, 255, 255, 0.08);
+			
+			--glass-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+			
+			--text-bright: #ffffff;
+			
+			--text-main: #E0E0E0;
+			
+			--text-muted: #A0A0A0;
+			
+			--text-dark: #111111;
+			
+			--dt-table-bg: rgba(0, 0, 0, 0.15);
+			
+			--dt-header-bg: rgba(0, 0, 0, 0.25);
+			
+			--dt-row-border: rgba(255, 255, 255, 0.03);
+			
+			--dt-row-hover: rgba(255, 255, 255, 0.07);
+			
+			--dt-input-bg: rgba(0, 0, 0, 0.2);
+			
+
+			/* --- 4. TIER DYNAMICS (Loop with logic) --- */
+			
+			--color-bird: #7AB5E0;
+			--color-bird-bg: #7AB5E014;
+			
+			--color-fox: #E55555;
+			--color-fox-bg: #E5555514;
+			
+			--color-rabbit: #F2C14E;
+			--color-rabbit-bg: #F2C14E14;
+			
+			--color-mouse: #F49E52;
+			--color-mouse-bg: #F49E5214;
+			
+			--color-squirrel: #94C160;
+			--color-squirrel-bg: #94C16014;
+			
+			--color-stag: #C686FF;
+			--color-stag-bg: #C686FF14;
+			
+			--color-default: #7A7347;
+			--color-default-bg: #7A734714;
+			
+
+			/* --- 5. PAGE THEME --- */
+			--main-color: #7AB5E0;
+		}
+    </style>
+	
+	<meta property="og:type" content="website">
+	<meta property="og:url" content="https://tricholome.github.io/rootelo">
+	<meta property="og:title" content="ROOTELO">
+	<meta property="og:description" content="A Metric of Woodland Skill and Will">
+	<meta property="og:image" content="https://tricholome.github.io/rootelo/assets/images/rootelo-preview.webp">
+
+    
+	
+</head>
+
+<body data-page="index">
+    
+    <div class="container">
+	
+        <header class="app-banner window-box">
+		
+            <div class="banner-container">
+                <div class="banner-icons left">
+                    <a href="javascript:void(0)" onclick="openTierModal('stag')" class="tooltip-link js-double-tap banner-icon-stag">
+                        <img src="assets/icons/stag.webp" alt="Stag">
+                        <span class="tooltip-text"><strong class="tier-stag">Stag (1600+)</strong> — The Legend</span>
+                    </a>
+					<a href="javascript:void(0)" onclick="openTierModal('bird')" class="tooltip-link js-double-tap">
+                        <img src="assets/icons/bird_new.webp" alt="Bird">
+                        <span class="tooltip-text"><strong class="tier-bird">Bird (1500+)</strong> — The Grandmasters</span>
+                    </a>
+                    <a href="javascript:void(0)" onclick="openTierModal('fox')" class="tooltip-link js-double-tap">
+                        <img src="assets/icons/fox_new.webp" alt="Fox">
+                        <span class="tooltip-text"><strong class="tier-fox">Fox (1400+)</strong> — The Cunning Tacticians</span>
+                    </a>
+                </div>
+                <div class="banner-center">
+                    <h1 class="site-title">ROOTELO</h1>
+                    <p class="site-subtitle">A Metric of Woodland&nbsp;Skill&nbsp;and&nbsp;Will</p>
+                </div>
+                <div class="banner-icons right">
+                    <a href="javascript:void(0)" onclick="openTierModal('rabbit')" class="tooltip-link js-double-tap">
+                        <img src="assets/icons/rabbit_new.webp" alt="Rabbit">
+                        <span class="tooltip-text"><strong class="tier-rabbit">Rabbit (1300+)</strong> — The Agile Contenders</span>
+                    </a>
+                    <a href="javascript:void(0)" onclick="openTierModal('mouse')" class="tooltip-link js-double-tap">
+                        <img src="assets/icons/mouse_new.webp" alt="Mouse">
+                        <span class="tooltip-text"><strong class="tier-mouse">Mouse (1200+)</strong> — The Steady Foragers</span>
+                    </a>
+					<a href="javascript:void(0)" onclick="openTierModal('squirrel')" class="tooltip-link js-double-tap banner-icon-squirrel">
+                        <img src="assets/icons/squirrel.webp" alt="Squirrel">
+                        <span class="tooltip-text"><strong class="tier-squirrel">Squirrel (&lt; 1200)</strong> — The Hapless Stragglers</span>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="nav-separator"></div>
+
+            <nav>
+				
+
+				
+					
+						
+					
+					<a href="index.html" class="active">Leaderboard</a>
+				
+					
+						
+					
+					<a href="matches.html" class="">Top Tables</a>
+				
+					
+						
+					
+					<a href="trends.html" class="">Player's Journey</a>
+				
+					
+						
+					
+					<a href="about.html" class="">Codex</a>
+				
+				<a href="cache.html" class="nav-secret ">Undergrowth</a>
+			</nav>
+			
+        </header>
+        
+        <div class="screen-deco right-deco">
+			
+				<img src="assets/images/leaderboard_img_right.webp" alt="Decoration Right">
+			
+		</div>
+
+        <div class="app-viewport window-box">
+            <header class="page-intro">
+				<h2>Leaderboard</h2>
+				
+				<div class="season-selector">
+					<span class="season-label">Season</span>
+					
+						
+							<a href="index_lh01.html" class="season-btn ">
+								LH01
+							</a>
+						
+							<a href="index_lh02.html" class="season-btn ">
+								LH02
+							</a>
+						
+					
+					<a href="index.html" class="season-btn active">
+						LH03
+					</a>
+				</div>
+				
+				<p>Only players with a Tier are ranked. Double-click&nbsp;to&nbsp;see&nbsp;individual&nbsp;Journeys.<br><br><i><small>Includes 35 matches up to 2026-07-05.</i></small></p>
+			</header>
+			
+            <main>
+                
+	<table id="leaderboard" class="display nowrap" style="width:100%">
+        <thead>
+            <tr>
+                <th>Rank</th>
+                <th>Tier</th>
+                <th>Player</th>
+                <th>ELO</th>
+                <th>Games</th>
+                <th>Wins</th>
+                <th>Win Rate</th>
+                <th>Peak</th>
+                <th>Last</th>
+            </tr>
+        </thead>
+        <tbody>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>Antiproject</td>
+                <td>1510</td>
+                <td>3</td>
+                <td>3.0</td>
+                <td>100.0%</td>
+                <td>1510</td>
+                <td>+38</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>kayajam</td>
+                <td>1479</td>
+                <td>1</td>
+                <td>0.0</td>
+                <td>0.0%</td>
+                <td>1526</td>
+                <td>-47</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>Killerstorm17</td>
+                <td>1451</td>
+                <td>2</td>
+                <td>1.0</td>
+                <td>50.0%</td>
+                <td>1504</td>
+                <td>-53</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>cringelordirl</td>
+                <td>1428</td>
+                <td>1</td>
+                <td>1.0</td>
+                <td>100.0%</td>
+                <td>1428</td>
+                <td>+46</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>BennyJ</td>
+                <td>1426</td>
+                <td>1</td>
+                <td>0.0</td>
+                <td>0.0%</td>
+                <td>1468</td>
+                <td>-42</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>matemato</td>
+                <td>1419</td>
+                <td>2</td>
+                <td>0.0</td>
+                <td>0.0%</td>
+                <td>1497</td>
+                <td>-45</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>Jack432</td>
+                <td>1400</td>
+                <td>3</td>
+                <td>0.5</td>
+                <td>16.7%</td>
+                <td>1470</td>
+                <td>-36</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>Luclid</td>
+                <td>1384</td>
+                <td>1</td>
+                <td>1.0</td>
+                <td>100.0%</td>
+                <td>1384</td>
+                <td>+60</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>oshwott2844</td>
+                <td>1383</td>
+                <td>1</td>
+                <td>0.0</td>
+                <td>0.0%</td>
+                <td>1425</td>
+                <td>-42</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>Aeliott</td>
+                <td>1372</td>
+                <td>1</td>
+                <td>1.0</td>
+                <td>100.0%</td>
+                <td>1372</td>
+                <td>+63</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>kurtfisto</td>
+                <td>1368</td>
+                <td>1</td>
+                <td>1.0</td>
+                <td>100.0%</td>
+                <td>1368</td>
+                <td>+48</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>Scipio</td>
+                <td>1367</td>
+                <td>3</td>
+                <td>1.5</td>
+                <td>50.0%</td>
+                <td>1367</td>
+                <td>+48</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>pooge</td>
+                <td>1360</td>
+                <td>1</td>
+                <td>0.0</td>
+                <td>0.0%</td>
+                <td>1377</td>
+                <td>-16</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>DemaRogue</td>
+                <td>1358</td>
+                <td>1</td>
+                <td>1.0</td>
+                <td>100.0%</td>
+                <td>1358</td>
+                <td>+43</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>LucianTheFak</td>
+                <td>1347</td>
+                <td>1</td>
+                <td>0.0</td>
+                <td>0.0%</td>
+                <td>1376</td>
+                <td>-29</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>time2orush</td>
+                <td>1345</td>
+                <td>4</td>
+                <td>2.0</td>
+                <td>50.0%</td>
+                <td>1381</td>
+                <td>-37</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>PestoEmporium</td>
+                <td>1334</td>
+                <td>3</td>
+                <td>1.0</td>
+                <td>33.3%</td>
+                <td>1385</td>
+                <td>-27</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>Waferseeker95</td>
+                <td>1330</td>
+                <td>6</td>
+                <td>3.0</td>
+                <td>50.0%</td>
+                <td>1361</td>
+                <td>-31</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>idk123</td>
+                <td>1325</td>
+                <td>1</td>
+                <td>0.0</td>
+                <td>0.0%</td>
+                <td>1356</td>
+                <td>-31</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>Dumbledore</td>
+                <td>1317</td>
+                <td>9</td>
+                <td>4.5</td>
+                <td>50.0%</td>
+                <td>1416</td>
+                <td>-18</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>uFancyHUH</td>
+                <td>1305</td>
+                <td>2</td>
+                <td>0.0</td>
+                <td>0.0%</td>
+                <td>1352</td>
+                <td>-18</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>tjudge</td>
+                <td>1292</td>
+                <td>3</td>
+                <td>1.0</td>
+                <td>33.3%</td>
+                <td>1354</td>
+                <td>-25</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>AcolyteOfRoot</td>
+                <td>1285</td>
+                <td>2</td>
+                <td>1.0</td>
+                <td>50.0%</td>
+                <td>1285</td>
+                <td>+57</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>DarthPuniceus</td>
+                <td>1280</td>
+                <td>1</td>
+                <td>0.0</td>
+                <td>0.0%</td>
+                <td>1296</td>
+                <td>-16</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>Salitance</td>
+                <td>1267</td>
+                <td>1</td>
+                <td>1.0</td>
+                <td>100.0%</td>
+                <td>1267</td>
+                <td>+67</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>BaconBoy</td>
+                <td>1261</td>
+                <td>1</td>
+                <td>1.0</td>
+                <td>100.0%</td>
+                <td>1261</td>
+                <td>+69</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>Tad604</td>
+                <td>1260</td>
+                <td>3</td>
+                <td>1.0</td>
+                <td>33.3%</td>
+                <td>1326</td>
+                <td>-33</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>TurkeyNoNo</td>
+                <td>1243</td>
+                <td>3</td>
+                <td>2.0</td>
+                <td>66.7%</td>
+                <td>1243</td>
+                <td>+72</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>ionou21</td>
+                <td>1231</td>
+                <td>1</td>
+                <td>0.0</td>
+                <td>0.0%</td>
+                <td>1257</td>
+                <td>-27</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>PacificCold</td>
+                <td>1230</td>
+                <td>4</td>
+                <td>1.0</td>
+                <td>25.0%</td>
+                <td>1245</td>
+                <td>-15</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>Dramsss</td>
+                <td>1230</td>
+                <td>1</td>
+                <td>0.0</td>
+                <td>0.0%</td>
+                <td>1253</td>
+                <td>-23</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>ominouscat</td>
+                <td>1228</td>
+                <td>1</td>
+                <td>0.0</td>
+                <td>0.0%</td>
+                <td>1249</td>
+                <td>-21</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>Cotton</td>
+                <td>1226</td>
+                <td>1</td>
+                <td>0.0</td>
+                <td>0.0%</td>
+                <td>1237</td>
+                <td>-11</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>mouseinabox</td>
+                <td>1220</td>
+                <td>1</td>
+                <td>1.0</td>
+                <td>100.0%</td>
+                <td>1220</td>
+                <td>+69</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>Odinius</td>
+                <td>1210</td>
+                <td>1</td>
+                <td>1.0</td>
+                <td>100.0%</td>
+                <td>1210</td>
+                <td>+59</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>sontei5</td>
+                <td>1207</td>
+                <td>2</td>
+                <td>1.0</td>
+                <td>50.0%</td>
+                <td>1218</td>
+                <td>-10</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>MunkeyBrewster</td>
+                <td>1192</td>
+                <td>1</td>
+                <td>0.0</td>
+                <td>0.0%</td>
+                <td>1209</td>
+                <td>-18</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>LilSoup</td>
+                <td>1191</td>
+                <td>1</td>
+                <td>0.0</td>
+                <td>0.0%</td>
+                <td>1200</td>
+                <td>-9</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>NadtyLite</td>
+                <td>1190</td>
+                <td>6</td>
+                <td>0.0</td>
+                <td>0.0%</td>
+                <td>1289</td>
+                <td>-9</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>creapy01</td>
+                <td>1189</td>
+                <td>1</td>
+                <td>0.5</td>
+                <td>50.0%</td>
+                <td>1189</td>
+                <td>+27</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>Mazrim</td>
+                <td>1188</td>
+                <td>1</td>
+                <td>0.0</td>
+                <td>0.0%</td>
+                <td>1200</td>
+                <td>-12</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>Tolfan</td>
+                <td>1183</td>
+                <td>3</td>
+                <td>0.0</td>
+                <td>0.0%</td>
+                <td>1260</td>
+                <td>-29</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>cookain</td>
+                <td>1181</td>
+                <td>1</td>
+                <td>0.0</td>
+                <td>0.0%</td>
+                <td>1200</td>
+                <td>-19</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>nmyers2</td>
+                <td>1181</td>
+                <td>1</td>
+                <td>0.0</td>
+                <td>0.0%</td>
+                <td>1200</td>
+                <td>-19</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>ermactually</td>
+                <td>1174</td>
+                <td>1</td>
+                <td>1.0</td>
+                <td>100.0%</td>
+                <td>1174</td>
+                <td>+63</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>FamilyTuber</td>
+                <td>1171</td>
+                <td>2</td>
+                <td>0.0</td>
+                <td>0.0%</td>
+                <td>1197</td>
+                <td>-11</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>Supersingalong</td>
+                <td>1166</td>
+                <td>1</td>
+                <td>0.0</td>
+                <td>0.0%</td>
+                <td>1173</td>
+                <td>-8</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>osche</td>
+                <td>1161</td>
+                <td>2</td>
+                <td>0.0</td>
+                <td>0.0%</td>
+                <td>1200</td>
+                <td>-27</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>Vak123</td>
+                <td>1154</td>
+                <td>3</td>
+                <td>0.0</td>
+                <td>0.0%</td>
+                <td>1200</td>
+                <td>-14</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>DarthOblivius</td>
+                <td>1152</td>
+                <td>3</td>
+                <td>1.0</td>
+                <td>33.3%</td>
+                <td>1174</td>
+                <td>-8</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>KyloBot</td>
+                <td>1150</td>
+                <td>2</td>
+                <td>0.0</td>
+                <td>0.0%</td>
+                <td>1174</td>
+                <td>-14</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>buurn</td>
+                <td>1145</td>
+                <td>1</td>
+                <td>0.0</td>
+                <td>0.0%</td>
+                <td>1153</td>
+                <td>-8</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>Glasypress</td>
+                <td>1143</td>
+                <td>4</td>
+                <td>0.0</td>
+                <td>0.0%</td>
+                <td>1200</td>
+                <td>-5</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>PlagueCarrier</td>
+                <td>1129</td>
+                <td>1</td>
+                <td>0.0</td>
+                <td>0.0%</td>
+                <td>1143</td>
+                <td>-14</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>TonyDeloreanESQ</td>
+                <td>1115</td>
+                <td>3</td>
+                <td>0.0</td>
+                <td>0.0%</td>
+                <td>1146</td>
+                <td>-13</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>rathyAro</td>
+                <td>1110</td>
+                <td>1</td>
+                <td>0.0</td>
+                <td>0.0%</td>
+                <td>1124</td>
+                <td>-13</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>TheFourthJesse</td>
+                <td>1100</td>
+                <td>2</td>
+                <td>0.0</td>
+                <td>0.0%</td>
+                <td>1118</td>
+                <td>-12</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>polyphemur</td>
+                <td>1098</td>
+                <td>3</td>
+                <td>0.0</td>
+                <td>0.0%</td>
+                <td>1139</td>
+                <td>-17</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>Fabius</td>
+                <td>1086</td>
+                <td>1</td>
+                <td>0.0</td>
+                <td>0.0%</td>
+                <td>1092</td>
+                <td>-6</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>Diyana</td>
+                <td>1080</td>
+                <td>2</td>
+                <td>0.0</td>
+                <td>0.0%</td>
+                <td>1091</td>
+                <td>-6</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>Maladay</td>
+                <td>1076</td>
+                <td>1</td>
+                <td>0.0</td>
+                <td>0.0%</td>
+                <td>1086</td>
+                <td>-10</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>silverfox</td>
+                <td>1075</td>
+                <td>1</td>
+                <td>0.0</td>
+                <td>0.0%</td>
+                <td>1086</td>
+                <td>-11</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>Hurple</td>
+                <td>1067</td>
+                <td>2</td>
+                <td>0.0</td>
+                <td>0.0%</td>
+                <td>1090</td>
+                <td>-14</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>DelSol</td>
+                <td>1021</td>
+                <td>3</td>
+                <td>0.0</td>
+                <td>0.0%</td>
+                <td>1040</td>
+                <td>-5</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>Ljaz7</td>
+                <td>1020</td>
+                <td>2</td>
+                <td>0.0</td>
+                <td>0.0%</td>
+                <td>1035</td>
+                <td>-8</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>cjahwon</td>
+                <td>1019</td>
+                <td>4</td>
+                <td>0.0</td>
+                <td>0.0%</td>
+                <td>1049</td>
+                <td>-11</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>Munchking</td>
+                <td>947</td>
+                <td>3</td>
+                <td>0.0</td>
+                <td>0.0%</td>
+                <td>959</td>
+                <td>-4</td>
+            </tr>
+            
+            <tr data-tier="unranked" class="unranked">
+                <td class="unranked">
+                    -
+                </td>
+                <td>
+					
+				</td>
+                <td>Wriggleroom</td>
+                <td>943</td>
+                <td>3</td>
+                <td>0.0</td>
+                <td>0.0%</td>
+                <td>953</td>
+                <td>-4</td>
+            </tr>
+            
+        </tbody>
+    </table>
+
+            </main>
+        </div>
+        
+        <div class="screen-deco left-deco">
+			
+				<img src="assets/images/leaderboard_img_left.webp" alt="Decoration Left">
+			
+		</div>
+
+        <footer class="app-footer window-box">
+			<div class="footer-content">
+				<div class="footer-credits">
+					<span>Powered by <strong>Tʀɪᴄʜᴏʟᴏᴍᴇ</strong></span>
+					<span>Woodland visions by <a class="cl" href="cache.html">𝕩𝕝𝕦𝕖𝕧𝕚</a></span>
+				</div>
+				<div class="footer-date">Updated on 2026-07-06 17:39 UTC</div>
+			</div>
+		</footer>
+    </div>
+    
+    <div id="tierModal" class="modal-overlay">
+		<div class="modal-content window-box">
+			<button class="modal-close" aria-label="Close">&times;</button>
+			<div id="modalBody">
+				<div class="modal-image-side">
+					<img id="modalIcon" src="" alt="Tier Icon">
+				</div>
+				
+				<div class="modal-text-side">
+					<div class="title-row">
+						<h2 id="modalTitle"></h2>
+						<h3 id="modalElo"></h3>
+					</div>
+					<div id="modalSubtitle"></div>
+					<div class="modal-divider"></div>
+					<div id="modalText"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div id="mystic-gate"></div>
+
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+	<script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+    
+    <script>
+		const CONFIG = {
+			colors: {"bird": "#7AB5E0", "default": "#7A7347", "fox": "#E55555", "mouse": "#F49E52", "rabbit": "#F2C14E", "squirrel": "#94C160", "stag": "#C686FF"},
+			icons: {"bird": "assets/icons/bird_new.webp", "fox": "assets/icons/fox_new.webp", "mouse": "assets/icons/mouse_new.webp", "rabbit": "assets/icons/rabbit_new.webp", "squirrel": "assets/icons/squirrel.webp", "stag": "assets/icons/stag.webp"},
+			currentTier: "bird",
+			chartData: {}
+		};
+	</script>
+		
+    <script src="static/script.js"></script>
+    
+	<script>
+		if (window.location.pathname.includes('/dev/')) {
+			window.goatcounter = {no_onload: true};
+		}
+	</script>
+	<script data-goatcounter="https://tricholome.goatcounter.com/count"
+            async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>
