@@ -767,16 +767,13 @@ function showVisitorRow(name, date) {
 /* =========================================================================
    --- 9. DYNAMIC TRENDS REDIRECTION ---
    ========================================================================= */
-
-// Double-clic sur une cellule de nom de joueur
+   
 $(document).on('dblclick', '.player-name-cell', function() {
-    const playerName = $(this).text().trim();
+    const playerName = $(this).attr('data-raw');
     
     if (playerName) {
-        // 1. On stocke le joueur uniquement pour la page Trends
         localStorage.setItem('selectedPlayer', playerName);
         
-        // 2. Routage dynamique universel selon la saison (ex: index_lh01.html -> trends_lh01.html)
         let trendsPage = 'trends.html';
         const pageName = window.location.pathname.split('/').pop() || '';
         
@@ -785,7 +782,6 @@ $(document).on('dblclick', '.player-name-cell', function() {
             trendsPage = `trends_${seasonSuffix}.html`;
         }
         
-        // 3. Redirection directe vers le graphique de tendances
         window.location.href = `${trendsPage}#progressionChart`;
     }
 });
