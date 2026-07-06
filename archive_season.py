@@ -5,20 +5,6 @@ import json
 from datetime import datetime
 
 # =========================================================================
-# --- 0. HELPERS & UTILITIES ---
-# =========================================================================
-def get_clean_name(name):
-    return name.split('+')[0].split('#')[0].strip()
-
-def get_tier_icon(rating):
-    if rating >= 1600: return "stag"
-    if rating >= 1500: return "bird"
-    if rating >= 1400: return "fox"
-    if rating >= 1300: return "rabbit"
-    if rating >= 1200: return "mouse"
-    return "squirrel"
-
-# =========================================================================
 # --- 1. SETTINGS & PATH CONFIGURATION ---
 # =========================================================================
 SEASON_TAG = os.getenv('SEASON_TAG', 'lh01').strip().lower()
@@ -30,11 +16,12 @@ CUTOFF_DATE = datetime.strptime(CUTOFF_DATE_STR, "%Y-%m-%d").date()
 API_TOKEN = os.getenv('API_TOKEN')
 HEADERS = {'Authorization': f'Token {API_TOKEN}'} if API_TOKEN else {}
 
+# Centralisation et uniformisation des noms de fichiers
 DATA_DIR = "data"
 CORRECTIONS_PATH = os.path.join(DATA_DIR, f"{SEASON_TAG}_corrections.csv")
-OUTPUT_RATINGS   = os.path.join(DATA_DIR, f"{SEASON_TAG}_final_ratings.csv")
-OUTPUT_HISTORY   = os.path.join(DATA_DIR, f"{SEASON_TAG}_history_full.json")
-OUTPUT_MATCHES   = os.path.join(DATA_DIR, f"{SEASON_TAG}_matches_fixed.json")
+OUTPUT_RATINGS   = os.path.join(DATA_DIR, f"{SEASON_TAG}_ratings.csv")
+OUTPUT_HISTORY   = os.path.join(DATA_DIR, f"{SEASON_TAG}_history.json")
+OUTPUT_MATCHES   = os.path.join(DATA_DIR, f"{SEASON_TAG}_matches.json")
 OUTPUT_METADATA  = os.path.join(DATA_DIR, f"{SEASON_TAG}_metadata.json")
 OUTPUT_RELATIONS = os.path.join(DATA_DIR, f"{SEASON_TAG}_relations.json")
 
@@ -45,7 +32,8 @@ print(f"\n=== INITIALIZING {SEASON_TAG.upper()} ===")
 inherited_elo = {}
 
 if PREVIOUS_SEASON_TAG:
-    prev_path = os.path.join(DATA_DIR, f"{PREVIOUS_SEASON_TAG}_final_ratings.csv")
+    # Utilisation du nouveau nom standardisé pour l'historique
+    prev_path = os.path.join(DATA_DIR, f"{PREVIOUS_SEASON_TAG}_ratings.csv")
     if os.path.exists(prev_path):
         print(f"  > Loading baseline from {PREVIOUS_SEASON_TAG.upper()}...")
         df_prev = pd.read_csv(prev_path)
@@ -119,16 +107,17 @@ if not df.empty:
 print("\n=== CALCULATING ELO & STATS ===")
 print("  > Processing matches and generating history...")
 
-# Rationalized initialization
 elo_ratings = {**{p: 1200.0 for p in df['Player'].unique()}, **inherited_elo} if not df.empty else inherited_elo.copy()
 peak_elo = elo_ratings.copy()
 player_stats = {p: {'games': 0, 'wins': 0.0} for p in elo_ratings}
 last_diff = {p: 0.0 for p in elo_ratings}
 
 start_label = f"{PREVIOUS_SEASON_TAG.upper()} Final" if PREVIOUS_SEASON_TAG else "Start"
-player_history = {p: [[start_label if p in inherited_elo else "Start", round(r), None, None]] for p, r in elo_ratings.items()}
+
+# Allégement de la structure initiale : [Label, Elo, MatchID]
+player_history = {p: [[start_label if p in inherited_elo else "Start", round(r), None]] for p, r in elo_ratings.items()}
 archive_matches_list = []
-pre_match_elos = {}  # Fast O(1) lookup cache for Section 8
+pre_match_elos = {}
 
 for game_id, group in df.groupby('GameID', sort=False):
     match_participants = group.to_dict('records')
@@ -140,12 +129,10 @@ for game_id, group in df.groupby('GameID', sort=False):
     
     for p in match_participants:
         name = p['Player']
-        clean_p = get_clean_name(name)
         actual = p['Score']
         expected = (10**(elo_ratings[name]/400)) / total_q
         
-        # Cache current Elo before updating it (Fluidifies relationship building)
-        pre_match_elos[(clean_p, game_id)] = round(elo_ratings[name])
+        pre_match_elos[(name, game_id)] = round(elo_ratings[name])
         
         stats = player_stats[name]
         stats['games'] += 1
@@ -161,13 +148,14 @@ for game_id, group in df.groupby('GameID', sort=False):
         if elo_ratings[name] > peak_elo[name]: 
             peak_elo[name] = elo_ratings[name]
         
-        player_history[name].append([current_date, round(elo_ratings[name]), game_id, f"https://rootleague.pliskin.dev/match/{game_id}"])
+        # Allégement de l'historique : suppression de la chaîne URL redondante
+        player_history[name].append([current_date, round(elo_ratings[name]), int(game_id)])
 
     archive_matches_list.append({
         'MatchID': int(game_id),
         'Date': current_date,
         'players': [{
-            'name': get_clean_name(p['Player']),
+            'name': p['Player'],
             'delta': deltas_this_match[p['Player']],
             'is_winner': bool(p['Score'] >= 0.5)
         } for p in match_participants],
@@ -197,10 +185,11 @@ if num_active > 0 and num_players > 0:
         elo_ratings[p] += bonus_per_player
         if elo_ratings[p] > peak_elo[p]: 
             peak_elo[p] = elo_ratings[p]
-        player_history[p].append(["Final", round(elo_ratings[p]), None, None])           
+        # Alignement structure à 3 éléments
+        player_history[p].append(["Final", round(elo_ratings[p]), None])           
 
 for p in inactive_players:
-    player_history[p].append(["Final", round(elo_ratings[p]), None, None])        
+    player_history[p].append(["Final", round(elo_ratings[p]), None])        
 
 # =========================================================================
 # --- 7. EXPORT FINAL RATINGS (LEADERBOARD) ---
@@ -237,8 +226,8 @@ def extract_relations(matches_list, pre_match_elos):
     all_players = {p['name'] for m in matches_list for p in m['players']}
     
     relations = {p: {
-        "trophy": {"name": None, "elo": -1, "tier": "unranked"}, 
-        "bane": {"name": None, "elo": 99999, "tier": "unranked"},
+        "trophy": {"name": None, "elo": -1}, 
+        "bane": {"name": None, "elo": 99999},
         "unique_opponents": 0
     } for p in all_players}
     
@@ -254,19 +243,17 @@ def extract_relations(matches_list, pre_match_elos):
         winners = [p for p in m['players'] if p['is_winner']]
         losers = [p for p in m['players'] if not p['is_winner']]
 
-        # Trophy: O(1) Instant cache lookup
         for w in winners:
             for l in losers:
                 l_elo = pre_match_elos.get((l['name'], match_id))
                 if l_elo is not None and l_elo > relations[w['name']]['trophy']['elo']:
-                    relations[w['name']]['trophy'] = {"name": l['name'], "elo": l_elo, "tier": get_tier_icon(l_elo)}
+                    relations[w['name']]['trophy'] = {"name": l['name'], "elo": l_elo}
 
-        # Bane: O(1) Instant cache lookup
         for l in losers:
             for w in winners:
                 w_elo = pre_match_elos.get((w['name'], match_id))
                 if w_elo is not None and w_elo < relations[l['name']]['bane']['elo']:
-                    relations[l['name']]['bane'] = {"name": w['name'], "elo": w_elo, "tier": get_tier_icon(w_elo)}
+                    relations[l['name']]['bane'] = {"name": w['name'], "elo": w_elo}
     
     for p in all_players:
         relations[p]["unique_opponents"] = len(opponents_track[p])
@@ -288,24 +275,17 @@ def safe_save(path, data, is_json=False):
         json.dump(data, f, indent=4) if is_json else data.to_csv(path, index=False)
     print(f"  > {os.path.basename(path)} saved.")
 
-# A. Save Leaderboard
 safe_save(OUTPUT_RATINGS, final_df)
 
-# B. Save Matches 
 if archive_matches_list:
     archive_matches_list = sorted(archive_matches_list, key=lambda x: x['ELO_Sum'], reverse=True)
     for idx, m in enumerate(archive_matches_list, start=1):
         m['Rank'] = idx
 safe_save(OUTPUT_MATCHES, archive_matches_list, is_json=True)
 
-# C. Save History Graph
-clean_history = {get_clean_name(k): v for k, v in player_history.items()}
-safe_save(OUTPUT_HISTORY, clean_history, is_json=True)
-
-# D. Save Relations Tree Data
+safe_save(OUTPUT_HISTORY, player_history, is_json=True)
 safe_save(OUTPUT_RELATIONS, relations_map, is_json=True)
 
-# E. Save Metadata
 metadata = {"season_tag": SEASON_TAG.upper(), "cutoff_date": CUTOFF_DATE_STR, "match_count": len(archive_matches_list)}
 safe_save(OUTPUT_METADATA, metadata, is_json=True)
 
