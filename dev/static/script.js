@@ -823,9 +823,7 @@ window.updateRelationsTree = function(playerName) {
     
     if (relationsWrapper) relationsWrapper.style.display = 'block';
     
-    // Mise à jour du nom central
-    const centerNameEl = document.getElementById('centerPlayerName');
-    if (centerNameEl) centerNameEl.innerText = playerName;
+    document.getElementById('centerPlayerName').innerText = playerName;
     
     const introEl = document.getElementById('centerPlayerIntro');
     const metaEl = document.getElementById('centerPlayerMeta');
@@ -842,7 +840,7 @@ window.updateRelationsTree = function(playerName) {
         if (metaEl) metaEl.innerHTML = "";
     }
     
-    // --- NŒUD TROPHY ---
+    // Logique du nœud Trophy (cible uniquement .node-content)
     const nodeTrophy = document.getElementById('nodeTrophy');
     if (nodeTrophy) {
         const target = nodeTrophy.querySelector('.node-content') || nodeTrophy;
@@ -870,11 +868,11 @@ window.updateRelationsTree = function(playerName) {
                     ${trophyEmptyText ? `<div class="narrative-text">${trophyEmptyText}</div>` : ''}
                 </div>
             `;
-            nodeTrophy.setAttribute('data-player', ''); // Le CSS intercepte ça pour masquer l'overlay
+            nodeTrophy.setAttribute('data-player', '');
         }
     }
     
-    // --- NŒUD BANE ---
+    // Logique du nœud Bane (cible uniquement .node-content)
     const nodeBane = document.getElementById('nodeBane');
     if (nodeBane) {
         const target = nodeBane.querySelector('.node-content') || nodeBane;
@@ -902,7 +900,7 @@ window.updateRelationsTree = function(playerName) {
                     ${baneEmptyText ? `<div class="narrative-text">${baneEmptyText}</div>` : ''}
                 </div>
             `;
-            nodeBane.setAttribute('data-player', ''); // Le CSS intercepte ça pour masquer l'overlay
+            nodeBane.setAttribute('data-player', '');
         }
     }
 };
@@ -911,11 +909,9 @@ window.selectPlayerFromTree = function(element) {
     const clickedName = element.getAttribute('data-player');
     if (clickedName) {
         const input = document.getElementById('playerName');
-        if (input) {
-            input.value = clickedName;
-            window.updateRelationsTree(clickedName);
-            input.dispatchEvent(new Event('input')); 
-        }
+        input.value = clickedName;
+        window.updateRelationsTree(clickedName);
+        input.dispatchEvent(new Event('input')); 
     }
 };
 
@@ -965,3 +961,19 @@ window.updatePlayerView = function() {
         }
     }
 };
+
+$(document).ready(function() {
+    const input = document.getElementById('playerName');
+    const savedPlayer = localStorage.getItem('selectedPlayer');
+    
+    if (input && input.value.trim()) {
+        window.updatePlayerView();
+    } 
+    else if (savedPlayer) {
+        if (input) input.value = savedPlayer;
+        window.updatePlayerView();
+    }
+    else {
+        window.updatePlayerView();
+    }
+});
