@@ -1050,6 +1050,15 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     opacity: 1; 
 }
 
+.interactive-node[data-player=""] {
+    cursor: default;
+    pointer-events: none;
+}
+
+.interactive-node[data-player=""] .node-overlay {
+    display: none !important;
+}
+
 /* --- Responsive Layout --- */
 @media (max-width: 1200px) {
     .relations-wrapper {
@@ -1691,7 +1700,6 @@ body.hof-unlocked .hof-section {
     display: block;
     animation: reveal-hof 1.2s ease-out forwards;
 }
-
 
 @keyframes reveal-hof {
     0% {
