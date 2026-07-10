@@ -452,7 +452,7 @@ nav a.active {
 
 /* Search Box */
 .search-box { 
-    max-width: 200px;
+    width: max-content;
     width: 100%;
 }
 
@@ -502,6 +502,7 @@ nav a.active {
 .unranked-toggle-container input[type="checkbox"] {
     cursor: pointer;
     margin: 0;
+	accent-color: var(--main-color);
 }
 
 .unranked-toggle-container label {
