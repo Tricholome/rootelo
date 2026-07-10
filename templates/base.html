@@ -110,11 +110,6 @@
 				<a href="cache.html" class="nav-secret {{ 'active' if page_id == 'cache' else '' }}">Undergrowth</a>
 			</nav>
 			
-			<div class="search-box" style="margin: 15px auto 5px auto; max-width: 320px; width: 90%; text-align: center;">
-				<input type="search" id="playerName" list="playerAutocompleteList" value="" placeholder="Search Player..." autocomplete="off">
-				<datalist id="playerAutocompleteList"></datalist>
-			</div>
-			
         </header>
         
         <div class="screen-deco right-deco">
@@ -140,6 +135,12 @@
 						{{ current_season_tag|upper if current_season_tag else 'LIVE' }}
 					</a>
 				</div>
+				
+				<div class="search-box" style="margin: 15px auto 5px auto; max-width: 320px; width: 90%; text-align: center;">
+					<input type="search" id="playerName" list="playerAutocompleteList" value="" placeholder="Search Player..." autocomplete="off">
+					<datalist id="playerAutocompleteList"></datalist>
+				</div>
+				
 				{% endif %}
 				{% if description %}<p>{{ description }}</p>{% endif %}
 			</header>
