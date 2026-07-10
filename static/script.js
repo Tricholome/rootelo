@@ -247,7 +247,7 @@ $(document).ready(function() {
 			"order": [[3, "desc"]],
 			"responsive": true, 
 			"pageLength": 50,
-			"dom": 'rt<"bottom"ip><"clear">',
+			"dom": 'rt<"bottom"p><"clear">',
 			"columnDefs": [ 
 				{ "targets": 0, "type": "rank" },
 				{ "targets": 2, "className": "player-name-cell" },
@@ -273,7 +273,7 @@ $(document).ready(function() {
 			"order": [[1, "desc"]], 
 			"responsive": true,
 			"pageLength": 50,
-			"dom": 'rt<"bottom"ip><"clear">',
+			"dom": 'rt<"bottom"p><"clear">',
 			"columnDefs": [
 				{ "className": "rank-cell", "targets": 0 },
 				{ "className": "elo-sum-cell", "targets": 1 },
