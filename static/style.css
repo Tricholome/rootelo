@@ -486,15 +486,6 @@ nav a.active {
     cursor: pointer;
 }
 
-/* Table Stats Counter Badge */
-.table-stats-badge {
-    font-size: var(--size-xs);
-    color: var(--text-muted);
-    font-style: italic;
-    text-align: center;
-    margin-top: 20px;
-}
-
 /* Unranked Toggle */
 .unranked-toggle-container {
     display: flex;
