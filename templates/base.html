@@ -131,7 +131,7 @@
 							</a>
 						{% endfor %}
 					{% endif %}
-					<a href="{{ page_id }}.html" class="season-btn {{ 'active' if not is_archive else '' }}">
+					<a href="{{ page_id }}.html#view" class="season-btn {{ 'active' if not is_archive else '' }}">
 						{{ current_season_tag|upper if current_season_tag else 'LIVE' }}
 					</a>
 				</div>
