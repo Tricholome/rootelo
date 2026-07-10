@@ -247,7 +247,7 @@ $(document).ready(function() {
 			"order": [[3, "desc"]],
 			"responsive": true, 
 			"pageLength": 50,
-			"dom": '<"top"lf>rt<"bottom"ip><"clear">',
+			"dom": 'rt<"bottom"ip><"clear">',
 			"columnDefs": [ 
 				{ "targets": 0, "type": "rank" },
 				{ "targets": 2, "className": "player-name-cell" },
@@ -281,6 +281,7 @@ $(document).ready(function() {
 			"order": [[1, "desc"]], 
 			"responsive": true,
 			"pageLength": 50,
+			"dom": 'rt<"bottom"ip><"clear">',
 			"columnDefs": [
 				{ "className": "rank-cell", "targets": 0 },
 				{ "className": "elo-sum-cell", "targets": 1 },
@@ -691,6 +692,16 @@ $(document).ready(function() {
     function applyGlobalSearch(val) {
         const query = (val || "").trim();
 
+        // [NOUVEAU] Synchronisation de la case "Show unranked players"
+        const checkbox = $('#tierFilterCheckbox');
+        if (checkbox.length > 0) {
+            const shouldBeChecked = (query !== "");
+            // Si l'état actuel de la checkbox ne correspond pas à ce qu'on veut, on le change
+            if (checkbox.is(':checked') !== shouldBeChecked) {
+                checkbox.prop('checked', shouldBeChecked).trigger('change');
+            }
+        }
+
         // Persistance intelligente : on ne sauvegarde QUE si le joueur existe réellement dans la BDD
         if (validPlayers.includes(query)) {
             localStorage.setItem('selectedPlayer', query);
@@ -716,7 +727,7 @@ $(document).ready(function() {
         }
     }
 
-    // 3. Écouteur principal sur la barre de recherche globale
+    // 3. Écouteur principal sur la barre de recherche globale (gère la saisie ET le clic sur la croix "x")
     input.addEventListener('input', function() {
         applyGlobalSearch(this.value);
     });
