@@ -118,7 +118,7 @@
 			{% endif %}
 		</div>
 
-        <div class="app-viewport window-box">
+        <div id="view" class="app-viewport window-box">
             <header class="page-intro">
 				<h2>{{ page_heading }}</h2>
 				{% if has_seasons %}
@@ -126,7 +126,7 @@
 					<span class="season-label">Season</span>
 					{% if archive_seasons %}
 						{% for s_tag in archive_seasons %}
-							<a href="{{ page_id }}_{{ s_tag }}.html" class="season-btn {{ 'active' if is_archive and season_tag == s_tag else '' }}">
+							<a href="{{ page_id }}_{{ s_tag }}.html#view" class="season-btn {{ 'active' if is_archive and season_tag == s_tag else '' }}">
 								{{ s_tag|upper }}
 							</a>
 						{% endfor %}
