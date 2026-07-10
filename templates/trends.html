@@ -5,16 +5,7 @@
 {% endblock %}
 
 {% block content %}
-    <div class="search-box">
-        <input type="search" list="playerList" id="playerName" value="" placeholder="Search Player..." oninput="updatePlayerView()">
-        <datalist id="playerList">
-            {% for name in player_names %}
-                <option value="{{ name }}">
-            {% endfor %}
-        </datalist>
-    </div>
-    
-    <div class="chart-wrapper">
+	<div class="chart-wrapper">
         <div class="chart-container">
             <canvas id="progressionChart"></canvas>
         </div>

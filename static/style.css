@@ -140,6 +140,10 @@ body::after {
 	letter-spacing: var(--track-slight);
 }
 
+.footer-table {
+    margin-top: 15px;
+}
+
 .footer-date {
     font-style: italic;
     opacity: 0.6;
@@ -409,12 +413,115 @@ nav a.active {
     border-bottom: 1px solid var(--border-light);
 }
 
-/* Season Selectors */
-.season-selector { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 20px auto 20px; }
-.season-label { font-size: var(--size-sm); text-transform: uppercase; color: var(--text-muted); letter-spacing: var(--track-wide); font-weight: var(--bold); margin-right: 5px;}
-.season-btn { text-decoration: none; font-size: var(--size-sm); font-weight: var(--medium); color: var(--text-muted); padding: 6px 14px; border-radius: 4px; background: var(--bg-surface); border: 1px solid var(--border-soft); transition: 0.2s; }
-.season-btn:hover { color: var(--text-main); background: var(--bg-hover); }
-.season-btn.active { background: transparent !important; color: var(--main-color) !important; border-color: var(--main-color) !important; }
+/* Season & Player Controls Selector */
+.season-selector-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 20px auto 25px auto;
+}
+
+.season-selector { 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    gap: 8px; 
+    width: 100%;
+    max-width: 320px;
+    margin: 4px 0;
+}
+
+.season-label { 
+    font-size: var(--size-sm); 
+    text-transform: uppercase; 
+    color: var(--text-muted); 
+    letter-spacing: var(--track-wide); 
+    font-weight: var(--bold); 
+    width: 65px;
+}
+
+/* Season Button */
+.season-btn { 
+    text-decoration: none; 
+    font-size: var(--size-sm); 
+    font-weight: var(--medium); 
+    color: var(--text-muted); 
+    padding: 6px 14px; 
+    border-radius: 4px; 
+    background: var(--bg-surface); 
+    border: 1px solid var(--border-soft); 
+    transition: 0.2s; 
+    text-align: center;
+    flex: 1; /* Sur mobile, les boutons se partagent équitablement l'espace restant */
+}
+.season-btn:hover { 
+    color: var(--text-main); 
+    background: var(--bg-hover); 
+}
+.season-btn.active { 
+    background: transparent !important; 
+    color: var(--main-color) !important; 
+    border-color: var(--main-color) !important; 
+}
+
+/* Search Box & Auto-Content Correction */
+.search-box { 
+    flex: 1; /* Prend exactement tout l'espace disponible restant sur sa ligne, calqué sur les boutons */
+}
+
+.search-box input { 
+    appearance: none;
+    -webkit-appearance: none;
+    box-sizing: border-box;
+    background: var(--dt-input-bg) !important;
+    color: var(--text-main) !important; 
+    border: 1px solid var(--border-soft) !important; 
+    padding: 6px 14px;
+    border-radius: 4px;
+    width: 100%;
+    font-family: var(--font-ui);
+    font-size: var(--size-sm);
+    text-align: left;
+    outline: none;
+    transition: border-color 0.2s, background-color 0.2s;
+}
+
+.search-box input:focus { 
+    border-color: var(--main-color) !important; 
+    background: var(--dt-row-hover) !important;
+}
+
+.search-box input::-webkit-search-cancel-button {
+    -webkit-appearance: none;
+    height: 12px; width: 12px;
+    background-color: var(--text-muted);
+    mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z'/></svg>") no-repeat 50% 50%;
+    -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z'/></svg>") no-repeat 50% 50%;
+    cursor: pointer;
+}
+
+/* Unranked Toggle */
+.unranked-toggle-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 10px;
+    font-size: var(--size-sm);
+    color: var(--text-muted);
+}
+
+.unranked-toggle-container input[type="checkbox"] {
+    cursor: pointer;
+    margin: 0;
+	accent-color: var(--main-color);
+}
+
+.unranked-toggle-container label {
+    cursor: pointer;
+    user-select: none;
+}
 
 
 /* =========================================================================
@@ -462,9 +569,7 @@ table.dataTable tbody tr:last-child td {
     border-bottom: none;
 }
 
-/* --- B. Controls (Search & Length) --- */
-.dataTables_filter label, 
-.dataTables_length label, 
+/* --- B. Controls (Pagination & Info) --- */
 .dataTables_info, 
 .dataTables_paginate { 
     color: var(--text-muted) !important; 
@@ -472,41 +577,6 @@ table.dataTable tbody tr:last-child td {
 }
 
 .dataTables_info, .dataTables_paginate { padding-top: 15px !important; }
-
-.dataTables_filter input, 
-.dataTables_length select {
-    background: var(--dt-input-bg) !important;
-    border: 1px solid var(--border-soft) !important;
-    color: var(--text-main) !important;
-    border-radius: 4px; 
-    padding: 4px 8px; 
-    outline: none; 
-    margin: 0 8px;
-    appearance: none; 
-    -webkit-appearance: none;
-    -moz-appearance: none;
-}
-
-.dataTables_length select {
-    padding-right: 24px !important;
-    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='gray' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") !important;
-    background-repeat: no-repeat !important; 
-    background-position: right 8px center !important;
-}
-
-.dataTables_filter input::-webkit-search-cancel-button {
-    -webkit-appearance: none;
-    height: 14px; width: 14px;
-    background-color: var(--text-muted);
-    mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z'/></svg>") no-repeat 50% 50%;
-    -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z'/></svg>") no-repeat 50% 50%;
-    cursor: pointer;
-}
-
-.dataTables_length select option { 
-    background-color: var(--bg-container); 
-    color: var(--text-main); 
-}
 
 table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     background-color: transparent !important;
@@ -812,44 +882,8 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 }
 
 /* =========================================================================
-   --- 8. CHART (TRENDS) ---
+   --- 8. TRENDS ---
    ========================================================================= */
-
-/* --- Search Box --- */
-.search-box { 
-    margin: 20px auto; 
-    text-align: center; 
-    max-width: 450px;
-}
-
-.search-box input { 
-    appearance: none;
-    -webkit-appearance: none;
-    background: var(--dt-input-bg) !important; /* Matches Datatables search */
-    color: var(--text-main) !important; 
-    border: 1px solid var(--border-soft) !important; 
-    padding: 10px 15px; 
-    border-radius: 6px; 
-    width: 100%; 
-    font-family: var(--font-ui);
-    outline: none;
-    transition: border-color 0.2s, background-color 0.2s;
-}
-
-.search-box input:focus { 
-    border-color: var(--main-color) !important; 
-    background: var(--dt-row-hover) !important; /* Slight glow on focus */
-}
-
-/* Custom Clear Button for Search */
-.search-box input::-webkit-search-cancel-button {
-    -webkit-appearance: none;
-    height: 14px; width: 14px;
-    background-color: var(--text-muted);
-    mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z'/></svg>") no-repeat 50% 50%;
-    -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z'/></svg>") no-repeat 50% 50%;
-    cursor: pointer;
-}
 
 /* --- Chart Container --- */
 .chart-wrapper { 
@@ -874,7 +908,6 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 /* --- Responsive Layout --- */
 @media (max-width: 768px) { 
     .chart-container { height: 40vh; padding: 10px; }
-    .search-box { padding: 0 15px; }
 }
 
 /* --- Narrative Journey Relations Chart --- */

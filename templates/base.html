@@ -118,30 +118,52 @@
 			{% endif %}
 		</div>
 
-        <div class="app-viewport window-box">
+        <div id="view" class="app-viewport window-box">
             <header class="page-intro">
 				<h2>{{ page_heading }}</h2>
+				{% if description %}<p>{{ description }}</p>{% endif %}
 				{% if has_seasons %}
-				<div class="season-selector">
-					<span class="season-label">Season</span>
-					{% if archive_seasons %}
-						{% for s_tag in archive_seasons %}
-							<a href="{{ page_id }}_{{ s_tag }}.html" class="season-btn {{ 'active' if is_archive and season_tag == s_tag else '' }}">
-								{{ s_tag|upper }}
-							</a>
-						{% endfor %}
-					{% endif %}
-					<a href="{{ page_id }}.html" class="season-btn {{ 'active' if not is_archive else '' }}">
-						{{ current_season_tag|upper if current_season_tag else 'LIVE' }}
-					</a>
+				<div class="season-selector-group">
+					<div class="season-selector">
+						<span class="season-label">Season</span>
+						{% if archive_seasons %}
+							{% for s_tag in archive_seasons %}
+								<a href="{{ page_id }}_{{ s_tag }}.html#view" class="season-btn {{ 'active' if is_archive and season_tag == s_tag else '' }}">
+									{{ s_tag|upper }}
+								</a>
+							{% endfor %}
+						{% endif %}
+						<a href="{{ page_id }}.html#view" class="season-btn {{ 'active' if not is_archive else '' }}">
+							{{ current_season_tag|upper if current_season_tag else 'LIVE' }}
+						</a>
+					</div>
+					<div class="season-selector">
+						<span class="season-label">Player</span>
+						<div class="search-box">
+							<input type="search" id="playerName" list="playerAutocompleteList" value="" placeholder="Search..." autocomplete="off">
+							<datalist id="playerAutocompleteList">
+								{% if global_players %}
+									{% for player in global_players %}
+										<option value="{{ player }}"></option>
+									{% endfor %}
+								{% endif %}
+							</datalist>
+						</div>
+					</div>
 				</div>
 				{% endif %}
-				{% if description %}<p>{{ description }}</p>{% endif %}
 			</header>
 			
             <main>
                 {% block content %}{% endblock %}
             </main>
+			
+			<div class="footer-table">
+				{% if match_count %}
+				<div class="footer-date">Includes {{ match_count }} matches up to {{ cutoff_date }}</div>
+				{% endif %}
+			</div>
+			
         </div>
         
         <div class="screen-deco left-deco">

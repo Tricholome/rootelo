@@ -240,6 +240,7 @@ def render_page(template_name, output_name, **kwargs):
     full_vars = {
         "nav_items": NAV_ITEMS,
         "generation_date": datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC'),
+        "global_players": GLOBAL_PLAYERS_LIST,
         **kwargs
     }
     with open(output_name, "w", encoding="utf-8") as f:
@@ -363,6 +364,8 @@ for tag in ARCHIVE_SEASONS:
         all_raw_names.update(archives_raw_data[tag]['history'].keys())
 
 initialize_player_mapping(all_raw_names)
+
+GLOBAL_PLAYERS_LIST = sorted(list({get_clean_name(name) for name in all_raw_names if name}))
 
 for tag in ARCHIVE_SEASONS:
     if 'history' in archives_raw_data[tag]:
@@ -582,16 +585,14 @@ def render_core_pages(file_suffix, is_archive, tag, lb_data, match_data, trends_
         "leaderboard.html", f"index{file_suffix}.html", page_id="index", current_page_base="index",
         title=PAGES["index"]["title"], 
         page_heading=PAGES["index"]["page_heading"],
-        description=PAGES["index"]["description"].format(
-            match_count=meta.get('match_count', 0), 
-            cutoff_date=meta.get('cutoff_date', 'N/A')
-        ),
+        description=PAGES["index"]["description"],
         is_archive=is_archive, has_seasons=True, season_tag=tag,
         archive_seasons=ARCHIVE_SEASONS,
         current_season_tag=CURRENT_SEASON_TAG,
         num_matches=meta.get('match_count', 0),
         cutoff_date=meta.get('cutoff_date', 'N/A'),
-        players=lb_data
+        players=lb_data,
+        match_count=meta.get('match_count', 0)
     )
 
     # 2. Matches
@@ -599,14 +600,13 @@ def render_core_pages(file_suffix, is_archive, tag, lb_data, match_data, trends_
         "matches.html", f"matches{file_suffix}.html", page_id="matches",
         title=PAGES["matches"]["title"], 
         page_heading=PAGES["matches"]["page_heading"],
-        description=PAGES["matches"]["description"].format(
-            match_count=meta.get('match_count', 0), 
-            cutoff_date=meta.get('cutoff_date', 'N/A')
-        ),
+        description=PAGES["matches"]["description"],
         is_archive=is_archive, has_seasons=True, season_tag=tag,
         archive_seasons=ARCHIVE_SEASONS,
         current_season_tag=CURRENT_SEASON_TAG,
-        matches=match_data
+        matches=match_data,
+        match_count=meta.get('match_count', 0),
+        cutoff_date=meta.get('cutoff_date', 'N/A')
     )
 
     # 3. Trends
