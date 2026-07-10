@@ -240,6 +240,7 @@ def render_page(template_name, output_name, **kwargs):
     full_vars = {
         "nav_items": NAV_ITEMS,
         "generation_date": datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC'),
+        "global_players": GLOBAL_PLAYERS_LIST,
         **kwargs
     }
     with open(output_name, "w", encoding="utf-8") as f:
@@ -363,6 +364,8 @@ for tag in ARCHIVE_SEASONS:
         all_raw_names.update(archives_raw_data[tag]['history'].keys())
 
 initialize_player_mapping(all_raw_names)
+
+GLOBAL_PLAYERS_LIST = sorted(list({get_clean_name(name) for name in all_raw_names if name}))
 
 for tag in ARCHIVE_SEASONS:
     if 'history' in archives_raw_data[tag]:
