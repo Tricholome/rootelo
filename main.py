@@ -578,9 +578,7 @@ for t in TIER_HIERARCHY:
 # =========================================================================
 print("\n=== GENERATING HTML PAGES ===")
 
-def render_core_pages(suffix, is_archive, tag, lb_data, matches_data, trends_data, meta_data, relations_data):
-    match_count = meta_data.get('match_count', 0)
-    cutoff_date = meta_data.get('cutoff_date', '')
+def render_core_pages(file_suffix, is_archive, tag, lb_data, match_data, trends_data, meta, relations_data=None):
     
     # 1. Leaderboard
     render_page(
@@ -594,8 +592,7 @@ def render_core_pages(suffix, is_archive, tag, lb_data, matches_data, trends_dat
         num_matches=meta.get('match_count', 0),
         cutoff_date=meta.get('cutoff_date', 'N/A'),
         players=lb_data,
-        match_count=match_count,
-        cutoff_date=cutoff_date
+        match_count=meta.get('match_count', 0)
     )
 
     # 2. Matches
@@ -608,8 +605,8 @@ def render_core_pages(suffix, is_archive, tag, lb_data, matches_data, trends_dat
         archive_seasons=ARCHIVE_SEASONS,
         current_season_tag=CURRENT_SEASON_TAG,
         matches=match_data,
-        match_count=match_count,
-        cutoff_date=cutoff_date
+        match_count=meta.get('match_count', 0),
+        cutoff_date=meta.get('cutoff_date', 'N/A')
     )
 
     # 3. Trends
