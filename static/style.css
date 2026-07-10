@@ -409,18 +409,50 @@ nav a.active {
     border-bottom: 1px solid var(--border-light);
 }
 
-/* Season Selectors */
-.season-selector { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 20px auto 20px; }
-.season-label { font-size: var(--size-sm); text-transform: uppercase; color: var(--text-muted); letter-spacing: var(--track-wide); font-weight: var(--bold); margin-right: 5px;}
-.season-btn { text-decoration: none; font-size: var(--size-sm); font-weight: var(--medium); color: var(--text-muted); padding: 6px 14px; border-radius: 4px; background: var(--bg-surface); border: 1px solid var(--border-soft); transition: 0.2s; }
-.season-btn:hover { color: var(--text-main); background: var(--bg-hover); }
-.season-btn.active { background: transparent !important; color: var(--main-color) !important; border-color: var(--main-color) !important; }
+/* Season & Player Controls Selector */
+.season-selector { 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    gap: 8px; 
+    margin: 15px auto; 
+}
+
+.season-label { 
+    font-size: var(--size-sm); 
+    text-transform: uppercase; 
+    color: var(--text-muted); 
+    letter-spacing: var(--track-wide); 
+    font-weight: var(--bold); 
+    margin-right: 5px;
+    width: 65px;
+}
+
+/* Season Button */
+.season-btn { 
+    text-decoration: none; 
+    font-size: var(--size-sm); 
+    font-weight: var(--medium); 
+    color: var(--text-muted); 
+    padding: 6px 14px; 
+    border-radius: 4px; 
+    background: var(--bg-surface); 
+    border: 1px solid var(--border-soft); 
+    transition: 0.2s; 
+}
+.season-btn:hover { 
+    color: var(--text-main); 
+    background: var(--bg-hover); 
+}
+.season-btn.active { 
+    background: transparent !important; 
+    color: var(--main-color) !important; 
+    border-color: var(--main-color) !important; 
+}
 
 /* Search Box */
 .search-box { 
-    margin: 15px auto 5px auto; 
-    text-align: center; 
-    max-width: 320px;
+    max-width: 200px;
     width: 100%;
 }
 
@@ -431,23 +463,24 @@ nav a.active {
     background: var(--dt-input-bg) !important;
     color: var(--text-main) !important; 
     border: 1px solid var(--border-soft) !important; 
-    padding: 10px 15px; 
-    border-radius: 6px; 
+    padding: 6px 14px; /* Même hauteur et padding que .season-btn */
+    border-radius: 4px; /* Même arrondi que .season-btn */
     width: 100%; 
     font-family: var(--font-ui);
-    text-align: center;
+    font-size: var(--size-sm); /* Même taille que .season-btn */
+    text-align: left; /* Alignement propre après le label */
     outline: none;
     transition: border-color 0.2s, background-color 0.2s;
 }
 
 .search-box input:focus { 
     border-color: var(--main-color) !important; 
-    background: var(--dt-row-hover) !important; /* Slight glow on focus */
+    background: var(--dt-row-hover) !important;
 }
 
 .search-box input::-webkit-search-cancel-button {
     -webkit-appearance: none;
-    height: 14px; width: 14px;
+    height: 12px; width: 12px;
     background-color: var(--text-muted);
     mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z'/></svg>") no-repeat 50% 50%;
     -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z'/></svg>") no-repeat 50% 50%;
