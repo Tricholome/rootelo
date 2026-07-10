@@ -578,23 +578,24 @@ for t in TIER_HIERARCHY:
 # =========================================================================
 print("\n=== GENERATING HTML PAGES ===")
 
-def render_core_pages(file_suffix, is_archive, tag, lb_data, match_data, trends_data, meta, relations_data=None):
+def render_core_pages(suffix, is_archive, tag, lb_data, matches_data, trends_data, meta_data, relations_data):
+    match_count = meta_data.get('match_count', 0)
+    cutoff_date = meta_data.get('cutoff_date', '')
     
     # 1. Leaderboard
     render_page(
         "leaderboard.html", f"index{file_suffix}.html", page_id="index", current_page_base="index",
         title=PAGES["index"]["title"], 
         page_heading=PAGES["index"]["page_heading"],
-        description=PAGES["index"]["description"].format(
-            match_count=meta.get('match_count', 0), 
-            cutoff_date=meta.get('cutoff_date', 'N/A')
-        ),
+        description=PAGES["index"]["description"],
         is_archive=is_archive, has_seasons=True, season_tag=tag,
         archive_seasons=ARCHIVE_SEASONS,
         current_season_tag=CURRENT_SEASON_TAG,
         num_matches=meta.get('match_count', 0),
         cutoff_date=meta.get('cutoff_date', 'N/A'),
-        players=lb_data
+        players=lb_data,
+        match_count=match_count,
+        cutoff_date=cutoff_date
     )
 
     # 2. Matches
@@ -602,14 +603,13 @@ def render_core_pages(file_suffix, is_archive, tag, lb_data, match_data, trends_
         "matches.html", f"matches{file_suffix}.html", page_id="matches",
         title=PAGES["matches"]["title"], 
         page_heading=PAGES["matches"]["page_heading"],
-        description=PAGES["matches"]["description"].format(
-            match_count=meta.get('match_count', 0), 
-            cutoff_date=meta.get('cutoff_date', 'N/A')
-        ),
+        description=PAGES["matches"]["description"],
         is_archive=is_archive, has_seasons=True, season_tag=tag,
         archive_seasons=ARCHIVE_SEASONS,
         current_season_tag=CURRENT_SEASON_TAG,
-        matches=match_data
+        matches=match_data,
+        match_count=match_count,
+        cutoff_date=cutoff_date
     )
 
     # 3. Trends
