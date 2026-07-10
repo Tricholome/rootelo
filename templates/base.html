@@ -136,17 +136,19 @@
 					</a>
 				</div>
 				
-				<div class="search-box">
-					<input type="search" id="playerName" list="playerAutocompleteList" value="" placeholder="Search Player..." autocomplete="off">
-					<datalist id="playerAutocompleteList">
-						{% if global_players %}
-							{% for player in global_players %}
-								<option value="{{ player }}"></option>
-							{% endfor %}
-						{% endif %}
-					</datalist>
+				<div class="season-selector">
+					<span class="season-label">Player</span>
+					<div class="search-box">
+						<input type="search" id="playerName" list="playerAutocompleteList" value="" placeholder="Search..." autocomplete="off">
+						<datalist id="playerAutocompleteList">
+							{% if global_players %}
+								{% for player in global_players %}
+									<option value="{{ player }}"></option>
+								{% endfor %}
+							{% endif %}
+						</datalist>
+					</div>
 				</div>
-				
 				{% endif %}
 				{% if description %}<p>{{ description }}</p>{% endif %}
 			</header>
