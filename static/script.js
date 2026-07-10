@@ -676,22 +676,6 @@ window.updatePlayerView = function() {
     }
 };
 
-$(document).ready(function() {
-    const input = document.getElementById('playerName');
-    const savedPlayer = localStorage.getItem('selectedPlayer');
-    
-    if (input && input.value.trim()) {
-        window.updatePlayerView();
-    } 
-    else if (savedPlayer) {
-        if (input) input.value = savedPlayer;
-        window.updatePlayerView();
-    }
-    else {
-        window.updatePlayerView();
-    }
-});
-
 /* =========================================================================
    --- 8. GLOBAL PLAYER SEARCH & PERSISTENCE SYNC ---
    ========================================================================= */
@@ -700,8 +684,7 @@ $(document).ready(function() {
     const input = document.getElementById('playerName');
     if (!input) return;
 
-    // 1. Génération de la liste déroulante (datalist)
-    // On extrait les joueurs à partir de la source de données disponible sur la page
+    // 1. EXTRACTION ET REMPLISSAGE DU DATALIST D'AUTOCOMPLÉTION
     let players = [];
     if (typeof CONFIG !== 'undefined' && CONFIG.chartData) {
         players = Object.keys(CONFIG.chartData);
@@ -710,48 +693,57 @@ $(document).ready(function() {
     }
 
     if (players.length > 0) {
-        const datalist = document.createElement('datalist');
-        datalist.id = 'playerAutocompleteList';
-        players.sort().forEach(p => {
-            const opt = document.createElement('option');
-            opt.value = p;
-            datalist.appendChild(opt);
-        });
-        document.body.appendChild(datalist);
-        input.setAttribute('list', 'playerAutocompleteList');
+        const datalist = document.getElementById('playerAutocompleteList');
+        if (datalist) {
+            datalist.innerHTML = ''; // On nettoie l'ancien contenu
+            players.sort().forEach(p => {
+                const opt = document.createElement('option');
+                opt.value = p;
+                datalist.appendChild(opt);
+            });
+        }
     }
 
-    // 2. Fonction unique d'application du filtre
+    // 2. FONCTION UNIQUE D'APPLICATION DES RECHERCHES ET FILTRES
     function applyGlobalSearch(val) {
-        // Applique la recherche sur le tableau de la page (si présent)
+        const query = (val || "").trim();
+
+        // A. Applique la recherche sur tous les tableaux DataTables de la page active
         $('.dataTable').each(function() {
             if ($.fn.dataTable.isDataTable(this)) {
-                $(this).DataTable().search(val).draw();
+                $(this).DataTable().search(query).draw();
             }
         });
 
-        // Déclenche la mise à jour des graphiques/arbres (si présents)
+        // B. Met à jour l'arbre relationnel (s'il est présent sur la page active)
+        if (typeof window.updatePlayerView === 'function') {
+            window.updatePlayerView();
+        }
+
+        // C. Met à jour le graphique (s'il est présent sur la page active)
         if (typeof window.updateChart === 'function' && document.getElementById('progressionChart')) {
             window.updateChart();
         }
-        if (typeof window.updatePlayerView === 'function' && document.getElementById('centerPlayerName')) {
-            window.updatePlayerView();
-        }
     }
 
-    // 3. Écouteur sur l'input unique
+    // 3. ÉCOUTEUR PRINCIPAL (Saisie au clavier ou choix dans le datalist)
     input.addEventListener('input', function() {
-        const val = this.value.trim();
+        const val = this.value;
         localStorage.setItem('selectedPlayer', val);
         applyGlobalSearch(val);
     });
 
-    // 4. Persistance au chargement de la page
+    // 4. RESTAURATION DE LA PERSISTANCE AU CHARGEMENT DE LA PAGE
     const savedPlayer = localStorage.getItem('selectedPlayer');
     if (savedPlayer) {
         input.value = savedPlayer;
-        // Laisse 50ms à la page pour s'initialiser avant de forcer le filtre
-        setTimeout(() => applyGlobalSearch(savedPlayer), 50);
+        // On laisse un léger temps (50ms) de chargement aux librairies (Chart.js / DataTables)
+        setTimeout(() => {
+            applyGlobalSearch(savedPlayer);
+        }, 50);
+    } else {
+        // S'il n'y a pas de sauvegarde, on initialise quand même la vue par défaut (vide)
+        applyGlobalSearch("");
     }
 });
 
