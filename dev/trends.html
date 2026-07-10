@@ -1,1440 +1,1090 @@
+/* =========================================================================
+   ROOTELO - JAVASCRIPT
+   Table of Contents:
+   1. Dynamic Scroll
+   2. Double-tap
+   3. Tier Modal
+   4. Data Tables
+   5. Chart
+   6. Dynamic Trends
+   7. Narrative Journey
+   8. Global Player Search
+   
+   --- EASTER EGGS ---
+   11. Secrets Engine
+   12. Nut & Berry
+   13. Visitor Recognition
 
+   ========================================================================= */
+   
+/* =========================================================================
+   --- 1. DYNAMIC SCROLL ---
+   ========================================================================= */
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Player's Journey • Rootelo</title>
+// Dynamic Scroll & Gesture Management
+// Variables to track touch positions and scroll direction
+let touchStartY = 0;
+let lastScrollY = window.scrollY;
+
+// 1. Capture the initial touch position on the physical screen (clientY)
+// Using clientY instead of pageY makes it immune to overscroll/bounce effects
+window.addEventListener('touchstart', (e) => {
+    touchStartY = e.touches[0].clientY; 
+}, { passive: true });
+
+// 2. Handle specific swipe gestures for the bottom image reveal
+window.addEventListener('touchmove', (e) => {
+    const isMobile = window.innerWidth < 1100;
+    if (!isMobile) return;
+
+    const currentY = e.touches[0].clientY;
+    const hasClass = document.body.classList.contains('is-at-bottom');
+
+    if (hasClass && (currentY - touchStartY) > 40) {
+        document.body.classList.remove('is-at-bottom');
+        return; // Exit early
+    }
+
+    const windowHeight = window.innerHeight;
+    const docHeight = document.documentElement.scrollHeight;
+    // 15px margin to ensure it triggers even with minor calculation rounding
+    const isAtBottom = Math.ceil(windowHeight + window.scrollY) >= (docHeight - 15);
+
+    // If at the bottom AND swiping UP intentionally (finger moves up by more than 70px)
+    if (isAtBottom && !hasClass && (touchStartY - currentY) > 70) {
+        document.body.classList.add('is-at-bottom');
+    }
+}, { passive: true });
+
+// 3. Handle standard scrolling (Header logic + Fallback reset)
+window.addEventListener('scroll', () => {
+    const currentScrollY = window.scrollY;
+    const isMobile = window.innerWidth < 1100;
+
+    // Set CSS variable for dynamic scroll effects
+    document.body.style.setProperty('--scroll', currentScrollY);
+
+    // Header logic: toggle class when scrolling past 30px
+    if (currentScrollY > 30) {
+        document.body.classList.add('is-scrolled');
+    } else {
+        document.body.classList.remove('is-scrolled');
+    }
+
+    if (isMobile && document.body.classList.contains('is-at-bottom')) {
+        // If the current scroll position is higher than the previous one (scrolling up)
+        if (currentScrollY < lastScrollY - 10) {
+            document.body.classList.remove('is-at-bottom');
+        }
+    }
     
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..900;1,9..144,400..900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
-    
-    <link rel="stylesheet" href="static/style.css">
-    
-    <style>
-        :root {
-			/* --- 1. LAYOUT CONFIG (Automatic loop) --- */
-			
-			--window-max-width: clamp(600px, 60vw, 1600px);
-			
-			--window-padding: clamp(20px, 2.5vw, 40px);
-			
-			--window-gap: 20px;
-			
+    // Update last scroll position for the next event check
+    lastScrollY = currentScrollY;
+}, { passive: true });
 
-			/* --- 2. TYPOGRAPHY (Automatic loop) --- */
-			
-			--font-title: 'Fraunces', serif;
-			
-			--font-ui: 'Inter', sans-serif;
-			
-			--font-mono: 'JetBrains Mono', monospace;
-			
-			--font-hand: 'Segoe Print', 'Bradley Hand', 'Apple Chancery', 'Comic Sans MS', cursive;
-			
-			--bold: 900;
-			
-			--medium: 600;
-			
-			--normal: 400;
-			
-			--size-xs: 0.75rem;
-			
-			--size-sm: 0.85rem;
-			
-			--size-modal: 0.90rem;
-			
-			--size-base: 0.95rem;
-			
-			--size-md: 1.2rem;
-			
-			--size-lg: 2.0rem;
-			
-			--size-xl: 2.5rem;
-			
-			--size-display: 2.8rem;
-			
-			--track-slight: 0.5px;
-			
-			--track-wide: 1px;
-			
-			--track-display: 4px;
-			
+/* =========================================================================
+   --- 2. DOUBLE-TAP ---
+   ========================================================================= */
+   
+document.addEventListener("DOMContentLoaded", function() {
+    const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (window.matchMedia("(hover: none)").matches);
 
-			/* --- 3. GLOBAL UI (Automatic loop) --- */
-			
-			--bg-overlay-top: rgba(0, 0, 0, 0.1);
-			
-			--bg-overlay-bottom: rgba(0, 0, 0, 0.8);
-			
-			--bg-container: #1c1c1c;
-			
-			--bg-surface: rgba(255, 255, 255, 0.03);
-			
-			--bg-hover: rgba(255, 255, 255, 0.08);
-			
-			--border-soft: #333333;
-			
-			--border-dark: rgba(0, 0, 0, 0.4);
-			
-			--border-light: rgba(255, 255, 255, 0.05);
-			
-			--glass-bg: #1c1c1cd9;
-			
-			--glass-border: rgba(255, 255, 255, 0.08);
-			
-			--glass-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-			
-			--text-bright: #ffffff;
-			
-			--text-main: #E0E0E0;
-			
-			--text-muted: #A0A0A0;
-			
-			--text-dark: #111111;
-			
-			--dt-table-bg: rgba(0, 0, 0, 0.15);
-			
-			--dt-header-bg: rgba(0, 0, 0, 0.25);
-			
-			--dt-row-border: rgba(255, 255, 255, 0.03);
-			
-			--dt-row-hover: rgba(255, 255, 255, 0.07);
-			
-			--dt-input-bg: rgba(0, 0, 0, 0.2);
-			
+    if (isTouchDevice) {
+        // On écoute sur le body pour capter même les icônes créées par DataTables
+        document.body.addEventListener('click', function(e) {
+            // On cherche si on a cliqué sur un lien double-tap
+            const link = e.target.closest('.js-double-tap');
 
-			/* --- 4. TIER DYNAMICS (Loop with logic) --- */
-			
-			--color-bird: #7AB5E0;
-			--color-bird-bg: #7AB5E014;
-			
-			--color-fox: #E55555;
-			--color-fox-bg: #E5555514;
-			
-			--color-rabbit: #F2C14E;
-			--color-rabbit-bg: #F2C14E14;
-			
-			--color-mouse: #F49E52;
-			--color-mouse-bg: #F49E5214;
-			
-			--color-squirrel: #94C160;
-			--color-squirrel-bg: #94C16014;
-			
-			--color-stag: #C686FF;
-			--color-stag-bg: #C686FF14;
-			
-			--color-default: #7A7347;
-			--color-default-bg: #7A734714;
-			
+            // 1. Si on clique ailleurs : on ferme tout
+            if (!link) {
+                document.querySelectorAll('.js-double-tap.expanded').forEach(l => l.classList.remove('expanded'));
+                return;
+            }
 
-			/* --- 5. PAGE THEME --- */
-			--main-color: #F2C14E;
-		}
-    </style>
-	
-	<meta property="og:type" content="website">
-	<meta property="og:url" content="https://tricholome.github.io/rootelo">
-	<meta property="og:title" content="ROOTELO">
-	<meta property="og:description" content="A Metric of Woodland Skill and Will">
-	<meta property="og:image" content="https://tricholome.github.io/rootelo/assets/images/rootelo-preview.webp">
+            // 2. Si on clique sur une icône
+            if (!link.classList.contains('expanded')) {
+                // PREMIER TAP
+                e.preventDefault();
+                e.stopPropagation();
 
-    
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-	
-</head>
-
-<body data-page="trends">
-    
-    <div class="container">
-	
-        <header class="app-banner window-box">
-		
-            <div class="banner-container">
-                <div class="banner-icons left">
-                    <a href="javascript:void(0)" onclick="openTierModal('stag')" class="tooltip-link js-double-tap banner-icon-stag">
-                        <img src="assets/icons/stag.webp" alt="Stag">
-                        <span class="tooltip-text"><strong class="tier-stag">Stag (1600+)</strong> — The Legend</span>
-                    </a>
-					<a href="javascript:void(0)" onclick="openTierModal('bird')" class="tooltip-link js-double-tap">
-                        <img src="assets/icons/bird_new.webp" alt="Bird">
-                        <span class="tooltip-text"><strong class="tier-bird">Bird (1500+)</strong> — The Grandmasters</span>
-                    </a>
-                    <a href="javascript:void(0)" onclick="openTierModal('fox')" class="tooltip-link js-double-tap">
-                        <img src="assets/icons/fox_new.webp" alt="Fox">
-                        <span class="tooltip-text"><strong class="tier-fox">Fox (1400+)</strong> — The Cunning Tacticians</span>
-                    </a>
-                </div>
-                <div class="banner-center">
-                    <h1 class="site-title">ROOTELO</h1>
-                    <p class="site-subtitle">A Metric of Woodland&nbsp;Skill&nbsp;and&nbsp;Will</p>
-                </div>
-                <div class="banner-icons right">
-                    <a href="javascript:void(0)" onclick="openTierModal('rabbit')" class="tooltip-link js-double-tap">
-                        <img src="assets/icons/rabbit_new.webp" alt="Rabbit">
-                        <span class="tooltip-text"><strong class="tier-rabbit">Rabbit (1300+)</strong> — The Agile Contenders</span>
-                    </a>
-                    <a href="javascript:void(0)" onclick="openTierModal('mouse')" class="tooltip-link js-double-tap">
-                        <img src="assets/icons/mouse_new.webp" alt="Mouse">
-                        <span class="tooltip-text"><strong class="tier-mouse">Mouse (1200+)</strong> — The Steady Foragers</span>
-                    </a>
-					<a href="javascript:void(0)" onclick="openTierModal('squirrel')" class="tooltip-link js-double-tap banner-icon-squirrel">
-                        <img src="assets/icons/squirrel.webp" alt="Squirrel">
-                        <span class="tooltip-text"><strong class="tier-squirrel">Squirrel (&lt; 1200)</strong> — The Hapless Stragglers</span>
-                    </a>
-                </div>
-            </div>
-            
-            <div class="nav-separator"></div>
-
-            <nav>
-				
-
-				
-					
-						
-					
-					<a href="index.html" class="">Leaderboard</a>
-				
-					
-						
-					
-					<a href="matches.html" class="">Top Tables</a>
-				
-					
-						
-					
-					<a href="trends.html" class="active">Player's Journey</a>
-				
-					
-						
-					
-					<a href="about.html" class="">Codex</a>
-				
-				<a href="cache.html" class="nav-secret ">Undergrowth</a>
-			</nav>
-			
-        </header>
-        
-        <div class="screen-deco right-deco">
-			
-				<img src="assets/images/trends_img_right.webp" alt="Decoration Right">
-			
-		</div>
-
-        <div class="app-viewport window-box">
-            <header class="page-intro">
-				<h2>Player's Journey</h2>
-				
-				<div class="season-selector">
-					<span class="season-label">Season</span>
-					
-						
-							<a href="trends_lh01.html" class="season-btn ">
-								LH01
-							</a>
-						
-							<a href="trends_lh02.html" class="season-btn ">
-								LH02
-							</a>
-						
-					
-					<a href="trends.html" class="season-btn active">
-						LH03
-					</a>
-				</div>
-				
-				<p>Search for a player to see their Elo&nbsp;evolution&nbsp;over&nbsp;the&nbsp;season.</p>
-			</header>
-			
-            <main>
+                // On ferme les autres
+                document.querySelectorAll('.js-double-tap.expanded').forEach(l => l.classList.remove('expanded'));
                 
-    <div class="search-box">
-        <input type="search" list="playerList" id="playerName" value="" placeholder="Search Player..." oninput="updatePlayerView()">
-        <datalist id="playerList">
-            
-                <option value="0thers1der">
-            
-                <option value="100pctskillz">
-            
-                <option value="1coolguy">
-            
-                <option value="2eaasley">
-            
-                <option value="aaronmaik88">
-            
-                <option value="Acecreamsundae">
-            
-                <option value="Acelet">
-            
-                <option value="Aceosd">
-            
-                <option value="AcolyteOfRoot">
-            
-                <option value="Actionman2222">
-            
-                <option value="Aeliott">
-            
-                <option value="aelisheneithlon">
-            
-                <option value="AERotters">
-            
-                <option value="AJIJIi">
-            
-                <option value="Akayami">
-            
-                <option value="Akriuss">
-            
-                <option value="Aleph">
-            
-                <option value="alevGO">
-            
-                <option value="alex0">
-            
-                <option value="Alexispc">
-            
-                <option value="amjohnson636">
-            
-                <option value="anoretu">
-            
-                <option value="Antiproject">
-            
-                <option value="Anton">
-            
-                <option value="ArionGekkota">
-            
-                <option value="Awesem">
-            
-                <option value="AxelMcKenzie">
-            
-                <option value="AxlPrototype">
-            
-                <option value="Axolatal">
-            
-                <option value="Azdontek">
-            
-                <option value="BaconBoy">
-            
-                <option value="BadScra">
-            
-                <option value="BaliHoo">
-            
-                <option value="balonthebold">
-            
-                <option value="Banzai7000">
-            
-                <option value="Bapgo">
-            
-                <option value="Baradhas">
-            
-                <option value="BareGammon">
-            
-                <option value="Bengal3">
-            
-                <option value="BennyJ">
-            
-                <option value="benruff">
-            
-                <option value="benssoon">
-            
-                <option value="BetterPools">
-            
-                <option value="bigcathedral">
-            
-                <option value="Biggins96">
-            
-                <option value="BigHat">
-            
-                <option value="Bitto">
-            
-                <option value="BjarkeHuse">
-            
-                <option value="Bjoda">
-            
-                <option value="Blank">
-            
-                <option value="blasonmyphemous">
-            
-                <option value="Blepblep">
-            
-                <option value="BloodMuffin">
-            
-                <option value="BLULOBSTR">
-            
-                <option value="Blurr">
-            
-                <option value="BMPerJMPer">
-            
-                <option value="Bodnamax">
-            
-                <option value="BoMa85">
-            
-                <option value="bootle">
-            
-                <option value="brrrlinguist">
-            
-                <option value="BuckeyeNation">
-            
-                <option value="budynzsmalcem">
-            
-                <option value="BugMuff44">
-            
-                <option value="BuliBaka">
-            
-                <option value="buurn">
-            
-                <option value="byzeke">
-            
-                <option value="Cabbage0642">
-            
-                <option value="CaptainBork">
-            
-                <option value="catscat">
-            
-                <option value="Cheesecake271">
-            
-                <option value="Cheetah32">
-            
-                <option value="chibimori">
-            
-                <option value="ChippZamoose">
-            
-                <option value="chosennuttso">
-            
-                <option value="ChrD99">
-            
-                <option value="ChusGG">
-            
-                <option value="chux88">
-            
-                <option value="cjahwon">
-            
-                <option value="Clink">
-            
-                <option value="cliuless">
-            
-                <option value="Cloudere">
-            
-                <option value="clp10033">
-            
-                <option value="CocoMocoMan">
-            
-                <option value="CodPieceZ">
-            
-                <option value="ColPop">
-            
-                <option value="CommonGibbon">
-            
-                <option value="complexartichoke">
-            
-                <option value="ConeMan">
-            
-                <option value="cookain">
-            
-                <option value="Cookies">
-            
-                <option value="CosmicCant">
-            
-                <option value="Cotton">
-            
-                <option value="CowOnAPlane">
-            
-                <option value="CoxyNormus">
-            
-                <option value="CptAlex">
-            
-                <option value="creapy01">
-            
-                <option value="cringelordirl">
-            
-                <option value="CroCroCro">
-            
-                <option value="Ctfox">
-            
-                <option value="Cuagodking">
-            
-                <option value="Cutoopen">
-            
-                <option value="CWise">
-            
-                <option value="Dandel">
-            
-                <option value="DanielDandaniel">
-            
-                <option value="DanielJeun">
-            
-                <option value="DanzigMF">
-            
-                <option value="darkcat">
-            
-                <option value="DarkOwl">
-            
-                <option value="DarkPortents">
-            
-                <option value="Darkwonderer">
-            
-                <option value="DarthOblivius">
-            
-                <option value="DarthPuniceus">
-            
-                <option value="DawnDiVito">
-            
-                <option value="Daz257">
-            
-                <option value="deejaythink">
-            
-                <option value="DegenerateIan">
-            
-                <option value="Dekiru">
-            
-                <option value="DelSol">
-            
-                <option value="Demand">
-            
-                <option value="DemaRogue">
-            
-                <option value="deriokle">
-            
-                <option value="DevilUnfiltered">
-            
-                <option value="DGDKami">
-            
-                <option value="dindane">
-            
-                <option value="Diyana">
-            
-                <option value="Dizzz">
-            
-                <option value="doejurko">
-            
-                <option value="Doordecat">
-            
-                <option value="Dramsss">
-            
-                <option value="DrCheeseFiend">
-            
-                <option value="Drinken">
-            
-                <option value="Dumbledore">
-            
-                <option value="Durian">
-            
-                <option value="EarlofEarl">
-            
-                <option value="EdacM">
-            
-                <option value="eef99">
-            
-                <option value="Elijah">
-            
-                <option value="ellbelle">
-            
-                <option value="elmoo">
-            
-                <option value="EmbryoticDeth">
-            
-                <option value="Emperia">
-            
-                <option value="ermactually">
-            
-                <option value="evancomposer">
-            
-                <option value="Evenorodds">
-            
-                <option value="Excitedteapot">
-            
-                <option value="ExecutedByGromp">
-            
-                <option value="Extortionator">
-            
-                <option value="Fabius">
-            
-                <option value="fadingnovel">
-            
-                <option value="FakeSki">
-            
-                <option value="FalconBird">
-            
-                <option value="FamilyTuber">
-            
-                <option value="FatBoyyy">
-            
-                <option value="FausDav">
-            
-                <option value="FavorOfTheRabbits">
-            
-                <option value="fbd117">
-            
-                <option value="Fearteiler">
-            
-                <option value="FelipeRocha">
-            
-                <option value="Fenetix">
-            
-                <option value="FireFox">
-            
-                <option value="Fluffy">
-            
-                <option value="ForkMaster">
-            
-                <option value="FrancescoBr">
-            
-                <option value="FungusMouse">
-            
-                <option value="Furry0329">
-            
-                <option value="FVMLion">
-            
-                <option value="Gabobs">
-            
-                <option value="Gaborever">
-            
-                <option value="GAFE15">
-            
-                <option value="Gagneto">
-            
-                <option value="GameProfit">
-            
-                <option value="GamerTower">
-            
-                <option value="GardenLily">
-            
-                <option value="Gibbs">
-            
-                <option value="GlandorHooverstein">
-            
-                <option value="Glasypress">
-            
-                <option value="GlisteningGeetus">
-            
-                <option value="goodgamepat">
-            
-                <option value="gord20">
-            
-                <option value="Gregoola">
-            
-                <option value="GuyNXS">
-            
-                <option value="Hadjiya">
-            
-                <option value="hakoo">
-            
-                <option value="halzyen">
-            
-                <option value="Hammad">
-            
-                <option value="hanban">
-            
-                <option value="Harriet">
-            
-                <option value="Hasan">
-            
-                <option value="hauntedpebbles2">
-            
-                <option value="Hazelnut19">
-            
-                <option value="HeatBeats">
-            
-                <option value="Hiyoshi">
-            
-                <option value="HobGungan">
-            
-                <option value="HollyKat902">
-            
-                <option value="HoosierDaddy">
-            
-                <option value="Hossain2020">
-            
-                <option value="HowDoYouDrew">
-            
-                <option value="HungryJeff">
-            
-                <option value="Hurple">
-            
-                <option value="Hydro033">
-            
-                <option value="idk123">
-            
-                <option value="ImEpy">
-            
-                <option value="ImJustExisting">
-            
-                <option value="IMPERATOR">
-            
-                <option value="IndifferentFish">
-            
-                <option value="Intraceptor">
-            
-                <option value="ionou21">
-            
-                <option value="Ironic">
-            
-                <option value="Jack432">
-            
-                <option value="Jalapeno">
-            
-                <option value="Jasiuńcio">
-            
-                <option value="Jboooooooooooooooooooom">
-            
-                <option value="Jerry">
-            
-                <option value="JointedRumble60">
-            
-                <option value="Joshi69">
-            
-                <option value="Jsn13">
-            
-                <option value="Julien">
-            
-                <option value="kaiser">
-            
-                <option value="kamomileTea">
-            
-                <option value="Karcher">
-            
-                <option value="KargDemiau">
-            
-                <option value="KarmaBurn">
-            
-                <option value="kayajam">
-            
-                <option value="kesitron">
-            
-                <option value="KeyserSoze">
-            
-                <option value="KFull">
-            
-                <option value="Killerstorm17">
-            
-                <option value="kingslime">
-            
-                <option value="Kirien">
-            
-                <option value="Klishu">
-            
-                <option value="Kmahussier">
-            
-                <option value="Knightochan">
-            
-                <option value="Komasan">
-            
-                <option value="Krooter">
-            
-                <option value="KuperMeister">
-            
-                <option value="kurtfisto">
-            
-                <option value="KyloBot">
-            
-                <option value="Lambo">
-            
-                <option value="Lante">
-            
-                <option value="lazarus210">
-            
-                <option value="Led_Slash">
-            
-                <option value="legrandgrand">
-            
-                <option value="Lex25">
-            
-                <option value="lgtw3450">
-            
-                <option value="LHlegend">
-            
-                <option value="Libitina114">
-            
-                <option value="Lifeye">
-            
-                <option value="LilSoup">
-            
-                <option value="LittleHalo (9882)">
-            
-                <option value="LittleHalo (9982)">
-            
-                <option value="Ljaz7">
-            
-                <option value="Lobster">
-            
-                <option value="Lokfok">
-            
-                <option value="Lucat">
-            
-                <option value="LucianTheFak">
-            
-                <option value="Luclid">
-            
-                <option value="Lufire">
-            
-                <option value="lumpyprol">
-            
-                <option value="LutherStr">
-            
-                <option value="Lynxtek">
-            
-                <option value="MagZeppelin">
-            
-                <option value="Maladay">
-            
-                <option value="MangoBlade11">
-            
-                <option value="Manpanzee">
-            
-                <option value="Marcus">
-            
-                <option value="Mariv">
-            
-                <option value="marksoz00">
-            
-                <option value="MarquiseDeGyatt">
-            
-                <option value="matemato">
-            
-                <option value="Mati92">
-            
-                <option value="maxlovesyou">
-            
-                <option value="Mazrim">
-            
-                <option value="Mcauthor">
-            
-                <option value="McMayo">
-            
-                <option value="MelodiCat">
-            
-                <option value="metalnooze">
-            
-                <option value="micherin">
-            
-                <option value="Mindger">
-            
-                <option value="MinePokemine">
-            
-                <option value="mishaelh1">
-            
-                <option value="MisterGume">
-            
-                <option value="mkcy3">
-            
-                <option value="Mohammad">
-            
-                <option value="MOMOGA">
-            
-                <option value="Mopey">
-            
-                <option value="Mossfusion">
-            
-                <option value="mouseinabox">
-            
-                <option value="Mouseman">
-            
-                <option value="MoxJet">
-            
-                <option value="MrDrouf">
-            
-                <option value="mrkent">
-            
-                <option value="MrRiceGuy">
-            
-                <option value="Munchking">
-            
-                <option value="MunkeyBrewster">
-            
-                <option value="Musicalwoofy">
-            
-                <option value="mwcrabtree">
-            
-                <option value="MylesMoose">
-            
-                <option value="mysti">
-            
-                <option value="Nadav253">
-            
-                <option value="NadtyLite">
-            
-                <option value="Napalminthebirdsong">
-            
-                <option value="Nate-inator">
-            
-                <option value="NattyKash">
-            
-                <option value="NaySmith">
-            
-                <option value="Nefkano">
-            
-                <option value="Nickpappa">
-            
-                <option value="Nierxlelx">
-            
-                <option value="NightTsuki">
-            
-                <option value="nikkan">
-            
-                <option value="ninjacat536">
-            
-                <option value="Niruu">
-            
-                <option value="nmyers2">
-            
-                <option value="NonStInc.">
-            
-                <option value="Nudraxon">
-            
-                <option value="nutrimentia">
-            
-                <option value="Nuttsy">
-            
-                <option value="Nymmer">
-            
-                <option value="nyosh8484">
-            
-                <option value="Octavius">
-            
-                <option value="Odinius">
-            
-                <option value="Olymp">
-            
-                <option value="ominouscat">
-            
-                <option value="Oppapi">
-            
-                <option value="optimusprawn">
-            
-                <option value="Oriol">
-            
-                <option value="osche">
-            
-                <option value="oshwott2844">
-            
-                <option value="OUSlaughter">
-            
-                <option value="PacificCold">
-            
-                <option value="PajaroTronador">
-            
-                <option value="Pandapapst">
-            
-                <option value="pashatherussian">
-            
-                <option value="Peppy">
-            
-                <option value="Perdita">
-            
-                <option value="PeskyPaul">
-            
-                <option value="PestoEmporium">
-            
-                <option value="pheobii">
-            
-                <option value="Pi314">
-            
-                <option value="Piechu">
-            
-                <option value="pigdog">
-            
-                <option value="pikeline">
-            
-                <option value="pizzamagican">
-            
-                <option value="PlagueCarrier">
-            
-                <option value="Plasma">
-            
-                <option value="Pliskin">
-            
-                <option value="Plush2">
-            
-                <option value="Podge0303">
-            
-                <option value="PokerFace126">
-            
-                <option value="polyphemur">
-            
-                <option value="pooge">
-            
-                <option value="Potatosgonnacrushya">
-            
-                <option value="Potet">
-            
-                <option value="PsychologicalBox">
-            
-                <option value="Ptitmxz">
-            
-                <option value="pwarren8590">
-            
-                <option value="Quisyo">
-            
-                <option value="QuixArtagnan">
-            
-                <option value="Rabbi">
-            
-                <option value="Rabbitwarlord">
-            
-                <option value="Rachel997">
-            
-                <option value="radiantchaos">
-            
-                <option value="Raineweather05">
-            
-                <option value="RangerEpic">
-            
-                <option value="rathyAro">
-            
-                <option value="RaveAnt">
-            
-                <option value="Raybit">
-            
-                <option value="re_al_">
-            
-                <option value="RedPanda">
-            
-                <option value="ReoWulf">
-            
-                <option value="residentevil">
-            
-                <option value="RexCow">
-            
-                <option value="RFMerlo">
-            
-                <option value="rhino">
-            
-                <option value="Rhyno">
-            
-                <option value="RiverKawaii">
-            
-                <option value="Riverman">
-            
-                <option value="Roldan">
-            
-                <option value="Rootenthusiast">
-            
-                <option value="RootiredRooter">
-            
-                <option value="RustySpruce">
-            
-                <option value="saintstonet">
-            
-                <option value="Salitance">
-            
-                <option value="sasquatch">
-            
-                <option value="scaled">
-            
-                <option value="Schkitz">
-            
-                <option value="Scipio">
-            
-                <option value="ScrubSewelly">
-            
-                <option value="sda1611">
-            
-                <option value="Sebby">
-            
-                <option value="secretpaths">
-            
-                <option value="sedlak87">
-            
-                <option value="Seiza">
-            
-                <option value="Shadyferret">
-            
-                <option value="Sharkskln">
-            
-                <option value="ShowStopperW">
-            
-                <option value="Shrek">
-            
-                <option value="Shrimpster">
-            
-                <option value="shurgs">
-            
-                <option value="ShuShuBana">
-            
-                <option value="Shuuhey">
-            
-                <option value="Silver">
-            
-                <option value="silverfox">
-            
-                <option value="SimulatedBeehive">
-            
-                <option value="Sirius">
-            
-                <option value="Sjepeal">
-            
-                <option value="Skumfi">
-            
-                <option value="sleepylabone">
-            
-                <option value="SlickAngel">
-            
-                <option value="SMenefee">
-            
-                <option value="Snivylover12">
-            
-                <option value="Soluna">
-            
-                <option value="sontei5">
-            
-                <option value="sourdoh">
-            
-                <option value="sparrowhawk">
-            
-                <option value="SSR_Mike">
-            
-                <option value="Starcore6">
-            
-                <option value="StarhardFishrinse">
-            
-                <option value="StatzoryTheMad">
-            
-                <option value="StellarHermit">
-            
-                <option value="StoneOfShame">
-            
-                <option value="StrikeOrca">
-            
-                <option value="strypeez">
-            
-                <option value="stxr444">
-            
-                <option value="Supersingalong">
-            
-                <option value="swiftsusan">
-            
-                <option value="Tad604">
-            
-                <option value="Tagatu">
-            
-                <option value="TAKSpx">
-            
-                <option value="Temperz87">
-            
-                <option value="TempExtremal">
-            
-                <option value="TenchRinggold">
-            
-                <option value="Thanhdat">
-            
-                <option value="TheDolphinman">
-            
-                <option value="TheFourthJesse">
-            
-                <option value="TheIndustrialRevoloution">
-            
-                <option value="themikeman">
-            
-                <option value="TheRedViper">
-            
-                <option value="TheSillyBilly">
-            
-                <option value="TheWiseFox">
-            
-                <option value="ThoseTeeff">
-            
-                <option value="time2orush">
-            
-                <option value="TimidTailwind">
-            
-                <option value="tippop">
-            
-                <option value="tjudge">
-            
-                <option value="ToasterTrash">
-            
-                <option value="tobin">
-            
-                <option value="tofuwater">
-            
-                <option value="Tolfan">
-            
-                <option value="TonyDeloreanESQ">
-            
-                <option value="ToughHazelnut">
-            
-                <option value="Traestaree">
-            
-                <option value="Tricholome">
-            
-                <option value="trollone1993">
-            
-                <option value="Trumpet">
-            
-                <option value="Tseka">
-            
-                <option value="tubaking">
-            
-                <option value="tunnndz">
-            
-                <option value="TurkeyNoNo">
-            
-                <option value="TurtleJawz">
-            
-                <option value="udon66">
-            
-                <option value="uFancyHUH">
-            
-                <option value="Ultcyber">
-            
-                <option value="uwtron">
-            
-                <option value="Vagabond Glazer">
-            
-                <option value="Vak123">
-            
-                <option value="Valzaan">
-            
-                <option value="vanillapoppy">
-            
-                <option value="VanKaiserman">
-            
-                <option value="Viggs">
-            
-                <option value="vinnie">
-            
-                <option value="Vitsky">
-            
-                <option value="voltigeur">
-            
-                <option value="Vxdaa">
-            
-                <option value="Waferseeker95">
-            
-                <option value="weirdone">
-            
-                <option value="Welllll">
-            
-                <option value="Whats02">
-            
-                <option value="wherestonks">
-            
-                <option value="WillRevolt">
-            
-                <option value="Wolvane">
-            
-                <option value="Wrestler">
-            
-                <option value="Wriggleroom">
-            
-                <option value="Wubba">
-            
-                <option value="WWren">
-            
-                <option value="WyvernElement">
-            
-                <option value="Xar149">
-            
-                <option value="Xerof">
-            
-                <option value="Xman1997">
-            
-                <option value="XxD4RK_W0LFxX">
-            
-                <option value="Yojimbo">
-            
-                <option value="Youdge">
-            
-                <option value="yoyot1">
-            
-                <option value="Yragael">
-            
-                <option value="Yucca">
-            
-                <option value="ZachB">
-            
-                <option value="Zeldamon">
-            
-                <option value="ZimaBlue">
-            
-        </datalist>
-    </div>
-    
-    <div class="chart-wrapper">
-        <div class="chart-container">
-            <canvas id="progressionChart"></canvas>
-        </div>
-    </div>
+                // On ouvre celle-ci
+                link.classList.add('expanded');
+            } else {
+                // DEUXIÈME TAP
+                // On laisse le comportement naturel (onclick du HTML ou href)
+                link.classList.remove('expanded');
+            }
+        }, true); // Le "true" ici permet d'intercepter avant DataTables
+    }
+});
 
-    <div class="relations-wrapper">
-        <div class="relations-container">
-            
-            <div class="left-column">
-				<div class="node central-node">
-					<div id="centerPlayerIntro"></div>
-					<div class="player-name" id="centerPlayerName">Select a player</div>
-					<div id="centerPlayerMeta"></div>
-				</div>
-			</div>
-
-            <div class="middle-space">
-                <svg class="relations-lines" viewBox="0 0 100 100" preserveAspectRatio="none">
-                    <path d="M 0 50 C 50 50, 50 20, 100 20" stroke="#f3c64f" stroke-width="2.5" fill="none" />
-                    <path d="M 0 50 C 50 50, 50 80, 100 80" stroke="#f3c64f" stroke-width="2.5" fill="none" />
-                </svg>
-            </div>
-
-            <div class="right-column">
-				<!-- Trophy Node -->
-				<div class="node interactive-node js-double-tap" id="nodeTrophy" onclick="selectPlayerFromTree(this)" data-player="">
-					<div class="node-content">
-						<div id="textTrophy">
-							<div class="player-name">...</div>
-						</div>
-					</div>
-					<div class="node-overlay">
-						<p class="overlay-desc">Highest-ranked opponent<br>defeated this season</p>
-						<p class="overlay-action">Click to see their progress</p>
-					</div>
-				</div>
-
-				<!-- Bane Node -->
-				<div class="node interactive-node js-double-tap" id="nodeBane" onclick="selectPlayerFromTree(this)" data-player="">
-					<div class="node-content">
-						<div id="textBane">
-							<div class="player-name">...</div>
-						</div>
-					</div>
-					<div class="node-overlay">
-						<p class="overlay-desc">Lowest-ranked opponent<br>lost to this season</p>
-						<p class="overlay-action">Click to see their progress</p>
-					</div>
-				</div>
-			</div>
-            
-        </div>
-    </div>
-
-    <script>
-		window.NARRATIVE_VARIATIONS = {
-			center: [
-				"On this winding journey,",
-				"During this epic season,",
-				"Deep within the Woodland,",
-				"From clearing to clearing,",
-				"Through briar and bramble,",
-				"Across the many paths,",
-				"Amidst the rustling leaves,"
-			],
-			opponents: [
-				"faced {count} different opponents…",
-				"engaged with {count} other souls…",
-				"matched up with {count} rivals…",
-				"took on {count} competitors…",
-				"met {count} other wanderers…",
-				"clashed with {count} contenders…"
-			],
-			trophy: [
-				"…brought down the mighty",
-				"…found a way to defeat",
-				"…secured a big upset against",
-				"…earned a major win over",
-				"…proved their worth by beating",
-				"…toppled the towering",
-				"…shattered the reign of",
-				"…outsmarted the giant"
-			],
-			trophy_empty: [
-				"…but suffered only bitter losses…",
-				"…but couldn't secure any victories…",
-				"…but found no glory this time…",
-				"…but couldn't find a breakthrough…",
-				"…but failed to claim any ground…",
-				"…but returned empty-handed…"
-			],
-			bane: [
-				"…and fell before the humble",
-				"…and succumbed to the lesser",
-				"…and bowed to the obscure",
-				"…and broke against the unproven",
-				"…only to be defeated by",
-				"…and gave way to the modest",
-				"…and was caught off guard by",
-				"…only to stumble against"
-			],
-			bane_empty: [
-				"…and never once tasted defeat.",
-				"…and refused to concede any losses.",
-				"…and held their ground perfectly.",
-				"…and walked away unscathed.",
-				"…and proved completely invincible.",
-				"…and reigned supreme without failure."
-			]
-		};
-
-		window.CONFIG = {};
-		window.relationsData = {"Sebby": {"trophy": {"name": "Tolfan", "elo": 1263, "tier": "mouse"}, "bane": {"name": "marksoz00", "elo": 1146, "tier": "squirrel"}, "unique_opponents": 13}, "PacificCold": {"trophy": {"name": "time2orush", "elo": 1372, "tier": "rabbit"}, "bane": {"name": "Darkwonderer", "elo": 1117, "tier": "squirrel"}, "unique_opponents": 14}, "maxlovesyou": {"trophy": {"name": null, "elo": -1, "tier": "unranked"}, "bane": {"name": "NadtyLite", "elo": 1239, "tier": "mouse"}, "unique_opponents": 3}, "uFancyHUH": {"trophy": {"name": "Tad604", "elo": 1260, "tier": "mouse"}, "bane": {"name": "CowOnAPlane", "elo": 1214, "tier": "mouse"}, "unique_opponents": 16}, "Darkwonderer": {"trophy": {"name": "KeyserSoze", "elo": 1347, "tier": "rabbit"}, "bane": {"name": null, "elo": 99999, "tier": "unranked"}, "unique_opponents": 3}, "Supersingalong": {"trophy": {"name": null, "elo": -1, "tier": "unranked"}, "bane": {"name": "DarthOblivius", "elo": 1143, "tier": "squirrel"}, "unique_opponents": 11}, "kayajam": {"trophy": {"name": null, "elo": -1, "tier": "unranked"}, "bane": {"name": "Manpanzee", "elo": 1379, "tier": "rabbit"}, "unique_opponents": 8}, "LucianTheFak": {"trophy": {"name": "NadtyLite", "elo": 1280, "tier": "mouse"}, "bane": {"name": "Tad604", "elo": 1261, "tier": "mouse"}, "unique_opponents": 9}, "TurkeyNoNo": {"trophy": {"name": "Killerstorm17", "elo": 1504, "tier": "bird"}, "bane": {"name": "Extortionator", "elo": 1200, "tier": "mouse"}, "unique_opponents": 11}, "Tricholome": {"trophy": {"name": "FavorOfTheRabbits", "elo": 1381, "tier": "rabbit"}, "bane": {"name": null, "elo": 99999, "tier": "unranked"}, "unique_opponents": 6}, "PestoEmporium": {"trophy": {"name": "Jack432", "elo": 1436, "tier": "fox"}, "bane": {"name": "mouseinabox", "elo": 1231, "tier": "mouse"}, "unique_opponents": 16}, "cookain": {"trophy": {"name": null, "elo": -1, "tier": "unranked"}, "bane": {"name": "Dumbledore", "elo": 1281, "tier": "mouse"}, "unique_opponents": 3}, "CommonGibbon": {"trophy": {"name": null, "elo": -1, "tier": "unranked"}, "bane": {"name": "Nickpappa", "elo": 1168, "tier": "squirrel"}, "unique_opponents": 3}, "rathyAro": {"trophy": {"name": null, "elo": -1, "tier": "unranked"}, "bane": {"name": "Waferseeker95", "elo": 1261, "tier": "mouse"}, "unique_opponents": 3}, "pooge": {"trophy": {"name": null, "elo": -1, "tier": "unranked"}, "bane": {"name": "Scipio", "elo": 1308, "tier": "rabbit"}, "unique_opponents": 3}, "Tolfan": {"trophy": {"name": "Dumbledore", "elo": 1325, "tier": "rabbit"}, "bane": {"name": "Piechu", "elo": 1083, "tier": "squirrel"}, "unique_opponents": 32}, "osche": {"trophy": {"name": null, "elo": -1, "tier": "unranked"}, "bane": {"name": "ermactually", "elo": 1111, "tier": "squirrel"}, "unique_opponents": 5}, "rhino": {"trophy": {"name": null, "elo": -1, "tier": "unranked"}, "bane": {"name": "Manpanzee", "elo": 1445, "tier": "fox"}, "unique_opponents": 3}, "FamilyTuber": {"trophy": {"name": null, "elo": -1, "tier": "unranked"}, "bane": {"name": "kurtfisto", "elo": 1320, "tier": "rabbit"}, "unique_opponents": 6}, "darkcat": {"trophy": {"name": null, "elo": -1, "tier": "unranked"}, "bane": {"name": "Jack432", "elo": 1373, "tier": "rabbit"}, "unique_opponents": 3}, "MunkeyBrewster": {"trophy": {"name": null, "elo": -1, "tier": "unranked"}, "bane": {"name": "creapy01", "elo": 1162, "tier": "squirrel"}, "unique_opponents": 9}, "Ljaz7": {"trophy": {"name": null, "elo": -1, "tier": "unranked"}, "bane": {"name": "Waferseeker95", "elo": 1199, "tier": "squirrel"}, "unique_opponents": 8}, "Nickpappa": {"trophy": {"name": "AcolyteOfRoot", "elo": 1285, "tier": "mouse"}, "bane": {"name": null, "elo": 99999, "tier": "unranked"}, "unique_opponents": 3}, "nmyers2": {"trophy": {"name": null, "elo": -1, "tier": "unranked"}, "bane": {"name": "Sebby", "elo": 1182, "tier": "squirrel"}, "unique_opponents": 6}, "Luclid": {"trophy": {"name": "matemato", "elo": 1464, "tier": "fox"}, "bane": {"name": null, "elo": 99999, "tier": "unranked"}, "unique_opponents": 3}, "Dramsss": {"trophy": {"name": "Sebby", "elo": 1273, "tier": "mouse"}, "bane": {"name": "FavorOfTheRabbits", "elo": 1324, "tier": "rabbit"}, "unique_opponents": 9}, "DelSol": {"trophy": {"name": null, "elo": -1, "tier": "unranked"}, "bane": {"name": "Salitance", "elo": 1200, "tier": "mouse"}, "unique_opponents": 14}, "LilSoup": {"trophy": {"name": null, "elo": -1, "tier": "unranked"}, "bane": {"name": "Scipio", "elo": 1415, "tier": "fox"}, "unique_opponents": 6}, "ionou21": {"trophy": {"name": null, "elo": -1, "tier": "unranked"}, "bane": {"name": "DarthOblivius", "elo": 1105, "tier": "squirrel"}, "unique_opponents": 6}, "Joshi69": {"trophy": {"name": null, "elo": -1, "tier": "unranked"}, "bane": {"name": "Dramsss", "elo": 1230, "tier": "mouse"}, "unique_opponents": 3}, "Wriggleroom": {"trophy": {"name": null, "elo": -1, "tier": "unranked"}, "bane": {"name": "DarthOblivius", "elo": 1105, "tier": "squirrel"}, "unique_opponents": 9}, "BennyJ": {"trophy": {"name": null, "elo": -1, "tier": "unranked"}, "bane": {"name": "NadtyLite", "elo": 1260, "tier": "mouse"}, "unique_opponents": 7}, "Mazrim": {"trophy": {"name": null, "elo": -1, "tier": "unranked"}, "bane": {"name": "BaconBoy", "elo": 1192, "tier": "squirrel"}, "unique_opponents": 11}, "Bapgo": {"trophy": {"name": null, "elo": -1, "tier": "unranked"}, "bane": {"name": "Manpanzee", "elo": 1445, "tier": "fox"}, "unique_opponents": 3}, "Extortionator": {"trophy": {"name": "NadtyLite", "elo": 1291, "tier": "mouse"}, "bane": {"name": null, "elo": 99999, "tier": "unranked"}, "unique_opponents": 3}, "Scipio": {"trophy": {"name": "matemato", "elo": 1497, "tier": "fox"}, "bane": {"name": "NadtyLite", "elo": 1260, "tier": "mouse"}, "unique_opponents": 18}, "Vxdaa": {"trophy": {"name": null, "elo": -1, "tier": "unranked"}, "bane": {"name": "Vak123", "elo": 1154, "tier": "squirrel"}, "unique_opponents": 3}, "Shrimpster": {"trophy": {"name": null, "elo": -1, "tier": "unranked"}, "bane": {"name": "Scipio", "elo": 1494, "tier": "fox"}, "unique_opponents": 3}, "Fearteiler": {"trophy": {"name": null, "elo": -1, "tier": "unranked"}, "bane": {"name": "LucianTheFak", "elo": 1319, "tier": "rabbit"}, "unique_opponents": 3}, "Odinius": {"trophy": {"name": "Tolfan", "elo": 1212, "tier": "mouse"}, "bane": {"name": null, "elo": 99999, "tier": "unranked"}, "unique_opponents": 3}, "time2orush": {"trophy": {"name": "idk123", "elo": 1356, "tier": "rabbit"}, "bane": {"name": "Piechu", "elo": 1083, "tier": "squirrel"}, "unique_opponents": 15}, "Maladay": {"trophy": {"name": null, "elo": -1, "tier": "unranked"}, "bane": {"name": "Dumbledore", "elo": 1281, "tier": "mouse"}, "unique_opponents": 3}, "NadtyLite": {"trophy": {"name": "Scipio", "elo": 1541, "tier": "bird"}, "bane": {"name": "TurkeyNoNo", "elo": 1097, "tier": "squirrel"}, "unique_opponents": 40}, "FavorOfTheRabbits": {"trophy": {"name": "AcolyteOfRoot", "elo": 1314, "tier": "rabbit"}, "bane": {"name": "NadtyLite", "elo": 1239, "tier": "mouse"}, "unique_opponents": 7}, "TheFourthJesse": {"trophy": {"name": null, "elo": -1, "tier": "unranked"}, "bane": {"name": "AcolyteOfRoot", "elo": 1228, "tier": "mouse"}, "unique_opponents": 9}, "Salitance": {"trophy": {"name": "time2orush", "elo": 1381, "tier": "rabbit"}, "bane": {"name": "FavorOfTheRabbits", "elo": 1324, "tier": "rabbit"}, "unique_opponents": 8}, "tjudge": {"trophy": {"name": "Waferseeker95", "elo": 1237, "tier": "mouse"}, "bane": {"name": "mouseinabox", "elo": 1152, "tier": "squirrel"}, "unique_opponents": 8}, "buurn": {"trophy": {"name": "Waferseeker95", "elo": 1386, "tier": "rabbit"}, "bane": {"name": "cjahwon", "elo": 1002, "tier": "squirrel"}, "unique_opponents": 16}, "Cotton": {"trophy": {"name": null, "elo": -1, "tier": "unranked"}, "bane": {"name": "Antiproject", "elo": 1473, "tier": "fox"}, "unique_opponents": 3}, "Ctfox": {"trophy": {"name": null, "elo": -1, "tier": "unranked"}, "bane": {"name": "DarthOblivius", "elo": 1143, "tier": "squirrel"}, "unique_opponents": 3}, "oshwott2844": {"trophy": {"name": null, "elo": -1, "tier": "unranked"}, "bane": {"name": "BaconBoy", "elo": 1192, "tier": "squirrel"}, "unique_opponents": 3}, "ermactually": {"trophy": {"name": "sontei5", "elo": 1207, "tier": "mouse"}, "bane": {"name": "Piechu", "elo": 1083, "tier": "squirrel"}, "unique_opponents": 15}, "idk123": {"trophy": {"name": null, "elo": -1, "tier": "unranked"}, "bane": {"name": "time2orush", "elo": 1316, "tier": "rabbit"}, "unique_opponents": 3}, "silverfox": {"trophy": {"name": null, "elo": -1, "tier": "unranked"}, "bane": {"name": "Tolfan", "elo": 1214, "tier": "mouse"}, "unique_opponents": 5}, "Munchking": {"trophy": {"name": null, "elo": -1, "tier": "unranked"}, "bane": {"name": "cjahwon", "elo": 1076, "tier": "squirrel"}, "unique_opponents": 16}, "deejaythink": {"trophy": {"name": null, "elo": -1, "tier": "unranked"}, "bane": {"name": "Scipio", "elo": 1502, "tier": "bird"}, "unique_opponents": 3}, "tunnndz": {"trophy": {"name": null, "elo": -1, "tier": "unranked"}, "bane": {"name": "ermactually", "elo": 1174, "tier": "squirrel"}, "unique_opponents": 9}, "nutrimentia": {"trophy": {"name": null, "elo": -1, "tier": "unranked"}, "bane": {"name": "LucianTheFak", "elo": 1319, "tier": "rabbit"}, "unique_opponents": 3}, "Waferseeker95": {"trophy": {"name": "Dumbledore", "elo": 1365, "tier": "rabbit"}, "bane": {"name": "cjahwon", "elo": 1002, "tier": "squirrel"}, "unique_opponents": 20}, "Piechu": {"trophy": {"name": "time2orush", "elo": 1318, "tier": "rabbit"}, "bane": {"name": null, "elo": 99999, "tier": "unranked"}, "unique_opponents": 3}, "JointedRumble60": {"trophy": {"name": null, "elo": -1, "tier": "unranked"}, "bane": {"name": "AcolyteOfRoot", "elo": 1261, "tier": "mouse"}, "unique_opponents": 3}, "mouseinabox": {"trophy": {"name": "PestoEmporium", "elo": 1356, "tier": "rabbit"}, "bane": {"name": "Sebby", "elo": 1219, "tier": "mouse"}, "unique_opponents": 12}, "matemato": {"trophy": {"name": null, "elo": -1, "tier": "unranked"}, "bane": {"name": "Scipio", "elo": 1308, "tier": "rabbit"}, "unique_opponents": 6}, "polyphemur": {"trophy": {"name": null, "elo": -1, "tier": "unranked"}, "bane": {"name": "Odinius", "elo": 1151, "tier": "squirrel"}, "unique_opponents": 15}, "KeyserSoze": {"trophy": {"name": "Sebby", "elo": 1241, "tier": "mouse"}, "bane": {"name": "Darkwonderer", "elo": 1117, "tier": "squirrel"}, "unique_opponents": 11}, "Awesem": {"trophy": {"name": null, "elo": -1, "tier": "unranked"}, "bane": {"name": "uFancyHUH", "elo": 1305, "tier": "rabbit"}, "unique_opponents": 3}, "Skumfi": {"trophy": {"name": null, "elo": -1, "tier": "unranked"}, "bane": {"name": "cjahwon", "elo": 1002, "tier": "squirrel"}, "unique_opponents": 3}, "mrkent": {"trophy": {"name": "ionou21", "elo": 1231, "tier": "mouse"}, "bane": {"name": null, "elo": 99999, "tier": "unranked"}, "unique_opponents": 3}, "MagZeppelin": {"trophy": {"name": null, "elo": -1, "tier": "unranked"}, "bane": {"name": "Waferseeker95", "elo": 1330, "tier": "rabbit"}, "unique_opponents": 3}, "Jack432": {"trophy": {"name": "Antiproject", "elo": 1510, "tier": "bird"}, "bane": {"name": "TurkeyNoNo", "elo": 1097, "tier": "squirrel"}, "unique_opponents": 16}, "PlagueCarrier": {"trophy": {"name": null, "elo": -1, "tier": "unranked"}, "bane": {"name": "DemaRogue", "elo": 1315, "tier": "rabbit"}, "unique_opponents": 3}, "AERotters": {"trophy": {"name": null, "elo": -1, "tier": "unranked"}, "bane": {"name": "mouseinabox", "elo": 1231, "tier": "mouse"}, "unique_opponents": 3}, "Killerstorm17": {"trophy": {"name": "KyloBot", "elo": 1174, "tier": "squirrel"}, "bane": {"name": "TurkeyNoNo", "elo": 1170, "tier": "squirrel"}, "unique_opponents": 6}, "kurtfisto": {"trophy": {"name": "LucianTheFak", "elo": 1347, "tier": "rabbit"}, "bane": {"name": null, "elo": 99999, "tier": "unranked"}, "unique_opponents": 5}, "Led_Slash": {"trophy": {"name": "kayajam", "elo": 1479, "tier": "fox"}, "bane": {"name": "Manpanzee", "elo": 1379, "tier": "rabbit"}, "unique_opponents": 9}, "GardenLily": {"trophy": {"name": "Nadav253", "elo": 1591, "tier": "bird"}, "bane": {"name": "Tolfan", "elo": 1163, "tier": "squirrel"}, "unique_opponents": 7}, "Manpanzee": {"trophy": {"name": "Bapgo", "elo": 1603, "tier": "stag"}, "bane": {"name": null, "elo": 99999, "tier": "unranked"}, "unique_opponents": 6}, "cjahwon": {"trophy": {"name": "Waferseeker95", "elo": 1376, "tier": "rabbit"}, "bane": {"name": "ermactually", "elo": 1111, "tier": "squirrel"}, "unique_opponents": 17}, "Tad604": {"trophy": {"name": "LucianTheFak", "elo": 1376, "tier": "rabbit"}, "bane": {"name": "AcolyteOfRoot", "elo": 1228, "tier": "mouse"}, "unique_opponents": 13}, "elmoo": {"trophy": {"name": null, "elo": -1, "tier": "unranked"}, "bane": {"name": "ermactually", "elo": 1174, "tier": "squirrel"}, "unique_opponents": 3}, "DemaRogue": {"trophy": {"name": "GardenLily", "elo": 1274, "tier": "mouse"}, "bane": {"name": "Dumbledore", "elo": 1317, "tier": "rabbit"}, "unique_opponents": 9}, "sleepylabone": {"trophy": {"name": null, "elo": -1, "tier": "unranked"}, "bane": {"name": "buurn", "elo": 1117, "tier": "squirrel"}, "unique_opponents": 5}, "DawnDiVito": {"trophy": {"name": null, "elo": -1, "tier": "unranked"}, "bane": {"name": "KeyserSoze", "elo": 1298, "tier": "mouse"}, "unique_opponents": 3}, "BMPerJMPer": {"trophy": {"name": null, "elo": -1, "tier": "unranked"}, "bane": {"name": "NadtyLite", "elo": 1239, "tier": "mouse"}, "unique_opponents": 3}, "DrCheeseFiend": {"trophy": {"name": null, "elo": -1, "tier": "unranked"}, "bane": {"name": "cringelordirl", "elo": 1406, "tier": "fox"}, "unique_opponents": 3}, "BaconBoy": {"trophy": {"name": "oshwott2844", "elo": 1425, "tier": "fox"}, "bane": {"name": null, "elo": 99999, "tier": "unranked"}, "unique_opponents": 3}, "KyloBot": {"trophy": {"name": null, "elo": -1, "tier": "unranked"}, "bane": {"name": "creapy01", "elo": 1162, "tier": "squirrel"}, "unique_opponents": 9}, "TonyDeloreanESQ": {"trophy": {"name": null, "elo": -1, "tier": "unranked"}, "bane": {"name": "AcolyteOfRoot", "elo": 1228, "tier": "mouse"}, "unique_opponents": 11}, "Glasypress": {"trophy": {"name": null, "elo": -1, "tier": "unranked"}, "bane": {"name": "ermactually", "elo": 1111, "tier": "squirrel"}, "unique_opponents": 17}, "Diyana": {"trophy": {"name": null, "elo": -1, "tier": "unranked"}, "bane": {"name": "TurkeyNoNo", "elo": 1097, "tier": "squirrel"}, "unique_opponents": 9}, "DarthOblivius": {"trophy": {"name": "Ctfox", "elo": 1422, "tier": "fox"}, "bane": {"name": "NadtyLite", "elo": 1265, "tier": "mouse"}, "unique_opponents": 24}, "cringelordirl": {"trophy": {"name": "uFancyHUH", "elo": 1352, "tier": "rabbit"}, "bane": {"name": "Antiproject", "elo": 1468, "tier": "fox"}, "unique_opponents": 12}, "Fabius": {"trophy": {"name": null, "elo": -1, "tier": "unranked"}, "bane": {"name": "cringelordirl", "elo": 1382, "tier": "rabbit"}, "unique_opponents": 3}, "Hurple": {"trophy": {"name": null, "elo": -1, "tier": "unranked"}, "bane": {"name": "cjahwon", "elo": 1076, "tier": "squirrel"}, "unique_opponents": 14}, "sontei5": {"trophy": {"name": "Dumbledore", "elo": 1416, "tier": "fox"}, "bane": {"name": "TurkeyNoNo", "elo": 1170, "tier": "squirrel"}, "unique_opponents": 9}, "SlickAngel": {"trophy": {"name": null, "elo": -1, "tier": "unranked"}, "bane": {"name": "NadtyLite", "elo": 1265, "tier": "mouse"}, "unique_opponents": 3}, "Nadav253": {"trophy": {"name": null, "elo": -1, "tier": "unranked"}, "bane": {"name": "GardenLily", "elo": 1200, "tier": "mouse"}, "unique_opponents": 3}, "Jsn13": {"trophy": {"name": null, "elo": -1, "tier": "unranked"}, "bane": {"name": "Tolfan", "elo": 1183, "tier": "squirrel"}, "unique_opponents": 3}, "Aeliott": {"trophy": {"name": "BennyJ", "elo": 1468, "tier": "fox"}, "bane": {"name": "PestoEmporium", "elo": 1308, "tier": "rabbit"}, "unique_opponents": 6}, "Antiproject": {"trophy": {"name": "kayajam", "elo": 1526, "tier": "bird"}, "bane": {"name": "Jack432", "elo": 1373, "tier": "rabbit"}, "unique_opponents": 14}, "ominouscat": {"trophy": {"name": null, "elo": -1, "tier": "unranked"}, "bane": {"name": "Dumbledore", "elo": 1381, "tier": "rabbit"}, "unique_opponents": 3}, "Vak123": {"trophy": {"name": "AcolyteOfRoot", "elo": 1237, "tier": "mouse"}, "bane": {"name": "tjudge", "elo": 1307, "tier": "rabbit"}, "unique_opponents": 9}, "creapy01": {"trophy": {"name": "MunkeyBrewster", "elo": 1209, "tier": "mouse"}, "bane": {"name": null, "elo": 99999, "tier": "unranked"}, "unique_opponents": 3}, "marksoz00": {"trophy": {"name": "AcolyteOfRoot", "elo": 1266, "tier": "mouse"}, "bane": {"name": null, "elo": 99999, "tier": "unranked"}, "unique_opponents": 3}, "AcolyteOfRoot": {"trophy": {"name": "Tad604", "elo": 1293, "tier": "mouse"}, "bane": {"name": "marksoz00", "elo": 1146, "tier": "squirrel"}, "unique_opponents": 20}, "DarthPuniceus": {"trophy": {"name": null, "elo": -1, "tier": "unranked"}, "bane": {"name": "NadtyLite", "elo": 1170, "tier": "squirrel"}, "unique_opponents": 8}, "BloodMuffin": {"trophy": {"name": null, "elo": -1, "tier": "unranked"}, "bane": {"name": "cringelordirl", "elo": 1406, "tier": "fox"}, "unique_opponents": 3}, "CowOnAPlane": {"trophy": {"name": "uFancyHUH", "elo": 1355, "tier": "rabbit"}, "bane": {"name": "NadtyLite", "elo": 1170, "tier": "squirrel"}, "unique_opponents": 5}, "Dumbledore": {"trophy": {"name": "DemaRogue", "elo": 1358, "tier": "rabbit"}, "bane": {"name": "DarthOblivius", "elo": 1105, "tier": "squirrel"}, "unique_opponents": 35}, "Mopey": {"trophy": {"name": null, "elo": -1, "tier": "unranked"}, "bane": {"name": "cjahwon", "elo": 1076, "tier": "squirrel"}, "unique_opponents": 14}};
-	</script>
-
-            </main>
-        </div>
-        
-        <div class="screen-deco left-deco">
-			
-				<img src="assets/images/trends_img_left.webp" alt="Decoration Left">
-			
-		</div>
-
-        <footer class="app-footer window-box">
-			<div class="footer-content">
-				<div class="footer-credits">
-					<span>Powered by <strong>Tʀɪᴄʜᴏʟᴏᴍᴇ</strong></span>
-					<span>Woodland visions by <a class="cl" href="cache.html">𝕩𝕝𝕦𝕖𝕧𝕚</a></span>
-				</div>
-				<div class="footer-date">Updated on 2026-07-10 08:43 UTC</div>
-			</div>
-		</footer>
-    </div>
-    
-    <div id="tierModal" class="modal-overlay">
-		<div class="modal-content window-box">
-			<button class="modal-close" aria-label="Close">&times;</button>
-			<div id="modalBody">
-				<div class="modal-image-side">
-					<img id="modalIcon" src="" alt="Tier Icon">
-				</div>
-				
-				<div class="modal-text-side">
-					<div class="title-row">
-						<h2 id="modalTitle"></h2>
-						<h3 id="modalElo"></h3>
-					</div>
-					<div id="modalSubtitle"></div>
-					<div class="modal-divider"></div>
-					<div id="modalText"></div>
-				</div>
-			</div>
-		</div>
-	</div>
-	
-	<div id="mystic-gate"></div>
-
-    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-	<script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
-    
-    <script>
-		const CONFIG = {
-			colors: {"bird": "#7AB5E0", "default": "#7A7347", "fox": "#E55555", "mouse": "#F49E52", "rabbit": "#F2C14E", "squirrel": "#94C160", "stag": "#C686FF"},
-			icons: {"bird": "assets/icons/bird_new.webp", "fox": "assets/icons/fox_new.webp", "mouse": "assets/icons/mouse_new.webp", "rabbit": "assets/icons/rabbit_new.webp", "squirrel": "assets/icons/squirrel.webp", "stag": "assets/icons/stag.webp"},
-			currentTier: "rabbit",
-			chartData: {"doejurko": [["LH02 Final", 1560, null, null]], "Killerstorm17": [["LH02 Final", 1481, null, null], ["2026-07-01", 1504, 47464, "https://rootleague.pliskin.dev/match/47464/"], ["2026-07-05", 1451, 47492, "https://rootleague.pliskin.dev/match/47492/"]], "Led_Slash": [["LH02 Final", 1449, null, null], ["2026-07-07", 1501, 47516, "https://rootleague.pliskin.dev/match/47516/"], ["2026-07-08", 1544, 47530, "https://rootleague.pliskin.dev/match/47530/"], ["2026-07-08", 1506, 47533, "https://rootleague.pliskin.dev/match/47533/"], ["2026-07-09", 1530, 47543, "https://rootleague.pliskin.dev/match/47543/"]], "kayajam": [["LH02 Final", 1526, null, null], ["2026-07-05", 1479, 47490, "https://rootleague.pliskin.dev/match/47490/"], ["2026-07-07", 1445, 47516, "https://rootleague.pliskin.dev/match/47516/"], ["2026-07-08", 1424, 47533, "https://rootleague.pliskin.dev/match/47533/"]], "tofuwater": [["LH02 Final", 1533, null, null]], "ShuShuBana": [["LH02 Final", 1434, null, null]], "Seiza": [["LH02 Final", 1356, null, null]], "Nadav253": [["LH02 Final", 1591, null, null], ["2026-07-08", 1530, 47537, "https://rootleague.pliskin.dev/match/47537/"]], "Mouseman": [["LH02 Final", 1388, null, null]], "Ctfox": [["LH02 Final", 1422, null, null], ["2026-07-06", 1371, 47500, "https://rootleague.pliskin.dev/match/47500/"]], "Tad604": [["LH02 Final", 1261, null, null], ["2026-07-04", 1326, 47488, "https://rootleague.pliskin.dev/match/47488/"], ["2026-07-05", 1293, 47493, "https://rootleague.pliskin.dev/match/47493/"], ["2026-07-05", 1260, 47393, "https://rootleague.pliskin.dev/match/47393/"], ["2026-07-06", 1237, 47495, "https://rootleague.pliskin.dev/match/47495/"], ["2026-07-09", 1220, 47551, "https://rootleague.pliskin.dev/match/47551/"]], "swiftsusan": [["LH02 Final", 1339, null, null]], "matemato": [["LH02 Final", 1497, null, null], ["2026-07-03", 1464, 47478, "https://rootleague.pliskin.dev/match/47478/"], ["2026-07-05", 1419, 47250, "https://rootleague.pliskin.dev/match/47250/"]], "LucianTheFak": [["LH02 Final", 1376, null, null], ["2026-07-04", 1347, 47488, "https://rootleague.pliskin.dev/match/47488/"], ["2026-07-06", 1319, 47504, "https://rootleague.pliskin.dev/match/47504/"], ["2026-07-08", 1366, 47535, "https://rootleague.pliskin.dev/match/47535/"]], "IMPERATOR": [["LH02 Final", 1387, null, null]], "DarthPuniceus": [["LH02 Final", 1296, null, null], ["2026-07-04", 1280, 47482, "https://rootleague.pliskin.dev/match/47482/"], ["2026-07-06", 1259, 47498, "https://rootleague.pliskin.dev/match/47498/"], ["2026-07-09", 1246, 47543, "https://rootleague.pliskin.dev/match/47543/"]], "Xar149": [["LH02 Final", 1374, null, null]], "Tricholome": [["LH02 Final", 1337, null, null], ["2026-07-06", 1375, 47501, "https://rootleague.pliskin.dev/match/47501/"], ["2026-07-08", 1429, 47538, "https://rootleague.pliskin.dev/match/47538/"]], "Bapgo": [["LH02 Final", 1603, null, null], ["2026-07-08", 1556, 47539, "https://rootleague.pliskin.dev/match/47539/"]], "tippop": [["LH02 Final", 1364, null, null]], "kaiser": [["LH02 Final", 1535, null, null]], "Pliskin": [["LH02 Final", 1401, null, null]], "Nefkano": [["LH02 Final", 1299, null, null]], "FrancescoBr": [["LH02 Final", 1356, null, null]], "KFull": [["LH02 Final", 1222, null, null]], "FavorOfTheRabbits": [["LH02 Final", 1354, null, null], ["2026-07-06", 1324, 47503, "https://rootleague.pliskin.dev/match/47503/"], ["2026-07-08", 1381, 47531, "https://rootleague.pliskin.dev/match/47531/"], ["2026-07-08", 1354, 47538, "https://rootleague.pliskin.dev/match/47538/"]], "BareGammon": [["LH02 Final", 1339, null, null]], "Rabbitwarlord": [["LH02 Final", 1267, null, null]], "RootiredRooter": [["LH02 Final", 1081, null, null]], "ChippZamoose": [["LH02 Final", 1407, null, null]], "Antiproject": [["LH02 Final", 1359, null, null], ["2026-07-04", 1418, 47486, "https://rootleague.pliskin.dev/match/47486/"], ["2026-07-05", 1473, 47490, "https://rootleague.pliskin.dev/match/47490/"], ["2026-07-05", 1510, 47491, "https://rootleague.pliskin.dev/match/47491/"], ["2026-07-07", 1468, 47518, "https://rootleague.pliskin.dev/match/47518/"], ["2026-07-08", 1513, 47534, "https://rootleague.pliskin.dev/match/47534/"]], "PokerFace126": [["LH02 Final", 1321, null, null]], "TimidTailwind": [["LH02 Final", 1320, null, null]], "ninjacat536": [["LH02 Final", 1319, null, null]], "time2orush": [["LH02 Final", 1316, null, null], ["2026-07-03", 1372, 47476, "https://rootleague.pliskin.dev/match/47476/"], ["2026-07-03", 1338, 47479, "https://rootleague.pliskin.dev/match/47479/"], ["2026-07-04", 1381, 47483, "https://rootleague.pliskin.dev/match/47483/"], ["2026-07-04", 1345, 47487, "https://rootleague.pliskin.dev/match/47487/"], ["2026-07-07", 1318, 47508, "https://rootleague.pliskin.dev/match/47508/"], ["2026-07-07", 1285, 47511, "https://rootleague.pliskin.dev/match/47511/"]], "VanKaiserman": [["LH02 Final", 1386, null, null]], "1coolguy": [["LH02 Final", 1279, null, null]], "Mossfusion": [["LH02 Final", 1343, null, null]], "complexartichoke": [["LH02 Final", 1310, null, null]], "gord20": [["LH02 Final", 1293, null, null]], "Kmahussier": [["LH02 Final", 1280, null, null]], "Silver": [["LH02 Final", 1309, null, null]], "vinnie": [["LH02 Final", 1304, null, null]], "Aleph": [["LH02 Final", 1302, null, null]], "Blurr": [["LH02 Final", 1300, null, null]], "LutherStr": [["LH02 Final", 1205, null, null]], "pooge": [["LH02 Final", 1377, null, null], ["2026-07-03", 1360, 47478, "https://rootleague.pliskin.dev/match/47478/"]], "mishaelh1": [["LH02 Final", 1349, null, null]], "dindane": [["LH02 Final", 1290, null, null]], "tjudge": [["LH02 Final", 1307, null, null], ["2026-07-01", 1354, 47463, "https://rootleague.pliskin.dev/match/47463/"], ["2026-07-01", 1317, 47467, "https://rootleague.pliskin.dev/match/47467/"], ["2026-07-04", 1292, 47487, "https://rootleague.pliskin.dev/match/47487/"]], "AxlPrototype": [["LH02 Final", 1283, null, null]], "Bitto": [["LH02 Final", 1176, null, null]], "Nudraxon": [["LH02 Final", 1277, null, null]], "bootle": [["LH02 Final", 1277, null, null]], "saintstonet": [["LH02 Final", 1276, null, null]], "Valzaan": [["LH02 Final", 1282, null, null]], "Intraceptor": [["LH02 Final", 1207, null, null]], "lazarus210": [["LH02 Final", 1266, null, null]], "Cabbage0642": [["LH02 Final", 1266, null, null]], "KeyserSoze": [["LH02 Final", 1321, null, null], ["2026-07-06", 1298, 47494, "https://rootleague.pliskin.dev/match/47494/"], ["2026-07-08", 1347, 47520, "https://rootleague.pliskin.dev/match/47520/"], ["2026-07-08", 1308, 47521, "https://rootleague.pliskin.dev/match/47521/"], ["2026-07-09", 1284, 47541, "https://rootleague.pliskin.dev/match/47541/"]], "ShowStopperW": [["LH02 Final", 1263, null, null]], "trollone1993": [["LH02 Final", 1318, null, null]], "Dramsss": [["LH02 Final", 1253, null, null], ["2026-07-04", 1230, 47483, "https://rootleague.pliskin.dev/match/47483/"], ["2026-07-08", 1290, 47526, "https://rootleague.pliskin.dev/match/47526/"], ["2026-07-08", 1271, 47531, "https://rootleague.pliskin.dev/match/47531/"]], "Vagabond Glazer": [["LH02 Final", 1249, null, null]], "Cookies": [["LH02 Final", 1480, null, null]], "Mindger": [["LH02 Final", 1258, null, null]], "MrDrouf": [["LH02 Final", 1255, null, null]], "aelisheneithlon": [["LH02 Final", 1254, null, null]], "Schkitz": [["LH02 Final", 1279, null, null]], "cliuless": [["LH02 Final", 1268, null, null]], "ermactually": [["LH02 Final", 1111, null, null], ["2026-07-04", 1174, 47484, "https://rootleague.pliskin.dev/match/47484/"], ["2026-07-06", 1234, 47499, "https://rootleague.pliskin.dev/match/47499/"], ["2026-07-07", 1220, 47508, "https://rootleague.pliskin.dev/match/47508/"], ["2026-07-07", 1201, 47511, "https://rootleague.pliskin.dev/match/47511/"], ["2026-07-08", 1195, 47537, "https://rootleague.pliskin.dev/match/47537/"], ["2026-07-09", 1176, 47550, "https://rootleague.pliskin.dev/match/47550/"]], "Bengal3": [["LH02 Final", 1219, null, null]], "pwarren8590": [["LH02 Final", 1246, null, null]], "Emperia": [["LH02 Final", 1380, null, null]], "Pandapapst": [["LH02 Final", 1407, null, null]], "ToasterTrash": [["LH02 Final", 1244, null, null]], "KarmaBurn": [["LH02 Final", 1243, null, null]], "Mohammad": [["LH02 Final", 1240, null, null]], "Napalminthebirdsong": [["LH02 Final", 1239, null, null]], "TurkeyNoNo": [["LH02 Final", 1107, null, null], ["2026-07-01", 1097, 47460, "https://rootleague.pliskin.dev/match/47460/"], ["2026-07-01", 1170, 47466, "https://rootleague.pliskin.dev/match/47466/"], ["2026-07-05", 1243, 47492, "https://rootleague.pliskin.dev/match/47492/"], ["2026-07-07", 1220, 47489, "https://rootleague.pliskin.dev/match/47489/"], ["2026-07-08", 1212, 47528, "https://rootleague.pliskin.dev/match/47528/"]], "Furry0329": [["LH02 Final", 1234, null, null]], "Hydro033": [["LH02 Final", 1198, null, null]], "Octavius": [["LH02 Final", 1233, null, null]], "Tolfan": [["LH02 Final", 1260, null, null], ["2026-07-02", 1231, 47471, "https://rootleague.pliskin.dev/match/47471/"], ["2026-07-02", 1212, 47472, "https://rootleague.pliskin.dev/match/47472/"], ["2026-07-04", 1183, 47485, "https://rootleague.pliskin.dev/match/47485/"], ["2026-07-07", 1234, 47505, "https://rootleague.pliskin.dev/match/47505/"], ["2026-07-07", 1214, 47511, "https://rootleague.pliskin.dev/match/47511/"], ["2026-07-07", 1263, 47514, "https://rootleague.pliskin.dev/match/47514/"], ["2026-07-07", 1229, 47517, "https://rootleague.pliskin.dev/match/47517/"], ["2026-07-08", 1207, 47525, "https://rootleague.pliskin.dev/match/47525/"], ["2026-07-08", 1190, 47526, "https://rootleague.pliskin.dev/match/47526/"], ["2026-07-08", 1173, 47532, "https://rootleague.pliskin.dev/match/47532/"], ["2026-07-08", 1170, 47537, "https://rootleague.pliskin.dev/match/47537/"], ["2026-07-09", 1163, 47540, "https://rootleague.pliskin.dev/match/47540/"], ["2026-07-09", 1198, 47541, "https://rootleague.pliskin.dev/match/47541/"], ["2026-07-09", 1188, 47545, "https://rootleague.pliskin.dev/match/47545/"], ["2026-07-09", 1219, 47550, "https://rootleague.pliskin.dev/match/47550/"]], "udon66": [["LH02 Final", 1230, null, null]], "hakoo": [["LH02 Final", 1226, null, null]], "BuliBaka": [["LH02 Final", 1223, null, null]], "TAKSpx": [["LH02 Final", 1222, null, null]], "Mcauthor": [["LH02 Final", 1275, null, null]], "cringelordirl": [["LH02 Final", 1382, null, null], ["2026-07-03", 1428, 47475, "https://rootleague.pliskin.dev/match/47475/"], ["2026-07-07", 1466, 47509, "https://rootleague.pliskin.dev/match/47509/"], ["2026-07-08", 1436, 47530, "https://rootleague.pliskin.dev/match/47530/"], ["2026-07-08", 1406, 47534, "https://rootleague.pliskin.dev/match/47534/"], ["2026-07-09", 1452, 47549, "https://rootleague.pliskin.dev/match/47549/"]], "uwtron": [["LH02 Final", 1221, null, null]], "NadtyLite": [["LH02 Final", 1289, null, null], ["2026-07-01", 1259, 47460, "https://rootleague.pliskin.dev/match/47460/"], ["2026-07-01", 1247, 47465, "https://rootleague.pliskin.dev/match/47465/"], ["2026-07-01", 1232, 47466, "https://rootleague.pliskin.dev/match/47466/"], ["2026-07-03", 1209, 47473, "https://rootleague.pliskin.dev/match/47473/"], ["2026-07-04", 1200, 47482, "https://rootleague.pliskin.dev/match/47482/"], ["2026-07-05", 1190, 47492, "https://rootleague.pliskin.dev/match/47492/"], ["2026-07-06", 1179, 47496, "https://rootleague.pliskin.dev/match/47496/"], ["2026-07-06", 1170, 47497, "https://rootleague.pliskin.dev/match/47497/"], ["2026-07-06", 1239, 47498, "https://rootleague.pliskin.dev/match/47498/"], ["2026-07-06", 1303, 47503, "https://rootleague.pliskin.dev/match/47503/"], ["2026-07-07", 1291, 47506, "https://rootleague.pliskin.dev/match/47506/"], ["2026-07-07", 1276, 47489, "https://rootleague.pliskin.dev/match/47489/"], ["2026-07-08", 1265, 47523, "https://rootleague.pliskin.dev/match/47523/"], ["2026-07-08", 1292, 47529, "https://rootleague.pliskin.dev/match/47529/"], ["2026-07-08", 1287, 47530, "https://rootleague.pliskin.dev/match/47530/"], ["2026-07-08", 1280, 47534, "https://rootleague.pliskin.dev/match/47534/"], ["2026-07-08", 1267, 47535, "https://rootleague.pliskin.dev/match/47535/"], ["2026-07-08", 1260, 47538, "https://rootleague.pliskin.dev/match/47538/"], ["2026-07-09", 1295, 47542, "https://rootleague.pliskin.dev/match/47542/"], ["2026-07-09", 1290, 47548, "https://rootleague.pliskin.dev/match/47548/"], ["2026-07-09", 1281, 47549, "https://rootleague.pliskin.dev/match/47549/"]], "TheDolphinman": [["LH02 Final", 1221, null, null]], "Perdita": [["LH02 Final", 1221, null, null]], "Acecreamsundae": [["LH02 Final", 1220, null, null]], "GlisteningGeetus": [["LH02 Final", 1220, null, null]], "AERotters": [["LH02 Final", 1212, null, null], ["2026-07-09", 1197, 47551, "https://rootleague.pliskin.dev/match/47551/"]], "Sjepeal": [["LH02 Final", 1220, null, null]], "DemaRogue": [["LH02 Final", 1315, null, null], ["2026-07-03", 1358, 47473, "https://rootleague.pliskin.dev/match/47473/"], ["2026-07-06", 1330, 47494, "https://rootleague.pliskin.dev/match/47494/"], ["2026-07-09", 1376, 47540, "https://rootleague.pliskin.dev/match/47540/"]], "Snivylover12": [["LH02 Final", 1184, null, null]], "radiantchaos": [["LH02 Final", 1176, null, null]], "ImJustExisting": [["LH02 Final", 1216, null, null]], "Oriol": [["LH02 Final", 1190, null, null]], "Bodnamax": [["LH02 Final", 1214, null, null]], "KuperMeister": [["LH02 Final", 1234, null, null]], "Ptitmxz": [["LH02 Final", 1233, null, null]], "Sirius": [["LH02 Final", 1149, null, null]], "BjarkeHuse": [["LH02 Final", 1209, null, null]], "Nymmer": [["LH02 Final", 1260, null, null]], "Awesem": [["LH02 Final", 1136, null, null], ["2026-07-06", 1125, 47495, "https://rootleague.pliskin.dev/match/47495/"]], "CowOnAPlane": [["LH02 Final", 1229, null, null], ["2026-07-06", 1214, 47498, "https://rootleague.pliskin.dev/match/47498/"], ["2026-07-07", 1280, 47506, "https://rootleague.pliskin.dev/match/47506/"]], "deejaythink": [["LH02 Final", 1151, null, null], ["2026-07-08", 1146, 47528, "https://rootleague.pliskin.dev/match/47528/"]], "Karcher": [["LH02 Final", 1192, null, null]], "BMPerJMPer": [["LH02 Final", 1303, null, null], ["2026-07-06", 1281, 47503, "https://rootleague.pliskin.dev/match/47503/"]], "idk123": [["LH02 Final", 1356, null, null], ["2026-07-03", 1325, 47476, "https://rootleague.pliskin.dev/match/47476/"]], "alevGO": [["LH02 Final", 1082, null, null]], "sda1611": [["LH02 Final", 1194, null, null]], "XxD4RK_W0LFxX": [["LH02 Final", 1158, null, null]], "Axolatal": [["LH02 Final", 1193, null, null]], "FausDav": [["LH02 Final", 1192, null, null]], "deriokle": [["LH02 Final", 1192, null, null]], "SMenefee": [["LH02 Final", 1191, null, null]], "MisterGume": [["LH02 Final", 1190, null, null]], "Olymp": [["LH02 Final", 1190, null, null]], "ConeMan": [["LH02 Final", 1180, null, null]], "IndifferentFish": [["LH02 Final", 1173, null, null]], "bigcathedral": [["LH02 Final", 1181, null, null]], "ChusGG": [["LH02 Final", 1190, null, null]], "GameProfit": [["LH02 Final", 1189, null, null]], "GamerTower": [["LH02 Final", 1172, null, null]], "Mati92": [["LH02 Final", 1189, null, null]], "Plush2": [["LH02 Final", 1264, null, null]], "shurgs": [["LH02 Final", 1189, null, null]], "StatzoryTheMad": [["LH02 Final", 1208, null, null]], "sedlak87": [["LH02 Final", 1188, null, null]], "vanillapoppy": [["LH02 Final", 1188, null, null]], "secretpaths": [["LH02 Final", 1188, null, null]], "Shadyferret": [["LH02 Final", 1188, null, null]], "Youdge": [["LH02 Final", 1190, null, null]], "Lynxtek": [["LH02 Final", 1188, null, null]], "Gregoola": [["LH02 Final", 1309, null, null]], "Shuuhey": [["LH02 Final", 1187, null, null]], "clp10033": [["LH02 Final", 1187, null, null]], "Libitina114": [["LH02 Final", 1187, null, null]], "KyloBot": [["LH02 Final", 1174, null, null], ["2026-07-01", 1164, 47464, "https://rootleague.pliskin.dev/match/47464/"], ["2026-07-04", 1150, 47481, "https://rootleague.pliskin.dev/match/47481/"], ["2026-07-06", 1141, 47504, "https://rootleague.pliskin.dev/match/47504/"]], "evancomposer": [["LH02 Final", 1181, null, null]], "oshwott2844": [["LH02 Final", 1425, null, null], ["2026-07-03", 1383, 47480, "https://rootleague.pliskin.dev/match/47480/"]], "Raineweather05": [["LH02 Final", 1186, null, null]], "FelipeRocha": [["LH02 Final", 1185, null, null]], "mysti": [["LH02 Final", 1185, null, null]], "mwcrabtree": [["LH02 Final", 1185, null, null]], "tubaking": [["LH02 Final", 1185, null, null]], "Pi314": [["LH02 Final", 1185, null, null]], "ThoseTeeff": [["LH02 Final", 1185, null, null]], "Nuttsy": [["LH02 Final", 1185, null, null]], "Julien": [["LH02 Final", 1185, null, null]], "chosennuttso": [["LH02 Final", 1185, null, null]], "HoosierDaddy": [["LH02 Final", 1184, null, null]], "Peppy": [["LH02 Final", 1280, null, null]], "Akayami": [["LH02 Final", 1184, null, null]], "lgtw3450": [["LH02 Final", 1184, null, null]], "QuixArtagnan": [["LH02 Final", 1179, null, null]], "DegenerateIan": [["LH02 Final", 1184, null, null]], "Demand": [["LH02 Final", 1184, null, null]], "Clink": [["LH02 Final", 1184, null, null]], "AJIJIi": [["LH02 Final", 1184, null, null]], "FireFox": [["LH02 Final", 1165, null, null]], "FungusMouse": [["LH02 Final", 1183, null, null]], "CroCroCro": [["LH02 Final", 1183, null, null]], "pikeline": [["LH02 Final", 1183, null, null]], "DanielDandaniel": [["LH02 Final", 1169, null, null]], "Wolvane": [["LH02 Final", 1183, null, null]], "micherin": [["LH02 Final", 1183, null, null]], "GAFE15": [["LH02 Final", 1183, null, null]], "Lucat": [["LH02 Final", 1183, null, null]], "ForkMaster": [["LH02 Final", 1182, null, null]], "fadingnovel": [["LH02 Final", 1224, null, null]], "catscat": [["LH02 Final", 1182, null, null]], "ZachB": [["LH02 Final", 1274, null, null]], "DelSol": [["LH02 Final", 1040, null, null], ["2026-07-01", 1033, 47460, "https://rootleague.pliskin.dev/match/47460/"], ["2026-07-03", 1026, 47473, "https://rootleague.pliskin.dev/match/47473/"], ["2026-07-04", 1021, 47487, "https://rootleague.pliskin.dev/match/47487/"], ["2026-07-08", 1019, 47530, "https://rootleague.pliskin.dev/match/47530/"], ["2026-07-09", 1016, 47542, "https://rootleague.pliskin.dev/match/47542/"], ["2026-07-09", 1013, 47543, "https://rootleague.pliskin.dev/match/47543/"]], "Sebby": [["LH02 Final", 1182, null, null], ["2026-07-07", 1241, 47517, "https://rootleague.pliskin.dev/match/47517/"], ["2026-07-08", 1219, 47520, "https://rootleague.pliskin.dev/match/47520/"], ["2026-07-08", 1273, 47522, "https://rootleague.pliskin.dev/match/47522/"], ["2026-07-08", 1247, 47526, "https://rootleague.pliskin.dev/match/47526/"], ["2026-07-09", 1222, 47544, "https://rootleague.pliskin.dev/match/47544/"], ["2026-07-09", 1200, 47550, "https://rootleague.pliskin.dev/match/47550/"]], "Rachel997": [["LH02 Final", 1182, null, null]], "WWren": [["LH02 Final", 1181, null, null]], "Plasma": [["LH02 Final", 1181, null, null]], "Actionman2222": [["LH02 Final", 1180, null, null]], "Gibbs": [["LH02 Final", 1180, null, null]], "kurtfisto": [["LH02 Final", 1320, null, null], ["2026-07-02", 1368, 47472, "https://rootleague.pliskin.dev/match/47472/"], ["2026-07-06", 1417, 47504, "https://rootleague.pliskin.dev/match/47504/"]], "BuckeyeNation": [["LH02 Final", 1179, null, null]], "themikeman": [["LH02 Final", 1179, null, null]], "Rabbi": [["LH02 Final", 1150, null, null]], "EmbryoticDeth": [["LH02 Final", 1178, null, null]], "MrRiceGuy": [["LH02 Final", 1178, null, null]], "BaconBoy": [["LH02 Final", 1192, null, null], ["2026-07-03", 1261, 47480, "https://rootleague.pliskin.dev/match/47480/"]], "Cuagodking": [["LH02 Final", 1177, null, null]], "RFMerlo": [["LH02 Final", 1177, null, null]], "DanielJeun": [["LH02 Final", 1175, null, null]], "StoneOfShame": [["LH02 Final", 1199, null, null]], "HowDoYouDrew": [["LH02 Final", 1088, null, null]], "benruff": [["LH02 Final", 1173, null, null]], "goodgamepat": [["LH02 Final", 1171, null, null]], "MoxJet": [["LH02 Final", 1146, null, null]], "Komasan": [["LH02 Final", 1170, null, null]], "ImEpy": [["LH02 Final", 1170, null, null]], "Lante": [["LH02 Final", 1170, null, null]], "Lobster": [["LH02 Final", 1156, null, null]], "byzeke": [["LH02 Final", 1169, null, null]], "PsychologicalBox": [["LH02 Final", 1168, null, null]], "Bjoda": [["LH02 Final", 1160, null, null]], "mouseinabox": [["LH02 Final", 1152, null, null], ["2026-07-01", 1220, 47467, "https://rootleague.pliskin.dev/match/47467/"], ["2026-07-08", 1200, 47520, "https://rootleague.pliskin.dev/match/47520/"], ["2026-07-08", 1177, 47522, "https://rootleague.pliskin.dev/match/47522/"], ["2026-07-08", 1231, 47524, "https://rootleague.pliskin.dev/match/47524/"], ["2026-07-09", 1295, 47551, "https://rootleague.pliskin.dev/match/47551/"]], "BadScra": [["LH02 Final", 1160, null, null]], "Jasiu\u0144cio": [["LH02 Final", 1253, null, null]], "EdacM": [["LH02 Final", 1167, null, null]], "Excitedteapot": [["LH02 Final", 1167, null, null]], "Potet": [["LH02 Final", 1166, null, null]], "residentevil": [["LH02 Final", 1165, null, null]], "Yragael": [["LH02 Final", 1164, null, null]], "MOMOGA": [["LH02 Final", 1164, null, null]], "brrrlinguist": [["LH02 Final", 1164, null, null]], "OUSlaughter": [["LH02 Final", 1164, null, null]], "FalconBird": [["LH02 Final", 1164, null, null]], "Musicalwoofy": [["LH02 Final", 1221, null, null]], "TheRedViper": [["LH02 Final", 1163, null, null]], "Drinken": [["LH02 Final", 1163, null, null]], "StarhardFishrinse": [["LH02 Final", 1163, null, null]], "LHlegend": [["LH02 Final", 1191, null, null]], "CptAlex": [["LH02 Final", 1162, null, null]], "Fearteiler": [["LH02 Final", 1135, null, null], ["2026-07-08", 1124, 47535, "https://rootleague.pliskin.dev/match/47535/"]], "Marcus": [["LH02 Final", 1161, null, null]], "metalnooze": [["LH02 Final", 1161, null, null]], "SSR_Mike": [["LH02 Final", 1161, null, null]], "Cheetah32": [["LH02 Final", 1161, null, null]], "HungryJeff": [["LH02 Final", 1228, null, null]], "Ljaz7": [["LH02 Final", 1035, null, null], ["2026-07-02", 1028, 47469, "https://rootleague.pliskin.dev/match/47469/"], ["2026-07-02", 1020, 47471, "https://rootleague.pliskin.dev/match/47471/"], ["2026-07-08", 1017, 47534, "https://rootleague.pliskin.dev/match/47534/"]], "RexCow": [["LH02 Final", 1160, null, null]], "Biggins96": [["LH02 Final", 1160, null, null]], "MangoBlade11": [["LH02 Final", 1159, null, null]], "lumpyprol": [["LH02 Final", 1249, null, null]], "TheSillyBilly": [["LH02 Final", 1130, null, null]], "Hiyoshi": [["LH02 Final", 1158, null, null]], "DanzigMF": [["LH02 Final", 1234, null, null]], "Odinius": [["LH02 Final", 1151, null, null], ["2026-07-04", 1210, 47485, "https://rootleague.pliskin.dev/match/47485/"]], "Baradhas": [["LH02 Final", 1156, null, null]], "Podge0303": [["LH02 Final", 1138, null, null]], "chux88": [["LH02 Final", 1155, null, null]], "Zeldamon": [["LH02 Final", 1155, null, null]], "weirdone": [["LH02 Final", 1233, null, null]], "pashatherussian": [["LH02 Final", 1155, null, null]], "HobGungan": [["LH02 Final", 1286, null, null]], "optimusprawn": [["LH02 Final", 1129, null, null]], "FVMLion": [["LH02 Final", 1153, null, null]], "WyvernElement": [["LH02 Final", 1186, null, null]], "Cloudere": [["LH02 Final", 1152, null, null]], "benssoon": [["LH02 Final", 1124, null, null]], "MylesMoose": [["LH02 Final", 1235, null, null]], "Alexispc": [["LH02 Final", 1170, null, null]], "BugMuff44": [["LH02 Final", 1149, null, null]], "Lambo": [["LH02 Final", 1204, null, null]], "Gabobs": [["LH02 Final", 1256, null, null]], "Riverman": [["LH02 Final", 1147, null, null]], "TheIndustrialRevoloution": [["LH02 Final", 1146, null, null]], "Jerry": [["LH02 Final", 1145, null, null]], "FatBoyyy": [["LH02 Final", 1131, null, null]], "McMayo": [["LH02 Final", 1144, null, null]], "RangerEpic": [["LH02 Final", 1045, null, null]], "sleepylabone": [["LH02 Final", 1125, null, null], ["2026-07-08", 1114, 47527, "https://rootleague.pliskin.dev/match/47527/"], ["2026-07-08", 1104, 47536, "https://rootleague.pliskin.dev/match/47536/"]], "TheFourthJesse": [["LH02 Final", 1118, null, null], ["2026-07-01", 1111, 47464, "https://rootleague.pliskin.dev/match/47464/"], ["2026-07-05", 1100, 47393, "https://rootleague.pliskin.dev/match/47393/"], ["2026-07-07", 1095, 47510, "https://rootleague.pliskin.dev/match/47510/"]], "Blank": [["LH02 Final", 1138, null, null]], "darkcat": [["LH02 Final", 1087, null, null], ["2026-07-07", 1083, 47518, "https://rootleague.pliskin.dev/match/47518/"]], "Harriet": [["LH02 Final", 1143, null, null]], "Soluna": [["LH02 Final", 1142, null, null]], "Xman1997": [["LH02 Final", 1118, null, null]], "BoMa85": [["LH02 Final", 1119, null, null]], "CoxyNormus": [["LH02 Final", 1140, null, null]], "Lokfok": [["LH02 Final", 1140, null, null]], "Dumbledore": [["LH02 Final", 1303, null, null], ["2026-07-01", 1351, 47460, "https://rootleague.pliskin.dev/match/47460/"], ["2026-07-01", 1381, 47461, "https://rootleague.pliskin.dev/match/47461/"], ["2026-07-01", 1416, 47462, "https://rootleague.pliskin.dev/match/47462/"], ["2026-07-02", 1365, 47468, "https://rootleague.pliskin.dev/match/47468/"], ["2026-07-02", 1319, 47469, "https://rootleague.pliskin.dev/match/47469/"], ["2026-07-02", 1281, 47470, "https://rootleague.pliskin.dev/match/47470/"], ["2026-07-03", 1330, 47474, "https://rootleague.pliskin.dev/match/47474/"], ["2026-07-04", 1335, 47481, "https://rootleague.pliskin.dev/match/47481/"], ["2026-07-04", 1317, 47486, "https://rootleague.pliskin.dev/match/47486/"], ["2026-07-06", 1375, 47494, "https://rootleague.pliskin.dev/match/47494/"], ["2026-07-06", 1361, 47497, "https://rootleague.pliskin.dev/match/47497/"], ["2026-07-06", 1344, 47498, "https://rootleague.pliskin.dev/match/47498/"], ["2026-07-07", 1332, 47507, "https://rootleague.pliskin.dev/match/47507/"], ["2026-07-07", 1325, 47518, "https://rootleague.pliskin.dev/match/47518/"], ["2026-07-09", 1311, 47541, "https://rootleague.pliskin.dev/match/47541/"]], "NattyKash": [["LH02 Final", 1140, null, null]], "marksoz00": [["LH02 Final", 1146, null, null], ["2026-07-09", 1212, 47544, "https://rootleague.pliskin.dev/match/47544/"]], "Sharkskln": [["LH02 Final", 1128, null, null]], "Wrestler": [["LH02 Final", 1050, null, null]], "Krooter": [["LH02 Final", 1133, null, null]], "NaySmith": [["LH02 Final", 1150, null, null]], "Hadjiya": [["LH02 Final", 1190, null, null]], "Gagneto": [["LH02 Final", 1131, null, null]], "Ironic": [["LH02 Final", 1129, null, null]], "ReoWulf": [["LH02 Final", 1127, null, null]], "Hossain2020": [["LH02 Final", 1105, null, null]], "TempExtremal": [["LH02 Final", 1123, null, null]], "mkcy3": [["LH02 Final", 1122, null, null]], "CodPieceZ": [["LH02 Final", 1122, null, null]], "Hurple": [["LH02 Final", 1090, null, null], ["2026-07-02", 1080, 47469, "https://rootleague.pliskin.dev/match/47469/"], ["2026-07-04", 1067, 47485, "https://rootleague.pliskin.dev/match/47485/"], ["2026-07-06", 1060, 47500, "https://rootleague.pliskin.dev/match/47500/"], ["2026-07-06", 1051, 47501, "https://rootleague.pliskin.dev/match/47501/"], ["2026-07-09", 1031, 47546, "https://rootleague.pliskin.dev/match/47546/"]], "Banzai7000": [["LH02 Final", 1071, null, null]], "Gaborever": [["LH02 Final", 1098, null, null]], "KargDemiau": [["LH02 Final", 1098, null, null]], "voltigeur": [["LH02 Final", 1051, null, null]], "hauntedpebbles2": [["LH02 Final", 1117, null, null]], "nikkan": [["LH02 Final", 1116, null, null]], "sparrowhawk": [["LH02 Final", 1116, null, null]], "TheWiseFox": [["LH02 Final", 1116, null, null]], "NonStInc.": [["LH02 Final", 1114, null, null]], "Piechu": [["LH02 Final", 1083, null, null], ["2026-07-07", 1155, 47511, "https://rootleague.pliskin.dev/match/47511/"]], "FakeSki": [["LH02 Final", 1154, null, null]], "Darkwonderer": [["LH02 Final", 1117, null, null], ["2026-07-08", 1187, 47521, "https://rootleague.pliskin.dev/match/47521/"]], "Trumpet": [["LH02 Final", 1110, null, null]], "Whats02": [["LH02 Final", 1101, null, null]], "ellbelle": [["LH02 Final", 1137, null, null]], "PlagueCarrier": [["LH02 Final", 1143, null, null], ["2026-07-03", 1129, 47473, "https://rootleague.pliskin.dev/match/47473/"]], "Acelet": [["LH02 Final", 1106, null, null]], "Jboooooooooooooooooooom": [["LH02 Final", 1106, null, null]], "Cheesecake271": [["LH02 Final", 1104, null, null]], "Oppapi": [["LH02 Final", 1103, null, null]], "TonyDeloreanESQ": [["LH02 Final", 1146, null, null], ["2026-07-05", 1139, 47250, "https://rootleague.pliskin.dev/match/47250/"], ["2026-07-05", 1127, 47493, "https://rootleague.pliskin.dev/match/47493/"], ["2026-07-05", 1115, 47393, "https://rootleague.pliskin.dev/match/47393/"], ["2026-07-07", 1106, 47519, "https://rootleague.pliskin.dev/match/47519/"]], "Elijah": [["LH02 Final", 1085, null, null]], "re_al_": [["LH02 Final", 1101, null, null]], "Wubba": [["LH02 Final", 1243, null, null]], "Dandel": [["LH02 Final", 1158, null, null]], "DarthOblivius": [["LH02 Final", 1105, null, null], ["2026-07-02", 1174, 47470, "https://rootleague.pliskin.dev/match/47470/"], ["2026-07-02", 1160, 47472, "https://rootleague.pliskin.dev/match/47472/"], ["2026-07-05", 1152, 47250, "https://rootleague.pliskin.dev/match/47250/"], ["2026-07-06", 1143, 47496, "https://rootleague.pliskin.dev/match/47496/"], ["2026-07-06", 1213, 47500, "https://rootleague.pliskin.dev/match/47500/"], ["2026-07-06", 1200, 47504, "https://rootleague.pliskin.dev/match/47504/"], ["2026-07-07", 1191, 47510, "https://rootleague.pliskin.dev/match/47510/"], ["2026-07-08", 1175, 47529, "https://rootleague.pliskin.dev/match/47529/"], ["2026-07-08", 1170, 47533, "https://rootleague.pliskin.dev/match/47533/"]], "silverfox": [["LH02 Final", 1086, null, null], ["2026-07-01", 1075, 47461, "https://rootleague.pliskin.dev/match/47461/"], ["2026-07-07", 1061, 47514, "https://rootleague.pliskin.dev/match/47514/"]], "Klishu": [["LH02 Final", 1083, null, null]], "tunnndz": [["LH02 Final", 1108, null, null], ["2026-07-06", 1095, 47499, "https://rootleague.pliskin.dev/match/47499/"], ["2026-07-08", 1078, 47524, "https://rootleague.pliskin.dev/match/47524/"], ["2026-07-09", 1070, 47540, "https://rootleague.pliskin.dev/match/47540/"]], "Doordecat": [["LH02 Final", 1066, null, null]], "100pctskillz": [["LH02 Final", 1064, null, null]], "Dizzz": [["LH02 Final", 1064, null, null]], "Wriggleroom": [["LH02 Final", 953, null, null], ["2026-07-02", 948, 47470, "https://rootleague.pliskin.dev/match/47470/"], ["2026-07-05", 947, 47490, "https://rootleague.pliskin.dev/match/47490/"], ["2026-07-05", 943, 47493, "https://rootleague.pliskin.dev/match/47493/"]], "Aceosd": [["LH02 Final", 1061, null, null]], "Raybit": [["LH02 Final", 1062, null, null]], "DrCheeseFiend": [["LH02 Final", 973, null, null], ["2026-07-09", 970, 47549, "https://rootleague.pliskin.dev/match/47549/"]], "hanban": [["LH02 Final", 1060, null, null]], "DawnDiVito": [["LH02 Final", 1027, null, null], ["2026-07-08", 1020, 47520, "https://rootleague.pliskin.dev/match/47520/"]], "Munchking": [["LH02 Final", 959, null, null], ["2026-07-01", 954, 47461, "https://rootleague.pliskin.dev/match/47461/"], ["2026-07-01", 950, 47462, "https://rootleague.pliskin.dev/match/47462/"], ["2026-07-02", 947, 47468, "https://rootleague.pliskin.dev/match/47468/"], ["2026-07-07", 939, 47505, "https://rootleague.pliskin.dev/match/47505/"], ["2026-07-07", 933, 47514, "https://rootleague.pliskin.dev/match/47514/"], ["2026-07-07", 928, 47517, "https://rootleague.pliskin.dev/match/47517/"], ["2026-07-09", 918, 47546, "https://rootleague.pliskin.dev/match/47546/"], ["2026-07-09", 914, 47547, "https://rootleague.pliskin.dev/match/47547/"]], "Lex25": [["LH02 Final", 1044, null, null]], "cjahwon": [["LH02 Final", 1049, null, null], ["2026-07-01", 1041, 47463, "https://rootleague.pliskin.dev/match/47463/"], ["2026-07-03", 1036, 47479, "https://rootleague.pliskin.dev/match/47479/"], ["2026-07-04", 1030, 47483, "https://rootleague.pliskin.dev/match/47483/"], ["2026-07-04", 1019, 47484, "https://rootleague.pliskin.dev/match/47484/"], ["2026-07-07", 1008, 47505, "https://rootleague.pliskin.dev/match/47505/"], ["2026-07-08", 1002, 47527, "https://rootleague.pliskin.dev/match/47527/"], ["2026-07-08", 1076, 47420, "https://rootleague.pliskin.dev/match/47420/"], ["2026-07-09", 1133, 47546, "https://rootleague.pliskin.dev/match/47546/"]], "BaliHoo": [["LH02 Final", 1027, null, null]], "buurn": [["LH02 Final", 1153, null, null], ["2026-07-04", 1145, 47488, "https://rootleague.pliskin.dev/match/47488/"], ["2026-07-06", 1131, 47501, "https://rootleague.pliskin.dev/match/47501/"], ["2026-07-07", 1124, 47507, "https://rootleague.pliskin.dev/match/47507/"], ["2026-07-07", 1117, 47509, "https://rootleague.pliskin.dev/match/47509/"], ["2026-07-08", 1186, 47527, "https://rootleague.pliskin.dev/match/47527/"], ["2026-07-08", 1169, 47532, "https://rootleague.pliskin.dev/match/47532/"], ["2026-07-08", 1155, 47420, "https://rootleague.pliskin.dev/match/47420/"]], "Jack432": [["LH02 Final", 1470, null, null], ["2026-07-01", 1416, 47466, "https://rootleague.pliskin.dev/match/47466/"], ["2026-07-03", 1436, 47478, "https://rootleague.pliskin.dev/match/47478/"], ["2026-07-04", 1400, 47482, "https://rootleague.pliskin.dev/match/47482/"], ["2026-07-07", 1373, 47510, "https://rootleague.pliskin.dev/match/47510/"], ["2026-07-07", 1434, 47518, "https://rootleague.pliskin.dev/match/47518/"], ["2026-07-07", 1461, 47519, "https://rootleague.pliskin.dev/match/47519/"], ["2026-07-09", 1431, 47548, "https://rootleague.pliskin.dev/match/47548/"]], "BennyJ": [["LH02 Final", 1468, null, null], ["2026-07-01", 1426, 47465, "https://rootleague.pliskin.dev/match/47465/"], ["2026-07-08", 1400, 47528, "https://rootleague.pliskin.dev/match/47528/"], ["2026-07-09", 1379, 47542, "https://rootleague.pliskin.dev/match/47542/"]], "Manpanzee": [["LH02 Final", 1379, null, null], ["2026-07-08", 1445, 47533, "https://rootleague.pliskin.dev/match/47533/"], ["2026-07-08", 1506, 47539, "https://rootleague.pliskin.dev/match/47539/"]], "uFancyHUH": [["LH02 Final", 1352, null, null], ["2026-07-03", 1323, 47475, "https://rootleague.pliskin.dev/match/47475/"], ["2026-07-05", 1305, 47491, "https://rootleague.pliskin.dev/match/47491/"], ["2026-07-06", 1355, 47495, "https://rootleague.pliskin.dev/match/47495/"], ["2026-07-07", 1323, 47506, "https://rootleague.pliskin.dev/match/47506/"], ["2026-07-07", 1300, 47509, "https://rootleague.pliskin.dev/match/47509/"], ["2026-07-07", 1288, 47516, "https://rootleague.pliskin.dev/match/47516/"]], "BloodMuffin": [["LH02 Final", 1349, null, null], ["2026-07-09", 1324, 47549, "https://rootleague.pliskin.dev/match/47549/"]], "Kirien": [["LH02 Final", 1338, null, null]], "GlandorHooverstein": [["LH02 Final", 1333, null, null]], "Dekiru": [["LH02 Final", 1331, null, null]], "PestoEmporium": [["LH02 Final", 1324, null, null], ["2026-07-04", 1385, 47482, "https://rootleague.pliskin.dev/match/47482/"], ["2026-07-04", 1362, 47486, "https://rootleague.pliskin.dev/match/47486/"], ["2026-07-04", 1334, 47488, "https://rootleague.pliskin.dev/match/47488/"], ["2026-07-06", 1308, 47496, "https://rootleague.pliskin.dev/match/47496/"], ["2026-07-07", 1368, 47507, "https://rootleague.pliskin.dev/match/47507/"], ["2026-07-08", 1356, 47539, "https://rootleague.pliskin.dev/match/47539/"], ["2026-07-09", 1323, 47551, "https://rootleague.pliskin.dev/match/47551/"]], "Luclid": [["LH02 Final", 1324, null, null], ["2026-07-05", 1384, 47250, "https://rootleague.pliskin.dev/match/47250/"]], "Potatosgonnacrushya": [["LH02 Final", 1312, null, null]], "Aeliott": [["LH02 Final", 1309, null, null], ["2026-07-01", 1372, 47465, "https://rootleague.pliskin.dev/match/47465/"], ["2026-07-07", 1344, 47507, "https://rootleague.pliskin.dev/match/47507/"]], "Scipio": [["LH02 Final", 1308, null, null], ["2026-07-03", 1337, 47478, "https://rootleague.pliskin.dev/match/47478/"], ["2026-07-04", 1319, 47486, "https://rootleague.pliskin.dev/match/47486/"], ["2026-07-05", 1367, 47493, "https://rootleague.pliskin.dev/match/47493/"], ["2026-07-06", 1415, 47496, "https://rootleague.pliskin.dev/match/47496/"], ["2026-07-06", 1460, 47497, "https://rootleague.pliskin.dev/match/47497/"], ["2026-07-07", 1502, 47510, "https://rootleague.pliskin.dev/match/47510/"], ["2026-07-08", 1541, 47528, "https://rootleague.pliskin.dev/match/47528/"], ["2026-07-09", 1494, 47542, "https://rootleague.pliskin.dev/match/47542/"], ["2026-07-09", 1538, 47548, "https://rootleague.pliskin.dev/match/47548/"]], "0thers1der": [["LH02 Final", 1305, null, null]], "WillRevolt": [["LH02 Final", 1295, null, null]], "MarquiseDeGyatt": [["LH02 Final", 1288, null, null]], "mrkent": [["LH02 Final", 1274, null, null], ["2026-07-09", 1320, 47547, "https://rootleague.pliskin.dev/match/47547/"]], "Shrek": [["LH02 Final", 1266, null, null]], "CosmicCant": [["LH02 Final", 1259, null, null]], "ionou21": [["LH02 Final", 1257, null, null], ["2026-07-02", 1231, 47470, "https://rootleague.pliskin.dev/match/47470/"], ["2026-07-09", 1204, 47547, "https://rootleague.pliskin.dev/match/47547/"]], "chibimori": [["LH02 Final", 1255, null, null]], "CommonGibbon": [["LH02 Final", 1254, null, null], ["2026-07-08", 1234, 47523, "https://rootleague.pliskin.dev/match/47523/"]], "pizzamagican": [["LH02 Final", 1252, null, null]], "ominouscat": [["LH02 Final", 1249, null, null], ["2026-07-01", 1228, 47462, "https://rootleague.pliskin.dev/match/47462/"]], "AcolyteOfRoot": [["LH02 Final", 1249, null, null], ["2026-07-03", 1228, 47477, "https://rootleague.pliskin.dev/match/47477/"], ["2026-07-05", 1285, 47393, "https://rootleague.pliskin.dev/match/47393/"], ["2026-07-08", 1261, 47523, "https://rootleague.pliskin.dev/match/47523/"], ["2026-07-08", 1314, 47525, "https://rootleague.pliskin.dev/match/47525/"], ["2026-07-08", 1293, 47531, "https://rootleague.pliskin.dev/match/47531/"], ["2026-07-08", 1266, 47536, "https://rootleague.pliskin.dev/match/47536/"], ["2026-07-09", 1237, 47544, "https://rootleague.pliskin.dev/match/47544/"], ["2026-07-09", 1212, 47545, "https://rootleague.pliskin.dev/match/47545/"], ["2026-07-09", 1191, 47550, "https://rootleague.pliskin.dev/match/47550/"]], "MagZeppelin": [["LH02 Final", 1244, null, null], ["2026-07-07", 1229, 47508, "https://rootleague.pliskin.dev/match/47508/"]], "SlickAngel": [["LH02 Final", 1242, null, null], ["2026-07-08", 1220, 47529, "https://rootleague.pliskin.dev/match/47529/"]], "Cotton": [["LH02 Final", 1237, null, null], ["2026-07-05", 1226, 47491, "https://rootleague.pliskin.dev/match/47491/"]], "Waferseeker95": [["LH02 Final", 1237, null, null], ["2026-07-01", 1215, 47463, "https://rootleague.pliskin.dev/match/47463/"], ["2026-07-01", 1199, 47467, "https://rootleague.pliskin.dev/match/47467/"], ["2026-07-02", 1261, 47469, "https://rootleague.pliskin.dev/match/47469/"], ["2026-07-02", 1312, 47471, "https://rootleague.pliskin.dev/match/47471/"], ["2026-07-03", 1361, 47477, "https://rootleague.pliskin.dev/match/47477/"], ["2026-07-03", 1330, 47479, "https://rootleague.pliskin.dev/match/47479/"], ["2026-07-07", 1386, 47508, "https://rootleague.pliskin.dev/match/47508/"], ["2026-07-08", 1334, 47527, "https://rootleague.pliskin.dev/match/47527/"], ["2026-07-08", 1376, 47532, "https://rootleague.pliskin.dev/match/47532/"], ["2026-07-08", 1328, 47420, "https://rootleague.pliskin.dev/match/47420/"], ["2026-07-08", 1352, 47536, "https://rootleague.pliskin.dev/match/47536/"]], "RustySpruce": [["LH02 Final", 1223, null, null]], "Jalapeno": [["LH02 Final", 1223, null, null]], "Niruu": [["LH02 Final", 1217, null, null]], "BetterPools": [["LH02 Final", 1210, null, null]], "MunkeyBrewster": [["LH02 Final", 1209, null, null], ["2026-07-04", 1192, 47481, "https://rootleague.pliskin.dev/match/47481/"], ["2026-07-06", 1176, 47495, "https://rootleague.pliskin.dev/match/47495/"], ["2026-07-07", 1164, 47519, "https://rootleague.pliskin.dev/match/47519/"]], "Daz257": [["LH02 Final", 1209, null, null]], "PacificCold": [["LH02 Final", 1206, null, null], ["2026-07-01", 1190, 47467, "https://rootleague.pliskin.dev/match/47467/"], ["2026-07-02", 1176, 47468, "https://rootleague.pliskin.dev/match/47468/"], ["2026-07-03", 1245, 47479, "https://rootleague.pliskin.dev/match/47479/"], ["2026-07-03", 1230, 47480, "https://rootleague.pliskin.dev/match/47480/"], ["2026-07-08", 1211, 47521, "https://rootleague.pliskin.dev/match/47521/"]], "ToughHazelnut": [["LH02 Final", 1202, null, null]], "Temperz87": [["LH02 Final", 1202, null, null]], "ColPop": [["LH02 Final", 1201, null, null]], "pheobii": [["LH02 Final", 1200, null, null]], "FamilyTuber": [["LH02 Final", 1197, null, null], ["2026-07-02", 1182, 47472, "https://rootleague.pliskin.dev/match/47472/"], ["2026-07-03", 1171, 47475, "https://rootleague.pliskin.dev/match/47475/"]], "fbd117": [["LH02 Final", 1197, null, null]], "Tagatu": [["LH02 Final", 1193, null, null]], "kamomileTea": [["LH02 Final", 1193, null, null]], "Anton": [["LH02 Final", 1191, null, null]], "RiverKawaii": [["LH02 Final", 1191, null, null]], "ExecutedByGromp": [["LH02 Final", 1191, null, null]], "Cutoopen": [["LH02 Final", 1191, null, null]], "Traestaree": [["LH02 Final", 1190, null, null]], "Xerof": [["LH02 Final", 1190, null, null]], "tobin": [["LH02 Final", 1190, null, null]], "Yojimbo": [["LH02 Final", 1190, null, null]], "halzyen": [["LH02 Final", 1190, null, null]], "Mariv": [["LH02 Final", 1189, null, null]], "LittleHalo (9882)": [["LH02 Final", 1189, null, null]], "Starcore6": [["LH02 Final", 1189, null, null]], "DarkOwl": [["LH02 Final", 1189, null, null]], "CocoMocoMan": [["LH02 Final", 1188, null, null]], "ArionGekkota": [["LH02 Final", 1188, null, null]], "LittleHalo (9982)": [["LH02 Final", 1187, null, null]], "CWise": [["LH02 Final", 1187, null, null]], "SimulatedBeehive": [["LH02 Final", 1187, null, null]], "Akriuss": [["LH02 Final", 1186, null, null]], "ChrD99": [["LH02 Final", 1186, null, null]], "Rhyno": [["LH02 Final", 1186, null, null]], "balonthebold": [["LH02 Final", 1185, null, null]], "StrikeOrca": [["LH02 Final", 1185, null, null]], "BLULOBSTR": [["LH02 Final", 1185, null, null]], "TurtleJawz": [["LH02 Final", 1185, null, null]], "Hasan": [["LH02 Final", 1184, null, null]], "stxr444": [["LH02 Final", 1184, null, null]], "Hammad": [["LH02 Final", 1184, null, null]], "Quisyo": [["LH02 Final", 1184, null, null]], "sasquatch": [["LH02 Final", 1183, null, null]], "Welllll": [["LH02 Final", 1183, null, null]], "Azdontek": [["LH02 Final", 1183, null, null]], "Vitsky": [["LH02 Final", 1183, null, null]], "yoyot1": [["LH02 Final", 1183, null, null]], "StellarHermit": [["LH02 Final", 1183, null, null]], "kesitron": [["LH02 Final", 1182, null, null]], "pigdog": [["LH02 Final", 1182, null, null]], "Fluffy": [["LH02 Final", 1182, null, null]], "MelodiCat": [["LH02 Final", 1181, null, null]], "CaptainBork": [["LH02 Final", 1180, null, null]], "scaled": [["LH02 Final", 1179, null, null]], "Roldan": [["LH02 Final", 1179, null, null]], "GuyNXS": [["LH02 Final", 1179, null, null]], "2eaasley": [["LH02 Final", 1178, null, null]], "aaronmaik88": [["LH02 Final", 1178, null, null]], "wherestonks": [["LH02 Final", 1177, null, null]], "Nierxlelx": [["LH02 Final", 1175, null, null]], "Rootenthusiast": [["LH02 Final", 1174, null, null]], "Lufire": [["LH02 Final", 1174, null, null]], "Supersingalong": [["LH02 Final", 1173, null, null], ["2026-07-01", 1166, 47465, "https://rootleague.pliskin.dev/match/47465/"], ["2026-07-06", 1154, 47500, "https://rootleague.pliskin.dev/match/47500/"], ["2026-07-06", 1139, 47501, "https://rootleague.pliskin.dev/match/47501/"], ["2026-07-07", 1130, 47506, "https://rootleague.pliskin.dev/match/47506/"], ["2026-07-07", 1122, 47509, "https://rootleague.pliskin.dev/match/47509/"]], "TenchRinggold": [["LH02 Final", 1173, null, null]], "RedPanda": [["LH02 Final", 1172, null, null]], "Hazelnut19": [["LH02 Final", 1171, null, null]], "PajaroTronador": [["LH02 Final", 1170, null, null]], "nyosh8484": [["LH02 Final", 1169, null, null]], "Nickpappa": [["LH02 Final", 1168, null, null], ["2026-07-08", 1236, 47523, "https://rootleague.pliskin.dev/match/47523/"]], "Lifeye": [["LH02 Final", 1166, null, null]], "MinePokemine": [["LH02 Final", 1164, null, null]], "creapy01": [["LH02 Final", 1162, null, null], ["2026-07-04", 1189, 47481, "https://rootleague.pliskin.dev/match/47481/"]], "Blepblep": [["LH02 Final", 1162, null, null]], "DevilUnfiltered": [["LH02 Final", 1161, null, null]], "ScrubSewelly": [["LH02 Final", 1160, null, null]], "RaveAnt": [["LH02 Final", 1160, null, null]], "Fenetix": [["LH02 Final", 1160, null, null]], "kingslime": [["LH02 Final", 1159, null, null]], "BigHat": [["LH02 Final", 1158, null, null]], "Evenorodds": [["LH02 Final", 1157, null, null]], "Thanhdat": [["LH02 Final", 1154, null, null]], "eef99": [["LH02 Final", 1153, null, null]], "Skumfi": [["LH02 Final", 1151, null, null], ["2026-07-08", 1138, 47420, "https://rootleague.pliskin.dev/match/47420/"]], "sourdoh": [["LH02 Final", 1151, null, null]], "sontei5": [["LH02 Final", 1149, null, null], ["2026-07-02", 1218, 47468, "https://rootleague.pliskin.dev/match/47468/"], ["2026-07-05", 1207, 47492, "https://rootleague.pliskin.dev/match/47492/"], ["2026-07-06", 1184, 47499, "https://rootleague.pliskin.dev/match/47499/"]], "Ultcyber": [["LH02 Final", 1147, null, null]], "ZimaBlue": [["LH02 Final", 1146, null, null]], "Yucca": [["LH02 Final", 1145, null, null]], "polyphemur": [["LH02 Final", 1139, null, null], ["2026-07-01", 1125, 47461, "https://rootleague.pliskin.dev/match/47461/"], ["2026-07-01", 1115, 47462, "https://rootleague.pliskin.dev/match/47462/"], ["2026-07-04", 1098, 47485, "https://rootleague.pliskin.dev/match/47485/"], ["2026-07-06", 1092, 47494, "https://rootleague.pliskin.dev/match/47494/"], ["2026-07-08", 1079, 47522, "https://rootleague.pliskin.dev/match/47522/"], ["2026-07-08", 1064, 47524, "https://rootleague.pliskin.dev/match/47524/"], ["2026-07-08", 1056, 47532, "https://rootleague.pliskin.dev/match/47532/"]], "DGDKami": [["LH02 Final", 1135, null, null]], "DarkPortents": [["LH02 Final", 1133, null, null]], "Viggs": [["LH02 Final", 1128, null, null]], "PeskyPaul": [["LH02 Final", 1128, null, null]], "legrandgrand": [["LH02 Final", 1128, null, null]], "AxelMcKenzie": [["LH02 Final", 1127, null, null]], "Tseka": [["LH02 Final", 1124, null, null]], "rathyAro": [["LH02 Final", 1124, null, null], ["2026-07-02", 1110, 47471, "https://rootleague.pliskin.dev/match/47471/"]], "rhino": [["LH02 Final", 1123, null, null], ["2026-07-08", 1120, 47539, "https://rootleague.pliskin.dev/match/47539/"]], "anoretu": [["LH02 Final", 1123, null, null]], "EarlofEarl": [["LH02 Final", 1122, null, null]], "budynzsmalcem": [["LH02 Final", 1122, null, null]], "HeatBeats": [["LH02 Final", 1121, null, null]], "strypeez": [["LH02 Final", 1119, null, null]], "HollyKat902": [["LH02 Final", 1108, null, null]], "nutrimentia": [["LH02 Final", 1097, null, null], ["2026-07-08", 1088, 47535, "https://rootleague.pliskin.dev/match/47535/"]], "amjohnson636": [["LH02 Final", 1096, null, null]], "NightTsuki": [["LH02 Final", 1096, null, null]], "Fabius": [["LH02 Final", 1092, null, null], ["2026-07-03", 1086, 47475, "https://rootleague.pliskin.dev/match/47475/"]], "Diyana": [["LH02 Final", 1091, null, null], ["2026-07-01", 1085, 47464, "https://rootleague.pliskin.dev/match/47464/"], ["2026-07-01", 1080, 47466, "https://rootleague.pliskin.dev/match/47466/"], ["2026-07-07", 1071, 47489, "https://rootleague.pliskin.dev/match/47489/"], ["2026-07-07", 1064, 47519, "https://rootleague.pliskin.dev/match/47519/"]], "Maladay": [["LH02 Final", 1086, null, null], ["2026-07-03", 1076, 47474, "https://rootleague.pliskin.dev/match/47474/"]], "Nate-inator": [["LH02 Final", 1081, null, null]], "Durian": [["LH02 Final", 1059, null, null]], "Shrimpster": [["LH02 Final", 1052, null, null], ["2026-07-09", 1049, 47548, "https://rootleague.pliskin.dev/match/47548/"]], "blasonmyphemous": [["LH02 Final", 1050, null, null]], "Knightochan": [["LH02 Final", 1044, null, null]], "alex0": [["LH02 Final", 1020, null, null]], "Vak123": [["Start", 1200, null, null], ["2026-07-01", 1182, 47463, "https://rootleague.pliskin.dev/match/47463/"], ["2026-07-03", 1168, 47477, "https://rootleague.pliskin.dev/match/47477/"], ["2026-07-04", 1154, 47483, "https://rootleague.pliskin.dev/match/47483/"], ["2026-07-09", 1219, 47545, "https://rootleague.pliskin.dev/match/47545/"]], "nmyers2": [["Start", 1200, null, null], ["2026-07-03", 1181, 47474, "https://rootleague.pliskin.dev/match/47474/"], ["2026-07-07", 1160, 47517, "https://rootleague.pliskin.dev/match/47517/"]], "cookain": [["Start", 1200, null, null], ["2026-07-03", 1181, 47474, "https://rootleague.pliskin.dev/match/47474/"]], "osche": [["Start", 1200, null, null], ["2026-07-03", 1187, 47476, "https://rootleague.pliskin.dev/match/47476/"], ["2026-07-04", 1161, 47484, "https://rootleague.pliskin.dev/match/47484/"]], "Glasypress": [["Start", 1200, null, null], ["2026-07-03", 1187, 47476, "https://rootleague.pliskin.dev/match/47476/"], ["2026-07-03", 1173, 47477, "https://rootleague.pliskin.dev/match/47477/"], ["2026-07-04", 1148, 47484, "https://rootleague.pliskin.dev/match/47484/"], ["2026-07-05", 1143, 47490, "https://rootleague.pliskin.dev/match/47490/"], ["2026-07-08", 1131, 47521, "https://rootleague.pliskin.dev/match/47521/"], ["2026-07-09", 1116, 47547, "https://rootleague.pliskin.dev/match/47547/"]], "Mazrim": [["Start", 1200, null, null], ["2026-07-03", 1188, 47480, "https://rootleague.pliskin.dev/match/47480/"], ["2026-07-07", 1182, 47516, "https://rootleague.pliskin.dev/match/47516/"], ["2026-07-08", 1166, 47529, "https://rootleague.pliskin.dev/match/47529/"], ["2026-07-09", 1159, 47543, "https://rootleague.pliskin.dev/match/47543/"]], "Salitance": [["Start", 1200, null, null], ["2026-07-04", 1267, 47487, "https://rootleague.pliskin.dev/match/47487/"], ["2026-07-08", 1251, 47531, "https://rootleague.pliskin.dev/match/47531/"], ["2026-07-08", 1238, 47538, "https://rootleague.pliskin.dev/match/47538/"]], "LilSoup": [["Start", 1200, null, null], ["2026-07-05", 1191, 47491, "https://rootleague.pliskin.dev/match/47491/"], ["2026-07-06", 1182, 47497, "https://rootleague.pliskin.dev/match/47497/"]], "elmoo": [["Start", 1200, null, null], ["2026-07-06", 1177, 47499, "https://rootleague.pliskin.dev/match/47499/"]], "maxlovesyou": [["Start", 1200, null, null], ["2026-07-06", 1188, 47503, "https://rootleague.pliskin.dev/match/47503/"]], "Jsn13": [["Start", 1200, null, null], ["2026-07-07", 1168, 47505, "https://rootleague.pliskin.dev/match/47505/"]], "Mopey": [["Start", 1200, null, null], ["2026-07-07", 1171, 47514, "https://rootleague.pliskin.dev/match/47514/"], ["2026-07-08", 1152, 47522, "https://rootleague.pliskin.dev/match/47522/"], ["2026-07-08", 1129, 47524, "https://rootleague.pliskin.dev/match/47524/"], ["2026-07-08", 1117, 47525, "https://rootleague.pliskin.dev/match/47525/"], ["2026-07-08", 1107, 47536, "https://rootleague.pliskin.dev/match/47536/"], ["2026-07-09", 1096, 47544, "https://rootleague.pliskin.dev/match/47544/"], ["2026-07-09", 1069, 47546, "https://rootleague.pliskin.dev/match/47546/"]], "Extortionator": [["Start", 1200, null, null], ["2026-07-07", 1262, 47489, "https://rootleague.pliskin.dev/match/47489/"]], "JointedRumble60": [["Start", 1200, null, null], ["2026-07-08", 1181, 47525, "https://rootleague.pliskin.dev/match/47525/"]], "Joshi69": [["Start", 1200, null, null], ["2026-07-08", 1183, 47526, "https://rootleague.pliskin.dev/match/47526/"]], "GardenLily": [["Start", 1200, null, null], ["2026-07-08", 1274, 47537, "https://rootleague.pliskin.dev/match/47537/"], ["2026-07-09", 1249, 47540, "https://rootleague.pliskin.dev/match/47540/"], ["2026-07-09", 1231, 47541, "https://rootleague.pliskin.dev/match/47541/"]], "Vxdaa": [["Start", 1200, null, null], ["2026-07-09", 1180, 47545, "https://rootleague.pliskin.dev/match/47545/"]]}
-		};
-	</script>
+/* =========================================================================
+   --- 3. TIER MODAL ---
+   ========================================================================= */
 		
-    <script src="static/script.js"></script>
-    
-	<script>
-		if (window.location.pathname.includes('/dev/')) {
-			window.goatcounter = {no_onload: true};
+// Tier Modal		
+document.addEventListener('DOMContentLoaded', function() {
+	const modal = document.getElementById('tierModal');
+	const modalBody = document.getElementById('modalBody');
+	const closeBtn = document.querySelector('.modal-close');
+
+	// Dictionnaire des textes exacts (About)
+	const tierTexts = {
+		'bird': {
+			name: 'Bird',
+			elo: '1500+',
+			subtitle: 'The Grandmasters',
+			desc: 'These elite sovereigns sit at the absolute pinnacle of the Woodland canopy. Remaining on this prestigious throne is a dizzying battle against shifting winds and ambitious rivals. They rule the skies by maintaining flawless execution and unerring control under pressure.'
+		},
+		'fox': {
+			name: 'Fox',
+			elo: '1400+',
+			subtitle: 'The Cunning Tacticians',
+			desc: 'These keen strategists dominate the ladder by thriving on sharp wit over brute force. The hunt presses close from all sides, and a single moment of hesitation can prove fatal. They prevail by measuring every step with care and exploiting weakness with signature flair.'
+		},
+		'rabbit': {
+			name: 'Rabbit',
+			elo: '1300+',
+			subtitle: 'The Agile Contenders',
+			desc: 'These nimble wanderers gracefully weave through the crowded paths of the rankings. Routine strategies falter here, threatening to trap anyone who cannot adapt to sudden chaos. They leap ahead where others see only barriers, turning dead ends into daring escapes.'
+		},
+		'mouse': {
+			name: 'Mouse',
+			elo: '1200+',
+			subtitle: 'The Steady Foragers',
+			desc: 'These resilient souls rise above the casual fray to mark a milestone of mastery. The wild now demands pure stamina, where early momentum easily fades into exhaustion. They hold their ground through quiet consistency, proving that patience outlasts blind luck.'
+		},
+		'squirrel': {
+			name: 'Squirrel',
+			elo: '< 1200',
+			subtitle: 'The Hapless Stragglers',
+			desc: 'These frantic collectors dwell in the tangled undergrowth of the ranking system. Clumsy errors and brutal defeats often force them to fall back while fiercer beasts surge ahead. Yet, they bravely endure by turning every painful lesson into a seed for next season’s harvest.'
+		},
+		'stag': {
+			name: 'Stag',
+			elo: '1600+',
+			subtitle: 'The Legend',
+			desc: 'Has anyone truly seen this mythical beast, or is it only an echo of the wild? What happens to the predator when the woods turn hollow and every path leads back to a mirror of its own perfection? With nothing left to be claimed, is the true crown the silence that follows the chase?'
 		}
-	</script>
-	<script data-goatcounter="https://tricholome.goatcounter.com/count"
-            async src="//gc.zgo.at/count.js"></script>
-</body>
-</html>
+	};
+
+	// On récupère les couleurs et icônes depuis l'objet CONFIG créé dans le HTML
+		const tierColors = CONFIG.colors;
+		const tierIcons = CONFIG.icons;
+
+	window.openTierModal = function(tier) {
+		const text = tierTexts[tier];
+		const color = tierColors[tier] || tierColors['default'];
+		const icon = tierIcons[tier];
+
+		if (!text) return;
+
+		const modalContent = modal.querySelector('.modal-content');
+    	modalContent.style.setProperty('--tier-color', color);
+
+		// On cible les éléments déjà existants dans le HTML
+		const modalTitle = document.getElementById('modalTitle');
+		const modalElo = document.getElementById('modalElo');
+		const modalIcon = document.getElementById('modalIcon');
+		const modalSubtitle = document.getElementById('modalSubtitle');
+		const modalText = document.getElementById('modalText');
+
+		modalTitle.textContent = text.name;
+		
+		modalElo.textContent = text.elo;
+		modalElo.style.color = color;
+		
+		modalIcon.src = icon;
+		
+		modalSubtitle.textContent = text.subtitle;
+		
+		modalText.textContent = text.desc;
+
+		modal.style.display = 'flex';
+		document.body.style.overflow = 'hidden';
+	};
+
+	const closeModal = () => {
+		modal.style.display = 'none';
+		document.body.style.overflowY = 'auto';
+		document.body.style.overflowX = 'hidden';
+		if (window.innerWidth < 1100) {
+			window.scrollTo(window.scrollX, window.scrollY);
+		}
+	};
+	if (closeBtn) closeBtn.onclick = closeModal;
+
+	window.onclick = (event) => { 
+		if (event.target == modal) closeModal(); 
+	};
+});
+
+/* =========================================================================
+   --- 4. DATA TABLES ---
+   ========================================================================= */
+
+$(document).ready(function() {
+
+	// --- 1. LEADERBOARD ---
+	if ($('#leaderboard').length > 0) {
+		const pageName = window.location.pathname.split('/').pop() || '';
+		let showAllPlayers = !pageName.includes('_'); 
+
+		$.extend($.fn.dataTable.ext.type.order, { 
+			"rank-pre": function (d) { return d === "-" ? 9999 : parseInt(d); } 
+		});
+
+		$.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
+			if (settings.nTable.id !== 'leaderboard') return true;
+			if (showAllPlayers) return true; 
+			return data[0].trim() !== "-";
+		});
+
+		$('#leaderboard').DataTable({
+			"order": [[3, "desc"]],
+			"responsive": true, 
+			"pageLength": 50,
+			"dom": '<"top"lf>rt<"bottom"ip><"clear">',
+			"columnDefs": [ 
+				{ "targets": 0, "type": "rank" },
+				{ "targets": 2, "className": "player-name-cell" },
+				{ "targets": 3, "className": "elo-cell" },
+				{ "className": "numeric-cell", "targets": [0, 3, 4, 5, 6, 7, 8] },
+				{ "responsivePriority": 1, "targets": [2, 3] },
+				{ "responsivePriority": 2, "targets": 0 },
+				{ "responsivePriority": 3, "targets": 1 },
+				{ "responsivePriority": 8, "targets": 6 },
+				{ "responsivePriority": 10, "targets": [4, 5, 7, 8] }
+			],
+			"language": { "searchPlaceholder": "Player name" },
+			"initComplete": function(settings, json) {
+				$('.dataTables_length').append(`
+					<label class="dt-checkbox-label">
+						<input type="checkbox" id="tierFilterCheckbox" ${showAllPlayers ? 'checked' : ''}> Show unranked players
+					</label>
+				`);
+			}
+		});
+
+		$(document).on('change', '#tierFilterCheckbox', function() {
+			showAllPlayers = $(this).is(':checked');
+			$('#leaderboard').DataTable().draw();
+		});
+	}
+
+	// --- 2. MATCHES ---
+	if ($('#matchesTable').length > 0) {
+		$('#matchesTable').DataTable({
+			"order": [[1, "desc"]], 
+			"responsive": true,
+			"pageLength": 50,
+			"columnDefs": [
+				{ "className": "rank-cell", "targets": 0 },
+				{ "className": "elo-sum-cell", "targets": 1 },
+				{ "className": "date-cell", "targets": 2 },
+				{ "className": "numeric-cell", "targets": [0, 1, 2, 4] },
+				{ "responsivePriority": 1, "targets": [1, 3] },
+				{ "responsivePriority": 2, "targets": [0, 2] },
+				{ "responsivePriority": 3, "targets": 4 }
+			],
+			"language": {
+				"searchPlaceholder": "Player name, Game ID..."
+			}
+		});
+	}
+
+    // --- 3. HALL OF FAME ---
+	if ($('#hall_of_fame').length > 0) {
+		$('#hall_of_fame').DataTable({
+			"responsive": true,
+			"ordering": false,
+			"paging": false,
+			"searching": false,
+			"info": false,
+			"dom": 'rt',
+			"columnDefs": [
+				{ "targets": 0, "className": "rank-cell" },
+				{ "targets": 1, "className": "player-name-cell" },
+				{ "targets": 2, "className": "streak-cell" },
+				{ "targets": 3, "className": "elo-cell" },
+				{ "targets": 4, "className": "date-cell" },
+				{ "className": "numeric-cell", "targets": [2, 3, 4] },
+				{ "responsivePriority": 1, "targets": [0, 1] },
+				{ "responsivePriority": 2, "targets": [2, 3] },
+				{ "responsivePriority": 3, "targets": 4 },
+			]
+		});
+	}
+	
+	// --- 4. VISITOR TABLE ---
+	if ($('#visitor_table').length > 0) {
+		$('#visitor_table').DataTable({
+			"responsive": true,
+			"ordering": false,
+			"paging": false,
+			"searching": false,
+			"info": false,
+			"dom": 'rt',
+			"columnDefs": [
+				{ "targets": 0, "className": "rank-cell" },
+			]
+		});
+	}
+	
+	// --- 5. GLOBAL FIX FOR ORIENTATION & RESIZE ---
+    window.addEventListener('resize', () => {
+        $('.dataTable').each(function() {
+            if ($.fn.dataTable.isDataTable(this)) {
+                $(this).DataTable()
+                    .columns.adjust()
+                    .responsive.recalc();
+            }
+        });
+    });
+
+});
+
+/* =========================================================================
+   --- 5. CHART (TRENDS) ---
+   ========================================================================= */
+
+let myChart;
+
+function updateChart() {
+    const input = document.getElementById('playerName');
+    const canvas = document.getElementById('progressionChart');
+    if (!input || !canvas) return;
+
+    const name = input.value;
+    const allData = CONFIG.chartData;
+
+    if (name === "" || !allData[name]) {
+        if (myChart) myChart.destroy();
+        localStorage.removeItem('selectedPlayer');
+        return;
+    }
+
+    const ctx = canvas.getContext('2d');
+    const rabbitColor = getComputedStyle(document.documentElement).getPropertyValue('--color-rabbit').trim() || '#E0B634';
+    
+    if (typeof allData !== 'undefined' && allData[name]) {
+        localStorage.setItem('selectedPlayer', name);
+
+        const rawData = allData[name];
+        const labels = rawData.map(d => {
+            const dateObj = new Date(d[0]);
+            return !isNaN(dateObj.getTime()) 
+                ? dateObj.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) 
+                : d[0];
+        });
+        const eloScores = rawData.map(d => d[1]);
+
+        if (myChart) myChart.destroy();
+        
+        let lastClickTime = 0;
+		let lastClickedIndex = -1;
+
+		myChart = new Chart(ctx, {
+			type: 'line',
+			data: {
+				labels: labels,
+				datasets: [{
+					data: eloScores,
+					borderColor: rabbitColor,
+					backgroundColor: rabbitColor + '22',
+					borderWidth: 3,
+					fill: true,
+					tension: 0.3,
+					pointRadius: 3,
+					pointBackgroundColor: rabbitColor,
+					pointHitRadius: 20
+				}]
+			},
+			options: {
+				responsive: true,
+				maintainAspectRatio: false,
+				onClick: (e, elements) => {
+					if (elements.length > 0) {
+						const index = elements[0].index;
+						const matchUrl = rawData[index][3];
+						
+						if (matchUrl) {
+							if (e.native.pointerType === 'touch') {
+								const currentTime = Date.now();
+								const timeDiff = currentTime - lastClickTime;
+								
+								if (index === lastClickedIndex && timeDiff < 400) {
+									window.open(matchUrl, '_blank');
+									lastClickedIndex = -1;
+								} else {
+									lastClickedIndex = index;
+								}
+								lastClickTime = currentTime;
+							} else {
+								window.open(matchUrl, '_blank');
+							}
+						}
+					}
+				},
+				onHover: (e, elements) => {
+					e.native.target.style.cursor = elements.length > 0 ? 'pointer' : 'default';
+				},
+				plugins: {
+					legend: { display: false },
+					tooltip: { 
+						enabled: true, 
+						backgroundColor: '#222', 
+						titleColor: rabbitColor,
+						callbacks: {
+							footer: (tooltipItems) => {
+								const index = tooltipItems[0].dataIndex;
+								const matchUrl = rawData[index][3];
+								
+								if (matchUrl) {
+									const isTouch = window.matchMedia('(pointer: coarse)').matches;
+									return isTouch ? 'Double-tap for game details' : 'Click for game details';
+								}
+								return '';
+							}
+						},
+						footerColor: '#aaa',
+						footerFont: { size: 11, weight: 'normal' },
+						footerSpacing: 4,
+						marginSpacing: 6
+					}
+				},
+				scales: {
+					y: { grid: { color: '#252525' }, ticks: { color: '#888' } },
+					x: { grid: { display: false }, ticks: { color: '#888', maxTicksLimit: 6 } }
+				}
+			}
+		});
+    }
+}
+
+$(document).ready(function() {
+    if ($('#progressionChart').length > 0) {
+        const input = document.getElementById('playerName');
+        const savedPlayer = localStorage.getItem('selectedPlayer');
+
+        if (savedPlayer && CONFIG.chartData[savedPlayer]) {
+            input.value = savedPlayer;
+            updateChart();
+        }
+    }
+});
+
+
+/* =========================================================================
+   --- 6. DYNAMIC TRENDS REDIRECTION ---
+   ========================================================================= */
+
+// Double-clic sur une cellule de nom de joueur
+$(document).on('dblclick', '.player-name-cell', function() {
+    const playerName = $(this).text().trim();
+    
+    if (playerName) {
+        // 1. On stocke le joueur uniquement pour la page Trends
+        localStorage.setItem('selectedPlayer', playerName);
+        
+        // 2. Routage dynamique universel selon la saison (ex: index_lh01.html -> trends_lh01.html)
+        let trendsPage = 'trends.html';
+        const pageName = window.location.pathname.split('/').pop() || '';
+        
+        if (pageName.includes('_')) {
+            const seasonSuffix = pageName.substring(pageName.indexOf('_') + 1).replace(/\.html$/i, '');
+            trendsPage = `trends_${seasonSuffix}.html`;
+        }
+        
+        // 3. Redirection directe vers le graphique de tendances
+        window.location.href = `${trendsPage}#progressionChart`;
+    }
+});
+
+/* =========================================================================
+   --- 7. NARRATIVE JOURNEY RELATIONS TREE ---
+   ========================================================================= */
+
+function getRelationsIconHtml(tier) {
+    if (!tier || tier === 'unranked' || typeof CONFIG === 'undefined' || !CONFIG.icons || !CONFIG.icons[tier]) return '';
+    const iconUrl = CONFIG.icons[tier];
+    return `<img src="${iconUrl}" class="tier-icon" alt="${tier}">`;
+}
+
+function getRandomVariation(array) {
+    if (!array || array.length === 0) return "";
+    return array[Math.floor(Math.random() * array.length)];
+}
+
+window.updateRelationsTree = function(playerName) {
+    const relationsWrapper = document.querySelector('.relations-wrapper');
+    
+    if (!window.relationsData) {
+        if (relationsWrapper) relationsWrapper.style.display = 'none';
+        return;
+    }
+    
+    const data = window.relationsData[playerName];
+    const vars = window.NARRATIVE_VARIATIONS;
+    
+    if (!data || !data.unique_opponents || data.unique_opponents === 0) {
+        if (relationsWrapper) relationsWrapper.style.display = 'none';
+        return; 
+    }
+    
+    if (relationsWrapper) relationsWrapper.style.display = 'block';
+    
+    document.getElementById('centerPlayerName').innerText = playerName;
+    
+    const introEl = document.getElementById('centerPlayerIntro');
+    const metaEl = document.getElementById('centerPlayerMeta');
+    const formattedCount = `<span class="opponents-count">${data.unique_opponents}</span>`;
+    
+    if (vars && vars.center && vars.opponents) {
+        const centerIntro = getRandomVariation(vars.center);
+        const opponentPhrase = getRandomVariation(vars.opponents).replace('{count}', formattedCount);
+        
+        if (introEl) introEl.innerHTML = centerIntro ? `<div class="narrative-text">${centerIntro}</div>` : '';
+        if (metaEl) metaEl.innerHTML = opponentPhrase ? `<div class="narrative-text">${opponentPhrase}</div>` : '';
+    } else {
+        if (introEl) introEl.innerHTML = "";
+        if (metaEl) metaEl.innerHTML = "";
+    }
+    
+    // Logique du nœud Trophy (cible uniquement .node-content)
+    const nodeTrophy = document.getElementById('nodeTrophy');
+    if (nodeTrophy) {
+        const target = nodeTrophy.querySelector('.node-content') || nodeTrophy;
+        
+        if (data.trophy && data.trophy.name) {
+            const trophyIcon = data.trophy.tier ? getRelationsIconHtml(data.trophy.tier) : "";
+            const eloColor = data.trophy.tier ? `var(--color-${data.trophy.tier})` : 'var(--text-main)';
+            const trophyText = (vars && vars.trophy) ? getRandomVariation(vars.trophy) : "";
+            
+            target.innerHTML = `
+                ${trophyText ? `<div class="narrative-text">${trophyText}</div>` : ''}
+                <div id="textTrophy" class="node-content-flex">
+                    ${trophyIcon ? `<div class="node-icon-side">${trophyIcon}</div>` : ''}
+                    <div class="node-text-side">
+                        <div class="player-name">${data.trophy.name}</div>
+                        <div class="player-meta" style="color: ${eloColor};">Elo ${data.trophy.elo}</div>
+                    </div>
+                </div>
+            `;
+            nodeTrophy.setAttribute('data-player', data.trophy.name);
+        } else {
+            const trophyEmptyText = (vars && vars.trophy_empty) ? getRandomVariation(vars.trophy_empty) : "";
+            target.innerHTML = `
+                <div id="textTrophy">
+                    ${trophyEmptyText ? `<div class="narrative-text">${trophyEmptyText}</div>` : ''}
+                </div>
+            `;
+            nodeTrophy.setAttribute('data-player', '');
+        }
+    }
+    
+    // Logique du nœud Bane (cible uniquement .node-content)
+    const nodeBane = document.getElementById('nodeBane');
+    if (nodeBane) {
+        const target = nodeBane.querySelector('.node-content') || nodeBane;
+        
+        if (data.bane && data.bane.name) {
+            const baneIcon = data.bane.tier ? getRelationsIconHtml(data.bane.tier) : "";
+            const eloColor = data.bane.tier ? `var(--color-${data.bane.tier})` : 'var(--text-main)';
+            const baneText = (vars && vars.bane) ? getRandomVariation(vars.bane) : "";
+            
+            target.innerHTML = `
+                ${baneText ? `<div class="narrative-text">${baneText}</div>` : ''}
+                <div id="textBane" class="node-content-flex">
+                    ${baneIcon ? `<div class="node-icon-side">${baneIcon}</div>` : ''}
+                    <div class="node-text-side">
+                        <div class="player-name">${data.bane.name}</div>
+                        <div class="player-meta" style="color: ${eloColor};">Elo ${data.bane.elo}</div>
+                    </div>
+                </div>
+            `;
+            nodeBane.setAttribute('data-player', data.bane.name);
+        } else {
+            const baneEmptyText = (vars && vars.bane_empty) ? getRandomVariation(vars.bane_empty) : "";
+            target.innerHTML = `
+                <div id="textBane">
+                    ${baneEmptyText ? `<div class="narrative-text">${baneEmptyText}</div>` : ''}
+                </div>
+            `;
+            nodeBane.setAttribute('data-player', '');
+        }
+    }
+};
+
+window.selectPlayerFromTree = function(element) {
+    const clickedName = element.getAttribute('data-player');
+    if (clickedName) {
+        const input = document.getElementById('playerName');
+        input.value = clickedName;
+        window.updateRelationsTree(clickedName);
+        input.dispatchEvent(new Event('input')); 
+    }
+};
+
+window.updatePlayerView = function() {
+    const input = document.getElementById('playerName');
+    const currentPlayer = input ? input.value.trim() : "";
+    
+    const chartWrapper = document.querySelector('.chart-wrapper');
+    const relationsWrapper = document.querySelector('.relations-wrapper');
+
+    if (currentPlayer) {
+        if (chartWrapper) chartWrapper.style.display = 'block';
+        if (relationsWrapper) relationsWrapper.style.display = 'block';
+        window.updateRelationsTree(currentPlayer);
+    } else {
+        if (chartWrapper) chartWrapper.style.display = 'none';
+        if (relationsWrapper) relationsWrapper.style.display = 'none';
+        
+        const centerName = document.getElementById('centerPlayerName');
+        const centerIntro = document.getElementById('centerPlayerIntro');
+        const centerMeta = document.getElementById('centerPlayerMeta');
+        
+        if (centerName) centerName.innerText = 'Select a player';
+        if (centerIntro) centerIntro.innerHTML = '';
+        if (centerMeta) centerMeta.innerHTML = '';
+
+        const nodeTrophy = document.getElementById('nodeTrophy');
+        if (nodeTrophy) {
+            const target = nodeTrophy.querySelector('.node-content') || nodeTrophy;
+            target.innerHTML = `
+                <div id="textTrophy">
+                    <div class="player-name">...</div>
+                </div>
+            `;
+            nodeTrophy.setAttribute('data-player', '');
+        }
+
+        const nodeBane = document.getElementById('nodeBane');
+        if (nodeBane) {
+            const target = nodeBane.querySelector('.node-content') || nodeBane;
+            target.innerHTML = `
+                <div id="textBane">
+                    <div class="player-name">...</div>
+                </div>
+            `;
+            nodeBane.setAttribute('data-player', '');
+        }
+    }
+};
+
+$(document).ready(function() {
+    const input = document.getElementById('playerName');
+    const savedPlayer = localStorage.getItem('selectedPlayer');
+    
+    if (input && input.value.trim()) {
+        window.updatePlayerView();
+    } 
+    else if (savedPlayer) {
+        if (input) input.value = savedPlayer;
+        window.updatePlayerView();
+    }
+    else {
+        window.updatePlayerView();
+    }
+});
+
+/* =========================================================================
+   --- 8. GLOBAL PLAYER SEARCH & PERSISTENCE SYNC ---
+   ========================================================================= */
+
+$(document).ready(function() {
+    // 1. RÉCUPÉRER TOUS LES JOUEURS POUR LA LISTE DÉROULANTE (DATALIST)
+    let playersSet = new Set();
+    
+    // A. Depuis les données des graphiques ou de l'arbre si présents
+    if (typeof CONFIG !== 'undefined' && CONFIG.chartData) {
+        Object.keys(CONFIG.chartData).forEach(p => playersSet.add(p));
+    } else if (window.relationsData) {
+        Object.keys(window.relationsData).forEach(p => playersSet.add(p));
+    }
+
+    // B. Depuis les tableaux DataTables présents sur la page (Leaderboard / Matches)
+    $('.dataTable').each(function() {
+        if ($.fn.dataTable.isDataTable(this)) {
+            let table = $(this).DataTable();
+            table.cells('.player-name-cell').data().each(function(val) {
+                let temp = document.createElement('div');
+                temp.innerHTML = val;
+                let cleanName = temp.textContent.trim();
+                if (cleanName && cleanName !== "-") playersSet.add(cleanName);
+            });
+        }
+    });
+
+    // 2. CRÉER ET INJECTER LE DATALIST HTML
+    if (playersSet.size > 0 && !document.getElementById('playerAutocompleteList')) {
+        let datalist = document.createElement('datalist');
+        datalist.id = 'playerAutocompleteList';
+        Array.from(playersSet).sort().forEach(p => {
+            let opt = document.createElement('option');
+            opt.value = p;
+            datalist.appendChild(opt);
+        });
+        document.body.appendChild(datalist);
+    }
+
+    // 3. MOTEUR DE SYNCHRONISATION (Met à jour toutes les vues selon le nom)
+    function applySearchToEverything(val) {
+        // A. Filtre tous les tableaux DataTables
+        $('.dataTable').each(function() {
+            if ($.fn.dataTable.isDataTable(this)) {
+                let table = $(this).DataTable();
+                if (table.search() !== val) {
+                    table.search(val).draw(false);
+                    $('#' + $(this).attr('id') + '_filter input').val(val);
+                }
+            }
+        });
+        // B. Met à jour l'input spécifique (Trends/Journey)
+        let customInput = document.getElementById('playerName');
+        if (customInput && customInput.value !== val) {
+            customInput.value = val;
+        }
+        // C. Met à jour les visuels (Graphique et Arbre)
+        if (typeof window.updateChart === 'function' && document.getElementById('progressionChart')) {
+            window.updateChart();
+        }
+        if (typeof window.updatePlayerView === 'function' && document.getElementById('centerPlayerName')) {
+            window.updatePlayerView();
+        }
+    }
+
+    // 4. ÉCOUTER LES FRAPPES AU CLAVIER SUR TOUS LES INPUTS
+    // Sur l'input Trends/Journey
+    $(document).on('input', '#playerName', function() {
+        let val = $(this).val().trim();
+        localStorage.setItem('selectedPlayer', val);
+        applySearchToEverything(val);
+    });
+
+    // Sur les inputs natifs générés par DataTables (Leaderboard/Matches)
+    $(document).on('input', '.dataTables_filter input', function() {
+        let val = $(this).val().trim();
+        localStorage.setItem('selectedPlayer', val);
+        applySearchToEverything(val);
+    });
+
+    // 5. INITIALISATION DES TABLEAUX : ATTACHER LE DATALIST & RESTAURER LA SESSION
+    $(document).on('init.dt', function(e, settings) {
+        let api = new $.fn.dataTable.Api(settings);
+        let $searchInput = $(api.table().container()).find('.dataTables_filter input');
+        
+        // Attache la liste déroulante à la barre de recherche du tableau
+        $searchInput.attr('list', 'playerAutocompleteList');
+        
+        // Restaure le joueur sauvegardé
+        let savedPlayer = localStorage.getItem('selectedPlayer');
+        if (savedPlayer) {
+            $searchInput.val(savedPlayer);
+            api.search(savedPlayer).draw(false);
+        }
+    });
+
+    // 6. RESTAURATION POUR LES PAGES SANS TABLEAU (Ex: Trends pur)
+    let savedPlayer = localStorage.getItem('selectedPlayer');
+    if (savedPlayer) {
+        let customInput = document.getElementById('playerName');
+        if (customInput) {
+            customInput.value = savedPlayer;
+            // On ajoute un mini-délai pour que les graphiques aient le temps de se monter
+            setTimeout(() => applySearchToEverything(savedPlayer), 50);
+        }
+    }
+});
+
+
+/* =========================================================================
+   --- 11. SECRETS ENGINE ---
+   ========================================================================= */
+
+document.addEventListener('DOMContentLoaded', () => {
+    const body = document.body;
+	
+    // --- 0. FINAL COMPLETION ---
+    function checkFinalCompletion() {
+        const required = ['watcher-found', 'nut-found', 'berry-found', 'ciphers-found', 'warden-found'];
+        const allFound = required.every(key => localStorage.getItem(key) === 'true');
+
+        if (allFound) {
+            body.classList.add('secrets-ended');
+            localStorage.setItem('secrets-ended', 'true');
+        }
+    }
+	
+	// --- 1. MYSTIC TRANSITION ---
+	function triggerMysticTransition(callback) {
+		const gate = document.getElementById('mystic-gate');
+		$(gate).fadeIn(600, function() {
+			if (callback) callback();
+			$(gate).fadeOut(1000);
+		});
+	}
+
+    // --- 2. PERSISTENCE CHECK ---
+    const isEnded = localStorage.getItem('secrets-ended') === 'true';
+    const isWatcherFound = localStorage.getItem('watcher-found') === 'true';
+    const isNutFound = localStorage.getItem('nut-found') === 'true';
+    const isBerryFound = localStorage.getItem('berry-found') === 'true';
+    const isCiphersFound = localStorage.getItem('ciphers-found') === 'true';
+	const isWardenFound = localStorage.getItem('warden-found') === 'true';
+    const isHofUnlocked = localStorage.getItem('hof-unlocked') === 'true';
+
+    // Specific states
+    if (isWatcherFound) body.classList.add('watcher-found');
+    if (isNutFound) body.classList.add('nut-found');
+    if (isBerryFound) body.classList.add('berry-found');
+    if (isCiphersFound) {
+        body.classList.add('ciphers-found');
+        updateMysticUI();
+    }
+	if (isWardenFound) body.classList.add('warden-found');
+    
+    // Final state
+    if (isEnded) body.classList.add('secrets-ended');
+    if (isHofUnlocked) body.classList.add('hof-unlocked');
+
+    // --- 3. UI TRANSFORMATION FUNCTION ---
+    function updateMysticUI() {
+        if (body.getAttribute('data-page') === 'cache') {
+            const intro = document.querySelector('.page-intro');
+            if (intro) {
+                const titleEl = intro.querySelector('h2');
+                const descEl = intro.querySelector('p');
+                if (titleEl) titleEl.textContent = "Glade of Fame";
+                if (descEl) descEl.textContent = "Silent roots remember every crown.";
+            }
+            document.title = "Glade of Fame • Rootelo";
+        }
+
+        const navSecretLink = document.querySelector('.nav-secret');
+        if (navSecretLink) {
+            navSecretLink.textContent = 'Glade of Fame';
+        }
+    }
+	
+    // --- 4. THE WATCHER SECRET ---
+    const watcherBtn = document.getElementById('watcher-secret');
+    if (watcherBtn) {
+        watcherBtn.addEventListener('click', () => {
+            body.classList.add('watcher-found');
+            localStorage.setItem('watcher-found', 'true');
+            checkFinalCompletion();
+            window.dispatchEvent(new Event('scroll'));
+        });
+    }
+
+    // --- 5. THE NUT SECRET ---
+    if (window.location.hash === '#nut-section') {
+        const nutSection = document.getElementById('nut-section');
+        if (nutSection) nutSection.style.display = 'block';
+    }
+
+    const nutBtn = document.getElementById('nut-secret');
+    if (nutBtn) {
+        nutBtn.addEventListener('click', () => {
+            body.classList.add('nut-found');
+            localStorage.setItem('nut-found', 'true');
+			nutBtn.removeAttribute('onclick');
+            checkFinalCompletion();
+        });
+    }
+	
+    // --- 6. THE BERRY SECRET ---
+    if (window.location.hash === '#berry-section') {
+        const berrySection = document.getElementById('berry-section');
+        if (berrySection) berrySection.style.display = 'block';
+    }
+
+    const berryBtn = document.getElementById('berry-secret');
+    if (berryBtn) {
+        berryBtn.addEventListener('click', () => {
+            body.classList.add('berry-found');
+            localStorage.setItem('berry-found', 'true');
+			berryBtn.removeAttribute('onclick');
+            checkFinalCompletion();
+        });
+    }
+
+    // --- 7. THE CIPHER SEQUENCE ---
+    const secretSequence = ['silent', 'roots', 'remember', 'every', 'crown'];
+    let userProgress = [];
+    let isResetting = false;
+
+    document.querySelectorAll('.cipher').forEach(el => {
+        el.addEventListener('click', () => {
+            const isAlreadySolved = body.classList.contains('ciphers-found');
+            
+            if (isAlreadySolved || isResetting) return;
+
+            el.classList.add('active-cipher');
+            const word = el.getAttribute('data-word');
+            
+            if (word === secretSequence[userProgress.length]) {
+                userProgress.push(word);
+
+                if (userProgress.length === secretSequence.length) {
+                    triggerMysticTransition(() => {
+                        body.classList.add('ciphers-found');
+                        localStorage.setItem('ciphers-found', 'true');
+                        updateMysticUI();
+                        checkFinalCompletion();
+                    });
+                }
+            } else {
+                isResetting = true; 
+
+                setTimeout(() => {
+                    document.querySelectorAll('.cipher').forEach(c => {
+                        if (c.classList.contains('active-cipher')) c.classList.add('cipher-blink');
+                    });
+                    
+                    setTimeout(() => {
+                        userProgress = [];
+                        document.querySelectorAll('.cipher').forEach(c => {
+                            c.classList.remove('active-cipher', 'cipher-blink');
+                        });
+                        isResetting = false; 
+                    }, 500);
+                }, 800);
+            }
+        });
+    });
+	
+	// --- 8. THE WARDEN SECRET ---
+    const wardenBtn = document.getElementById('warden-secret');
+    if (wardenBtn) {
+        wardenBtn.addEventListener('click', () => {
+            body.classList.add('warden-found');
+            localStorage.setItem('warden-found', 'true');
+            checkFinalCompletion();
+            requestAnimationFrame(() => {
+                window.scrollTo({
+                    top: document.body.scrollHeight,
+                    behavior: 'smooth'
+                });
+            });
+        });
+    }
+	
+    // --- 9. HALL OF FAME FINAL UNLOCK ---
+    const hofBtn = document.getElementById('hof-access');
+	if (hofBtn) {
+		hofBtn.addEventListener('click', () => {
+			if (localStorage.getItem('secrets-ended') !== 'true') return;
+
+			body.classList.add('hof-unlocked');
+			localStorage.setItem('hof-unlocked', 'true');
+
+			setTimeout(() => {
+				if ($.fn.dataTable.isDataTable('#hall_of_fame')) {
+					$('#hall_of_fame').DataTable()
+						.columns.adjust()
+						.responsive.recalc();
+				}
+			}, 50);
+		});
+	}
+
+    // --- 10. THE EXIT DOOR ---
+	const leaveBtn = document.querySelector('#leave-secrets');
+	if (leaveBtn) {
+		leaveBtn.addEventListener('click', (e) => {
+			e.preventDefault(); 
+			
+			triggerMysticTransition(() => {
+				localStorage.clear();
+				document.body.className = ''; 
+				window.location.href = 'index.html'; 
+			});
+		});
+	}
+});
+
+/* =========================================================================
+   --- 12. NUT & BERRY ---
+   ========================================================================= */
+
+function handleTierClick(event, tier) {
+    const isNutFound = localStorage.getItem('nut-found') === 'true';
+    const isBerryFound = localStorage.getItem('berry-found') === 'true';
+
+    if (tier === 'squirrel' && !isNutFound) {
+        window.location.href = 'cache.html#nut-section';
+    } 
+    else if (tier === 'stag' && !isBerryFound) {
+        window.location.href = 'cache.html#berry-section';
+    } 
+    else {
+        if (typeof openTierModal === "function") {
+            openTierModal(tier);
+        }
+    }
+}
+
+/* =========================================================================
+   --- 13. VISITOR RECOGNITION ---
+   ========================================================================= */
+
+const btnEngrave = document.getElementById('btn-engrave');
+const inputZone = document.getElementById('input-zone');
+const btnConfirm = document.getElementById('btn-confirm');
+
+window.addEventListener('DOMContentLoaded', () => {
+    const savedName = localStorage.getItem('visitor_name');
+    const savedDate = localStorage.getItem('discovery_date');
+    if (savedName && savedDate) {
+        showVisitorRow(savedName, savedDate);
+    }
+});
+
+// 1. Bouton Engrave
+if (btnEngrave && inputZone) {
+    btnEngrave.addEventListener('click', () => {
+        btnEngrave.style.display = 'none';
+        inputZone.style.display = 'block';
+    });
+}
+
+// 2. Confirmation
+if (btnConfirm) {
+    btnConfirm.addEventListener('click', () => {
+        const nameInput = document.getElementById('visitor-name');
+        const name = nameInput ? nameInput.value.trim() : ""; 
+
+        if (name === "") return;
+
+        const date = new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
+        
+        showVisitorRow(name, date);
+
+        localStorage.setItem('visitor_name', name);
+        localStorage.setItem('discovery_date', date);
+    });
+}
+
+function showVisitorRow(name, date) {
+    const visitorTable = document.getElementById('visitor_table');
+    if (visitorTable) {
+        visitorTable.querySelector('.visitor-name').textContent = name;
+        visitorTable.querySelector('.visitor-date').textContent = date;
+        visitorTable.style.setProperty('display', 'table', 'important');
+        
+        setTimeout(() => {
+            if ($.fn.dataTable.isDataTable('#visitor_table')) {
+                $('#visitor_table').DataTable().columns.adjust();
+            }
+        }, 10);
+    }
+
+    const recognitionZone = document.getElementById('visitor-recognition');
+    if (recognitionZone) recognitionZone.style.display = 'none';
+}
