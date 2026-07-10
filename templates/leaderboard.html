@@ -2,6 +2,10 @@
 {% extends "base.html" %}
 
 {% block content %}
+	<div class="unranked-toggle-container">
+		<input type="checkbox" id="tierFilterCheckbox">
+		<label for="tierFilterCheckbox">Show unranked players</label>
+	</div>
 	<table id="leaderboard" class="display nowrap" style="width:100%">
         <thead>
             <tr>
