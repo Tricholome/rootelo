@@ -258,15 +258,7 @@ $(document).ready(function() {
 				{ "responsivePriority": 3, "targets": 1 },
 				{ "responsivePriority": 8, "targets": 6 },
 				{ "responsivePriority": 10, "targets": [4, 5, 7, 8] }
-			],
-			"language": { "searchPlaceholder": "Player name" },
-			"initComplete": function(settings, json) {
-				$('.dataTables_length').append(`
-					<label class="dt-checkbox-label">
-						<input type="checkbox" id="tierFilterCheckbox" ${showAllPlayers ? 'checked' : ''}> Show unranked players
-					</label>
-				`);
-			}
+			]
 		});
 
 		$(document).on('change', '#tierFilterCheckbox', function() {
@@ -290,10 +282,7 @@ $(document).ready(function() {
 				{ "responsivePriority": 1, "targets": [1, 3] },
 				{ "responsivePriority": 2, "targets": [0, 2] },
 				{ "responsivePriority": 3, "targets": 4 }
-			],
-			"language": {
-				"searchPlaceholder": "Player name, Game ID..."
-			}
+			]
 		});
 	}
 
@@ -692,17 +681,25 @@ $(document).ready(function() {
     function applyGlobalSearch(val) {
         const query = (val || "").trim();
 
-        // [NOUVEAU] Synchronisation de la case "Show unranked players"
+        // Gestion de la checkbox "Show unranked players" du Leaderboard
         const checkbox = $('#tierFilterCheckbox');
         if (checkbox.length > 0) {
-            const shouldBeChecked = (query !== "");
-            // Si l'état actuel de la checkbox ne correspond pas à ce qu'on veut, on le change
-            if (checkbox.is(':checked') !== shouldBeChecked) {
-                checkbox.prop('checked', shouldBeChecked).trigger('change');
+            // Si on effectue une recherche, on force l'activation pour trouver les unranked
+            if (query !== "" && !checkbox.is(':checked')) {
+                checkbox.prop('checked', true).trigger('change');
+            } 
+            // Si on vide la recherche, on rétablit la préférence par défaut de la page (Saison vs Archive)
+            else if (query === "") {
+                const pageName = window.location.pathname.split('/').pop() || '';
+                const defaultStateForPage = !pageName.includes('_'); // True si saison LIVE, False si archive
+                
+                if (checkbox.is(':checked') !== defaultStateForPage) {
+                    checkbox.prop('checked', defaultStateForPage).trigger('change');
+                }
             }
         }
 
-        // Persistance intelligente : on ne sauvegarde QUE si le joueur existe réellement dans la BDD
+        // Persistance intelligente dans le localStorage
         if (validPlayers.includes(query)) {
             localStorage.setItem('selectedPlayer', query);
         } else if (query === "") {
@@ -727,7 +724,7 @@ $(document).ready(function() {
         }
     }
 
-    // 3. Écouteur principal sur la barre de recherche globale (gère la saisie ET le clic sur la croix "x")
+    // 3. Écouteur principal sur la barre de recherche globale
     input.addEventListener('input', function() {
         applyGlobalSearch(this.value);
     });
