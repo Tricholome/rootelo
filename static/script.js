@@ -697,59 +697,40 @@ $(document).ready(function() {
    ========================================================================= */
 
 $(document).ready(function() {
-    // 1. RÉCUPÉRER TOUS LES JOUEURS POUR LA LISTE DÉROULANTE (DATALIST)
-    let playersSet = new Set();
-    
-    // A. Depuis les données des graphiques ou de l'arbre si présents
+    const input = document.getElementById('playerName');
+    if (!input) return;
+
+    // 1. Génération de la liste déroulante (datalist)
+    // On extrait les joueurs à partir de la source de données disponible sur la page
+    let players = [];
     if (typeof CONFIG !== 'undefined' && CONFIG.chartData) {
-        Object.keys(CONFIG.chartData).forEach(p => playersSet.add(p));
+        players = Object.keys(CONFIG.chartData);
     } else if (window.relationsData) {
-        Object.keys(window.relationsData).forEach(p => playersSet.add(p));
+        players = Object.keys(window.relationsData);
     }
 
-    // B. Depuis les tableaux DataTables présents sur la page (Leaderboard / Matches)
-    $('.dataTable').each(function() {
-        if ($.fn.dataTable.isDataTable(this)) {
-            let table = $(this).DataTable();
-            table.cells('.player-name-cell').data().each(function(val) {
-                let temp = document.createElement('div');
-                temp.innerHTML = val;
-                let cleanName = temp.textContent.trim();
-                if (cleanName && cleanName !== "-") playersSet.add(cleanName);
-            });
-        }
-    });
-
-    // 2. CRÉER ET INJECTER LE DATALIST HTML
-    if (playersSet.size > 0 && !document.getElementById('playerAutocompleteList')) {
-        let datalist = document.createElement('datalist');
+    if (players.length > 0) {
+        const datalist = document.createElement('datalist');
         datalist.id = 'playerAutocompleteList';
-        Array.from(playersSet).sort().forEach(p => {
-            let opt = document.createElement('option');
+        players.sort().forEach(p => {
+            const opt = document.createElement('option');
             opt.value = p;
             datalist.appendChild(opt);
         });
         document.body.appendChild(datalist);
+        input.setAttribute('list', 'playerAutocompleteList');
     }
 
-    // 3. MOTEUR DE SYNCHRONISATION (Met à jour toutes les vues selon le nom)
-    function applySearchToEverything(val) {
-        // A. Filtre tous les tableaux DataTables
+    // 2. Fonction unique d'application du filtre
+    function applyGlobalSearch(val) {
+        // Applique la recherche sur le tableau de la page (si présent)
         $('.dataTable').each(function() {
             if ($.fn.dataTable.isDataTable(this)) {
-                let table = $(this).DataTable();
-                if (table.search() !== val) {
-                    table.search(val).draw(false);
-                    $('#' + $(this).attr('id') + '_filter input').val(val);
-                }
+                $(this).DataTable().search(val).draw();
             }
         });
-        // B. Met à jour l'input spécifique (Trends/Journey)
-        let customInput = document.getElementById('playerName');
-        if (customInput && customInput.value !== val) {
-            customInput.value = val;
-        }
-        // C. Met à jour les visuels (Graphique et Arbre)
+
+        // Déclenche la mise à jour des graphiques/arbres (si présents)
         if (typeof window.updateChart === 'function' && document.getElementById('progressionChart')) {
             window.updateChart();
         }
@@ -758,46 +739,19 @@ $(document).ready(function() {
         }
     }
 
-    // 4. ÉCOUTER LES FRAPPES AU CLAVIER SUR TOUS LES INPUTS
-    // Sur l'input Trends/Journey
-    $(document).on('input', '#playerName', function() {
-        let val = $(this).val().trim();
+    // 3. Écouteur sur l'input unique
+    input.addEventListener('input', function() {
+        const val = this.value.trim();
         localStorage.setItem('selectedPlayer', val);
-        applySearchToEverything(val);
+        applyGlobalSearch(val);
     });
 
-    // Sur les inputs natifs générés par DataTables (Leaderboard/Matches)
-    $(document).on('input', '.dataTables_filter input', function() {
-        let val = $(this).val().trim();
-        localStorage.setItem('selectedPlayer', val);
-        applySearchToEverything(val);
-    });
-
-    // 5. INITIALISATION DES TABLEAUX : ATTACHER LE DATALIST & RESTAURER LA SESSION
-    $(document).on('init.dt', function(e, settings) {
-        let api = new $.fn.dataTable.Api(settings);
-        let $searchInput = $(api.table().container()).find('.dataTables_filter input');
-        
-        // Attache la liste déroulante à la barre de recherche du tableau
-        $searchInput.attr('list', 'playerAutocompleteList');
-        
-        // Restaure le joueur sauvegardé
-        let savedPlayer = localStorage.getItem('selectedPlayer');
-        if (savedPlayer) {
-            $searchInput.val(savedPlayer);
-            api.search(savedPlayer).draw(false);
-        }
-    });
-
-    // 6. RESTAURATION POUR LES PAGES SANS TABLEAU (Ex: Trends pur)
-    let savedPlayer = localStorage.getItem('selectedPlayer');
+    // 4. Persistance au chargement de la page
+    const savedPlayer = localStorage.getItem('selectedPlayer');
     if (savedPlayer) {
-        let customInput = document.getElementById('playerName');
-        if (customInput) {
-            customInput.value = savedPlayer;
-            // On ajoute un mini-délai pour que les graphiques aient le temps de se monter
-            setTimeout(() => applySearchToEverything(savedPlayer), 50);
-        }
+        input.value = savedPlayer;
+        // Laisse 50ms à la page pour s'initialiser avant de forcer le filtre
+        setTimeout(() => applyGlobalSearch(savedPlayer), 50);
     }
 });
 
