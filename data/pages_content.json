@@ -2,12 +2,12 @@
   "index": {
     "title": "Leaderboard • Rootelo",
     "page_heading": "Leaderboard",
-    "description": "Only players with a Tier are ranked. Double-click&nbsp;to&nbsp;see&nbsp;individual&nbsp;Journeys.<br><br><i><small>Includes {match_count} matches up to {cutoff_date}.</i></small>"
+    "description": "Only players with a Tier are ranked. Double-click&nbsp;to&nbsp;see&nbsp;individual&nbsp;journeys."
   },
   "matches": {
     "title": "Top Tables • Rootelo",
     "page_heading": "Top Tables",
-    "description": "Season games ranked by total Elo. Click&nbsp;a&nbsp;Game&nbsp;ID&nbsp;for&nbsp;match&nbsp;details.<br><br><i><small>Includes {match_count} matches up to {cutoff_date}.</i></small>"
+    "description": "Season games ranked by total Elo. Click&nbsp;a&nbsp;Game&nbsp;ID&nbsp;for&nbsp;match&nbsp;details."
   },
   "trends": {
     "title": "Player's Journey • Rootelo",
