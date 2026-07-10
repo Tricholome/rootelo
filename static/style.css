@@ -140,6 +140,10 @@ body::after {
 	letter-spacing: var(--track-slight);
 }
 
+.footer-table {
+    margin-top: 15px;
+}
+
 .footer-date {
     font-style: italic;
     opacity: 0.6;
