@@ -684,65 +684,52 @@ $(document).ready(function() {
     const input = document.getElementById('playerName');
     if (!input) return;
 
-    // 1. EXTRACTION ET REMPLISSAGE DU DATALIST D'AUTOCOMPLÉTION
-    let players = [];
-    if (typeof CONFIG !== 'undefined' && CONFIG.chartData) {
-        players = Object.keys(CONFIG.chartData);
-    } else if (window.relationsData) {
-        players = Object.keys(window.relationsData);
-    }
+    // 1. Récupération des joueurs valides directement depuis le datalist généré par Python
+    const validPlayers = Array.from(document.querySelectorAll('#playerAutocompleteList option')).map(opt => opt.value);
 
-    if (players.length > 0) {
-        const datalist = document.getElementById('playerAutocompleteList');
-        if (datalist) {
-            datalist.innerHTML = ''; // On nettoie l'ancien contenu
-            players.sort().forEach(p => {
-                const opt = document.createElement('option');
-                opt.value = p;
-                datalist.appendChild(opt);
-            });
-        }
-    }
-
-    // 2. FONCTION UNIQUE D'APPLICATION DES RECHERCHES ET FILTRES
+    // 2. Fonction unique de filtrage et de persistance sécurisée
     function applyGlobalSearch(val) {
         const query = (val || "").trim();
 
-        // A. Applique la recherche sur tous les tableaux DataTables de la page active
+        // Persistance intelligente : on ne sauvegarde QUE si le joueur existe réellement dans la BDD
+        if (validPlayers.includes(query)) {
+            localStorage.setItem('selectedPlayer', query);
+        } else if (query === "") {
+            localStorage.removeItem('selectedPlayer');
+        }
+
+        // Filtrage dynamique de tous les tableaux DataTables présents sur la page
         $('.dataTable').each(function() {
             if ($.fn.dataTable.isDataTable(this)) {
                 $(this).DataTable().search(query).draw();
             }
         });
 
-        // B. Met à jour l'arbre relationnel (s'il est présent sur la page active)
+        // Mise à jour de l'arbre relationnel (si présent)
         if (typeof window.updatePlayerView === 'function') {
             window.updatePlayerView();
         }
 
-        // C. Met à jour le graphique (s'il est présent sur la page active)
+        // Mise à jour du graphique (si présent)
         if (typeof window.updateChart === 'function' && document.getElementById('progressionChart')) {
             window.updateChart();
         }
     }
 
-    // 3. ÉCOUTEUR PRINCIPAL (Saisie au clavier ou choix dans le datalist)
+    // 3. Écouteur principal sur la barre de recherche globale
     input.addEventListener('input', function() {
-        const val = this.value;
-        localStorage.setItem('selectedPlayer', val);
-        applyGlobalSearch(val);
+        applyGlobalSearch(this.value);
     });
 
-    // 4. RESTAURATION DE LA PERSISTANCE AU CHARGEMENT DE LA PAGE
+    // 4. Restauration de l'état persistant au chargement
     const savedPlayer = localStorage.getItem('selectedPlayer');
-    if (savedPlayer) {
+    if (savedPlayer && validPlayers.includes(savedPlayer)) {
         input.value = savedPlayer;
-        // On laisse un léger temps (50ms) de chargement aux librairies (Chart.js / DataTables)
         setTimeout(() => {
             applyGlobalSearch(savedPlayer);
         }, 50);
     } else {
-        // S'il n'y a pas de sauvegarde, on initialise quand même la vue par défaut (vide)
+        localStorage.removeItem('selectedPlayer');
         applyGlobalSearch("");
     }
 });
