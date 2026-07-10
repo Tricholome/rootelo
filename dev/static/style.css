@@ -414,12 +414,22 @@ nav a.active {
 }
 
 /* Season & Player Controls Selector */
+.season-selector-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 30px auto 25px auto; /* Écarte bien le groupe en haut et en bas */
+}
+
 .season-selector { 
     display: flex; 
     align-items: center; 
     justify-content: center; 
     gap: 8px; 
-    margin: 15px auto; 
+    width: 100%;
+    max-width: 320px;
+    margin: 4px 0;
 }
 
 .season-label { 
@@ -428,7 +438,6 @@ nav a.active {
     color: var(--text-muted); 
     letter-spacing: var(--track-wide); 
     font-weight: var(--bold); 
-    margin-right: 5px;
     width: 65px;
 }
 
@@ -443,6 +452,8 @@ nav a.active {
     background: var(--bg-surface); 
     border: 1px solid var(--border-soft); 
     transition: 0.2s; 
+    text-align: center;
+    flex: 1; /* Sur mobile, les boutons se partagent équitablement l'espace restant */
 }
 .season-btn:hover { 
     color: var(--text-main); 
@@ -454,9 +465,9 @@ nav a.active {
     border-color: var(--main-color) !important; 
 }
 
-/* Search Box */
+/* Search Box & Auto-Content Correction */
 .search-box { 
-    width: max-content;
+    flex: 1; /* Prend exactement tout l'espace disponible restant sur sa ligne, calqué sur les boutons */
 }
 
 .search-box input { 
@@ -466,12 +477,12 @@ nav a.active {
     background: var(--dt-input-bg) !important;
     color: var(--text-main) !important; 
     border: 1px solid var(--border-soft) !important; 
-    padding: 6px 14px; /* Même hauteur et padding que .season-btn */
-    border-radius: 4px; /* Même arrondi que .season-btn */
-    width: 100%; 
+    padding: 6px 14px;
+    border-radius: 4px;
+    width: 100%;
     font-family: var(--font-ui);
-    font-size: var(--size-sm); /* Même taille que .season-btn */
-    text-align: left; /* Alignement propre après le label */
+    font-size: var(--size-sm);
+    text-align: left;
     outline: none;
     transition: border-color 0.2s, background-color 0.2s;
 }
