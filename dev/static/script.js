@@ -696,11 +696,41 @@ $(document).ready(function() {
    --- 8. GLOBAL PLAYER SEARCH & PERSISTENCE SYNC ---
    ========================================================================= */
 
+// Fonction unique de synchronisation appelée lors de tout changement de joueur
+window.syncPlayerChange = function(playerName) {
+    const name = (playerName || "").trim();
+    
+    // 1. Sauvegarde dans le stockage local pour persister entre onglets/archives
+    if (name) {
+        localStorage.setItem('selectedPlayer', name);
+    } else {
+        localStorage.removeItem('selectedPlayer');
+    }
+
+    // 2. Application du filtre sur TOUS les tableaux DataTables présents sur la page (Leaderboard, Matches...)
+    $('.dataTable').each(function() {
+        if ($.fn.dataTable.isDataTable(this)) {
+            $(this).DataTable().search(name).draw();
+        }
+    });
+
+    // 3. Déclenchement de la mise à jour du graphique Trends (si présent sur la page)
+    if (typeof window.updateChart === 'function' && document.getElementById('progressionChart')) {
+        window.updateChart();
+    }
+
+    // 4. Déclenchement de la mise à jour de l'arbre relationnel (si présent sur la page)
+    if (typeof window.updatePlayerView === 'function' && document.getElementById('centerPlayerName')) {
+        window.updatePlayerView();
+    }
+};
+
+// Initialisation au chargement de la page
 document.addEventListener('DOMContentLoaded', () => {
     const input = document.getElementById('playerName');
     if (!input) return;
 
-    // 1. Collecte unique de tous les joueurs de la BDD (Trends ou Relations) pour l'autocomplétion
+    // A. Construction de la liste des joueurs pour l'autocomplétion (Trends ou Relations)
     const allData = (typeof CONFIG !== 'undefined' && CONFIG.chartData) ? CONFIG.chartData : (window.relationsData || {});
     const players = Object.keys(allData).sort();
 
@@ -716,38 +746,15 @@ document.addEventListener('DOMContentLoaded', () => {
         input.setAttribute('list', 'playerAutocompleteList');
     }
 
-    // 2. Gestionnaire d'action unique pour TOUTES les pages du site
-    function syncPlayerChange(value) {
-        const name = value.trim();
-        localStorage.setItem('selectedPlayer', name);
+    // B. Écouteur unique sur l'input de recherche
+    input.addEventListener('input', (e) => window.syncPlayerChange(e.target.value));
 
-        // A. Si DataTables est présent sur la page (Leaderboard ou Matches) -> Filtre direct
-        $('.dataTable').each(function() {
-            if ($.fn.dataTable.isDataTable(this)) {
-                $(this).DataTable().search(name).draw();
-            }
-        });
-
-        // B. Si le graphique Trends est présent -> Met à jour
-        if (typeof updateChart === 'function' && document.getElementById('progressionChart')) {
-            updateChart();
-        }
-
-        // C. Si l'arbre relationnel de l'onglet principal est présent -> Met à jour
-        if (typeof window.updatePlayerView === 'function' && document.getElementById('centerPlayerName')) {
-            window.updatePlayerView();
-        }
-    }
-
-    // Écouteur unique sur l'input de recherche
-    input.addEventListener('input', (e) => syncPlayerChange(e.target.value));
-
-    // 3. Restauration de la session au chargement initial de n'importe quelle page
+    // C. Restauration automatique de la session (mémoire inter-onglets et archives)
     const savedPlayer = localStorage.getItem('selectedPlayer');
     if (savedPlayer) {
         input.value = savedPlayer;
-        // Laisse le temps aux DataTables ou Graphiques de s'initialiser
-        setTimeout(() => syncPlayerChange(savedPlayer), 50);
+        // Laisse 100ms aux scripts de tableaux/graphiques tiers pour finir de s'initialiser
+        setTimeout(() => window.syncPlayerChange(savedPlayer), 100);
     }
 });
 
