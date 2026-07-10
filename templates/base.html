@@ -151,15 +151,13 @@
 					</div>
 				</div>
 				{% endif %}
-				{% if match_count %}
-				<div class="table-stats-badge">
-					Includes {{ match_count }} matches up to {{ cutoff_date }}
-				</div>
-				{% endif %}
 			</header>
 			
             <main>
                 {% block content %}{% endblock %}
+				{% if match_count %}
+				<div class="footer-date">Includes {{ match_count }} matches up to {{ cutoff_date }}</div>
+				{% endif %}
             </main>
         </div>
         
