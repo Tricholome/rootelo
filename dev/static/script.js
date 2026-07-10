@@ -490,7 +490,7 @@ $(document).on('dblclick', '.player-name-cell', function() {
         }
         
         // 3. Redirection directe vers le graphique de tendances
-        window.location.href = `${trendsPage}#progressionChart`;
+        window.location.href = `${trendsPage}#view`;
     }
 });
 
