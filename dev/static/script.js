@@ -696,48 +696,42 @@ $(document).ready(function() {
    --- 8. GLOBAL PLAYER SEARCH & PERSISTENCE SYNC ---
    ========================================================================= */
 
-// Fonction unique de synchronisation appelée lors de tout changement de joueur
-window.syncPlayerChange = function(playerName) {
-    const name = (playerName || "").trim();
-    
-    // 1. Sauvegarde dans le stockage local pour persister entre onglets/archives
-    if (name) {
-        localStorage.setItem('selectedPlayer', name);
-    } else {
-        localStorage.removeItem('selectedPlayer');
-    }
-
-    // 2. Application du filtre sur TOUS les tableaux DataTables présents sur la page (Leaderboard, Matches...)
-    $('.dataTable').each(function() {
-        if ($.fn.dataTable.isDataTable(this)) {
-            $(this).DataTable().search(name).draw();
-        }
-    });
-
-    // 3. Déclenchement de la mise à jour du graphique Trends (si présent sur la page)
-    if (typeof window.updateChart === 'function' && document.getElementById('progressionChart')) {
-        window.updateChart();
-    }
-
-    // 4. Déclenchement de la mise à jour de l'arbre relationnel (si présent sur la page)
-    if (typeof window.updatePlayerView === 'function' && document.getElementById('centerPlayerName')) {
-        window.updatePlayerView();
-    }
-};
-
-// Initialisation au chargement de la page
-document.addEventListener('DOMContentLoaded', () => {
+$(document).ready(function() {
     const input = document.getElementById('playerName');
     if (!input) return;
 
-    // A. Construction de la liste des joueurs pour l'autocomplétion (Trends ou Relations)
-    const allData = (typeof CONFIG !== 'undefined' && CONFIG.chartData) ? CONFIG.chartData : (window.relationsData || {});
-    const players = Object.keys(allData).sort();
+    // 1. EXTRACTION DYNAMIQUE DES JOUEURS POUR LA LISTE DÉROULANTE (DATALIST)
+    // On essaie de récupérer les noms depuis n'importe quelle source disponible sur la page active
+    let players = [];
+    
+    if (typeof CONFIG !== 'undefined' && CONFIG.chartData) {
+        players = Object.keys(CONFIG.chartData);
+    } else if (window.relationsData) {
+        players = Object.keys(window.relationsData);
+    } else {
+        // Si on est sur le Leaderboard ou les Matches (sans CONFIG de graph), on extrait directement les joueurs du tableau DataTables !
+        $('.dataTable').each(function() {
+            if ($.fn.dataTable.isDataTable(this)) {
+                const table = $(this).DataTable();
+                // Extrait toutes les valeurs uniques de la colonne contenant les noms (généralement index 1 ou 2)
+                table.column({ search: 'applied' }).data().each(function(val) {
+                    // Nettoie le HTML potentiel (comme les liens ou les icônes autour des noms)
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = val;
+                    const cleanName = tempDiv.textContent.trim();
+                    if (cleanName && cleanName !== "-" && !players.includes(cleanName)) {
+                        players.push(cleanName);
+                    }
+                });
+            }
+        });
+    }
 
+    // Création et injection du datalist d'autocomplétion
     if (players.length > 0 && !document.getElementById('playerAutocompleteList')) {
         const datalist = document.createElement('datalist');
         datalist.id = 'playerAutocompleteList';
-        players.forEach(p => {
+        players.sort().forEach(p => {
             const opt = document.createElement('option');
             opt.value = p;
             datalist.appendChild(opt);
@@ -746,15 +740,36 @@ document.addEventListener('DOMContentLoaded', () => {
         input.setAttribute('list', 'playerAutocompleteList');
     }
 
-    // B. Écouteur unique sur l'input de recherche
-    input.addEventListener('input', (e) => window.syncPlayerChange(e.target.value));
+    // 2. FILTRAGE ET PERSISTANCE DES TABLEAUX
+    // Fonction qui applique la recherche sur tous les tableaux DataTables de la page active
+    function filterTables(val) {
+        $('.dataTable').each(function() {
+            if ($.fn.dataTable.isDataTable(this)) {
+                $(this).DataTable().search(val).draw();
+            }
+        });
+    }
 
-    // C. Restauration automatique de la session (mémoire inter-onglets et archives)
+    // Écouteur à la saisie ou sélection dans la liste déroulante
+    input.addEventListener('input', function() {
+        const val = this.value.trim();
+        localStorage.setItem('selectedPlayer', val);
+        filterTables(val);
+    });
+
+    // 3. RESTAURATION DU JOUEUR DEPUIS LE LOCAL STORAGE AU CHARGEMENT DE LA PAGE
     const savedPlayer = localStorage.getItem('selectedPlayer');
     if (savedPlayer) {
         input.value = savedPlayer;
-        // Laisse 100ms aux scripts de tableaux/graphiques tiers pour finir de s'initialiser
-        setTimeout(() => window.syncPlayerChange(savedPlayer), 100);
+        // On laisse 50ms aux tableaux DataTables pour finir leur rendu avant de filtrer
+        setTimeout(() => {
+            filterTables(savedPlayer);
+            
+            // Si on est sur l'onglet principal et que l'arbre de relations est présent, on le met aussi à jour
+            if (typeof window.updatePlayerView === 'function') {
+                window.updatePlayerView();
+            }
+        }, 50);
     }
 });
 
