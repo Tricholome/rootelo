@@ -453,7 +453,6 @@ nav a.active {
 /* Search Box */
 .search-box { 
     width: max-content;
-    width: 100%;
 }
 
 .search-box input { 
