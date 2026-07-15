@@ -305,7 +305,8 @@ for tag in ARCHIVE_SEASONS:
         if os.path.exists(path_ratings):
             df_ratings = pd.read_csv(path_ratings)
             for _, row in df_ratings.iterrows():
-                elo_ratings[str(row['Player'])] = float(row.get('Virtual_ELO', row.get('ELO', 1200.0)))
+                elo_ratings[str(row['Player'])] = float(row.get('ELO', 1200.0))
+            
             df_ratings['ELO'] = df_ratings['ELO'].round().astype(int)
             if 'Virtual_ELO' in df_ratings.columns:
                 df_ratings['Virtual_ELO'] = df_ratings['Virtual_ELO'].round().astype(int)
