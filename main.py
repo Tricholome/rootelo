@@ -516,12 +516,7 @@ for tag in ARCHIVE_SEASONS:
                 player['tier'] = 'bear'
                 break
 
-    display_archives[tag] = {
-        'leaderboard': lb_data, 
-        'matches': prepare_matches_data(raw['matches_list']), 
-        'trends': prepare_trends_data(raw['history']),
-        'champion_match': champion_match
-    }
+    display_archives[tag] = {'leaderboard': lb_data, 'matches': prepare_matches_data(raw['matches_list']), 'trends': prepare_trends_data(raw['history']),      'champion_match': champion_match}
 
 # =========================================================================
 # --- 8. HALL OF FAME (STREAKS CODES) ---
@@ -649,7 +644,7 @@ render_core_pages("", False, CURRENT_SEASON_TAG, display_leaderboard_current, di
 for tag in ARCHIVE_SEASONS:
     archive_relations_clean = prepare_archive_relations(archives_raw_data[tag].get('relations', {}))
     
-    render_core_pages(f"_{tag}", True, tag, display_archives[tag]['leaderboard'], display_archives[tag]['matches'], display_archives[tag]['trends'], archives_raw_data[tag]['metadata'], archive_relations_clean, champion_match=champ_match)
+    render_core_pages(f"_{tag}", True, tag, display_archives[tag]['leaderboard'], display_archives[tag]['matches'], display_archives[tag]['trends'], archives_raw_data[tag]['metadata'], archive_relations_clean, champion_match=champion_match)
 
 # --- Render Static Pages ---
 render_page(
