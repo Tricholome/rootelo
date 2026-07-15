@@ -215,7 +215,7 @@
 			colors: {{ config.colors.tiers|tojson }},
 			icons: {{ config.assets.icons|tojson }},
 			currentTier: "{{ current_tier }}",
-			chartData: {{ history_json | safe if history_json is defined else '{}' }}
+			chartData: {{ history_json | safe if history_json is defined else '{}' }},
 			champMatch: {{ champ_match | tojson | safe if champ_match else 'null' }}
 		};
 		
@@ -265,8 +265,6 @@
 			}
 		};
 	</script>
-		
-	<script src="static/script.js"></script>
 		
     <script src="static/script.js"></script>
     {% block custom_js %}{% endblock %}
