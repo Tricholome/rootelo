@@ -1335,6 +1335,7 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 .tier-mouse    { color: var(--color-mouse) !important; }
 .tier-squirrel { color: var(--color-squirrel) !important; }
 .tier-stag 	   { color: var(--color-stag) !important; }
+.tier-bear 	   { color: var(--color-bear) !important; }
 
 /* Background and border for each tier row */
 table.dataTable tbody tr[data-tier="bird"]     { background-color: var(--color-bird-bg) !important; border-left: 4px solid var(--color-bird) !important; }
@@ -1343,6 +1344,7 @@ table.dataTable tbody tr[data-tier="rabbit"]   { background-color: var(--color-r
 table.dataTable tbody tr[data-tier="mouse"]    { background-color: var(--color-mouse-bg) !important; border-left: 4px solid var(--color-mouse) !important; }
 table.dataTable tbody tr[data-tier="squirrel"] { background-color: var(--color-squirrel-bg) !important; border-left: 4px solid var(--color-squirrel) !important; }
 table.dataTable tbody tr[data-tier="stag"] { background-color: var(--color-stag-bg) !important; border-left: 4px solid var(--color-stag) !important; }
+table.dataTable tbody tr[data-tier="bear"] { background-color: var(--color-bear-bg) !important; border-left: 4px solid var(--color-bear) !important; }
 
 /* Text color for the 4th column (Elo) based on tier */
 tr[data-tier="bird"] td:nth-child(4)     { color: var(--color-bird) !important; }
@@ -1351,6 +1353,7 @@ tr[data-tier="rabbit"] td:nth-child(4)   { color: var(--color-rabbit) !important
 tr[data-tier="mouse"] td:nth-child(4)    { color: var(--color-mouse) !important; }
 tr[data-tier="squirrel"] td:nth-child(4) { color: var(--color-squirrel) !important; }
 tr[data-tier="stag"] td:nth-child(4)     { color: var(--color-stag) !important; }
+tr[data-tier="stag"] td:nth-child(4)     { color: var(--color-bear) !important; }
 
 /* =========================================================================
    --- 12. HIDDEN CONTENT: UNDERGROWTH ---
