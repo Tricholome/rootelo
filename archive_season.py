@@ -19,6 +19,7 @@ HEADERS = {'Authorization': f'Token {API_TOKEN}'} if API_TOKEN else {}
 # Centralisation et uniformisation des noms de fichiers
 DATA_DIR = "data"
 CORRECTIONS_PATH = os.path.join(DATA_DIR, f"{SEASON_TAG}_corrections.csv")
+CHAMPIONS_PATH   = os.path.join(DATA_DIR, "champions.json")
 OUTPUT_RATINGS   = os.path.join(DATA_DIR, f"{SEASON_TAG}_ratings.csv")
 OUTPUT_HISTORY   = os.path.join(DATA_DIR, f"{SEASON_TAG}_history.json")
 OUTPUT_MATCHES   = os.path.join(DATA_DIR, f"{SEASON_TAG}_matches.json")
@@ -194,16 +195,34 @@ for p in inactive_players:
 # =========================================================================
 # --- 7. EXPORT FINAL RATINGS (LEADERBOARD) ---
 # =========================================================================
-results = [
-    {
-        'Player': p, 'ELO': rating, 'Games': player_stats[p]['games'], 'Wins': player_stats[p]['wins'],
-        'Win Rate': f"{(player_stats[p]['wins']/player_stats[p]['games']):.1%}" if player_stats[p]['games'] > 0 else "0.0%", 
-        'Peak': round(peak_elo[p]), 'Last': f"+{round(last_diff[p])}" if round(last_diff[p]) > 0 else str(round(last_diff[p])),
-        'Qualified': (player_stats[p]['games'] >= 10 and round(rating) >= 1200)
-    } for p, rating in elo_ratings.items()
-]
+import json
+champ = None
+if os.path.exists(CHAMPIONS_PATH):
+    try:
+        with open(CHAMPIONS_PATH, "r", encoding="utf-8") as f:
+            champ = json.load(f).get(SEASON_TAG, {}).get("champion")
+    except Exception as e:
+        print(f"  > Warning: Could not read champions.json: {e}")
 
-final_df = pd.DataFrame(results).sort_values(by='ELO', ascending=False)
+results = []
+for p, rating in elo_ratings.items():
+    is_champ = (champ and p == champ)
+    
+    virtual_elo = 9999.0 if is_champ else rating
+    
+    results.append({
+        'Player': p, 
+        'ELO': rating, 
+        'Virtual_ELO': virtual_elo,
+        'Games': player_stats[p]['games'], 
+        'Wins': player_stats[p]['wins'],
+        'Win Rate': f"{(player_stats[p]['wins']/player_stats[p]['games']):.1%}" if player_stats[p]['games'] > 0 else "0.0%", 
+        'Peak': round(peak_elo[p]), 
+        'Last': f"+{round(last_diff[p])}" if round(last_diff[p]) > 0 else str(round(last_diff[p])),
+        'Qualified': (player_stats[p]['games'] >= 10 and round(rating) >= 1200)
+    })
+
+final_df = pd.DataFrame(results).sort_values(by='Virtual_ELO', ascending=False).reset_index(drop=True)
 
 rank, ranks = 1, []
 for _, row in final_df.iterrows():
