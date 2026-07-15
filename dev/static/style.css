@@ -1353,7 +1353,7 @@ tr[data-tier="rabbit"] td:nth-child(4)   { color: var(--color-rabbit) !important
 tr[data-tier="mouse"] td:nth-child(4)    { color: var(--color-mouse) !important; }
 tr[data-tier="squirrel"] td:nth-child(4) { color: var(--color-squirrel) !important; }
 tr[data-tier="stag"] td:nth-child(4)     { color: var(--color-stag) !important; }
-tr[data-tier="stag"] td:nth-child(4)     { color: var(--color-bear) !important; }
+tr[data-tier="bear"] td:nth-child(4)     { color: var(--color-bear) !important; }
 
 /* =========================================================================
    --- 12. HIDDEN CONTENT: UNDERGROWTH ---
