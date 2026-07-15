@@ -115,22 +115,33 @@ def prepare_leaderboard_data(df):
         return []
     
     has_virtual = 'Virtual_ELO' in df.columns
-    
     sort_col = 'Virtual_ELO' if has_virtual else 'ELO'
+    
     df_sorted = df.sort_values(by=sort_col, ascending=False)
     
-    return [{
-        'Rank': row['Rank'],
-        'tier': get_tier_name(row['Virtual_ELO'] if has_virtual else row['ELO'], row['Games']),
-        'display_name': get_clean_name(row['Player']),
-        'ELO': int(row['ELO']),
-        'Virtual_ELO': int(row['Virtual_ELO']) if has_virtual else int(row['ELO']),
-        'Games': row['Games'],
-        'Wins': row['Wins'],
-        'Win_Rate': row['Win Rate'],
-        'Peak': row['Peak'],
-        'Last': row['Last']
-    } for _, row in df_sorted.iterrows()]
+    processed_data = []
+    for _, row in df_sorted.iterrows():
+        current_elo = row['Virtual_ELO'] if has_virtual else row['ELO']
+        tier = get_tier_name(current_elo, row['Games'])
+        
+        data_entry = {
+            'Rank': row['Rank'],
+            'tier': tier,
+            'display_name': get_clean_name(row['Player']),
+            'ELO': int(row['ELO']),
+            'Games': row['Games'],
+            'Wins': row['Wins'],
+            'Win_Rate': row['Win Rate'],
+            'Peak': row['Peak'],
+            'Last': row['Last']
+        }
+        
+        if has_virtual:
+            data_entry['Virtual_ELO'] = int(row['Virtual_ELO'])
+            
+        processed_data.append(data_entry)
+        
+    return processed_data
 
 def prepare_matches_data(matches_list):
     return [{
