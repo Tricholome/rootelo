@@ -160,6 +160,8 @@ document.addEventListener('DOMContentLoaded', function() {
 		modalSubtitle.textContent = text.subtitle;
 		
 		modalText.textContent = text.desc;
+		
+		modalTable.textContent = text.table;
 
 		modal.style.display = 'flex';
 		document.body.style.overflow = 'hidden';
