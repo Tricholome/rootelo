@@ -258,18 +258,18 @@
 			},
 			'bear': {
 				name: 'Bear',
-				// Utilisation des données de CONFIG.champMatch
+				// On pointe directement sur CONFIG.champMatch sans passer par match_results
 				elo: CONFIG.champMatch ? CONFIG.champMatch.champion : 'Champion',
 				subtitle: 'Season Champion',
 				desc: CONFIG.champMatch ? 
-					  `Has won the season Final on ${CONFIG.champMatch.match_results.date} on ${CONFIG.champMatch.match_results.map} using ${CONFIG.champMatch.match_results.deck}.` : 
+					  `Has won the season Final on ${CONFIG.champMatch.date} on ${CONFIG.champMatch.map} using ${CONFIG.champMatch.deck}.` : 
 					  'The legendary champion.',
-				// Génération du tableau à la volée pour que ton script actuel l'affiche
-				table: (CONFIG.champMatch && CONFIG.champMatch.match_results.players) ? `
+				// La table est générée dynamiquement ici (toujours sans match_results)
+				table: (CONFIG.champMatch && CONFIG.champMatch.players) ? `
 					<table class="match-detail">
 						<thead><tr><th>SEAT</th><th>PLAYER</th><th>FACTION</th><th>SCORE</th></tr></thead>
 						<tbody>
-							${CONFIG.champMatch.match_results.players.map((p, i) => `
+							${CONFIG.champMatch.players.map((p, i) => `
 								<tr>
 									<td>${i + 1}</td>
 									<td>${p.name}</td>
