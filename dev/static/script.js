@@ -244,7 +244,7 @@ $(document).ready(function() {
 		});
 
 		$('#leaderboard').DataTable({
-			"order": [[3, "desc"]],
+			"order": [],
 			"responsive": true, 
 			"pageLength": 50,
 			"dom": 'rt<"bottom"p><"clear">',
