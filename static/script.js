@@ -131,52 +131,11 @@ document.addEventListener('DOMContentLoaded', function() {
 	const modalBody = document.getElementById('modalBody');
 	const closeBtn = document.querySelector('.modal-close');
 
-	// Dictionnaire des textes exacts (About)
-	const tierTexts = {
-		'bird': {
-			name: 'Bird',
-			elo: '1500+',
-			subtitle: 'The Grandmasters',
-			desc: 'These elite sovereigns sit at the absolute pinnacle of the Woodland canopy. Remaining on this prestigious throne is a dizzying battle against shifting winds and ambitious rivals. They rule the skies by maintaining flawless execution and unerring control under pressure.'
-		},
-		'fox': {
-			name: 'Fox',
-			elo: '1400+',
-			subtitle: 'The Cunning Tacticians',
-			desc: 'These keen strategists dominate the ladder by thriving on sharp wit over brute force. The hunt presses close from all sides, and a single moment of hesitation can prove fatal. They prevail by measuring every step with care and exploiting weakness with signature flair.'
-		},
-		'rabbit': {
-			name: 'Rabbit',
-			elo: '1300+',
-			subtitle: 'The Agile Contenders',
-			desc: 'These nimble wanderers gracefully weave through the crowded paths of the rankings. Routine strategies falter here, threatening to trap anyone who cannot adapt to sudden chaos. They leap ahead where others see only barriers, turning dead ends into daring escapes.'
-		},
-		'mouse': {
-			name: 'Mouse',
-			elo: '1200+',
-			subtitle: 'The Steady Foragers',
-			desc: 'These resilient souls rise above the casual fray to mark a milestone of mastery. The wild now demands pure stamina, where early momentum easily fades into exhaustion. They hold their ground through quiet consistency, proving that patience outlasts blind luck.'
-		},
-		'squirrel': {
-			name: 'Squirrel',
-			elo: '< 1200',
-			subtitle: 'The Hapless Stragglers',
-			desc: 'These frantic collectors dwell in the tangled undergrowth of the ranking system. Clumsy errors and brutal defeats often force them to fall back while fiercer beasts surge ahead. Yet, they bravely endure by turning every painful lesson into a seed for next season’s harvest.'
-		},
-		'stag': {
-			name: 'Stag',
-			elo: '1600+',
-			subtitle: 'The Legend',
-			desc: 'Has anyone truly seen this mythical beast, or is it only an echo of the wild? What happens to the predator when the woods turn hollow and every path leads back to a mirror of its own perfection? With nothing left to be claimed, is the true crown the silence that follows the chase?'
-		}
-	};
-
-	// On récupère les couleurs et icônes depuis l'objet CONFIG créé dans le HTML
 		const tierColors = CONFIG.colors;
 		const tierIcons = CONFIG.icons;
 
 	window.openTierModal = function(tier) {
-		const text = tierTexts[tier];
+		const text = TIER_DATA[tier];
 		const color = tierColors[tier] || tierColors['default'];
 		const icon = tierIcons[tier];
 
@@ -185,7 +144,6 @@ document.addEventListener('DOMContentLoaded', function() {
 		const modalContent = modal.querySelector('.modal-content');
     	modalContent.style.setProperty('--tier-color', color);
 
-		// On cible les éléments déjà existants dans le HTML
 		const modalTitle = document.getElementById('modalTitle');
 		const modalElo = document.getElementById('modalElo');
 		const modalIcon = document.getElementById('modalIcon');
