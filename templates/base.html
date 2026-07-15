@@ -258,7 +258,7 @@
 			},
 			'bear': {
 				name: 'Bear',
-				elo: CHAMP?.champion || '', 
+				elo: CONFIG.champMatch ? CONFIG.champMatch.match_results.match_id : '9000+',
 				subtitle: 'The Great Unbroken',
 				desc: 'Has won the season Final on [DATE], [MAP], [DECK].',
 				table: '<table class="match-detail">... ton tableau ici ...</table>'
