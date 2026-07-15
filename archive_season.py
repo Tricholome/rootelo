@@ -19,7 +19,6 @@ HEADERS = {'Authorization': f'Token {API_TOKEN}'} if API_TOKEN else {}
 # Centralisation et uniformisation des noms de fichiers
 DATA_DIR = "data"
 CORRECTIONS_PATH = os.path.join(DATA_DIR, f"{SEASON_TAG}_corrections.csv")
-CHAMPIONS_PATH   = os.path.join(DATA_DIR, "champions.json")
 OUTPUT_RATINGS   = os.path.join(DATA_DIR, f"{SEASON_TAG}_ratings.csv")
 OUTPUT_HISTORY   = os.path.join(DATA_DIR, f"{SEASON_TAG}_history.json")
 OUTPUT_MATCHES   = os.path.join(DATA_DIR, f"{SEASON_TAG}_matches.json")
@@ -206,15 +205,9 @@ results = [
 
 final_df = pd.DataFrame(results).sort_values(by='ELO', ascending=False)
 
-import json
-champ = json.load(open("data/champions.json")).get(SEASON_TAG, {}).get("champion")
-
-if champ and champ in final_df['Player'].values:
-    final_df = pd.concat([final_df[final_df['Player'] == champ], final_df[final_df['Player'] != champ]]).reset_index(drop=True)
-
 rank, ranks = 1, []
 for _, row in final_df.iterrows():
-    if row['Qualified'] or row['Player'] == champ:
+    if row['Qualified']:
         ranks.append(rank)
         rank += 1
     else:
