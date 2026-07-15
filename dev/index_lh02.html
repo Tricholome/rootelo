@@ -7222,7 +7222,7 @@
 					<span>Powered by <strong>Tʀɪᴄʜᴏʟᴏᴍᴇ</strong></span>
 					<span>Woodland visions by <a class="cl" href="cache.html">𝕩𝕝𝕦𝕖𝕧𝕚</a></span>
 				</div>
-				<div class="footer-date">Updated on 2026-07-15 20:42 UTC</div>
+				<div class="footer-date">Updated on 2026-07-15 20:52 UTC</div>
 			</div>
 		</footer>
     </div>
@@ -7260,10 +7260,9 @@
 			icons: {"bear": "assets/icons/squirrel.webp", "bird": "assets/icons/bird_new.webp", "fox": "assets/icons/fox_new.webp", "mouse": "assets/icons/mouse_new.webp", "rabbit": "assets/icons/rabbit_new.webp", "squirrel": "assets/icons/squirrel.webp", "stag": "assets/icons/stag.webp"},
 			currentTier: "bird",
 			chartData: {}
+			champMatch: {"champion": "matemato+5004", "match_results": {"date": "2026-07-20", "deck": "Exiles \u0026 Partisans", "map": "Mountain", "match_id": "lh02-final", "players": [{"faction": "Marquise de Cat", "is_winner": true, "name": "matemato", "score": 30}, {"faction": "Woodland Alliance", "is_winner": false, "name": "Player 2", "score": 25}, {"faction": "Eyrie Dynasties", "is_winner": false, "name": "Player 3", "score": 21}, {"faction": "Underground Duchy", "is_winner": false, "name": "Player 4", "score": 18}]}}
 		};
-	</script>
-	
-	<script>
+		
 		const TIER_DATA = {
 			'bird': {
 				name: 'Bird',
@@ -7303,7 +7302,7 @@
 			},
 			'bear': {
 				name: 'Bear',
-				elo: '9000+', 
+				elo: CHAMP?.champion || '', 
 				subtitle: 'The Great Unbroken',
 				desc: 'Has won the season Final on [DATE], [MAP], [DECK].',
 				table: '<table class="match-detail">... ton tableau ici ...</table>'

@@ -43393,7 +43393,7 @@
 					<span>Powered by <strong>Tʀɪᴄʜᴏʟᴏᴍᴇ</strong></span>
 					<span>Woodland visions by <a class="cl" href="cache.html">𝕩𝕝𝕦𝕖𝕧𝕚</a></span>
 				</div>
-				<div class="footer-date">Updated on 2026-07-15 20:42 UTC</div>
+				<div class="footer-date">Updated on 2026-07-15 20:52 UTC</div>
 			</div>
 		</footer>
     </div>
@@ -43431,10 +43431,9 @@
 			icons: {"bear": "assets/icons/squirrel.webp", "bird": "assets/icons/bird_new.webp", "fox": "assets/icons/fox_new.webp", "mouse": "assets/icons/mouse_new.webp", "rabbit": "assets/icons/rabbit_new.webp", "squirrel": "assets/icons/squirrel.webp", "stag": "assets/icons/stag.webp"},
 			currentTier: "fox",
 			chartData: {}
+			champMatch: null
 		};
-	</script>
-	
-	<script>
+		
 		const TIER_DATA = {
 			'bird': {
 				name: 'Bird',
@@ -43474,7 +43473,7 @@
 			},
 			'bear': {
 				name: 'Bear',
-				elo: '9000+', 
+				elo: CHAMP?.champion || '', 
 				subtitle: 'The Great Unbroken',
 				desc: 'Has won the season Final on [DATE], [MAP], [DECK].',
 				table: '<table class="match-detail">... ton tableau ici ...</table>'
