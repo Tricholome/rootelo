@@ -506,17 +506,28 @@ for tag in ARCHIVE_SEASONS:
     raw = archives_raw_data[tag]
     lb_data = prepare_leaderboard_data(raw['final_df'][raw['final_df']['Games'] > 0]) if not raw['final_df'].empty else []
     
-    champion_match = None
+    champ_match = None
     if tag in CHAMPIONS_DATA:
         champ_name = CHAMPIONS_DATA[tag].get("champion")
-        champion_match = CHAMPIONS_DATA[tag].get("match_results")
+        champ_match = CHAMPIONS_DATA[tag].get("match_results")
         
-        for player in lb_data:
-            if player.get('Player') == champ_name or player.get('display_name') == champ_name:
-                player['tier'] = 'bear'
+        champ_player = None
+        for p in lb_data:
+            if p.get('Player') == champ_name or p.get('display_name') == champ_name:
+                champ_player = p
                 break
+        
+        if champ_player:
+            champ_player['tier'] = 'bear'
+            lb_data.remove(champ_player)
+            lb_data.insert(0, champ_player)
 
-    display_archives[tag] = {'leaderboard': lb_data, 'matches': prepare_matches_data(raw['matches_list']), 'trends': prepare_trends_data(raw['history']),      'champion_match': champion_match}
+    display_archives[tag] = {
+        'leaderboard': lb_data, 
+        'matches': prepare_matches_data(raw['matches_list']), 
+        'trends': prepare_trends_data(raw['history']),
+        'champ_match': champ_match
+    }
 
 # =========================================================================
 # --- 8. HALL OF FAME (STREAKS CODES) ---
@@ -593,7 +604,7 @@ for t in TIER_HIERARCHY:
 # =========================================================================
 print("\n=== GENERATING HTML PAGES ===")
 
-def render_core_pages(file_suffix, is_archive, tag, lb_data, match_data, trends_data, meta, relations_data=None, champion_match=None):
+def render_core_pages(file_suffix, is_archive, tag, lb_data, match_data, trends_data, meta, relations_data=None, champ_match=None):
     
     # 1. Leaderboard
     render_page(
@@ -608,7 +619,7 @@ def render_core_pages(file_suffix, is_archive, tag, lb_data, match_data, trends_
         cutoff_date=meta.get('cutoff_date', 'N/A'),
         players=lb_data,
         match_count=meta.get('match_count', 0),
-        champion_match=champion_match
+        champ_match=champ_match
     )
 
     # 2. Matches
@@ -644,7 +655,7 @@ render_core_pages("", False, CURRENT_SEASON_TAG, display_leaderboard_current, di
 for tag in ARCHIVE_SEASONS:
     archive_relations_clean = prepare_archive_relations(archives_raw_data[tag].get('relations', {}))
     
-    render_core_pages(f"_{tag}", True, tag, display_archives[tag]['leaderboard'], display_archives[tag]['matches'], display_archives[tag]['trends'], archives_raw_data[tag]['metadata'], archive_relations_clean, champion_match=champion_match)
+    render_core_pages(f"_{tag}", True, tag, display_archives[tag]['leaderboard'], display_archives[tag]['matches'], display_archives[tag]['trends'], archives_raw_data[tag]['metadata'], archive_relations_clean, champ_match=champ_match)
 
 # --- Render Static Pages ---
 render_page(
