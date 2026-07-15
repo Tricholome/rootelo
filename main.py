@@ -530,13 +530,15 @@ for tag in ARCHIVE_SEASONS:
     
     champ_match = None
     if tag in CHAMPIONS_DATA:
-        champ_match = CHAMPIONS_DATA[tag].get("match_results")
+        champ_data = CHAMPIONS_DATA[tag] 
+    else:
+        champ_data = None
 
     display_archives[tag] = {
         'leaderboard': lb_data, 
         'matches': prepare_matches_data(raw['matches_list']), 
         'trends': prepare_trends_data(raw['history']),
-        'champ_match': champ_match
+        'champ_match': champ_data
     }
 
 # =========================================================================
