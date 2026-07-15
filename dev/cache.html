@@ -686,7 +686,7 @@
 					<span>Powered by <strong>Tʀɪᴄʜᴏʟᴏᴍᴇ</strong></span>
 					<span>Woodland visions by <a class="cl" href="cache.html">𝕩𝕝𝕦𝕖𝕧𝕚</a></span>
 				</div>
-				<div class="footer-date">Updated on 2026-07-15 21:00 UTC</div>
+				<div class="footer-date">Updated on 2026-07-15 21:19 UTC</div>
 			</div>
 		</footer>
     </div>
@@ -766,10 +766,27 @@
 			},
 			'bear': {
 				name: 'Bear',
-				elo: CONFIG.champMatch ? CONFIG.champMatch.match_results.match_id : '9000+',
-				subtitle: 'The Great Unbroken',
-				desc: 'Has won the season Final on [DATE], [MAP], [DECK].',
-				table: '<table class="match-detail">... ton tableau ici ...</table>'
+				// Utilisation des données de CONFIG.champMatch
+				elo: CONFIG.champMatch ? CONFIG.champMatch.champion : 'Champion',
+				subtitle: 'Season Champion',
+				desc: CONFIG.champMatch ? 
+					  `Has won the season Final on ${CONFIG.champMatch.match_results.date} on ${CONFIG.champMatch.match_results.map} using ${CONFIG.champMatch.match_results.deck}.` : 
+					  'The legendary champion.',
+				// Génération du tableau à la volée pour que ton script actuel l'affiche
+				table: (CONFIG.champMatch && CONFIG.champMatch.match_results.players) ? `
+					<table class="match-detail">
+						<thead><tr><th>SEAT</th><th>PLAYER</th><th>FACTION</th><th>SCORE</th></tr></thead>
+						<tbody>
+							${CONFIG.champMatch.match_results.players.map((p, i) => `
+								<tr>
+									<td>${i + 1}</td>
+									<td>${p.name}</td>
+									<td>${p.faction}</td>
+									<td>${p.score}</td>
+								</tr>
+							`).join('')}
+						</tbody>
+					</table>` : ''
 			}
 		};
 	</script>
