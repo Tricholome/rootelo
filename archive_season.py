@@ -208,8 +208,9 @@ final_df = pd.DataFrame(results).sort_values(by='ELO', ascending=False)
 
 import json
 champ = json.load(open("data/champions.json")).get(SEASON_TAG, {}).get("champion")
-final_df['Tier'] = final_df['Player'].apply(lambda x: 'bear' if x == champ else None)
-final_df = final_df.sort_values(by=['Tier', 'ELO'], ascending=[False, False], na_position='last')
+
+if champ and champ in final_df['Player'].values:
+    final_df = pd.concat([final_df[final_df['Player'] == champ], final_df[final_df['Player'] != champ]]).reset_index(drop=True)
 
 rank, ranks = 1, []
 for _, row in final_df.iterrows():
