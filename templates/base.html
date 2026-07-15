@@ -216,10 +216,9 @@
 			icons: {{ config.assets.icons|tojson }},
 			currentTier: "{{ current_tier }}",
 			chartData: {{ history_json | safe if history_json is defined else '{}' }}
+			champMatch: {{ champ_match | tojson | safe if champ_match else 'null' }}
 		};
-	</script>
-	
-	<script>
+		
 		const TIER_DATA = {
 			'bird': {
 				name: 'Bird',
@@ -259,7 +258,7 @@
 			},
 			'bear': {
 				name: 'Bear',
-				elo: '9000+', 
+				elo: CHAMP?.champion || '', 
 				subtitle: 'The Great Unbroken',
 				desc: 'Has won the season Final on [DATE], [MAP], [DECK].',
 				table: '<table class="match-detail">... ton tableau ici ...</table>'
