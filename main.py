@@ -593,7 +593,7 @@ for t in TIER_HIERARCHY:
 # =========================================================================
 print("\n=== GENERATING HTML PAGES ===")
 
-def render_core_pages(file_suffix, is_archive, tag, lb_data, match_data, trends_data, meta, relations_data=None):
+def render_core_pages(file_suffix, is_archive, tag, lb_data, match_data, trends_data, meta, relations_data=None, champion_match=None):
     
     # 1. Leaderboard
     render_page(
