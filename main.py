@@ -21,6 +21,12 @@ if os.path.exists(CONTENT_FILE):
         PAGES = json.load(f)
 else:
     PAGES = {}
+    
+CHAMPIONS_FILE = os.path.join(DATA_DIR, "champions.json")
+CHAMPIONS_DATA = {}
+if os.path.exists(CHAMPIONS_FILE):
+    with open(CHAMPIONS_FILE, "r", encoding="utf-8") as f:
+        CHAMPIONS_DATA = json.load(f)
 
 NAV_ITEMS = [
     {'id': 'index', 'url': 'index.html', 'label': 'Leaderboard'},
@@ -36,7 +42,7 @@ TIER_THRESHOLDS = [
     (1300, "rabbit"),
     (1200, "mouse")
 ]
-TIER_HIERARCHY = ['stag', 'bird', 'fox', 'rabbit', 'mouse']
+TIER_HIERARCHY = ['bear', 'stag', 'bird', 'fox', 'rabbit', 'mouse']
 
 # =========================================================================
 # --- 1. JINJA2 FILTER SETUP ---
@@ -499,8 +505,22 @@ display_archives = {}
 for tag in ARCHIVE_SEASONS:
     raw = archives_raw_data[tag]
     lb_data = prepare_leaderboard_data(raw['final_df'][raw['final_df']['Games'] > 0]) if not raw['final_df'].empty else []
+    
+    champion_match = None
+    if tag in CHAMPIONS_DATA:
+        champ_name = CHAMPIONS_DATA[tag].get("champion")
+        champion_match = CHAMPIONS_DATA[tag].get("match_results")
+        
+        for player in lb_data:
+            if player.get('Player') == champ_name or player.get('display_name') == champ_name:
+                player['tier'] = 'bear'
+                break
+
     display_archives[tag] = {
-        'leaderboard': lb_data, 'matches': prepare_matches_data(raw['matches_list']), 'trends': prepare_trends_data(raw['history'])
+        'leaderboard': lb_data, 
+        'matches': prepare_matches_data(raw['matches_list']), 
+        'trends': prepare_trends_data(raw['history']),
+        'champion_match': champion_match
     }
 
 # =========================================================================
@@ -592,7 +612,8 @@ def render_core_pages(file_suffix, is_archive, tag, lb_data, match_data, trends_
         num_matches=meta.get('match_count', 0),
         cutoff_date=meta.get('cutoff_date', 'N/A'),
         players=lb_data,
-        match_count=meta.get('match_count', 0)
+        match_count=meta.get('match_count', 0),
+        champion_match=champion_match
     )
 
     # 2. Matches
@@ -628,7 +649,7 @@ render_core_pages("", False, CURRENT_SEASON_TAG, display_leaderboard_current, di
 for tag in ARCHIVE_SEASONS:
     archive_relations_clean = prepare_archive_relations(archives_raw_data[tag].get('relations', {}))
     
-    render_core_pages(f"_{tag}", True, tag, display_archives[tag]['leaderboard'], display_archives[tag]['matches'], display_archives[tag]['trends'], archives_raw_data[tag]['metadata'], archive_relations_clean)
+    render_core_pages(f"_{tag}", True, tag, display_archives[tag]['leaderboard'], display_archives[tag]['matches'], display_archives[tag]['trends'], archives_raw_data[tag]['metadata'], archive_relations_clean, champion_match=champ_match)
 
 # --- Render Static Pages ---
 render_page(
