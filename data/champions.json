@@ -1,13 +1,13 @@
 {
   "lh02": {
-    "champion": "matemato+5004",
+    "champion": "matemato",
     "match_results": {
       "match_id": "lh02-final",
       "date": "2026-07-20",
       "map": "Mountain",
       "deck": "Exiles & Partisans",
       "players": [
-        {"name": "matemato+5004", "score": 30, "faction": "Marquise de Cat", "is_winner": true},
+        {"name": "matemato", "score": 30, "faction": "Marquise de Cat", "is_winner": true},
         {"name": "Player 2", "score": 25, "faction": "Woodland Alliance", "is_winner": false},
         {"name": "Player 3", "score": 21, "faction": "Eyrie Dynasties", "is_winner": false},
         {"name": "Player 4", "score": 18, "faction": "Underground Duchy", "is_winner": false}
