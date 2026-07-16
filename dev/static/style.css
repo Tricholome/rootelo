@@ -1382,26 +1382,26 @@ table.dataTable tbody tr[data-tier="bear"],
 
 #modalCrown {
     position: absolute;
-    top: -20px; /* Ajuste cette valeur pour poser la couronne pile sur son front */
+    top: 0; 
     left: 50%;
-    transform: translateX(-50%) rotate(0deg);
-    transform-origin: bottom center; /* Pivot indispensable à la base de la couronne */
-    pointer-events: none; /* Empêche de bloquer les clics ou les drags */
-    z-index: 10; /* S'assure de passer par-dessus la tête de l'ours */
-    
-    /* Animation ultra lente (6 secondes) et douce (ease-in-out) en boucle */
+    width: clamp(70px, 10vw, 120px); 
+    height: auto;
+    transform: translate(-50%, -85%) rotate(0deg);
+    transform-origin: bottom center;
+    pointer-events: none;
+    z-index: 10;
     animation: sway-crown 6s ease-in-out infinite;
 }
 
 @keyframes sway-crown {
     0% {
-        transform: translateX(-50%) rotate(-3.5deg);
+        transform: translate(-50%, -85%) rotate(-3deg);
     }
     50% {
-        transform: translateX(-50%) rotate(3.5deg);
+        transform: translate(-50%, -85%) rotate(3deg);
     }
     100% {
-        transform: translateX(-50%) rotate(-3.5deg);
+        transform: translate(-50%, -85%) rotate(-3deg);
     }
 }
 
