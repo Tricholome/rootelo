@@ -167,7 +167,12 @@ document.addEventListener('DOMContentLoaded', function() {
 		if (modalFinal) {
 			modalFinal.innerHTML = text.final || '';
 		}
-
+		
+		if (modalCrown) {
+			modalCrown.src = text.crown || '';
+			modalCrown.style.display = text.crown ? 'block' : 'none';
+		}
+		
 		modal.style.display = 'flex';
 		document.body.style.overflow = 'hidden';
 	};
