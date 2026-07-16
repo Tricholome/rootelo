@@ -1380,6 +1380,31 @@ table.dataTable tbody tr[data-tier="bear"],
     animation: bearShimmer 8s infinite linear !important;
 }
 
+#modal-crown {
+    position: absolute;
+    top: -20px; /* Ajuste cette valeur pour poser la couronne pile sur son front */
+    left: 50%;
+    transform: translateX(-50%) rotate(0deg);
+    transform-origin: bottom center; /* Pivot indispensable à la base de la couronne */
+    pointer-events: none; /* Empêche de bloquer les clics ou les drags */
+    z-index: 10; /* S'assure de passer par-dessus la tête de l'ours */
+    
+    /* Animation ultra lente (6 secondes) et douce (ease-in-out) en boucle */
+    animation: sway-crown 6s ease-in-out infinite;
+}
+
+@keyframes sway-crown {
+    0% {
+        transform: translateX(-50%) rotate(-3.5deg);
+    }
+    50% {
+        transform: translateX(-50%) rotate(3.5deg);
+    }
+    100% {
+        transform: translateX(-50%) rotate(-3.5deg);
+    }
+}
+
 /* =========================================================================
    --- 13. HIDDEN CONTENT: UNDERGROWTH ---
    ========================================================================= */
