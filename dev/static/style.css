@@ -1413,9 +1413,9 @@ table.dataTable tbody tr[data-tier="bear"],
 
 #modalCrown {
     position: absolute;
-    width: clamp(100px, 42%, 110px);
+    width: clamp(70px, 42%, 110px);
     height: auto;
-    top: 70px; 
+    top: clamp(60px, 25%, 70px); 
     left: 50%;
     transform: translateX(-50%) rotate(0deg);
     transform-origin: bottom center;
