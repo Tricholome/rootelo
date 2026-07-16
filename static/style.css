@@ -1413,7 +1413,7 @@ table.dataTable tbody tr[data-tier="bear"],
 
 #modalCrown {
     position: absolute;
-    width: clamp(70px, 42%, 110px);
+    width: clamp(70px, 42%, 120px);
     height: auto;
     top: clamp(60px, 25%, 70px); 
     left: 50%;
