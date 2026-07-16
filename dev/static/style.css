@@ -1400,6 +1400,15 @@ table.dataTable tbody tr[data-tier="bear"],
     animation: bearShimmer 7s infinite ease-in-out !important;
 }
 
+#modalFinal strong {
+    color: var(--text-main);
+    font-weight: var(--medium);
+}
+
+#modalFinal a.cl { border-bottom: 1px dotted var(--color-bear);  }
+#modalFinal a.cl:hover { border-bottom: 1px solid var(--color-bear); color: var(--color-bear); }
+
+
 .bear-shimmer #modalIcon {
     margin-top: 50px;
 	margin-bottom: -15px;
