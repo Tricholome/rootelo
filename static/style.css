@@ -1259,6 +1259,10 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     animation: modalFadeIn 0.3s ease-out;
 }
 
+.modal-image-side {
+    position: relative;
+}
+
 @keyframes modalFadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
@@ -1390,7 +1394,7 @@ table.dataTable tbody tr[data-tier="bear"],
     
     /* 2. PLACEMENT AJUSTÉ : */
     /* On la descend (top: 10px) pour qu'elle morde sur le front de l'ours */
-    top: 100px; 
+    top: 10px; 
     left: 50%;
     
     /* 3. CENTRAGE ET ROTATION (sans effet de flottement trop haut) */
