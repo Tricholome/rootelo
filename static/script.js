@@ -162,6 +162,11 @@ document.addEventListener('DOMContentLoaded', function() {
 		modalSubtitle.textContent = text.subtitle;
 		
 		modalText.textContent = text.desc;
+		
+		const modalLink = document.getElementById('modalLink');
+		if (modalLink) {
+			modalLink.innerHTML = text.link || '';
+		}
 
 		modal.style.display = 'flex';
 		document.body.style.overflow = 'hidden';
