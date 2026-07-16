@@ -1368,11 +1368,19 @@ tr[data-tier="bear"] td:nth-child(4)     { color: var(--color-bear) !important; 
    ========================================================================= */
    
 @keyframes bearShimmer {
-    0%, 100% { 
+    0% { 
         background-position: 0% 0; 
     }
-    50% { 
+    35% { 
         background-position: 100% 0; 
+    }
+    
+    70% { 
+        background-position: 0% 0; 
+    }
+    
+    100% { 
+        background-position: 0% 0; 
     }
 }
 
@@ -1381,12 +1389,12 @@ table.dataTable tbody tr[data-tier="bear"],
     background-image: linear-gradient(
         120deg, 
         rgba(255, 255, 255, 0) 15%, 
-        rgba(255, 255, 255, 0.14) 50%, 
+        rgba(255, 255, 255, 0.10) 50%, 
         rgba(255, 255, 255, 0) 85%
     ) !important;
     
     background-size: 200% 100% !important;
-    animation: bearShimmer 12s infinite ease-in-out !important;
+    animation: bearShimmer 7s infinite ease-in-out !important;
 }
 
 #modalFinal strong {
