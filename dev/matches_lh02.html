@@ -43399,7 +43399,7 @@
 					<span>Powered by <strong>Tʀɪᴄʜᴏʟᴏᴍᴇ</strong></span>
 					<span>Woodland visions by <a class="cl" href="cache.html">𝕩𝕝𝕦𝕖𝕧𝕚</a></span>
 				</div>
-				<div class="footer-date">Updated on 2026-07-16 08:39 UTC</div>
+				<div class="footer-date">Updated on 2026-07-16 09:21 UTC</div>
 			</div>
 		</footer>
     </div>
@@ -43480,27 +43480,9 @@
 			},
 			'bear': {
 				name: 'Bear',
-				// On pointe directement sur CONFIG.champMatch sans passer par match_results
-				elo: CONFIG.champMatch ? CONFIG.champMatch.champion : 'Champion',
-				subtitle: 'Season Champion',
-				desc: CONFIG.champMatch ? 
-					  `Has won the season Final on ${CONFIG.champMatch.date} on ${CONFIG.champMatch.map} using ${CONFIG.champMatch.deck}.` : 
-					  'The legendary champion.',
-				// La table est générée dynamiquement ici (toujours sans match_results)
-				table: (CONFIG.champMatch && CONFIG.champMatch.players) ? `
-					<table class="match-detail">
-						<thead><tr><th>SEAT</th><th>PLAYER</th><th>FACTION</th><th>SCORE</th></tr></thead>
-						<tbody>
-							${CONFIG.champMatch.players.map((p, i) => `
-								<tr>
-									<td>${i + 1}</td>
-									<td>${p.name}</td>
-									<td>${p.faction}</td>
-									<td>${p.score}</td>
-								</tr>
-							`).join('')}
-						</tbody>
-					</table>` : ''
+				elo: CONFIG.champMatch ? CONFIG.champMatch.name : '',
+				subtitle: CONFIG.champMatch ? `Season ${CONFIG.champMatch.season} Champion` : '',
+				desc: CONFIG.champMatch ? CONFIG.champMatch.desc : '',
 			}
 		};
 	</script>
