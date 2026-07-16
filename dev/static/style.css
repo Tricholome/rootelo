@@ -1397,6 +1397,10 @@ table.dataTable tbody tr[data-tier="bear"],
     animation: sway-crown 6s ease-in-out infinite;
 }
 
+.bear-shimmer #modalIcon {
+    margin-top: 35px;
+}
+
 @keyframes sway-crown {
     0% {
         transform: translate(-50%, -85%) rotate(-3deg);
