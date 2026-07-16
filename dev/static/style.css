@@ -1386,25 +1386,14 @@ table.dataTable tbody tr[data-tier="bear"],
 
 #modalCrown {
     position: absolute;
-    
-    /* 1. TAILLE GÉNÉREUSE ET PROPORTIONNELLE : */
-    /* Elle fait 150px sur grand écran et s'adapte sur mobile (environ 40% de la largeur de l'ours) */
-    width: clamp(100px, 42%, 150px);
+    width: clamp(100px, 42%, 120px);
     height: auto;
-    
-    /* 2. PLACEMENT AJUSTÉ : */
-    /* On la descend (top: 10px) pour qu'elle morde sur le front de l'ours */
-    top: 80px; 
+    top: 70px; 
     left: 50%;
-    
-    /* 3. CENTRAGE ET ROTATION (sans effet de flottement trop haut) */
     transform: translateX(-50%) rotate(0deg);
-    transform-origin: bottom center; /* Pivot parfait à la base de la couronne */
-    
-    pointer-events: none; /* L'utilisateur peut cliquer à travers */
-    z-index: 10; /* Reste par-dessus l'ours */
-    
-    /* Animation douce de balancement */
+    transform-origin: bottom center;
+    pointer-events: none;
+    z-index: 10;
     animation: sway-crown 6s ease-in-out infinite;
 }
 
