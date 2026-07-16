@@ -163,9 +163,9 @@ document.addEventListener('DOMContentLoaded', function() {
 		
 		modalText.textContent = text.desc;
 		
-		const modalLink = document.getElementById('modalLink');
-		if (modalLink) {
-			modalLink.innerHTML = text.link || '';
+		const modalFinal = document.getElementById('modalFinal');
+		if (modalFinal) {
+			modalFinal.innerHTML = text.final || '';
 		}
 
 		modal.style.display = 'flex';
