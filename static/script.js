@@ -143,6 +143,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
 		const modalContent = modal.querySelector('.modal-content');
     	modalContent.style.setProperty('--tier-color', color);
+		
+		modalContent.classList.toggle('bear-shimmer', tier === 'bear');
 
 		const modalTitle = document.getElementById('modalTitle');
 		const modalElo = document.getElementById('modalElo');
