@@ -1,15 +1,9 @@
 {
   "lh02": {
     "champion": "matemato+5004",
-    "match_id": "lh02-final",
-    "date": "2026-07-20",
-    "map": "Mountain",
-    "deck": "Exiles & Partisans",
-    "players": [
-      {"name": "matemato", "score": 30, "faction": "Marquise de Cat"},
-      {"name": "Player 2", "score": 25, "faction": "Woodland Alliance"},
-      {"name": "Player 3", "score": 21, "faction": "Eyrie Dynasties"},
-      {"name": "Player 4", "score": 18, "faction": "Underground Duchy"}
-    ]
+	"season": "LH02",
+	"name": "matemato",
+    "match_id": "46335",
+    "desc": "On July 20, 2026, matemato outmaneuvered kayajam, kaiser and Bapgo.""
   }
 }
