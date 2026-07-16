@@ -3525,7 +3525,7 @@
 						</a>
 					</span>
 				</div>
-				<div class="footer-date">Updated on 2026-07-16 15:01 UTC</div>
+				<div class="footer-date">Updated on 2026-07-16 15:04 UTC</div>
 			</div>
 		</footer>
     </div>
@@ -3546,7 +3546,7 @@
 					<div id="modalSubtitle"></div>
 					<div class="modal-divider"></div>
 					<div id="modalText"></div>
-					<div id="modalLink"></div>
+					<div id="modalFinal"></div>
 				</div>
 			</div>
 		</div>
@@ -3608,8 +3608,7 @@
 				name: 'Bear',
 				elo: CONFIG.champMatch ? CONFIG.champMatch.name : '',
 				subtitle: CONFIG.champMatch ? `Season ${CONFIG.champMatch.season} Champion` : '',
-				desc: CONFIG.champMatch ? CONFIG.champMatch.desc : '',
-				link: CONFIG.champMatch ? `Check the match details:	<a href="https://rootleague.pliskin.dev/match/${CONFIG.champMatch.match_id}" target="_blank" class="match-id-link"> ${CONFIG.champMatch.match_id} ↗</a>` : ''
+				final: CONFIG.champMatch ? `On ${CONFIG.champMatch.date}, after a grueling season, ${CONFIG.champMatch.name} outmaneuvered the league's top-tier contenders ${CONFIG.champMatch.player2}, ${CONFIG.champMatch.player3} and ${CONFIG.champMatch.player4} in an epic final battle. Check the match details: <a href="https://rootleague.pliskin.dev/match/${CONFIG.champMatch.match_id}" target="_blank" class="match-id-link"> ${CONFIG.champMatch.match_id} ↗</a>` : ''
 			}
 		};
 	</script>
