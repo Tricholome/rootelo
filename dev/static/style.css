@@ -1304,7 +1304,7 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 	.modal-divider { display: none; }
     #modalIcon { width: 200px; }
     #modalTitle { font-size: var(--size-xl); letter-spacing: var(--track-wide); }
-	#modalText { font-size: var(--size-modal); line-height: 1.5; margin-top: 25px; text-align: center; }
+	#modalText, #modalFinal { font-size: var(--size-modal); line-height: 1.5; margin-top: 25px; text-align: center; }
 }
 
 /* --- MOBILE LANDSCAPE --- */
@@ -1329,7 +1329,7 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     #modalSubtitle { margin-top: 7px; font-size: var(--size-sm); }
 
     .modal-divider { display: none; }
-    #modalText { font-size: var(--size-sm); line-height: 1.4; margin-top: 20px; text-align: left; }
+    #modalText, #modalFinal { font-size: var(--size-sm); line-height: 1.4; margin-top: 20px; text-align: left; }
 }
 
 /* =========================================================================
@@ -1368,20 +1368,36 @@ tr[data-tier="bear"] td:nth-child(4)     { color: var(--color-bear) !important; 
    ========================================================================= */
    
 @keyframes bearShimmer {
-    0% { background-position: -200% 0; }
-    100% { background-position: 200% 0; }
+    /* 0% à 30% : Le reflet argenté balaie l'élément de gauche à droite */
+    0% { 
+        background-position: 150% 0; 
+    }
+    30% { 
+        background-position: -150% 0; 
+    }
+    /* 30% à 100% : Phase de pause (l'élément redevient calme avant le prochain éclat) */
+    100% { 
+        background-position: -150% 0; 
+    }
 }
 
 table.dataTable tbody tr[data-tier="bear"],
 .modal-content.bear-shimmer {
+    /* Un dégradé plus serré et intense avec un éclat central blanc pur/argenté (0.2) entouré de reflets doux */
     background-image: linear-gradient(
-        120deg, 
-        rgba(255, 255, 255, 0) 25%, 
-        rgba(255, 255, 255, 0.06) 50%, 
-        rgba(255, 255, 255, 0) 75%
+        105deg, 
+        rgba(255, 255, 255, 0) 35%, 
+        rgba(255, 255, 255, 0.08) 43%,
+        rgba(255, 255, 255, 0.22) 50%, /* Éclat métallique central */
+        rgba(255, 255, 255, 0.08) 57%,
+        rgba(255, 255, 255, 0) 65%
     ) !important;
-    background-size: 200% 100% !important;
-    animation: bearShimmer 8s infinite linear !important;
+    
+    /* Plus de marge pour le déplacement du reflet */
+    background-size: 300% 100% !important;
+    
+    /* Animation globale sur 7 secondes (balayage rapide de 2.1s, puis 4.9s de pause) */
+    animation: bearShimmer 7s infinite ease-in-out !important;
 }
 
 .bear-shimmer #modalIcon {
