@@ -1368,87 +1368,25 @@ tr[data-tier="bear"] td:nth-child(4)     { color: var(--color-bear) !important; 
    ========================================================================= */
    
 @keyframes bearShimmer {
-    /* 0% à 30% : Le reflet argenté balaie l'élément de gauche à droite */
-    0% { 
-        background-position: 150% 0; 
+    0%, 100% { 
+        background-position: 0% 0; 
     }
-    30% { 
-        background-position: -150% 0; 
-    }
-    /* 30% à 100% : Phase de pause (l'élément redevient calme avant le prochain éclat) */
-    100% { 
-        background-position: -150% 0; 
+    50% { 
+        background-position: 100% 0; 
     }
 }
 
-table.dataTable tbody tr[data-tier="bear"] {
-    /* Un dégradé plus serré et intense avec un éclat central blanc pur/argenté (0.2) entouré de reflets doux */
+table.dataTable tbody tr[data-tier="bear"],
+.modal-content.bear-shimmer {
     background-image: linear-gradient(
-        105deg, 
-        rgba(255, 255, 255, 0) 35%, 
-        rgba(255, 255, 255, 0.08) 43%,
-        rgba(255, 255, 255, 0.22) 50%, /* Éclat métallique central */
-        rgba(255, 255, 255, 0.08) 57%,
-        rgba(255, 255, 255, 0) 65%
+        120deg, 
+        rgba(255, 255, 255, 0) 15%, 
+        rgba(255, 255, 255, 0.14) 50%, 
+        rgba(255, 255, 255, 0) 85%
     ) !important;
     
-    /* Plus de marge pour le déplacement du reflet */
-    background-repeat: no-repeat !important;
-	background-size: 300% 100% !important;
-    
-    /* Animation globale sur 7 secondes (balayage rapide de 2.1s, puis 4.9s de pause) */
-    animation: bearShimmer 7s infinite ease-in-out !important;
-}
-
-@keyframes polarRipple {
-    0% {
-        /* L'anneau commence tout petit au centre */
-        transform: translate(-50%, -50%) scale(0.1);
-        opacity: 0;
-    }
-    15% {
-        /* Il s'allume d'un coup en commençant son expansion */
-        opacity: 1;
-    }
-    75% {
-        /* Il s'étend très largement et s'évapore */
-        transform: translate(-50%, -50%) scale(5);
-        opacity: 0;
-    }
-    100% {
-        /* Pause pour respirer avant la prochaine onde */
-        transform: translate(-50%, -50%) scale(5);
-        opacity: 0;
-    }
-}
-
-/* La modale bloque toujours les débordements */
-.modal-content.bear-shimmer {
-    position: relative;
-    overflow: hidden;
-}
-
-/* L'anneau magique (Ripple) */
-.modal-content.bear-shimmer::before {
-    content: "";
-    position: absolute;
-    top: 35%;  /* Toujours centré sur l'ours */
-    left: 50%;
-    width: 150px;
-    height: 150px;
-    
-    /* LE SECRET : Le centre est transparent (0%), la lumière est sur l'arête (50%) */
-    background: radial-gradient(
-        circle, 
-        rgba(255, 255, 255, 0) 25%,     /* Cœur vide */
-        rgba(255, 255, 255, 0.4) 50%,   /* Pic de l'onde lumineuse */
-        rgba(255, 255, 255, 0) 75%      /* Extérieur estompé */
-    );
-    border-radius: 50%;
-    pointer-events: none;
-    
-    /* L'animation utilise une courbe personnalisée : départ fulgurant, fin ralentie */
-    animation: polarRipple 4.5s infinite cubic-bezier(0.1, 0.9, 0.2, 1);
+    background-size: 200% 100% !important;
+    animation: bearShimmer 12s infinite ease-in-out !important;
 }
 
 #modalFinal strong {
@@ -1456,7 +1394,7 @@ table.dataTable tbody tr[data-tier="bear"] {
     font-weight: var(--medium);
 }
 
-#modalFinal a.cl { border-bottom: 1px dotted var(--color-bear);  }
+#modalFinal a.cl { border-bottom: 1px dotted var(--color-bear); color: var(--text-muted) }
 #modalFinal a.cl:hover { border-bottom: 1px solid var(--color-bear); color: var(--color-bear); }
 
 
