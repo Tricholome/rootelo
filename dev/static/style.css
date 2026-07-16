@@ -1380,7 +1380,7 @@ table.dataTable tbody tr[data-tier="bear"],
     animation: bearShimmer 8s infinite linear !important;
 }
 
-#modal-crown {
+#modalCrown {
     position: absolute;
     top: -20px; /* Ajuste cette valeur pour poser la couronne pile sur son front */
     left: 50%;
