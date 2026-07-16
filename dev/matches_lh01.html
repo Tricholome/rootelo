@@ -45352,7 +45352,7 @@
 						</a>
 					</span>
 				</div>
-				<div class="footer-date">Updated on 2026-07-16 17:37 UTC</div>
+				<div class="footer-date">Updated on 2026-07-16 17:40 UTC</div>
 			</div>
 		</footer>
     </div>
@@ -45363,6 +45363,7 @@
 			<div id="modalBody">
 				<div class="modal-image-side">
 					<img id="modalIcon" src="" alt="Tier Icon">
+					<img id="modalCrown" src="" alt="Crown">
 				</div>
 				
 				<div class="modal-text-side">
@@ -45414,6 +45415,7 @@
 				desc: 'These nimble wanderers gracefully weave through the crowded paths of the rankings. Routine strategies falter here, threatening to trap anyone who cannot adapt to sudden chaos. They leap ahead where others see only barriers, turning dead ends into daring escapes.'
 			},
 			'mouse': {
+				crown: NO
 				name: 'Mouse',
 				elo: '1200+',
 				subtitle: 'The Steady Foragers',
@@ -45435,7 +45437,8 @@
 				name: 'Bear',
 				elo: CONFIG.champMatch ? CONFIG.champMatch.name : '',
 				subtitle: CONFIG.champMatch ? `Season ${CONFIG.champMatch.season} Champion` : '',
-				final: CONFIG.champMatch ? `When the woodland floor shakes, it is because the top four titans of the league have finally met. On ${CONFIG.champMatch.date}, <strong>${CONFIG.champMatch.name}</strong> secured the seasonal crown by patiently shutting out the ambitions of <strong>${CONFIG.champMatch.player2}</strong>, <strong>${CONFIG.champMatch.player3}</strong> and <strong>${CONFIG.champMatch.player4}</strong> in an epic <a href="https://rootleague.pliskin.dev/match/${CONFIG.champMatch.match_id}" target="_blank" class="cl">final battle</a>.` : ''
+				final: CONFIG.champMatch ? `When the woodland floor shakes, it is because the top four titans of the league have finally met. On ${CONFIG.champMatch.date}, <strong>${CONFIG.champMatch.name}</strong> secured the seasonal crown by patiently shutting out the ambitions of <strong>${CONFIG.champMatch.player2}</strong>, <strong>${CONFIG.champMatch.player3}</strong> and <strong>${CONFIG.champMatch.player4}</strong> in an epic <a href="https://rootleague.pliskin.dev/match/${CONFIG.champMatch.match_id}" target="_blank" class="cl">final battle</a>.` : '',
+				crown: 'assets/images/crown.webp'
 			}
 		};
 	</script>
