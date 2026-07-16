@@ -162,11 +162,6 @@ document.addEventListener('DOMContentLoaded', function() {
 		modalSubtitle.textContent = text.subtitle;
 		
 		modalText.textContent = text.desc;
-		
-		const modalTable = document.getElementById('modalTable');
-		if (modalTable) {
-			modalTable.innerHTML = text.table || '';
-		}
 
 		modal.style.display = 'flex';
 		document.body.style.overflow = 'hidden';
