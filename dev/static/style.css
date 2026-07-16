@@ -1384,9 +1384,14 @@ table.dataTable tbody tr[data-tier="bear"],
     animation: bearShimmer 8s infinite linear !important;
 }
 
+.bear-shimmer #modalIcon {
+    margin-top: 50px;
+	margin-bottom: -15px;
+}
+
 #modalCrown {
     position: absolute;
-    width: clamp(100px, 42%, 120px);
+    width: clamp(100px, 42%, 110px);
     height: auto;
     top: 70px; 
     left: 50%;
@@ -1394,22 +1399,18 @@ table.dataTable tbody tr[data-tier="bear"],
     transform-origin: bottom center;
     pointer-events: none;
     z-index: 10;
-    animation: sway-crown 6s ease-in-out infinite;
-}
-
-.bear-shimmer #modalIcon {
-    margin-top: 35px;
+    animation: sway-crown 3s ease-in-out infinite;
 }
 
 @keyframes sway-crown {
     0% {
-        transform: translate(-50%, -85%) rotate(-3deg);
+        transform: translate(-50%, -85%) rotate(-7deg);
     }
     50% {
-        transform: translate(-50%, -85%) rotate(3deg);
+        transform: translate(-50%, -85%) rotate(7deg);
     }
     100% {
-        transform: translate(-50%, -85%) rotate(-3deg);
+        transform: translate(-50%, -85%) rotate(-7deg);
     }
 }
 
