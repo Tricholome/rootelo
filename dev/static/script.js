@@ -777,7 +777,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (titleEl) titleEl.textContent = "Glade of Fame";
                 if (descEl) descEl.textContent = "Silent roots remember every crown.";
             }
-            document.title = "Glade of Fame • Rootelo";
+            document.title = "Rootelo • Glade of Fame";
         }
 
         const navSecretLink = document.querySelector('.nav-secret');
