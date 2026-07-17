@@ -114,15 +114,16 @@ def prepare_leaderboard_data(df, champion_name=None):
         return []
     
     data = []
+    clean_champ = get_clean_name(champion_name) if champion_name else None
+    
     for _, row in df.iterrows():
         clean_name = get_clean_name(row['Player'])
-        clean_champ = get_clean_name(champion_name) if champion_name else None
         is_champ = (clean_champ is not None and clean_name == clean_champ)
+        
         tier = "bear" if is_champ else get_tier_name(row['ELO'], row['Games'])
-        rank = 1 if is_champ else row['Rank']
         
         data.append({
-            'Rank': rank,
+            'Rank': 0,
             'tier': tier,
             'display_name': clean_name,
             'ELO': int(row['ELO']),
@@ -133,8 +134,11 @@ def prepare_leaderboard_data(df, champion_name=None):
             'Last': row['Last']
         })
     
-    if champion_name:
-        data.sort(key=lambda x: x['display_name'] != get_clean_name(champion_name))
+    if clean_champ:
+        data.sort(key=lambda x: x['display_name'] != clean_champ)
+            
+    for i, entry in enumerate(data):
+        entry['Rank'] = i + 1
             
     return data
 
