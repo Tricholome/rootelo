@@ -610,7 +610,7 @@ for t in TIER_HIERARCHY:
 # =========================================================================
 print("\n=== GENERATING HTML PAGES ===")
 
-def render_core_pages(file_suffix, is_archive, tag, lb_data, match_data, trends_data, meta, relations_data=None):
+def render_core_pages(file_suffix, is_archive, tag, lb_data, match_data, trends_data, meta, relations_data=None, champ_match=None):
     
     # 1. Leaderboard
     render_page(
@@ -624,7 +624,8 @@ def render_core_pages(file_suffix, is_archive, tag, lb_data, match_data, trends_
         num_matches=meta.get('match_count', 0),
         cutoff_date=meta.get('cutoff_date', 'N/A'),
         players=lb_data,
-        match_count=meta.get('match_count', 0)
+        match_count=meta.get('match_count', 0),
+        champ_match=champ_match
     )
 
     # 2. Matches
@@ -660,7 +661,7 @@ render_core_pages("", False, CURRENT_SEASON_TAG, display_leaderboard_current, di
 for tag in ARCHIVE_SEASONS:
     archive_relations_clean = prepare_archive_relations(archives_raw_data[tag].get('relations', {}))
     
-    render_core_pages(f"_{tag}", True, tag, display_archives[tag]['leaderboard'], display_archives[tag]['matches'], display_archives[tag]['trends'], archives_raw_data[tag]['metadata'], archive_relations_clean)
+    render_core_pages(f"_{tag}", True, tag, display_archives[tag]['leaderboard'], display_archives[tag]['matches'], display_archives[tag]['trends'], archives_raw_data[tag]['metadata'], archive_relations_clean, champ_match=CHAMPIONS_DATA.get(tag))
 
 # --- Render Static Pages ---
 render_page(
