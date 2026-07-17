@@ -113,17 +113,45 @@ def prepare_leaderboard_data(df, champion_name=None):
     if df.empty: 
         return []
     
-    data = []
+    # 1. On transforme le DataFrame en liste de dictionnaires
+    records = df.to_dict('records')
     clean_champ = get_clean_name(champion_name) if champion_name else None
     
-    for _, row in df.iterrows():
+    # 2. On trie la liste : 
+    # Priorité 1: Champion d'abord
+    # Priorité 2: Qualifiés (True) avant Non-Qualifiés (False)
+    # Priorité 3: ELO décroissant
+    records.sort(key=lambda x: (
+        get_clean_name(x['Player']) != clean_champ, # Le champion (False/0) passe avant les autres (True/1)
+        not x.get('Qualified', False),              # Les qualifiés (False/0) passent avant les non-qualifiés (True/1)
+        -x['ELO']                                   # ELO décroissant
+    ))
+            
+    # 3. On reconstruit la liste en assignant les rangs proprement
+    data = []
+    rank_counter = 1
+    
+    for row in records:
         clean_name = get_clean_name(row['Player'])
         is_champ = (clean_champ is not None and clean_name == clean_champ)
         
-        tier = "bear" if is_champ else get_tier_name(row['ELO'], row['Games'])
-        
+        # Attribution du rang :
+        # Si c'est le champion -> Rang 1
+        # Si qualifié -> Rang séquentiel
+        # Sinon -> "-"
+        if is_champ:
+            rank = 1
+            tier = "bear"
+        elif row.get('Qualified', False):
+            rank = rank_counter
+            rank_counter += 1
+            tier = get_tier_name(row['ELO'], row['Games'])
+        else:
+            rank = "-"
+            tier = get_tier_name(row['ELO'], row['Games'])
+            
         data.append({
-            'Rank': 0,
+            'Rank': rank,
             'tier': tier,
             'display_name': clean_name,
             'ELO': int(row['ELO']),
@@ -133,12 +161,6 @@ def prepare_leaderboard_data(df, champion_name=None):
             'Peak': row['Peak'],
             'Last': row['Last']
         })
-    
-    if clean_champ:
-        data.sort(key=lambda x: x['display_name'] != clean_champ)
-            
-    for i, entry in enumerate(data):
-        entry['Rank'] = i + 1
             
     return data
 
