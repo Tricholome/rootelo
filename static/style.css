@@ -1407,7 +1407,7 @@ table.dataTable tbody tr[data-tier="bear"],
 
 
 .bear-shimmer #modalIcon {
-    margin-top: clamp(25px, 10%, 50px); 
+    margin-top: 50px;
 	margin-bottom: -15px;
 }
 
@@ -1415,7 +1415,7 @@ table.dataTable tbody tr[data-tier="bear"],
     position: absolute;
     width: clamp(70px, 42%, 120px);
     height: auto;
-    top: clamp(40px, 10%, 70px); 
+    top: clamp(60px, 25%, 70px); 
     left: 50%;
     transform: translateX(-50%) rotate(0deg);
     transform-origin: bottom center;
