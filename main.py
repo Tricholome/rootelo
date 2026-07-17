@@ -36,14 +36,13 @@ NAV_ITEMS = [
 ]
 
 TIER_THRESHOLDS = [
-    (9000, "bear"),
     (1600, "stag"),
     (1500, "bird"),
     (1400, "fox"),
     (1300, "rabbit"),
     (1200, "mouse")
 ]
-TIER_HIERARCHY = ['bear', 'stag', 'bird', 'fox', 'rabbit', 'mouse']
+TIER_HIERARCHY = ['stag', 'bird', 'fox', 'rabbit', 'mouse']
 
 # =========================================================================
 # --- 1. JINJA2 FILTER SETUP ---
@@ -110,38 +109,34 @@ def get_tier_name(rating, games):
             return tier
     return "squirrel"
 
-def prepare_leaderboard_data(df):
+def prepare_leaderboard_data(df, champion_name=None):
     if df.empty: 
         return []
     
-    has_virtual = 'Virtual_ELO' in df.columns
-    sort_col = 'Virtual_ELO' if has_virtual else 'ELO'
-    
-    df_sorted = df.sort_values(by=sort_col, ascending=False)
-    
-    processed_data = []
-    for _, row in df_sorted.iterrows():
-        current_elo = row['Virtual_ELO'] if has_virtual else row['ELO']
-        tier = get_tier_name(current_elo, row['Games'])
+    data = []
+    for _, row in df.iterrows():
+        clean_name = get_clean_name(row['Player'])
+        clean_champ = get_clean_name(champion_name) if champion_name else None
+        is_champ = (clean_champ is not None and clean_name == clean_champ)
+        tier = "bear" if is_champ else get_tier_name(row['ELO'], row['Games'])
+        rank = 1 if is_champ else row['Rank']
         
-        data_entry = {
-            'Rank': row['Rank'],
+        data.append({
+            'Rank': rank,
             'tier': tier,
-            'display_name': get_clean_name(row['Player']),
+            'display_name': clean_name,
             'ELO': int(row['ELO']),
             'Games': row['Games'],
             'Wins': row['Wins'],
             'Win_Rate': row['Win Rate'],
             'Peak': row['Peak'],
             'Last': row['Last']
-        }
-        
-        if has_virtual:
-            data_entry['Virtual_ELO'] = int(row['Virtual_ELO'])
+        })
+    
+    if champion_name:
+        data.sort(key=lambda x: x['display_name'] != get_clean_name(champion_name))
             
-        processed_data.append(data_entry)
-        
-    return processed_data
+    return data
 
 def prepare_matches_data(matches_list):
     return [{
@@ -306,10 +301,7 @@ for tag in ARCHIVE_SEASONS:
             df_ratings = pd.read_csv(path_ratings)
             for _, row in df_ratings.iterrows():
                 elo_ratings[str(row['Player'])] = float(row.get('ELO', 1200.0))
-            
             df_ratings['ELO'] = df_ratings['ELO'].round().astype(int)
-            if 'Virtual_ELO' in df_ratings.columns:
-                df_ratings['Virtual_ELO'] = df_ratings['Virtual_ELO'].round().astype(int)
             if 'Tier' not in df_ratings.columns: 
                 df_ratings['Tier'] = None
             archives_raw_data[tag]['final_df'] = df_ratings
@@ -526,19 +518,16 @@ print("  > Processing historical archive data...")
 display_archives = {}
 for tag in ARCHIVE_SEASONS:
     raw = archives_raw_data[tag]
-    lb_data = prepare_leaderboard_data(raw['final_df'][raw['final_df']['Games'] > 0]) if not raw['final_df'].empty else []
+    season_champ = CHAMPIONS_DATA.get(tag, {}).get('champion')
+    lb_data = prepare_leaderboard_data(
+        raw['final_df'][raw['final_df']['Games'] > 0], 
+        champion_name=season_champ
+    ) if not raw['final_df'].empty else []
     
-    champ_match = None
-    if tag in CHAMPIONS_DATA:
-        champ_data = CHAMPIONS_DATA[tag] 
-    else:
-        champ_data = None
-
     display_archives[tag] = {
         'leaderboard': lb_data, 
         'matches': prepare_matches_data(raw['matches_list']), 
-        'trends': prepare_trends_data(raw['history']),
-        'champ_match': champ_data
+        'trends': prepare_trends_data(raw['history'])
     }
 
 # =========================================================================
@@ -616,7 +605,7 @@ for t in TIER_HIERARCHY:
 # =========================================================================
 print("\n=== GENERATING HTML PAGES ===")
 
-def render_core_pages(file_suffix, is_archive, tag, lb_data, match_data, trends_data, meta, relations_data=None, champ_match=None):
+def render_core_pages(file_suffix, is_archive, tag, lb_data, match_data, trends_data, meta, relations_data=None):
     
     # 1. Leaderboard
     render_page(
@@ -630,8 +619,7 @@ def render_core_pages(file_suffix, is_archive, tag, lb_data, match_data, trends_
         num_matches=meta.get('match_count', 0),
         cutoff_date=meta.get('cutoff_date', 'N/A'),
         players=lb_data,
-        match_count=meta.get('match_count', 0),
-        champ_match=champ_match
+        match_count=meta.get('match_count', 0)
     )
 
     # 2. Matches
@@ -667,17 +655,7 @@ render_core_pages("", False, CURRENT_SEASON_TAG, display_leaderboard_current, di
 for tag in ARCHIVE_SEASONS:
     archive_relations_clean = prepare_archive_relations(archives_raw_data[tag].get('relations', {}))
     
-    render_core_pages(
-        f"_{tag}", 
-        True, 
-        tag, 
-        display_archives[tag]['leaderboard'], 
-        display_archives[tag]['matches'], 
-        display_archives[tag]['trends'], 
-        archives_raw_data[tag]['metadata'], 
-        archive_relations_clean, 
-        champ_match=display_archives[tag]['champ_match']
-    )
+    render_core_pages(f"_{tag}", True, tag, display_archives[tag]['leaderboard'], display_archives[tag]['matches'], display_archives[tag]['trends'], archives_raw_data[tag]['metadata'], archive_relations_clean)
 
 # --- Render Static Pages ---
 render_page(
