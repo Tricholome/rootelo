@@ -116,18 +116,22 @@ def prepare_leaderboard_data(df, champion_name=None):
     data = []
     clean_champ = get_clean_name(champion_name) if champion_name else None
     
+    # On utilise simplement le caractère Unicode
+    crown_icon = "♔" 
+    
     for _, row in df.iterrows():
         clean_name = get_clean_name(row['Player'])
         is_champ = (clean_champ is not None and clean_name == clean_champ)
         
-        # On garde le rang tel quel (donc 3 reste 3)
-        rank = row['Rank']
+        # Le rang est soit l'icône, soit le numéro
+        rank_display = crown_icon if is_champ else row['Rank']
+        
         tier = "bear" if is_champ else get_tier_name(row['ELO'], row['Games'])
         
         data.append({
-            'Rank': rank,
+            'Rank': rank_display,
             'tier': tier,
-            'is_champion': is_champ, # Nouveau flag pour le template
+            'is_champion': is_champ,
             'display_name': clean_name,
             'ELO': int(row['ELO']),
             'Games': row['Games'],
@@ -137,9 +141,7 @@ def prepare_leaderboard_data(df, champion_name=None):
             'Last': row['Last']
         })
     
-    # Tri : On place le champion en haut, sans modifier le rang des autres
     if clean_champ:
-        # sorted() avec True en premier (is_champion est True pour le champ)
         data.sort(key=lambda x: not x['is_champion'])
             
     return data
