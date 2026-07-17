@@ -117,7 +117,7 @@ def prepare_leaderboard_data(df, champion_name=None):
     clean_champ = get_clean_name(champion_name) if champion_name else None
     
     # On utilise simplement le caractère Unicode
-    crown_icon = "♔" 
+    crown_icon = "♕" 
     
     for _, row in df.iterrows():
         clean_name = get_clean_name(row['Player'])
