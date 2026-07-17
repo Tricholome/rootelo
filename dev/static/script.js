@@ -204,7 +204,11 @@ $(document).ready(function() {
 		let showAllPlayers = !pageName.includes('_'); 
 
 		$.extend($.fn.dataTable.ext.type.order, { 
-			"rank-pre": function (d) { return d === "-" ? 9999 : parseInt(d); } 
+			"rank-pre": function (d) { 
+				if (d === "♔") return 0; 
+				if (d === "-") return 9999;
+				return parseInt(d); 
+			} 
 		});
 
 		$.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
