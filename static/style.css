@@ -1411,6 +1411,10 @@ table.dataTable tbody tr[data-tier="bear"],
 	margin-bottom: -15px;
 }
 
+@media (max-height: 500px) and (orientation: landscape) {
+    .bear-shimmer #modalIcon { margin-bottom: -30px; }
+}
+
 #modalCrown {
     position: absolute;
     width: clamp(70px, 42%, 120px);
