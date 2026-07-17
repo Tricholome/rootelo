@@ -115,15 +115,12 @@ def prepare_leaderboard_data(df, champion_name=None):
     
     data = []
     clean_champ = get_clean_name(champion_name) if champion_name else None
-    
-    # On utilise simplement le caractère Unicode
-    crown_icon = "♕" 
+    crown_icon = "♔" 
     
     for _, row in df.iterrows():
         clean_name = get_clean_name(row['Player'])
         is_champ = (clean_champ is not None and clean_name == clean_champ)
         
-        # Le rang est soit l'icône, soit le numéro
         rank_display = crown_icon if is_champ else row['Rank']
         
         tier = "bear" if is_champ else get_tier_name(row['ELO'], row['Games'])
