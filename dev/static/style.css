@@ -510,9 +510,9 @@ nav a.active {
     cursor: pointer;
 }
 
-/* --- DB Button --- */
+/* DB Button */
 #root-db-btn {
-	position: relative;
+    position: relative;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -534,19 +534,29 @@ nav a.active {
     stroke: currentColor;
 }
 
-.search-box input:focus + #root-db-btn:not(.disabled) {
-    border-color: var(--main-color);
+.search-box input:focus + #root-db-btn {
+    border-color: var(--main-color) !important;
 }
 
-#root-db-btn:not(.disabled):hover { 
+#root-db-btn .tooltip-text {
+    top: calc(100% + 8px);
+    bottom: auto;
+    left: auto;
+    right: 0;
+    transform: translateY(-4px);
+}
+
+#root-db-btn:not(.disabled):hover,
+#root-db-btn:not(.disabled).expanded { 
     color: var(--main-color);
+    border-color: var(--main-color);
     background: var(--bg-hover);
 }
 
 #root-db-btn:not(.disabled):hover .tooltip-text,
 #root-db-btn:not(.disabled).expanded .tooltip-text {
     opacity: 1;
-    transform: translateX(-50%) translateY(-15px);
+    transform: translateY(0);
 }
 
 /* Unranked Toggle */
