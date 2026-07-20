@@ -48,6 +48,8 @@
 	<meta property="og:title" content="ROOTELO">
 	<meta property="og:description" content="A Metric of Woodland Skill and Will">
 	<meta property="og:image" content="https://tricholome.github.io/rootelo/assets/images/rootelo-preview.webp">
+	
+	<link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg">
 
     {% block extra_head %}{% endblock %}
 	{% block extra_css %}{% endblock %}
@@ -148,6 +150,18 @@
 									{% endfor %}
 								{% endif %}
 							</datalist>
+							<a id="root-db-btn" 
+							   href="#" 
+							   target="_blank" 
+							   rel="noopener noreferrer" 
+							   class="db-btn js-double-tap disabled" 
+							   aria-label="View profile on The Root Database">
+							   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+								 <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+								 <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+							   </svg>
+							   <span class="tooltip-text">View profile on The Root Database</span>
+							</a>
 						</div>
 					</div>
 				</div>
@@ -176,7 +190,16 @@
 			<div class="footer-content">
 				<div class="footer-credits">
 					<span>Powered by <strong>Tʀɪᴄʜᴏʟᴏᴍᴇ</strong></span>
-					<span>Woodland visions by <a class="cl" href="cache.html">𝕩𝕝𝕦𝕖𝕧𝕚</a></span>
+					<span>Woodland visions by
+						<a class="cl" href="cache.html">𝕩𝕝𝕦𝕖𝕧𝕚</a>
+						<a class="insta" href="https://www.instagram.com/xluevi.art/" target="_blank" aria-label="Instagram de xluevi">
+							<svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+								<rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+								<path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+								<line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+							</svg>
+						</a>
+					</span>
 				</div>
 				<div class="footer-date">Updated on {{ generation_date }}</div>
 			</div>
@@ -189,6 +212,7 @@
 			<div id="modalBody">
 				<div class="modal-image-side">
 					<img id="modalIcon" src="" alt="Tier Icon">
+					<img id="modalCrown" src="" alt="Crown">
 				</div>
 				
 				<div class="modal-text-side">
@@ -199,6 +223,7 @@
 					<div id="modalSubtitle"></div>
 					<div class="modal-divider"></div>
 					<div id="modalText"></div>
+					<div id="modalFinal"></div>
 				</div>
 			</div>
 		</div>
@@ -211,14 +236,62 @@
 	<script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
     
     <script>
+		window.PLAYER_DWD_MAP = {{ player_dwd_map_json | safe if player_dwd_map_json is defined else '{}' }};
+	
 		const CONFIG = {
 			colors: {{ config.colors.tiers|tojson }},
 			icons: {{ config.assets.icons|tojson }},
 			currentTier: "{{ current_tier }}",
-			chartData: {{ history_json | safe if history_json is defined else '{}' }}
+			chartData: {{ history_json | safe if history_json is defined else '{}' }},
+			champMatch: {{ champ_match | tojson | safe if champ_match else 'null' }}
+		};
+		
+		const TIER_DATA = {
+			'bird': {
+				name: 'Bird',
+				elo: '1500+',
+				subtitle: 'The Grandmasters',
+				desc: 'These elite sovereigns sit at the absolute pinnacle of the Woodland canopy. Remaining on this prestigious throne is a dizzying battle against shifting winds and ambitious rivals. They rule the skies by maintaining flawless execution and unerring control under pressure.'
+			},
+			'fox': {
+				name: 'Fox',
+				elo: '1400+',
+				subtitle: 'The Cunning Tacticians',
+				desc: 'These keen strategists dominate the ladder by thriving on sharp wit over brute force. The hunt presses close from all sides, and a single moment of hesitation can prove fatal. They prevail by measuring every step with care and exploiting weakness with signature flair.'
+			},
+			'rabbit': {
+				name: 'Rabbit',
+				elo: '1300+',
+				subtitle: 'The Agile Contenders',
+				desc: 'These nimble wanderers gracefully weave through the crowded paths of the rankings. Routine strategies falter here, threatening to trap anyone who cannot adapt to sudden chaos. They leap ahead where others see only barriers, turning dead ends into daring escapes.'
+			},
+			'mouse': {
+				name: 'Mouse',
+				elo: '1200+',
+				subtitle: 'The Steady Foragers',
+				desc: 'These resilient souls rise above the casual fray to mark a milestone of mastery. The wild now demands pure stamina, where early momentum easily fades into exhaustion. They hold their ground through quiet consistency, proving that patience outlasts blind luck.'
+			},
+			'squirrel': {
+				name: 'Squirrel',
+				elo: '< 1200',
+				subtitle: 'The Hapless Stragglers',
+				desc: 'These frantic collectors dwell in the tangled undergrowth of the ranking system. Clumsy errors and brutal defeats often force them to fall back while fiercer beasts surge ahead. Yet, they bravely endure by turning every painful lesson into a seed for next season’s harvest.'
+			},
+			'stag': {
+				name: 'Stag',
+				elo: '1600+',
+				subtitle: 'The Legend',
+				desc: 'Has anyone truly seen this mythical beast, or is it only an echo of the wild? What happens to the predator when the woods turn hollow and every path leads back to a mirror of its own perfection? With nothing left to be claimed, is the true crown the silence that follows the chase?'
+			},
+			'bear': {
+				name: 'Bear',
+				elo: CONFIG.champMatch ? CONFIG.champMatch.champion : '',
+				subtitle: CONFIG.champMatch ? `Season ${CONFIG.champMatch.season} Champion` : '',
+				final: CONFIG.champMatch ? `An epic <a href="https://rootleague.pliskin.dev/match/${CONFIG.champMatch.match_id}" target="_blank" class="cl">final battle</a> pitted the top four titans of the league against each other. On ${CONFIG.champMatch.date}, <strong>${CONFIG.champMatch.champion}</strong> secured the seasonal crown by shutting out the ambitions of <strong>${CONFIG.champMatch.player2}</strong>, <strong>${CONFIG.champMatch.player3}</strong> and <strong>${CONFIG.champMatch.player4}</strong>. Surely, the woodland floor shook from the sheer force of their clash.` : '',
+				crown: 'assets/images/crown.webp'
+			}
 		};
 	</script>
-		
     <script src="static/script.js"></script>
     {% block custom_js %}{% endblock %}
 	<script>
