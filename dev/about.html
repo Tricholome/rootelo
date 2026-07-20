@@ -1,0 +1,472 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Rootelo • Codex</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..900;1,9..144,400..900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
+    
+    <link rel="stylesheet" href="static/style.css">
+    
+    <style>
+        :root {
+			/* --- 1. LAYOUT CONFIG (Automatic loop) --- */
+			
+			--window-max-width: clamp(600px, 60vw, 1600px);
+			
+			--window-padding: clamp(20px, 2.5vw, 40px);
+			
+			--window-gap: 20px;
+			
+
+			/* --- 2. TYPOGRAPHY (Automatic loop) --- */
+			
+			--font-title: 'Fraunces', serif;
+			
+			--font-ui: 'Inter', sans-serif;
+			
+			--font-mono: 'JetBrains Mono', monospace;
+			
+			--font-hand: 'Segoe Print', 'Bradley Hand', 'Apple Chancery', 'Comic Sans MS', cursive;
+			
+			--bold: 900;
+			
+			--medium: 600;
+			
+			--normal: 400;
+			
+			--size-xs: 0.75rem;
+			
+			--size-sm: 0.85rem;
+			
+			--size-modal: 0.90rem;
+			
+			--size-base: 0.95rem;
+			
+			--size-md: 1.2rem;
+			
+			--size-lg: 2.0rem;
+			
+			--size-xl: 2.5rem;
+			
+			--size-display: 2.8rem;
+			
+			--track-slight: 0.5px;
+			
+			--track-wide: 1px;
+			
+			--track-display: 4px;
+			
+
+			/* --- 3. GLOBAL UI (Automatic loop) --- */
+			
+			--bg-overlay-top: rgba(0, 0, 0, 0.1);
+			
+			--bg-overlay-bottom: rgba(0, 0, 0, 0.8);
+			
+			--bg-container: #1c1c1c;
+			
+			--bg-surface: rgba(255, 255, 255, 0.03);
+			
+			--bg-hover: rgba(255, 255, 255, 0.08);
+			
+			--border-soft: #333333;
+			
+			--border-dark: rgba(0, 0, 0, 0.4);
+			
+			--border-light: rgba(255, 255, 255, 0.05);
+			
+			--glass-bg: #1c1c1cd9;
+			
+			--glass-border: rgba(255, 255, 255, 0.08);
+			
+			--glass-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+			
+			--text-bright: #ffffff;
+			
+			--text-main: #E0E0E0;
+			
+			--text-muted: #A0A0A0;
+			
+			--text-dark: #111111;
+			
+			--dt-table-bg: rgba(0, 0, 0, 0.15);
+			
+			--dt-header-bg: rgba(0, 0, 0, 0.25);
+			
+			--dt-row-border: rgba(255, 255, 255, 0.03);
+			
+			--dt-row-hover: rgba(255, 255, 255, 0.07);
+			
+			--dt-input-bg: rgba(0, 0, 0, 0.2);
+			
+
+			/* --- 4. TIER DYNAMICS (Loop with logic) --- */
+			
+			--color-bird: #7AB5E0;
+			--color-bird-bg: #7AB5E014;
+			
+			--color-fox: #E55555;
+			--color-fox-bg: #E5555514;
+			
+			--color-rabbit: #F2C14E;
+			--color-rabbit-bg: #F2C14E14;
+			
+			--color-mouse: #F49E52;
+			--color-mouse-bg: #F49E5214;
+			
+			--color-squirrel: #94C160;
+			--color-squirrel-bg: #94C16014;
+			
+			--color-stag: #C686FF;
+			--color-stag-bg: #C686FF14;
+			
+			--color-bear: #ffffff;
+			--color-bear-bg: #ffffff14;
+			
+			--color-default: #7A7347;
+			--color-default-bg: #7A734714;
+			
+
+			/* --- 5. PAGE THEME --- */
+			--main-color: #F49E52;
+		}
+    </style>
+	
+	<meta property="og:type" content="website">
+	<meta property="og:url" content="https://tricholome.github.io/rootelo">
+	<meta property="og:title" content="ROOTELO">
+	<meta property="og:description" content="A Metric of Woodland Skill and Will">
+	<meta property="og:image" content="https://tricholome.github.io/rootelo/assets/images/rootelo-preview.webp">
+	
+	<link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg">
+
+    
+	
+</head>
+
+<body data-page="about">
+    
+    <div class="container">
+	
+        <header class="app-banner window-box">
+		
+            <div class="banner-container">
+                <div class="banner-icons left">
+                    <a href="javascript:void(0)" onclick="openTierModal('stag')" class="tooltip-link js-double-tap banner-icon-stag">
+                        <img src="assets/icons/stag.webp" alt="Stag">
+                        <span class="tooltip-text"><strong class="tier-stag">Stag (1600+)</strong> — The Legend</span>
+                    </a>
+					<a href="javascript:void(0)" onclick="openTierModal('bird')" class="tooltip-link js-double-tap">
+                        <img src="assets/icons/bird_new.webp" alt="Bird">
+                        <span class="tooltip-text"><strong class="tier-bird">Bird (1500+)</strong> — The Grandmasters</span>
+                    </a>
+                    <a href="javascript:void(0)" onclick="openTierModal('fox')" class="tooltip-link js-double-tap">
+                        <img src="assets/icons/fox_new.webp" alt="Fox">
+                        <span class="tooltip-text"><strong class="tier-fox">Fox (1400+)</strong> — The Cunning Tacticians</span>
+                    </a>
+                </div>
+                <div class="banner-center">
+                    <h1 class="site-title">ROOTELO</h1>
+                    <p class="site-subtitle">A Metric of Woodland&nbsp;Skill&nbsp;and&nbsp;Will</p>
+                </div>
+                <div class="banner-icons right">
+                    <a href="javascript:void(0)" onclick="openTierModal('rabbit')" class="tooltip-link js-double-tap">
+                        <img src="assets/icons/rabbit_new.webp" alt="Rabbit">
+                        <span class="tooltip-text"><strong class="tier-rabbit">Rabbit (1300+)</strong> — The Agile Contenders</span>
+                    </a>
+                    <a href="javascript:void(0)" onclick="openTierModal('mouse')" class="tooltip-link js-double-tap">
+                        <img src="assets/icons/mouse_new.webp" alt="Mouse">
+                        <span class="tooltip-text"><strong class="tier-mouse">Mouse (1200+)</strong> — The Steady Foragers</span>
+                    </a>
+					<a href="javascript:void(0)" onclick="openTierModal('squirrel')" class="tooltip-link js-double-tap banner-icon-squirrel">
+                        <img src="assets/icons/squirrel.webp" alt="Squirrel">
+                        <span class="tooltip-text"><strong class="tier-squirrel">Squirrel (&lt; 1200)</strong> — The Hapless Stragglers</span>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="nav-separator"></div>
+
+            <nav>
+				
+
+				
+					
+						
+					
+					<a href="index.html" class="">Leaderboard</a>
+				
+					
+						
+					
+					<a href="matches.html" class="">Top Tables</a>
+				
+					
+						
+					
+					<a href="trends.html" class="">Player's Journey</a>
+				
+					
+						
+					
+					<a href="about.html" class="active">Codex</a>
+				
+				<a href="cache.html" class="nav-secret ">Undergrowth</a>
+			</nav>
+			
+        </header>
+        
+        <div class="screen-deco right-deco">
+			
+				<img src="assets/images/about_img_right.webp" alt="Decoration Right">
+			
+		</div>
+
+        <div id="view" class="app-viewport window-box">
+            <header class="page-intro">
+				<h2>Codex</h2>
+				<p>Understanding the fundamental rules and&nbsp;mechanics&nbsp;of&nbsp;Rootelo.</p>
+				
+			</header>
+			
+            <main>
+                
+<div class="codex-section">
+    <h2>An Alternative Ladder</h2>
+    <p>This platform offers a distinct competitive lens through which to view player performance, providing an alternative ranking experience specifically designed for the <a class="cl" href="https://rootleague.pliskin.dev/">Root Digital League</a>. Known for its informal yet highly competitive spirit, the league organizes established seasons where every match is played to the bitterest end. You can join the adventure at any time: visit their official site to subscribe, follow the community rules, and start competing for seasonal awards.</p>
+
+    <h2>The Scoring Engine</h2>
+    <p>To ensure fairness in a four-player format, this leaderboard uses a multi-player <a class="cl" href="https://en.wikipedia.org/wiki/Elo_rating_system">Elo model</a>. The journey begins with a base rating of 1200 points. Unlike a simple win-count, the engine evaluates the “strength of schedule”: defeating high-ranked opponents boosts a rating significantly, while losing as the favorite results in a steeper drop. The Elo score is permanent, serving as a continuous record of performance over time.</p>
+
+    <h2>The Dynamic Phases</h2>
+    <p>The <strong>K-Factor</strong> determines the maximum number of Elo points you can win or lose in a single match. As you play more games, your K-Factor decreases, protecting your hard-earned rank from wild swings and rewarding long-term consistency.</p>
+    
+    <table class="k-table">
+		<tr>
+			<td><strong>Calibration</strong></td>
+			<td>0-10 games</td>
+			<td class="k-val">K = 80</td>
+			<td>High volatility to find your true rank quickly.</td>
+		</tr>
+		<tr>
+			<td><strong>Active</strong></td>
+			<td>11-50 games</td>
+			<td class="k-val">K = 40</td>
+			<td>Balanced weighting to climb the ladder steadily.</td>
+		</tr>
+		<tr>
+			<td><strong>Veteran</strong></td>
+			<td>50+ games</td>
+			<td class="k-val">K = 20</td>
+			<td>Solid stability to protect your long-term standing.</td>
+		</tr>
+	</table>
+    
+    <h2>The Tier System</h2>
+    <p>After your 10-game calibration phase, you officially join the ranks and unlock your <strong>Tier</strong> based on your current Elo rating:</p>
+    
+    <table class="k-table">
+		
+		<tr>
+			<td><strong>Bird</strong></td>
+			<td>
+				<a href="javascript:void(0)" onclick="openTierModal('bird')" class="tier-anchor-link">
+					<div class="tier-icon-container">
+						<img src="assets/icons/bird_new.webp" alt="bird">
+					</div>
+				</a>
+			</td>
+			<td class="k-val">Elo &ge; 1500</td>
+			<td>The Grandmasters</td>
+		</tr>
+		
+		<tr>
+			<td><strong>Fox</strong></td>
+			<td>
+				<a href="javascript:void(0)" onclick="openTierModal('fox')" class="tier-anchor-link">
+					<div class="tier-icon-container">
+						<img src="assets/icons/fox_new.webp" alt="fox">
+					</div>
+				</a>
+			</td>
+			<td class="k-val">Elo &ge; 1400</td>
+			<td>The Cunning Tacticians</td>
+		</tr>
+		
+		<tr>
+			<td><strong>Rabbit</strong></td>
+			<td>
+				<a href="javascript:void(0)" onclick="openTierModal('rabbit')" class="tier-anchor-link">
+					<div class="tier-icon-container">
+						<img src="assets/icons/rabbit_new.webp" alt="rabbit">
+					</div>
+				</a>
+			</td>
+			<td class="k-val">Elo &ge; 1300</td>
+			<td>The Agile Contenders</td>
+		</tr>
+		
+		<tr>
+			<td><strong>Mouse</strong></td>
+			<td>
+				<a href="javascript:void(0)" onclick="openTierModal('mouse')" class="tier-anchor-link">
+					<div class="tier-icon-container">
+						<img src="assets/icons/mouse_new.webp" alt="mouse">
+					</div>
+				</a>
+			</td>
+			<td class="k-val">Elo &ge; 1200</td>
+			<td>The Steady Foragers</td>
+		</tr>
+		
+	</table>
+    
+    <h2>The Seasonal Lifecycle</h2>
+    <p>While Elo scores are persistent, seasonal game counts are reset. To reclaim their Tier, every player must complete the calibration phase at the start of each season, where restored volatility allows for rapid movement. At a season’s end, a <strong>Loyalty Bonus</strong> is equally distributed to all players with at least one recorded match. By rebalancing the global pool, this system combats deflation and can even secure a qualification at the finish line.</p>
+
+    <h2>The Championship Finale</h2>
+    <p>Once the leaderboard is frozen, the top four qualified players advance to a single, all-random match to crown the <strong>League Champion</strong>. Played either live or asynchronously at the participants' discretion, this final clash provides a definitive conclusion to the current season.</p>
+
+    <h2>A Living Project</h2>
+    <p>This system is a living project. Formulas and features may evolve to better reflect the competitive reality of the game. If you have any questions, suggestions, or want to discuss the math behind the ranks, join the conversation on the <a class="cl" href="https://discord.com/channels/476234833572397056/1477741957139791892">Woodland Warriors</a>.</p>
+</div>
+
+            </main>
+			
+			<div class="footer-table">
+				
+			</div>
+			
+        </div>
+        
+        <div class="screen-deco left-deco">
+			
+				<img src="assets/images/about_img_left.webp" alt="Decoration Left">
+			
+		</div>
+
+        <footer class="app-footer window-box">
+			<div class="footer-content">
+				<div class="footer-credits">
+					<span>Powered by <strong>Tʀɪᴄʜᴏʟᴏᴍᴇ</strong></span>
+					<span>Woodland visions by
+						<a class="cl" href="cache.html">𝕩𝕝𝕦𝕖𝕧𝕚</a>
+						<a class="insta" href="https://www.instagram.com/xluevi.art/" target="_blank" aria-label="Instagram de xluevi">
+							<svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+								<rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+								<path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+								<line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+							</svg>
+						</a>
+					</span>
+				</div>
+				<div class="footer-date">Updated on 2026-07-20 14:12 UTC</div>
+			</div>
+		</footer>
+    </div>
+    
+    <div id="tierModal" class="modal-overlay">
+		<div class="modal-content window-box">
+			<button class="modal-close" aria-label="Close">&times;</button>
+			<div id="modalBody">
+				<div class="modal-image-side">
+					<img id="modalIcon" src="" alt="Tier Icon">
+					<img id="modalCrown" src="" alt="Crown">
+				</div>
+				
+				<div class="modal-text-side">
+					<div class="title-row">
+						<h2 id="modalTitle"></h2>
+						<h3 id="modalElo"></h3>
+					</div>
+					<div id="modalSubtitle"></div>
+					<div class="modal-divider"></div>
+					<div id="modalText"></div>
+					<div id="modalFinal"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div id="mystic-gate"></div>
+
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+	<script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+    
+    <script>
+		window.PLAYER_DWD_MAP = {"Lex25": "Lex25-415", "DelSol": "DelSol-6479", "Harriet": "Harriet-1445", "DarkOwl": "DarkOwl-5198", "Cheetah32": "Cheetah32-6800", "Musicalwoofy": "Musicalwoofy-7712", "GameProfit": "GameProfit-8226", "alex0": "alex0-3804", "benruff": "benruff-449", "CosmicCant": "CosmicCant-3836", "DanielDandaniel": "DanielDandaniel-7434", "LHlegend": "LHlegend-5313", "TheSillyBilly": "TheSillyBilly-6135", "re_al_": "re_al_-5392", "EmbryoticDeth": "EmbryoticDeth", "Riverman": "Riverman-1204", "pizzamagican": "pizzamagican-4983", "ZachB": "ZachB-8726", "BetterPools": "BetterPools-6450", "Montes": "Montes-8263", "Nefkano": "Nefkano-8780", "Excitedteapot": "Excitedteapot-2857", "DanzigMF": "DanzigMF-6351", "TheIndustrialRevoloution": "TheIndustrialRevoloution-3880", "Doordecat": "Doordecat-1475", "Intraceptor": "Intraceptor-5437", "polyphemur": "polyphemur-3699", "Aceosd": "Aceosd-1686", "NaySmith": "NaySmith-3702", "AERotters": "AERotters-5277", "TimidTailwind": "TimidTailwind-2597", "Akayami": "Akayami-8372", "Bodoby": "Bodoby-7221", "ConeMan": "ConeMan-3213", "byzeke": "byzeke-7830", "Octavius": "Octavius-8289", "aelisheneithlon": "aelisheneithlon-4087", "Pi314": "Pi314-6815", "matemato": "matemato-5004", "Diyana": "Diyana-933", "FatBoyyy": "FatBoyyy-6258", "Nate-inator": "Nate-inator-8253", "Rachel997": "Rachel997", "Blank": "Blank-7029", "Jack432": "Jack432-6277", "TheWiseFox": "TheWiseFox-8428", "WWren": "WWren-25", "Xar149": "Xar149-9374", "evancomposer": "evancomposer-2898", "Yucca": "Yucca-8041", "BennyJ": "BennyJ-6079", "Mazrim": "Mazrim-9295", "GlandorHooverstein": "GlandorHooverstein-602", "optimusprawn": "optimusprawn-9866", "EarlofEarl": "EarlofEarl-908", "Nierxlelx": "Nierxlelx-7709", "Hydro033": "Hydro033-5014", "anoretu": "anoretu-9881", "FVMLion": "FVMLion-1706", "AcolyteOfRoot": "AcolyteOfRoot-4294", "Mohammad": "Mohammad-8142", "AJIJIi": "AJIJIi", "nyosh8484": "nyosh8484-1627", "kamomileTea": "kamomileTea-4472", "FamilyTuber": "FamilyTuber-3701", "FausDav": "FausDav-5901", "XxD4RK_W0LFxX": "XxD4RK_W0LFxX-9534", "secretpaths": "secretpaths-8130", "RootiredRooter": "RootiredRooter-4390", "Bengal3": "Bengal3-6710", "NightTsuki": "NightTsuki-7092", "BaconBoy": "BaconBoy-9689", "ChrD99": "ChrD99-1022", "Wrathbone": "Wrathbone-7116", "Mati92": "Mati92-4633", "ShuShuBana": "ShuShuBana-2889", "ZimaBlue": "ZimaBlue-5729", "KarmaBurn": "KarmaBurn-1193", "Yojimbo": "Yojimbo-9872", "Fluffy": "Fluffy-189", "Evenorodds": "Evenorodds-2809", "bigcathedral": "bigcathedral-1133", "ToasterTrash": "ToasterTrash-8502", "pheobii": "pheobii-5175", "Valzaan": "Valzaan-3564", "CaptainBork": "CaptainBork-7195", "Anton": "Anton-562", "Cotton": "Cotton-4951", "Furry0329": "Furry0329-6442", "ReoWulf": "ReoWulf-5368", "QuixArtagnan": "QuixArtagnan-7824", "ermactually": "ermactually-9395", "Blurr": "Blurr-1887", "lumpyprol": "lumpyprol-3206", "RFMerlo": "RFMerlo-6470", "DevilUnfiltered": "DevilUnfiltered-380", "Hazelnut19": "Hazelnut19-2913", "HeatBeats": "HeatBeats-9767", "MunkeyBrewster": "MunkeyBrewster-2527", "Lambo": "Lambo-7524", "Ctfox": "Ctfox-5431", "LegendsAbyss": "LegendsAbyss-6443", "cliuless": "cliuless-2304", "ToughHazelnut": "ToughHazelnut-1523", "Demand": "Demand-3288", "rhino": "rhino-3915", "0thers1der": "0thers1der-5053", "pwarren8590": "pwarren8590-4047", "AxlPrototype": "AxlPrototype-5016", "Lante": "Lante-1268", "Vitsky": "Vitsky-1201", "KargDemiau": "KargDemiau-7823", "Blepblep": "Blepblep-6970", "Bjoda": "Bjoda-2731", "Munchking": "Munchking-5998", "Maladay": "Maladay-6079", "dindane": "dindane-250", "RedPanda": "RedPanda-336", "nathanbraun": "nathanbraun-7726", "GamerTower": "GamerTower-410", "silverfox": "silverfox-4551", "blasonmyphemous": "blasonmyphemous-8394", "FrancescoBr": "FrancescoBr-4009", "cookain": "cookain-4752", "Seiza": "Seiza-6137", "PokerFace126": "PokerFace126-7192", "IMPERATOR": "IMPERATOR-2570", "MelodiCat": "MelodiCat-8385", "hauntedpebbles2": "hauntedpebbles2-8720", "Jalapeno": "Jalapeno-9238", "LittleHalo (9982)": "LittleHalo-9982", "RiverKawaii": "RiverKawaii-4578", "MisterGume": "MisterGume-9687", "IndifferentFish": "IndifferentFish-2547", "complexartichoke": "complexartichoke-1699", "gord20": "gord20-7161", "eef99": "eef99-8799", "cringelordirl": "cringelordirl-3838", "Gaborever": "Gaborever-8187", "Glasypress": "Glasypress-9650", "Schkitz": "Schkitz-8222", "Silver": "Silver-6850", "MrRiceGuy": "MrRiceGuy-5849", "ColPop": "ColPop-9146", "Pliskin": "Pliskin-7357", "HoosierDaddy": "HoosierDaddy-4463", "PlagueCarrier": "PlagueCarrier-5718", "FalconBird": "FalconBird-7701", "AxelMcKenzie": "AxelMcKenzie-19", "DrCheeseFiend": "DrCheeseFiend-3515", "DarthPuniceus": "DarthPuniceus-9605", "Ptitmxz": "Ptitmxz-6986", "pikeline": "pikeline-9847", "Zeldamon": "Zeldamon-7946", "BigHat": "BigHat-3791", "Sharkskln": "Sharkskln-6071", "BMPerJMPer": "BMPerJMPer-9145", "legrandgrand": "legrandgrand-9040", "Piechu": "Piechu-7320", "Hammad": "Hammad-766", "HobGungan": "HobGungan-2914", "lgtw3450": "lgtw3450-6602", "Azdontek": "Azdontek-1234", "Elijah": "Elijah-6615", "Fearteiler": "Fearteiler-8050", "maxlovesyou": "maxlovesyou-9434", "DarthOblivius": "DarthOblivius-1339", "MoxJet": "MoxJet-3716", "TAKSpx": "TAKSpx-9156", "tjudge": "tjudge-8299", "Supersingalong": "Supersingalong-6545", "Rootenthusiast": "Rootenthusiast-6637", "Extortionator": "Extortionator-4951", "kesitron": "kesitron-187", "HollyKat902": "HollyKat902-1703", "fadingnovel": "fadingnovel-7335", "Wubba": "Wubba-9310", "fbd117": "fbd117-324", "tunnndz": "tunnndz-4720", "ImJustExisting": "ImJustExisting-9170", "Plasma": "Plasma-7413", "TurkeyNoNo": "TurkeyNoNo-9522", "chibimori": "chibimori-1707", "Led_Slash": "Led_Slash-3579", "Scipio": "Scipio-8842", "Cutoopen": "Cutoopen-2335", "hakoo": "hakoo", "Cloudere": "Cloudere-8085", "GlisteningGeetus": "GlisteningGeetus-4225", "tubaking": "tubaking-4200", "Oppapi": "Oppapi-9478", "kingslime": "kingslime-8836", "ninjacat536": "ninjacat536-1220", "HowDoYouDrew": "HowDoYouDrew-716", "MOMOGA": "MOMOGA-5135", "KyloBot": "KyloBot-6508", "chux88": "chux88-4717", "KeyserSoze": "KeyserSoze-1044", "ominouscat": "ominouscat-4065", "ArionGekkota": "ArionGekkota-7361", "Xman1997": "Xman1997-3777", "ExecutedByGromp": "ExecutedByGromp-3925", "Dekiru": "Dekiru-4451", "benssoon": "benssoon-802", "BareGammon": "BareGammon-82", "Ironic": "Ironic-3891", "weirdone": "weirdone-8473", "sasquatch": "sasquatch-9509", "SSR_Mike": "SSR_Mike-6444", "Alexispc": "Alexispc-6921", "KFull": "KFull-1226", "shurgs": "shurgs-6277", "Shuuhey": "Shuuhey-6535", "creapy01": "creapy01-439", "Jerry": "Jerry", "rathyAro": "rathyAro-1512", "Oriol": "Oriol-2638", "tobin": "tobin-8390", "nutrimentia": "nutrimentia-2965", "MangoBlade11": "MangoBlade11-7548", "Baradhas": "Baradhas-8593", "kaiser": "kaiser-8343", "Mindger": "Mindger-7576", "amjohnson636": "amjohnson636-3986", "TheDolphinman": "TheDolphinman-2630", "metalnooze": "metalnooze-4817", "CommonGibbon": "CommonGibbon-5852", "Daniel": "Daniel-9756", "Temperz87": "Temperz87-4696", "Hiyoshi": "Hiyoshi-2879", "Hossain2020": "Hossain2020-1837", "Karcher": "Karcher-6280", "mrkent": "mrkent-9273", "MarquiseDeGyatt": "MarquiseDeGyatt-202", "FelipeRocha": "FelipeRocha-9451", "Rhyno": "Rhyno-5128", "Lokfok": "Lokfok-5204", "trollone1993": "trollone1993-1106", "wherestonks": "wherestonks-4878", "pigdog": "pigdog-4355", "TheFourthJesse": "TheFourthJesse-9103", "JustABurntBird": "JustABurntBird-3221", "WyvernElement": "WyvernElement-1816", "ChippZamoose": "ChippZamoose-906", "Sirius": "Sirius-9323", "Julien": "Julien-5506", "Krooter": "Krooter-8646", "Bitto": "Bitto-476", "RangerEpic": "RangerEpic-3948", "GuyNXS": "GuyNXS-7023", "mysti": "mysti-7857", "Vxdaa": "Vxdaa-3835", "2eaasley": "2eaasley-6663", "Roldan": "Roldan-1152", "RaveAnt": "RaveAnt-1236", "Acelet": "Acelet", "lazarus210": "lazarus210", "Hasan": "Hasan-1782", "BjarkeHuse": "BjarkeHuse-2923", "oshwott2844": "oshwott2844-9258", "PestoEmporium": "PestoEmporium-6690", "brrrlinguist": "brrrlinguist-929", "StrikeOrca": "StrikeOrca-4455", "CowOnAPlane": "CowOnAPlane-3405", "DarkPortents": "DarkPortents-1248", "Daz257": "Daz257-7505", "Wriggleroom": "Wriggleroom-4502", "Emperia": "Emperia-9282", "ForkMaster": "ForkMaster-8694", "Nightfury1089": "Nightfury1089-500", "Aleph": "Aleph-9548", "LutherStr": "LutherStr-1358", "osche": "osche-990", "Perdita": "Perdita-9449", "clp10033": "clp10033-4124", "tofuwater": "tofuwater-4853", "TempExtremal": "TempExtremal-1625", "balonthebold": "balonthebold-1851", "vinnie": "vinnie-746", "Potet": "Potet-3500", "Wolvane": "Wolvane-1704", "nikkan": "nikkan-7933", "goodgamepat": "goodgamepat-6980", "FavorOfTheRabbits": "FavorOfTheRabbits-9523", "Dandel": "Dandel-3128", "Lucat": "Lucat-9382", "1coolguy": "1coolguy-6294", "Sebby": "Sebby-9924", "Cuagodking": "Cuagodking-3670", "GardenLily": "GardenLily-4780", "yoyot1": "yoyot1-5057", "Jasiu\u0144cio": "Jasiu\u0144cio-3892", "mkcy3": "mkcy3-8006", "Traestaree": "Traestaree-7134", "Joshi69": "Joshi69-4249", "Plush2": "Plush2-8334", "RexCow": "RexCow-93848049", "Kirien": "Kirien-375", "Niruu": "Niruu-622", "Skumfi": "Skumfi-5761", "buurn": "buurn-343", "sparrowhawk": "sparrowhawk-9374", "Podge0303": "Podge0303-8578", "Viggs": "Viggs-9470", "HungryJeff": "HungryJeff-6786", "aaronmaik88": "aaronmaik88-3890", "darkcat": "darkcat-794", "Actionman2222": "Actionman2222-4303", "StatzoryTheMad": "StatzoryTheMad-7951", "Dumbledore": "Dumbledore-1135", "CocoMocoMan": "CocoMocoMan-3134", "BaliHoo": "BaliHoo-3674", "Banzai7000": "Banzai7000-1191", "Wrestler": "Wrestler-3756", "Akriuss": "Akriuss-573", "ImEpy": "ImEpy-9148", "uwtron": "uwtron-573", "Jboooooooooooooooooooom": "Jboooooooooooooooooooom-4776", "kayajam": "kayajam-9348", "Tagatu": "Tagatu-7056", "Snivylover12": "Snivylover12-1064", "RustySpruce": "RustySpruce-2483", "Gabobs": "Gabobs-7758", "MinePokemine": "MinePokemine-7899", "cjahwon": "cjahwon-6865", "BLULOBSTR": "BLULOBSTR-1510", "Tolfan": "Tolfan", "FungusMouse": "FungusMouse-7883", "Nudraxon": "Nudraxon-7640", "Nadav253": "Nadav253-6419", "BoMa85": "BoMa85-9812", "Nickpappa": "Nickpappa-2149", "GAFE15": "GAFE15-7357", "Thanhdat": "Thanhdat-1146", "Whats02": "Whats02-5282", "100pctskillz": "100pctskillz-6186", "TonyDeloreanESQ": "TonyDeloreanESQ-4756", "saintstonet": "saintstonet-7390", "doejurko": "doejurko-3088", "TheRedViper": "TheRedViper-1596", "Dramsss": "Dramsss-3", "DawnDiVito": "DawnDiVito-5802", "DGDKami": "DGDKami-9860", "CWise": "CWise-6651", "Kmahussier": "Kmahussier-2186", "DegenerateIan": "DegenerateIan-7146", "Tricholome": "Tricholome-4276", "CptAlex": "CptAlex-2928", "Hurple": "Hurple-6007", "Vagabond Glazer": "Vagabond Glazer-6268", "StarhardFishrinse": "StarhardFishrinse-1675", "StellarHermit": "StellarHermit-3326", "DanielJeun": "DanielJeun-8467", "Xerof": "Xerof-7582", "uFancyHUH": "uFancyHUH-8404", "mouseinabox": "mouseinabox-992", "residentevil": "residentevil-6828", "strypeez": "strypeez-6330", "Drinken": "Drinken-3181", "themikeman": "themikeman-4306", "Knightochan": "Knightochan-8069", "Tseka": "Tseka-4826", "TenchRinggold": "TenchRinggold-1755", "voltigeur": "voltigeur-3314", "kurtfisto": "kurtfisto-6674", "mishaelh1": "mishaelh1-6045", "Lobster": "Lobster-5525", "Yragael": "Yragael-5413", "tippop": "tippop-7531", "sedlak87": "sedlak87-8418", "sourdoh": "sourdoh-5225", "JointedRumble60": "JointedRumble60-7541", "Potatosgonnacrushya": "Potatosgonnacrushya-428", "scaled": "scaled-326", "alevGO": "alevGO-2990", "Peppy": "Peppy-6321", "PajaroTronador": "PajaroTronador-9221", "Manpanzee": "Manpanzee-265", "Soluna": "Soluna-2127", "McMayo": "McMayo-5829", "deriokle": "deriokle-4319", "WillRevolt": "WillRevolt-5749", "Lynxtek": "Lynxtek-4186", "BalintusMaxi": "BalintusMaxi-1951", "Antiproject": "Antiproject-7236", "CroCroCro": "CroCroCro-9495", "MrDrouf": "MrDrouf-3826", "BugMuff44": "BugMuff44-9091", "budynzsmalcem": "budynzsmalcem-3790", "nmyers2": "nmyers2-8426", "Libitina114": "Libitina114-7177", "MylesMoose": "MylesMoose-6850", "Durian": "Durian-959", "Gregoola": "Gregoola-1424", "Luclid": "Luclid-298", "SlickAngel": "SlickAngel-9821", "Bodnamax": "Bodnamax-6783", "CoxyNormus": "CoxyNormus-5176", "Shrimpster": "Shrimpster-8461", "pashatherussian": "pashatherussian-5688", "ShowStopperW": "ShowStopperW-549", "Lufire": "Lufire-7855", "Mossfusion": "Mossfusion-6189", "ThoseTeeff": "ThoseTeeff-4061", "sontei5": "sontei5-3678", "Dizzz": "Dizzz-246", "MagZeppelin": "MagZeppelin-4248", "NonStInc.": "NonStInc.-6190", "LilSoup": "LilSoup-6064", "Pandapapst": "Pandapapst-8323", "Salitance": "Salitance-3491", "udon66": "udon66-6395", "Raineweather05": "Raineweather05-2319", "hanban": "hanban-3911", "Welllll": "Welllll-4899", "Shadyferret": "Shadyferret-9636", "PacificCold": "PacificCold-7409", "Mcauthor": "Mcauthor-181", "Rabbitwarlord": "Rabbitwarlord-1983", "Odinius": "Odinius-897", "FireFox": "FireFox-7079", "Rabbi": "Rabbi-7", "sda1611": "sda1611-3493", "Olymp": "Olymp-9823", "Youdge": "Youdge-8117", "CodPieceZ": "CodPieceZ-7710", "radiantchaos": "radiantchaos-5523", "Starcore6": "Starcore6-817", "Mopey": "Mopey-1052", "Tad604": "Tad604-8004", "StoneOfShame": "StoneOfShame-5048", "Vak123": "Vak123-5225", "Axolatal": "Axolatal", "Ljaz7": "Ljaz7-6925", "Trumpet": "Trumpet-4282", "Shrek": "Shrek-876", "BloodMuffin": "BloodMuffin-4386", "vanillapoppy": "vanillapoppy-9303", "bootle": "bootle-7207", "Klishu": "Klishu-3272", "Komasan": "Komasan-7739", "NadtyLite": "NadtyLite-7330", "Hadjiya": "Hadjiya-4475", "NotTheThreat": "NotTheThreat-4569", "Gagneto": "Gagneto-8499", "PeskyPaul": "PeskyPaul-5583", "chosennuttso": "chosennuttso", "Waferseeker95": "Waferseeker95-4351", "DemaRogue": "DemaRogue-7727", "deejaythink": "deejaythink-9834", "PsychologicalBox": "PsychologicalBox-5812", "KuperMeister": "KuperMeister-8518", "TurtleJawz": "TurtleJawz-3309", "Nuttsy": "Nuttsy-5282", "Biggins96": "Biggins96-3792", "LittleHalo (9882)": "LittleHalo-9882", "elmoo": "elmoo-6190", "Quisyo": "Quisyo-8653", "FakeSki": "FakeSki-4232", "Acecreamsundae": "Acecreamsundae-1472", "Lifeye": "Lifeye-4414", "ionou21": "ionou21-8459", "micherin": "micherin-7972", "Fenetix": "Fenetix-9243", "Cookies": "Cookies-3700", "catscat": "catscat-1327", "Sjepeal": "Sjepeal-9206", "Mariv": "Mariv-2352", "ChusGG": "ChusGG-6807", "swiftsusan": "swiftsusan-8662", "SMenefee": "SMenefee-4066", "marksoz00": "marksoz00-1780", "Mouseman": "Mouseman-7870", "Cabbage0642": "Cabbage0642-3776", "OUSlaughter": "OUSlaughter-3653", "Cheesecake271": "Cheesecake271-5205", "LucianTheFak": "LucianTheFak-3697", "EdacM": "EdacM-9189", "time2orush": "time2orush-2871", "Raybit": "Raybit-2953", "BuckeyeNation": "BuckeyeNation-0", "Lobber": "Lobber-171819", "Bapgo": "Bapgo-7254", "Darkwonderer": "Darkwonderer-1035", "mwcrabtree": "mwcrabtree", "Ultcyber": "Ultcyber-1551", "VanKaiserman": "VanKaiserman-5269", "idk123": "idk123-6079", "SimulatedBeehive": "SimulatedBeehive-1517", "ellbelle": "ellbelle-9011", "Jsn13": "Jsn13-1881", "sleepylabone": "sleepylabone-1003", "Nymmer": "Nymmer-3243", "stxr444": "stxr444-8143", "Aeliott": "Aeliott-7118", "Clink": "Clink-5884", "BuliBaka": "BuliBaka-6658", "Marcus": "Marcus-9032", "Awesem": "Awesem-1966", "Napalminthebirdsong": "Napalminthebirdsong-5528", "Gibbs": "Gibbs-3656", "pooge": "pooge-6189", "halzyen": "halzyen-4113", "Killerstorm17": "Killerstorm17-3440", "Fabius": "Fabius-5370", "BadScra": "BadScra-3199", "NattyKash": "NattyKash-316"};
+	
+		const CONFIG = {
+			colors: {"bear": "#ffffff", "bird": "#7AB5E0", "default": "#7A7347", "fox": "#E55555", "mouse": "#F49E52", "rabbit": "#F2C14E", "squirrel": "#94C160", "stag": "#C686FF"},
+			icons: {"bear": "assets/icons/bear.webp", "bird": "assets/icons/bird_new.webp", "fox": "assets/icons/fox_new.webp", "mouse": "assets/icons/mouse_new.webp", "rabbit": "assets/icons/rabbit_new.webp", "squirrel": "assets/icons/squirrel.webp", "stag": "assets/icons/stag.webp"},
+			currentTier: "mouse",
+			chartData: {},
+			champMatch: null
+		};
+		
+		const TIER_DATA = {
+			'bird': {
+				name: 'Bird',
+				elo: '1500+',
+				subtitle: 'The Grandmasters',
+				desc: 'These elite sovereigns sit at the absolute pinnacle of the Woodland canopy. Remaining on this prestigious throne is a dizzying battle against shifting winds and ambitious rivals. They rule the skies by maintaining flawless execution and unerring control under pressure.'
+			},
+			'fox': {
+				name: 'Fox',
+				elo: '1400+',
+				subtitle: 'The Cunning Tacticians',
+				desc: 'These keen strategists dominate the ladder by thriving on sharp wit over brute force. The hunt presses close from all sides, and a single moment of hesitation can prove fatal. They prevail by measuring every step with care and exploiting weakness with signature flair.'
+			},
+			'rabbit': {
+				name: 'Rabbit',
+				elo: '1300+',
+				subtitle: 'The Agile Contenders',
+				desc: 'These nimble wanderers gracefully weave through the crowded paths of the rankings. Routine strategies falter here, threatening to trap anyone who cannot adapt to sudden chaos. They leap ahead where others see only barriers, turning dead ends into daring escapes.'
+			},
+			'mouse': {
+				name: 'Mouse',
+				elo: '1200+',
+				subtitle: 'The Steady Foragers',
+				desc: 'These resilient souls rise above the casual fray to mark a milestone of mastery. The wild now demands pure stamina, where early momentum easily fades into exhaustion. They hold their ground through quiet consistency, proving that patience outlasts blind luck.'
+			},
+			'squirrel': {
+				name: 'Squirrel',
+				elo: '< 1200',
+				subtitle: 'The Hapless Stragglers',
+				desc: 'These frantic collectors dwell in the tangled undergrowth of the ranking system. Clumsy errors and brutal defeats often force them to fall back while fiercer beasts surge ahead. Yet, they bravely endure by turning every painful lesson into a seed for next season’s harvest.'
+			},
+			'stag': {
+				name: 'Stag',
+				elo: '1600+',
+				subtitle: 'The Legend',
+				desc: 'Has anyone truly seen this mythical beast, or is it only an echo of the wild? What happens to the predator when the woods turn hollow and every path leads back to a mirror of its own perfection? With nothing left to be claimed, is the true crown the silence that follows the chase?'
+			},
+			'bear': {
+				name: 'Bear',
+				elo: CONFIG.champMatch ? CONFIG.champMatch.champion : '',
+				subtitle: CONFIG.champMatch ? `Season ${CONFIG.champMatch.season} Champion` : '',
+				final: CONFIG.champMatch ? `An epic <a href="https://rootleague.pliskin.dev/match/${CONFIG.champMatch.match_id}" target="_blank" class="cl">final battle</a> pitted the top four titans of the league against each other. On ${CONFIG.champMatch.date}, <strong>${CONFIG.champMatch.champion}</strong> secured the seasonal crown by shutting out the ambitions of <strong>${CONFIG.champMatch.player2}</strong>, <strong>${CONFIG.champMatch.player3}</strong> and <strong>${CONFIG.champMatch.player4}</strong>. Surely, the woodland floor shook from the sheer force of their clash.` : '',
+				crown: 'assets/images/crown.webp'
+			}
+		};
+	</script>
+    <script src="static/script.js"></script>
+    
+	<script>
+		if (window.location.pathname.includes('/dev/')) {
+			window.goatcounter = {no_onload: true};
+		}
+	</script>
+	<script data-goatcounter="https://tricholome.goatcounter.com/count"
+            async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>
