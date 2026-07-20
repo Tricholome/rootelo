@@ -34,6 +34,7 @@ jobs:
           cp *.html rootelo_site/
           cp -r static rootelo_site/
           cp -r assets rootelo_site/
+          cp -r api rootelo_site/
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
