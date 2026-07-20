@@ -510,7 +510,7 @@ nav a.active {
     cursor: pointer;
 }
 
-/* DB Button */
+/* --- DB Button --- */
 #root-db-btn {
     display: inline-flex;
     align-items: center;
@@ -518,13 +518,12 @@ nav a.active {
     padding: 0 10px;
     background: var(--bg-surface);
     border: 1px solid var(--border-soft);
-    border-left: 1px solid rgba(255, 255, 255, 0.1); /* Ligne de séparation subtile */
+    border-left: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 0 4px 4px 0;
-    font-size: 1rem;
-    line-height: 1;
+    color: var(--text-muted);
     text-decoration: none;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: color 0.2s, background-color 0.2s, border-color 0.2s, opacity 0.2s;
     opacity: 0.35;
     pointer-events: none;
 }
@@ -532,22 +531,17 @@ nav a.active {
 #root-db-btn svg {
     display: block;
     stroke: currentColor;
-    transition: transform 0.2s ease, stroke 0.2s ease;
 }
 
 .search-box input:focus + #root-db-btn:not(.disabled) {
     border-color: var(--main-color);
 }
 
-#root-db-btn:hover:not(.disabled) { 
+#root-db-btn:not(.disabled):hover { 
+    color: var(--main-color);
     background: var(--bg-hover);
-    filter: drop-shadow(0 0 4px var(--main-color));
 }
 
-#root-db-btn:hover:not(.disabled) svg {
-    stroke: var(--main-color);
-    transform: scale(1.15);
-}
 /* Unranked Toggle */
 .unranked-toggle-container {
     display: flex;
