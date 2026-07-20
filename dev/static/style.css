@@ -446,7 +446,8 @@ nav a.active {
 }
 
 /* Season Button */
-.season-btn { 
+.season-btn,
+.db-btn {
     text-decoration: none; 
     font-size: var(--size-sm); 
     font-weight: var(--medium); 
@@ -457,8 +458,12 @@ nav a.active {
     border: 1px solid var(--border-soft); 
     transition: 0.2s; 
     text-align: center;
+}
+
+.season-btn { 
     flex: 1; /* Sur mobile, les boutons se partagent équitablement l'espace restant */
 }
+
 .season-btn:hover { 
     color: var(--text-main); 
     background: var(--bg-hover); 
@@ -469,9 +474,26 @@ nav a.active {
     border-color: var(--main-color) !important; 
 }
 
+/* DB Button */
+.db-btn {
+    font-family: 'Luminari', fantasy, serif;
+    font-weight: var(--bold);
+    text-transform: uppercase;
+    letter-spacing: var(--track-wide);
+}
+
+.db-btn:hover:not(.disabled) { 
+    color: var(--main-color); 
+    background: var(--bg-hover); 
+    border-color: var(--main-color);
+}
+
 /* Search Box & Auto-Content Correction */
 .search-box { 
     flex: 1; /* Prend exactement tout l'espace disponible restant sur sa ligne, calqué sur les boutons */
+	display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .search-box input { 
