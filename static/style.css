@@ -476,20 +476,19 @@ nav a.active {
     display: flex;
     align-items: center;
     width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
     background: var(--dt-input-bg);
     border: 1px solid var(--border-soft);
     border-radius: 4px;
     transition: border-color 0.2s;
-    position: relative; /* Repère pour le tooltip */
-}
-
-.search-box:focus-within,
-.search-box:has(#root-db-btn:not(.disabled)) {
-    border-color: var(--main-color);
+    position: relative;
 }
 
 .search-box input { 
     flex: 1;
+    min-width: 0;
+    box-sizing: border-box;
     background: transparent !important;
     color: var(--text-main) !important; 
     border: none !important; 
@@ -497,6 +496,11 @@ nav a.active {
     font-family: var(--font-ui);
     font-size: var(--size-sm);
     outline: none;
+}
+
+.search-box:focus-within,
+.search-box:has(#root-db-btn:not(.disabled)) {
+    border-color: var(--main-color);
 }
 
 .search-box input::-webkit-search-cancel-button {
