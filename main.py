@@ -13,6 +13,12 @@ ARCHIVE_SEASONS = ["lh01", "lh02"]
 CURRENT_SEASON_TAG = "lh03"
 TOURNAMENT_ID = 26
 
+CONFIG_FILE = os.path.join(DATA_DIR, "config.json")
+CONFIG = {}
+if os.path.exists(CONFIG_FILE):
+    with open(CONFIG_FILE, "r", encoding="utf-8") as f:
+        CONFIG = json.load(f)
+
 CORRECTIONS_FILE = os.path.join(DATA_DIR, f"{CURRENT_SEASON_TAG}_corrections.csv")
 
 CONTENT_FILE = os.path.join(DATA_DIR, "pages_content.json")
@@ -48,6 +54,8 @@ TIER_HIERARCHY = ['stag', 'bird', 'fox', 'rabbit', 'mouse']
 # --- 1. JINJA2 FILTER SETUP ---
 # =========================================================================
 env = Environment(loader=FileSystemLoader('templates'))
+
+env.globals['config'] = CONFIG
 
 def smart_date_filter(d1, d2=None):
     if not d1: 
@@ -682,3 +690,42 @@ render_page(
 )
 
 print("✨ Website generated successfully!")
+
+# =========================================================================
+# --- 10. API GENERATION ---
+# =========================================================================
+print("\n=== GENERATING API JSON ===")
+
+BASE_URL = "https://tricholome.github.io/rootelo"
+
+tier_colors = CONFIG.get('colors', {}).get('tiers', {})
+tier_icons = CONFIG.get('assets', {}).get('icons', {})
+
+api_data = {
+    "updated_at": datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC'),
+    "players": {}
+}
+
+for item in display_leaderboard_current:
+    clean_name = item['display_name']
+    tier = item['tier']
+    color = tier_colors.get(tier)
+    icon_path = tier_icons.get(tier)
+
+    api_data["players"][clean_name] = {
+        "display_name": clean_name,
+        "elo": item['ELO'],
+        "rank": item['Rank'],
+        "tier": tier,
+        "bg_color": color,
+        "icon_url": f"{BASE_URL}/{icon_path}" if icon_path else None,
+        "games": item['Games'],
+        "wins": item['Wins'],
+        "win_rate": item['Win_Rate']
+    }
+
+os.makedirs("api", exist_ok=True)
+with open("api/live_elo.json", "w", encoding="utf-8") as f:
+    json.dump(api_data, f, indent=2, ensure_ascii=False)
+
+print("  > api/live_elo.json generated.")
