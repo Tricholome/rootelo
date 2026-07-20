@@ -1,4 +1,6 @@
-{% from '_config.html' import config, theme_color, current_tier, current_deco with context %}
+{% set current_tier = config.page_tiers[page_id] if page_id in config.page_tiers else 'default' %}
+{% set theme_color = config.colors.tiers[current_tier] if current_tier in config.colors.tiers else config.colors.tiers.default %}
+{% set current_deco = config.assets.decorations[page_id] if page_id in config.assets.decorations else none %}
 
 <!DOCTYPE html>
 <html lang="en">
