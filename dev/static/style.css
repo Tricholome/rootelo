@@ -446,8 +446,7 @@ nav a.active {
 }
 
 /* Season Button */
-.season-btn,
-.db-btn {
+.season-btn {
     text-decoration: none; 
     font-size: var(--size-sm); 
     font-weight: var(--medium); 
@@ -458,10 +457,7 @@ nav a.active {
     border: 1px solid var(--border-soft); 
     transition: 0.2s; 
     text-align: center;
-}
-
-.season-btn { 
-    flex: 1; /* Sur mobile, les boutons se partagent équitablement l'espace restant */
+    flex: 1;
 }
 
 .season-btn:hover { 
@@ -474,26 +470,12 @@ nav a.active {
     border-color: var(--main-color) !important; 
 }
 
-/* DB Button */
-.db-btn {
-    font-family: 'Luminari', fantasy, serif;
-    font-weight: var(--bold);
-    text-transform: uppercase;
-    letter-spacing: var(--track-wide);
-}
-
-.db-btn:hover:not(.disabled) { 
-    color: var(--main-color); 
-    background: var(--bg-hover); 
-    border-color: var(--main-color);
-}
-
 /* Search Box & Auto-Content Correction */
 .search-box { 
-    flex: 1; /* Prend exactement tout l'espace disponible restant sur sa ligne, calqué sur les boutons */
-	display: flex;
-    align-items: center;
-    gap: 8px;
+    flex: 1;
+    display: flex;
+    align-items: stretch;
+    width: 100%;
 }
 
 .search-box input { 
@@ -503,8 +485,9 @@ nav a.active {
     background: var(--dt-input-bg) !important;
     color: var(--text-main) !important; 
     border: 1px solid var(--border-soft) !important; 
-    padding: 6px 14px;
-    border-radius: 4px;
+    border-right: none !important;
+    border-radius: 4px 0 0 4px !important;
+    padding: 6px 12px;
     width: 100%;
     font-family: var(--font-ui);
     font-size: var(--size-sm);
@@ -527,6 +510,44 @@ nav a.active {
     cursor: pointer;
 }
 
+/* DB Button */
+#root-db-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 10px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-soft);
+    border-left: 1px solid rgba(255, 255, 255, 0.1); /* Ligne de séparation subtile */
+    border-radius: 0 4px 4px 0;
+    font-size: 1rem;
+    line-height: 1;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    opacity: 0.35;
+    pointer-events: none;
+}
+
+#root-db-btn svg {
+    display: block;
+    stroke: currentColor;
+    transition: transform 0.2s ease, stroke 0.2s ease;
+}
+
+.search-box input:focus + #root-db-btn:not(.disabled) {
+    border-color: var(--main-color);
+}
+
+#root-db-btn:hover:not(.disabled) { 
+    background: var(--bg-hover);
+    filter: drop-shadow(0 0 4px var(--main-color));
+}
+
+#root-db-btn:hover:not(.disabled) svg {
+    stroke: var(--main-color);
+    transform: scale(1.15);
+}
 /* Unranked Toggle */
 .unranked-toggle-container {
     display: flex;
