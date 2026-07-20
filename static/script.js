@@ -648,24 +648,41 @@ $(document).ready(function() {
     const input = document.getElementById('playerName');
     if (!input) return;
 
-    // 1. Récupération des joueurs valides directement depuis le datalist généré par Python
-    const validPlayers = Array.from(document.querySelectorAll('#playerAutocompleteList option')).map(opt => opt.value);
+    // 1. Récupération des joueurs valides (depuis le datalist d'autocomplétion)
+    const validPlayers = Array.from(document.querySelectorAll('#playerAutocompleteList option, #players-list option')).map(opt => opt.value);
 
-    // 2. Fonction unique de filtrage et de persistance sécurisée
+    // 2. Fonction principale de filtrage, synchronisation et mise à jour des éléments
     function applyGlobalSearch(val) {
         const query = (val || "").trim();
 
-        // Gestion de la checkbox "Show unranked players" du Leaderboard
+        // --- A. Mise à jour dynamique du bouton The Root Database ---
+        const dbBtn = document.getElementById('root-db-btn');
+        if (dbBtn) {
+            const map = window.PLAYER_DWD_MAP || {};
+            const matchedName = Object.keys(map).find(k => k.toLowerCase() === query.toLowerCase());
+            const slug = matchedName ? map[matchedName] : null;
+
+            if (slug) {
+                dbBtn.href = `https://www.therootdatabase.com/dwd/profile/${slug}`;
+                dbBtn.classList.remove('disabled');
+                dbBtn.style.opacity = '1';
+                dbBtn.style.pointerEvents = 'auto';
+            } else {
+                dbBtn.href = '#';
+                dbBtn.classList.add('disabled');
+                dbBtn.style.opacity = '0.4';
+                dbBtn.style.pointerEvents = 'none';
+            }
+        }
+
+        // --- B. Checkbox Leaderboard ---
         const checkbox = $('#tierFilterCheckbox');
         if (checkbox.length > 0) {
-            // Si on effectue une recherche, on force l'activation pour trouver les unranked
             if (query !== "" && !checkbox.is(':checked')) {
                 checkbox.prop('checked', true).trigger('change');
-            } 
-            // Si on vide la recherche, on rétablit la préférence par défaut de la page (Saison vs Archive)
-            else if (query === "") {
+            } else if (query === "") {
                 const pageName = window.location.pathname.split('/').pop() || '';
-                const defaultStateForPage = !pageName.includes('_'); // True si saison LIVE, False si archive
+                const defaultStateForPage = !pageName.includes('_');
                 
                 if (checkbox.is(':checked') !== defaultStateForPage) {
                     checkbox.prop('checked', defaultStateForPage).trigger('change');
@@ -673,42 +690,64 @@ $(document).ready(function() {
             }
         }
 
-        // Persistance intelligente dans le localStorage
-        if (validPlayers.includes(query)) {
-            localStorage.setItem('selectedPlayer', query);
+        // --- C. Persistance dans le localStorage ---
+        const map = window.PLAYER_DWD_MAP || {};
+        const matchedName = Object.keys(map).find(k => k.toLowerCase() === query.toLowerCase()) || query;
+
+        if (validPlayers.includes(matchedName) || map[matchedName]) {
+            localStorage.setItem('selectedPlayer', matchedName);
         } else if (query === "") {
             localStorage.removeItem('selectedPlayer');
         }
 
-        // Filtrage dynamique de tous les tableaux DataTables présents sur la page
+        // --- D. Filtrage des DataTables ---
         $('.dataTable').each(function() {
             if ($.fn.dataTable.isDataTable(this)) {
                 $(this).DataTable().search(query).draw();
             }
         });
 
-        // Mise à jour de l'arbre relationnel (si présent)
+        // --- E. Mise à jour de l'Arbre Relationnel & du Graphique ---
         if (typeof window.updatePlayerView === 'function') {
             window.updatePlayerView();
         }
-
-        // Mise à jour du graphique (si présent)
         if (typeof window.updateChart === 'function' && document.getElementById('progressionChart')) {
             window.updateChart();
         }
     }
 
-    // 3. Écouteur principal sur la barre de recherche globale
+    // 3. Écouteur principal sur la barre de recherche
     input.addEventListener('input', function() {
         applyGlobalSearch(this.value);
     });
 
-    // 4. Restauration de l'état persistant au chargement
-    const savedPlayer = localStorage.getItem('selectedPlayer');
-    if (savedPlayer && validPlayers.includes(savedPlayer)) {
-        input.value = savedPlayer;
+    // 4. RESTAURATION INITIALE : Priorité URL (?player=...) > LocalStorage
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlQuery = urlParams.get('player')?.trim().toLowerCase();
+
+    const map = window.PLAYER_DWD_MAP || {};
+    // Table de correspondance bi-directionnelle (slug DWD -> Nom propre & Nom propre -> Nom propre)
+    const lookupMap = {};
+    Object.entries(map).forEach(([cleanName, slug]) => {
+        lookupMap[slug.toLowerCase()] = cleanName;
+        lookupMap[cleanName.toLowerCase()] = cleanName;
+    });
+
+    let targetPlayer = null;
+
+    if (urlQuery && lookupMap[urlQuery]) {
+        targetPlayer = lookupMap[urlQuery];
+    } else {
+        const savedPlayer = localStorage.getItem('selectedPlayer');
+        if (savedPlayer && (validPlayers.includes(savedPlayer) || map[savedPlayer])) {
+            targetPlayer = savedPlayer;
+        }
+    }
+
+    if (targetPlayer) {
+        input.value = targetPlayer;
         setTimeout(() => {
-            applyGlobalSearch(savedPlayer);
+            applyGlobalSearch(targetPlayer);
         }, 50);
     } else {
         localStorage.removeItem('selectedPlayer');
