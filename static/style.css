@@ -470,35 +470,33 @@ nav a.active {
     border-color: var(--main-color) !important; 
 }
 
-/* Search Box & Auto-Content Correction */
+/* Search Box */
 .search-box { 
     flex: 1;
     display: flex;
-    align-items: stretch;
+    align-items: center;
     width: 100%;
+    background: var(--dt-input-bg);
+    border: 1px solid var(--border-soft);
+    border-radius: 4px;
+    transition: border-color 0.2s;
+    position: relative; /* Repère pour le tooltip */
+}
+
+.search-box:focus-within,
+.search-box:has(#root-db-btn:not(.disabled)) {
+    border-color: var(--main-color);
 }
 
 .search-box input { 
-    appearance: none;
-    -webkit-appearance: none;
-    box-sizing: border-box;
-    background: var(--dt-input-bg) !important;
+    flex: 1;
+    background: transparent !important;
     color: var(--text-main) !important; 
-    border: 1px solid var(--border-soft) !important; 
-    border-right: none !important;
-    border-radius: 4px 0 0 4px !important;
+    border: none !important; 
     padding: 6px 12px;
-    width: 100%;
     font-family: var(--font-ui);
     font-size: var(--size-sm);
-    text-align: left;
     outline: none;
-    transition: border-color 0.2s, background-color 0.2s;
-}
-
-.search-box input:focus { 
-    border-color: var(--main-color) !important; 
-    background: var(--dt-row-hover) !important;
 }
 
 .search-box input::-webkit-search-cancel-button {
@@ -510,23 +508,19 @@ nav a.active {
     cursor: pointer;
 }
 
-/* DB Button */
+/* RDB button */
 #root-db-btn {
-    position: relative;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 0 10px;
-    background: var(--bg-surface);
-    border: 1px solid var(--border-soft);
+    padding: 6px 10px;
+    border: none;
     border-left: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 0 4px 4px 0;
     color: var(--text-muted);
     text-decoration: none;
-    cursor: pointer;
-    transition: color 0.2s, background-color 0.2s, border-color 0.2s, opacity 0.2s;
     opacity: 0.35;
     pointer-events: none;
+    transition: color 0.2s, background-color 0.2s, opacity 0.2s;
 }
 
 #root-db-btn svg {
@@ -534,23 +528,24 @@ nav a.active {
     stroke: currentColor;
 }
 
-.search-box input:focus + #root-db-btn {
-    border-color: var(--main-color) !important;
+#root-db-btn:not(.disabled) {
+    opacity: 1;
+    pointer-events: auto;
 }
 
+#root-db-btn:not(.disabled):hover,
+#root-db-btn:not(.disabled).expanded {
+    color: var(--main-color);
+    background: var(--bg-hover);
+}
+
+/* RDB Tooltip */
 #root-db-btn .tooltip-text {
     top: calc(100% + 8px);
     bottom: auto;
     left: auto;
     right: 0;
     transform: translateY(-4px);
-}
-
-#root-db-btn:not(.disabled):hover,
-#root-db-btn:not(.disabled).expanded { 
-    color: var(--main-color);
-    border-color: var(--main-color);
-    background: var(--bg-hover);
 }
 
 #root-db-btn:not(.disabled):hover .tooltip-text,
