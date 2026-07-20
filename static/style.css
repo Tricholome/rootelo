@@ -14,7 +14,8 @@
    9. Codex & Static Content (About page)
    10. Modals
    11. Tier-based Coloration
-   12. Hidden Content & Secrets
+   12. Season Champion
+   13. Hidden Content & Secrets
    ========================================================================= */
    
 /* =========================================================================
@@ -249,6 +250,9 @@ body::after {
 a.cl { color: var(--text-main); text-decoration: none; font-weight: var(--medium); letter-spacing: var(--track-slight); border-bottom: 1px dotted var(--main-color); transition: 0.2s; }
 a.cl:hover { border-bottom: 1px solid var(--main-color); color: var(--main-color); }
 
+a.insta { color: var(--text-main); text-decoration: none; transition: 0.2s; }
+a.insta:hover { color: var(--main-color); }
+
 @media (max-width: 768px) {
     .site-title { font-size: var(--size-lg); }
     .page-intro h2 { font-size: var(--size-lg); }
@@ -442,7 +446,7 @@ nav a.active {
 }
 
 /* Season Button */
-.season-btn { 
+.season-btn {
     text-decoration: none; 
     font-size: var(--size-sm); 
     font-weight: var(--medium); 
@@ -453,8 +457,9 @@ nav a.active {
     border: 1px solid var(--border-soft); 
     transition: 0.2s; 
     text-align: center;
-    flex: 1; /* Sur mobile, les boutons se partagent équitablement l'espace restant */
+    flex: 1;
 }
+
 .season-btn:hover { 
     color: var(--text-main); 
     background: var(--bg-hover); 
@@ -465,31 +470,37 @@ nav a.active {
     border-color: var(--main-color) !important; 
 }
 
-/* Search Box & Auto-Content Correction */
+/* Search Box */
 .search-box { 
-    flex: 1; /* Prend exactement tout l'espace disponible restant sur sa ligne, calqué sur les boutons */
+    flex: 1;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    background: var(--dt-input-bg);
+    border: 1px solid var(--border-soft);
+    border-radius: 4px;
+    transition: border-color 0.2s;
+    position: relative;
 }
 
 .search-box input { 
-    appearance: none;
-    -webkit-appearance: none;
+    flex: 1;
+    min-width: 0;
     box-sizing: border-box;
-    background: var(--dt-input-bg) !important;
+    background: transparent !important;
     color: var(--text-main) !important; 
-    border: 1px solid var(--border-soft) !important; 
-    padding: 6px 14px;
-    border-radius: 4px;
-    width: 100%;
+    border: none !important; 
+    padding: 6px 12px;
     font-family: var(--font-ui);
     font-size: var(--size-sm);
-    text-align: left;
     outline: none;
-    transition: border-color 0.2s, background-color 0.2s;
 }
 
-.search-box input:focus { 
-    border-color: var(--main-color) !important; 
-    background: var(--dt-row-hover) !important;
+.search-box:focus-within,
+.search-box:has(#root-db-btn:not(.disabled)) {
+    border-color: var(--main-color);
 }
 
 .search-box input::-webkit-search-cancel-button {
@@ -499,6 +510,52 @@ nav a.active {
     mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z'/></svg>") no-repeat 50% 50%;
     -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z'/></svg>") no-repeat 50% 50%;
     cursor: pointer;
+}
+
+/* RDB button */
+#root-db-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 10px;
+    border: none;
+    border-left: 1px solid rgba(255, 255, 255, 0.08);
+    color: var(--text-muted);
+    text-decoration: none;
+    opacity: 0.35;
+    pointer-events: none;
+    transition: color 0.2s, background-color 0.2s, opacity 0.2s;
+}
+
+#root-db-btn svg {
+    display: block;
+    stroke: currentColor;
+}
+
+#root-db-btn:not(.disabled) {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+#root-db-btn:not(.disabled):hover,
+#root-db-btn:not(.disabled).expanded {
+    color: var(--main-color);
+    background: var(--bg-hover);
+}
+
+/* RDB Tooltip */
+#root-db-btn .tooltip-text {
+    top: calc(100% + 8px);
+    bottom: auto;
+    left: auto;
+    right: 0;
+    transform: translateY(-4px);
+}
+
+#root-db-btn:not(.disabled):hover .tooltip-text,
+#root-db-btn:not(.disabled).expanded .tooltip-text {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 /* Unranked Toggle */
@@ -1255,6 +1312,10 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     animation: modalFadeIn 0.3s ease-out;
 }
 
+.modal-image-side {
+    position: relative;
+}
+
 @keyframes modalFadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
@@ -1282,7 +1343,7 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 
 #modalElo { font-weight: var(--bold); var(--size-lg); margin-top: 5px; }
 #modalSubtitle { color: var(--text-muted); font-style: italic; font-size: var(--size-base); margin-top: -5px; }
-#modalText { color: var(--text-muted); text-align: left; font-size: var(--size-base); line-height: 1.6; }
+#modalText, #modalFinal { color: var(--text-muted); text-align: left; font-size: var(--size-base); line-height: 1.6; }
 
 .modal-divider {
     width: 100%; height: 0; margin: 25px auto;
@@ -1296,7 +1357,7 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 	.modal-divider { display: none; }
     #modalIcon { width: 200px; }
     #modalTitle { font-size: var(--size-xl); letter-spacing: var(--track-wide); }
-	#modalText { font-size: var(--size-modal); line-height: 1.5; margin-top: 25px; text-align: center; }
+	#modalText, #modalFinal { font-size: var(--size-modal); line-height: 1.5; margin-top: 25px; text-align: center; }
 }
 
 /* --- MOBILE LANDSCAPE --- */
@@ -1321,7 +1382,7 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     #modalSubtitle { margin-top: 7px; font-size: var(--size-sm); }
 
     .modal-divider { display: none; }
-    #modalText { font-size: var(--size-sm); line-height: 1.4; margin-top: 20px; text-align: left; }
+    #modalText, #modalFinal { font-size: var(--size-sm); line-height: 1.4; margin-top: 20px; text-align: left; }
 }
 
 /* =========================================================================
@@ -1335,6 +1396,7 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 .tier-mouse    { color: var(--color-mouse) !important; }
 .tier-squirrel { color: var(--color-squirrel) !important; }
 .tier-stag 	   { color: var(--color-stag) !important; }
+.tier-bear 	   { color: var(--color-bear) !important; }
 
 /* Background and border for each tier row */
 table.dataTable tbody tr[data-tier="bird"]     { background-color: var(--color-bird-bg) !important; border-left: 4px solid var(--color-bird) !important; }
@@ -1343,6 +1405,7 @@ table.dataTable tbody tr[data-tier="rabbit"]   { background-color: var(--color-r
 table.dataTable tbody tr[data-tier="mouse"]    { background-color: var(--color-mouse-bg) !important; border-left: 4px solid var(--color-mouse) !important; }
 table.dataTable tbody tr[data-tier="squirrel"] { background-color: var(--color-squirrel-bg) !important; border-left: 4px solid var(--color-squirrel) !important; }
 table.dataTable tbody tr[data-tier="stag"] { background-color: var(--color-stag-bg) !important; border-left: 4px solid var(--color-stag) !important; }
+table.dataTable tbody tr[data-tier="bear"] { background-color: var(--color-bear-bg) !important; border-left: 4px solid var(--color-bear) !important; }
 
 /* Text color for the 4th column (Elo) based on tier */
 tr[data-tier="bird"] td:nth-child(4)     { color: var(--color-bird) !important; }
@@ -1351,9 +1414,83 @@ tr[data-tier="rabbit"] td:nth-child(4)   { color: var(--color-rabbit) !important
 tr[data-tier="mouse"] td:nth-child(4)    { color: var(--color-mouse) !important; }
 tr[data-tier="squirrel"] td:nth-child(4) { color: var(--color-squirrel) !important; }
 tr[data-tier="stag"] td:nth-child(4)     { color: var(--color-stag) !important; }
+tr[data-tier="bear"] td:nth-child(4)     { color: var(--color-bear) !important; }
 
 /* =========================================================================
-   --- 12. HIDDEN CONTENT: UNDERGROWTH ---
+   --- 12. SEASON CHAMPION ---
+   ========================================================================= */
+   
+@keyframes bearShimmer {
+    0% { 
+        background-position: 0% 0; 
+    }
+    35% { 
+        background-position: 100% 0; 
+    }
+    
+    70% { 
+        background-position: 0% 0; 
+    }
+    
+    100% { 
+        background-position: 0% 0; 
+    }
+}
+
+table.dataTable tbody tr[data-tier="bear"],
+.modal-content.bear-shimmer {
+    background-image: linear-gradient(
+        120deg, 
+        rgba(255, 255, 255, 0) 15%, 
+        rgba(255, 255, 255, 0.10) 50%, 
+        rgba(255, 255, 255, 0) 85%
+    ) !important;
+    
+    background-size: 200% 100% !important;
+    animation: bearShimmer 7s infinite ease-in-out !important;
+}
+
+#modalFinal strong {
+    color: var(--text-main);
+    font-weight: var(--medium);
+}
+
+#modalFinal a.cl { border-bottom: 1px dotted var(--color-bear); color: var(--text-muted) }
+#modalFinal a.cl:hover { border-bottom: 1px solid var(--color-bear); color: var(--color-bear); }
+
+
+.bear-shimmer #modalIcon {
+    margin-top: 50px;
+	margin-bottom: -15px;
+}
+
+#modalCrown {
+    position: absolute;
+    width: clamp(70px, 42%, 120px);
+    height: auto;
+    top: clamp(60px, 25%, 70px); 
+    left: 50%;
+    transform: translateX(-50%) rotate(0deg);
+    transform-origin: bottom center;
+    pointer-events: none;
+    z-index: 10;
+    animation: sway-crown 3s ease-in-out infinite;
+}
+
+@keyframes sway-crown {
+    0% {
+        transform: translate(-50%, -85%) rotate(-7deg);
+    }
+    50% {
+        transform: translate(-50%, -85%) rotate(7deg);
+    }
+    100% {
+        transform: translate(-50%, -85%) rotate(-7deg);
+    }
+}
+
+/* =========================================================================
+   --- 13. HIDDEN CONTENT: UNDERGROWTH ---
    ========================================================================= */
 
 /* --- 0. Secret Button --- */
