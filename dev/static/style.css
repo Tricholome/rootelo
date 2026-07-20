@@ -512,6 +512,7 @@ nav a.active {
 
 /* --- DB Button --- */
 #root-db-btn {
+	position: relative;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -540,6 +541,12 @@ nav a.active {
 #root-db-btn:not(.disabled):hover { 
     color: var(--main-color);
     background: var(--bg-hover);
+}
+
+#root-db-btn:not(.disabled):hover .tooltip-text,
+#root-db-btn:not(.disabled).expanded .tooltip-text {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-15px);
 }
 
 /* Unranked Toggle */
