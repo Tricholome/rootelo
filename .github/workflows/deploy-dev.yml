@@ -41,6 +41,7 @@ jobs:
           cp *.html mirror_site/
           cp -r static mirror_site/
           cp -r assets mirror_site/
+          cp -r api mirror_site/
 
       - name: Deploy to GitHub Pages (Subfolder /dev)
         uses: peaceiris/actions-gh-pages@v3
