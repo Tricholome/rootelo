@@ -266,6 +266,7 @@ def render_page(template_name, output_name, **kwargs):
         "nav_items": NAV_ITEMS,
         "generation_date": datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC'),
         "global_players": GLOBAL_PLAYERS_LIST,
+        "player_dwd_map_json": json.dumps(PLAYER_DWD_MAP),
         **kwargs
     }
     with open(output_name, "w", encoding="utf-8") as f:
@@ -391,6 +392,7 @@ for tag in ARCHIVE_SEASONS:
 initialize_player_mapping(all_raw_names)
 
 GLOBAL_PLAYERS_LIST = sorted(list({get_clean_name(name) for name in all_raw_names if name}))
+PLAYER_DWD_MAP = {get_clean_name(n): str(n).strip().replace('+', '-') for n in all_raw_names if n}
 
 for tag in ARCHIVE_SEASONS:
     if 'history' in archives_raw_data[tag]:
