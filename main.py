@@ -706,14 +706,19 @@ api_data = {
     "players": {}
 }
 
-for item in display_leaderboard_current:
+api_full_leaderboard = prepare_leaderboard_data(current_final_df)
+
+for item in api_full_leaderboard:
     clean_name = item['display_name']
+    
+    raw_dwd = PLAYER_DWD_MAP.get(clean_name, clean_name)
+    dwd_key = str(raw_dwd).replace('#', '-').lower().strip()
+    
     tier = item['tier']
     color = tier_colors.get(tier)
     icon_path = tier_icons.get(tier)
 
-    api_data["players"][clean_name] = {
-        "display_name": clean_name,
+    api_data["players"][dwd_key] = {
         "elo": item['ELO'],
         "rank": item['Rank'],
         "tier": tier,
