@@ -1437,7 +1437,7 @@ tr[data-tier="bear"] td:nth-child(4)     { color: var(--color-bear) !important; 
     }
 }
 
-table.dataTable tbody tr[data-tier="bear"],
+body.archive-view table.dataTable tbody tr[data-tier="bear"],
 .modal-content.bear-shimmer {
     background-image: linear-gradient(
         120deg, 
