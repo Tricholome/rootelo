@@ -17,9 +17,11 @@ API_TOKEN = os.getenv('API_TOKEN')
 HEADERS = {'Authorization': f'Token {API_TOKEN}'} if API_TOKEN else {}
 
 DATA_DIR = "data"
+CONFIG_DIR = os.path.join(DATA_DIR, "config")
 SEASON_DIR = os.path.join(DATA_DIR, "archives", SEASON_TAG)
 
-CORRECTIONS_PATH = os.path.join(SEASON_DIR, "corrections.csv")
+CORRECTIONS_PATH = os.path.join(CONFIG_DIR, "corrections.csv")
+
 OUTPUT_RATINGS   = os.path.join(SEASON_DIR, "ratings.csv")
 OUTPUT_HISTORY   = os.path.join(SEASON_DIR, "history.json")
 OUTPUT_MATCHES   = os.path.join(SEASON_DIR, "matches.json")
@@ -47,16 +49,14 @@ else:
 # =========================================================================
 # --- 3. LOAD CORRECTIONS ---
 # =========================================================================
-CORRECTIONS_PATH = os.path.join(DATA_DIR, "corrections.csv")
 game_id_mapping = pd.Series(dtype='datetime64[ns]')
-
 try:
     if os.path.exists(CORRECTIONS_PATH):
         df_updates = pd.read_csv(CORRECTIONS_PATH, parse_dates=['New_Date'])
         if not df_updates.empty and 'GameID' in df_updates.columns:
             game_id_mapping = df_updates.set_index('GameID')['New_Date']
             game_id_mapping.index = game_id_mapping.index.astype(int)
-            print(f"  > Loaded {len(game_id_mapping)} total manual date corrections.")
+            print(f"  > Loaded {len(game_id_mapping)} manual date corrections from {CORRECTIONS_PATH}.")
 except Exception as e:
     print(f"  > Note: Corrections skipped or failed ({e}).")
 
