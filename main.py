@@ -399,12 +399,19 @@ def main():
     headers = {'Authorization': f'Token {api_token}'} if api_token else {}
     today = date.today()
     cutoff_date = today - timedelta(days=1)
-    next_url = f"{PLISKIN_BASE_URL}/api/match/?format=json&limit=500&tournament={TOURNAMENT_ID}"
+    
+    endpoint = f"{PLISKIN_BASE_URL.rstrip('/')}/api/match/"
+    params = {
+        'tournament': TOURNAMENT_ID,
+        'limit': 500
+    }
 
     print(f"🌐 Requesting data for Tournament {TOURNAMENT_ID}... Filtering matches before: {today}")
+    next_url = endpoint
     while next_url:
         try:
-            res = requests.get(next_url, headers=headers)
+            res = requests.get(next_url, headers=headers, params=params)
+            params = None  # Clear params for pagination pages as DRF includes them in 'next'
             if res.status_code == 400:
                 print(f"ℹ️ Tournament {TOURNAMENT_ID} is not active on API yet.")
                 break
@@ -603,38 +610,66 @@ def main():
             f.write(template.render(**full_vars))
         print(f"  > {output_name} generated.")
 
-    def render_core_pages(file_suffix, is_archive, tag, lb_data, match_data, trends_data, meta, relations_data=None, champ_match=None):
-        for page_type, tmpl in [("index", "leaderboard.html"), ("matches", "matches.html"), ("trends", "trends.html")]:
-            p_info = pages_content.get(page_type, {})
-            extra_vars = {}
-            if page_type == "index":
-                extra_vars = {"players": lb_data, "champ_match": champ_match, "current_page_base": "index"}
-            elif page_type == "matches":
-                extra_vars = {"matches": match_data}
-            elif page_type == "trends":
-                extra_vars = {
-                    "history_json": trends_data['history_json'], 
-                    "player_names": trends_data['player_names'],
-                    "relations_json": json.dumps(relations_data) if relations_data else "{}"
-                }
+    def render_season_pages(tag, is_archive, lb_data, match_data, trends_data, meta, relations_data=None, champ_match=None, suffix=""):
+        season_context = {
+            "is_archive": is_archive,
+            "has_seasons": True,
+            "season_tag": tag,
+            "archive_seasons": ARCHIVE_SEASONS,
+            "current_season_tag": CURRENT_SEASON_TAG,
+            "cutoff_date": meta.get('cutoff_date', 'N/A'),
+        }
 
-            render_page(
-                tmpl, f"{page_type}{file_suffix}.html", page_id=page_type,
-                title=p_info.get("title", ""), page_heading=p_info.get("page_heading", ""), description=p_info.get("description", ""),
-                is_archive=is_archive, has_seasons=True, season_tag=tag,
-                archive_seasons=ARCHIVE_SEASONS, current_season_tag=CURRENT_SEASON_TAG,
-                num_matches=meta.get('match_count', 0), match_count=meta.get('match_count', 0),
-                cutoff_date=meta.get('cutoff_date', 'N/A'), **extra_vars
-            )
+        # 1. Leaderboard (Index)
+        render_page(
+            "index.html", f"index{suffix}.html",
+            page_id="index",
+            players=lb_data,
+            champ_match=champ_match,
+            match_count=meta.get('match_count', 0),
+            **pages_content.get("index", {}),
+            **season_context
+        )
 
-    # Render Current Season & Archives
-    render_core_pages("", False, CURRENT_SEASON_TAG, display_leaderboard_current, display_matches_current, display_trends_current, current_meta, current_relations)
+        # 2. Matches
+        render_page(
+            "matches.html", f"matches{suffix}.html",
+            page_id="matches",
+            matches=match_data,
+            match_count=meta.get('match_count', 0),
+            **pages_content.get("matches", {}),
+            **season_context
+        )
 
+        # 3. Trends
+        render_page(
+            "trends.html", f"trends{suffix}.html",
+            page_id="trends",
+            history_json=trends_data['history_json'],
+            player_names=trends_data['player_names'],
+            relations_json=json.dumps(relations_data or {}),
+            **pages_content.get("trends", {}),
+            **season_context
+        )
+
+    # Render Current Season
+    render_season_pages(
+        CURRENT_SEASON_TAG, False, 
+        display_leaderboard_current, display_matches_current, display_trends_current, 
+        current_meta, current_relations
+    )
+
+    # Render Historical Archives
     for tag in ARCHIVE_SEASONS:
         archive_relations_clean = prepare_archive_relations(archives_raw_data[tag].get('relations', {}))
-        render_core_pages(f"_{tag}", True, tag, display_archives[tag]['leaderboard'], display_archives[tag]['matches'], display_archives[tag]['trends'], archives_raw_data[tag]['metadata'], archive_relations_clean, champ_match=champions_data.get(tag))
+        render_season_pages(
+            tag, True, 
+            display_archives[tag]['leaderboard'], display_archives[tag]['matches'], display_archives[tag]['trends'], 
+            archives_raw_data[tag]['metadata'], archive_relations_clean, 
+            champ_match=champions_data.get(tag), suffix=f"_{tag}"
+        )
 
-    # Static Pages
+    # Render Static Pages (About, Undergrowth/Cache)
     for page_id, tmpl in [("about", "about.html"), ("cache", "cache.html")]:
         p_info = pages_content.get(page_id, {})
         extra = {"hall_of_fame": hall_of_fame_data} if page_id == "cache" else {}
