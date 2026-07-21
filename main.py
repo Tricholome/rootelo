@@ -131,19 +131,17 @@ def setup_jinja_env(config):
 # =========================================================================
 # --- 4. DATA PREPARATION HELPERS ---
 # =========================================================================
-def prepare_leaderboard_data(df, champion_name=None):
+def prepare_leaderboard_data(df, champion_name=None, is_archive=False):
     if df.empty:
         return []
     
     data = []
     clean_champ = player_registry.get_clean_name(champion_name) if champion_name else None
-    crown_icon = "♔"
     
     for _, row in df.iterrows():
         clean_name = player_registry.get_clean_name(row['Player'])
         is_champ = (clean_champ is not None and clean_name == clean_champ)
-        
-        rank_display = crown_icon if is_champ else row['Rank']
+        rank_display = "♔" if (is_champ and is_archive) else row['Rank']
         tier = "bear" if is_champ else get_tier_name(row['ELO'], row['Games'])
         
         data.append({
@@ -159,7 +157,7 @@ def prepare_leaderboard_data(df, champion_name=None):
             'Last': row['Last']
         })
     
-    if clean_champ:
+    if clean_champ and is_archive:
         data.sort(key=lambda x: not x['is_champion'])
             
     return data
@@ -574,7 +572,14 @@ def main():
         'match_count': df['GameID'].nunique() if not df.empty else 0,
         'cutoff_date': cutoff_date.strftime('%Y-%m-%d')
     }
-    display_leaderboard_current = prepare_leaderboard_data(current_final_df[current_final_df['Games'] > 0]) if not current_final_df.empty else []
+    
+    reigning_champ = champions_data.get(ARCHIVE_SEASONS[-1], {}).get('champion') if ARCHIVE_SEASONS else None
+
+    display_leaderboard_current = prepare_leaderboard_data(
+        current_final_df[current_final_df['Games'] > 0], 
+        champion_name=reigning_champ
+    ) if not current_final_df.empty else []
+    
     display_matches_current = prepare_matches_data(current_matches_df.to_dict('records')) if not current_matches_df.empty else []
     display_trends_current = prepare_trends_data(current_history)
 
@@ -582,7 +587,11 @@ def main():
     for tag in ARCHIVE_SEASONS:
         raw = archives_raw_data[tag]
         season_champ = champions_data.get(tag, {}).get('champion')
-        lb_data = prepare_leaderboard_data(raw['final_df'][raw['final_df']['Games'] > 0], champion_name=season_champ) if not raw['final_df'].empty else []
+        lb_data = prepare_leaderboard_data(
+            raw['final_df'][raw['final_df']['Games'] > 0], 
+            champion_name=season_champ, 
+            is_archive=True
+        ) if not raw['final_df'].empty else []
         
         display_archives[tag] = {
             'leaderboard': lb_data, 
@@ -660,7 +669,8 @@ def main():
     render_season_pages(
         CURRENT_SEASON_TAG, False, 
         display_leaderboard_current, display_matches_current, display_trends_current, 
-        current_meta, current_relations
+        current_meta, current_relations,
+        champ_match=champions_data.get(ARCHIVE_SEASONS[-1]) if ARCHIVE_SEASONS else None
     )
 
     # Render Historical Archives
@@ -692,7 +702,8 @@ def main():
         "players": {}
     }
 
-    for item in prepare_leaderboard_data(current_final_df):
+    reigning_champ = champions_data.get(ARCHIVE_SEASONS[-1], {}).get('champion') if ARCHIVE_SEASONS else None
+    for item in prepare_leaderboard_data(current_final_df, champion_name=reigning_champ):
         clean_name = item['display_name']
         raw_dwd = player_dwd_map.get(clean_name, clean_name)
         dwd_key = str(raw_dwd).replace('#', '-').lower().strip()
