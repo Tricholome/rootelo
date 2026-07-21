@@ -1,45 +1,20 @@
-import os
-import requests
-import pandas as pd
-from datetime import datetime, timedelta, date, timezone
 import json
+import os
+from collections import Counter
+from datetime import date, datetime, timedelta, timezone
 from jinja2 import Environment, FileSystemLoader
+import pandas as pd
+import requests
 
 # =========================================================================
 # --- 0. CONFIGURATION & CONSTANTS ---
 # =========================================================================
 DATA_DIR = "data"
-ARCHIVE_SEASONS = ["lh01", "lh02"] 
+ARCHIVE_SEASONS = ["lh01", "lh02"]
 CURRENT_SEASON_TAG = "lh03"
 TOURNAMENT_ID = 26
-
-CONFIG_FILE = os.path.join(DATA_DIR, "config.json")
-CONFIG = {}
-if os.path.exists(CONFIG_FILE):
-    with open(CONFIG_FILE, "r", encoding="utf-8") as f:
-        CONFIG = json.load(f)
-
-CORRECTIONS_FILE = os.path.join(DATA_DIR, f"{CURRENT_SEASON_TAG}_corrections.csv")
-
-CONTENT_FILE = os.path.join(DATA_DIR, "pages_content.json")
-if os.path.exists(CONTENT_FILE):
-    with open(CONTENT_FILE, "r", encoding="utf-8") as f:
-        PAGES = json.load(f)
-else:
-    PAGES = {}
-    
-CHAMPIONS_FILE = os.path.join(DATA_DIR, "champions.json")
-CHAMPIONS_DATA = {}
-if os.path.exists(CHAMPIONS_FILE):
-    with open(CHAMPIONS_FILE, "r", encoding="utf-8") as f:
-        CHAMPIONS_DATA = json.load(f)
-
-NAV_ITEMS = [
-    {'id': 'index', 'url': 'index.html', 'label': 'Leaderboard'},
-    {'id': 'matches', 'url': 'matches.html', 'label': 'Top Tables'},
-    {'id': 'trends', 'url': 'trends.html', 'label': "Player's Journey"},
-    {'id': 'about', 'url': 'about.html', 'label': 'Codex'}
-]
+BASE_URL = "https://tricholome.github.io/rootelo"
+PLISKIN_BASE_URL = "https://rootleague.pliskin.dev"
 
 TIER_THRESHOLDS = [
     (1600, "stag"),
@@ -50,87 +25,122 @@ TIER_THRESHOLDS = [
 ]
 TIER_HIERARCHY = ['stag', 'bird', 'fox', 'rabbit', 'mouse']
 
-# =========================================================================
-# --- 1. JINJA2 FILTER SETUP ---
-# =========================================================================
-env = Environment(loader=FileSystemLoader('templates'))
+NAV_ITEMS = [
+    {'id': 'index', 'url': 'index.html', 'label': 'Leaderboard'},
+    {'id': 'matches', 'url': 'matches.html', 'label': 'Top Tables'},
+    {'id': 'trends', 'url': 'trends.html', 'label': "Player's Journey"},
+    {'id': 'about', 'url': 'about.html', 'label': 'Codex'}
+]
 
-env.globals['config'] = CONFIG
+# =========================================================================
+# --- 1. FILE & I/O HELPERS ---
+# =========================================================================
+def load_json(filepath, default=None):
+    """Safely loads a JSON file with a fallback default value."""
+    if default is None:
+        default = {}
+    if os.path.exists(filepath):
+        try:
+            with open(filepath, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except Exception as e:
+            print(f"⚠️ Error reading {filepath}: {e}")
+    return default
 
-def smart_date_filter(d1, d2=None):
-    if not d1: 
-        return ""
-    try:
-        dt1 = datetime.strptime(str(d1), '%Y-%m-%d')
-        if not d2 or d1 == d2:
-            return dt1.strftime('%b %d, %Y')
+def save_json(filepath, data, indent=2):
+    """Saves data to a JSON file, creating target directories if needed."""
+    os.makedirs(os.path.dirname(filepath), exist_ok=True)
+    with open(filepath, "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=indent, ensure_ascii=False)
+
+# =========================================================================
+# --- 2. PLAYER MAPPING & TIER UTILITIES ---
+# =========================================================================
+class PlayerRegistry:
+    """Handles cleaning and unique mapping for player names."""
+    def __init__(self):
+        self.player_map = {}
+
+    def initialize(self, all_raw_names):
+        base_names = [str(n).split('+')[0].split('#')[0].strip() for n in all_raw_names if n]
+        counts = Counter(base_names)
         
-        dt2 = datetime.strptime(str(d2), '%Y-%m-%d')
-        if dt1.year != dt2.year:
-            return f"{dt1.strftime('%b %d, %Y')} — {dt2.strftime('%b %d, %Y')}"
-        return f"{dt1.strftime('%b %d')} — {dt2.strftime('%b %d, %Y')}"
-    except ValueError:
-        return str(d1)
-
-env.filters['smart_date'] = smart_date_filter
-
-# =========================================================================
-# --- 2. UTILITIES & HELPERS ---
-# =========================================================================
-PLAYER_MAP = {}
-
-def initialize_player_mapping(all_raw_names):
-    from collections import Counter
-    base_names = [str(n).split('+')[0].split('#')[0].strip() for n in all_raw_names if n]
-    counts = Counter(base_names)
-    
-    for name in all_raw_names:
-        if not name:
-            continue
-        name_str = str(name)
-        base = name_str.split('+')[0].split('#')[0].strip()
-        
-        if counts[base] > 1:
-            tag = ""
-            if '#' in name_str:
-                tag = name_str.split('#')[-1].strip()
-            elif '+' in name_str:
-                tag = name_str.split('+')[-1].strip()
+        for name in all_raw_names:
+            if not name:
+                continue
+            name_str = str(name)
+            base = name_str.split('+')[0].split('#')[0].strip()
             
-            PLAYER_MAP[name] = f"{base} ({tag})" if tag else base
-        else:
-            PLAYER_MAP[name] = base
+            if counts[base] > 1:
+                tag = ""
+                if '#' in name_str:
+                    tag = name_str.split('#')[-1].strip()
+                elif '+' in name_str:
+                    tag = name_str.split('+')[-1].strip()
+                self.player_map[name] = f"{base} ({tag})" if tag else base
+            else:
+                self.player_map[name] = base
 
-def get_clean_name(name):
-    if not name: 
-        return ""
-    if name in PLAYER_MAP:
-        return PLAYER_MAP[name]
-    return str(name).split('+')[0].split('#')[0].strip()
+    def get_clean_name(self, name):
+        if not name:
+            return ""
+        if name in self.player_map:
+            return self.player_map[name]
+        return str(name).split('+')[0].split('#')[0].strip()
+
+# Global registry instance
+player_registry = PlayerRegistry()
 
 def get_tier_name(rating, games):
-    if games < 10: 
-        return "unranked"  
+    if games < 10:
+        return "unranked"
     r = round(rating)
     for threshold, tier in TIER_THRESHOLDS:
-        if r >= threshold: 
+        if r >= threshold:
             return tier
     return "squirrel"
 
+# =========================================================================
+# --- 3. JINJA2 ENVIRONMENT SETUP ---
+# =========================================================================
+def setup_jinja_env(config):
+    env = Environment(loader=FileSystemLoader('templates'))
+    env.globals['config'] = config
+
+    def smart_date_filter(d1, d2=None):
+        if not d1:
+            return ""
+        try:
+            dt1 = datetime.strptime(str(d1), '%Y-%m-%d')
+            if not d2 or d1 == d2:
+                return dt1.strftime('%b %d, %Y')
+            
+            dt2 = datetime.strptime(str(d2), '%Y-%m-%d')
+            if dt1.year != dt2.year:
+                return f"{dt1.strftime('%b %d, %Y')} — {dt2.strftime('%b %d, %Y')}"
+            return f"{dt1.strftime('%b %d')} — {dt2.strftime('%b %d, %Y')}"
+        except ValueError:
+            return str(d1)
+
+    env.filters['smart_date'] = smart_date_filter
+    return env
+
+# =========================================================================
+# --- 4. DATA PREPARATION HELPERS ---
+# =========================================================================
 def prepare_leaderboard_data(df, champion_name=None):
-    if df.empty: 
+    if df.empty:
         return []
     
     data = []
-    clean_champ = get_clean_name(champion_name) if champion_name else None
-    crown_icon = "♔" 
+    clean_champ = player_registry.get_clean_name(champion_name) if champion_name else None
+    crown_icon = "♔"
     
     for _, row in df.iterrows():
-        clean_name = get_clean_name(row['Player'])
+        clean_name = player_registry.get_clean_name(row['Player'])
         is_champ = (clean_champ is not None and clean_name == clean_champ)
         
         rank_display = crown_icon if is_champ else row['Rank']
-        
         tier = "bear" if is_champ else get_tier_name(row['ELO'], row['Games'])
         
         data.append({
@@ -157,10 +167,10 @@ def prepare_matches_data(matches_list):
         'elo_sum': m.get('ELO_Sum'),
         'date': m.get('Date'),
         'players': sorted([
-            {**p, 'name': get_clean_name(p['name'])} for p in m.get('players', [])
+            {**p, 'name': player_registry.get_clean_name(p['name'])} for p in m.get('players', [])
         ], key=lambda x: x['is_winner'], reverse=True),
         'match_id': m.get('MatchID'),
-        'match_url': f"https://rootleague.pliskin.dev/match/{m.get('MatchID')}/"
+        'match_url': f"{PLISKIN_BASE_URL}/match/{m.get('MatchID')}/"
     } for m in matches_list]
 
 def prepare_trends_data(history_dict):
@@ -172,23 +182,22 @@ def prepare_trends_data(history_dict):
         clean_rows = []
         for row in rows:
             match_id = row[2] if len(row) > 2 else None
-            url = f"https://rootleague.pliskin.dev/match/{match_id}/" if match_id else None
-            
+            url = f"{PLISKIN_BASE_URL}/match/{match_id}/" if match_id else None
             clean_rows.append([row[0], row[1], match_id, url])
             
-        enriched_history[get_clean_name(player_raw)] = clean_rows
+        enriched_history[player_registry.get_clean_name(player_raw)] = clean_rows
     
-    player_names = sorted(
-        [k for k in enriched_history.keys()],
-        key=lambda x: x.lower()
-    )
+    player_names = sorted(list(enriched_history.keys()), key=lambda x: x.lower())
     return {
         "history_json": json.dumps(enriched_history),
         "player_names": player_names
     }
-    
+
+# =========================================================================
+# --- 5. ELO & RELATIONS ENGINE ---
+# =========================================================================
 def get_elo_for_match(player_name, game_id, full_history):
-    clean_p = get_clean_name(player_name)
+    clean_p = player_registry.get_clean_name(player_name)
     history = full_history.get(clean_p, [])
     
     for i, entry in enumerate(history):
@@ -197,7 +206,7 @@ def get_elo_for_match(player_name, game_id, full_history):
     return None
 
 def extract_relations(matches_list, full_history):
-    all_players = {get_clean_name(p['name']) for m in matches_list for p in m['players']}
+    all_players = {player_registry.get_clean_name(p['name']) for m in matches_list for p in m['players']}
     
     relations = {p: {
         "trophy": {"name": None, "elo": -1, "tier": "unranked"}, 
@@ -209,7 +218,7 @@ def extract_relations(matches_list, full_history):
             
     for m in matches_list:
         match_id = m['MatchID']
-        p_names = [get_clean_name(p['name']) for p in m['players']]
+        p_names = [player_registry.get_clean_name(p['name']) for p in m['players']]
         
         for p_name in p_names:
             for opp_name in p_names:
@@ -220,9 +229,9 @@ def extract_relations(matches_list, full_history):
         losers = [p for p in m['players'] if not p['is_winner']]
 
         for w in winners:
-            w_clean = get_clean_name(w['name'])
+            w_clean = player_registry.get_clean_name(w['name'])
             for l in losers:
-                l_clean = get_clean_name(l['name'])
+                l_clean = player_registry.get_clean_name(l['name'])
                 l_elo = get_elo_for_match(l_clean, match_id, full_history)
                 if l_elo is not None and l_elo > relations[w_clean]['trophy']['elo']:
                     relations[w_clean]['trophy'] = {
@@ -230,9 +239,9 @@ def extract_relations(matches_list, full_history):
                     }
 
         for l in losers:
-            l_clean = get_clean_name(l['name'])
+            l_clean = player_registry.get_clean_name(l['name'])
             for w in winners:
-                w_clean = get_clean_name(w['name'])
+                w_clean = player_registry.get_clean_name(w['name'])
                 w_elo = get_elo_for_match(w_clean, match_id, full_history)
                 if w_elo is not None and w_elo < relations[l_clean]['bane']['elo']:
                     relations[l_clean]['bane'] = {
@@ -247,7 +256,7 @@ def extract_relations(matches_list, full_history):
 def prepare_archive_relations(raw_relations):
     prepared = {}
     for p_raw, data in raw_relations.items():
-        p_clean = get_clean_name(p_raw)
+        p_clean = player_registry.get_clean_name(p_raw)
         t_name = data["trophy"]["name"]
         t_elo = data["trophy"]["elo"]
         b_name = data["bane"]["name"]
@@ -256,317 +265,38 @@ def prepare_archive_relations(raw_relations):
         prepared[p_clean] = {
             "unique_opponents": data.get("unique_opponents", 0),
             "trophy": {
-                "name": get_clean_name(t_name) if t_name else None,
+                "name": player_registry.get_clean_name(t_name) if t_name else None,
                 "elo": t_elo,
                 "tier": get_tier_name(t_elo, 10) if t_elo != -1 else "unranked"
             },
             "bane": {
-                "name": get_clean_name(b_name) if b_name else None,
+                "name": player_registry.get_clean_name(b_name) if b_name else None,
                 "elo": b_elo,
                 "tier": get_tier_name(b_elo, 10) if b_elo != 99999 else "unranked"
             }
         }
     return prepared
 
-def render_page(template_name, output_name, **kwargs):
-    template = env.get_template(template_name)
-    full_vars = {
-        "nav_items": NAV_ITEMS,
-        "generation_date": datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC'),
-        "global_players": GLOBAL_PLAYERS_LIST,
-        "player_dwd_map_json": json.dumps(PLAYER_DWD_MAP),
-        **kwargs
-    }
-    with open(output_name, "w", encoding="utf-8") as f:
-        f.write(template.render(**full_vars))
-    print(f"  > {output_name} generated.")
-
 # =========================================================================
-# --- 3. DATA LOADERS ---
+# --- 6. HALL OF FAME ENGINE ---
 # =========================================================================
-game_id_mapping = pd.Series(dtype='datetime64[ns]')
-if os.path.exists(CORRECTIONS_FILE):
-    try:
-        df_updates = pd.read_csv(CORRECTIONS_FILE, parse_dates=['New_Date'])
-        if not df_updates.empty and 'GameID' in df_updates.columns:
-            game_id_mapping = df_updates.set_index('GameID')['New_Date']
-            print(f"✅ Loaded corrections from {CORRECTIONS_FILE}")
-    except Exception as e:
-        print(f"ℹ️ Note: Error loading corrections: {e}")
-
-archives_raw_data = {}
-elo_ratings = {} 
-
-for tag in ARCHIVE_SEASONS:
-    print(f"📂 Loading archive: {tag.upper()}")
-    archives_raw_data[tag] = {
-        'final_df': pd.DataFrame(), 'matches_list': [], 'history': {},
-        'metadata': {"cutoff_date": "N/A", "match_count": 0}, 'relations': {}
-    }
-    
-    for filename, key in [("_metadata.json", "metadata"), ("_relations.json", "relations")]:
-        path = os.path.join(DATA_DIR, f"{tag}{filename}")
-        if os.path.exists(path):
-            with open(path, "r", encoding="utf-8") as f:
-                archives_raw_data[tag][key] = json.load(f)
-    try:
-        path_ratings = os.path.join(DATA_DIR, f"{tag}_ratings.csv")
-        if os.path.exists(path_ratings):
-            df_ratings = pd.read_csv(path_ratings)
-            for _, row in df_ratings.iterrows():
-                elo_ratings[str(row['Player'])] = float(row.get('ELO', 1200.0))
-            df_ratings['ELO'] = df_ratings['ELO'].round().astype(int)
-            if 'Tier' not in df_ratings.columns: 
-                df_ratings['Tier'] = None
-            archives_raw_data[tag]['final_df'] = df_ratings
-        
-        path_matches = os.path.join(DATA_DIR, f"{tag}_matches.json")
-        if os.path.exists(path_matches):
-            with open(path_matches, "r", encoding="utf-8") as f:
-                archives_raw_data[tag]['matches_list'] = json.load(f)
-        
-        path_trends = os.path.join(DATA_DIR, f"{tag}_history.json")
-        if os.path.exists(path_trends):
-            with open(path_trends, "r", encoding="utf-8") as f:
-                history = json.load(f)
-                archives_raw_data[tag]['history'] = history
-                
-        print(f"  ✅ Archive {tag.upper()} loaded successfully.")
-    except Exception as e:
-        print(f"  ⚠️ Error loading archive {tag.upper()}: {e}")
-        
-archived_player_names = set(elo_ratings.keys())
-
-# =========================================================================
-# --- 4. API FETCHING (CURRENT SEASON) ---
-# =========================================================================
-all_matches = []
-API_TOKEN = os.getenv('API_TOKEN')
-HEADERS = {'Authorization': f'Token {API_TOKEN}'} if API_TOKEN else {}
-today = date.today()
-CUTOFF_DATE = today - timedelta(days=1)
-next_url = f"https://rootleague.pliskin.dev/api/match/?format=json&limit=500&tournament={TOURNAMENT_ID}"
-
-print(f"🌐 Requesting data for Tournament {TOURNAMENT_ID}... Filtering before: {today}")
-while next_url:
-    try:
-        res = requests.get(next_url, headers=HEADERS)
-        if res.status_code == 400:
-            print(f"ℹ️ Tournament {TOURNAMENT_ID} not yet active on API.")
-            break
-        res.raise_for_status()
-        data = res.json()
-        all_matches.extend(data.get('results', []))
-        next_url = data.get('next')
-    except requests.RequestException as e:
-        print(f"📡 API Note: {e}")
-        break
-
-raw_data = [] 
-for m in all_matches:
-    participants = m.get('participants', [])
-    if len(participants) == 4:
-        for p in participants:
-            raw_data.append({
-                'GameID': m['id'], 'Player': p.get('player'),
-                'Score': float(p.get('tournament_score', 0.0)), 'Date_Closed': m.get('date_closed')
-            })
-
-df = pd.DataFrame(raw_data)
-if not df.empty:
-    df['Date_Closed'] = pd.to_datetime(df['Date_Closed'], format='ISO8601', utc=True)
-    if not game_id_mapping.empty:
-        game_id_mapping.index = game_id_mapping.index.astype(int)
-        mask = df['GameID'].isin(game_id_mapping.index)
-        if mask.any():
-            original_times = df.loc[mask, 'Date_Closed'].dt.strftime('%H:%M:%S.%f')
-            new_dates = df.loc[mask, 'GameID'].map(game_id_mapping).dt.strftime('%Y-%m-%d')
-            df.loc[mask, 'Date_Closed'] = pd.to_datetime(new_dates + ' ' + original_times, utc=True)
-            print(f"🔧 Applied date corrections to {mask.sum()} entries.")
-
-    df = df[df['Date_Closed'].dt.date <= CUTOFF_DATE].copy()
-    df = df.sort_values(by='Date_Closed').reset_index(drop=True)
-    
-all_raw_names = set()
-if not df.empty:
-    all_raw_names.update(df['Player'].unique())
-for tag in ARCHIVE_SEASONS:
-    archive_df = archives_raw_data[tag]['final_df']
-    if not archive_df.empty and 'Player' in archive_df.columns:
-        all_raw_names.update(archive_df['Player'].unique())
-    if 'history' in archives_raw_data[tag] and archives_raw_data[tag]['history']:
-        all_raw_names.update(archives_raw_data[tag]['history'].keys())
-
-initialize_player_mapping(all_raw_names)
-
-GLOBAL_PLAYERS_LIST = sorted(list({get_clean_name(name) for name in all_raw_names if name}))
-PLAYER_DWD_MAP = {get_clean_name(n): str(n).strip().replace('+', '-') for n in all_raw_names if n}
-
-for tag in ARCHIVE_SEASONS:
-    if 'history' in archives_raw_data[tag]:
-        raw_hist = archives_raw_data[tag]['history']
-        archives_raw_data[tag]['history'] = {get_clean_name(k): v for k, v in raw_hist.items()}
-
-# =========================================================================
-# --- 5. ELO ENGINE ---
-# =========================================================================
-current_final_df = pd.DataFrame()
-current_matches_df = pd.DataFrame()
-match_history_data = []
-
-if not df.empty:
-    for player in df['Player'].unique():
-        if player not in elo_ratings: 
-            elo_ratings[player] = 1200.0
-
-peak_elo = {p: r for p, r in elo_ratings.items()}
-last_diff = {p: 0.0 for p in elo_ratings}
-player_stats = {p: {'games': 0, 'wins': 0.0} for p in elo_ratings}
-player_history = {}
-
-for p, r in elo_ratings.items():
-    label = f"{ARCHIVE_SEASONS[-1].upper()} Final" if ARCHIVE_SEASONS and p in archived_player_names else "Start"
-    player_history[p] = [[label, round(r), None]]
-
-if not df.empty:
-    for game_id, group in df.groupby('GameID', sort=False):
-        match_participants = group.to_dict('records')
-        current_match_sum = round(sum([elo_ratings[p['Player']] for p in match_participants]))
-        current_date = pd.to_datetime(match_participants[0]['Date_Closed']).strftime('%Y-%m-%d')
-        
-        q_scores = {p['Player']: 10 ** (elo_ratings[p['Player']] / 400) for p in match_participants}
-        total_q = sum(q_scores.values())
-        
-        deltas_this_match = {}
-        for p in match_participants:
-            name = p['Player']
-            actual = p['Score']
-            expected = q_scores[name] / total_q
-            
-            player_stats[name]['games'] += 1
-            player_stats[name]['wins'] += actual
-            
-            g_count = player_stats[name]['games']
-            k = 80 if g_count <= 10 else (40 if g_count <= 50 else 20)
-            change = k * (actual - expected)
-            
-            elo_ratings[name] += change
-            last_diff[name] = change
-            deltas_this_match[name] = round(change)
-            
-            if elo_ratings[name] > peak_elo[name]: 
-                peak_elo[name] = elo_ratings[name]
-                
-            player_history[name].append([current_date, round(elo_ratings[name]), int(game_id)])
-
-        players_list = [{
-            'name': get_clean_name(p['Player']),
-            'delta': int(deltas_this_match[p['Player']]),
-            'is_winner': bool(p['Score'] >= 0.5)
-        } for p in match_participants]
-
-        match_history_data.append({
-            'MatchID': game_id, 'Date': current_date, 'players': players_list, 'ELO_Sum': current_match_sum
-        })
-
-current_matches_df = pd.DataFrame(match_history_data)
-if not current_matches_df.empty:
-    current_matches_df = current_matches_df.sort_values(by='ELO_Sum', ascending=False).reset_index(drop=True)
-    current_matches_df.insert(0, 'Rank', range(1, len(current_matches_df) + 1))
-    
-current_history = {get_clean_name(k): v for k, v in player_history.items()}
-current_relations = extract_relations(match_history_data, current_history)
-    
-# =========================================================================
-# --- 6. LEADERBOARD GENERATION ---
-# =========================================================================
-leaderboard_list = []
-for p_name, rating in elo_ratings.items():
-    s = player_stats.get(p_name, {'wins': 0, 'games': 0})
-    display_elo = round(rating)
-    diff = round(last_diff.get(p_name, 0))
-    is_qual = (s['games'] >= 10 and display_elo >= 1200)
-    
-    leaderboard_list.append({
-        'Player': p_name, 'ELO': rating, 'Display_ELO': display_elo, 'Games': s['games'], 'Wins': s['wins'], 
-        'Win Rate': f"{(s['wins']/s['games']):.1%}" if s['games'] > 0 else "0.0%",
-        'Peak': round(peak_elo.get(p_name, rating)), 'Last': f"+{diff}" if diff > 0 else str(diff), 'Qualified': is_qual
-    })
-
-if leaderboard_list:
-    current_final_df = pd.DataFrame(leaderboard_list).sort_values(by='ELO', ascending=False)
-    rank_counter = 1
-    ranks = []
-    for _, row in current_final_df.iterrows():
-        if row['Qualified']:
-            ranks.append(rank_counter)
-            rank_counter += 1
-        else: 
-            ranks.append("-")
-            
-    current_final_df.insert(0, 'Rank', ranks)
-    current_final_df['ELO'] = current_final_df['Display_ELO']
-    current_final_df = current_final_df.drop(columns=['Display_ELO'])
-else:
-    current_final_df = pd.DataFrame(columns=['Rank', 'Player', 'ELO', 'Games', 'Wins', 'Win Rate', 'Peak', 'Last', 'Qualified'])
-
-# =========================================================================
-# --- 7. ASSET PREPARATION ---
-# =========================================================================
-print("\n=== PREPARING SITE ASSETS ===")
-print("  > Processing current season data...")
-
-current_meta = {
-    'match_count': df['GameID'].nunique() if not df.empty else 0, 'cutoff_date': CUTOFF_DATE.strftime('%Y-%m-%d')
-}
-display_leaderboard_current = []
-if not current_final_df.empty:
-    display_leaderboard_current = prepare_leaderboard_data(current_final_df[current_final_df['Games'] > 0])
-
-display_matches_current = []
-if not current_matches_df.empty:
-    display_matches_current = prepare_matches_data(current_matches_df.to_dict('records'))
-
-display_trends_current = prepare_trends_data(current_history)
-
-print("  > Processing historical archive data...")
-display_archives = {}
-for tag in ARCHIVE_SEASONS:
-    raw = archives_raw_data[tag]
-    season_champ = CHAMPIONS_DATA.get(tag, {}).get('champion')
-    lb_data = prepare_leaderboard_data(
-        raw['final_df'][raw['final_df']['Games'] > 0], 
-        champion_name=season_champ
-    ) if not raw['final_df'].empty else []
-    
-    display_archives[tag] = {
-        'leaderboard': lb_data, 
-        'matches': prepare_matches_data(raw['matches_list']), 
-        'trends': prepare_trends_data(raw['history'])
-    }
-
-# =========================================================================
-# --- 8. HALL OF FAME (STREAKS CODES) ---
-# =========================================================================
-print("  > Compiling historical tier streaks...")
-
 def extract_all_streaks(history, player_full_name):
     streaks = []
-    if len(history) < 11: 
+    if len(history) < 11:
         return streaks
-    short_name = get_clean_name(player_full_name)
+    short_name = player_registry.get_clean_name(player_full_name)
     current_s = None
 
     for i in range(10, len(history)):
         date_str, elo_val = history[i][0], history[i][1]
-        if "-" not in str(date_str): 
+        if "-" not in str(date_str):
             continue
         tier_now = get_tier_name(elo_val, 11)
-        if tier_now not in TIER_HIERARCHY: 
+        if tier_now not in TIER_HIERARCHY:
             tier_now = None
 
         if tier_now != (current_s['tier'] if current_s else None):
-            if current_s: 
+            if current_s:
                 streaks.append(current_s)
             if tier_now:
                 current_s = {
@@ -580,157 +310,367 @@ def extract_all_streaks(history, player_full_name):
             current_s['end_date'] = date_str
             current_s['peak'] = max(current_s['peak'], elo_val)
 
-    if current_s: 
+    if current_s:
         streaks.append(current_s)
     return streaks
 
-best_streaks_only = {}
-sources = [(row['Player'], player_history.get(row['Player'], [])) for _, row in current_final_df.iterrows()] if not current_final_df.empty else []
-
-for tag in ARCHIVE_SEASONS:
-    for p_name, h in archives_raw_data.get(tag, {}).get('history', {}).items():
-        sources.append((p_name, h))
-
-for p_name, h in sources:
-    for s in extract_all_streaks(h, p_name):
-        key = (s['player'], s['tier'])
-        if key not in best_streaks_only:
-            best_streaks_only[key] = s
-        else:
-            curr = best_streaks_only[key]
-            if (s['streak_count'] > curr['streak_count']) or (s['streak_count'] == curr['streak_count'] and s['peak'] > curr['peak']):
+def build_hall_of_fame(sources):
+    best_streaks_only = {}
+    for p_name, h in sources:
+        for s in extract_all_streaks(h, p_name):
+            key = (s['player'], s['tier'])
+            if key not in best_streaks_only:
                 best_streaks_only[key] = s
+            else:
+                curr = best_streaks_only[key]
+                if (s['streak_count'] > curr['streak_count']) or (s['streak_count'] == curr['streak_count'] and s['peak'] > curr['peak']):
+                    best_streaks_only[key] = s
 
-all_sorted_streaks = sorted(
-    best_streaks_only.values(), 
-    key=lambda x: (TIER_HIERARCHY.index(x['tier']) if x['tier'] in TIER_HIERARCHY else 99, -x['streak_count'], -x['peak'])
-)
-
-hall_of_fame_data = []
-for t in TIER_HIERARCHY:
-    tier_top_5 = [s for s in all_sorted_streaks if s['tier'] == t][:5]
-    if tier_top_5:
-        hall_of_fame_data.append({'is_section': True, 'tier': t})
-        for rank, s in enumerate(tier_top_5, 1):
-            s.update({'is_section': False, 'rank_display': ["", "I", "II", "III", "IV", "V"][rank]})
-            hall_of_fame_data.append(s)
-    
-# =========================================================================
-# --- 9. WEB RENDERING ---
-# =========================================================================
-print("\n=== GENERATING HTML PAGES ===")
-
-def render_core_pages(file_suffix, is_archive, tag, lb_data, match_data, trends_data, meta, relations_data=None, champ_match=None):
-    
-    # 1. Leaderboard
-    render_page(
-        "leaderboard.html", f"index{file_suffix}.html", page_id="index", current_page_base="index",
-        title=PAGES["index"]["title"], 
-        page_heading=PAGES["index"]["page_heading"],
-        description=PAGES["index"]["description"],
-        is_archive=is_archive, has_seasons=True, season_tag=tag,
-        archive_seasons=ARCHIVE_SEASONS,
-        current_season_tag=CURRENT_SEASON_TAG,
-        num_matches=meta.get('match_count', 0),
-        cutoff_date=meta.get('cutoff_date', 'N/A'),
-        players=lb_data,
-        match_count=meta.get('match_count', 0),
-        champ_match=champ_match
+    all_sorted_streaks = sorted(
+        best_streaks_only.values(),
+        key=lambda x: (TIER_HIERARCHY.index(x['tier']) if x['tier'] in TIER_HIERARCHY else 99, -x['streak_count'], -x['peak'])
     )
 
-    # 2. Matches
-    render_page(
-        "matches.html", f"matches{file_suffix}.html", page_id="matches",
-        title=PAGES["matches"]["title"], 
-        page_heading=PAGES["matches"]["page_heading"],
-        description=PAGES["matches"]["description"],
-        is_archive=is_archive, has_seasons=True, season_tag=tag,
-        archive_seasons=ARCHIVE_SEASONS,
-        current_season_tag=CURRENT_SEASON_TAG,
-        matches=match_data,
-        match_count=meta.get('match_count', 0),
-        cutoff_date=meta.get('cutoff_date', 'N/A')
-    )
-
-    # 3. Trends
-    render_page(
-        "trends.html", f"trends{file_suffix}.html", page_id="trends",
-        title=PAGES["trends"]["title"], 
-        page_heading=PAGES["trends"]["page_heading"],
-        description=PAGES["trends"]["description"],
-        is_archive=is_archive, has_seasons=True, season_tag=tag,
-        archive_seasons=ARCHIVE_SEASONS,
-        current_season_tag=CURRENT_SEASON_TAG,
-        history_json=trends_data['history_json'], player_names=trends_data['player_names'],
-        relations_json=json.dumps(relations_data) if relations_data else "{}"
-    )
-
-# --- Render Current Season & Archives ---
-render_core_pages("", False, CURRENT_SEASON_TAG, display_leaderboard_current, display_matches_current, display_trends_current, current_meta, current_relations)
-
-for tag in ARCHIVE_SEASONS:
-    archive_relations_clean = prepare_archive_relations(archives_raw_data[tag].get('relations', {}))
-    
-    render_core_pages(f"_{tag}", True, tag, display_archives[tag]['leaderboard'], display_archives[tag]['matches'], display_archives[tag]['trends'], archives_raw_data[tag]['metadata'], archive_relations_clean, champ_match=CHAMPIONS_DATA.get(tag))
-
-# --- Render Static Pages ---
-render_page(
-    "about.html", "about.html", page_id="about", is_archive=False, has_seasons=False,
-    title=PAGES["about"]["title"], 
-    page_heading=PAGES["about"]["page_heading"], 
-    description=PAGES["about"]["description"]
-)
-
-render_page(
-    "cache.html", "cache.html", page_id="cache", is_archive=False, has_seasons=False,
-    title=PAGES["cache"]["title"], 
-    page_heading=PAGES["cache"]["page_heading"], 
-    description=PAGES["cache"]["description"], 
-    hall_of_fame=hall_of_fame_data
-)
-
-print("✨ Website generated successfully!")
+    hall_of_fame_data = []
+    for t in TIER_HIERARCHY:
+        tier_top_5 = [s for s in all_sorted_streaks if s['tier'] == t][:5]
+        if tier_top_5:
+            hall_of_fame_data.append({'is_section': True, 'tier': t})
+            for rank, s in enumerate(tier_top_5, 1):
+                s.update({'is_section': False, 'rank_display': ["", "I", "II", "III", "IV", "V"][rank]})
+                hall_of_fame_data.append(s)
+    return hall_of_fame_data
 
 # =========================================================================
-# --- 10. API GENERATION ---
+# --- 7. MAIN PIPELINE ---
 # =========================================================================
-print("\n=== GENERATING API JSON ===")
-
-BASE_URL = "https://tricholome.github.io/rootelo"
-
-tier_colors = CONFIG.get('colors', {}).get('tiers', {})
-tier_icons = CONFIG.get('assets', {}).get('icons', {})
-
-api_data = {
-    "updated_at": datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC'),
-    "players": {}
-}
-
-api_full_leaderboard = prepare_leaderboard_data(current_final_df)
-
-for item in api_full_leaderboard:
-    clean_name = item['display_name']
+def main():
+    print("🚀 Initializing Rootelo generation pipeline...")
     
-    raw_dwd = PLAYER_DWD_MAP.get(clean_name, clean_name)
-    dwd_key = str(raw_dwd).replace('#', '-').lower().strip()
+    # --- Load Configurations & Content ---
+    config = load_json(os.path.join(DATA_DIR, "config.json"))
+    pages_content = load_json(os.path.join(DATA_DIR, "pages_content.json"))
+    champions_data = load_json(os.path.join(DATA_DIR, "champions.json"))
     
-    tier = item['tier']
-    color = tier_colors.get(tier)
-    icon_path = tier_icons.get(tier)
+    corrections_file = os.path.join(DATA_DIR, f"{CURRENT_SEASON_TAG}_corrections.csv")
+    game_id_mapping = pd.Series(dtype='datetime64[ns]')
+    if os.path.exists(corrections_file):
+        try:
+            df_updates = pd.read_csv(corrections_file, parse_dates=['New_Date'])
+            if not df_updates.empty and 'GameID' in df_updates.columns:
+                game_id_mapping = df_updates.set_index('GameID')['New_Date']
+                print(f"✅ Loaded corrections from {corrections_file}")
+        except Exception as e:
+            print(f"ℹ️ Note: Error loading corrections: {e}")
 
-    api_data["players"][dwd_key] = {
-        "elo": item['ELO'],
-        "rank": item['Rank'],
-        "tier": tier,
-        "bg_color": color,
-        "icon_url": f"{BASE_URL}/{icon_path}" if icon_path else None,
-        "games": item['Games'],
-        "wins": item['Wins'],
-        "win_rate": item['Win_Rate']
+    env = setup_jinja_env(config)
+
+    # --- Load Historical Archives ---
+    archives_raw_data = {}
+    elo_ratings = {}
+
+    for tag in ARCHIVE_SEASONS:
+        print(f"📂 Loading archive: {tag.upper()}")
+        archives_raw_data[tag] = {
+            'final_df': pd.DataFrame(), 'matches_list': [], 'history': {},
+            'metadata': {"cutoff_date": "N/A", "match_count": 0}, 'relations': {}
+        }
+        
+        archives_raw_data[tag]['metadata'] = load_json(os.path.join(DATA_DIR, f"{tag}_metadata.json"), archives_raw_data[tag]['metadata'])
+        archives_raw_data[tag]['relations'] = load_json(os.path.join(DATA_DIR, f"{tag}_relations.json"), archives_raw_data[tag]['relations'])
+        archives_raw_data[tag]['matches_list'] = load_json(os.path.join(DATA_DIR, f"{tag}_matches.json"), [])
+        archives_raw_data[tag]['history'] = load_json(os.path.join(DATA_DIR, f"{tag}_history.json"), {})
+
+        path_ratings = os.path.join(DATA_DIR, f"{tag}_ratings.csv")
+        if os.path.exists(path_ratings):
+            df_ratings = pd.read_csv(path_ratings)
+            for _, row in df_ratings.iterrows():
+                elo_ratings[str(row['Player'])] = float(row.get('ELO', 1200.0))
+            df_ratings['ELO'] = df_ratings['ELO'].round().astype(int)
+            if 'Tier' not in df_ratings.columns:
+                df_ratings['Tier'] = None
+            archives_raw_data[tag]['final_df'] = df_ratings
+
+    archived_player_names = set(elo_ratings.keys())
+
+    # --- Fetch Current Season API Data ---
+    all_matches = []
+    api_token = os.getenv('API_TOKEN')
+    headers = {'Authorization': f'Token {api_token}'} if api_token else {}
+    today = date.today()
+    cutoff_date = today - timedelta(days=1)
+    next_url = f"{PLISKIN_BASE_URL}/api/match/?format=json&limit=500&tournament={TOURNAMENT_ID}"
+
+    print(f"🌐 Requesting data for Tournament {TOURNAMENT_ID}... Filtering matches before: {today}")
+    while next_url:
+        try:
+            res = requests.get(next_url, headers=headers)
+            if res.status_code == 400:
+                print(f"ℹ️ Tournament {TOURNAMENT_ID} is not active on API yet.")
+                break
+            res.raise_for_status()
+            data = res.json()
+            all_matches.extend(data.get('results', []))
+            next_url = data.get('next')
+        except requests.RequestException as e:
+            print(f"📡 API Note: {e}")
+            break
+
+    raw_data = []
+    for m in all_matches:
+        participants = m.get('participants', [])
+        if len(participants) == 4:
+            for p in participants:
+                raw_data.append({
+                    'GameID': m['id'], 'Player': p.get('player'),
+                    'Score': float(p.get('tournament_score', 0.0)), 'Date_Closed': m.get('date_closed')
+                })
+
+    df = pd.DataFrame(raw_data)
+    if not df.empty:
+        df['Date_Closed'] = pd.to_datetime(df['Date_Closed'], format='ISO8601', utc=True)
+        if not game_id_mapping.empty:
+            game_id_mapping.index = game_id_mapping.index.astype(int)
+            mask = df['GameID'].isin(game_id_mapping.index)
+            if mask.any():
+                original_times = df.loc[mask, 'Date_Closed'].dt.strftime('%H:%M:%S.%f')
+                new_dates = df.loc[mask, 'GameID'].map(game_id_mapping).dt.strftime('%Y-%m-%d')
+                df.loc[mask, 'Date_Closed'] = pd.to_datetime(new_dates + ' ' + original_times, utc=True)
+
+        df = df[df['Date_Closed'].dt.date <= cutoff_date].copy()
+        df = df.sort_values(by='Date_Closed').reset_index(drop=True)
+
+    # --- Player Registry Initialization ---
+    all_raw_names = set()
+    if not df.empty:
+        all_raw_names.update(df['Player'].unique())
+    for tag in ARCHIVE_SEASONS:
+        archive_df = archives_raw_data[tag]['final_df']
+        if not archive_df.empty and 'Player' in archive_df.columns:
+            all_raw_names.update(archive_df['Player'].unique())
+        if archives_raw_data[tag]['history']:
+            all_raw_names.update(archives_raw_data[tag]['history'].keys())
+
+    player_registry.initialize(all_raw_names)
+
+    global_players_list = sorted(list({player_registry.get_clean_name(name) for name in all_raw_names if name}))
+    player_dwd_map = {player_registry.get_clean_name(n): str(n).strip().replace('+', '-') for n in all_raw_names if n}
+
+    for tag in ARCHIVE_SEASONS:
+        if archives_raw_data[tag]['history']:
+            raw_hist = archives_raw_data[tag]['history']
+            archives_raw_data[tag]['history'] = {player_registry.get_clean_name(k): v for k, v in raw_hist.items()}
+
+    # --- Current Season ELO Calculation ---
+    current_final_df = pd.DataFrame()
+    match_history_data = []
+
+    if not df.empty:
+        for player in df['Player'].unique():
+            if player not in elo_ratings:
+                elo_ratings[player] = 1200.0
+
+    peak_elo = {p: r for p, r in elo_ratings.items()}
+    last_diff = {p: 0.0 for p in elo_ratings}
+    player_stats = {p: {'games': 0, 'wins': 0.0} for p in elo_ratings}
+    player_history = {}
+
+    for p, r in elo_ratings.items():
+        label = f"{ARCHIVE_SEASONS[-1].upper()} Final" if ARCHIVE_SEASONS and p in archived_player_names else "Start"
+        player_history[p] = [[label, round(r), None]]
+
+    if not df.empty:
+        for game_id, group in df.groupby('GameID', sort=False):
+            match_participants = group.to_dict('records')
+            current_match_sum = round(sum([elo_ratings[p['Player']] for p in match_participants]))
+            current_date = pd.to_datetime(match_participants[0]['Date_Closed']).strftime('%Y-%m-%d')
+            
+            q_scores = {p['Player']: 10 ** (elo_ratings[p['Player']] / 400) for p in match_participants}
+            total_q = sum(q_scores.values())
+            
+            deltas_this_match = {}
+            for p in match_participants:
+                name = p['Player']
+                actual = p['Score']
+                expected = q_scores[name] / total_q
+                
+                player_stats[name]['games'] += 1
+                player_stats[name]['wins'] += actual
+                
+                g_count = player_stats[name]['games']
+                k = 80 if g_count <= 10 else (40 if g_count <= 50 else 20)
+                change = k * (actual - expected)
+                
+                elo_ratings[name] += change
+                last_diff[name] = change
+                deltas_this_match[name] = round(change)
+                
+                if elo_ratings[name] > peak_elo[name]:
+                    peak_elo[name] = elo_ratings[name]
+                    
+                player_history[name].append([current_date, round(elo_ratings[name]), int(game_id)])
+
+            players_list = [{
+                'name': player_registry.get_clean_name(p['Player']),
+                'delta': int(deltas_this_match[p['Player']]),
+                'is_winner': bool(p['Score'] >= 0.5)
+            } for p in match_participants]
+
+            match_history_data.append({
+                'MatchID': game_id, 'Date': current_date, 'players': players_list, 'ELO_Sum': current_match_sum
+            })
+
+    current_matches_df = pd.DataFrame(match_history_data)
+    if not current_matches_df.empty:
+        current_matches_df = current_matches_df.sort_values(by='ELO_Sum', ascending=False).reset_index(drop=True)
+        current_matches_df.insert(0, 'Rank', range(1, len(current_matches_df) + 1))
+        
+    current_history = {player_registry.get_clean_name(k): v for k, v in player_history.items()}
+    current_relations = extract_relations(match_history_data, current_history)
+
+    # Leaderboard Construction
+    leaderboard_list = []
+    for p_name, rating in elo_ratings.items():
+        s = player_stats.get(p_name, {'wins': 0, 'games': 0})
+        display_elo = round(rating)
+        diff = round(last_diff.get(p_name, 0))
+        is_qual = (s['games'] >= 10 and display_elo >= 1200)
+        
+        leaderboard_list.append({
+            'Player': p_name, 'ELO': rating, 'Display_ELO': display_elo, 'Games': s['games'], 'Wins': s['wins'], 
+            'Win Rate': f"{(s['wins']/s['games']):.1%}" if s['games'] > 0 else "0.0%",
+            'Peak': round(peak_elo.get(p_name, rating)), 'Last': f"+{diff}" if diff > 0 else str(diff), 'Qualified': is_qual
+        })
+
+    if leaderboard_list:
+        current_final_df = pd.DataFrame(leaderboard_list).sort_values(by='ELO', ascending=False)
+        rank_counter = 1
+        ranks = []
+        for _, row in current_final_df.iterrows():
+            if row['Qualified']:
+                ranks.append(rank_counter)
+                rank_counter += 1
+            else:
+                ranks.append("-")
+                
+        current_final_df.insert(0, 'Rank', ranks)
+        current_final_df['ELO'] = current_final_df['Display_ELO']
+        current_final_df = current_final_df.drop(columns=['Display_ELO'])
+
+    # --- Site Asset Preparation ---
+    print("\n=== PREPARING SITE ASSETS ===")
+    current_meta = {
+        'match_count': df['GameID'].nunique() if not df.empty else 0,
+        'cutoff_date': cutoff_date.strftime('%Y-%m-%d')
+    }
+    display_leaderboard_current = prepare_leaderboard_data(current_final_df[current_final_df['Games'] > 0]) if not current_final_df.empty else []
+    display_matches_current = prepare_matches_data(current_matches_df.to_dict('records')) if not current_matches_df.empty else []
+    display_trends_current = prepare_trends_data(current_history)
+
+    display_archives = {}
+    for tag in ARCHIVE_SEASONS:
+        raw = archives_raw_data[tag]
+        season_champ = champions_data.get(tag, {}).get('champion')
+        lb_data = prepare_leaderboard_data(raw['final_df'][raw['final_df']['Games'] > 0], champion_name=season_champ) if not raw['final_df'].empty else []
+        
+        display_archives[tag] = {
+            'leaderboard': lb_data, 
+            'matches': prepare_matches_data(raw['matches_list']), 
+            'trends': prepare_trends_data(raw['history'])
+        }
+
+    # --- Hall of Fame Compilation ---
+    sources = [(row['Player'], player_history.get(row['Player'], [])) for _, row in current_final_df.iterrows()] if not current_final_df.empty else []
+    for tag in ARCHIVE_SEASONS:
+        for p_name, h in archives_raw_data.get(tag, {}).get('history', {}).items():
+            sources.append((p_name, h))
+            
+    hall_of_fame_data = build_hall_of_fame(sources)
+
+    # --- HTML Page Rendering ---
+    print("\n=== GENERATING HTML PAGES ===")
+
+    def render_page(template_name, output_name, **kwargs):
+        template = env.get_template(template_name)
+        full_vars = {
+            "nav_items": NAV_ITEMS,
+            "generation_date": datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC'),
+            "global_players": global_players_list,
+            "player_dwd_map_json": json.dumps(player_dwd_map),
+            **kwargs
+        }
+        with open(output_name, "w", encoding="utf-8") as f:
+            f.write(template.render(**full_vars))
+        print(f"  > {output_name} generated.")
+
+    def render_core_pages(file_suffix, is_archive, tag, lb_data, match_data, trends_data, meta, relations_data=None, champ_match=None):
+        for page_type, tmpl in [("index", "leaderboard.html"), ("matches", "matches.html"), ("trends", "trends.html")]:
+            p_info = pages_content.get(page_type, {})
+            extra_vars = {}
+            if page_type == "index":
+                extra_vars = {"players": lb_data, "champ_match": champ_match, "current_page_base": "index"}
+            elif page_type == "matches":
+                extra_vars = {"matches": match_data}
+            elif page_type == "trends":
+                extra_vars = {
+                    "history_json": trends_data['history_json'], 
+                    "player_names": trends_data['player_names'],
+                    "relations_json": json.dumps(relations_data) if relations_data else "{}"
+                }
+
+            render_page(
+                tmpl, f"{page_type}{file_suffix}.html", page_id=page_type,
+                title=p_info.get("title", ""), page_heading=p_info.get("page_heading", ""), description=p_info.get("description", ""),
+                is_archive=is_archive, has_seasons=True, season_tag=tag,
+                archive_seasons=ARCHIVE_SEASONS, current_season_tag=CURRENT_SEASON_TAG,
+                num_matches=meta.get('match_count', 0), match_count=meta.get('match_count', 0),
+                cutoff_date=meta.get('cutoff_date', 'N/A'), **extra_vars
+            )
+
+    # Render Current Season & Archives
+    render_core_pages("", False, CURRENT_SEASON_TAG, display_leaderboard_current, display_matches_current, display_trends_current, current_meta, current_relations)
+
+    for tag in ARCHIVE_SEASONS:
+        archive_relations_clean = prepare_archive_relations(archives_raw_data[tag].get('relations', {}))
+        render_core_pages(f"_{tag}", True, tag, display_archives[tag]['leaderboard'], display_archives[tag]['matches'], display_archives[tag]['trends'], archives_raw_data[tag]['metadata'], archive_relations_clean, champ_match=champions_data.get(tag))
+
+    # Static Pages
+    for page_id, tmpl in [("about", "about.html"), ("cache", "cache.html")]:
+        p_info = pages_content.get(page_id, {})
+        extra = {"hall_of_fame": hall_of_fame_data} if page_id == "cache" else {}
+        render_page(
+            tmpl, f"{page_id}.html", page_id=page_id, is_archive=False, has_seasons=False,
+            title=p_info.get("title", ""), page_heading=p_info.get("page_heading", ""), description=p_info.get("description", ""), **extra
+        )
+
+    # --- API JSON Generation ---
+    print("\n=== GENERATING API JSON ===")
+    tier_colors = config.get('colors', {}).get('tiers', {})
+    tier_icons = config.get('assets', {}).get('icons', {})
+
+    api_data = {
+        "updated_at": datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC'),
+        "players": {}
     }
 
-os.makedirs("api", exist_ok=True)
-with open("api/live_elo.json", "w", encoding="utf-8") as f:
-    json.dump(api_data, f, indent=2, ensure_ascii=False)
+    for item in prepare_leaderboard_data(current_final_df):
+        clean_name = item['display_name']
+        raw_dwd = player_dwd_map.get(clean_name, clean_name)
+        dwd_key = str(raw_dwd).replace('#', '-').lower().strip()
+        
+        tier = item['tier']
+        color = tier_colors.get(tier)
+        icon_path = tier_icons.get(tier)
 
-print("  > api/live_elo.json generated.")
+        api_data["players"][dwd_key] = {
+            "elo": item['ELO'], "rank": item['Rank'], "tier": tier, "bg_color": color,
+            "icon_url": f"{BASE_URL}/{icon_path}" if icon_path else None,
+            "games": item['Games'], "wins": item['Wins'], "win_rate": item['Win_Rate']
+        }
+
+    save_json("api/live_elo.json", api_data)
+    print("  > api/live_elo.json generated successfully!")
+    print("\n✨ Website and API generated successfully!")
+
+if __name__ == "__main__":
+    main()
