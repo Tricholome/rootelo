@@ -1,8 +1,8 @@
-import os
-import requests
-import pandas as pd
 import json
+import os
 from datetime import datetime
+import pandas as pd
+import requests
 
 # =========================================================================
 # --- 1. SETTINGS & PATH CONFIGURATION ---
@@ -16,14 +16,16 @@ CUTOFF_DATE = datetime.strptime(CUTOFF_DATE_STR, "%Y-%m-%d").date()
 API_TOKEN = os.getenv('API_TOKEN')
 HEADERS = {'Authorization': f'Token {API_TOKEN}'} if API_TOKEN else {}
 
-# Centralisation et uniformisation des noms de fichiers
+# Nouvelle structure : un dossier dédié par saison dans data/archives/
 DATA_DIR = "data"
-CORRECTIONS_PATH = os.path.join(DATA_DIR, f"{SEASON_TAG}_corrections.csv")
-OUTPUT_RATINGS   = os.path.join(DATA_DIR, f"{SEASON_TAG}_ratings.csv")
-OUTPUT_HISTORY   = os.path.join(DATA_DIR, f"{SEASON_TAG}_history.json")
-OUTPUT_MATCHES   = os.path.join(DATA_DIR, f"{SEASON_TAG}_matches.json")
-OUTPUT_METADATA  = os.path.join(DATA_DIR, f"{SEASON_TAG}_metadata.json")
-OUTPUT_RELATIONS = os.path.join(DATA_DIR, f"{SEASON_TAG}_relations.json")
+SEASON_DIR = os.path.join(DATA_DIR, "archives", SEASON_TAG)
+
+CORRECTIONS_PATH = os.path.join(SEASON_DIR, "corrections.csv")
+OUTPUT_RATINGS   = os.path.join(SEASON_DIR, "ratings.csv")
+OUTPUT_HISTORY   = os.path.join(SEASON_DIR, "history.json")
+OUTPUT_MATCHES   = os.path.join(SEASON_DIR, "matches.json")
+OUTPUT_METADATA  = os.path.join(SEASON_DIR, "metadata.json")
+OUTPUT_RELATIONS = os.path.join(SEASON_DIR, "relations.json")
 
 # =========================================================================
 # --- 2. LOAD PREVIOUS SEASON BASELINE ---
@@ -32,8 +34,8 @@ print(f"\n=== INITIALIZING {SEASON_TAG.upper()} ===")
 inherited_elo = {}
 
 if PREVIOUS_SEASON_TAG:
-    # Utilisation du nouveau nom standardisé pour l'historique
-    prev_path = os.path.join(DATA_DIR, f"{PREVIOUS_SEASON_TAG}_ratings.csv")
+    # Lecture depuis le dossier de la saison précédente
+    prev_path = os.path.join(DATA_DIR, "archives", PREVIOUS_SEASON_TAG, "ratings.csv")
     if os.path.exists(prev_path):
         print(f"  > Loading baseline from {PREVIOUS_SEASON_TAG.upper()}...")
         df_prev = pd.read_csv(prev_path)
@@ -54,7 +56,7 @@ try:
         if not df_updates.empty and 'GameID' in df_updates.columns:
             game_id_mapping = df_updates.set_index('GameID')['New_Date']
             game_id_mapping.index = game_id_mapping.index.astype(int)
-            print(f"  > Loaded {len(game_id_mapping)} manual date corrections.")
+            print(f"  > Loaded {len(game_id_mapping)} manual date corrections from {CORRECTIONS_PATH}.")
 except Exception as e:
     print(f"  > Note: Corrections skipped or failed ({e}).")
 
@@ -74,7 +76,7 @@ while next_url:
         data = res.json()
         all_matches.extend(data.get('results', []))
         next_url = data.get('next')
-    except: 
+    except Exception:
         break
 
 raw_data = [] 
@@ -114,7 +116,6 @@ last_diff = {p: 0.0 for p in elo_ratings}
 
 start_label = f"{PREVIOUS_SEASON_TAG.upper()} Final" if PREVIOUS_SEASON_TAG else "Start"
 
-# Allégement de la structure initiale : [Label, Elo, MatchID]
 player_history = {p: [[start_label if p in inherited_elo else "Start", round(r), None]] for p, r in elo_ratings.items()}
 archive_matches_list = []
 pre_match_elos = {}
@@ -148,7 +149,6 @@ for game_id, group in df.groupby('GameID', sort=False):
         if elo_ratings[name] > peak_elo[name]: 
             peak_elo[name] = elo_ratings[name]
         
-        # Allégement de l'historique : suppression de la chaîne URL redondante
         player_history[name].append([current_date, round(elo_ratings[name]), int(game_id)])
 
     archive_matches_list.append({
@@ -185,7 +185,6 @@ if num_active > 0 and num_players > 0:
         elo_ratings[p] += bonus_per_player
         if elo_ratings[p] > peak_elo[p]: 
             peak_elo[p] = elo_ratings[p]
-        # Alignement structure à 3 éléments
         player_history[p].append(["Final", round(elo_ratings[p]), None])           
 
 for p in inactive_players:
@@ -266,14 +265,16 @@ relations_map = extract_relations(archive_matches_list, pre_match_elos)
 # --- 9. FINAL EXPORTS ---
 # =========================================================================
 print("\n=== EXPORTING ARCHIVES ===")
-os.makedirs(DATA_DIR, exist_ok=True)
+
+# Création automatique du dossier data/archives/{SEASON_TAG}/ s'il n'existe pas encore
+os.makedirs(SEASON_DIR, exist_ok=True)
 
 def safe_save(path, data, is_json=False):
     if os.path.exists(path):
         os.remove(path)
     with open(path, 'w', encoding='utf-8') as f:
         json.dump(data, f, indent=4) if is_json else data.to_csv(path, index=False)
-    print(f"  > {os.path.basename(path)} saved.")
+    print(f"  > {os.path.basename(path)} saved in {SEASON_DIR}.")
 
 safe_save(OUTPUT_RATINGS, final_df)
 
@@ -289,4 +290,4 @@ safe_save(OUTPUT_RELATIONS, relations_map, is_json=True)
 metadata = {"season_tag": SEASON_TAG.upper(), "cutoff_date": CUTOFF_DATE_STR, "match_count": len(archive_matches_list)}
 safe_save(OUTPUT_METADATA, metadata, is_json=True)
 
-print(f"\n✨ Archives for {SEASON_TAG.upper()} successfully generated!")
+print(f"\n✨ Archives for {SEASON_TAG.upper()} successfully generated in {SEASON_DIR}!")
