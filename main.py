@@ -10,6 +10,9 @@ import requests
 # --- 0. CONFIGURATION & CONSTANTS ---
 # =========================================================================
 DATA_DIR = "data"
+CONFIG_DIR = os.path.join(DATA_DIR, "config")
+ARCHIVES_DIR = os.path.join(DATA_DIR, "archives")
+
 ARCHIVE_SEASONS = ["lh01", "lh02"]
 CURRENT_SEASON_TAG = "lh03"
 TOURNAMENT_ID = 26
@@ -347,12 +350,12 @@ def build_hall_of_fame(sources):
 def main():
     print("🚀 Initializing Rootelo generation pipeline...")
     
-    # --- Load Configurations & Content ---
-    config = load_json(os.path.join(DATA_DIR, "config.json"))
-    pages_content = load_json(os.path.join(DATA_DIR, "pages_content.json"))
-    champions_data = load_json(os.path.join(DATA_DIR, "champions.json"))
+    # --- Load Configurations & Content (from data/config/) ---
+    config = load_json(os.path.join(CONFIG_DIR, "config.json"))
+    pages_content = load_json(os.path.join(CONFIG_DIR, "pages_content.json"))
+    champions_data = load_json(os.path.join(CONFIG_DIR, "champions.json"))
     
-    corrections_file = os.path.join(DATA_DIR, f"{CURRENT_SEASON_TAG}_corrections.csv")
+    corrections_file = os.path.join(CONFIG_DIR, "corrections.csv")
     game_id_mapping = pd.Series(dtype='datetime64[ns]')
     if os.path.exists(corrections_file):
         try:
@@ -365,23 +368,24 @@ def main():
 
     env = setup_jinja_env(config)
 
-    # --- Load Historical Archives ---
+    # --- Load Historical Archives (from data/archives/{tag}/) ---
     archives_raw_data = {}
     elo_ratings = {}
 
     for tag in ARCHIVE_SEASONS:
         print(f"📂 Loading archive: {tag.upper()}")
+        season_archive_dir = os.path.join(ARCHIVES_DIR, tag)
         archives_raw_data[tag] = {
             'final_df': pd.DataFrame(), 'matches_list': [], 'history': {},
             'metadata': {"cutoff_date": "N/A", "match_count": 0}, 'relations': {}
         }
         
-        archives_raw_data[tag]['metadata'] = load_json(os.path.join(DATA_DIR, f"{tag}_metadata.json"), archives_raw_data[tag]['metadata'])
-        archives_raw_data[tag]['relations'] = load_json(os.path.join(DATA_DIR, f"{tag}_relations.json"), archives_raw_data[tag]['relations'])
-        archives_raw_data[tag]['matches_list'] = load_json(os.path.join(DATA_DIR, f"{tag}_matches.json"), [])
-        archives_raw_data[tag]['history'] = load_json(os.path.join(DATA_DIR, f"{tag}_history.json"), {})
+        archives_raw_data[tag]['metadata'] = load_json(os.path.join(season_archive_dir, "metadata.json"), archives_raw_data[tag]['metadata'])
+        archives_raw_data[tag]['relations'] = load_json(os.path.join(season_archive_dir, "relations.json"), archives_raw_data[tag]['relations'])
+        archives_raw_data[tag]['matches_list'] = load_json(os.path.join(season_archive_dir, "matches.json"), [])
+        archives_raw_data[tag]['history'] = load_json(os.path.join(season_archive_dir, "history.json"), {})
 
-        path_ratings = os.path.join(DATA_DIR, f"{tag}_ratings.csv")
+        path_ratings = os.path.join(season_archive_dir, "ratings.csv")
         if os.path.exists(path_ratings):
             df_ratings = pd.read_csv(path_ratings)
             for _, row in df_ratings.iterrows():
