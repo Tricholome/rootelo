@@ -702,8 +702,7 @@ def main():
         "players": {}
     }
 
-    reigning_champ = champions_data.get(ARCHIVE_SEASONS[-1], {}).get('champion') if ARCHIVE_SEASONS else None
-    for item in prepare_leaderboard_data(current_final_df, champion_name=reigning_champ):
+    for item in display_leaderboard_current:
         clean_name = item['display_name']
         raw_dwd = player_dwd_map.get(clean_name, clean_name)
         dwd_key = str(raw_dwd).replace('#', '-').lower().strip()
@@ -720,7 +719,6 @@ def main():
 
     save_json("api/live_elo.json", api_data)
     print("  > api/live_elo.json generated successfully!")
-    print("\n✨ Website and API generated successfully!")
 
 if __name__ == "__main__":
     main()
