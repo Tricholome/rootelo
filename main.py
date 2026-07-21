@@ -702,7 +702,9 @@ def main():
         "players": {}
     }
 
-    for item in display_leaderboard_current:
+    full_api_leaderboard = prepare_leaderboard_data(current_final_df, champion_name=reigning_champ) if not current_final_df.empty else []
+
+    for item in full_api_leaderboard:
         clean_name = item['display_name']
         raw_dwd = player_dwd_map.get(clean_name, clean_name)
         dwd_key = str(raw_dwd).replace('#', '-').lower().strip()
