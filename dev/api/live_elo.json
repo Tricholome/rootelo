@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-07-21 10:07 UTC",
+  "updated_at": "2026-07-21 10:10 UTC",
   "players": {
     "led_slash-3579": {
       "elo": 1600,
@@ -14,9 +14,9 @@
     "nadav253-6419": {
       "elo": 1570,
       "rank": "-",
-      "tier": "unranked",
-      "bg_color": null,
-      "icon_url": null,
+      "tier": "bear",
+      "bg_color": "#ffffff",
+      "icon_url": "https://tricholome.github.io/rootelo/assets/icons/bear.webp",
       "games": 2,
       "wins": 1.0,
       "win_rate": "50.0%"
@@ -104,9 +104,9 @@
     "kayajam-9348": {
       "elo": 1475,
       "rank": "-",
-      "tier": "bear",
-      "bg_color": "#ffffff",
-      "icon_url": "https://tricholome.github.io/rootelo/assets/icons/bear.webp",
+      "tier": "unranked",
+      "bg_color": null,
+      "icon_url": null,
       "games": 7,
       "wins": 2.0,
       "win_rate": "28.6%"
