@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-07-21 10:58 UTC",
+  "updated_at": "2026-07-21 11:02 UTC",
   "players": {
     "led_slash-3579": {
       "elo": 1600,
@@ -44,9 +44,9 @@
     "kaiser-8343": {
       "elo": 1535,
       "rank": "-",
-      "tier": "bear",
-      "bg_color": "#ffffff",
-      "icon_url": "https://tricholome.github.io/rootelo/assets/icons/bear.webp",
+      "tier": "unranked",
+      "bg_color": null,
+      "icon_url": null,
       "games": 0,
       "wins": 0.0,
       "win_rate": "0.0%"
@@ -64,9 +64,9 @@
     "bapgo-7254": {
       "elo": 1529,
       "rank": "-",
-      "tier": "unranked",
-      "bg_color": null,
-      "icon_url": null,
+      "tier": "bear",
+      "bg_color": "#ffffff",
+      "icon_url": "https://tricholome.github.io/rootelo/assets/icons/bear.webp",
       "games": 3,
       "wins": 1.0,
       "win_rate": "33.3%"
