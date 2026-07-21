@@ -16,7 +16,6 @@ CUTOFF_DATE = datetime.strptime(CUTOFF_DATE_STR, "%Y-%m-%d").date()
 API_TOKEN = os.getenv('API_TOKEN')
 HEADERS = {'Authorization': f'Token {API_TOKEN}'} if API_TOKEN else {}
 
-# Nouvelle structure : un dossier dédié par saison dans data/archives/
 DATA_DIR = "data"
 SEASON_DIR = os.path.join(DATA_DIR, "archives", SEASON_TAG)
 
@@ -34,7 +33,6 @@ print(f"\n=== INITIALIZING {SEASON_TAG.upper()} ===")
 inherited_elo = {}
 
 if PREVIOUS_SEASON_TAG:
-    # Lecture depuis le dossier de la saison précédente
     prev_path = os.path.join(DATA_DIR, "archives", PREVIOUS_SEASON_TAG, "ratings.csv")
     if os.path.exists(prev_path):
         print(f"  > Loading baseline from {PREVIOUS_SEASON_TAG.upper()}...")
@@ -49,14 +47,16 @@ else:
 # =========================================================================
 # --- 3. LOAD CORRECTIONS ---
 # =========================================================================
+CORRECTIONS_PATH = os.path.join(DATA_DIR, "corrections.csv")
 game_id_mapping = pd.Series(dtype='datetime64[ns]')
+
 try:
     if os.path.exists(CORRECTIONS_PATH):
         df_updates = pd.read_csv(CORRECTIONS_PATH, parse_dates=['New_Date'])
         if not df_updates.empty and 'GameID' in df_updates.columns:
             game_id_mapping = df_updates.set_index('GameID')['New_Date']
             game_id_mapping.index = game_id_mapping.index.astype(int)
-            print(f"  > Loaded {len(game_id_mapping)} manual date corrections from {CORRECTIONS_PATH}.")
+            print(f"  > Loaded {len(game_id_mapping)} total manual date corrections.")
 except Exception as e:
     print(f"  > Note: Corrections skipped or failed ({e}).")
 
@@ -266,7 +266,6 @@ relations_map = extract_relations(archive_matches_list, pre_match_elos)
 # =========================================================================
 print("\n=== EXPORTING ARCHIVES ===")
 
-# Création automatique du dossier data/archives/{SEASON_TAG}/ s'il n'existe pas encore
 os.makedirs(SEASON_DIR, exist_ok=True)
 
 def safe_save(path, data, is_json=False):
