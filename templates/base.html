@@ -57,7 +57,7 @@
 	{% block extra_css %}{% endblock %}
 </head>
 
-<body data-page="{{ page_id }}">
+<body class="{% if is_archive %}archive-view{% endif %}" data-page="{{ page_id }}">
     
     <div class="container">
 	
