@@ -186,7 +186,7 @@ def calculate_k_factor(games_count, last_date, current_date, k_config, is_ranked
     return min(k_cap, k_base * v_time)
 
 def setup_jinja_env(config):
-    env = Environment(loader=FileSystemLoader('templates'))
+    env = Environment(loader=FileSystemLoader(['templates', '.']))
     env.globals['config'] = config
 
     def smart_date_filter(d1, d2=None):
