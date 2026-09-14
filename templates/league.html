@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block subnav %}
+<div class="season-selector-group">
+    <div class="season-selector">
+        <a href="about.html#view" class="season-btn {{ 'active' if page_id == 'about' else '' }}">Overview</a>
+        <a href="league.html#view" class="season-btn {{ 'active' if page_id == 'league' else '' }}">League</a>
+        <a href="simulator.html#view" class="season-btn {{ 'active' if page_id == 'simulator' else '' }}">Simulator</a>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="codex-section">
+    {% include "../data/" ~ league_config.slug ~ "/league_content.html" ignore missing %}
+</div>
+{% endblock %}
