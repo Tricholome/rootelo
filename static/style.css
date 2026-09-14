@@ -392,9 +392,9 @@ nav a.active {
     display: flex; 
     align-items: center; 
     justify-content: center; 
-    gap: 8px; 
+    gap: 6px; 
     width: 100%;
-    max-width: 320px;
+    max-width: 340px;
     margin: 4px 0;
 }
 
@@ -404,7 +404,8 @@ nav a.active {
     color: var(--text-muted); 
     letter-spacing: var(--track-wide); 
     font-weight: var(--bold); 
-    width: 65px;
+    width: 60px;
+	flex-shrink: 0;
 }
 
 .season-btn {
@@ -412,13 +413,26 @@ nav a.active {
     font-size: var(--size-sm); 
     font-weight: var(--medium); 
     color: var(--text-muted); 
-    padding: 6px 14px; 
+    padding: 6px 8px; 
     border-radius: 4px; 
     background: var(--bg-surface); 
     border: 1px solid var(--border-soft); 
     transition: 0.2s; 
     text-align: center;
     flex: 1;
+	min-width: 0;
+	white-space: nowrap;
+}
+
+@media (max-width: 380px) {
+    .season-selector {
+        gap: 4px;
+    }
+    .season-btn {
+        padding: 5px 4px;
+        font-size: var(--size-xs);
+        letter-spacing: normal;
+    }
 }
 
 .season-btn:hover { 
@@ -1787,7 +1801,6 @@ body.watcher-found .nav-secret { display: inline-block; }
    5.3 Watcher & Warden Enigmas
    ------------------------------------------------------------------------- */
 .enigma { text-align: center !important; }
-.enigma-green { margin-top: 0 !important; }
 .enigma span { display: block !important; }
 
 body.watcher-found .enigma-green,

@@ -186,7 +186,7 @@ def calculate_k_factor(games_count, last_date, current_date, k_config, is_ranked
     return min(k_cap, k_base * v_time)
 
 def setup_jinja_env(config):
-    env = Environment(loader=FileSystemLoader('templates'))
+    env = Environment(loader=FileSystemLoader(['templates', '.']))
     env.globals['config'] = config
 
     def smart_date_filter(d1, d2=None):
@@ -548,7 +548,7 @@ def run_league_pipeline(league_config, all_leagues_list):
 
     archive_seasons = sorted([
         d for d in os.listdir(archives_dir)
-        if os.path.isdir(os.path.join(archives_dir, d))
+        if os.path.isdir(os.path.join(archives_dir, d)) and d != current_season_tag
     ]) if os.path.exists(archives_dir) else []
     Logger.info(f"Detected archived seasons ({len(archive_seasons)}): {', '.join(archive_seasons) if archive_seasons else 'None'}")
 
@@ -935,10 +935,10 @@ def run_league_pipeline(league_config, all_leagues_list):
     # Render Static Pages (About, Simulator, Cache)
     static_pages = [
         ("about", "about.html", "codex"),
+        ("league", "league.html", "codex"),
         ("simulator", "simulator.html", "codex"),
         ("cache", "cache.html", "cache")
     ]
-
     for page_id, tmpl, section_id in static_pages:
         p_info = pages_content.get(section_id, {})
         extra = {"hall_of_fame": hall_of_fame_data} if page_id == "cache" else {}
