@@ -387,7 +387,7 @@ def main():
     safe_save(output_ratings, final_df)
 
     if archive_matches_list:
-        archive_matches_list = sorted(archive_matches_list, key=x: x['ELO_Sum'], reverse=True)
+        archive_matches_list = sorted(archive_matches_list, key=lambda x: x['ELO_Sum'], reverse=True)
         for idx, m in enumerate(archive_matches_list, start=1):
             m['Rank'] = idx
     safe_save(output_matches, archive_matches_list, is_json=True)
