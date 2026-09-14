@@ -935,10 +935,10 @@ def run_league_pipeline(league_config, all_leagues_list):
     # Render Static Pages (About, Simulator, Cache)
     static_pages = [
         ("about", "about.html", "codex"),
+        ("league", "league.html", "codex"),
         ("simulator", "simulator.html", "codex"),
         ("cache", "cache.html", "cache")
     ]
-
     for page_id, tmpl, section_id in static_pages:
         p_info = pages_content.get(section_id, {})
         extra = {"hall_of_fame": hall_of_fame_data} if page_id == "cache" else {}
