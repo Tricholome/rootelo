@@ -1,0 +1,50 @@
+<h2>The Digital League</h2>
+	<p>Known for its informal yet highly competitive spirit, the <a class="cl" href="https://rootleague.pliskin.dev/">Root Digital League</a> organizes established seasons where every match is played to the bitterest end. You can join the adventure at any time: visit their official site to subscribe, follow the community rules, and start competing for seasonal awards.</p>
+
+<h2>The Rating Volatility</h2>
+	<p>Driven by the <strong>K-Factor</strong>, rating volatility starts high during initial placement before smoothly decaying toward a stable floor as matches accumulate:</p>
+
+	<table class="k-table">
+		<tr>
+			<td><strong>Starting</strong></td>
+			<td>No games</td>
+			<td class="k-val">K = 75</td>
+			<td>Initiation for previously unranked players.</td>
+		</tr>
+		<tr>
+			<td><strong>Returning</strong></td>
+			<td>No games</td>
+			<td class="k-val">K = 50</td>
+			<td>Soft-reset for previous season ranked players.</td>
+		</tr>
+		<tr>
+			<td><strong>Calibrating</strong></td>
+			<td>10 games</td>
+			<td class="k-val">K = 50</td>
+			<td>High mobility while establishing your rank.</td>
+		</tr>
+		<tr>
+			<td><strong>Active</strong></td>
+			<td>20 games</td>
+			<td class="k-val">K = 31</td>
+			<td>Steady decay as match count grows.</td>
+		</tr>
+		<tr>
+			<td><strong>Stabilizing</strong></td>
+			<td>30 games</td>
+			<td class="k-val">K = 24</td>
+			<td>Fine-tuning near skill equilibrium.</td>
+		</tr>
+		<tr>
+			<td><strong>Veterans</strong></td>
+			<td>40+ games</td>
+			<td class="k-val">K = 20</td>
+			<td>Minimum floor for long-term rank stability.</td>
+		</tr>
+	</table>
+
+<h2>The Seasonal Lifecycle</h2>
+	<p>While Elo scores are persistent, seasonal game counts are reset. To reclaim their Tier, every player must complete the calibration phase at the start of each season, where restored volatility allows for rapid movement. At a season’s end, a <strong>Loyalty Bonus</strong> is equally distributed to all players with at least one recorded match. By rebalancing the global pool, this system combats deflation and can even secure a qualification at the finish line.</p>
+
+<h2>The Championship Finale</h2>
+	<p>Once the leaderboard is frozen, the top four qualified players advance to a single, all-random match to crown the <strong>League Champion</strong>. Played either live or asynchronously at the participants' discretion, this final clash provides a definitive conclusion to the current season.</p>
