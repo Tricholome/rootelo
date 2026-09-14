@@ -1787,7 +1787,6 @@ body.watcher-found .nav-secret { display: inline-block; }
    5.3 Watcher & Warden Enigmas
    ------------------------------------------------------------------------- */
 .enigma { text-align: center !important; }
-.enigma-green { margin-top: 0 !important; }
 .enigma span { display: block !important; }
 
 body.watcher-found .enigma-green,
