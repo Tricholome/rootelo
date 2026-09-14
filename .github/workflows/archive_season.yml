@@ -3,21 +3,29 @@ name: Archive Season Data
 on:
   workflow_dispatch:
     inputs:
-      season_tag:
-        description: 'Season tag to archive (e.g., lh02)'
+      league:
+        description: 'League slug (e.g., rdl, hoot)'
         required: true
-        default: 'lh02'
+        default: 'rdl'
+      season_tag:
+        description: 'Season tag to archive (e.g., lh03)'
+        required: true
+        default: 'lh03'
       previous_season_tag:
-        description: 'Previous season tag (e.g., lh01) - Leave empty if none'
+        description: 'Previous season tag (e.g., lh02) - Leave empty if none'
         required: false
       tournament_id:
-        description: 'Tournament ID on the API (e.g., 25)'
-        required: true
-        default: '25'
+        description: 'Tournament ID (optional, overrides config)'
+        required: false
       cutoff_date:
         description: 'Cutoff date in YYYY-MM-DD format'
         required: true
-        default: '2026-06-30'
+        default: '2026-08-31'
+      use_legacy_engine:
+        description: 'Use legacy script (archive_season_legacy.py for LH01/LH02)'
+        type: boolean
+        required: true
+        default: false
 
 jobs:
   build:
@@ -38,14 +46,32 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Run Archive Script
+      # Run Legacy
+      - name: Run Legacy Archive Script
+        if: ${{ inputs.use_legacy_engine }}
         env:
           API_TOKEN: ${{ secrets.API_TOKEN }}
           SEASON_TAG: ${{ github.event.inputs.season_tag }}
           PREVIOUS_SEASON_TAG: ${{ github.event.inputs.previous_season_tag }}
           TOURNAMENT_ID: ${{ github.event.inputs.tournament_id }}
           CUTOFF_DATE_STR: ${{ github.event.inputs.cutoff_date }}
-        run: python archive_season.py
+        run: python archive_season_legacy.py
+
+      # Run New Script
+      - name: Run Agnostic Archive Script
+        if: ${{ !inputs.use_legacy_engine }}
+        env:
+          API_TOKEN: ${{ secrets.API_TOKEN }}
+          ROOTDB_API_KEY: ${{ secrets.ROOTDB_API_KEY }}
+        run: |
+          CMD="python archive_season.py --league ${{ github.event.inputs.league }} --season ${{ github.event.inputs.season_tag }} --cutoff ${{ github.event.inputs.cutoff_date }}"
+          if [ -n "${{ github.event.inputs.previous_season_tag }}" ]; then
+            CMD="$CMD --prev-season ${{ github.event.inputs.previous_season_tag }}"
+          fi
+          if [ -n "${{ github.event.inputs.tournament_id }}" ]; then
+            CMD="$CMD --tournament-id ${{ github.event.inputs.tournament_id }}"
+          fi
+          $CMD
 
       - name: Commit and Push changes
         run: |
@@ -54,5 +80,5 @@ jobs:
           
           git add data/
           
-          git commit -m "Automated update of season archives (${{ github.event.inputs.season_tag }})" || echo "No changes to commit"
+          git commit -m "Automated update of season archives (${{ github.event.inputs.league }} / ${{ github.event.inputs.season_tag }})" || echo "No changes to commit"
           git push
