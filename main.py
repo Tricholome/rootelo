@@ -548,7 +548,7 @@ def run_league_pipeline(league_config, all_leagues_list):
 
     archive_seasons = sorted([
         d for d in os.listdir(archives_dir)
-        if os.path.isdir(os.path.join(archives_dir, d))
+        if os.path.isdir(os.path.join(archives_dir, d)) and d != current_season_tag
     ]) if os.path.exists(archives_dir) else []
     Logger.info(f"Detected archived seasons ({len(archive_seasons)}): {', '.join(archive_seasons) if archive_seasons else 'None'}")
 
