@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       league:
-        description: 'League slug (e.g., rdl, hoot)'
+        description: 'League slug'
         required: true
         default: 'rdl'
       season_tag:
@@ -20,9 +20,9 @@ on:
       cutoff_date:
         description: 'Cutoff date in YYYY-MM-DD format'
         required: true
-        default: '2026-08-31'
+        default: '2026-09-30'
       use_legacy_engine:
-        description: 'Use legacy script (archive_season_legacy.py for LH01/LH02)'
+        description: 'Use legacy script (archive_season_legacy.py)'
         type: boolean
         required: true
         default: false
