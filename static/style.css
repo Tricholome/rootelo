@@ -1025,15 +1025,23 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 
 .timing-duration,
 .timing-type {
-    font-size: var(--size-sm);
+    display: block;
     color: var(--text-muted);
     white-space: nowrap;
+	width: fit-content;
+}
+
+.timing-type {
+    font-size: var(--size-sm);
+    border: 1px solid var(--main-color);
+	font-weight: var(--medium);
+    padding: 2px 6px;
+    border-radius: 4px;  
 }
 
 .timing-duration {
-    border: 1px solid var(--border-soft);
-    padding: 2px 6px;
-    border-radius: 4px;
+    font-size: var(--size-xs);
+    margin-top: 4px;
 }
 
 #matchesTable th, 
