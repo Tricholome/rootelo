@@ -1048,9 +1048,9 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 }
 
 tr.child .match-timing {
-    display: flex;
+    flex-direction: row;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
 }
 
 #matchesTable th, 
