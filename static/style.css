@@ -1035,7 +1035,7 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 
 .timing-type {
     font-size: var(--size-sm);
-    border: 1px solid var(--main-color);
+    border: 1px solid var(--border-soft);
     font-weight: var(--medium);
     padding: 2px 6px;
     border-radius: 4px;
@@ -1045,6 +1045,12 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     font-size: var(--size-xs);
     margin-top: 4px;
     text-align: center;
+}
+
+tr.child .match-timing {
+    display: flex;
+    align-items: center;
+    gap: 6px;
 }
 
 #matchesTable th, 
