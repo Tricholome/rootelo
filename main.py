@@ -221,11 +221,9 @@ def get_discord_created_at(table_talk_url):
     return None
 
 
-def format_match_timing(turn_timing, created_at, closed_at, is_async_league):
+def format_match_timing(turn_timing, created_at, closed_at):
     """Formats timing label: 'Live', 'Async', or calculated duration ('14d' / '6h')."""
-    if turn_timing == 'live' or (
-        turn_timing is None and not is_async_league
-    ):
+    if turn_timing == 'live':
         return "Live"
 
     if not created_at or not closed_at or created_at == closed_at:
@@ -536,7 +534,6 @@ def prepare_matches_data(matches_list, player_registry, league_config):
             m.get('Turn_Timing'),
             m.get('Date_Created'),
             m.get('Date_Closed'),
-            is_async_league,
         ),
         'players': sorted([
             {**p, 'name': player_registry.get_clean_name(p['name'])} for p in m.get('players', [])
