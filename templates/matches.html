@@ -7,7 +7,7 @@
                 <th>Rank</th>
                 <th>Elo <span class="hide-mobile">Sum</span></th>
                 <th>Date</th>
-                <th>Format</th>
+                <th>Timing</th>
                 <th>Lineup & Changes</th>
                 <th>Game ID</th>
             </tr>
@@ -18,8 +18,11 @@
 				<td>{{ m.rank }}</td>
 				<td>{{ m.elo_sum }}</td>
 				<td data-order="{{ m.date }}">{{ m.date | smart_date }}</td>
-				<td>
-					<span class="badge-timing {{ 'live' if m.timing == 'Live' else 'async' }}">{{ m.timing }}</span>
+				<td data-order="{{ m.timing_order }}">
+					<span class="timing-type">{{ m.timing_type }}</span>
+					{% if m.timing_duration %}
+					<span class="timing-duration">{{ m.timing_duration }}</span>
+					{% endif %}
 				</td>
 				<td class="lineup-cell">
 					<div class="player-list">
