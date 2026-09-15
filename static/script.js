@@ -258,10 +258,10 @@ $(document).ready(function() {
 				{ "className": "rank-cell", "targets": 0 },
 				{ "className": "elo-sum-cell", "targets": 1 },
 				{ "className": "date-cell", "targets": 2 },
-				{ "className": "numeric-cell", "targets": [0, 1, 2, 4] },
-				{ "responsivePriority": 1, "targets": [1, 3] },
+				{ "className": "numeric-cell", "targets": [0, 1, 2, 5] },
+				{ "responsivePriority": 1, "targets": [1, 4] },
 				{ "responsivePriority": 2, "targets": [0, 2] },
-				{ "responsivePriority": 3, "targets": 4 }
+				{ "responsivePriority": 3, "targets": [3, 5] }
 			]
 		});
 	}
