@@ -18,7 +18,7 @@
 				<td>{{ m.rank }}</td>
 				<td>{{ m.elo_sum }}</td>
 				<td data-order="{{ m.date }}">{{ m.date | smart_date }}</td>
-				<td data-order="{{ m.timing_order }}">
+				<td class="match-timing" data-order="{{ m.timing_order }}">
 					<span class="timing-type">{{ m.timing_type }}</span>
 					{% if m.timing_duration %}
 					<span class="timing-duration">{{ m.timing_duration }}</span>
