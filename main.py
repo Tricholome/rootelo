@@ -8,6 +8,7 @@ from datetime import date, datetime, timedelta, timezone
 from jinja2 import Environment, FileSystemLoader
 import pandas as pd
 import requests
+import re
 
 # =========================================================================
 # --- 0. GLOBAL CONSTANTS & LOGGING ---
@@ -29,6 +30,7 @@ NAV_ITEMS = [
     {'id': 'about', 'url': 'about.html', 'label': 'Codex'}
 ]
 
+DISCORD_EPOCH = 1420070400000
 
 class Logger:
     @staticmethod
@@ -207,6 +209,34 @@ def setup_jinja_env(config):
     env.filters['smart_date'] = smart_date_filter
     return env
 
+def get_discord_created_at(table_talk_url):
+    """Extracts exact creation timestamp using the Snowflake ID from the Discord URL."""
+    if not table_talk_url:
+        return None
+    match = re.search(r'/(\d+)/?$', str(table_talk_url).strip())
+    if match:
+        snowflake_id = int(match.group(1))
+        timestamp_ms = (snowflake_id >> 22) + DISCORD_EPOCH
+        return pd.to_datetime(timestamp_ms, unit='ms', utc=True)
+    return None
+
+
+def format_match_timing(turn_timing, created_at, closed_at, is_async_league):
+    """Formats timing label: 'Live', 'Async', or calculated duration ('14d' / '6h')."""
+    if turn_timing == 'live' or (
+        turn_timing is None and not is_async_league
+    ):
+        return "Live"
+
+    if not created_at or not closed_at or created_at == closed_at:
+        return "Async"
+
+    delta = pd.to_datetime(closed_at) - pd.to_datetime(created_at)
+    days = delta.days
+    if days == 0:
+        hours = max(1, int(delta.total_seconds() // 3600))
+        return f"{hours}h"
+    return f"{days}d"
 
 # =========================================================================
 # --- 2. API FETCHING & DATA INGESTION ---
@@ -247,13 +277,18 @@ def fetch_raw_matches(league_config):
         for m in all_matches:
             participants = m.get('participants', [])
             if len(participants) == 4:
+                created_at = get_discord_created_at(m.get('table_talk_url'))
+                turn_timing = m.get('turn_timing')
+
                 for p in participants:
                     raw_data.append({
                         'GameID': m['id'],
                         'Player': p.get('player'),
                         'Player_Name': p.get('player_name'),
                         'Score': float(p.get('tournament_score', 0.0)),
-                        'Date_Closed': m.get('date_closed')
+                        'Date_Closed': m.get('date_closed'),
+                        'Date_Created': created_at,
+                        'Turn_Timing': turn_timing,
                     })
 
     elif api_type == 'rootdb':
@@ -497,6 +532,12 @@ def prepare_matches_data(matches_list, player_registry, league_config):
         'rank': m.get('Rank'),
         'elo_sum': m.get('ELO_Sum'),
         'date': m.get('Date'),
+        'timing': format_match_timing(
+            m.get('Turn_Timing'),
+            m.get('Date_Created'),
+            m.get('Date_Closed'),
+            is_async_league,
+        ),
         'players': sorted([
             {**p, 'name': player_registry.get_clean_name(p['name'])} for p in m.get('players', [])
         ], key=lambda x: x['is_winner'], reverse=True),
@@ -745,7 +786,13 @@ def run_league_pipeline(league_config, all_leagues_list):
             } for p in match_participants]
 
             match_history_data.append({
-                'MatchID': game_id, 'Date': current_date, 'players': players_list, 'ELO_Sum': current_match_sum
+                'MatchID': game_id,
+                'Date': current_date,
+                'Date_Closed': match_participants[0].get('Date_Closed'),
+                'Date_Created': match_participants[0].get('Date_Created'),
+                'Turn_Timing': match_participants[0].get('Turn_Timing'),
+                'players': players_list,
+                'ELO_Sum': current_match_sum,
             })
 
     current_matches_df = pd.DataFrame(match_history_data)
