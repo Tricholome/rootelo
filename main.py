@@ -222,19 +222,24 @@ def get_discord_created_at(table_talk_url):
 
 
 def format_match_timing(turn_timing, created_at, closed_at):
-    """Formats timing label: 'Live', 'Async', or calculated duration ('14d' / '6h')."""
-    if turn_timing == 'live':
-        return "Live"
+    """Formats timing order, type ('Live'/'Async'), and optional duration."""
+    if not turn_timing or str(turn_timing).lower() == 'live':
+        return 0, "Live", None
 
     if not created_at or not closed_at or created_at == closed_at:
-        return "Async"
+        return 99999999, "Async", None
 
     delta = pd.to_datetime(closed_at) - pd.to_datetime(created_at)
+    seconds = max(1, int(delta.total_seconds()))
     days = delta.days
+
     if days == 0:
-        hours = max(1, int(delta.total_seconds() // 3600))
-        return f"{hours}h"
-    return f"{days}d"
+        hours = max(1, seconds // 3600)
+        duration = f"{hours} hour" if hours == 1 else f"{hours} hours"
+    else:
+        duration = f"{days} day" if days == 1 else f"{days} days"
+
+    return seconds, "Async", duration
 
 # =========================================================================
 # --- 2. API FETCHING & DATA INGESTION ---
@@ -526,21 +531,35 @@ def prepare_leaderboard_data(df, player_registry, champion_name=None, is_archive
 
 
 def prepare_matches_data(matches_list, player_registry, league_config):
-    return [{
-        'rank': m.get('Rank'),
-        'elo_sum': m.get('ELO_Sum'),
-        'date': m.get('Date'),
-        'timing': format_match_timing(
+    formatted = []
+    for m in matches_list:
+        order, timing_type, duration = format_match_timing(
             m.get('Turn_Timing'),
             m.get('Date_Created'),
             m.get('Date_Closed'),
-        ),
-        'players': sorted([
-            {**p, 'name': player_registry.get_clean_name(p['name'])} for p in m.get('players', [])
-        ], key=lambda x: x['is_winner'], reverse=True),
-        'match_id': m.get('MatchID'),
-        'match_url': get_match_url(m.get('MatchID'), league_config)
-    } for m in matches_list]
+        )
+        formatted.append({
+            'rank': m.get('Rank'),
+            'elo_sum': m.get('ELO_Sum'),
+            'date': m.get('Date'),
+            'timing_order': order,
+            'timing_type': timing_type,
+            'timing_duration': duration,
+            'players': sorted(
+                [
+                    {
+                        **p,
+                        'name': player_registry.get_clean_name(p['name']),
+                    }
+                    for p in m.get('players', [])
+                ],
+                key=lambda x: x['is_winner'],
+                reverse=True,
+            ),
+            'match_id': m.get('MatchID'),
+            'match_url': get_match_url(m.get('MatchID'), league_config),
+        })
+    return formatted
 
 
 def prepare_trends_data(history_dict, player_registry, league_config):
