@@ -109,9 +109,7 @@ def fetch_raw_matches(league_config, tournament_id=None):
         for m in all_matches:
             participants = m.get('participants', [])
             if len(participants) == 4:
-                created_at = m.get('date_registered') or get_discord_created_at(m.get('table_talk_url'))
-                if isinstance(created_at, (pd.Timestamp, datetime)):
-                    created_at = created_at.isoformat()
+                created_at = get_discord_created_at(m.get('table_talk_url'))
                 turn_timing = m.get('turn_timing')
 
                 for p in participants:
@@ -144,9 +142,7 @@ def fetch_raw_matches(league_config, tournament_id=None):
         for m in all_matches:
             participants = m.get('participants', [])
             if len(participants) == 4:
-                created_at = m.get('date_registered') or get_discord_created_at(m.get('table_talk_url'))
-                if isinstance(created_at, (pd.Timestamp, datetime)):
-                    created_at = created_at.isoformat()
+                created_at = get_discord_created_at(m.get('table_talk_url'))
                 turn_timing = m.get('turn_timing')
 
                 for p in participants:
@@ -226,7 +222,8 @@ def main():
     df = pd.DataFrame(raw_data)
     if not df.empty:
         df['Date_Closed'] = pd.to_datetime(df['Date_Closed'], format='ISO8601', utc=True)
-        df['Date_Created'] = pd.to_datetime(df['Date_Created'], format='ISO8601', utc=True)
+        if 'Date_Created' in df.columns:
+            df['Date_Created'] = pd.to_datetime(df['Date_Created'], utc=True)
 
         # Apply Manual Corrections (Date_Closed / Date_Created)
         if os.path.exists(corrections_path):
@@ -280,10 +277,10 @@ def main():
             current_date = current_dt.strftime('%Y-%m-%d')
 
             date_closed_val = match_participants[0].get('Date_Closed')
-            date_closed_str = date_closed_val.isoformat() if isinstance(date_closed_val, (pd.Timestamp, datetime)) else (str(date_closed_val) if date_closed_val else None)
+            date_closed_str = date_closed_val.isoformat() if hasattr(date_closed_val, 'isoformat') else (str(date_closed_val) if date_closed_val else None)
 
             date_created_val = match_participants[0].get('Date_Created')
-            date_created_str = date_created_val.isoformat() if isinstance(date_created_val, (pd.Timestamp, datetime)) else (str(date_created_val) if date_created_val else None)
+            date_created_str = date_created_val.isoformat() if hasattr(date_created_val, 'isoformat') else (str(date_created_val) if date_created_val else None)
 
             turn_timing_val = match_participants[0].get('Turn_Timing')
             
