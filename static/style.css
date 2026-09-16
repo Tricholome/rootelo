@@ -1054,9 +1054,16 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 }
 
 tr.child .match-timing {
-    flex-direction: row;
+    display: inline-flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
+}
+
+tr.child .timing-type,
+tr.child .timing-duration {
+    display: inline-block;
+    margin: 0;
+    padding-left: 0;
 }
 
 #matchesTable tbody tr:hover .match-id-link {
