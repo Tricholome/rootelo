@@ -618,13 +618,21 @@ def run_league_pipeline(league_config, all_leagues_list):
     champions_data = load_json(os.path.join(data_dir, "champions.json"))
     corrections_file = os.path.join(data_dir, "corrections.csv")
 
-    game_id_mapping = pd.Series(dtype='datetime64[ns]')
+    closed_date_mapping = pd.Series(dtype='object')
+    created_date_mapping = pd.Series(dtype='object')
+
     if os.path.exists(corrections_file):
         try:
-            df_updates = pd.read_csv(corrections_file, parse_dates=['New_Date'])
+            df_updates = pd.read_csv(corrections_file)
             if not df_updates.empty and 'GameID' in df_updates.columns:
-                game_id_mapping = df_updates.set_index('GameID')['New_Date']
-                Logger.success(f"Loaded {len(game_id_mapping)} manual date corrections")
+                if 'Date_Closed' in df_updates.columns:
+                    df_closed = df_updates.dropna(subset=['Date_Closed'])
+                    closed_date_mapping = df_closed.set_index('GameID')['Date_Closed']
+                if 'Date_Created' in df_updates.columns:
+                    df_created = df_updates.dropna(subset=['Date_Created'])
+                    created_date_mapping = df_created.set_index('GameID')['Date_Created']
+                
+                Logger.success(f"Loaded manual date corrections from {corrections_file}")
         except Exception as e:
             Logger.warn(f"Error loading corrections: {e}")
 
@@ -676,13 +684,24 @@ def run_league_pipeline(league_config, all_leagues_list):
     df = pd.DataFrame(raw_data)
     if not df.empty:
         df['Date_Closed'] = pd.to_datetime(df['Date_Closed'], format='ISO8601', utc=True)
-        if not game_id_mapping.empty:
-            game_id_mapping.index = game_id_mapping.index.astype(int)
-            mask = df['GameID'].isin(game_id_mapping.index)
-            if mask.any():
-                original_times = df.loc[mask, 'Date_Closed'].dt.strftime('%H:%M:%S.%f')
-                new_dates = df.loc[mask, 'GameID'].map(game_id_mapping).dt.strftime('%Y-%m-%d')
-                df.loc[mask, 'Date_Closed'] = pd.to_datetime(new_dates + ' ' + original_times, utc=True)
+        if 'Date_Created' in df.columns:
+            df['Date_Created'] = pd.to_datetime(df['Date_Created'], utc=True)
+
+        if not closed_date_mapping.empty:
+            closed_date_mapping.index = closed_date_mapping.index.astype(int)
+            mask_closed = df['GameID'].isin(closed_date_mapping.index)
+            if mask_closed.any():
+                df.loc[mask_closed, 'Date_Closed'] = pd.to_datetime(
+                    df.loc[mask_closed, 'GameID'].map(closed_date_mapping), utc=True
+                )
+
+        if not created_date_mapping.empty:
+            created_date_mapping.index = created_date_mapping.index.astype(int)
+            mask_created = df['GameID'].isin(created_date_mapping.index)
+            if mask_created.any():
+                df.loc[mask_created, 'Date_Created'] = pd.to_datetime(
+                    df.loc[mask_created, 'GameID'].map(created_date_mapping), utc=True
+                )
 
         df = df[df['Date_Closed'].dt.date <= cutoff_date].copy()
         df = df.sort_values(by='Date_Closed').reset_index(drop=True)
