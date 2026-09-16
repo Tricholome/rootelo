@@ -1023,6 +1023,14 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     white-space: nowrap;
 }
 
+.match-id-link:hover {
+    color: var(--main-color);
+}
+
+#matchesTable tbody tr:hover .match-id-link {
+    border-color: var(--main-color);
+}
+
 .timing-duration,
 .timing-type {
     display: block;
@@ -1035,15 +1043,13 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 
 .timing-type {
     font-size: var(--size-sm);
-    border: 1px solid var(--border-soft);
     font-weight: var(--medium);
-    padding: 2px 6px;
-    border-radius: 4px;
+    text-transform: uppercase;
 }
 
 .timing-duration {
     font-size: var(--size-xs);
-    margin-top: 4px;
+    margin-top: 3px;
     text-align: center;
 }
 
@@ -1051,6 +1057,14 @@ tr.child .match-timing {
     flex-direction: row;
     align-items: center;
     gap: 8px;
+}
+
+#matchesTable tbody tr:hover .match-id-link {
+    border-color: var(--main-color);
+}
+
+#matchesTable tbody tr:hover .timing-type {
+    border-color: var(--text-main);
 }
 
 #matchesTable th, 
