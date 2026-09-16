@@ -52,9 +52,10 @@ else:
 game_id_mapping = pd.Series(dtype='datetime64[ns]')
 try:
     if os.path.exists(CORRECTIONS_PATH):
-        df_updates = pd.read_csv(CORRECTIONS_PATH, parse_dates=['New_Date'])
+        df_updates = pd.read_csv(CORRECTIONS_PATH, parse_dates=['Date_Closed'])
         if not df_updates.empty and 'GameID' in df_updates.columns:
-            game_id_mapping = df_updates.set_index('GameID')['New_Date']
+            df_valid = df_updates.dropna(subset=['Date_Closed'])
+            game_id_mapping = df_valid.set_index('GameID')['Date_Closed']
             game_id_mapping.index = game_id_mapping.index.astype(int)
             print(f"  > Loaded {len(game_id_mapping)} manual date corrections from {CORRECTIONS_PATH}.")
 except Exception as e:
@@ -86,7 +87,7 @@ for m in all_matches:
         for p in participants:
             raw_data.append({
                 'GameID': m['id'], 'Player': p.get('player'),
-                'Score': float(p.get('tournament_score', 0.0)), 'Date_Closed': m.get('date_closed')
+                'Score': float(p.get('tournament_score', 0.0)), 'Date_Closed': m.get('date_closed'), 'Turn_Timing': m.get('turn_timing')
             })
 
 df = pd.DataFrame(raw_data)
@@ -154,6 +155,7 @@ for game_id, group in df.groupby('GameID', sort=False):
     archive_matches_list.append({
         'MatchID': int(game_id),
         'Date': current_date,
+        'Turn_Timing': match_participants[0].get('Turn_Timing'),
         'players': [{
             'name': p['Player'],
             'delta': deltas_this_match[p['Player']],
