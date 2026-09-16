@@ -8,6 +8,7 @@ from datetime import date, datetime, timedelta, timezone
 from jinja2 import Environment, FileSystemLoader
 import pandas as pd
 import requests
+import re
 
 # =========================================================================
 # --- 0. GLOBAL CONSTANTS & LOGGING ---
@@ -29,6 +30,7 @@ NAV_ITEMS = [
     {'id': 'about', 'url': 'about.html', 'label': 'Codex'}
 ]
 
+DISCORD_EPOCH = 1420070400000
 
 class Logger:
     @staticmethod
@@ -207,6 +209,45 @@ def setup_jinja_env(config):
     env.filters['smart_date'] = smart_date_filter
     return env
 
+def get_discord_created_at(table_talk_url):
+    """Extracts exact creation timestamp using the Snowflake ID from the Discord URL."""
+    if not table_talk_url:
+        return None
+
+    url_str = str(table_talk_url).strip()
+    
+    match = re.search(r'/channels/\d+/(\d+)', url_str)
+    
+    if not match:
+        match = re.search(r'/(\d+)/?$', url_str)
+
+    if match:
+        snowflake_id = int(match.group(1))
+        timestamp_ms = (snowflake_id >> 22) + DISCORD_EPOCH
+        return pd.to_datetime(timestamp_ms, unit='ms', utc=True)
+
+    return None
+
+
+def format_match_timing(turn_timing, created_at, closed_at):
+    """Formats timing order, type ('Live'/'Async'), and optional duration."""
+    if not turn_timing or str(turn_timing).lower() == 'live':
+        return 0, "Live", None
+
+    if not created_at or not closed_at or created_at == closed_at:
+        return 99999999, "Async", None
+
+    delta = pd.to_datetime(closed_at) - pd.to_datetime(created_at)
+    seconds = max(1, int(delta.total_seconds()))
+    days = delta.days
+
+    if days == 0:
+        hours = max(1, seconds // 3600)
+        duration = f"{hours} hour" if hours == 1 else f"{hours} hours"
+    else:
+        duration = f"{days} day" if days == 1 else f"{days} days"
+
+    return seconds, "Async", duration
 
 # =========================================================================
 # --- 2. API FETCHING & DATA INGESTION ---
@@ -247,13 +288,18 @@ def fetch_raw_matches(league_config):
         for m in all_matches:
             participants = m.get('participants', [])
             if len(participants) == 4:
+                created_at = get_discord_created_at(m.get('table_talk_url'))
+                turn_timing = m.get('turn_timing')
+
                 for p in participants:
                     raw_data.append({
                         'GameID': m['id'],
                         'Player': p.get('player'),
                         'Player_Name': p.get('player_name'),
                         'Score': float(p.get('tournament_score', 0.0)),
-                        'Date_Closed': m.get('date_closed')
+                        'Date_Closed': m.get('date_closed'),
+                        'Date_Created': created_at,
+                        'Turn_Timing': turn_timing,
                     })
 
     elif api_type == 'rootdb':
@@ -493,16 +539,35 @@ def prepare_leaderboard_data(df, player_registry, champion_name=None, is_archive
 
 
 def prepare_matches_data(matches_list, player_registry, league_config):
-    return [{
-        'rank': m.get('Rank'),
-        'elo_sum': m.get('ELO_Sum'),
-        'date': m.get('Date'),
-        'players': sorted([
-            {**p, 'name': player_registry.get_clean_name(p['name'])} for p in m.get('players', [])
-        ], key=lambda x: x['is_winner'], reverse=True),
-        'match_id': m.get('MatchID'),
-        'match_url': get_match_url(m.get('MatchID'), league_config)
-    } for m in matches_list]
+    formatted = []
+    for m in matches_list:
+        order, timing_type, duration = format_match_timing(
+            m.get('Turn_Timing'),
+            m.get('Date_Created'),
+            m.get('Date_Closed'),
+        )
+        formatted.append({
+            'rank': m.get('Rank'),
+            'elo_sum': m.get('ELO_Sum'),
+            'date': m.get('Date'),
+            'timing_order': order,
+            'timing_type': timing_type,
+            'timing_duration': duration,
+            'players': sorted(
+                [
+                    {
+                        **p,
+                        'name': player_registry.get_clean_name(p['name']),
+                    }
+                    for p in m.get('players', [])
+                ],
+                key=lambda x: x['is_winner'],
+                reverse=True,
+            ),
+            'match_id': m.get('MatchID'),
+            'match_url': get_match_url(m.get('MatchID'), league_config),
+        })
+    return formatted
 
 
 def prepare_trends_data(history_dict, player_registry, league_config):
@@ -561,13 +626,21 @@ def run_league_pipeline(league_config, all_leagues_list):
     champions_data = load_json(os.path.join(data_dir, "champions.json"))
     corrections_file = os.path.join(data_dir, "corrections.csv")
 
-    game_id_mapping = pd.Series(dtype='datetime64[ns]')
+    closed_date_mapping = pd.Series(dtype='object')
+    created_date_mapping = pd.Series(dtype='object')
+
     if os.path.exists(corrections_file):
         try:
-            df_updates = pd.read_csv(corrections_file, parse_dates=['New_Date'])
+            df_updates = pd.read_csv(corrections_file)
             if not df_updates.empty and 'GameID' in df_updates.columns:
-                game_id_mapping = df_updates.set_index('GameID')['New_Date']
-                Logger.success(f"Loaded {len(game_id_mapping)} manual date corrections")
+                if 'Date_Closed' in df_updates.columns:
+                    df_closed = df_updates.dropna(subset=['Date_Closed'])
+                    closed_date_mapping = df_closed.set_index('GameID')['Date_Closed']
+                if 'Date_Created' in df_updates.columns:
+                    df_created = df_updates.dropna(subset=['Date_Created'])
+                    created_date_mapping = df_created.set_index('GameID')['Date_Created']
+                
+                Logger.success(f"Loaded manual date corrections from {corrections_file}")
         except Exception as e:
             Logger.warn(f"Error loading corrections: {e}")
 
@@ -619,13 +692,24 @@ def run_league_pipeline(league_config, all_leagues_list):
     df = pd.DataFrame(raw_data)
     if not df.empty:
         df['Date_Closed'] = pd.to_datetime(df['Date_Closed'], format='ISO8601', utc=True)
-        if not game_id_mapping.empty:
-            game_id_mapping.index = game_id_mapping.index.astype(int)
-            mask = df['GameID'].isin(game_id_mapping.index)
-            if mask.any():
-                original_times = df.loc[mask, 'Date_Closed'].dt.strftime('%H:%M:%S.%f')
-                new_dates = df.loc[mask, 'GameID'].map(game_id_mapping).dt.strftime('%Y-%m-%d')
-                df.loc[mask, 'Date_Closed'] = pd.to_datetime(new_dates + ' ' + original_times, utc=True)
+        if 'Date_Created' in df.columns:
+            df['Date_Created'] = pd.to_datetime(df['Date_Created'], utc=True)
+
+        if not closed_date_mapping.empty:
+            closed_date_mapping.index = closed_date_mapping.index.astype(int)
+            mask_closed = df['GameID'].isin(closed_date_mapping.index)
+            if mask_closed.any():
+                df.loc[mask_closed, 'Date_Closed'] = pd.to_datetime(
+                    df.loc[mask_closed, 'GameID'].map(closed_date_mapping), utc=True
+                )
+
+        if not created_date_mapping.empty:
+            created_date_mapping.index = created_date_mapping.index.astype(int)
+            mask_created = df['GameID'].isin(created_date_mapping.index)
+            if mask_created.any():
+                df.loc[mask_created, 'Date_Created'] = pd.to_datetime(
+                    df.loc[mask_created, 'GameID'].map(created_date_mapping), utc=True
+                )
 
         df = df[df['Date_Closed'].dt.date <= cutoff_date].copy()
         df = df.sort_values(by='Date_Closed').reset_index(drop=True)
@@ -745,7 +829,13 @@ def run_league_pipeline(league_config, all_leagues_list):
             } for p in match_participants]
 
             match_history_data.append({
-                'MatchID': game_id, 'Date': current_date, 'players': players_list, 'ELO_Sum': current_match_sum
+                'MatchID': game_id,
+                'Date': current_date,
+                'Date_Closed': match_participants[0].get('Date_Closed'),
+                'Date_Created': match_participants[0].get('Date_Created'),
+                'Turn_Timing': match_participants[0].get('Turn_Timing'),
+                'players': players_list,
+                'ELO_Sum': current_match_sum,
             })
 
     current_matches_df = pd.DataFrame(match_history_data)

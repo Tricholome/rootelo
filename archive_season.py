@@ -2,6 +2,7 @@ import argparse
 import json
 import math
 import os
+import re
 import sys
 from datetime import datetime
 import pandas as pd
@@ -10,6 +11,9 @@ import requests
 # =========================================================================
 # --- 1. UTILS & LEAGUE CONFIGURATION ---
 # =========================================================================
+
+DISCORD_EPOCH = 1420070400000
+
 
 def load_json(filepath, default=None):
     if default is None:
@@ -55,6 +59,25 @@ def calculate_k_factor(games_count, last_date, current_date, k_config, is_ranked
     return min(k_cap, k_base * v_time)
 
 
+def get_discord_created_at(table_talk_url):
+    """Extracts exact creation timestamp using the Snowflake ID from the Discord URL."""
+    if not table_talk_url:
+        return None
+    
+    url_str = str(table_talk_url).strip()
+    
+    match = re.search(r'/channels/\d+/(\d+)', url_str)
+    
+    if not match:
+        match = re.search(r'/(\d+)/?$', url_str)
+
+    if match:
+        snowflake_id = int(match.group(1))
+        timestamp_ms = (snowflake_id >> 22) + DISCORD_EPOCH
+        return pd.to_datetime(timestamp_ms, unit='ms', utc=True)
+    return None
+
+
 def fetch_raw_matches(league_config, tournament_id=None):
     """Fetches raw match data dynamically using specified league API configuration."""
     raw_data = []
@@ -93,12 +116,17 @@ def fetch_raw_matches(league_config, tournament_id=None):
         for m in all_matches:
             participants = m.get('participants', [])
             if len(participants) == 4:
+                created_at = get_discord_created_at(m.get('table_talk_url'))
+                turn_timing = m.get('turn_timing')
+
                 for p in participants:
                     raw_data.append({
                         'GameID': m['id'],
                         'Player': p.get('player'),
                         'Score': float(p.get('tournament_score', 0.0)),
-                        'Date_Closed': m.get('date_closed')
+                        'Date_Closed': m.get('date_closed'),
+                        'Date_Created': created_at,
+                        'Turn_Timing': turn_timing
                     })
 
     elif api_type == 'rootdb':
@@ -121,12 +149,17 @@ def fetch_raw_matches(league_config, tournament_id=None):
         for m in all_matches:
             participants = m.get('participants', [])
             if len(participants) == 4:
+                created_at = get_discord_created_at(m.get('table_talk_url'))
+                turn_timing = m.get('turn_timing')
+
                 for p in participants:
                     raw_data.append({
                         'GameID': m['id'],
                         'Player': p.get('player'),
                         'Score': float(p.get('tournament_score', 0.0)),
-                        'Date_Closed': m.get('date_closed')
+                        'Date_Closed': m.get('date_closed'),
+                        'Date_Created': created_at,
+                        'Turn_Timing': turn_timing
                     })
 
     return raw_data
@@ -188,18 +221,6 @@ def main():
     else:
         print("  > No previous season defined. Starting fresh (1200.0 baseline).")
 
-    # Load Manual Corrections
-    game_id_mapping = pd.Series(dtype='datetime64[ns]')
-    try:
-        if os.path.exists(corrections_path):
-            df_updates = pd.read_csv(corrections_path, parse_dates=['New_Date'])
-            if not df_updates.empty and 'GameID' in df_updates.columns:
-                game_id_mapping = df_updates.set_index('GameID')['New_Date']
-                game_id_mapping.index = game_id_mapping.index.astype(int)
-                print(f"  > Loaded {len(game_id_mapping)} manual date corrections.")
-    except Exception as e:
-        print(f"  > Note: Corrections skipped or failed ({e}).")
-
     # Fetch Data
     print("\n=== FETCHING API DATA ===")
     print(f"  > Requesting matches (Cutoff date: {cutoff_date_str})...")
@@ -208,13 +229,35 @@ def main():
     df = pd.DataFrame(raw_data)
     if not df.empty:
         df['Date_Closed'] = pd.to_datetime(df['Date_Closed'], format='ISO8601', utc=True)
+        if 'Date_Created' in df.columns:
+            df['Date_Created'] = pd.to_datetime(df['Date_Created'], utc=True)
 
-        if not game_id_mapping.empty:
-            mask = df['GameID'].isin(game_id_mapping.index)
-            if mask.any():
-                original_times = df.loc[mask, 'Date_Closed'].dt.strftime('%H:%M:%S.%f')
-                new_dates = df.loc[mask, 'GameID'].map(game_id_mapping).dt.strftime('%Y-%m-%d')
-                df.loc[mask, 'Date_Closed'] = pd.to_datetime(new_dates + ' ' + original_times, utc=True)
+        # Apply Manual Corrections (Date_Closed / Date_Created)
+        if os.path.exists(corrections_path):
+            try:
+                df_corr = pd.read_csv(corrections_path)
+                if not df_corr.empty and 'GameID' in df_corr.columns:
+                    df_corr['GameID'] = df_corr['GameID'].astype(int)
+
+                    if 'Date_Closed' in df_corr.columns:
+                        closed_map = df_corr.set_index('GameID')['Date_Closed'].dropna()
+                        mask_closed = df['GameID'].isin(closed_map.index)
+                        if mask_closed.any():
+                            df.loc[mask_closed, 'Date_Closed'] = pd.to_datetime(
+                                df.loc[mask_closed, 'GameID'].map(closed_map), utc=True
+                            )
+
+                    if 'Date_Created' in df_corr.columns:
+                        created_map = df_corr.set_index('GameID')['Date_Created'].dropna()
+                        mask_created = df['GameID'].isin(created_map.index)
+                        if mask_created.any():
+                            df.loc[mask_created, 'Date_Created'] = pd.to_datetime(
+                                df.loc[mask_created, 'GameID'].map(created_map), utc=True
+                            )
+
+                    print(f"  > Applied manual date corrections from {corrections_path}.")
+            except Exception as e:
+                print(f"  > Note: Corrections skipped or failed ({e}).")
 
         df = df[df['Date_Closed'].dt.date <= cutoff_date].copy()
         df = df.sort_values(by='Date_Closed').reset_index(drop=True)
@@ -239,6 +282,14 @@ def main():
             
             current_dt = pd.to_datetime(match_participants[0]['Date_Closed'])
             current_date = current_dt.strftime('%Y-%m-%d')
+
+            date_closed_val = match_participants[0].get('Date_Closed')
+            date_closed_str = date_closed_val.isoformat() if hasattr(date_closed_val, 'isoformat') else (str(date_closed_val) if date_closed_val else None)
+
+            date_created_val = match_participants[0].get('Date_Created')
+            date_created_str = date_created_val.isoformat() if hasattr(date_created_val, 'isoformat') else (str(date_created_val) if date_created_val else None)
+
+            turn_timing_val = match_participants[0].get('Turn_Timing')
             
             q_scores = {p['Player']: 10 ** (elo_ratings[p['Player']] / 400) for p in match_participants}
             total_q = sum(q_scores.values())
@@ -275,6 +326,9 @@ def main():
             archive_matches_list.append({
                 'MatchID': int(game_id),
                 'Date': current_date,
+                'Date_Closed': date_closed_str,
+                'Date_Created': date_created_str,
+                'Turn_Timing': turn_timing_val,
                 'players': [{
                     'name': p['Player'],
                     'delta': deltas_this_match[p['Player']],
