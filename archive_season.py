@@ -63,7 +63,14 @@ def get_discord_created_at(table_talk_url):
     """Extracts exact creation timestamp using the Snowflake ID from the Discord URL."""
     if not table_talk_url:
         return None
-    match = re.search(r'/(\d+)/?$', str(table_talk_url).strip())
+    
+    url_str = str(table_talk_url).strip()
+    
+    match = re.search(r'/channels/\d+/(\d+)', url_str)
+    
+    if not match:
+        match = re.search(r'/(\d+)/?$', url_str)
+
     if match:
         snowflake_id = int(match.group(1))
         timestamp_ms = (snowflake_id >> 22) + DISCORD_EPOCH
