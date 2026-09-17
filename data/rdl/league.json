@@ -4,7 +4,7 @@
   "enabled": true,
   "is_default": true,
   "output_dir": ".",
-  "current_season_tag": "lh03",
+  "current_season_tag": "lh04",
   "profile_base_url": "https://www.therootdatabase.com/dwd/profile",
   "profile_format_replace_chars": true,
   "match_base_url": "https://rootleague.pliskin.dev/match",
@@ -12,7 +12,7 @@
     "auth_prefix": "Token",
     "token_env_var": "API_TOKEN",
     "base_url": "https://rootleague.pliskin.dev",
-    "tournament_id": 26
+    "tournament_id": 27
   },
   "k_factor": {
     "k_floor": 20.0,
