@@ -1,8 +1,18 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="codex-section">
-    <table id="frogsTable" class="display nowrap" style="width:100%">
+<div class="codex-section">	
+    <h2>Welcome, frogs!</h2>
+
+    <!-- Contrôles du sélecteur de date -->
+    <div class="date-controls" style="display: flex; align-items: center; justify-content: center; gap: 10px; margin: 20px 0;">
+        <button id="prevDateBtn" class="btn">&laquo; Jour précédent</button>
+        <input type="date" id="datePicker" style="padding: 6px 12px; font-size: 1rem;">
+        <button id="nextDateBtn" class="btn">Jour suivant &raquo;</button>
+        <button id="latestDateBtn" class="btn">Dernier jour</button>
+    </div>
+
+    <table id="frogTable" class="display nowrap" style="width:100%">
         <thead>
             <tr>
                 <th>Player</th>
@@ -15,10 +25,101 @@
             <tr>
                 <td>{{ player.name }}</td>
                 <td>{{ player.games }}</td>
-                <td>{{ player.tribe or '' }}</td>
+                <td>{{ player.tribe or '-' }}</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
 </div>
+
+<script>
+    const matchesData = {{ matches_json | safe }};
+    const availableDates = {{ dates_json | safe }};
+
+    document.addEventListener("DOMContentLoaded", function () {
+        if (!availableDates || availableDates.length === 0) return;
+
+        const datePicker = document.getElementById("datePicker");
+        const prevBtn = document.getElementById("prevDateBtn");
+        const nextBtn = document.getElementById("nextDateBtn");
+        const latestBtn = document.getElementById("latestDateBtn");
+
+        // Définir les bornes du sélecteur HTML
+        datePicker.min = availableDates[0];
+        datePicker.max = availableDates[availableDates.length - 1];
+
+        let currentIndex = availableDates.length - 1;
+
+        // Fonction pour récupérer/initialiser la DataTable
+        function getDataTableInstance() {
+            if ($.fn.DataTable.isDataTable('#frogTable')) {
+                return $('#frogTable').DataTable();
+            } else {
+                return $('#frogTable').DataTable({
+                    "order": [[1, "desc"]],
+                    "responsive": true,
+                    "pageLength": 25
+                });
+            }
+        }
+
+        function updateTableForDate(selectedDate) {
+            datePicker.value = selectedDate;
+
+            // Cumul des matchs jusqu'à la date sélectionnée (inclusivement)
+            const playerGames = {};
+            matchesData.forEach(match => {
+                if (match.date <= selectedDate) {
+                    match.players.forEach(player => {
+                        playerGames[player] = (playerGames[player] || 0) + 1;
+                    });
+                }
+            });
+
+            // Conversion au format attendu par DataTables
+            const newRows = Object.entries(playerGames).map(([name, games]) => [
+                name,
+                games,
+                '-'
+            ]);
+
+            // Mise à jour de DataTables sans recharger la page
+            const table = getDataTableInstance();
+            table.clear();
+            table.rows.add(newRows);
+            table.draw();
+
+            // Gestion de l'état des boutons
+            prevBtn.disabled = (currentIndex <= 0);
+            nextBtn.disabled = (currentIndex >= availableDates.length - 1);
+        }
+
+        function setDateByIndex(index) {
+            if (index >= 0 && index < availableDates.length) {
+                currentIndex = index;
+                updateTableForDate(availableDates[currentIndex]);
+            }
+        }
+
+        // Écouteurs d'événements
+        prevBtn.addEventListener("click", () => setDateByIndex(currentIndex - 1));
+        nextBtn.addEventListener("click", () => setDateByIndex(currentIndex + 1));
+        latestBtn.addEventListener("click", () => setDateByIndex(availableDates.length - 1));
+
+        datePicker.addEventListener("change", function () {
+            const val = datePicker.value;
+            // Trouver la date la plus proche ou exacte
+            let matchIdx = availableDates.findIndex(d => d >= val);
+            if (matchIdx !== -1) {
+                currentIndex = matchIdx;
+            } else {
+                currentIndex = availableDates.length - 1;
+            }
+            updateTableForDate(availableDates[currentIndex]);
+        });
+
+        // Initialiser à la date la plus récente
+        setDateByIndex(currentIndex);
+    });
+</script>
 {% endblock %}
