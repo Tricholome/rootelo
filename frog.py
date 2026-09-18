@@ -1,59 +1,84 @@
 import json
-import os
-from datetime import datetime, timezone
-from jinja2 import Environment, FileSystemLoader
+from collections import Counter
+from pathlib import Path
 
-# Constantes de navigation reprises de main.py
-NAV_ITEMS = [
-    {'id': 'index', 'url': 'index.html', 'label': 'Leaderboard'},
-    {'id': 'matches', 'url': 'matches.html', 'label': 'Top Tables'},
-    {'id': 'trends', 'url': 'trends.html', 'label': "Player's Journey"},
-    {'id': 'about', 'url': 'about.html', 'label': 'Codex'}
-]
+# 1. Chemin du fichier matches.json
+json_path = Path("rootelo/data/rdl/archives/lh03/matches.json")
 
+# 2. Lecture du fichier JSON
+with open(json_path, "r", encoding="utf-8") as f:
+    matches = json.load(f)
 
-def load_json(filepath, default=None):
-    """Charge un fichier JSON de manière sécurisée (identique à main.py)."""
-    if default is None:
-        default = {}
-    if os.path.exists(filepath):
-        try:
-            with open(filepath, "r", encoding="utf-8") as f:
-                return json.load(f)
-        except Exception as e:
-            print(f"⚠️ Erreur lors de la lecture de {filepath}: {e}")
-    return default
+# 3. Comptage du nombre de parties jouées par chaque joueur
+player_games = Counter()
 
+for match in matches:
+    for player in match.get("players", []):
+        player_name = player.get("name")
+        if player_name:
+            player_games[player_name] += 1
 
-def main():
-    # 1. Chargement des configurations globales (comme dans main.py)
-    config = load_json(os.path.join("data", "config", "config.json"))
+# Tri des joueurs du plus grand au plus petit nombre de parties jouées
+sorted_players = sorted(player_games.items(), key=lambda x: (-x[1], x[0]))
 
-    # 2. Configuration de l'environnement Jinja2
-    env = Environment(loader=FileSystemLoader(['templates', '.']))
-    env.globals['config'] = config
+# 4. Construction de la table HTML
+html_content = """<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Frog Leaderboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+        }
+        table {
+            border-collapse: collapse;
+            width: 60%;
+            margin: 0 auto;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+        tr:nth-child(even) {
+            background-color: #fafafa;
+        }
+    </style>
+</head>
+<body>
+    <h2 style="text-align: center;">Statistiques des Joueurs</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Player</th>
+                <th>Games</th>
+                <th>Tribe</th>
+            </tr>
+        </thead>
+        <tbody>
+"""
 
-    # 3. Chargement du template (templates/frog.html)
-    template = env.get_template("frog.html")
+for player, games in sorted_players:
+    html_content += f"""            <tr>
+                <td>{player}</td>
+                <td>{games}</td>
+                <td></td>
+            </tr>\n"""
 
-    # 4. Context/Variables transmises au template HTML
-    context = {
-        "nav_items": NAV_ITEMS,
-        "page_id": "frog",
-        "section_id": "frog",
-        "title": "Frog Test Zone 🐸",
-        "generation_date": datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC'),
-        "path_prefix": "",
-        "is_static": True
-    }
+html_content += """        </tbody>
+    </table>
+</body>
+</html>
+"""
 
-    # 5. Rendu et enregistrement du fichier de sortie frog.html
-    output_path = "frog.html"
-    with open(output_path, "w", encoding="utf-8") as f:
-        f.write(template.render(**context))
+# 5. Écriture du fichier frog.html
+output_path = Path("frog.html")
+with open(output_path, "w", encoding="utf-8") as f:
+    f.write(html_content)
 
-    print(f"✅ Page générée avec succès : {output_path}")
-
-
-if __name__ == "__main__":
-    main()
+print(f"Fichier '{output_path}' généré avec succès pour {len(sorted_players)} joueurs !")
