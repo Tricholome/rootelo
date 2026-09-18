@@ -1,9 +1,9 @@
-name: Update Rootelo DEV Mirror
+name: Deploy Frog Test to DEV Mirror
 
 on:
   push:
     branches:
-      - dev
+      - frog
   workflow_dispatch:
 
 jobs:
@@ -12,8 +12,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          ref: dev
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -32,24 +30,14 @@ jobs:
         run: |
           pip install -r requirements.txt
 
-      - name: Build RDL League
+      - name: Build Frog Page
         env:
           API_TOKEN: ${{ secrets.API_TOKEN }}
-        run: |
-          python main.py --league rdl
-          mkdir -p build_site
-          cp *.html build_site/
-          cp -r static build_site/
-          cp -r assets build_site/
-          cp -r api build_site/
-
-      - name: Build HOOT League
-        env:
           ROOTDB_TOKEN: ${{ secrets.ROOTDB_TOKEN }}
         run: |
-          python main.py --league hoot
-          cp -r hoot build_site/
-          cp -r api build_site/
+          python frog.py
+          mkdir -p build_site
+          cp frog.html build_site/
 
       - name: Deploy to rootelo-dev repository
         uses: peaceiris/actions-gh-pages@v3
@@ -58,3 +46,4 @@ jobs:
           external_repository: tricholome/rootelo-dev
           publish_dir: ./build_site
           publish_branch: gh-pages
+          keep_files: true
