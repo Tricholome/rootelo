@@ -9,7 +9,7 @@
   "profile_format_replace_chars": false,
   "match_base_url": "https://www.therootdatabase.com/game",
   "api": {
-    "type": "rootdb",
+    "auth_prefix": "Api-Key",
     "endpoint": "https://www.therootdatabase.com/api/games/?elo_system=hoot-rankings&page_size=500",
     "token_env_var": "ROOTDB_TOKEN"
   },

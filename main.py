@@ -253,91 +253,77 @@ def format_match_timing(turn_timing, created_at, closed_at):
 # --- 2. API FETCHING & DATA INGESTION ---
 # =========================================================================
 
-def fetch_raw_matches(league_config):
+def fetch_raw_matches(league_config, max_retries=3, retry_delay=5, timeout=15):
     """Fetches and normalizes raw match data using the specified league API configuration."""
-    raw_data = []
     api_cfg = league_config.get('api', {})
-    api_type = api_cfg.get('type')
+    league_name = league_config.get('name', 'Unknown League')
+
     token_var = api_cfg.get('token_env_var')
-    api_token = os.getenv(token_var) if token_var else None
+    token = os.getenv(token_var) if token_var else None
+    auth_prefix = api_cfg.get('auth_prefix', 'Token')
+    headers = {'Authorization': f'{auth_prefix} {token}'} if token else {}
 
-    if api_type == 'pliskin':
-        base_url = api_cfg['base_url'].rstrip('/')
-        tournament_id = api_cfg.get('tournament_id')
-        headers = {'Authorization': f'Token {api_token}'} if api_token else {}
-        endpoint = f"{base_url}/api/match/"
-        params = {'tournament': tournament_id, 'limit': 500}
+    base_url = api_cfg.get('base_url', '').rstrip('/')
+    endpoint = api_cfg.get('endpoint') or f"{base_url}/api/match/"
 
-        next_url = endpoint
-        all_matches = []
-        while next_url:
+    params = {'limit': 500}
+    if 'tournament_id' in api_cfg:
+        params['tournament'] = api_cfg['tournament_id']
+
+    next_url, all_matches = endpoint, []
+    while next_url:
+        success = False
+        for attempt in range(1, max_retries + 1):
             try:
-                res = requests.get(next_url, headers=headers, params=params)
+                res = requests.get(next_url, headers=headers, params=params, timeout=timeout)
                 params = None
+
                 if res.status_code == 400:
-                    Logger.info(f"Tournament {tournament_id} is not active on API yet.")
+                    Logger.info(f"API returned 400 for {league_name} (league may not be active yet).")
+                    next_url = None
+                    success = True
                     break
+
                 res.raise_for_status()
                 data = res.json()
                 all_matches.extend(data.get('results', []))
                 next_url = data.get('next')
-            except requests.RequestException as e:
-                Logger.warn(f"API Error ({league_config['name']}): {e}")
+                success = True
                 break
-
-        for m in all_matches:
-            participants = m.get('participants', [])
-            if len(participants) == 4:
-                created_at = get_discord_created_at(m.get('table_talk_url'))
-                turn_timing = m.get('turn_timing')
-
-                for p in participants:
-                    raw_data.append({
-                        'GameID': m['id'],
-                        'Player': p.get('player'),
-                        'Player_Name': p.get('player_name'),
-                        'Score': float(p.get('tournament_score', 0.0)),
-                        'Date_Closed': m.get('date_closed'),
-                        'Date_Created': created_at,
-                        'Turn_Timing': turn_timing,
-                    })
-
-    elif api_type == 'rootdb':
-        endpoint = api_cfg.get('endpoint')
-        if not api_token:
-            Logger.warn(f"No {token_var} found in environment variables!")
-            headers = {}
-        else:
-            headers = {'Authorization': f'Api-Key {api_token}'}
-
-        next_url = endpoint
-        all_matches = []
-        while next_url:
-            try:
-                res = requests.get(next_url, headers=headers)
-                res.raise_for_status()
-                data = res.json()
-                all_matches.extend(data.get('results', []))
-                next_url = data.get('next')
             except requests.RequestException as e:
-                Logger.warn(f"RootDB API Error ({league_config['name']}): {e}")
-                break
+                Logger.warn(f"API Error ({league_name}) - Attempt {attempt}/{max_retries}: {e}")
+                if attempt < max_retries:
+                    time.sleep(retry_delay)
 
-        for m in all_matches:
-            participants = m.get('participants', [])
-            if len(participants) == 4:
-                for p in participants:
-                    raw_data.append({
-                        'GameID': m['id'],
-                        'Player': p.get('player'),
-                        'Player_Name': p.get('player_name') or p.get('player'),
-                        'Score': float(p.get('tournament_score', 0.0)),
-                        'Date_Closed': m.get('date_closed')
-                    })
-                    
+        if not success and next_url:
+            raise RuntimeError(
+                f"API unavailable for league '{league_name}' after {max_retries} attempts. Aborting pipeline."
+            )
+
+    raw_data = []
+    for m in all_matches:
+        participants = m.get('participants', [])
+        if len(participants) == 4:
+            table_talk = m.get('table_talk_url')
+            created_at = get_discord_created_at(table_talk) if table_talk else None
+
+            for p in participants:
+                match_row = {
+                    'GameID': m['id'],
+                    'Player': p.get('player'),
+                    'Player_Name': p.get('player_name'),
+                    'Score': float(p.get('tournament_score', 0.0)),
+                    'Date_Closed': m.get('date_closed'),
+                }
+                if created_at:
+                    match_row['Date_Created'] = created_at
+                if 'turn_timing' in m:
+                    match_row['Turn_Timing'] = m.get('turn_timing')
+
+                raw_data.append(match_row)
+
     unique_matches_count = len({m['GameID'] for m in raw_data})
     Logger.step(f"{unique_matches_count} matches retrieved from API.")
-
     return raw_data
 
 

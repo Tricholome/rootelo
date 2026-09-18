@@ -9,10 +9,10 @@
   "profile_format_replace_chars": true,
   "match_base_url": "https://rootleague.pliskin.dev/match",
   "api": {
-    "type": "pliskin",
+    "auth_prefix": "Token",
+    "token_env_var": "API_TOKEN",
     "base_url": "https://rootleague.pliskin.dev",
-    "tournament_id": 26,
-    "token_env_var": "API_TOKEN"
+    "tournament_id": 26
   },
   "k_factor": {
     "k_floor": 20.0,
