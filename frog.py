@@ -33,10 +33,10 @@ for match in matches:
 
 sorted_dates = sorted(list(dates_set))
 
-# --- SECTION 3: ORGANIC TRIBE ENGINE ---
+# --- SECTION 3: ORGANIC TRIBE ENGINE (STICKY MEMBERSHIP & CREATION THRESHOLD) ---
 ALLOWED_TRIBES = ["Tribe A", "Tribe B", "Tribe C", "Tribe D", "Tribe E"]
 MIN_PAIR_MATCHES = 2
-CORE_CLIQUE_SIZE = 4
+MIN_TRIBE_CREATION_SIZE = 4  # Seuil minimal: pas de tribu à 1 membre
 MAX_TRIBES = 5
 
 registered_tribes = []
@@ -56,53 +56,34 @@ for current_date_str in sorted_dates:
         for p1, p2 in combinations(sorted(players), 2):
             pair_counts[(p1, p2)] += 1
 
-    # 1. Build interaction graph for strong links (>= 2 joint matches)
+    # 1. RÈGLE D'INERTIE: On garde les affectations de la veille (Jamais de retour en Inclassé)
+    current_assignments = dict(prev_assignments)
+
+    # 2. Graphe des interactions fortes (>= 2 matchs ensemble)
     G_core = nx.Graph()
     for (p1, p2), count in pair_counts.items():
         if count >= MIN_PAIR_MATCHES:
             G_core.add_edge(p1, p2)
 
-    # 2. Detect core nuclei (cliques of at least 4 mutually linked players)
-    cliques = [set(c) for c in nx.find_cliques(G_core) if len(c) >= CORE_CLIQUE_SIZE]
+    # 3. Détection des noyaux fondateurs (Cliques >= 4 joueurs unassigned)
+    cliques = [set(c) for c in nx.find_cliques(G_core) if len(c) >= MIN_TRIBE_CREATION_SIZE]
     cliques.sort(key=len, reverse=True)
 
-    current_assignments = {}
-    claimed_tribes = set()
-    unmatched_cliques = []
-
-    # Map core cliques to existing tribes using historical affinity
-    for clique in cliques:
-        history = Counter(prev_assignments.get(p) for p in clique if prev_assignments.get(p) in registered_tribes)
-        valid_history = {t: cnt for t, cnt in history.items() if t not in claimed_tribes}
-        
-        if valid_history:
-            assigned_tribe = max(valid_history, key=valid_history.get)
-            claimed_tribes.add(assigned_tribe)
-            for p in clique:
-                current_assignments[p] = assigned_tribe
-        else:
-            unmatched_cliques.append(clique)
-
-    # Unlock new tribes sequentially when new nuclei emerge
+    # Création d'une NOUVELLE tribu uniquement si 4+ joueurs Inclassés forment un noyau
     if len(registered_tribes) < MAX_TRIBES:
-        for clique in unmatched_cliques:
-            if len(registered_tribes) < MAX_TRIBES:
+        for clique in cliques:
+            unassigned_in_clique = [p for p in clique if current_assignments.get(p, "Inclassé") == "Inclassé"]
+            if len(unassigned_in_clique) >= MIN_TRIBE_CREATION_SIZE and len(registered_tribes) < MAX_TRIBES:
                 new_tribe = ALLOWED_TRIBES[len(registered_tribes)]
                 registered_tribes.append(new_tribe)
-                claimed_tribes.add(new_tribe)
-                for p in clique:
+                for p in unassigned_in_clique:
                     current_assignments[p] = new_tribe
 
-    # 3. Règle de la majorité qualifiée
-    known_members = {p: t for p, t in current_assignments.items()}
+    # 4. CONFLIT DE LOYAUTÉ ET RECRUTEMENT (> 50% des matchs)
+    known_members = {p: t for p, t in current_assignments.items() if t != "Inclassé"}
     
     for p, match_indices in player_matches.items():
-        if p in current_assignments:
-            continue
-            
         total_games = len(match_indices)
-        
-        # VERROU 1: Minimum 3 parties jouées dans la saison pour quitter "Inclassé"
         if total_games < 3:
             continue
 
@@ -113,13 +94,23 @@ for current_date_str in sorted_dates:
             for t in match_tribes:
                 tribe_match_counts[t] += 1
 
-        best_tribe, best_count = tribe_match_counts.most_common(1)[0] if tribe_match_counts else (None, 0)
-        
-        # VERROU 2: Minimum 2 matchs partagés ET > 50% des parties
-        if best_tribe and best_count >= 2 and (best_count / total_games) > 0.50:
-            current_assignments[p] = best_tribe
+        if not tribe_match_counts:
+            continue
 
-    # 4. Unassigned players default to "Inclassé"
+        best_tribe, best_count = tribe_match_counts.most_common(1)[0]
+        current_tribe = current_assignments.get(p, "Inclassé")
+
+        # CAS A: Un joueur Inclassé rejoint une tribu
+        if current_tribe == "Inclassé":
+            if best_count >= 2 and (best_count / total_games) > 0.50:
+                current_assignments[p] = best_tribe
+
+        # CAS B: Conflit de loyauté (Changement de tribu si la nouvelle domine > 50%)
+        elif current_tribe != best_tribe:
+            if best_count >= 3 and (best_count / total_games) > 0.50:
+                current_assignments[p] = best_tribe
+
+    # 5. Valeur par défaut pour les joueurs actifs sans tribu
     for p in player_matches:
         if p not in current_assignments:
             current_assignments[p] = "Inclassé"
