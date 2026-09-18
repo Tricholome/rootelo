@@ -93,7 +93,7 @@ for current_date_str in sorted_dates:
                 for p in clique:
                     current_assignments[p] = new_tribe
 
-    # 3. Majority Rule (> 50% of games played with members of a tribe)
+    # 3. Règle de la majorité qualifiée
     known_members = {p: t for p, t in current_assignments.items()}
     
     for p, match_indices in player_matches.items():
@@ -101,7 +101,9 @@ for current_date_str in sorted_dates:
             continue
             
         total_games = len(match_indices)
-        if total_games == 0:
+        
+        # VERROU 1: Minimum 3 parties jouées dans la saison pour quitter "Inclassé"
+        if total_games < 3:
             continue
 
         tribe_match_counts = Counter()
@@ -112,7 +114,9 @@ for current_date_str in sorted_dates:
                 tribe_match_counts[t] += 1
 
         best_tribe, best_count = tribe_match_counts.most_common(1)[0] if tribe_match_counts else (None, 0)
-        if best_tribe and (best_count / total_games) > 0.50:
+        
+        # VERROU 2: Minimum 2 matchs partagés ET > 50% des parties
+        if best_tribe and best_count >= 2 and (best_count / total_games) > 0.50:
             current_assignments[p] = best_tribe
 
     # 4. Unassigned players default to "Inclassé"
