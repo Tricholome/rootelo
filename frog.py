@@ -41,13 +41,13 @@ for match in matches:
 
 sorted_dates = sorted(list(dates_set))
 
-# 4. Calcul de Louvain avec suivi temporel (Temporal Community Tracking)
-ALL_TRIBE_NAMES = [f"Tribe {chr(65+i)}" for i in range(26)]  # Tribe A, Tribe B, Tribe C...
-used_tribe_names = set()
-prev_date_assignments = {}  # {player: tribe_name} à la date T-1
-
+# 4. Calcul de Louvain avec suivi temporel (Strictement limité à 5 Tribus)
+ALLOWED_TRIBES = ["Tribe A", "Tribe B", "Tribe C", "Tribe D", "Tribe E"]
 MIN_MATCHES = 3
 MIN_COMMUNITY_SIZE = 5
+MAX_LEAGUES = 5
+
+prev_date_assignments = {}  # {player: tribe_name} à la date T-1
 daily_tribes = {}
 
 for d in sorted_dates:
@@ -80,55 +80,54 @@ for d in sorted_dates:
         except Exception:
             raw_communities = []
             
-        # Filtrer uniquement les communautés ayant la taille minimale requise
+        # 1. Ne retenir que les 5 plus grandes communautés éligibles
         valid_communities = [c for c in raw_communities if len(c) >= MIN_COMMUNITY_SIZE]
+        valid_communities = sorted(valid_communities, key=len, reverse=True)[:MAX_LEAGUES]
         
-        # --- ALGORITHME DE MATCHING TEMPOREL ---
+        # 2. Calcul du chevauchement avec la date précédente
         matches = []
         for comm_idx, comm in enumerate(valid_communities):
-            # Compter les origines des membres par rapport à la date précédente
             counts = Counter(
                 prev_date_assignments.get(p) 
                 for p in comm 
-                if prev_date_assignments.get(p) and prev_date_assignments.get(p) != "Inclassé"
+                if prev_date_assignments.get(p) in ALLOWED_TRIBES
             )
             for tribe_name, overlap in counts.items():
-                matches.append((overlap, comm_idx, tribe_name))
+                if overlap > 0:
+                    matches.append((overlap, comm_idx, tribe_name))
         
-        # Trier par chevauchement décroissant
         matches.sort(reverse=True, key=lambda x: x[0])
         
         matched_comms = set()
-        matched_tribes = set()
+        claimed_tribes_today = set()
         comm_to_tribe = {}
         
-        # Attribuer en priorité aux plus forts chevauchements
+        # 3. Conserver l'identité des tribus existantes
         for overlap, comm_idx, tribe_name in matches:
-            if comm_idx not in matched_comms and tribe_name not in matched_tribes:
+            if comm_idx not in matched_comms and tribe_name not in claimed_tribes_today:
                 comm_to_tribe[comm_idx] = tribe_name
                 matched_comms.add(comm_idx)
-                matched_tribes.add(tribe_name)
+                claimed_tribes_today.add(tribe_name)
                 
-        # Pour les nouvelles communautés sans historique commun (Nouvelles Tribus)
+        # 4. Attribuer les noms libérés/disponibles (parmi A..E) aux nouvelles tribus
+        available_names = [name for name in ALLOWED_TRIBES if name not in claimed_tribes_today]
+        
         for comm_idx in range(len(valid_communities)):
             if comm_idx not in comm_to_tribe:
-                available_name = next(
-                    (name for name in ALL_TRIBE_NAMES if name not in used_tribe_names),
-                    f"Tribe {len(used_tribe_names) + 1}"
-                )
-                comm_to_tribe[comm_idx] = available_name
-                used_tribe_names.add(available_name)
+                assigned_name = available_names.pop(0)
+                comm_to_tribe[comm_idx] = assigned_name
+                claimed_tribes_today.add(assigned_name)
                 
-        # Enregistrer l'attribution de la date D
+        # 5. Enregistrer les affectations de la journée
         for comm_idx, comm in enumerate(valid_communities):
             tribe_name = comm_to_tribe[comm_idx]
             for player in comm:
                 current_assignments[player] = tribe_name
 
-    # Les joueurs hors communautés majeures ou sous le seuil d'activité sont Inclassés
+    # Les joueurs non classés dans les 5 tribus majeures deviennent "Inclassé"
     for player in player_counts:
         if player not in current_assignments:
-            current_assignments[player] = "Inclassé"
+            current_assignments[player] = "-"
             
     prev_date_assignments = current_assignments
     daily_tribes[d] = current_assignments
