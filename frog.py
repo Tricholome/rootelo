@@ -4,7 +4,7 @@ from pathlib import Path
 from jinja2 import Environment, FileSystemLoader
 
 # 1. Charger la configuration globale requise par base.html
-config_path = Path("data/config.json")
+config_path = Path("data/config/config.json")
 with open(config_path, "r", encoding="utf-8") as f:
     config_data = json.load(f)
 
