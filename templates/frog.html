@@ -1,8 +1,24 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="codex-section">	
-	<h2>Welcome, frogs!</h2>
-	<p>This is a test.</p>
+<div class="codex-section">
+    <table id="frogsTable" class="display nowrap" style="width:100%">
+        <thead>
+            <tr>
+                <th>Player</th>
+                <th>Games</th>
+                <th>Tribe</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for player in players %}
+            <tr>
+                <td>{{ player.name }}</td>
+                <td>{{ player.games }}</td>
+                <td>{{ player.tribe or '' }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
 {% endblock %}
