@@ -112,7 +112,10 @@ for d in sorted_dates:
         # Pour les nouvelles communautés sans historique commun (Nouvelles Tribus)
         for comm_idx in range(len(valid_communities)):
             if comm_idx not in comm_to_tribe:
-                available_name = next(name for name in ALL_TRIBE_NAMES if name not in used_tribe_names)
+                available_name = next(
+                    (name for name in ALL_TRIBE_NAMES if name not in used_tribe_names),
+                    f"Tribe {len(used_tribe_names) + 1}"
+                )
                 comm_to_tribe[comm_idx] = available_name
                 used_tribe_names.add(available_name)
                 
