@@ -4,11 +4,17 @@
 <div class="codex-section">	
     <h2>Welcome, frogs!</h2>
 
+    <!-- Contrôles du sélecteur de date -->
     <div class="date-controls" style="display: flex; align-items: center; justify-content: center; gap: 10px; margin: 20px 0;">
         <button id="prevDateBtn" class="btn">&laquo; Jour précédent</button>
         <input type="date" id="datePicker" style="padding: 6px 12px; font-size: 1rem;">
         <button id="nextDateBtn" class="btn">Jour suivant &raquo;</button>
         <button id="latestDateBtn" class="btn">Dernier jour</button>
+    </div>
+
+    <!-- Compteurs de tribus dynamiques -->
+    <div id="tribeSummary" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin: 15px 0 25px 0;">
+        <!-- Généré dynamiquement en JS -->
     </div>
 
     <table id="frogTable" class="display nowrap" style="width:100%">
@@ -48,20 +54,19 @@
             "dom": 'rt<"bottom"p><"clear">'
         });
 
-        const $datePicker = $('#datePicker');
-        const $prevBtn = $('#prevDateBtn');
-        const $nextBtn = $('#nextDateBtn');
-        const $latestBtn = $('#latestDateBtn');
+        const $datePicker =$('#datePicker');
+        const $prevBtn =$('#prevDateBtn');
+        const $nextBtn =$('#nextDateBtn');
+        const $latestBtn =$('#latestDateBtn');
 
-        $datePicker.attr('min', availableDates[0]);
-        $datePicker.attr('max', availableDates[availableDates.length - 1]);
+        $datePicker.attr('min', availableDates[0]);$datePicker.attr('max', availableDates[availableDates.length - 1]);
 
         let currentIndex = availableDates.length - 1;
 
         function updateTableForDate(selectedDate) {
             $datePicker.val(selectedDate);
 
-            // Recalcul du nombre de parties jusqu'à la date
+            // Recalcul des parties jusqu'à selectedDate
             const playerGames = {};
             matchesData.forEach(match => {
                 if (match.date <= selectedDate) {
@@ -71,21 +76,40 @@
                 }
             });
 
-            // Récupération de la tribu calculée par Louvain pour cette date
             const dateTribes = tribesData[selectedDate] || {};
+            const tribeCounts = {};
 
-            const newRows = Object.entries(playerGames).map(([name, games]) => [
-                name,
-                games,
-                dateTribes[name] || 'Inclassé'
-            ]);
+            const newRows = Object.entries(playerGames).map(([name, games]) => {
+                const tribe = dateTribes[name] || 'Inclassé';
+                tribeCounts[tribe] = (tribeCounts[tribe] || 0) + 1;
+                return [name, games, tribe];
+            });
 
+            // Génération dynamique des badges de décompte des tribus
+            const tribeOrder = ["Tribe A", "Tribe B", "Tribe C", "Tribe D", "Tribe E", "Inclassé"];
+            let summaryHtml = "";
+
+            tribeOrder.forEach(tribe => {
+                const count = tribeCounts[tribe] || 0;
+                if (count > 0 || tribe === "Inclassé") {
+                    const isUnclassified = tribe === "Inclassé";
+                    const bgColor = isUnclassified ? '#4a5568' : '#2e7d32';
+                    summaryHtml += `
+                        <span style="background-color: ${bgColor}; color: #ffffff; padding: 6px 14px; border-radius: 20px; font-weight: 600; font-size: 0.88rem; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.15);">
+                            <span>${tribe}</span>
+                            <span style="background: rgba(255,255,255,0.25); border-radius: 10px; padding: 1px 7px; font-size: 0.82rem;">${count}</span>
+                        </span>`;
+                }
+            });
+
+            $('#tribeSummary').html(summaryHtml);
+
+            // Mise à jour de DataTables
             table.clear();
             table.rows.add(newRows);
             table.draw();
 
-            $prevBtn.prop('disabled', currentIndex <= 0);
-            $nextBtn.prop('disabled', currentIndex >= availableDates.length - 1);
+            $prevBtn.prop('disabled', currentIndex <= 0);$nextBtn.prop('disabled', currentIndex >= availableDates.length - 1);
         }
 
         function setDateByIndex(index) {
@@ -96,8 +120,7 @@
         }
 
         $prevBtn.on('click', () => setDateByIndex(currentIndex - 1));
-        $nextBtn.on('click', () => setDateByIndex(currentIndex + 1));
-        $latestBtn.on('click', () => setDateByIndex(availableDates.length - 1));
+        $nextBtn.on('click', () => setDateByIndex(currentIndex + 1));$latestBtn.on('click', () => setDateByIndex(availableDates.length - 1));
 
         $datePicker.on('change', function () {
             const val = $(this).val();
