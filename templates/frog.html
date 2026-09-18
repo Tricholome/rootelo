@@ -31,42 +31,40 @@
         </tbody>
     </table>
 </div>
+{% endblock %}
 
+{% block custom_js %}
 <script>
     const matchesData = {{ matches_json | safe }};
     const availableDates = {{ dates_json | safe }};
 
-    document.addEventListener("DOMContentLoaded", function () {
+    $(document).ready(function () {
         if (!availableDates || availableDates.length === 0) return;
 
-        const datePicker = document.getElementById("datePicker");
-        const prevBtn = document.getElementById("prevDateBtn");
-        const nextBtn = document.getElementById("nextDateBtn");
-        const latestBtn = document.getElementById("latestDateBtn");
+        // 1. Initialisation propre de DataTables une fois jQuery/DataTables chargés
+        const table = $('#frogTable').DataTable({
+            "order": [[1, "desc"]],
+            "responsive": true,
+            "pageLength": 25,
+            "dom": 'rt<"bottom"p><"clear">'
+        });
 
-        // Définir les bornes du sélecteur HTML
-        datePicker.min = availableDates[0];
-        datePicker.max = availableDates[availableDates.length - 1];
+        const $datePicker = $('#datePicker');
+        const $prevBtn = $('#prevDateBtn');
+        const $nextBtn = $('#nextDateBtn');
+        const $latestBtn = $('#latestDateBtn');
+
+        // Configurer les bornes du calendrier
+        $datePicker.attr('min', availableDates[0]);
+        $datePicker.attr('max', availableDates[availableDates.length - 1]);
 
         let currentIndex = availableDates.length - 1;
 
-        // Fonction pour récupérer/initialiser la DataTable
-        function getDataTableInstance() {
-            if ($.fn.DataTable.isDataTable('#frogTable')) {
-                return $('#frogTable').DataTable();
-            } else {
-                return $('#frogTable').DataTable({
-                    "order": [[1, "desc"]],
-                    "responsive": true,
-                    "pageLength": 25
-                });
-            }
-        }
-
+        // 2. Fonction de mise à jour des données selon la date
         function updateTableForDate(selectedDate) {
-            datePicker.value = selectedDate;
+            $datePicker.val(selectedDate);
 
-            // Cumul des matchs jusqu'à la date sélectionnée (inclusivement)
+            // Calcul du cumul des parties jusqu'à selectedDate
             const playerGames = {};
             matchesData.forEach(match => {
                 if (match.date <= selectedDate) {
@@ -76,22 +74,21 @@
                 }
             });
 
-            // Conversion au format attendu par DataTables
+            // Formatage des lignes pour DataTables
             const newRows = Object.entries(playerGames).map(([name, games]) => [
                 name,
                 games,
                 '-'
             ]);
 
-            // Mise à jour de DataTables sans recharger la page
-            const table = getDataTableInstance();
+            // Injection et redessin du tableau DataTables
             table.clear();
             table.rows.add(newRows);
             table.draw();
 
-            // Gestion de l'état des boutons
-            prevBtn.disabled = (currentIndex <= 0);
-            nextBtn.disabled = (currentIndex >= availableDates.length - 1);
+            // État des boutons
+            $prevBtn.prop('disabled', currentIndex <= 0);
+            $nextBtn.prop('disabled', currentIndex >= availableDates.length - 1);
         }
 
         function setDateByIndex(index) {
@@ -102,13 +99,12 @@
         }
 
         // Écouteurs d'événements
-        prevBtn.addEventListener("click", () => setDateByIndex(currentIndex - 1));
-        nextBtn.addEventListener("click", () => setDateByIndex(currentIndex + 1));
-        latestBtn.addEventListener("click", () => setDateByIndex(availableDates.length - 1));
+        $prevBtn.on('click', () => setDateByIndex(currentIndex - 1));
+        $nextBtn.on('click', () => setDateByIndex(currentIndex + 1));
+        $latestBtn.on('click', () => setDateByIndex(availableDates.length - 1));
 
-        datePicker.addEventListener("change", function () {
-            const val = datePicker.value;
-            // Trouver la date la plus proche ou exacte
+        $datePicker.on('change', function () {
+            const val = $(this).val();
             let matchIdx = availableDates.findIndex(d => d >= val);
             if (matchIdx !== -1) {
                 currentIndex = matchIdx;
@@ -118,7 +114,7 @@
             updateTableForDate(availableDates[currentIndex]);
         });
 
-        // Initialiser à la date la plus récente
+        // Afficher directement la date la plus récente au chargement
         setDateByIndex(currentIndex);
     });
 </script>
