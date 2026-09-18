@@ -13,7 +13,7 @@ if not config_path.exists():
 with open(config_path, "r", encoding="utf-8") as f:
     config_data = json.load(f)
 
-# 2. Fichier d'archives des matchs
+# 2. Charger les matchs depuis les archives
 json_path = Path("data/rdl/archives/lh02/matches.json")
 if not json_path.exists():
     archives = list(Path("data/rdl/archives").rglob("matches.json"))
@@ -23,7 +23,7 @@ if not json_path.exists():
 with open(json_path, "r", encoding="utf-8") as f:
     matches = json.load(f)
 
-# 3. Extraction chronologique des matchs
+# 3. Traiter les matchs et dates chronologiques
 matches_data = []
 dates_set = set()
 
@@ -41,36 +41,39 @@ for match in matches:
 
 sorted_dates = sorted(list(dates_set))
 
-# 4. Calcul de Louvain : Émergence progressive + Persistance permanente
+# 4. Calcul des tribus avec filtrage Jaccard + Louvain + Persistance
 ALLOWED_TRIBES = ["Tribe A", "Tribe B", "Tribe C", "Tribe D", "Tribe E"]
-MIN_MATCHES = 3
-NEW_TRIBE_THRESHOLD = 6  # Seuil plus élevé pour ralentir l'émergence des nouvelles tribus
+MIN_ABSOLUTE_MATCHES = 2     # Au moins 2 matchs partagés
+MIN_JACCARD_AFFINITY = 0.15  # 15% d'affinité relative minimum
+MIN_TRIBE_SIZE = 5           # Taille minimale d'une tribu
 MAX_LEAGUES = 5
 
-registered_tribes = []   # Registre permanent des tribus déjà créées
-prev_date_assignments = {}  # {player: tribe_name} à T-1
+registered_tribes = []       # Liste des tribus permanentes apparues au fil de la saison
+prev_date_assignments = {}   # Affectations à T-1
 daily_tribes = {}
 
 for d in sorted_dates:
     cumulative_matches = [m for m in matches_data if m["date"] <= d]
     
     player_counts = Counter()
+    pair_counts = Counter()
+    
     for m in cumulative_matches:
-        for p in m["players"]:
+        players = m["players"]
+        for p in players:
             player_counts[p] += 1
-            
-    active_players = {p for p, count in player_counts.items() if count >= MIN_MATCHES}
-    
+        for p1, p2 in combinations(sorted(players), 2):
+            pair_counts[(p1, p2)] += 1
+
+    # Construction du graphe d'affinité (Jaccard auto-adaptatif)
     G = nx.Graph()
-    G.add_nodes_from(active_players)
-    
-    for m in cumulative_matches:
-        m_active = [p for p in m["players"] if p in active_players]
-        for p1, p2 in combinations(m_active, 2):
-            if G.has_edge(p1, p2):
-                G[p1][p2]["weight"] += 1
-            else:
-                G.add_edge(p1, p2, weight=1)
+    for (p1, p2), joint_games in pair_counts.items():
+        if joint_games >= MIN_ABSOLUTE_MATCHES:
+            total_unique_games = player_counts[p1] + player_counts[p2] - joint_games
+            affinity = joint_games / total_unique_games if total_unique_games > 0 else 0
+            
+            if affinity >= MIN_JACCARD_AFFINITY:
+                G.add_edge(p1, p2, weight=affinity)
                 
     current_assignments = {}
     
@@ -80,74 +83,40 @@ for d in sorted_dates:
         except Exception:
             raw_communities = []
             
-        # 1. Protection contre les fusions : Scission si Louvain regroupe deux tribus permanentes
-        split_communities = []
-        for comm in raw_communities:
-            existing_in_comm = Counter(
-                prev_date_assignments.get(p) 
-                for p in comm 
-                if prev_date_assignments.get(p) in registered_tribes
-            )
-            # Repérer les tribus historiques ayant au moins 2 membres dans ce cluster
-            present_tribes = [t for t, count in existing_in_comm.items() if count >= 2]
-            
-            if len(present_tribes) > 1:
-                # Scission : chaque tribu conserve son noyau
-                sub_groups = {t: set() for t in present_tribes}
-                unassigned = set()
-                for p in comm:
-                    p_tribe = prev_date_assignments.get(p)
-                    if p_tribe in sub_groups:
-                        sub_groups[p_tribe].add(p)
-                    else:
-                        unassigned.add(p)
-                        
-                # Attribution des joueurs neutres vers le noyau le plus connecté
-                for p in unassigned:
-                    best_t = max(
-                        sub_groups.keys(),
-                        key=lambda t: sum(G[p][n].get('weight', 1) for n in sub_groups[t] if G.has_edge(p, n)),
-                        default=present_tribes[0]
-                    )
-                    sub_groups[best_t].add(p)
-                    
-                for sg in sub_groups.values():
-                    split_communities.append(sg)
-            else:
-                split_communities.append(comm)
+        valid_communities = [c for c in raw_communities if len(c) >= MIN_TRIBE_SIZE]
+        
+        # Attribution prioritaire aux tribus déjà débloquées à T-1
+        claimed_today = set()
+        unassigned_communities = []
 
-        # 2. Assignation prioritaire aux tribus déjà enregistrées
-        claimed_tribes_today = set()
-        unmatched_communities = []
-
-        for comm in split_communities:
+        for comm in valid_communities:
             counts = Counter(
                 prev_date_assignments.get(p) 
                 for p in comm 
                 if prev_date_assignments.get(p) in registered_tribes
             )
-            valid_counts = {t: c for t, c in counts.items() if t not in claimed_tribes_today}
+            valid_counts = {t: cnt for t, cnt in counts.items() if t not in claimed_today}
             
             if valid_counts:
                 best_tribe = max(valid_counts, key=valid_counts.get)
-                claimed_tribes_today.add(best_tribe)
-                for player in comm:
-                    current_assignments[player] = best_tribe
+                claimed_today.add(best_tribe)
+                for p in comm:
+                    current_assignments[p] = best_tribe
             else:
-                unmatched_communities.append(comm)
+                unassigned_communities.append(comm)
 
-        # 3. Émergence contrôlée (Déverrouillage progressif de nouvelles tribus)
+        # Création progressive de nouvelles tribus (jusqu'à 5 max)
         if len(registered_tribes) < MAX_LEAGUES:
-            unmatched_communities.sort(key=len, reverse=True)
-            for comm in unmatched_communities:
-                if len(comm) >= NEW_TRIBE_THRESHOLD and len(registered_tribes) < MAX_LEAGUES:
+            unassigned_communities.sort(key=len, reverse=True)
+            for comm in unassigned_communities:
+                if len(registered_tribes) < MAX_LEAGUES:
                     new_tribe_name = ALLOWED_TRIBES[len(registered_tribes)]
                     registered_tribes.append(new_tribe_name)
-                    claimed_tribes_today.add(new_tribe_name)
-                    for player in comm:
-                        current_assignments[player] = new_tribe_name
+                    claimed_today.add(new_tribe_name)
+                    for p in comm:
+                        current_assignments[p] = new_tribe_name
 
-    # Les joueurs hors tribus majeures restent Inclassés
+    # Les joueurs hors tribus restent Inclassés
     for player in player_counts:
         if player not in current_assignments:
             current_assignments[player] = "Inclassé"
@@ -155,7 +124,7 @@ for d in sorted_dates:
     prev_date_assignments = current_assignments
     daily_tribes[d] = current_assignments
 
-# 5. Rendu Jinja2
+# 5. Préparation des données pour Jinja2
 player_games = Counter()
 for m in matches_data:
     for p in m["players"]:
@@ -188,4 +157,4 @@ output_path = Path("frog.html")
 with open(output_path, "w", encoding="utf-8") as f:
     f.write(rendered_html)
 
-print(f"Fichier '{output_path}' généré avec succès ({len(sorted_dates)} dates analysées).")
+print(f"Page '{output_path}' générée avec succès ({len(sorted_dates)} dates analysées).")
