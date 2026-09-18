@@ -41,13 +41,14 @@ for match in matches:
 
 sorted_dates = sorted(list(dates_set))
 
-# 4. Calcul de Louvain avec suivi temporel (Strictement limité à 5 Tribus)
+# 4. Calcul de Louvain : Émergence progressive + Persistance permanente
 ALLOWED_TRIBES = ["Tribe A", "Tribe B", "Tribe C", "Tribe D", "Tribe E"]
 MIN_MATCHES = 3
-MIN_COMMUNITY_SIZE = 5
+NEW_TRIBE_THRESHOLD = 6  # Seuil plus élevé pour ralentir l'émergence des nouvelles tribus
 MAX_LEAGUES = 5
 
-prev_date_assignments = {}  # {player: tribe_name} à la date T-1
+registered_tribes = []   # Registre permanent des tribus déjà créées
+prev_date_assignments = {}  # {player: tribe_name} à T-1
 daily_tribes = {}
 
 for d in sorted_dates:
@@ -60,7 +61,6 @@ for d in sorted_dates:
             
     active_players = {p for p, count in player_counts.items() if count >= MIN_MATCHES}
     
-    # Construction du graphe
     G = nx.Graph()
     G.add_nodes_from(active_players)
     
@@ -80,54 +80,77 @@ for d in sorted_dates:
         except Exception:
             raw_communities = []
             
-        # 1. Ne retenir que les 5 plus grandes communautés éligibles
-        valid_communities = [c for c in raw_communities if len(c) >= MIN_COMMUNITY_SIZE]
-        valid_communities = sorted(valid_communities, key=len, reverse=True)[:MAX_LEAGUES]
-        
-        # 2. Calcul du chevauchement avec la date précédente
-        matches = []
-        for comm_idx, comm in enumerate(valid_communities):
+        # 1. Protection contre les fusions : Scission si Louvain regroupe deux tribus permanentes
+        split_communities = []
+        for comm in raw_communities:
+            existing_in_comm = Counter(
+                prev_date_assignments.get(p) 
+                for p in comm 
+                if prev_date_assignments.get(p) in registered_tribes
+            )
+            # Repérer les tribus historiques ayant au moins 2 membres dans ce cluster
+            present_tribes = [t for t, count in existing_in_comm.items() if count >= 2]
+            
+            if len(present_tribes) > 1:
+                # Scission : chaque tribu conserve son noyau
+                sub_groups = {t: set() for t in present_tribes}
+                unassigned = set()
+                for p in comm:
+                    p_tribe = prev_date_assignments.get(p)
+                    if p_tribe in sub_groups:
+                        sub_groups[p_tribe].add(p)
+                    else:
+                        unassigned.add(p)
+                        
+                # Attribution des joueurs neutres vers le noyau le plus connecté
+                for p in unassigned:
+                    best_t = max(
+                        sub_groups.keys(),
+                        key=lambda t: sum(G[p][n].get('weight', 1) for n in sub_groups[t] if G.has_edge(p, n)),
+                        default=present_tribes[0]
+                    )
+                    sub_groups[best_t].add(p)
+                    
+                for sg in sub_groups.values():
+                    split_communities.append(sg)
+            else:
+                split_communities.append(comm)
+
+        # 2. Assignation prioritaire aux tribus déjà enregistrées
+        claimed_tribes_today = set()
+        unmatched_communities = []
+
+        for comm in split_communities:
             counts = Counter(
                 prev_date_assignments.get(p) 
                 for p in comm 
-                if prev_date_assignments.get(p) in ALLOWED_TRIBES
+                if prev_date_assignments.get(p) in registered_tribes
             )
-            for tribe_name, overlap in counts.items():
-                if overlap > 0:
-                    matches.append((overlap, comm_idx, tribe_name))
-        
-        matches.sort(reverse=True, key=lambda x: x[0])
-        
-        matched_comms = set()
-        claimed_tribes_today = set()
-        comm_to_tribe = {}
-        
-        # 3. Conserver l'identité des tribus existantes
-        for overlap, comm_idx, tribe_name in matches:
-            if comm_idx not in matched_comms and tribe_name not in claimed_tribes_today:
-                comm_to_tribe[comm_idx] = tribe_name
-                matched_comms.add(comm_idx)
-                claimed_tribes_today.add(tribe_name)
-                
-        # 4. Attribuer les noms libérés/disponibles (parmi A..E) aux nouvelles tribus
-        available_names = [name for name in ALLOWED_TRIBES if name not in claimed_tribes_today]
-        
-        for comm_idx in range(len(valid_communities)):
-            if comm_idx not in comm_to_tribe:
-                assigned_name = available_names.pop(0)
-                comm_to_tribe[comm_idx] = assigned_name
-                claimed_tribes_today.add(assigned_name)
-                
-        # 5. Enregistrer les affectations de la journée
-        for comm_idx, comm in enumerate(valid_communities):
-            tribe_name = comm_to_tribe[comm_idx]
-            for player in comm:
-                current_assignments[player] = tribe_name
+            valid_counts = {t: c for t, c in counts.items() if t not in claimed_tribes_today}
+            
+            if valid_counts:
+                best_tribe = max(valid_counts, key=valid_counts.get)
+                claimed_tribes_today.add(best_tribe)
+                for player in comm:
+                    current_assignments[player] = best_tribe
+            else:
+                unmatched_communities.append(comm)
 
-    # Les joueurs non classés dans les 5 tribus majeures deviennent "Inclassé"
+        # 3. Émergence contrôlée (Déverrouillage progressif de nouvelles tribus)
+        if len(registered_tribes) < MAX_LEAGUES:
+            unmatched_communities.sort(key=len, reverse=True)
+            for comm in unmatched_communities:
+                if len(comm) >= NEW_TRIBE_THRESHOLD and len(registered_tribes) < MAX_LEAGUES:
+                    new_tribe_name = ALLOWED_TRIBES[len(registered_tribes)]
+                    registered_tribes.append(new_tribe_name)
+                    claimed_tribes_today.add(new_tribe_name)
+                    for player in comm:
+                        current_assignments[player] = new_tribe_name
+
+    # Les joueurs hors tribus majeures restent Inclassés
     for player in player_counts:
         if player not in current_assignments:
-            current_assignments[player] = "-"
+            current_assignments[player] = "Inclassé"
             
     prev_date_assignments = current_assignments
     daily_tribes[d] = current_assignments
