@@ -1,13 +1,12 @@
 import json
 import math
 from collections import Counter, defaultdict
-from datetime import datetime
 from itertools import combinations
 from pathlib import Path
 import networkx as nx
 from jinja2 import Environment, FileSystemLoader
 
-# Config & Chargement des données
+# 1. Chargement des configurations et archives
 config_path = Path("data/config/config.json") if Path("data/config/config.json").exists() else Path("data/config.json")
 with open(config_path, "r", encoding="utf-8") as f:
     config_data = json.load(f)
@@ -21,7 +20,7 @@ if not json_path.exists():
 with open(json_path, "r", encoding="utf-8") as f:
     matches = json.load(f)
 
-# Traitement chronologique
+# 2. Traitement chronologique cumulatif
 matches_data = []
 dates_set = set()
 for match in matches:
@@ -34,95 +33,89 @@ for match in matches:
 
 sorted_dates = sorted(list(dates_set))
 
-# --- PARAMÈTRES DU MOTEUR ORGANIQUE ---
-HALF_LIFE_DAYS = 21  # Demi-vie des matchs (les matchs d'il y a 21j pèsent 50%)
-LAMBDA = math.log(2) / HALF_LIFE_DAYS
-ATTRACTION_THRESHOLD = 0.35  # 35% du temps de jeu récent consacré à un groupe pour l'intégrer
-MIN_TRIBE_SIZE = 4
+# 3. Moteur de calcul par Exclusivité Relative
 ALLOWED_TRIBES = ["Tribe A", "Tribe B", "Tribe C", "Tribe D", "Tribe E"]
+MIN_MATCHES_THRESHOLD = 3   # Joueur actif s'il a joué au moins 3 matchs
+EXCLUSIVITY_THRESHOLD = 0.22 # Seuil d'exclusivité minimum pour créer un lien fort (0.0 à 1.0)
+MIN_TRIBE_SIZE = 4
+MAX_LEAGUES = 5
 
-daily_tribes = {}
-prev_assignments = {}  # {player: tribe} au jour T-1
 registered_tribes = []
+prev_assignments = {}
+daily_tribes = {}
 
-for current_date_str in sorted_dates:
-    current_date = datetime.strptime(current_date_str, "%Y-%m-%d")
-    cumulative_matches = [m for m in matches_data if m["date"] <= current_date_str]
+for d in sorted_dates:
+    cumulative_matches = [m for m in matches_data if m["date"] <= d]
     
-    # 1. Calcul du graphe pondéré par décroissance temporelle
-    G = nx.Graph()
-    player_activity = defaultdict(float)
+    player_counts = Counter()
+    pair_counts = Counter()
     
     for m in cumulative_matches:
-        m_date = datetime.strptime(m["date"], "%Y-%m-%d")
-        days_ago = (current_date - m_date).days
-        weight = math.exp(-LAMBDA * days_ago)
-        
-        for p in m["players"]:
-            player_activity[p] += weight
-            
-        for p1, p2 in combinations(sorted(m["players"]), 2):
-            if G.has_edge(p1, p2):
-                G[p1][p2]["weight"] += weight
-            else:
-                G.add_edge(p1, p2, weight=weight)
+        players = m["players"]
+        for p in players:
+            player_counts[p] += 1
+        for p1, p2 in combinations(sorted(players), 2):
+            pair_counts[(p1, p2)] += 1
 
-    # 2. Détection initiale des noyaux durs (Louvain sur le graphe temporel)
-    active_players = {p for p, act in player_activity.items() if act >= 1.0}
-    G_active = G.subgraph(active_players)
-    
+    # Construction du graphe pondéré par l'exclusivité relative
+    G = nx.Graph()
+    active_players = {p for p, count in player_counts.items() if count >= MIN_MATCHES_THRESHOLD}
+    G.add_nodes_from(active_players)
+
+    for (p1, p2), joint_matches in pair_counts.items():
+        if p1 in active_players and p2 in active_players:
+            # Calcul du poids normalisé par les totaux cumulés des deux joueurs
+            norm_weight = joint_matches / math.sqrt(player_counts[p1] * player_counts[p2])
+            
+            if norm_weight >= EXCLUSIVITY_THRESHOLD:
+                G.add_edge(p1, p2, weight=norm_weight)
+
     current_assignments = {}
-    if G_active.number_of_nodes() > 0:
+    if G.number_of_nodes() > 0:
         try:
-            communities = list(nx.community.louvain_communities(G_active, weight="weight", seed=42))
+            communities = list(nx.community.louvain_communities(G, weight="weight", seed=42))
         except Exception:
             communities = []
 
-        # Identifier les communautés stables (>= MIN_TRIBE_SIZE)
-        major_communities = [c for c in communities if len(c) >= MIN_TRIBE_SIZE]
+        # Ne retenir que les noyaux d'au moins MIN_TRIBE_SIZE joueurs
+        valid_communities = [c for c in communities if len(c) >= MIN_TRIBE_SIZE]
         
-        # 3. Association continue avec l'historique (Inertie)
-        claimed_tribes = set()
-        for comm in sorted(major_communities, key=len, reverse=True):
-            history_counts = Counter(prev_assignments.get(p) for p in comm if prev_assignments.get(p) in registered_tribes)
-            valid_history = {t: cnt for t, cnt in history_counts.items() if t not in claimed_tribes}
+        # Suivi temporel par proximité historique (Continuite)
+        claimed_today = set()
+        unmatched_comms = []
+
+        for comm in valid_communities:
+            history = Counter(prev_assignments.get(p) for p in comm if prev_assignments.get(p) in registered_tribes)
+            valid_history = {t: cnt for t, cnt in history.items() if t not in claimed_today}
             
             if valid_history:
                 assigned_name = max(valid_history, key=valid_history.get)
-            elif len(registered_tribes) < len(ALLOWED_TRIBES):
-                assigned_name = ALLOWED_TRIBES[len(registered_tribes)]
-                registered_tribes.append(assigned_name)
+                claimed_today.add(assigned_name)
+                for p in comm:
+                    current_assignments[p] = assigned_name
             else:
-                continue
-                
-            claimed_tribes.add(assigned_name)
-            for p in comm:
-                current_assignments[p] = assigned_name
+                unmatched_comms.append(comm)
 
-        # 4. Attributs d'attraction pour les joueurs périphériques
-        for p in active_players:
-            if p not in current_assignments:
-                total_p_weight = sum(G[p][nbr]["weight"] for nbr in G[p])
-                if total_p_weight > 0:
-                    tribe_attractions = defaultdict(float)
-                    for nbr in G[p]:
-                        nbr_tribe = current_assignments.get(nbr) or prev_assignments.get(nbr)
-                        if nbr_tribe in registered_tribes:
-                            tribe_attractions[nbr_tribe] += G[p][nbr]["weight"]
-                            
-                    best_tribe, best_score = max(tribe_attractions.items(), key=lambda x: x[1], default=(None, 0))
-                    if best_tribe and (best_score / total_p_weight) >= ATTRACTION_THRESHOLD:
-                        current_assignments[p] = best_tribe
+        # Déverrouillage progressif des nouvelles tribus (jusqu'à 5 max)
+        if len(registered_tribes) < MAX_LEAGUES:
+            unmatched_comms.sort(key=len, reverse=True)
+            for comm in unmatched_comms:
+                if len(registered_tribes) < MAX_LEAGUES:
+                    new_name = ALLOWED_TRIBES[len(registered_tribes)]
+                    registered_tribes.append(new_name)
+                    claimed_today.add(new_name)
+                    for p in comm:
+                        current_assignments[p] = new_name
 
-    # Tous les autres joueurs sont Inclassés
-    for p in player_activity:
+    # Les joueurs sans liens d'exclusivité forts restent Inclassés
+    for p in player_counts:
         if p not in current_assignments:
             current_assignments[p] = "Inclassé"
 
     prev_assignments = current_assignments
-    daily_tribes[current_date_str] = current_assignments
+    daily_tribes[d] = current_assignments
 
-# Génération HTML (Jinja2)
+# 4. Génération de la page HTML via Jinja2
 player_games = Counter(p for m in matches_data for p in m["players"])
 latest_date = sorted_dates[-1] if sorted_dates else ""
 players_list = [
@@ -144,4 +137,4 @@ with open(output_path, "w", encoding="utf-8") as f:
         tribes_json=json.dumps(daily_tribes, ensure_ascii=False)
     ))
 
-print(f"Moteur organique prêt : {len(sorted_dates)} dates calculées.")
+print(f"Calcul terminé : {len(sorted_dates)} dates analysées avec la métrique d'exclusivité.")
