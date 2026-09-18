@@ -33,87 +33,95 @@ for match in matches:
 
 sorted_dates = sorted(list(dates_set))
 
-# 3. Moteur de calcul par Exclusivité Relative
+# --- SECTION 3: ORGANIC TRIBE ENGINE ---
 ALLOWED_TRIBES = ["Tribe A", "Tribe B", "Tribe C", "Tribe D", "Tribe E"]
-MIN_MATCHES_THRESHOLD = 3   # Joueur actif s'il a joué au moins 3 matchs
-EXCLUSIVITY_THRESHOLD = 0.22 # Seuil d'exclusivité minimum pour créer un lien fort (0.0 à 1.0)
-MIN_TRIBE_SIZE = 4
-MAX_LEAGUES = 5
+MIN_PAIR_MATCHES = 2
+CORE_CLIQUE_SIZE = 4
+MAX_TRIBES = 5
 
 registered_tribes = []
 prev_assignments = {}
 daily_tribes = {}
 
-for d in sorted_dates:
-    cumulative_matches = [m for m in matches_data if m["date"] <= d]
+for current_date_str in sorted_dates:
+    cumulative_matches = [m for m in matches_data if m["date"] <= current_date_str]
     
-    player_counts = Counter()
+    player_matches = defaultdict(list)
     pair_counts = Counter()
     
-    for m in cumulative_matches:
+    for idx, m in enumerate(cumulative_matches):
         players = m["players"]
         for p in players:
-            player_counts[p] += 1
+            player_matches[p].append(idx)
         for p1, p2 in combinations(sorted(players), 2):
             pair_counts[(p1, p2)] += 1
 
-    # Construction du graphe pondéré par l'exclusivité relative
-    G = nx.Graph()
-    active_players = {p for p, count in player_counts.items() if count >= MIN_MATCHES_THRESHOLD}
-    G.add_nodes_from(active_players)
+    # 1. Build interaction graph for strong links (>= 2 joint matches)
+    G_core = nx.Graph()
+    for (p1, p2), count in pair_counts.items():
+        if count >= MIN_PAIR_MATCHES:
+            G_core.add_edge(p1, p2)
 
-    for (p1, p2), joint_matches in pair_counts.items():
-        if p1 in active_players and p2 in active_players:
-            # Calcul du poids normalisé par les totaux cumulés des deux joueurs
-            norm_weight = joint_matches / math.sqrt(player_counts[p1] * player_counts[p2])
-            
-            if norm_weight >= EXCLUSIVITY_THRESHOLD:
-                G.add_edge(p1, p2, weight=norm_weight)
+    # 2. Detect core nuclei (cliques of at least 4 mutually linked players)
+    cliques = [set(c) for c in nx.find_cliques(G_core) if len(c) >= CORE_CLIQUE_SIZE]
+    cliques.sort(key=len, reverse=True)
 
     current_assignments = {}
-    if G.number_of_nodes() > 0:
-        try:
-            communities = list(nx.community.louvain_communities(G, weight="weight", seed=42))
-        except Exception:
-            communities = []
+    claimed_tribes = set()
+    unmatched_cliques = []
 
-        # Ne retenir que les noyaux d'au moins MIN_TRIBE_SIZE joueurs
-        valid_communities = [c for c in communities if len(c) >= MIN_TRIBE_SIZE]
+    # Map core cliques to existing tribes using historical affinity
+    for clique in cliques:
+        history = Counter(prev_assignments.get(p) for p in clique if prev_assignments.get(p) in registered_tribes)
+        valid_history = {t: cnt for t, cnt in history.items() if t not in claimed_tribes}
         
-        # Suivi temporel par proximité historique (Continuite)
-        claimed_today = set()
-        unmatched_comms = []
+        if valid_history:
+            assigned_tribe = max(valid_history, key=valid_history.get)
+            claimed_tribes.add(assigned_tribe)
+            for p in clique:
+                current_assignments[p] = assigned_tribe
+        else:
+            unmatched_cliques.append(clique)
 
-        for comm in valid_communities:
-            history = Counter(prev_assignments.get(p) for p in comm if prev_assignments.get(p) in registered_tribes)
-            valid_history = {t: cnt for t, cnt in history.items() if t not in claimed_today}
+    # Unlock new tribes sequentially when new nuclei emerge
+    if len(registered_tribes) < MAX_TRIBES:
+        for clique in unmatched_cliques:
+            if len(registered_tribes) < MAX_TRIBES:
+                new_tribe = ALLOWED_TRIBES[len(registered_tribes)]
+                registered_tribes.append(new_tribe)
+                claimed_tribes.add(new_tribe)
+                for p in clique:
+                    current_assignments[p] = new_tribe
+
+    # 3. Majority Rule (> 50% of games played with members of a tribe)
+    known_members = {p: t for p, t in current_assignments.items()}
+    
+    for p, match_indices in player_matches.items():
+        if p in current_assignments:
+            continue
             
-            if valid_history:
-                assigned_name = max(valid_history, key=valid_history.get)
-                claimed_today.add(assigned_name)
-                for p in comm:
-                    current_assignments[p] = assigned_name
-            else:
-                unmatched_comms.append(comm)
+        total_games = len(match_indices)
+        if total_games == 0:
+            continue
 
-        # Déverrouillage progressif des nouvelles tribus (jusqu'à 5 max)
-        if len(registered_tribes) < MAX_LEAGUES:
-            unmatched_comms.sort(key=len, reverse=True)
-            for comm in unmatched_comms:
-                if len(registered_tribes) < MAX_LEAGUES:
-                    new_name = ALLOWED_TRIBES[len(registered_tribes)]
-                    registered_tribes.append(new_name)
-                    claimed_today.add(new_name)
-                    for p in comm:
-                        current_assignments[p] = new_name
+        tribe_match_counts = Counter()
+        for idx in match_indices:
+            m_players = cumulative_matches[idx]["players"]
+            match_tribes = {known_members[other] for other in m_players if other != p and other in known_members}
+            for t in match_tribes:
+                tribe_match_counts[t] += 1
 
-    # Les joueurs sans liens d'exclusivité forts restent Inclassés
-    for p in player_counts:
+        best_tribe, best_count = tribe_match_counts.most_common(1)[0] if tribe_match_counts else (None, 0)
+        if best_tribe and (best_count / total_games) > 0.50:
+            current_assignments[p] = best_tribe
+
+    # 4. Unassigned players default to "Inclassé"
+    for p in player_matches:
         if p not in current_assignments:
             current_assignments[p] = "Inclassé"
 
     prev_assignments = current_assignments
-    daily_tribes[d] = current_assignments
+    daily_tribes[current_date_str] = current_assignments
 
 # 4. Génération de la page HTML via Jinja2
 player_games = Counter(p for m in matches_data for p in m["players"])
