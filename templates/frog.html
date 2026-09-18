@@ -4,7 +4,6 @@
 <div class="codex-section">	
     <h2>Welcome, frogs!</h2>
 
-    <!-- Contrôles du sélecteur de date -->
     <div class="date-controls" style="display: flex; align-items: center; justify-content: center; gap: 10px; margin: 20px 0;">
         <button id="prevDateBtn" class="btn">&laquo; Jour précédent</button>
         <input type="date" id="datePicker" style="padding: 6px 12px; font-size: 1rem;">
@@ -25,7 +24,7 @@
             <tr>
                 <td>{{ player.name }}</td>
                 <td>{{ player.games }}</td>
-                <td>{{ player.tribe or '-' }}</td>
+                <td>{{ player.tribe }}</td>
             </tr>
             {% endfor %}
         </tbody>
@@ -37,11 +36,11 @@
 <script>
     const matchesData = {{ matches_json | safe }};
     const availableDates = {{ dates_json | safe }};
+    const tribesData = {{ tribes_json | safe }};
 
     $(document).ready(function () {
         if (!availableDates || availableDates.length === 0) return;
 
-        // 1. Initialisation propre de DataTables une fois jQuery/DataTables chargés
         const table = $('#frogTable').DataTable({
             "order": [[1, "desc"]],
             "responsive": true,
@@ -54,17 +53,15 @@
         const $nextBtn = $('#nextDateBtn');
         const $latestBtn = $('#latestDateBtn');
 
-        // Configurer les bornes du calendrier
         $datePicker.attr('min', availableDates[0]);
         $datePicker.attr('max', availableDates[availableDates.length - 1]);
 
         let currentIndex = availableDates.length - 1;
 
-        // 2. Fonction de mise à jour des données selon la date
         function updateTableForDate(selectedDate) {
             $datePicker.val(selectedDate);
 
-            // Calcul du cumul des parties jusqu'à selectedDate
+            // Recalcul du nombre de parties jusqu'à la date
             const playerGames = {};
             matchesData.forEach(match => {
                 if (match.date <= selectedDate) {
@@ -74,19 +71,19 @@
                 }
             });
 
-            // Formatage des lignes pour DataTables
+            // Récupération de la tribu calculée par Louvain pour cette date
+            const dateTribes = tribesData[selectedDate] || {};
+
             const newRows = Object.entries(playerGames).map(([name, games]) => [
                 name,
                 games,
-                '-'
+                dateTribes[name] || 'Inclassé'
             ]);
 
-            // Injection et redessin du tableau DataTables
             table.clear();
             table.rows.add(newRows);
             table.draw();
 
-            // État des boutons
             $prevBtn.prop('disabled', currentIndex <= 0);
             $nextBtn.prop('disabled', currentIndex >= availableDates.length - 1);
         }
@@ -98,7 +95,6 @@
             }
         }
 
-        // Écouteurs d'événements
         $prevBtn.on('click', () => setDateByIndex(currentIndex - 1));
         $nextBtn.on('click', () => setDateByIndex(currentIndex + 1));
         $latestBtn.on('click', () => setDateByIndex(availableDates.length - 1));
@@ -114,7 +110,6 @@
             updateTableForDate(availableDates[currentIndex]);
         });
 
-        // Afficher directement la date la plus récente au chargement
         setDateByIndex(currentIndex);
     });
 </script>
