@@ -93,6 +93,24 @@
             }
         }
 
+        function renderTribeCell(pct, isMainTribe) {
+            if (pct < 10) {
+                return `<span style="color:#a0aec0;">-</span>`;
+            }
+            const pctStr = `<span style="font-weight:600; margin-right:4px;">${pct} %</span>`;
+            if (!isMainTribe) {
+                return pctStr;
+            }
+
+            if (pct >= 60) {
+                return `${pctStr} <span style="background:#2e7d32; color:#fff; padding:2px 6px; border-radius:10px; font-size:0.75rem; font-weight:600;">Noyau</span>`;
+            } else if (pct >= 30) {
+                return `${pctStr} <span style="background:#1565c0; color:#fff; padding:2px 6px; border-radius:10px; font-size:0.75rem; font-weight:600;">Membre</span>`;
+            } else {
+                return `${pctStr} <span style="background:#c62828; color:#fff; padding:2px 6px; border-radius:10px; font-size:0.75rem; font-weight:600;">Fragile</span>`;
+            }
+        }
+
         function updateTableForDate(selectedDate) {
             $datePicker.val(selectedDate);
 
@@ -127,16 +145,48 @@
             const tribeCounts = {};
 
             const newRows = Object.entries(playerGames).map(([name, games]) => {
-                const mainTribe = dateTribes[name] || 'Inclassé';
-                tribeCounts[mainTribe] = (tribeCounts[mainTribe] || 0) + 1;
-
+                const louvainTribe = dateTribes[name] || 'Inclassé';
                 const pSums = playerLoyaltySum[name] || { "Tribe A": 0, "Tribe B": 0, "Tribe C": 0 };
                 
-                const cellA = renderTribeCell(Math.round((pSums["Tribe A"] / games) * 100));
-                const cellB = renderTribeCell(Math.round((pSums["Tribe B"] / games) * 100));
-                const cellC = renderTribeCell(Math.round((pSums["Tribe C"] / games) * 100));
+                const scores = {
+                    "Tribe A": Math.round(((pSums["Tribe A"] || 0) / games) * 100),
+                    "Tribe B": Math.round(((pSums["Tribe B"] || 0) / games) * 100),
+                    "Tribe C": Math.round(((pSums["Tribe C"] || 0) / games) * 100)
+                };
 
-                return [name, games, mainTribe, cellA, cellB, cellC];
+                let maxTribe = null;
+                let maxPct = -1;
+                TARGET_TRIBES.forEach(t => {
+                    if (scores[t] > maxPct) {
+                        maxPct = scores[t];
+                        maxTribe = t;
+                    }
+                });
+
+                // Règle de réattribution
+                let finalTribe = louvainTribe;
+                if (louvainTribe === 'Inclassé') {
+                    if (maxPct >= 30) {
+                        finalTribe = maxTribe;
+                    }
+                } else {
+                    const louvainPct = scores[louvainTribe] || 0;
+                    if (maxTribe && maxTribe !== louvainTribe && maxPct > louvainPct) {
+                        if (maxPct >= 30) {
+                            finalTribe = maxTribe;
+                        } else {
+                            finalTribe = 'Inclassé';
+                        }
+                    }
+                }
+
+                tribeCounts[finalTribe] = (tribeCounts[finalTribe] || 0) + 1;
+
+                const cellA = renderTribeCell(scores["Tribe A"], finalTribe === "Tribe A");
+                const cellB = renderTribeCell(scores["Tribe B"], finalTribe === "Tribe B");
+                const cellC = renderTribeCell(scores["Tribe C"], finalTribe === "Tribe C");
+
+                return [name, games, finalTribe, cellA, cellB, cellC];
             });
 
             // Badges de résumé
@@ -164,23 +214,6 @@
 
             $prevBtn.prop('disabled', currentIndex <= 0);$nextBtn.prop('disabled', currentIndex >= availableDates.length - 1);
         }
-
-        function setDateByIndex(index) {
-            if (index >= 0 && index < availableDates.length) {
-                currentIndex = index;
-                updateTableForDate(availableDates[currentIndex]);
-            }
-        }
-
-        $prevBtn.on('click', () => setDateByIndex(currentIndex - 1));
-        $nextBtn.on('click', () => setDateByIndex(currentIndex + 1));$latestBtn.on('click', () => setDateByIndex(availableDates.length - 1));
-
-        $datePicker.on('change', function () {
-            const val = $(this).val();
-            let matchIdx = availableDates.findIndex(d => d >= val);
-            currentIndex = matchIdx !== -1 ? matchIdx : availableDates.length - 1;
-            updateTableForDate(availableDates[currentIndex]);
-        });
 
         setDateByIndex(currentIndex);
     });
