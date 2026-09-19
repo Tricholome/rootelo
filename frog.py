@@ -1,5 +1,6 @@
 import json
 import math
+import statistics
 from collections import Counter
 from itertools import combinations
 from pathlib import Path
@@ -90,7 +91,7 @@ for date_idx, d in enumerate(sorted_dates):
 
         valid_communities = [c for c in raw_communities if len(c) >= MIN_TRIBE_SIZE]
 
-        # Continuité historique par chevauchement maximal (Anti-hold-up)
+        # Continuité historique par chevauchement maximal (Max Overlap)
         candidate_matches = []
         for comm_idx, comm in enumerate(valid_communities):
             history_counts = Counter(
@@ -101,7 +102,6 @@ for date_idx, d in enumerate(sorted_dates):
             for tribe, count in history_counts.items():
                 candidate_matches.append((count, comm_idx, tribe))
 
-        # Tri par score d'ancienneté décroissant : le plus grand sous-groupe gagne le nom de sa tribu historique
         candidate_matches.sort(reverse=True, key=lambda x: x[0])
 
         assigned_communities = set()
@@ -114,7 +114,6 @@ for date_idx, d in enumerate(sorted_dates):
                 for p in valid_communities[comm_idx]:
                     current_assignments[p] = tribe
 
-        # Attribuer les clusters orphelins à de nouvelles tribus
         unassigned_communities = [
             comm for idx, comm in enumerate(valid_communities)
             if idx not in assigned_communities
@@ -129,7 +128,6 @@ for date_idx, d in enumerate(sorted_dates):
                 for p in comm:
                     current_assignments[p] = new_tribe
 
-    # Gestion de la rétention individuelle
     for p in player_counts:
         if p not in current_assignments:
             prev_tribe = prev_assignments.get(p)
@@ -138,7 +136,6 @@ for date_idx, d in enumerate(sorted_dates):
             else:
                 current_assignments[p] = "Inclassé"
 
-    # Sécurité anti-tribu fantôme (< 3 membres)
     active_tribe_counts = Counter(current_assignments.values())
     for p, tribe in list(current_assignments.items()):
         if tribe in registered_tribes and active_tribe_counts[tribe] < MIN_ACTIVE_MEMBERS:
@@ -147,8 +144,7 @@ for date_idx, d in enumerate(sorted_dates):
     prev_assignments = current_assignments
     daily_tribes[d] = current_assignments
 
-# 4. Calcul multi-tribus, arbitrage et badges ciblés
-ALLOWED_TRIBES = ["Tribe A", "Tribe B", "Tribe C"]
+# 4. Calcul multi-tribus, arbitrage et filtrage par la médiane
 player_games = Counter(p for m in matches_data for p in m["players"])
 latest_date = sorted_dates[-1] if sorted_dates else ""
 latest_tribes = daily_tribes.get(latest_date, {})
@@ -168,6 +164,11 @@ for m in matches_data:
                 if other_tribe in ALLOWED_TRIBES:
                     player_loyalty_sum[p][other_tribe] += 1 / (n_players - 1)
 
+# Seuil dynamique : 30 % de la médiane globale des parties (plancher à 3 parties)
+all_counts = list(player_games.values())
+global_median = statistics.median(all_counts) if all_counts else 0
+min_games_tribe = max(3, math.ceil(global_median * 0.30))
+
 def format_tribe_cell(pct, is_main_tribe):
     if pct < 10:
         return "-", "", ""
@@ -186,7 +187,6 @@ players_list = []
 for name, count in sorted(player_games.items(), key=lambda x: (-x[1], x[0])):
     louvain_tribe = latest_tribes.get(name, "Inclassé")
     
-    # Calcul des pourcentages par tribu
     scores = {}
     max_tribe = None
     max_pct = -1
@@ -198,20 +198,22 @@ for name, count in sorted(player_games.items(), key=lambda x: (-x[1], x[0])):
             max_pct = pct
             max_tribe = t
 
-    # Arbitrage / Réattribution
-    final_tribe = louvain_tribe
-    if louvain_tribe == "Inclassé":
-        if max_pct >= 30:
-            final_tribe = max_tribe
+    # Garde-fou de volume + arbitrage
+    if count < min_games_tribe:
+        final_tribe = "Inclassé"
     else:
-        louvain_pct = scores.get(louvain_tribe, 0)
-        if max_tribe and max_tribe != louvain_tribe and max_pct > louvain_pct:
+        final_tribe = louvain_tribe
+        if louvain_tribe == "Inclassé":
             if max_pct >= 30:
                 final_tribe = max_tribe
-            else:
-                final_tribe = "Inclassé"
+        else:
+            louvain_pct = scores.get(louvain_tribe, 0)
+            if max_tribe and max_tribe != louvain_tribe and max_pct > louvain_pct:
+                if max_pct >= 30:
+                    final_tribe = max_tribe
+                else:
+                    final_tribe = "Inclassé"
 
-    # Construction des cellules
     tribe_scores = {}
     for t in ALLOWED_TRIBES:
         pct = scores[t]
@@ -245,4 +247,4 @@ with open(output_path, "w", encoding="utf-8") as f:
         tribes_json=json.dumps(daily_tribes, ensure_ascii=False)
     ))
 
-print(f"Analyse réussie : {len(sorted_dates)} dates calculées avec affichage 3 tribus.")
+print(f"Analyse réussie : {len(sorted_dates)} dates calculées avec arbitrage multi-tribus et filtrage par la médiane.")
