@@ -21,23 +21,19 @@ CORE_TOP_N = 3            # Nombre de piliers suivis par tribu (Core Anchoring)
 MIN_PLAYER_GAMES_GRAPH = 3  # Nb min de parties d'un joueur pour entrer dans le graphe
 MIN_JOINT_BASE = 2          # Nb min de parties communes (début de saison)
 MIN_JOINT_SLOPE = 3         # Facteur d'augmentation des parties communes en fin de saison
-MIN_COSINE_WEIGHT = 0.18    # Seuil minimal de similarité Cosinus (0.18 pour bien séparer)
+MIN_COSINE_WEIGHT = 0.18    # Seuil minimal de similarité Cosinus pour lier deux joueurs
 LOUVAIN_SEED = 42           # Graine de reproductibilité pour Louvain
 
 # --- 3. Filtrage du Volume (Volume Guardrail) ---
 MEDIAN_RATIO_THRESHOLD = 0.30  # % de la médiane globale requis
 MIN_GAMES_FLOOR = 3            # Plancher absolu de parties
 
-# --- 4. Attribution & Affiliation (Loyalty Rules) ---
-MIN_LOYALTY_PCT = 20      # Loyauté min (%) pour être classé (permet le statut Fragile)
-SWITCH_TRIBE_PCT = 40     # Loyauté min (%) pour changer de la tribu Louvain vers une autre
-
-# --- 5. Seuils d'Affichage & Badges (Frontend) ---
+# --- 4. Seuils d'Affichage & Badges (Informations visuelles) ---
 STATUS_CORE_PCT = 60      # Loyauté >= 60 % -> Badge "Noyau"
 STATUS_MEMBER_PCT = 30    # Loyauté >= 30 % -> Badge "Membre" (< 30 % -> "Fragile")
 DISPLAY_MIN_PCT = 10      # Loyauté < 10 % -> Masqué ("-") dans le tableau
 
-# --- 6. Fichiers et Chemins ---
+# --- 5. Fichiers et Chemins ---
 CONFIG_PATH = Path("data/config/config.json")
 DEFAULT_MATCHES_PATH = Path("data/rdl/archives/lh02/matches.json")
 TEMPLATE_DIR = "templates"
@@ -191,7 +187,7 @@ for date_idx, d in enumerate(sorted_dates):
     previous_cores = current_cores
     prev_assignments = current_assignments
 
-    # ÉTAPE D : Loyauté, Médiane et Arbitrage Métier
+    # ÉTAPE D : Loyauté indicative, Filtre de Volume et Formatage Frontend
     player_loyalty_sum = {p: Counter() for p in player_counts}
     for m in cumulative_matches:
         players = m["players"]
@@ -205,7 +201,7 @@ for date_idx, d in enumerate(sorted_dates):
                     if other_tribe in TARGET_TRIBES:
                         player_loyalty_sum[p][other_tribe] += 1 / (n_players - 1)
 
-    # Seuil dynamique de volume
+    # Seuil dynamique de volume (Médiane)
     all_counts = list(player_counts.values())
     global_median = statistics.median(all_counts) if all_counts else 0
     min_games_tribe = max(MIN_GAMES_FLOOR, math.ceil(global_median * MEDIAN_RATIO_THRESHOLD))
@@ -216,36 +212,22 @@ for date_idx, d in enumerate(sorted_dates):
     for name, count in sorted(player_counts.items(), key=lambda x: (-x[1], x[0])):
         louvain_tribe = current_assignments.get(name, "Inclassé")
 
-        # Calcul des scores de loyauté
+        # Calcul des scores de loyauté à titre d'affichage
         scores = {}
-        max_tribe = None
-        max_pct = -1
         for t in TARGET_TRIBES:
             score = player_loyalty_sum[name][t] / count if count > 0 else 0
             pct = round(score * 100)
             scores[t] = pct
-            if pct > max_pct:
-                max_pct = pct
-                max_tribe = t
 
-        # Arbitrage métier rééquilibré
+        # Règle d'attribution : Confiance totale en Louvain avec le seul filtre de volume
         if count < min_games_tribe:
             final_tribe = "Inclassé"
         else:
-            louvain_pct = scores.get(louvain_tribe, 0)
-            if louvain_tribe in TARGET_TRIBES and louvain_pct >= MIN_LOYALTY_PCT:
-                if max_tribe != louvain_tribe and max_pct >= SWITCH_TRIBE_PCT:
-                    final_tribe = max_tribe
-                else:
-                    final_tribe = louvain_tribe
-            elif max_pct >= MIN_LOYALTY_PCT:
-                final_tribe = max_tribe
-            else:
-                final_tribe = "Inclassé"
+            final_tribe = louvain_tribe
 
         tribe_summary[final_tribe] = tribe_summary.get(final_tribe, 0) + 1
 
-        # Attribution des badges
+        # Attribution des badges visuels
         formatted_scores = {}
         for t in TARGET_TRIBES:
             pct = scores[t]
@@ -287,4 +269,4 @@ with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
         dates_json=json.dumps(sorted_dates, ensure_ascii=False)
     ))
 
-print(f"Analyse réussie : {len(sorted_dates)} dates calculées.")
+print(f"Analyse réussie : {len(sorted_dates)} dates calculées (Modèle Louvain Pur + Gardien de Volume).")
