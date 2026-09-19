@@ -24,9 +24,9 @@ MIN_JOINT_SLOPE = 3         # Facteur d'augmentation des parties communes en fin
 MIN_COSINE_WEIGHT = 0.18    # Seuil minimal de similarité Cosinus pour lier deux joueurs dans G
 LOUVAIN_SEED = 42           # Graine de reproductibilité pour Louvain
 
-# --- 3. Filtrage du Volume (Volume Guardrail) ---
-MEDIAN_RATIO_THRESHOLD = 0.30  # % de la médiane globale requis
-MIN_GAMES_FLOOR = 3            # Plancher absolu de parties
+# --- 3. Filtrage du Volume (Volume Guardrail Organique) ---
+TRIBE_VOLUME_RATIO = 0.15  # Un joueur doit accumuler au moins 15 % du volume moyen des piliers de sa tribu
+MIN_GAMES_FLOOR = 3        # Plancher absolu en tout début de saison
 
 # --- 4. Seuils d'Affichage & Badges ---
 STATUS_CORE_PCT = 60      # Affinité >= 60 % -> Badge "Noyau"
@@ -207,10 +207,18 @@ for date_idx, d in enumerate(sorted_dates):
             if t2 in TARGET_TRIBES: player_global_affinity[p1][t2] += weight
             if t1 in TARGET_TRIBES: player_global_affinity[p2][t1] += weight
 
-    # 2. Seuil de volume dynamique
-    all_counts = list(player_counts.values())
-    global_median = statistics.median(all_counts) if all_counts else 0
-    min_games_tribe = max(MIN_GAMES_FLOOR, math.ceil(global_median * MEDIAN_RATIO_THRESHOLD))
+    # 2. Seuils de volume dynamiques et organiques par tribu
+    tribe_thresholds = {}
+    for t in TARGET_TRIBES:
+        cores = current_cores.get(t, [])
+        if cores:
+            # Volume moyen des piliers fondateurs de cette tribu
+            core_volumes = [player_counts[p] for p in cores]
+            core_avg = statistics.mean(core_volumes)
+            # Le seuil d'entrée augmente automatiquement au rythme de la tribu
+            tribe_thresholds[t] = max(MIN_GAMES_FLOOR, math.ceil(core_avg * TRIBE_VOLUME_RATIO))
+        else:
+            tribe_thresholds[t] = MIN_GAMES_FLOOR
 
     tribe_summary = {t: 0 for t in TARGET_TRIBES + ["Inclassé"]}
     snapshot_players = []
@@ -232,8 +240,11 @@ for date_idx, d in enumerate(sorted_dates):
         # Est-il un pilier fondateur ?
         is_core = any(name in cores for cores in current_cores.values())
 
+        # On récupère l'exigence de volume spécifique à la tribu visée
+        required_games = tribe_thresholds.get(max_tribe, MIN_GAMES_FLOOR)
+
         # L'ARBITRAGE IMPLACABLE
-        if count < min_games_tribe:
+        if count < required_games:
             final_tribe = "Inclassé"
         elif is_core:
             # Le noyau reste fidèle à Louvain, il EST la tribu
@@ -243,9 +254,6 @@ for date_idx, d in enumerate(sorted_dates):
             final_tribe = max_tribe 
         else:
             final_tribe = "Inclassé"
-
-        # LA CORRECTION : Ne SURTOUT PAS réinjecter final_tribe dans current_assignments
-        # On laisse current_assignments intact (pur Louvain) pour le lendemain.
 
         tribe_summary[final_tribe] = tribe_summary.get(final_tribe, 0) + 1
 
@@ -272,7 +280,6 @@ for date_idx, d in enumerate(sorted_dates):
         })
         
     # CORRECTION 3 : Enregistrer la photo du jour dans l'historique global
-    # (Attention à l'indentation : au même niveau que le `for name, count...`)
     snapshots[d] = {
         "summary": tribe_summary,
         "players": snapshot_players
@@ -290,4 +297,4 @@ with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
         dates_json=json.dumps(sorted_dates, ensure_ascii=False)
     ))
 
-print(f"Analyse réussie : {len(sorted_dates)} dates calculées (Affinité Globale Cosinus + Louvain Pur).")
+print(f"Analyse réussie : {len(sorted_dates)} dates calculées (Modèle Noyau & Gravité + Seuils Organiques).")
