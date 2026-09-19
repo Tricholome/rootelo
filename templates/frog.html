@@ -75,22 +75,27 @@
             $datePicker.val(selectedDate);
 
             const playerGames = {};
-            const playerTribeGames = {};
+            const playerLoyaltySum = {};
             const dateTribes = tribesData[selectedDate] || {};
 
             const filteredMatches = matchesData.filter(m => m.date <= selectedDate);
 
             filteredMatches.forEach(match => {
                 const players = match.players;
+                const nPlayers = players.length;
+                if (nPlayers <= 1) return;
+
                 players.forEach(p => {
                     playerGames[p] = (playerGames[p] || 0) + 1;
                     
                     const pTribe = dateTribes[p] || 'Inclassé';
                     if (pTribe !== 'Inclassé') {
-                        const hasTribeTeammate = players.some(other => other !== p && (dateTribes[other] || 'Inclassé') === pTribe);
-                        if (hasTribeTeammate) {
-                            playerTribeGames[p] = (playerTribeGames[p] || 0) + 1;
-                        }
+                        const sameTribeCount = players.filter(
+                            other => other !== p && (dateTribes[other] || 'Inclassé') === pTribe
+                        ).length;
+                        
+                        const matchRatio = sameTribeCount / (nPlayers - 1);
+                        playerLoyaltySum[p] = (playerLoyaltySum[p] || 0) + matchRatio;
                     }
                 });
             });
@@ -105,13 +110,13 @@
                 let statusBadge = '<span style="background:#6c757d; color:#fff; padding:3px 8px; border-radius:12px; font-size:0.8rem;">Nomade</span>';
 
                 if (tribe !== 'Inclassé') {
-                    const tGames = playerTribeGames[name] || 0;
-                    const loyaltyPct = Math.round((tGames / games) * 100);
+                    const loyaltyScore = (playerLoyaltySum[name] || 0) / games;
+                    const loyaltyPct = Math.round(loyaltyScore * 100);
                     loyaltyStr = `${loyaltyPct} %`;
 
-                    if (loyaltyPct >= 70) {
+                    if (loyaltyPct >= 60) {
                         statusBadge = '<span style="background:#2e7d32; color:#fff; padding:3px 8px; border-radius:12px; font-size:0.8rem; font-weight:600;">Noyau</span>';
-                    } else if (loyaltyPct >= 40) {
+                    } else if (loyaltyPct >= 30) {
                         statusBadge = '<span style="background:#1565c0; color:#fff; padding:3px 8px; border-radius:12px; font-size:0.8rem; font-weight:600;">Membre</span>';
                     } else {
                         statusBadge = '<span style="background:#c62828; color:#fff; padding:3px 8px; border-radius:12px; font-size:0.8rem; font-weight:600;">Fragile</span>';
