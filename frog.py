@@ -29,7 +29,8 @@ MEDIAN_RATIO_THRESHOLD = 0.30  # % de la médiane globale requis (ex: 0.30 = 30 
 MIN_GAMES_FLOOR = 3            # Plancher absolu de parties (quel que soit le résultat de la médiane)
 
 # --- 4. Attribution & Affiliation (Loyalty Rules) ---
-MIN_LOYALTY_PCT = 30      # Loyauté minimale (%) requise dans la tribu cible pour y être classé
+MIN_LOYALTY_PCT = 20      # Loyauté minimale (%) requise dans la tribu cible pour y être classé
+SWITCH_TRIBE_PCT = 40       # Loyauté minimale pour qu'un joueur change de sa tribu Louvain vers une autre
 
 # --- 5. Seuils d'Affichage & Badges (Frontend) ---
 STATUS_CORE_PCT = 60      # Loyauté >= 60 % -> Badge "Noyau"
@@ -225,13 +226,23 @@ for date_idx, d in enumerate(sorted_dates):
                 max_pct = pct
                 max_tribe = t
 
-        # Règle d'arbitrage unifiée & équitable
-        if count < min_games_tribe or max_pct < MIN_LOYALTY_PCT:
+        ## Arbitrage métier rééquilibré
+        if count < min_games_tribe:
             final_tribe = "Inclassé"
         else:
-            final_tribe = max_tribe
-
-        tribe_summary[final_tribe] = tribe_summary.get(final_tribe, 0) + 1
+            # 1. Si Louvain lui donne une tribu valide et qu'il y a au moins 20 % de loyauté
+            louvain_pct = scores.get(louvain_tribe, 0)
+            if louvain_tribe in TARGET_TRIBES and louvain_pct >= MIN_LOYALTY_PCT:
+                # Il ne change de tribu que si son pôle d'attraction principal est bien plus fort ailleurs
+                if max_tribe != louvain_tribe and max_pct >= SWITCH_TRIBE_PCT:
+                    final_tribe = max_tribe
+                else:
+                    final_tribe = louvain_tribe
+            # 2. Si Louvain l'avait mis Inclassé, on le repêche s'il atteint le seuil
+            elif max_pct >= MIN_LOYALTY_PCT:
+                final_tribe = max_tribe
+            else:
+                final_tribe = "Inclassé"
 
         # Attribution des badges
         formatted_scores = {}
