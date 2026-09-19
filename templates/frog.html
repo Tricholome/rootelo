@@ -23,6 +23,8 @@
                 <th>Player</th>
                 <th>Games</th>
                 <th>Tribe</th>
+                <th>Loyalty</th>
+                <th>Status</th>
             </tr>
         </thead>
         <tbody>
@@ -31,6 +33,12 @@
                 <td>{{ player.name }}</td>
                 <td>{{ player.games }}</td>
                 <td>{{ player.tribe }}</td>
+                <td>{{ player.loyalty }}</td>
+                <td>
+                    <span style="padding: 3px 8px; border-radius: 12px; font-size: 0.8rem; font-weight: 600; {{ player.status_style }}">
+                        {{ player.status }}
+                    </span>
+                </td>
             </tr>
             {% endfor %}
         </tbody>
@@ -66,27 +74,55 @@
         function updateTableForDate(selectedDate) {
             $datePicker.val(selectedDate);
 
-            // Recalcul des parties jusqu'à selectedDate
             const playerGames = {};
-            matchesData.forEach(match => {
-                if (match.date <= selectedDate) {
-                    match.players.forEach(player => {
-                        playerGames[player] = (playerGames[player] || 0) + 1;
-                    });
-                }
+            const playerTribeGames = {};
+            const dateTribes = tribesData[selectedDate] || {};
+
+            const filteredMatches = matchesData.filter(m => m.date <= selectedDate);
+
+            filteredMatches.forEach(match => {
+                const players = match.players;
+                players.forEach(p => {
+                    playerGames[p] = (playerGames[p] || 0) + 1;
+                    
+                    const pTribe = dateTribes[p] || 'Inclassé';
+                    if (pTribe !== 'Inclassé') {
+                        const hasTribeTeammate = players.some(other => other !== p && (dateTribes[other] || 'Inclassé') === pTribe);
+                        if (hasTribeTeammate) {
+                            playerTribeGames[p] = (playerTribeGames[p] || 0) + 1;
+                        }
+                    }
+                });
             });
 
-            const dateTribes = tribesData[selectedDate] || {};
             const tribeCounts = {};
 
             const newRows = Object.entries(playerGames).map(([name, games]) => {
                 const tribe = dateTribes[name] || 'Inclassé';
                 tribeCounts[tribe] = (tribeCounts[tribe] || 0) + 1;
-                return [name, games, tribe];
+
+                let loyaltyStr = '-';
+                let statusBadge = '<span style="background:#6c757d; color:#fff; padding:3px 8px; border-radius:12px; font-size:0.8rem;">Nomade</span>';
+
+                if (tribe !== 'Inclassé') {
+                    const tGames = playerTribeGames[name] || 0;
+                    const loyaltyPct = Math.round((tGames / games) * 100);
+                    loyaltyStr = `${loyaltyPct} %`;
+
+                    if (loyaltyPct >= 70) {
+                        statusBadge = '<span style="background:#2e7d32; color:#fff; padding:3px 8px; border-radius:12px; font-size:0.8rem; font-weight:600;">Noyau</span>';
+                    } else if (loyaltyPct >= 40) {
+                        statusBadge = '<span style="background:#1565c0; color:#fff; padding:3px 8px; border-radius:12px; font-size:0.8rem; font-weight:600;">Membre</span>';
+                    } else {
+                        statusBadge = '<span style="background:#c62828; color:#fff; padding:3px 8px; border-radius:12px; font-size:0.8rem; font-weight:600;">Fragile</span>';
+                    }
+                }
+
+                return [name, games, tribe, loyaltyStr, statusBadge];
             });
 
             // Génération dynamique des badges de décompte des tribus
-            const tribeOrder = ["Tribe A", "Tribe B", "Tribe C", "Tribe D", "Tribe E", "Inclassé"];
+            const tribeOrder = ["Tribe A", "Tribe B", "Tribe C", "Inclassé"];
             let summaryHtml = "";
 
             tribeOrder.forEach(tribe => {
