@@ -14,27 +14,28 @@ from jinja2 import Environment, FileSystemLoader
 # --- 1. Tribe Names & Boundaries ---
 TARGET_TRIBES = ["Tribe A", "Tribe B", "Tribe C"]
 UNALIGNED_LABEL = "-"
-MIN_TRIBE_SIZE = 5        # Min members to validate a Louvain community
-MIN_ACTIVE_MEMBERS = 3    # Min members to keep a tribe active
-CORE_TOP_N = 3            # Number of core pillars tracked per tribe
+MIN_TRIBE_SIZE = 5        
+MIN_ACTIVE_MEMBERS = 3    
+CORE_TOP_N = 3            
 
 # --- 2. Graph & Connection Filtering ---
-MIN_PLAYER_GAMES_GRAPH = 3  # Min games for a player to enter the graph
-MIN_JOINT_BASE = 2          # Min joint games (early season)
-MIN_JOINT_SLOPE = 3         # Joint games increase factor by season end
-MIN_COSINE_WEIGHT = 0.18    # Min Cosine similarity threshold for edge creation
-LOUVAIN_SEED = 42           # Reproducibility seed for Louvain
-LOUVAIN_RESOLUTION = 1.5    # Louvain resolution parameter
-HYSTERESIS_MARGIN = 10      # Required % margin to switch tribes (inertia)
+MIN_PLAYER_GAMES_GRAPH = 3  
+MIN_JOINT_BASE = 2          
+MIN_JOINT_SLOPE = 3         
+MIN_COSINE_WEIGHT = 0.18    
+LOUVAIN_SEED = 42           
+LOUVAIN_RESOLUTION = 1.5    
+HYSTERESIS_MARGIN = 20      # 🔒 Marge étendue pour forcer le passage par "Wavering"
+SWITCH_MIN_PCT = 30         # 🔒 Seuil minimal dans la nouvelle tribu pour valider un transfert
 
 # --- 3. Volume Filtering (Median Organic Volume) ---
-TRIBE_MEDIAN_RATIO = 0.4   # Player must reach 40% of their tribe's median volume
-MIN_GAMES_FLOOR = 3        # Absolute minimum games floor early in the season
+TRIBE_MEDIAN_RATIO = 0.4   
+MIN_GAMES_FLOOR = 3        
 
 # --- 4. Status Tiers & Display Thresholds ---
-STATUS_CORE_PCT = 65       # Affinity >= 65% -> "Core"
-STATUS_LOYAL_PCT = 45      # Affinity >= 45% -> "Loyalist" (< 45% -> "Affiliate")
-DISPLAY_MIN_PCT = 10       # Affinity < 10% -> Hidden ("-") in table
+STATUS_CORE_PCT = 65       
+STATUS_LOYAL_PCT = 45      
+DISPLAY_MIN_PCT = 10       
 
 # --- 5. Files & Paths ---
 CONFIG_PATH = Path("data/config/config.json")
@@ -78,7 +79,6 @@ for match in matches:
 sorted_dates = sorted(list(dates_set))
 
 def get_community_core(community_nodes, G, top_n=CORE_TOP_N):
-    """Identifies tribe pillars using degree centrality within the subgraph."""
     subgraph = G.subgraph(community_nodes)
     centrality = nx.degree_centrality(subgraph)
     return sorted(centrality.keys(), key=lambda x: centrality[x], reverse=True)[:top_n]
@@ -105,7 +105,6 @@ for date_idx, d in enumerate(sorted_dates):
     season_progress = date_idx / max(1, len(sorted_dates) - 1)
     min_joint_matches = MIN_JOINT_BASE + int(season_progress * MIN_JOINT_SLOPE)
 
-    # STEP A: Graph Construction (Cosine Similarity)
     G = nx.Graph()
     G.add_nodes_from(active_players)
 
@@ -115,7 +114,6 @@ for date_idx, d in enumerate(sorted_dates):
             if weight >= MIN_COSINE_WEIGHT:
                 G.add_edge(p1, p2, weight=weight)
 
-    # STEP B: Louvain Detection & Core Anchoring
     raw_communities = []
     if G.number_of_nodes() > 0:
         try:
@@ -168,7 +166,6 @@ for date_idx, d in enumerate(sorted_dates):
                 for p in comm:
                     current_assignments[p] = new_tribe
 
-    # STEP C: Inertial Catch-up & Cleaning
     for p in player_counts:
         if p not in current_assignments:
             prev_tribe = prev_assignments.get(p, UNALIGNED_LABEL)
@@ -186,7 +183,6 @@ for date_idx, d in enumerate(sorted_dates):
     previous_cores = current_cores
     prev_assignments = current_assignments
 
-    # STEP D: Normalized Gravity & Final Assignment
     player_global_affinity = {p: Counter() for p in player_counts}
 
     for (p1, p2), joint_count in pair_counts.items():
@@ -239,9 +235,14 @@ for date_idx, d in enumerate(sorted_dates):
         held_by_inertia = False
 
         prev_tribe = prev_assignments.get(name, UNALIGNED_LABEL)
+        
+        # 🛡️ La Zone Tampon en action
         if prev_tribe in TARGET_TRIBES and raw_max_tribe != prev_tribe:
             prev_score = scores.get(prev_tribe, 0)
-            if raw_max_pct - prev_score < HYSTERESIS_MARGIN:
+            
+            # Condition 1 : L'écart est inférieur à 20%
+            # Condition 2 : Le score de la nouvelle tribu est inférieur à 30%
+            if (raw_max_pct - prev_score < HYSTERESIS_MARGIN) or (raw_max_pct < SWITCH_MIN_PCT):
                 max_tribe = prev_tribe
                 max_pct = prev_score
                 held_by_inertia = True
@@ -302,4 +303,4 @@ with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
         dates_json=json.dumps(sorted_dates, ensure_ascii=False)
     ))
 
-print(f"Analysis successful: {len(sorted_dates)} dates calculated.")
+print(f"Analysis successful: {len(sorted_dates)} dates calculated (Wavering buffer active).")
