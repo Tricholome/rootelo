@@ -7,15 +7,52 @@ from pathlib import Path
 import networkx as nx
 from jinja2 import Environment, FileSystemLoader
 
-# 1. Configuration et chargement des données
-config_path = Path("data/config/config.json")
-if not config_path.exists():
-    config_path = Path("data/config.json")
+# ==============================================================================
+# ⚙️ CONFIGURATION & HYPERPARAMÈTRES (À AJUSTER SELON TES BESOINS)
+# ==============================================================================
 
+# --- 1. Noms et Limites des Tribus ---
+TARGET_TRIBES = ["Tribe A", "Tribe B", "Tribe C"]
+MIN_TRIBE_SIZE = 5        # Nb min de membres pour valider une communauté Louvain
+MIN_ACTIVE_MEMBERS = 3    # Nb min de membres pour éviter de conserver une tribu fantôme
+CORE_TOP_N = 3            # Nombre de piliers suivis par tribu (Core Anchoring)
+
+# --- 2. Graphe & Filtrage des Connexions ---
+MIN_PLAYER_GAMES_GRAPH = 3  # Nb min de parties d'un joueur pour entrer dans le graphe
+MIN_JOINT_BASE = 2          # Nb min de parties communes (début de saison)
+MIN_JOINT_SLOPE = 3         # Facteur d'augmentation des parties communes en fin de saison
+MIN_COSINE_WEIGHT = 0.12    # Seuil minimal de similarité Cosinus pour relier deux joueurs
+LOUVAIN_SEED = 42           # Graine de reproductibilité pour Louvain
+
+# --- 3. Filtrage du Volume (Volume Guardrail) ---
+MEDIAN_RATIO_THRESHOLD = 0.30  # % de la médiane globale requis (ex: 0.30 = 30 %)
+MIN_GAMES_FLOOR = 3            # Plancher absolu de parties (quel que soit le résultat de la médiane)
+
+# --- 4. Attribution & Affiliation (Loyalty Rules) ---
+MIN_LOYALTY_PCT = 30      # Loyauté minimale (%) requise dans la tribu cible pour y être classé
+
+# --- 5. Seuils d'Affichage & Badges (Frontend) ---
+STATUS_CORE_PCT = 60      # Loyauté >= 60 % -> Badge "Noyau"
+STATUS_MEMBER_PCT = 30    # Loyauté >= 30 % -> Badge "Membre" (< 30 % -> "Fragile")
+DISPLAY_MIN_PCT = 10      # Loyauté < 10 % -> Masqué ("-") dans le tableau
+
+# --- 6. Fichiers et Chemins ---
+CONFIG_PATH = Path("data/config/config.json")
+DEFAULT_MATCHES_PATH = Path("data/rdl/archives/lh02/matches.json")
+TEMPLATE_DIR = "templates"
+TEMPLATE_FILE = "frog.html"
+OUTPUT_FILE = Path("frog.html")
+
+# ==============================================================================
+# 🚀 EXECUTION DU TRAITEMENT
+# ==============================================================================
+
+# 1. Chargement de la configuration
+config_path = CONFIG_PATH if CONFIG_PATH.exists() else Path("data/config.json")
 with open(config_path, "r", encoding="utf-8") as f:
     config_data = json.load(f)
 
-json_path = Path("data/rdl/archives/lh02/matches.json")
+json_path = DEFAULT_MATCHES_PATH
 if not json_path.exists():
     archives = list(Path("data/rdl/archives").rglob("matches.json"))
     if archives:
@@ -42,13 +79,8 @@ for match in matches:
 
 sorted_dates = sorted(list(dates_set))
 
-# 3. Paramètres du graphe et des tribus
-TARGET_TRIBES = ["Tribe A", "Tribe B", "Tribe C"]
-MIN_TRIBE_SIZE = 5
-MIN_ACTIVE_MEMBERS = 3
-
-def get_community_core(community_nodes, G, top_n=3):
-    """Identifie les 'piliers' d'une tribu grâce à leur centralité de degré au sein de la communauté"""
+def get_community_core(community_nodes, G, top_n=CORE_TOP_N):
+    """Identifie les piliers d'une tribu via leur centralité de degré au sein du sous-graphe."""
     subgraph = G.subgraph(community_nodes)
     centrality = nx.degree_centrality(subgraph)
     return sorted(centrality.keys(), key=lambda x: centrality[x], reverse=True)[:top_n]
@@ -58,7 +90,7 @@ previous_cores = {}
 daily_tribes = {}
 prev_assignments = {}
 
-# 4. Boucle temporelle : Calcul total jour par jour
+# 3. Boucle temporelle
 for date_idx, d in enumerate(sorted_dates):
     cumulative_matches = [m for m in matches_data if m["date"] <= d]
     
@@ -72,26 +104,25 @@ for date_idx, d in enumerate(sorted_dates):
         for p1, p2 in combinations(sorted(players), 2):
             pair_counts[(p1, p2)] += 1
 
-    active_players = {p for p, count in player_counts.items() if count >= 3}
+    active_players = {p for p, count in player_counts.items() if count >= MIN_PLAYER_GAMES_GRAPH}
     season_progress = date_idx / max(1, len(sorted_dates) - 1)
-    min_joint_matches = 2 + int(season_progress * 3)
+    min_joint_matches = MIN_JOINT_BASE + int(season_progress * MIN_JOINT_SLOPE)
 
-    # --- ÉTAPE A : Construction du graphe avec Similarité Cosinus ---
+    # ÉTAPE A : Construction du Graphe (Similarité Cosinus)
     G = nx.Graph()
     G.add_nodes_from(active_players)
 
     for (p1, p2), joint_count in pair_counts.items():
         if p1 in active_players and p2 in active_players and joint_count >= min_joint_matches:
-            # Poids mathématique propre : Similarité Cosinus
             weight = joint_count / math.sqrt(player_counts[p1] * player_counts[p2])
-            if weight >= 0.12:
+            if weight >= MIN_COSINE_WEIGHT:
                 G.add_edge(p1, p2, weight=weight)
 
-    # --- ÉTAPE B : Détection Louvain et Continuité par Noyau (Core Anchoring) ---
+    # ÉTAPE B : Détection Louvain et Core Anchoring
     raw_communities = []
     if G.number_of_nodes() > 0:
         try:
-            raw_communities = list(nx.community.louvain_communities(G, weight="weight", seed=42))
+            raw_communities = list(nx.community.louvain_communities(G, weight="weight", seed=LOUVAIN_SEED))
         except Exception:
             pass
 
@@ -101,18 +132,17 @@ for date_idx, d in enumerate(sorted_dates):
     current_cores = {}
     
     if not previous_cores:
-        # Jour 1 : Assignation initiale brute
+        # Initialisation (Jour 1)
         for idx, comm in enumerate(valid_communities):
-            if idx < 3:
+            if idx < len(TARGET_TRIBES):
                 tribe_name = TARGET_TRIBES[idx]
                 current_cores[tribe_name] = get_community_core(comm, G)
                 for p in comm:
                     current_assignments[p] = tribe_name
     else:
-        # Jours suivants : Suivi par l'inertie des noyaux
+        # Suivi par l'inertie des noyaux
         assigned_tribes = set()
         
-        # 1. Assigner les communautés existantes
         for comm in valid_communities:
             best_match = None
             max_core_overlap = 0
@@ -131,7 +161,7 @@ for date_idx, d in enumerate(sorted_dates):
                 for p in comm:
                     current_assignments[p] = best_match
                     
-        # 2. Gérer l'apparition de nouvelles communautés (si une tribu a disparu et laissé un "slot" vide)
+        # Remplacement de tribus disparues
         unassigned_comms = [c for c in valid_communities if not any(p in current_assignments for p in c)]
         for comm in unassigned_comms:
             available_tribes = [t for t in TARGET_TRIBES if t not in assigned_tribes]
@@ -142,11 +172,11 @@ for date_idx, d in enumerate(sorted_dates):
                 for p in comm:
                     current_assignments[p] = new_tribe
 
-    # --- ÉTAPE C : Rattrapage des inclassés et filtrage volume ---
+    # ÉTAPE C : Rattrapage inertiel et nettoyage
     for p in player_counts:
         if p not in current_assignments:
             prev_tribe = prev_assignments.get(p, "Inclassé")
-            if prev_tribe in current_cores:  # Si sa tribu d'hier existe toujours, il y reste par inertie
+            if prev_tribe in current_cores:
                 current_assignments[p] = prev_tribe
             else:
                 current_assignments[p] = "Inclassé"
@@ -156,18 +186,17 @@ for date_idx, d in enumerate(sorted_dates):
         if tribe in TARGET_TRIBES and active_tribe_counts[tribe] < MIN_ACTIVE_MEMBERS:
             current_assignments[p] = "Inclassé"
 
-    # Sauvegarde de l'état purement algorithmique pour ce jour
     daily_tribes[d] = current_assignments
     previous_cores = current_cores
     prev_assignments = current_assignments
 
-    # --- ÉTAPE D : Arbitrage Métier et Préparation Frontend ("Dumb Frontend") ---
-    # Calcul de la loyauté cumulative à date
+    # ÉTAPE D : Loyauté, Médiane et Arbitrage Métier
     player_loyalty_sum = {p: Counter() for p in player_counts}
     for m in cumulative_matches:
         players = m["players"]
         n_players = len(players)
-        if n_players <= 1: continue
+        if n_players <= 1:
+            continue
         for p in players:
             for other in players:
                 if other != p:
@@ -175,18 +204,16 @@ for date_idx, d in enumerate(sorted_dates):
                     if other_tribe in TARGET_TRIBES:
                         player_loyalty_sum[p][other_tribe] += 1 / (n_players - 1)
 
-    # Calcul de la médiane dynamique
+    # Seuil dynamique de volume
     all_counts = list(player_counts.values())
     global_median = statistics.median(all_counts) if all_counts else 0
-    min_games_tribe = max(3, math.ceil(global_median * 0.30))
+    min_games_tribe = max(MIN_GAMES_FLOOR, math.ceil(global_median * MEDIAN_RATIO_THRESHOLD))
 
     tribe_summary = {t: 0 for t in TARGET_TRIBES + ["Inclassé"]}
     snapshot_players = []
 
     for name, count in sorted(player_counts.items(), key=lambda x: (-x[1], x[0])):
-        louvain_tribe = current_assignments.get(name, "Inclassé")
-        
-        # Calcul des pourcentages
+        # Repérage du meilleur score de loyauté
         scores = {}
         max_tribe = None
         max_pct = -1
@@ -198,33 +225,26 @@ for date_idx, d in enumerate(sorted_dates):
                 max_pct = pct
                 max_tribe = t
 
-        # Arbitrage métier final (remplace ton ancien code JS)
-        if count < min_games_tribe:
+        # Règle d'arbitrage unifiée & équitable
+        if count < min_games_tribe or max_pct < MIN_LOYALTY_PCT:
             final_tribe = "Inclassé"
         else:
-            final_tribe = louvain_tribe
-            if louvain_tribe == "Inclassé":
-                if max_pct >= 30:
-                    final_tribe = max_tribe
-            else:
-                louvain_pct = scores.get(louvain_tribe, 0)
-                if max_tribe and max_tribe != louvain_tribe and max_pct > louvain_pct:
-                    if max_pct >= 30:
-                        final_tribe = max_tribe
-                    else:
-                        final_tribe = "Inclassé"
+            final_tribe = max_tribe
 
         tribe_summary[final_tribe] = tribe_summary.get(final_tribe, 0) + 1
 
-        # Formatage des statuts pour l'affichage
+        # Attribution des badges
         formatted_scores = {}
         for t in TARGET_TRIBES:
             pct = scores[t]
             status = None
             if t == final_tribe:
-                if pct >= 60: status = "Noyau"
-                elif pct >= 30: status = "Membre"
-                else: status = "Fragile"
+                if pct >= STATUS_CORE_PCT:
+                    status = "Noyau"
+                elif pct >= STATUS_MEMBER_PCT:
+                    status = "Membre"
+                else:
+                    status = "Fragile"
             
             formatted_scores[t] = {
                 "pct": pct,
@@ -238,24 +258,21 @@ for date_idx, d in enumerate(sorted_dates):
             "scores": formatted_scores
         })
 
-    # Enregistrement du cliché (snapshot) du jour
     snapshots[d] = {
         "summary": tribe_summary,
         "players": snapshot_players
     }
 
-# 5. Génération HTML
-env = Environment(loader=FileSystemLoader("templates"))
+# 4. Génération HTML
+env = Environment(loader=FileSystemLoader(TEMPLATE_DIR))
 env.globals["config"] = config_data
-template = env.get_template("frog.html")
+template = env.get_template(TEMPLATE_FILE)
 
-output_path = Path("frog.html")
-with open(output_path, "w", encoding="utf-8") as f:
+with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
     f.write(template.render(
         active_section="frog",
-        # Le JS n'a plus besoin de calculer quoi que ce soit, on lui passe tout prémâché :
         snapshots_json=json.dumps(snapshots, ensure_ascii=False), 
         dates_json=json.dumps(sorted_dates, ensure_ascii=False)
     ))
 
-print(f"Analyse réussie : {len(sorted_dates)} dates calculées (Similarité Cosinus + Core Anchoring + Dumb Frontend).")
+print(f"Analyse réussie : {len(sorted_dates)} dates calculées.")
