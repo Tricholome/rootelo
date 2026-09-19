@@ -13,9 +13,9 @@ from jinja2 import Environment, FileSystemLoader
 
 # --- 1. Noms et Limites des Tribus ---
 TARGET_TRIBES = ["Tribe A", "Tribe B", "Tribe C"]
-MIN_TRIBE_SIZE = 5        # Nb min de membres pour valider une communauté Louvain
-MIN_ACTIVE_MEMBERS = 3    # Nb min de membres pour conserver une tribu
-CORE_TOP_N = 3            # Nombre de piliers suivis par tribu (Core Anchoring)
+MIN_TRIBE_SIZE = 5          # Nb min de membres pour valider une communauté Louvain
+MIN_ACTIVE_MEMBERS = 3      # Nb min de membres pour conserver une tribu
+CORE_TOP_N = 3              # Nombre de piliers suivis par tribu (Core Anchoring)
 
 # --- 2. Graphe & Filtrage des Connexions ---
 MIN_PLAYER_GAMES_GRAPH = 3  # Nb min de parties d'un joueur pour entrer dans le graphe
@@ -25,13 +25,13 @@ MIN_COSINE_WEIGHT = 0.18    # Seuil minimal de similarité Cosinus pour lier deu
 LOUVAIN_SEED = 42           # Graine de reproductibilité pour Louvain
 
 # --- 3. Filtrage du Volume (Volume Guardrail Organique) ---
-TRIBE_VOLUME_RATIO = 0.15  # Un joueur doit accumuler au moins 15 % du volume moyen des piliers de sa tribu
-MIN_GAMES_FLOOR = 3        # Plancher absolu en tout début de saison
+TRIBE_MEDIAN_RATIO = 0.4    # Le joueur doit atteindre 40% du volume du joueur "médian" de la tribu
+MIN_GAMES_FLOOR = 3         # Plancher absolu en tout début de saison
 
 # --- 4. Seuils d'Affichage & Badges ---
-STATUS_CORE_PCT = 60      # Affinité >= 60 % -> Badge "Noyau"
-STATUS_MEMBER_PCT = 30    # Affinité >= 30 % -> Badge "Membre" (< 30 % -> "Fragile")
-DISPLAY_MIN_PCT = 10      # Affinité < 10 % -> Masqué ("-") dans le tableau
+STATUS_CORE_PCT = 60        # Affinité >= 60 % -> Badge "Noyau"
+STATUS_MEMBER_PCT = 30      # Affinité >= 30 % -> Badge "Membre" (< 30 % -> "Fragile")
+DISPLAY_MIN_PCT = 10        # Affinité < 10 % -> Masqué ("-") dans le tableau
 
 # --- 5. Fichiers et Chemins ---
 CONFIG_PATH = Path("data/config/config.json")
@@ -210,13 +210,16 @@ for date_idx, d in enumerate(sorted_dates):
     # 2. Seuils de volume dynamiques et organiques par tribu
     tribe_thresholds = {}
     for t in TARGET_TRIBES:
-        cores = current_cores.get(t, [])
-        if cores:
-            # Volume moyen des piliers fondateurs de cette tribu
-            core_volumes = [player_counts[p] for p in cores]
-            core_avg = statistics.mean(core_volumes)
-            # Le seuil d'entrée augmente automatiquement au rythme de la tribu
-            tribe_thresholds[t] = max(MIN_GAMES_FLOOR, math.ceil(core_avg * TRIBE_VOLUME_RATIO))
+        # On récupère TOUS les membres pré-assignés à cette tribu (pas juste le noyau)
+        tribe_members = [p for p, tribe in current_assignments.items() if tribe == t]
+        
+        if tribe_members:
+            # On extrait les volumes et on prend la médiane (le point d'équilibre de la tribu)
+            tribe_volumes = [player_counts[p] for p in tribe_members]
+            tribe_median = statistics.median(tribe_volumes)
+            
+            # Le seuil évolue doucement avec la masse des joueurs, pas avec les piliers
+            tribe_thresholds[t] = max(MIN_GAMES_FLOOR, math.ceil(tribe_median * TRIBE_MEDIAN_RATIO))
         else:
             tribe_thresholds[t] = MIN_GAMES_FLOOR
 
