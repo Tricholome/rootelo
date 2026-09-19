@@ -147,7 +147,7 @@ for date_idx, d in enumerate(sorted_dates):
     prev_assignments = current_assignments
     daily_tribes[d] = current_assignments
 
-# 4. Calcul de la loyauté multi-tribus pondérée
+# 4. Calcul multi-tribus, arbitrage et badges ciblés
 ALLOWED_TRIBES = ["Tribe A", "Tribe B", "Tribe C"]
 player_games = Counter(p for m in matches_data for p in m["players"])
 latest_date = sorted_dates[-1] if sorted_dates else ""
@@ -168,25 +168,55 @@ for m in matches_data:
                 if other_tribe in ALLOWED_TRIBES:
                     player_loyalty_sum[p][other_tribe] += 1 / (n_players - 1)
 
-def format_tribe_status(pct):
-    if pct >= 60:
-        return f"{pct} %", "Noyau", "background:#2e7d32; color:#fff;"
-    elif pct >= 30:
-        return f"{pct} %", "Membre", "background:#1565c0; color:#fff;"
-    elif pct >= 10:
-        return f"{pct} %", "Fragile", "background:#c62828; color:#fff;"
-    else:
+def format_tribe_cell(pct, is_main_tribe):
+    if pct < 10:
         return "-", "", ""
+    pct_str = f"{pct} %"
+    if not is_main_tribe:
+        return pct_str, "", ""
+    
+    if pct >= 60:
+        return pct_str, "Noyau", "background:#2e7d32; color:#fff;"
+    elif pct >= 30:
+        return pct_str, "Membre", "background:#1565c0; color:#fff;"
+    else:
+        return pct_str, "Fragile", "background:#c62828; color:#fff;"
 
 players_list = []
 for name, count in sorted(player_games.items(), key=lambda x: (-x[1], x[0])):
-    main_tribe = latest_tribes.get(name, "Inclassé")
-    tribe_scores = {}
+    louvain_tribe = latest_tribes.get(name, "Inclassé")
     
+    # Calcul des pourcentages par tribu
+    scores = {}
+    max_tribe = None
+    max_pct = -1
     for t in ALLOWED_TRIBES:
         score = player_loyalty_sum[name][t] / count if count > 0 else 0
         pct = round(score * 100)
-        loyalty_str, status_label, style = format_tribe_status(pct)
+        scores[t] = pct
+        if pct > max_pct:
+            max_pct = pct
+            max_tribe = t
+
+    # Arbitrage / Réattribution
+    final_tribe = louvain_tribe
+    if louvain_tribe == "Inclassé":
+        if max_pct >= 30:
+            final_tribe = max_tribe
+    else:
+        louvain_pct = scores.get(louvain_tribe, 0)
+        if max_tribe and max_tribe != louvain_tribe and max_pct > louvain_pct:
+            if max_pct >= 30:
+                final_tribe = max_tribe
+            else:
+                final_tribe = "Inclassé"
+
+    # Construction des cellules
+    tribe_scores = {}
+    for t in ALLOWED_TRIBES:
+        pct = scores[t]
+        is_main = (t == final_tribe)
+        loyalty_str, status_label, style = format_tribe_cell(pct, is_main)
         tribe_scores[t] = {
             "pct_str": loyalty_str,
             "status": status_label,
@@ -196,7 +226,7 @@ for name, count in sorted(player_games.items(), key=lambda x: (-x[1], x[0])):
     players_list.append({
         "name": name,
         "games": count,
-        "tribe": main_tribe,
+        "tribe": final_tribe,
         "scores": tribe_scores
     })
 
