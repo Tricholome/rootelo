@@ -26,7 +26,7 @@ MIN_COSINE_WEIGHT = 0.18
 LOUVAIN_SEED = 42           
 LOUVAIN_RESOLUTION = 1.5    
 HYSTERESIS_MARGIN = 10      # Écart nécessaire pour changer physiquement de tribu principale
-WAVERING_MARGIN = 15        # ⚖️ Si l'écart entre les 2 meilleures tribus <= 15%, le joueur est "Wavering"
+WAVERING_MARGIN = 10        # ⚖️ Réduit à 10% pour ne pas cannibaliser le statut Affiliate
 
 # --- 3. Volume Filtering (Median Organic Volume) ---
 TRIBE_MEDIAN_RATIO = 0.4   
@@ -227,7 +227,6 @@ for date_idx, d in enumerate(sorted_dates):
             else:
                 scores[t] = 0
         
-        # ⚖️ Calcul de l'écart (margin) entre les deux meilleures tribus du joueur
         sorted_scores = sorted(scores.values(), reverse=True)
         top_margin = sorted_scores[0] - sorted_scores[1] if len(sorted_scores) > 1 else 100
 
@@ -237,7 +236,6 @@ for date_idx, d in enumerate(sorted_dates):
         max_tribe = raw_max_tribe
         max_pct = raw_max_pct
 
-        # 🛡️ Inertie historique pour définir la tribu d'appartenance principale (évite les sauts quotidiens)
         prev_tribe = prev_assignments.get(name, UNALIGNED_LABEL)
         if prev_tribe in TARGET_TRIBES and raw_max_tribe != prev_tribe:
             prev_score = scores.get(prev_tribe, 0)
@@ -264,7 +262,6 @@ for date_idx, d in enumerate(sorted_dates):
             pct = scores[t]
             status = None
             if t == final_tribe:
-                # ⚖️ Détermination du statut : Wavering prioritaire si l'écart est faible
                 if top_margin <= WAVERING_MARGIN:
                     status = "Wavering"
                 elif is_core or pct >= STATUS_CORE_PCT:
@@ -302,4 +299,4 @@ with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
         dates_json=json.dumps(sorted_dates, ensure_ascii=False)
     ))
 
-print(f"Analysis successful: {len(sorted_dates)} dates calculated (Wavering fixed on margins).")
+print(f"Analysis successful: {len(sorted_dates)} dates calculated (Wavering margin tightened to 10%).")
