@@ -25,8 +25,8 @@ MIN_JOINT_SLOPE = 3
 MIN_COSINE_WEIGHT = 0.18    
 LOUVAIN_SEED = 42           
 LOUVAIN_RESOLUTION = 1.5    
-HYSTERESIS_MARGIN = 10      # Écart nécessaire pour changer physiquement de tribu principale
-WAVERING_MARGIN = 10        # ⚖️ Réduit à 10% pour ne pas cannibaliser le statut Affiliate
+HYSTERESIS_MARGIN = 10
+WAVERING_MARGIN = 5
 
 # --- 3. Volume Filtering (Median Organic Volume) ---
 TRIBE_MEDIAN_RATIO = 0.4   
