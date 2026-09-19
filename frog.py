@@ -187,28 +187,22 @@ for date_idx, d in enumerate(sorted_dates):
     previous_cores = current_cores
     prev_assignments = current_assignments
 
-    # ÉTAPE D : Affinité Globale (Granularité Cosinus + Vrai Dénominateur)
+    # --- ÉTAPE D : Le Modèle "Noyau & Gravité" ---
+    
+    # 1. Calcul de l'Affinité Globale sur la base des suggestions Louvain
     player_global_affinity = {p: Counter() for p in player_counts}
-    player_total_weight = {p: 0.0 for p in player_counts}
-
-    # Balayage de TOUTES les paires historiques (y compris liens faibles et Inclassés)
     for (p1, p2), joint_count in pair_counts.items():
         if p1 in active_players and p2 in active_players:
             weight = joint_count / math.sqrt(player_counts[p1] * player_counts[p2])
             
-            # Total absolu du poids relationnel (Inclassés inclus)
-            player_total_weight[p1] += weight
-            player_total_weight[p2] += weight
-            
+            # On utilise l'assignation topologique comme champ magnétique
             t1 = current_assignments.get(p1, "Inclassé")
             t2 = current_assignments.get(p2, "Inclassé")
             
-            if t2 in TARGET_TRIBES:
-                player_global_affinity[p1][t2] += weight
-            if t1 in TARGET_TRIBES:
-                player_global_affinity[p2][t1] += weight
+            if t2 in TARGET_TRIBES: player_global_affinity[p1][t2] += weight
+            if t1 in TARGET_TRIBES: player_global_affinity[p2][t1] += weight
 
-    # Seuil dynamique de volume (Médiane)
+    # 2. Seuil de volume dynamique
     all_counts = list(player_counts.values())
     global_median = statistics.median(all_counts) if all_counts else 0
     min_games_tribe = max(MIN_GAMES_FLOOR, math.ceil(global_median * MEDIAN_RATIO_THRESHOLD))
@@ -216,39 +210,46 @@ for date_idx, d in enumerate(sorted_dates):
     tribe_summary = {t: 0 for t in TARGET_TRIBES + ["Inclassé"]}
     snapshot_players = []
 
+    # 3. Attribution Finale par Gravité
     for name, count in sorted(player_counts.items(), key=lambda x: (-x[1], x[0])):
-        louvain_tribe = current_assignments.get(name, "Inclassé")
+        
+        # Calcul des pourcentages d'affinité
+        total_affinity = sum(player_global_affinity[name].values())
+        scores = {}
+        for t in TARGET_TRIBES:
+            pct = round((player_global_affinity[name][t] / total_affinity) * 100) if total_affinity > 0 else 0
+            scores[t] = pct
 
-        # Attribution finale : Louvain pur + filtre de volume
+        # Détermination de la tribu dominante mathématiquement
+        max_tribe = max(scores, key=scores.get) if total_affinity > 0 else "Inclassé"
+        max_pct = scores.get(max_tribe, 0)
+
+        # Est-il un pilier fondateur ?
+        is_core = any(name in cores for cores in current_cores.values())
+
+        # L'ARBITRAGE IMPLACABLE
         if count < min_games_tribe:
             final_tribe = "Inclassé"
+        elif is_core:
+            # Le noyau reste fidèle à Louvain, il EST la tribu
+            final_tribe = current_assignments.get(name, "Inclassé")
+        elif max_pct >= MIN_LOYALTY_PCT:
+            # Les autres joueurs obéissent strictement au pourcentage affiché !
+            final_tribe = max_tribe 
         else:
-            final_tribe = louvain_tribe
+            final_tribe = "Inclassé"
 
         tribe_summary[final_tribe] = tribe_summary.get(final_tribe, 0) + 1
 
-        # Vrai dénominateur relationnel
-        total_affinity = player_total_weight.get(name, 0.0)
-
-        scores = {}
-        for t in TARGET_TRIBES:
-            if total_affinity > 0:
-                pct = round((player_global_affinity[name][t] / total_affinity) * 100)
-            else:
-                pct = 0
-            scores[t] = pct
-
+        # Formatage des badges pour le HTML
         formatted_scores = {}
         for t in TARGET_TRIBES:
             pct = scores[t]
             status = None
             if t == final_tribe:
-                if pct >= STATUS_CORE_PCT:
-                    status = "Noyau"
-                elif pct >= STATUS_MEMBER_PCT:
-                    status = "Membre"
-                else:
-                    status = "Fragile"
+                if is_core or pct >= STATUS_CORE_PCT: status = "Noyau"
+                elif pct >= STATUS_MEMBER_PCT: status = "Membre"
+                else: status = "Fragile"
             
             formatted_scores[t] = {
                 "pct": pct,
@@ -261,12 +262,8 @@ for date_idx, d in enumerate(sorted_dates):
             "main_tribe": final_tribe,
             "scores": formatted_scores
         })
-
-    snapshots[d] = {
-        "summary": tribe_summary,
-        "players": snapshot_players
-    }
-
+        
+        
 # 4. Génération HTML
 env = Environment(loader=FileSystemLoader(TEMPLATE_DIR))
 env.globals["config"] = config_data
