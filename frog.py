@@ -233,11 +233,15 @@ for date_idx, d in enumerate(sorted_dates):
         elif is_core:
             # Le noyau reste fidèle à Louvain, il EST la tribu
             final_tribe = current_assignments.get(name, "Inclassé")
-        elif max_pct >= MIN_LOYALTY_PCT:
-            # Les autres joueurs obéissent strictement au pourcentage affiché !
+        elif max_pct >= DISPLAY_MIN_PCT: # <-- CORRECTION 1 : On utilise ton paramètre existant au lieu de MIN_LOYALTY_PCT
+            # Les autres obéissent au pourcentage
             final_tribe = max_tribe 
         else:
             final_tribe = "Inclassé"
+
+        # CORRECTION 2 : Mettre à jour l'assignation officielle 
+        # pour que le calcul du lendemain se base sur la réalité affichée
+        current_assignments[name] = final_tribe
 
         tribe_summary[final_tribe] = tribe_summary.get(final_tribe, 0) + 1
 
@@ -263,7 +267,13 @@ for date_idx, d in enumerate(sorted_dates):
             "scores": formatted_scores
         })
         
-        
+    # CORRECTION 3 : Enregistrer la photo du jour dans l'historique global
+    # (Attention à l'indentation : au même niveau que le `for name, count...`)
+    snapshots[d] = {
+        "summary": tribe_summary,
+        "players": snapshot_players
+    }
+       
 # 4. Génération HTML
 env = Environment(loader=FileSystemLoader(TEMPLATE_DIR))
 env.globals["config"] = config_data
