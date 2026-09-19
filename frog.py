@@ -8,34 +8,36 @@ import networkx as nx
 from jinja2 import Environment, FileSystemLoader
 
 # ==============================================================================
-# ⚙️ CONFIGURATION & HYPERPARAMÈTRES
+# ⚙️ CONFIGURATION & HYPERPARAMETERS
 # ==============================================================================
 
-# --- 1. Noms et Limites des Tribus ---
+# --- 1. Tribe Names & Boundaries ---
 TARGET_TRIBES = ["Tribe A", "Tribe B", "Tribe C"]
-MIN_TRIBE_SIZE = 5        # Nb min de membres pour valider une communauté Louvain
-MIN_ACTIVE_MEMBERS = 3    # Nb min de membres pour conserver une tribu
-CORE_TOP_N = 3            # Nombre de piliers suivis par tribu (Core Anchoring)
+UNALIGNED_LABEL = "Unaligned"
+MIN_TRIBE_SIZE = 5        # Min members to validate a Louvain community
+MIN_ACTIVE_MEMBERS = 3    # Min members to keep a tribe active
+CORE_TOP_N = 3            # Number of core pillars tracked per tribe
 
-# --- 2. Graphe & Filtrage des Connexions ---
-MIN_PLAYER_GAMES_GRAPH = 3  # Nb min de parties d'un joueur pour entrer dans le graphe
-MIN_JOINT_BASE = 2          # Nb min de parties communes (début de saison)
-MIN_JOINT_SLOPE = 3         # Facteur d'augmentation des parties communes en fin de saison
-MIN_COSINE_WEIGHT = 0.18    # Seuil minimal de similarité Cosinus pour lier deux joueurs dans G
-LOUVAIN_SEED = 42           # Graine de reproductibilité pour Louvain
-LOUVAIN_RESOLUTION = 1.5    # Résolution Louvain (isole les méga-communautés si > 1.0)
-HYSTERESIS_MARGIN = 10      # Marge de 10% requise pour changer de tribu
+# --- 2. Graph & Connection Filtering ---
+MIN_PLAYER_GAMES_GRAPH = 3  # Min games for a player to enter the graph
+MIN_JOINT_BASE = 2          # Min joint games (early season)
+MIN_JOINT_SLOPE = 3         # Joint games increase factor by season end
+MIN_COSINE_WEIGHT = 0.18    # Min Cosine similarity threshold for edge creation
+LOUVAIN_SEED = 42           # Reproducibility seed for Louvain
+LOUVAIN_RESOLUTION = 1.5    # Louvain resolution parameter
+HYSTERESIS_MARGIN = 10      # Required % margin to switch tribes (inertia)
 
-# --- 3. Filtrage du Volume (Volume Organique par Médiane) ---
-TRIBE_MEDIAN_RATIO = 0.4   # Un joueur doit atteindre 40% du volume médian de sa tribu
-MIN_GAMES_FLOOR = 3        # Plancher absolu en tout début de saison
+# --- 3. Volume Filtering (Median Organic Volume) ---
+TRIBE_MEDIAN_RATIO = 0.4   # Player must reach 40% of their tribe's median volume
+MIN_GAMES_FLOOR = 3        # Absolute minimum games floor early in the season
 
-# --- 4. Seuils d'Affichage & Badges ---
-STATUS_CORE_PCT = 65      # Affinité >= 65 % -> Badge "Noyau"
-STATUS_MEMBER_PCT = 45    # Affinité >= 45 % -> Badge "Membre" (< 45 % -> "Fragile")
-DISPLAY_MIN_PCT = 10      # Affinité < 10 % -> Masqué ("-") dans le tableau
+# --- 4. Status Tiers & Display Thresholds ---
+STATUS_CORE_PCT = 65       # Affinity >= 65% -> "Core"
+STATUS_LOYAL_PCT = 45      # Affinity >= 45% -> "Loyalist"
+STATUS_AFFILIATE_PCT = 25  # Affinity >= 25% -> "Affiliate" (< 25% -> "Wavering")
+DISPLAY_MIN_PCT = 10       # Affinity < 10% -> Hidden ("-") in table
 
-# --- 5. Fichiers et Chemins ---
+# --- 5. Files & Paths ---
 CONFIG_PATH = Path("data/config/config.json")
 DEFAULT_MATCHES_PATH = Path("data/rdl/archives/lh02/matches.json")
 TEMPLATE_DIR = "templates"
@@ -43,10 +45,9 @@ TEMPLATE_FILE = "frog.html"
 OUTPUT_FILE = Path("frog.html")
 
 # ==============================================================================
-# 🚀 EXECUTION DU TRAITEMENT
+# 🚀 PIPELINE EXECUTION
 # ==============================================================================
 
-# 1. Chargement de la configuration
 config_path = CONFIG_PATH if CONFIG_PATH.exists() else Path("data/config.json")
 with open(config_path, "r", encoding="utf-8") as f:
     config_data = json.load(f)
@@ -60,7 +61,6 @@ if not json_path.exists():
 with open(json_path, "r", encoding="utf-8") as f:
     matches = json.load(f)
 
-# 2. Traitement chronologique cumulatif
 matches_data = []
 dates_set = set()
 
@@ -79,7 +79,7 @@ for match in matches:
 sorted_dates = sorted(list(dates_set))
 
 def get_community_core(community_nodes, G, top_n=CORE_TOP_N):
-    """Identifie les piliers d'une tribu via leur centralité de degré au sein du sous-graphe."""
+    """Identifies tribe pillars using degree centrality within the subgraph."""
     subgraph = G.subgraph(community_nodes)
     centrality = nx.degree_centrality(subgraph)
     return sorted(centrality.keys(), key=lambda x: centrality[x], reverse=True)[:top_n]
@@ -89,7 +89,6 @@ previous_cores = {}
 daily_tribes = {}
 prev_assignments = {}
 
-# 3. Boucle temporelle
 for date_idx, d in enumerate(sorted_dates):
     cumulative_matches = [m for m in matches_data if m["date"] <= d]
     
@@ -107,7 +106,7 @@ for date_idx, d in enumerate(sorted_dates):
     season_progress = date_idx / max(1, len(sorted_dates) - 1)
     min_joint_matches = MIN_JOINT_BASE + int(season_progress * MIN_JOINT_SLOPE)
 
-    # ÉTAPE A : Construction du Graphe (Similarité Cosinus)
+    # STEP A: Graph Construction (Cosine Similarity)
     G = nx.Graph()
     G.add_nodes_from(active_players)
 
@@ -117,7 +116,7 @@ for date_idx, d in enumerate(sorted_dates):
             if weight >= MIN_COSINE_WEIGHT:
                 G.add_edge(p1, p2, weight=weight)
 
-    # ÉTAPE B : Détection Louvain et Core Anchoring (avec résolution isolée)
+    # STEP B: Louvain Detection & Core Anchoring
     raw_communities = []
     if G.number_of_nodes() > 0:
         try:
@@ -133,7 +132,6 @@ for date_idx, d in enumerate(sorted_dates):
     current_cores = {}
     
     if not previous_cores:
-        # Initialisation (Jour 1)
         for idx, comm in enumerate(valid_communities):
             if idx < len(TARGET_TRIBES):
                 tribe_name = TARGET_TRIBES[idx]
@@ -141,7 +139,6 @@ for date_idx, d in enumerate(sorted_dates):
                 for p in comm:
                     current_assignments[p] = tribe_name
     else:
-        # Suivi par l'inertie des noyaux
         assigned_tribes = set()
         
         for comm in valid_communities:
@@ -162,7 +159,6 @@ for date_idx, d in enumerate(sorted_dates):
                 for p in comm:
                     current_assignments[p] = best_match
                     
-        # Remplacement de tribus disparues
         unassigned_comms = [c for c in valid_communities if not any(p in current_assignments for p in c)]
         for comm in unassigned_comms:
             available_tribes = [t for t in TARGET_TRIBES if t not in assigned_tribes]
@@ -173,43 +169,39 @@ for date_idx, d in enumerate(sorted_dates):
                 for p in comm:
                     current_assignments[p] = new_tribe
 
-    # ÉTAPE C : Rattrapage inertiel et nettoyage
+    # STEP C: Inertial Catch-up & Cleaning
     for p in player_counts:
         if p not in current_assignments:
-            prev_tribe = prev_assignments.get(p, "Inclassé")
+            prev_tribe = prev_assignments.get(p, UNALIGNED_LABEL)
             if prev_tribe in current_cores:
                 current_assignments[p] = prev_tribe
             else:
-                current_assignments[p] = "Inclassé"
+                current_assignments[p] = UNALIGNED_LABEL
 
     active_tribe_counts = Counter(current_assignments.values())
     for p, tribe in list(current_assignments.items()):
         if tribe in TARGET_TRIBES and active_tribe_counts[tribe] < MIN_ACTIVE_MEMBERS:
-            current_assignments[p] = "Inclassé"
+            current_assignments[p] = UNALIGNED_LABEL
 
     daily_tribes[d] = current_assignments
     previous_cores = current_cores
     prev_assignments = current_assignments
 
-    # --- ÉTAPE D : Le Modèle "Noyau & Gravité Normalisée" ---
-    
-    # 1. Calcul de l'Affinité Globale brute
+    # STEP D: Normalized Gravity & Final Assignment
     player_global_affinity = {p: Counter() for p in player_counts}
 
     for (p1, p2), joint_count in pair_counts.items():
         if p1 in active_players and p2 in active_players:
             weight = joint_count / math.sqrt(player_counts[p1] * player_counts[p2])
 
-            t1 = current_assignments.get(p1, "Inclassé")
-            t2 = current_assignments.get(p2, "Inclassé")
+            t1 = current_assignments.get(p1, UNALIGNED_LABEL)
+            t2 = current_assignments.get(p2, UNALIGNED_LABEL)
             
             if t2 in TARGET_TRIBES: player_global_affinity[p1][t2] += weight
             if t1 in TARGET_TRIBES: player_global_affinity[p2][t1] += weight
 
-    # Récupération des tailles actuelles pour normaliser l'attraction
     louvain_tribe_sizes = Counter(current_assignments.values())
 
-    # 2. Seuils de volume dynamiques basés sur la médiane de la tribu
     tribe_thresholds = {}
     for t in TARGET_TRIBES:
         tribe_members = [p for p, tribe in current_assignments.items() if tribe == t]
@@ -220,15 +212,13 @@ for date_idx, d in enumerate(sorted_dates):
         else:
             tribe_thresholds[t] = MIN_GAMES_FLOOR
 
-    tribe_summary = {t: 0 for t in TARGET_TRIBES + ["Inclassé"]}
+    tribe_summary = {t: 0 for t in TARGET_TRIBES + [UNALIGNED_LABEL]}
     snapshot_players = []
 
-    # 3. Attribution Finale avec Amortissement et Inertie
     for name, count in sorted(player_counts.items(), key=lambda x: (-x[1], x[0])):
         normalized_affinities = {}
         total_normalized = 0.0
 
-        # Amortissement par racine carrée de la taille
         for t in TARGET_TRIBES:
             t_size = max(1, louvain_tribe_sizes.get(t, 1))
             norm_aff = player_global_affinity[name][t] / math.sqrt(t_size)
@@ -242,41 +232,52 @@ for date_idx, d in enumerate(sorted_dates):
             else:
                 scores[t] = 0
         
-        max_tribe = max(scores, key=scores.get) if total_normalized > 0 else "Inclassé"
-        max_pct = scores.get(max_tribe, 0)
+        raw_max_tribe = max(scores, key=scores.get) if total_normalized > 0 else UNALIGNED_LABEL
+        raw_max_pct = scores.get(raw_max_tribe, 0)
 
-        # Application de l'inertie : on conserve l'ancienne tribu sauf si la nouvelle la dépasse nettement
-        prev_tribe = prev_assignments.get(name, "Inclassé")
-        if prev_tribe in TARGET_TRIBES and max_tribe != prev_tribe:
+        max_tribe = raw_max_tribe
+        max_pct = raw_max_pct
+        held_by_inertia = False
+
+        prev_tribe = prev_assignments.get(name, UNALIGNED_LABEL)
+        if prev_tribe in TARGET_TRIBES and raw_max_tribe != prev_tribe:
             prev_score = scores.get(prev_tribe, 0)
-            if max_pct - prev_score < HYSTERESIS_MARGIN:
+            if raw_max_pct - prev_score < HYSTERESIS_MARGIN:
                 max_tribe = prev_tribe
                 max_pct = prev_score
+                held_by_inertia = True
 
         is_core = any(name in cores for cores in current_cores.values())
         required_games = tribe_thresholds.get(max_tribe, MIN_GAMES_FLOOR)
 
         if count < required_games:
-            final_tribe = "Inclassé"
+            final_tribe = UNALIGNED_LABEL
         elif is_core:
-            final_tribe = current_assignments.get(name, "Inclassé")
+            final_tribe = current_assignments.get(name, UNALIGNED_LABEL)
         elif max_pct >= DISPLAY_MIN_PCT: 
             final_tribe = max_tribe 
         else:
-            final_tribe = "Inclassé"
+            final_tribe = UNALIGNED_LABEL
 
         tribe_summary[final_tribe] = tribe_summary.get(final_tribe, 0) + 1
 
-        # Formatage des badges pour le HTML
         formatted_scores = {}
         for t in TARGET_TRIBES:
             pct = scores[t]
             status = None
             if t == final_tribe:
-                if is_core or pct >= STATUS_CORE_PCT: status = "Noyau"
-                elif pct >= STATUS_MEMBER_PCT: status = "Membre"
-                else: status = "Fragile"
-            
+                if is_core or pct >= STATUS_CORE_PCT:
+                    status = "Core"
+                elif pct >= STATUS_LOYAL_PCT:
+                    status = "Loyalist"
+                elif pct >= STATUS_AFFILIATE_PCT:
+                    status = "Affiliate"
+                else:
+                    status = "Wavering"
+
+                if held_by_inertia:
+                    status += " ⚓"
+
             formatted_scores[t] = {
                 "pct": pct,
                 "status": status
@@ -286,6 +287,7 @@ for date_idx, d in enumerate(sorted_dates):
             "name": name,
             "games": count,
             "main_tribe": final_tribe,
+            "is_inertia": held_by_inertia,
             "scores": formatted_scores
         })
         
@@ -294,7 +296,6 @@ for date_idx, d in enumerate(sorted_dates):
         "players": snapshot_players
     }
        
-# 4. Génération HTML
 env = Environment(loader=FileSystemLoader(TEMPLATE_DIR))
 env.globals["config"] = config_data
 template = env.get_template(TEMPLATE_FILE)
@@ -306,4 +307,4 @@ with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
         dates_json=json.dumps(sorted_dates, ensure_ascii=False)
     ))
 
-print(f"Analyse réussie : {len(sorted_dates)} dates calculées (Résolution Louvain + Gravité Normalisée + Médiane).")
+print(f"Analysis successful: {len(sorted_dates)} dates calculated (Louvain Resolution + Normalized Gravity + Inertia + 4-Tier Badges).")
