@@ -41,14 +41,14 @@ for match in matches:
 
 sorted_dates = sorted(list(dates_set))
 
-# 3. Moteur Louvain progressif à sévérité dynamique & persistance
+# 3. Moteur Louvain progressif à 3 tribus
 ALLOWED_TRIBES = ["Tribe A", "Tribe B", "Tribe C"]
-MIN_TRIBE_SIZE = 5     # Taille min. d'un cluster Louvain pour débloquer/revendiquer une tribu
-MIN_ACTIVE_MEMBERS = 3 # Nombre min. de membres pour qu'une tribu reste active
+MIN_TRIBE_SIZE = 5     # Taille minimale pour fonder/rejoindre une tribu
+MIN_ACTIVE_MEMBERS = 3 # Plancher pour éviter les tribus fantômes
 MAX_LEAGUES = 3
 
-registered_tribes = [] # Registre permanent des tribus débloquées
-prev_assignments = {}  # Historique à T-1 {player: tribe_name}
+registered_tribes = []
+prev_assignments = {}
 daily_tribes = {}
 
 for date_idx, d in enumerate(sorted_dates):
@@ -64,24 +64,20 @@ for date_idx, d in enumerate(sorted_dates):
         for p1, p2 in combinations(sorted(players), 2):
             pair_counts[(p1, p2)] += 1
 
-    # RÈGLE 1 : Exclusion stricte des joueurs occasionnels (<= 2 matchs au total)
     active_players = {p for p, count in player_counts.items() if count >= 3}
 
-    # RÈGLE 2 : Sévérité progressive de la saison (de 2 matchs partagés à 5)
     season_progress = date_idx / max(1, len(sorted_dates) - 1)
     min_joint_matches = 2 + int(season_progress * 3)
 
-    # Construction du graphe restreint aux joueurs actifs et liens significatifs
     G = nx.Graph()
     G.add_nodes_from(active_players)
 
     for (p1, p2), joint_count in pair_counts.items():
         if p1 in active_players and p2 in active_players and joint_count >= min_joint_matches:
-            # Affinité relative (Jaccard) pour privilégier l'exclusivité des interactions
             total_unique = player_counts[p1] + player_counts[p2] - joint_count
             affinity = joint_count / total_unique if total_unique > 0 else 0
             
-            if affinity >= 0.12:  # Seuil de pertinence minimum
+            if affinity >= 0.12:
                 G.add_edge(p1, p2, weight=affinity)
 
     current_assignments = {}
@@ -94,7 +90,6 @@ for date_idx, d in enumerate(sorted_dates):
 
         valid_communities = [c for c in raw_communities if len(c) >= MIN_TRIBE_SIZE]
 
-        # RÈGLE 3 : Continuité historique sans fusions destructrices
         claimed_today = set()
         unassigned_communities = []
 
@@ -114,7 +109,6 @@ for date_idx, d in enumerate(sorted_dates):
             else:
                 unassigned_communities.append(comm)
 
-        # Déverrouillage contrôlé de nouvelles tribus
         unassigned_communities.sort(key=len, reverse=True)
         for comm in unassigned_communities:
             if len(registered_tribes) < MAX_LEAGUES:
@@ -124,7 +118,7 @@ for date_idx, d in enumerate(sorted_dates):
                 for p in comm:
                     current_assignments[p] = new_tribe
 
-    # RÈGLE 4 : Rétention des acquis vs statut Inclassé
+    # Gestion de la rétention
     for p in player_counts:
         if p not in current_assignments:
             prev_tribe = prev_assignments.get(p)
@@ -133,8 +127,7 @@ for date_idx, d in enumerate(sorted_dates):
             else:
                 current_assignments[p] = "Inclassé"
 
-    # Sécurité anti-tribu fantôme : si une tribu compte < 3 membres aujourd'hui,
-    # ses membres isolés repassent Inclassé
+    # Sécurité anti-tribu fantôme (< 3 membres)
     active_tribe_counts = Counter(current_assignments.values())
     for p, tribe in list(current_assignments.items()):
         if tribe in registered_tribes and active_tribe_counts[tribe] < MIN_ACTIVE_MEMBERS:
@@ -143,17 +136,49 @@ for date_idx, d in enumerate(sorted_dates):
     prev_assignments = current_assignments
     daily_tribes[d] = current_assignments
 
-# 4. Génération de la page HTML via Jinja2
+# 4. Préparation du contexte Jinja2 avec calcul de la loyauté
 player_games = Counter(p for m in matches_data for p in m["players"])
 latest_date = sorted_dates[-1] if sorted_dates else ""
-players_list = [
-    {
+latest_tribes = daily_tribes.get(latest_date, {})
+
+player_tribe_games = Counter()
+for m in matches_data:
+    players = m["players"]
+    for p in players:
+        p_tribe = latest_tribes.get(p, "Inclassé")
+        if p_tribe != "Inclassé":
+            if any(other != p and latest_tribes.get(other, "Inclassé") == p_tribe for other in players):
+                player_tribe_games[p] += 1
+
+players_list = []
+for name, count in sorted(player_games.items(), key=lambda x: (-x[1], x[0])):
+    tribe = latest_tribes.get(name, "Inclassé")
+    if tribe != "Inclassé":
+        t_games = player_tribe_games[name]
+        loyalty_pct = round((t_games / count) * 100) if count > 0 else 0
+        loyalty_str = f"{loyalty_pct} %"
+        if loyalty_pct >= 70:
+            status = "Noyau"
+            status_style = "background:#2e7d32; color:#fff;"
+        elif loyalty_pct >= 40:
+            status = "Membre"
+            status_style = "background:#1565c0; color:#fff;"
+        else:
+            status = "Fragile"
+            status_style = "background:#c62828; color:#fff;"
+    else:
+        loyalty_str = "-"
+        status = "Nomade"
+        status_style = "background:#6c757d; color:#fff;"
+
+    players_list.append({
         "name": name,
         "games": count,
-        "tribe": daily_tribes.get(latest_date, {}).get(name, "Inclassé")
-    }
-    for name, count in sorted(player_games.items(), key=lambda x: (-x[1], x[0]))
-]
+        "tribe": tribe,
+        "loyalty": loyalty_str,
+        "status": status,
+        "status_style": status_style
+    })
 
 env = Environment(loader=FileSystemLoader("templates"))
 env.globals["config"] = config_data
@@ -169,4 +194,4 @@ with open(output_path, "w", encoding="utf-8") as f:
         tribes_json=json.dumps(daily_tribes, ensure_ascii=False)
     ))
 
-print(f"Génération réussie : {len(sorted_dates)} dates analysées.")
+print(f"Mise à jour terminée : {len(sorted_dates)} dates analysées.")
