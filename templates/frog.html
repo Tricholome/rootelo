@@ -40,7 +40,7 @@
     const snapshots = {{ snapshots_json | safe }};
     const availableDates = {{ dates_json | safe }};
     const TARGET_TRIBES = ["Tribe A", "Tribe B", "Tribe C"];
-    const UNALIGNED_LABEL = "Unaligned";
+    const UNALIGNED_LABEL = "-";
 
     $(document).ready(function () {
         if (!availableDates || availableDates.length === 0) return;
@@ -73,15 +73,18 @@
             }
 
             let bgColor = "#4a5568";
-            const baseStatus = scoreData.status.replace(" ⚓", "");
+            let tooltip = "";
 
-            if (baseStatus === "Core") bgColor = "#2e7d32";        // Dark Green
-            else if (baseStatus === "Loyalist") bgColor = "#1565c0";  // Blue
-            else if (baseStatus === "Affiliate") bgColor = "#d97706"; // Amber / Orange
-            else if (baseStatus === "Wavering") bgColor = "#c62828";  // Red
-
-            const isAnchor = scoreData.status.includes('⚓');
-            const tooltip = isAnchor ? 'title="Maintained in tribe by historical inertia"' : '';
+            if (scoreData.status === "Core") {
+                bgColor = "#2e7d32"; // Dark Green
+            } else if (scoreData.status === "Loyalist") {
+                bgColor = "#1565c0"; // Blue
+            } else if (scoreData.status === "Affiliate") {
+                bgColor = "#d97706"; // Amber / Orange
+            } else if (scoreData.status === "Wavering") {
+                bgColor = "#c62828";  // Red
+                tooltip = 'title="Maintained in tribe by historical inertia while leaning elsewhere"';
+            }
 
             return `${pctStr} <span style="background:${bgColor}; color:#fff; padding:2px 6px; border-radius:10px; font-size:0.75rem; font-weight:600;" ${tooltip}>${scoreData.status}</span>`;
         }
@@ -108,14 +111,10 @@
             $('#tribeSummary').html(summaryHtml);
 
             const newRows = snapshot.players.map(p => {
-                const mainTribeLabel = p.is_inertia 
-                    ? `${p.main_tribe} <span title="Maintained by historical inertia (Anchor)" style="cursor:help;">⚓</span>` 
-                    : p.main_tribe;
-
                 return [
                     p.name,
                     p.games,
-                    mainTribeLabel,
+                    p.main_tribe,
                     renderTribeCell(p.scores["Tribe A"]),
                     renderTribeCell(p.scores["Tribe B"]),
                     renderTribeCell(p.scores["Tribe C"])
