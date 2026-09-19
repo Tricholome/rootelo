@@ -13,9 +13,9 @@ from jinja2 import Environment, FileSystemLoader
 
 # --- 1. Noms et Limites des Tribus ---
 TARGET_TRIBES = ["Tribe A", "Tribe B", "Tribe C"]
-MIN_TRIBE_SIZE = 5          # Nb min de membres pour valider une communauté Louvain
-MIN_ACTIVE_MEMBERS = 3      # Nb min de membres pour conserver une tribu
-CORE_TOP_N = 3              # Nombre de piliers suivis par tribu (Core Anchoring)
+MIN_TRIBE_SIZE = 5        # Nb min de membres pour valider une communauté Louvain
+MIN_ACTIVE_MEMBERS = 3    # Nb min de membres pour conserver une tribu
+CORE_TOP_N = 3            # Nombre de piliers suivis par tribu (Core Anchoring)
 
 # --- 2. Graphe & Filtrage des Connexions ---
 MIN_PLAYER_GAMES_GRAPH = 3  # Nb min de parties d'un joueur pour entrer dans le graphe
@@ -23,15 +23,16 @@ MIN_JOINT_BASE = 2          # Nb min de parties communes (début de saison)
 MIN_JOINT_SLOPE = 3         # Facteur d'augmentation des parties communes en fin de saison
 MIN_COSINE_WEIGHT = 0.18    # Seuil minimal de similarité Cosinus pour lier deux joueurs dans G
 LOUVAIN_SEED = 42           # Graine de reproductibilité pour Louvain
+LOUVAIN_RESOLUTION = 1.5    # Résolution Louvain (isole les méga-communautés si > 1.0)
 
-# --- 3. Filtrage du Volume (Volume Guardrail Organique) ---
-TRIBE_MEDIAN_RATIO = 0.4    # Le joueur doit atteindre 40% du volume du joueur "médian" de la tribu
-MIN_GAMES_FLOOR = 3         # Plancher absolu en tout début de saison
+# --- 3. Filtrage du Volume (Volume Organique par Médiane) ---
+TRIBE_MEDIAN_RATIO = 0.4   # Un joueur doit atteindre 40% du volume médian de sa tribu
+MIN_GAMES_FLOOR = 3        # Plancher absolu en tout début de saison
 
 # --- 4. Seuils d'Affichage & Badges ---
-STATUS_CORE_PCT = 60        # Affinité >= 60 % -> Badge "Noyau"
-STATUS_MEMBER_PCT = 30      # Affinité >= 30 % -> Badge "Membre" (< 30 % -> "Fragile")
-DISPLAY_MIN_PCT = 10        # Affinité < 10 % -> Masqué ("-") dans le tableau
+STATUS_CORE_PCT = 60      # Affinité >= 60 % -> Badge "Noyau"
+STATUS_MEMBER_PCT = 30    # Affinité >= 30 % -> Badge "Membre" (< 30 % -> "Fragile")
+DISPLAY_MIN_PCT = 10      # Affinité < 10 % -> Masqué ("-") dans le tableau
 
 # --- 5. Fichiers et Chemins ---
 CONFIG_PATH = Path("data/config/config.json")
@@ -115,11 +116,13 @@ for date_idx, d in enumerate(sorted_dates):
             if weight >= MIN_COSINE_WEIGHT:
                 G.add_edge(p1, p2, weight=weight)
 
-    # ÉTAPE B : Détection Louvain et Core Anchoring
+    # ÉTAPE B : Détection Louvain et Core Anchoring (avec résolution isolée)
     raw_communities = []
     if G.number_of_nodes() > 0:
         try:
-            raw_communities = list(nx.community.louvain_communities(G, weight="weight", seed=LOUVAIN_SEED))
+            raw_communities = list(nx.community.louvain_communities(
+                G, weight="weight", resolution=LOUVAIN_RESOLUTION, seed=LOUVAIN_SEED
+            ))
         except Exception:
             pass
 
@@ -187,19 +190,14 @@ for date_idx, d in enumerate(sorted_dates):
     previous_cores = current_cores
     prev_assignments = current_assignments
 
-    # --- ÉTAPE D : Le Modèle "Noyau & Gravité" ---
+    # --- ÉTAPE D : Le Modèle "Noyau & Gravité Normalisée" ---
     
-    # 1. Calcul de l'Affinité Globale et du poids total
+    # 1. Calcul de l'Affinité Globale brute
     player_global_affinity = {p: Counter() for p in player_counts}
-    player_total_weight = {p: 0.0 for p in player_counts}
 
     for (p1, p2), joint_count in pair_counts.items():
         if p1 in active_players and p2 in active_players:
             weight = joint_count / math.sqrt(player_counts[p1] * player_counts[p2])
-            
-            # Poids total toutes paires confondues
-            player_total_weight[p1] += weight
-            player_total_weight[p2] += weight
 
             t1 = current_assignments.get(p1, "Inclassé")
             t2 = current_assignments.get(p2, "Inclassé")
@@ -207,18 +205,16 @@ for date_idx, d in enumerate(sorted_dates):
             if t2 in TARGET_TRIBES: player_global_affinity[p1][t2] += weight
             if t1 in TARGET_TRIBES: player_global_affinity[p2][t1] += weight
 
-    # 2. Seuils de volume dynamiques et organiques par tribu
+    # Récupération des tailles actuelles pour normaliser l'attraction
+    louvain_tribe_sizes = Counter(current_assignments.values())
+
+    # 2. Seuils de volume dynamiques basés sur la médiane de la tribu
     tribe_thresholds = {}
     for t in TARGET_TRIBES:
-        # On récupère TOUS les membres pré-assignés à cette tribu (pas juste le noyau)
         tribe_members = [p for p, tribe in current_assignments.items() if tribe == t]
-        
         if tribe_members:
-            # On extrait les volumes et on prend la médiane (le point d'équilibre de la tribu)
             tribe_volumes = [player_counts[p] for p in tribe_members]
             tribe_median = statistics.median(tribe_volumes)
-            
-            # Le seuil évolue doucement avec la masse des joueurs, pas avec les piliers
             tribe_thresholds[t] = max(MIN_GAMES_FLOOR, math.ceil(tribe_median * TRIBE_MEDIAN_RATIO))
         else:
             tribe_thresholds[t] = MIN_GAMES_FLOOR
@@ -226,34 +222,38 @@ for date_idx, d in enumerate(sorted_dates):
     tribe_summary = {t: 0 for t in TARGET_TRIBES + ["Inclassé"]}
     snapshot_players = []
 
-    # 3. Attribution Finale par Gravité
+    # 3. Attribution Finale par Gravité Normalisée
     for name, count in sorted(player_counts.items(), key=lambda x: (-x[1], x[0])):
         
-        # Dénominateur absolu
-        total_affinity = player_total_weight.get(name, 0.0)
+        normalized_affinities = {}
+        total_normalized = 0.0
+
+        # Normalisation : on divise par la taille de la tribu pour neutraliser l'effet de masse
+        for t in TARGET_TRIBES:
+            t_size = max(1, louvain_tribe_sizes.get(t, 1))
+            norm_aff = player_global_affinity[name][t] / t_size
+            normalized_affinities[t] = norm_aff
+            total_normalized += norm_aff
+            
         scores = {}
         for t in TARGET_TRIBES:
-            pct = round((player_global_affinity[name][t] / total_affinity) * 100) if total_affinity > 0 else 0
-            scores[t] = pct
+            if total_normalized > 0:
+                scores[t] = round((normalized_affinities[t] / total_normalized) * 100)
+            else:
+                scores[t] = 0
         
-        # Détermination de la tribu dominante mathématiquement
-        max_tribe = max(scores, key=scores.get) if total_affinity > 0 else "Inclassé"
+        max_tribe = max(scores, key=scores.get) if total_normalized > 0 else "Inclassé"
         max_pct = scores.get(max_tribe, 0)
 
-        # Est-il un pilier fondateur ?
         is_core = any(name in cores for cores in current_cores.values())
-
-        # On récupère l'exigence de volume spécifique à la tribu visée
         required_games = tribe_thresholds.get(max_tribe, MIN_GAMES_FLOOR)
 
         # L'ARBITRAGE IMPLACABLE
         if count < required_games:
             final_tribe = "Inclassé"
         elif is_core:
-            # Le noyau reste fidèle à Louvain, il EST la tribu
             final_tribe = current_assignments.get(name, "Inclassé")
         elif max_pct >= DISPLAY_MIN_PCT: 
-            # Les autres obéissent au pourcentage
             final_tribe = max_tribe 
         else:
             final_tribe = "Inclassé"
@@ -282,7 +282,6 @@ for date_idx, d in enumerate(sorted_dates):
             "scores": formatted_scores
         })
         
-    # CORRECTION 3 : Enregistrer la photo du jour dans l'historique global
     snapshots[d] = {
         "summary": tribe_summary,
         "players": snapshot_players
@@ -300,4 +299,4 @@ with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
         dates_json=json.dumps(sorted_dates, ensure_ascii=False)
     ))
 
-print(f"Analyse réussie : {len(sorted_dates)} dates calculées (Modèle Noyau & Gravité + Seuils Organiques).")
+print(f"Analyse réussie : {len(sorted_dates)} dates calculées (Résolution Louvain + Gravité Normalisée + Médiane).")
