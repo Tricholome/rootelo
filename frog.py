@@ -1,10 +1,6 @@
-import json
-import math
-from collections import Counter, defaultdict
-from itertools import combinations
-from pathlib import Path
 import networkx as nx
-from jinja2 import Environment, FileSystemLoader
+from collections import Counter
+from itertools import combinations
 
 # 1. Chargement des configurations et archives
 config_path = Path("data/config/config.json") if Path("data/config/config.json").exists() else Path("data/config.json")
@@ -33,90 +29,83 @@ for match in matches:
 
 sorted_dates = sorted(list(dates_set))
 
-# --- SECTION 3: ORGANIC TRIBE ENGINE (STICKY MEMBERSHIP & CREATION THRESHOLD) ---
+# --- SECTION 3: LOUVAIN PROGRESSIF & PERSISTANT ---
 ALLOWED_TRIBES = ["Tribe A", "Tribe B", "Tribe C", "Tribe D", "Tribe E"]
-MIN_PAIR_MATCHES = 2
-MIN_TRIBE_CREATION_SIZE = 4  # Seuil minimal: pas de tribu à 1 membre
-MAX_TRIBES = 5
+MIN_TRIBE_SIZE = 5     # Un cluster Louvain doit faire au moins 5 membres pour devenir une tribu
+MAX_LEAGUES = 5
 
-registered_tribes = []
-prev_assignments = {}
+registered_tribes = [] # Registre des tribus débloquées au fil de la saison
+prev_assignments = {}  # {player: tribe_name} au jour T-1
 daily_tribes = {}
 
-for current_date_str in sorted_dates:
-    cumulative_matches = [m for m in matches_data if m["date"] <= current_date_str]
+for d in sorted_dates:
+    cumulative_matches = [m for m in matches_data if m["date"] <= d]
     
-    player_matches = defaultdict(list)
+    # 1. Compter le nombre de parties simples et partagées
+    player_counts = Counter()
     pair_counts = Counter()
-    
-    for idx, m in enumerate(cumulative_matches):
+    for m in cumulative_matches:
         players = m["players"]
         for p in players:
-            player_matches[p].append(idx)
+            player_counts[p] += 1
         for p1, p2 in combinations(sorted(players), 2):
             pair_counts[(p1, p2)] += 1
 
-    # 1. RÈGLE D'INERTIE: On garde les affectations de la veille (Jamais de retour en Inclassé)
-    current_assignments = dict(prev_assignments)
+    # 2. Construction du graphe (poids = nombre de matchs ensemble)
+    G = nx.Graph()
+    for (p1, p2), w in pair_counts.items():
+        G.add_edge(p1, p2, weight=w)
 
-    # 2. Graphe des interactions fortes (>= 2 matchs ensemble)
-    G_core = nx.Graph()
-    for (p1, p2), count in pair_counts.items():
-        if count >= MIN_PAIR_MATCHES:
-            G_core.add_edge(p1, p2)
+    current_assignments = {}
 
-    # 3. Détection des noyaux fondateurs (Cliques >= 4 joueurs unassigned)
-    cliques = [set(c) for c in nx.find_cliques(G_core) if len(c) >= MIN_TRIBE_CREATION_SIZE]
-    cliques.sort(key=len, reverse=True)
+    if G.number_of_nodes() > 0:
+        # 3. Algorithme de Louvain
+        try:
+            raw_communities = list(nx.community.louvain_communities(G, weight="weight", seed=42))
+        except Exception:
+            raw_communities = []
 
-    # Création d'une NOUVELLE tribu uniquement si 4+ joueurs Inclassés forment un noyau
-    if len(registered_tribes) < MAX_TRIBES:
-        for clique in cliques:
-            unassigned_in_clique = [p for p in clique if current_assignments.get(p, "Inclassé") == "Inclassé"]
-            if len(unassigned_in_clique) >= MIN_TRIBE_CREATION_SIZE and len(registered_tribes) < MAX_TRIBES:
-                new_tribe = ALLOWED_TRIBES[len(registered_tribes)]
-                registered_tribes.append(new_tribe)
-                for p in unassigned_in_clique:
-                    current_assignments[p] = new_tribe
+        # Ne retenir que les clusters significatifs (>= 5 joueurs)
+        valid_communities = [c for c in raw_communities if len(c) >= MIN_TRIBE_SIZE]
 
-    # 4. CONFLIT DE LOYAUTÉ ET RECRUTEMENT (> 50% des matchs)
-    known_members = {p: t for p, t in current_assignments.items() if t != "Inclassé"}
-    
-    for p, match_indices in player_matches.items():
-        total_games = len(match_indices)
-        if total_games < 3:
-            continue
+        # 4. Association avec les tribus existantes (Continuité historique)
+        claimed_today = set()
+        unassigned_communities = []
 
-        tribe_match_counts = Counter()
-        for idx in match_indices:
-            m_players = cumulative_matches[idx]["players"]
-            match_tribes = {known_members[other] for other in m_players if other != p and other in known_members}
-            for t in match_tribes:
-                tribe_match_counts[t] += 1
+        for comm in valid_communities:
+            history_counts = Counter(
+                prev_assignments.get(p)
+                for p in comm
+                if prev_assignments.get(p) in registered_tribes
+            )
+            valid_history = {t: cnt for t, cnt in history_counts.items() if t not in claimed_today}
 
-        if not tribe_match_counts:
-            continue
+            if valid_history:
+                # Le cluster reprend la tribu historique avec laquelle il a le plus d'affinité
+                assigned_tribe = max(valid_history, key=valid_history.get)
+                claimed_today.add(assigned_tribe)
+                for p in comm:
+                    current_assignments[p] = assigned_tribe
+            else:
+                unassigned_communities.append(comm)
 
-        best_tribe, best_count = tribe_match_counts.most_common(1)[0]
-        current_tribe = current_assignments.get(p, "Inclassé")
+        # 5. Déverrouillage progressif de nouvelles tribus (1 par 1 au fil des semaines)
+        unassigned_communities.sort(key=len, reverse=True)
+        for comm in unassigned_communities:
+            if len(registered_tribes) < MAX_LEAGUES:
+                new_tribe_name = ALLOWED_TRIBES[len(registered_tribes)]
+                registered_tribes.append(new_tribe_name)
+                claimed_today.add(new_tribe_name)
+                for p in comm:
+                    current_assignments[p] = new_tribe_name
 
-        # CAS A: Un joueur Inclassé rejoint une tribu
-        if current_tribe == "Inclassé":
-            if best_count >= 2 and (best_count / total_games) > 0.50:
-                current_assignments[p] = best_tribe
-
-        # CAS B: Conflit de loyauté (Changement de tribu si la nouvelle domine > 50%)
-        elif current_tribe != best_tribe:
-            if best_count >= 3 and (best_count / total_games) > 0.50:
-                current_assignments[p] = best_tribe
-
-    # 5. Valeur par défaut pour les joueurs actifs sans tribu
-    for p in player_matches:
+    # 6. Tous les joueurs hors des grands clusters Louvain restent "Inclassé"
+    for p in player_counts:
         if p not in current_assignments:
             current_assignments[p] = "Inclassé"
 
     prev_assignments = current_assignments
-    daily_tribes[current_date_str] = current_assignments
+    daily_tribes[d] = current_assignments
 
 # 4. Génération de la page HTML via Jinja2
 player_games = Counter(p for m in matches_data for p in m["players"])
