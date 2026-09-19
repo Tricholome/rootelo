@@ -44,7 +44,11 @@
                             {{ t.status }}
                         </span>
                     {% else %}
-                        <span style="color: #a0aec0;">-</span>
+                        {% if t.pct_str != "-" %}
+                            <span style="font-weight: 600;">{{ t.pct_str }}</span>
+                        {% else %}
+                            <span style="color: #a0aec0;">-</span>
+                        {% endif %}
                     {% endif %}
                 </td>
                 {% endfor %}
@@ -130,6 +134,17 @@
                 });
             });
 
+            // Calcul dynamique du seuil par la médiane à la date choisie
+            const sortedCounts = Object.values(playerGames).sort((a, b) => a - b);
+            let globalMedian = 0;
+            if (sortedCounts.length > 0) {
+                const mid = Math.floor(sortedCounts.length / 2);
+                globalMedian = sortedCounts.length % 2 !== 0 
+                    ? sortedCounts[mid] 
+                    : (sortedCounts[mid - 1] + sortedCounts[mid]) / 2;
+            }
+            const minGamesTribe = Math.max(3, Math.ceil(globalMedian * 0.30));
+
             const tribeCounts = {};
 
             const newRows = Object.entries(playerGames).map(([name, games]) => {
@@ -151,9 +166,11 @@
                     }
                 });
 
-                // Règle de réattribution
+                // Garde-fou de volume + arbitrage JS
                 let finalTribe = louvainTribe;
-                if (louvainTribe === 'Inclassé') {
+                if (games < minGamesTribe) {
+                    finalTribe = 'Inclassé';
+                } else if (louvainTribe === 'Inclassé') {
                     if (maxPct >= 30) {
                         finalTribe = maxTribe;
                     }
