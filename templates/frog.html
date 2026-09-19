@@ -29,31 +29,7 @@
             </tr>
         </thead>
         <tbody>
-            {% for player in players %}
-            <tr>
-                <td>{{ player.name }}</td>
-                <td>{{ player.games }}</td>
-                <td>{{ player.tribe }}</td>
-                
-                {% for tribe_name in ["Tribe A", "Tribe B", "Tribe C"] %}
-                {% set t = player.scores[tribe_name] %}
-                <td>
-                    {% if t.status %}
-                        <span style="font-weight: 600; margin-right: 4px;">{{ t.pct_str }}</span>
-                        <span style="padding: 2px 6px; border-radius: 10px; font-size: 0.75rem; font-weight: 600; {{ t.style }}">
-                            {{ t.status }}
-                        </span>
-                    {% else %}
-                        {% if t.pct_str != "-" %}
-                            <span style="font-weight: 600;">{{ t.pct_str }}</span>
-                        {% else %}
-                            <span style="color: #a0aec0;">-</span>
-                        {% endif %}
-                    {% endif %}
-                </td>
-                {% endfor %}
-            </tr>
-            {% endfor %}
+            <!-- Le corps du tableau est laissé vide, JS fera le premier rendu pour éviter de dupliquer la logique d'affichage -->
         </tbody>
     </table>
 </div>
@@ -61,9 +37,9 @@
 
 {% block custom_js %}
 <script>
-    const matchesData = {{ matches_json | safe }};
+    // Le Python envoie un JSON structuré par date avec tout le travail prémâché.
+    const snapshots = {{ snapshots_json | safe }};
     const availableDates = {{ dates_json | safe }};
-    const tribesData = {{ tribes_json | safe }};
     const TARGET_TRIBES = ["Tribe A", "Tribe B", "Tribe C"];
 
     $(document).ready(function () {
@@ -85,124 +61,39 @@
 
         let currentIndex = availableDates.length - 1;
 
-        function renderTribeCell(pct, isMainTribe) {
-            if (pct < 10) {
+        // Fonction de rendu purement esthétique (aucune logique mathématique)
+        function renderTribeCell(scoreData) {
+            if (!scoreData || scoreData.pct < 10) {
                 return `<span style="color:#a0aec0;">-</span>`;
             }
-            const pctStr = `<span style="font-weight:600; margin-right:4px;">${pct} %</span>`;
-            if (!isMainTribe) {
-                return pctStr;
+            
+            const pctStr = `<span style="font-weight:600; margin-right:4px;">${scoreData.pct} %</span>`;
+            
+            if (!scoreData.status) {
+                return pctStr; // Joueur occasionnel dans cette tribu
             }
 
-            if (pct >= 60) {
-                return `${pctStr} <span style="background:#2e7d32; color:#fff; padding:2px 6px; border-radius:10px; font-size:0.75rem; font-weight:600;">Noyau</span>`;
-            } else if (pct >= 30) {
-                return `${pctStr} <span style="background:#1565c0; color:#fff; padding:2px 6px; border-radius:10px; font-size:0.75rem; font-weight:600;">Membre</span>`;
-            } else {
-                return `${pctStr} <span style="background:#c62828; color:#fff; padding:2px 6px; border-radius:10px; font-size:0.75rem; font-weight:600;">Fragile</span>`;
-            }
+            // Couleurs basées sur le statut calculé par Python
+            let bgColor = "#c62828"; // Fragile par défaut
+            if (scoreData.status === "Noyau") bgColor = "#2e7d32";
+            if (scoreData.status === "Membre") bgColor = "#1565c0";
+
+            return `${pctStr} <span style="background:${bgColor}; color:#fff; padding:2px 6px; border-radius:10px; font-size:0.75rem; font-weight:600;">${scoreData.status}</span>`;
         }
 
         function updateTableForDate(selectedDate) {
             $datePicker.val(selectedDate);
+            const snapshot = snapshots[selectedDate];
+            if (!snapshot) return;
 
-            const playerGames = {};
-            const playerLoyaltySum = {};
-            const dateTribes = tribesData[selectedDate] || {};
-
-            const filteredMatches = matchesData.filter(m => m.date <= selectedDate);
-
-            filteredMatches.forEach(match => {
-                const players = match.players;
-                const nPlayers = players.length;
-                if (nPlayers <= 1) return;
-
-                players.forEach(p => {
-                    playerGames[p] = (playerGames[p] || 0) + 1;
-                    if (!playerLoyaltySum[p]) {
-                        playerLoyaltySum[p] = { "Tribe A": 0, "Tribe B": 0, "Tribe C": 0 };
-                    }
-
-                    players.forEach(other => {
-                        if (other !== p) {
-                            const otherTribe = dateTribes[other] || 'Inclassé';
-                            if (TARGET_TRIBES.includes(otherTribe)) {
-                                playerLoyaltySum[p][otherTribe] += 1 / (nPlayers - 1);
-                            }
-                        }
-                    });
-                });
-            });
-
-            // Calcul dynamique du seuil par la médiane à la date choisie
-            const sortedCounts = Object.values(playerGames).sort((a, b) => a - b);
-            let globalMedian = 0;
-            if (sortedCounts.length > 0) {
-                const mid = Math.floor(sortedCounts.length / 2);
-                globalMedian = sortedCounts.length % 2 !== 0 
-                    ? sortedCounts[mid] 
-                    : (sortedCounts[mid - 1] + sortedCounts[mid]) / 2;
-            }
-            const minGamesTribe = Math.max(3, Math.ceil(globalMedian * 0.30));
-
-            const tribeCounts = {};
-
-            const newRows = Object.entries(playerGames).map(([name, games]) => {
-                const louvainTribe = dateTribes[name] || 'Inclassé';
-                const pSums = playerLoyaltySum[name] || { "Tribe A": 0, "Tribe B": 0, "Tribe C": 0 };
-                
-                const scores = {
-                    "Tribe A": Math.round(((pSums["Tribe A"] || 0) / games) * 100),
-                    "Tribe B": Math.round(((pSums["Tribe B"] || 0) / games) * 100),
-                    "Tribe C": Math.round(((pSums["Tribe C"] || 0) / games) * 100)
-                };
-
-                let maxTribe = null;
-                let maxPct = -1;
-                TARGET_TRIBES.forEach(t => {
-                    if (scores[t] > maxPct) {
-                        maxPct = scores[t];
-                        maxTribe = t;
-                    }
-                });
-
-                // Garde-fou de volume + arbitrage JS
-                let finalTribe = louvainTribe;
-                if (games < minGamesTribe) {
-                    finalTribe = 'Inclassé';
-                } else if (louvainTribe === 'Inclassé') {
-                    if (maxPct >= 30) {
-                        finalTribe = maxTribe;
-                    }
-                } else {
-                    const louvainPct = scores[louvainTribe] || 0;
-                    if (maxTribe && maxTribe !== louvainTribe && maxPct > louvainPct) {
-                        if (maxPct >= 30) {
-                            finalTribe = maxTribe;
-                        } else {
-                            finalTribe = 'Inclassé';
-                        }
-                    }
-                }
-
-                tribeCounts[finalTribe] = (tribeCounts[finalTribe] || 0) + 1;
-
-                const cellA = renderTribeCell(scores["Tribe A"], finalTribe === "Tribe A");
-                const cellB = renderTribeCell(scores["Tribe B"], finalTribe === "Tribe B");
-                const cellC = renderTribeCell(scores["Tribe C"], finalTribe === "Tribe C");
-
-                return [name, games, finalTribe, cellA, cellB, cellC];
-            });
-
-            // Badges de résumé
+            // 1. Rendu des badges de résumé (données fournies par Python)
             const tribeOrder = ["Tribe A", "Tribe B", "Tribe C", "Inclassé"];
             let summaryHtml = "";
 
             tribeOrder.forEach(tribe => {
-                const count = tribeCounts[tribe] || 0;
+                const count = snapshot.summary[tribe] || 0;
                 if (count > 0 || tribe === "Inclassé") {
-                    const isUnclassified = tribe === "Inclassé";
-                    const bgColor = isUnclassified ? '#4a5568' : '#2e7d32';
+                    const bgColor = tribe === "Inclassé" ? '#4a5568' : '#2e7d32';
                     summaryHtml += `
                         <span style="background-color: ${bgColor}; color: #ffffff; padding: 6px 14px; border-radius: 20px; font-weight: 600; font-size: 0.88rem; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.15);">
                             <span>${tribe}</span>
@@ -210,13 +101,25 @@
                         </span>`;
                 }
             });
-
             $('#tribeSummary').html(summaryHtml);
+
+            // 2. Construction des lignes du tableau
+            const newRows = snapshot.players.map(p => {
+                return [
+                    p.name,
+                    p.games,
+                    p.main_tribe,
+                    renderTribeCell(p.scores["Tribe A"]),
+                    renderTribeCell(p.scores["Tribe B"]),
+                    renderTribeCell(p.scores["Tribe C"])
+                ];
+            });
 
             table.clear();
             table.rows.add(newRows);
             table.draw();
 
+            // Gestion de l'état des boutons
             $prevBtn.prop('disabled', currentIndex <= 0);$nextBtn.prop('disabled', currentIndex >= availableDates.length - 1);
         }
 
@@ -227,6 +130,7 @@
             }
         }
 
+        // Événements
         $prevBtn.on('click', () => setDateByIndex(currentIndex - 1));
         $nextBtn.on('click', () => setDateByIndex(currentIndex + 1));$latestBtn.on('click', () => setDateByIndex(availableDates.length - 1));
 
@@ -237,6 +141,7 @@
             updateTableForDate(availableDates[currentIndex]);
         });
 
+        // Initialisation avec le dernier jour
         setDateByIndex(currentIndex);
     });
 </script>
