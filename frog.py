@@ -147,31 +147,41 @@ for date_idx, d in enumerate(sorted_dates):
     prev_assignments = current_assignments
     daily_tribes[d] = current_assignments
 
-# 4. Calcul de la loyauté et préparation Jinja2
+# 4. Calcul de la loyauté pondérée par la taille de la table
 player_games = Counter(p for m in matches_data for p in m["players"])
 latest_date = sorted_dates[-1] if sorted_dates else ""
 latest_tribes = daily_tribes.get(latest_date, {})
 
-player_tribe_games = Counter()
+player_loyalty_sum = Counter()
+
 for m in matches_data:
     players = m["players"]
+    n_players = len(players)
+    if n_players <= 1:
+        continue
+        
     for p in players:
         p_tribe = latest_tribes.get(p, "Inclassé")
         if p_tribe != "Inclassé":
-            if any(other != p and latest_tribes.get(other, "Inclassé") == p_tribe for other in players):
-                player_tribe_games[p] += 1
+            same_tribe_count = sum(
+                1 for other in players 
+                if other != p and latest_tribes.get(other, "Inclassé") == p_tribe
+            )
+            # Densité de la tribu sur la table (hors joueur lui-même)
+            player_loyalty_sum[p] += same_tribe_count / (n_players - 1)
 
 players_list = []
 for name, count in sorted(player_games.items(), key=lambda x: (-x[1], x[0])):
     tribe = latest_tribes.get(name, "Inclassé")
     if tribe != "Inclassé":
-        t_games = player_tribe_games[name]
-        loyalty_pct = round((t_games / count) * 100) if count > 0 else 0
+        loyalty_score = player_loyalty_sum[name] / count if count > 0 else 0
+        loyalty_pct = round(loyalty_score * 100)
         loyalty_str = f"{loyalty_pct} %"
-        if loyalty_pct >= 70:
+        
+        if loyalty_pct >= 60:
             status = "Noyau"
             status_style = "background:#2e7d32; color:#fff;"
-        elif loyalty_pct >= 40:
+        elif loyalty_pct >= 30:
             status = "Membre"
             status_style = "background:#1565c0; color:#fff;"
         else:
