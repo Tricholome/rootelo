@@ -189,13 +189,18 @@ for date_idx, d in enumerate(sorted_dates):
 
     # --- ÉTAPE D : Le Modèle "Noyau & Gravité" ---
     
-    # 1. Calcul de l'Affinité Globale sur la base des suggestions Louvain
+    # 1. Calcul de l'Affinité Globale et du poids total
     player_global_affinity = {p: Counter() for p in player_counts}
+    player_total_weight = {p: 0.0 for p in player_counts}
+
     for (p1, p2), joint_count in pair_counts.items():
         if p1 in active_players and p2 in active_players:
             weight = joint_count / math.sqrt(player_counts[p1] * player_counts[p2])
             
-            # On utilise l'assignation topologique comme champ magnétique
+            # Poids total toutes paires confondues
+            player_total_weight[p1] += weight
+            player_total_weight[p2] += weight
+
             t1 = current_assignments.get(p1, "Inclassé")
             t2 = current_assignments.get(p2, "Inclassé")
             
@@ -213,13 +218,13 @@ for date_idx, d in enumerate(sorted_dates):
     # 3. Attribution Finale par Gravité
     for name, count in sorted(player_counts.items(), key=lambda x: (-x[1], x[0])):
         
-        # Calcul des pourcentages d'affinité
-        total_affinity = sum(player_global_affinity[name].values())
+        # Dénominateur absolu
+        total_affinity = player_total_weight.get(name, 0.0)
         scores = {}
         for t in TARGET_TRIBES:
             pct = round((player_global_affinity[name][t] / total_affinity) * 100) if total_affinity > 0 else 0
             scores[t] = pct
-
+        
         # Détermination de la tribu dominante mathématiquement
         max_tribe = max(scores, key=scores.get) if total_affinity > 0 else "Inclassé"
         max_pct = scores.get(max_tribe, 0)
