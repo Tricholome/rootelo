@@ -42,9 +42,10 @@ for match in matches:
 sorted_dates = sorted(list(dates_set))
 
 # 3. Moteur Louvain progressif à sévérité dynamique & persistance
-ALLOWED_TRIBES = ["Tribe A", "Tribe B", "Tribe C", "Tribe D", "Tribe E"]
-MIN_TRIBE_SIZE = 5     # Taille minimale d'un cluster pour former/rejoindre une tribu
-MAX_LEAGUES = 5
+ALLOWED_TRIBES = ["Tribe A", "Tribe B", "Tribe C"]
+MIN_TRIBE_SIZE = 5     # Taille min. d'un cluster Louvain pour débloquer/revendiquer une tribu
+MIN_ACTIVE_MEMBERS = 3 # Nombre min. de membres pour qu'une tribu reste active
+MAX_LEAGUES = 3
 
 registered_tribes = [] # Registre permanent des tribus débloquées
 prev_assignments = {}  # Historique à T-1 {player: tribe_name}
@@ -127,11 +128,17 @@ for date_idx, d in enumerate(sorted_dates):
     for p in player_counts:
         if p not in current_assignments:
             prev_tribe = prev_assignments.get(p)
-            # Un joueur déjà membre d'une tribu enregistrée conserve son appartenance
             if prev_tribe in registered_tribes:
                 current_assignments[p] = prev_tribe
             else:
                 current_assignments[p] = "Inclassé"
+
+    # Sécurité anti-tribu fantôme : si une tribu compte < 3 membres aujourd'hui,
+    # ses membres isolés repassent Inclassé
+    active_tribe_counts = Counter(current_assignments.values())
+    for p, tribe in list(current_assignments.items()):
+        if tribe in registered_tribes and active_tribe_counts[tribe] < MIN_ACTIVE_MEMBERS:
+            current_assignments[p] = "Inclassé"
 
     prev_assignments = current_assignments
     daily_tribes[d] = current_assignments
