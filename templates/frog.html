@@ -22,9 +22,10 @@
             <tr>
                 <th>Player</th>
                 <th>Games</th>
-                <th>Tribe</th>
-                <th>Loyalty</th>
-                <th>Status</th>
+                <th>Main Tribe</th>
+                <th>Tribe A</th>
+                <th>Tribe B</th>
+                <th>Tribe C</th>
             </tr>
         </thead>
         <tbody>
@@ -33,12 +34,20 @@
                 <td>{{ player.name }}</td>
                 <td>{{ player.games }}</td>
                 <td>{{ player.tribe }}</td>
-                <td>{{ player.loyalty }}</td>
+                
+                {% for tribe_name in ["Tribe A", "Tribe B", "Tribe C"] %}
+                {% set t = player.scores[tribe_name] %}
                 <td>
-                    <span style="padding: 3px 8px; border-radius: 12px; font-size: 0.8rem; font-weight: 600; {{ player.status_style }}">
-                        {{ player.status }}
-                    </span>
+                    {% if t.status %}
+                        <span style="font-weight: 600; margin-right: 4px;">{{ t.pct_str }}</span>
+                        <span style="padding: 2px 6px; border-radius: 10px; font-size: 0.75rem; font-weight: 600; {{ t.style }}">
+                            {{ t.status }}
+                        </span>
+                    {% else %}
+                        <span style="color: #a0aec0;">-</span>
+                    {% endif %}
                 </td>
+                {% endfor %}
             </tr>
             {% endfor %}
         </tbody>
@@ -51,6 +60,7 @@
     const matchesData = {{ matches_json | safe }};
     const availableDates = {{ dates_json | safe }};
     const tribesData = {{ tribes_json | safe }};
+    const TARGET_TRIBES = ["Tribe A", "Tribe B", "Tribe C"];
 
     $(document).ready(function () {
         if (!availableDates || availableDates.length === 0) return;
@@ -71,6 +81,18 @@
 
         let currentIndex = availableDates.length - 1;
 
+        function renderTribeCell(pct) {
+            if (pct >= 60) {
+                return `<span style="font-weight:600; margin-right:4px;">${pct} %</span> <span style="background:#2e7d32; color:#fff; padding:2px 6px; border-radius:10px; font-size:0.75rem; font-weight:600;">Noyau</span>`;
+            } else if (pct >= 30) {
+                return `<span style="font-weight:600; margin-right:4px;">${pct} %</span> <span style="background:#1565c0; color:#fff; padding:2px 6px; border-radius:10px; font-size:0.75rem; font-weight:600;">Membre</span>`;
+            } else if (pct >= 10) {
+                return `<span style="font-weight:600; margin-right:4px;">${pct} %</span> <span style="background:#c62828; color:#fff; padding:2px 6px; border-radius:10px; font-size:0.75rem; font-weight:600;">Fragile</span>`;
+            } else {
+                return `<span style="color:#a0aec0;">-</span>`;
+            }
+        }
+
         function updateTableForDate(selectedDate) {
             $datePicker.val(selectedDate);
 
@@ -87,46 +109,37 @@
 
                 players.forEach(p => {
                     playerGames[p] = (playerGames[p] || 0) + 1;
-                    
-                    const pTribe = dateTribes[p] || 'Inclassé';
-                    if (pTribe !== 'Inclassé') {
-                        const sameTribeCount = players.filter(
-                            other => other !== p && (dateTribes[other] || 'Inclassé') === pTribe
-                        ).length;
-                        
-                        const matchRatio = sameTribeCount / (nPlayers - 1);
-                        playerLoyaltySum[p] = (playerLoyaltySum[p] || 0) + matchRatio;
+                    if (!playerLoyaltySum[p]) {
+                        playerLoyaltySum[p] = { "Tribe A": 0, "Tribe B": 0, "Tribe C": 0 };
                     }
+
+                    players.forEach(other => {
+                        if (other !== p) {
+                            const otherTribe = dateTribes[other] || 'Inclassé';
+                            if (TARGET_TRIBES.includes(otherTribe)) {
+                                playerLoyaltySum[p][otherTribe] += 1 / (nPlayers - 1);
+                            }
+                        }
+                    });
                 });
             });
 
             const tribeCounts = {};
 
             const newRows = Object.entries(playerGames).map(([name, games]) => {
-                const tribe = dateTribes[name] || 'Inclassé';
-                tribeCounts[tribe] = (tribeCounts[tribe] || 0) + 1;
+                const mainTribe = dateTribes[name] || 'Inclassé';
+                tribeCounts[mainTribe] = (tribeCounts[mainTribe] || 0) + 1;
 
-                let loyaltyStr = '-';
-                let statusBadge = '<span style="background:#6c757d; color:#fff; padding:3px 8px; border-radius:12px; font-size:0.8rem;">Nomade</span>';
+                const pSums = playerLoyaltySum[name] || { "Tribe A": 0, "Tribe B": 0, "Tribe C": 0 };
+                
+                const cellA = renderTribeCell(Math.round((pSums["Tribe A"] / games) * 100));
+                const cellB = renderTribeCell(Math.round((pSums["Tribe B"] / games) * 100));
+                const cellC = renderTribeCell(Math.round((pSums["Tribe C"] / games) * 100));
 
-                if (tribe !== 'Inclassé') {
-                    const loyaltyScore = (playerLoyaltySum[name] || 0) / games;
-                    const loyaltyPct = Math.round(loyaltyScore * 100);
-                    loyaltyStr = `${loyaltyPct} %`;
-
-                    if (loyaltyPct >= 60) {
-                        statusBadge = '<span style="background:#2e7d32; color:#fff; padding:3px 8px; border-radius:12px; font-size:0.8rem; font-weight:600;">Noyau</span>';
-                    } else if (loyaltyPct >= 30) {
-                        statusBadge = '<span style="background:#1565c0; color:#fff; padding:3px 8px; border-radius:12px; font-size:0.8rem; font-weight:600;">Membre</span>';
-                    } else {
-                        statusBadge = '<span style="background:#c62828; color:#fff; padding:3px 8px; border-radius:12px; font-size:0.8rem; font-weight:600;">Fragile</span>';
-                    }
-                }
-
-                return [name, games, tribe, loyaltyStr, statusBadge];
+                return [name, games, mainTribe, cellA, cellB, cellC];
             });
 
-            // Génération dynamique des badges de décompte des tribus
+            // Badges de résumé
             const tribeOrder = ["Tribe A", "Tribe B", "Tribe C", "Inclassé"];
             let summaryHtml = "";
 
@@ -145,7 +158,6 @@
 
             $('#tribeSummary').html(summaryHtml);
 
-            // Mise à jour de DataTables
             table.clear();
             table.rows.add(newRows);
             table.draw();
@@ -166,11 +178,7 @@
         $datePicker.on('change', function () {
             const val = $(this).val();
             let matchIdx = availableDates.findIndex(d => d >= val);
-            if (matchIdx !== -1) {
-                currentIndex = matchIdx;
-            } else {
-                currentIndex = availableDates.length - 1;
-            }
+            currentIndex = matchIdx !== -1 ? matchIdx : availableDates.length - 1;
             updateTableForDate(availableDates[currentIndex]);
         });
 
