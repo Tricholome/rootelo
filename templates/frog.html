@@ -2,19 +2,19 @@
 
 {% block content %}
 <div class="codex-section">	
-    <h2>Welcome, frogs!</h2>
+    <h2>Welcome, Frogs!</h2>
 
-    <!-- Contrôles du sélecteur de date -->
+    <!-- Date selector controls -->
     <div class="date-controls" style="display: flex; align-items: center; justify-content: center; gap: 10px; margin: 20px 0;">
-        <button id="prevDateBtn" class="btn">&laquo; Jour précédent</button>
+        <button id="prevDateBtn" class="btn">&laquo; Previous Day</button>
         <input type="date" id="datePicker" style="padding: 6px 12px; font-size: 1rem;">
-        <button id="nextDateBtn" class="btn">Jour suivant &raquo;</button>
-        <button id="latestDateBtn" class="btn">Dernier jour</button>
+        <button id="nextDateBtn" class="btn">Next Day &raquo;</button>
+        <button id="latestDateBtn" class="btn">Latest Date</button>
     </div>
 
-    <!-- Compteurs de tribus dynamiques -->
+    <!-- Dynamic tribe counters -->
     <div id="tribeSummary" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin: 15px 0 25px 0;">
-        <!-- Généré dynamiquement en JS -->
+        <!-- Generated dynamically in JS -->
     </div>
 
     <table id="frogTable" class="display nowrap" style="width:100%">
@@ -29,7 +29,7 @@
             </tr>
         </thead>
         <tbody>
-            <!-- Le corps du tableau est laissé vide, JS fera le premier rendu pour éviter de dupliquer la logique d'affichage -->
+            <!-- Table body populated dynamically by JS -->
         </tbody>
     </table>
 </div>
@@ -37,10 +37,10 @@
 
 {% block custom_js %}
 <script>
-    // Le Python envoie un JSON structuré par date avec tout le travail prémâché.
     const snapshots = {{ snapshots_json | safe }};
     const availableDates = {{ dates_json | safe }};
     const TARGET_TRIBES = ["Tribe A", "Tribe B", "Tribe C"];
+    const UNALIGNED_LABEL = "Unaligned";
 
     $(document).ready(function () {
         if (!availableDates || availableDates.length === 0) return;
@@ -61,7 +61,6 @@
 
         let currentIndex = availableDates.length - 1;
 
-        // Fonction de rendu purement esthétique (aucune logique mathématique)
         function renderTribeCell(scoreData) {
             if (!scoreData || scoreData.pct < 10) {
                 return `<span style="color:#a0aec0;">-</span>`;
@@ -70,15 +69,21 @@
             const pctStr = `<span style="font-weight:600; margin-right:4px;">${scoreData.pct} %</span>`;
             
             if (!scoreData.status) {
-                return pctStr; // Joueur occasionnel dans cette tribu
+                return pctStr;
             }
 
-            // Couleurs basées sur le statut calculé par Python
-            let bgColor = "#c62828"; // Fragile par défaut
-            if (scoreData.status === "Noyau") bgColor = "#2e7d32";
-            if (scoreData.status === "Membre") bgColor = "#1565c0";
+            let bgColor = "#4a5568";
+            const baseStatus = scoreData.status.replace(" ⚓", "");
 
-            return `${pctStr} <span style="background:${bgColor}; color:#fff; padding:2px 6px; border-radius:10px; font-size:0.75rem; font-weight:600;">${scoreData.status}</span>`;
+            if (baseStatus === "Core") bgColor = "#2e7d32";        // Dark Green
+            else if (baseStatus === "Loyalist") bgColor = "#1565c0";  // Blue
+            else if (baseStatus === "Affiliate") bgColor = "#d97706"; // Amber / Orange
+            else if (baseStatus === "Wavering") bgColor = "#c62828";  // Red
+
+            const isAnchor = scoreData.status.includes('⚓');
+            const tooltip = isAnchor ? 'title="Maintained in tribe by historical inertia"' : '';
+
+            return `${pctStr} <span style="background:${bgColor}; color:#fff; padding:2px 6px; border-radius:10px; font-size:0.75rem; font-weight:600;" ${tooltip}>${scoreData.status}</span>`;
         }
 
         function updateTableForDate(selectedDate) {
@@ -86,14 +91,13 @@
             const snapshot = snapshots[selectedDate];
             if (!snapshot) return;
 
-            // 1. Rendu des badges de résumé (données fournies par Python)
-            const tribeOrder = ["Tribe A", "Tribe B", "Tribe C", "Inclassé"];
+            const tribeOrder = ["Tribe A", "Tribe B", "Tribe C", UNALIGNED_LABEL];
             let summaryHtml = "";
 
             tribeOrder.forEach(tribe => {
                 const count = snapshot.summary[tribe] || 0;
-                if (count > 0 || tribe === "Inclassé") {
-                    const bgColor = tribe === "Inclassé" ? '#4a5568' : '#2e7d32';
+                if (count > 0 || tribe === UNALIGNED_LABEL) {
+                    const bgColor = tribe === UNALIGNED_LABEL ? '#4a5568' : '#2e7d32';
                     summaryHtml += `
                         <span style="background-color: ${bgColor}; color: #ffffff; padding: 6px 14px; border-radius: 20px; font-weight: 600; font-size: 0.88rem; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.15);">
                             <span>${tribe}</span>
@@ -103,12 +107,15 @@
             });
             $('#tribeSummary').html(summaryHtml);
 
-            // 2. Construction des lignes du tableau
             const newRows = snapshot.players.map(p => {
+                const mainTribeLabel = p.is_inertia 
+                    ? `${p.main_tribe} <span title="Maintained by historical inertia (Anchor)" style="cursor:help;">⚓</span>` 
+                    : p.main_tribe;
+
                 return [
                     p.name,
                     p.games,
-                    p.main_tribe,
+                    mainTribeLabel,
                     renderTribeCell(p.scores["Tribe A"]),
                     renderTribeCell(p.scores["Tribe B"]),
                     renderTribeCell(p.scores["Tribe C"])
@@ -119,7 +126,6 @@
             table.rows.add(newRows);
             table.draw();
 
-            // Gestion de l'état des boutons
             $prevBtn.prop('disabled', currentIndex <= 0);$nextBtn.prop('disabled', currentIndex >= availableDates.length - 1);
         }
 
@@ -130,7 +136,6 @@
             }
         }
 
-        // Événements
         $prevBtn.on('click', () => setDateByIndex(currentIndex - 1));
         $nextBtn.on('click', () => setDateByIndex(currentIndex + 1));$latestBtn.on('click', () => setDateByIndex(availableDates.length - 1));
 
@@ -141,7 +146,6 @@
             updateTableForDate(availableDates[currentIndex]);
         });
 
-        // Initialisation avec le dernier jour
         setDateByIndex(currentIndex);
     });
 </script>
