@@ -21,17 +21,17 @@ CORE_TOP_N = 3            # Nombre de piliers suivis par tribu (Core Anchoring)
 MIN_PLAYER_GAMES_GRAPH = 3  # Nb min de parties d'un joueur pour entrer dans le graphe
 MIN_JOINT_BASE = 2          # Nb min de parties communes (début de saison)
 MIN_JOINT_SLOPE = 3         # Facteur d'augmentation des parties communes en fin de saison
-MIN_COSINE_WEIGHT = 0.18    # Seuil minimal de similarité Cosinus pour lier deux joueurs
+MIN_COSINE_WEIGHT = 0.12    # Seuil de similarité Cosinus (0.12 pour garder un graphe connecté)
 LOUVAIN_SEED = 42           # Graine de reproductibilité pour Louvain
 
 # --- 3. Filtrage du Volume (Volume Guardrail) ---
 MEDIAN_RATIO_THRESHOLD = 0.30  # % de la médiane globale requis
 MIN_GAMES_FLOOR = 3            # Plancher absolu de parties
 
-# --- 4. Seuils d'Affichage & Badges (Informations visuelles) ---
-STATUS_CORE_PCT = 60      # Loyauté >= 60 % -> Badge "Noyau"
-STATUS_MEMBER_PCT = 30    # Loyauté >= 30 % -> Badge "Membre" (< 30 % -> "Fragile")
-DISPLAY_MIN_PCT = 10      # Loyauté < 10 % -> Masqué ("-") dans le tableau
+# --- 4. Seuils d'Affichage & Badges ---
+STATUS_CORE_PCT = 60      # Affinité >= 60 % -> Badge "Noyau"
+STATUS_MEMBER_PCT = 30    # Affinité >= 30 % -> Badge "Membre" (< 30 % -> "Fragile")
+DISPLAY_MIN_PCT = 10      # Affinité < 10 % -> Masqué ("-") dans le tableau
 
 # --- 5. Fichiers et Chemins ---
 CONFIG_PATH = Path("data/config/config.json")
@@ -187,18 +187,20 @@ for date_idx, d in enumerate(sorted_dates):
     previous_cores = current_cores
     prev_assignments = current_assignments
 
-    # ÉTAPE D : Affinité Réseau (Poids Cosinus purs du graphe) ---
+    # ÉTAPE D : Affinité Réseau Sécurisée (Graph-Native)
     player_network_affinity = {p: Counter() for p in player_counts}
+    player_total_weight = {p: 0.0 for p in player_counts}
     
-    # Calcul du poids relationnel direct dans le graphe G
     for p in G.nodes():
         for neighbor in G.neighbors(p):
             weight = G[p][neighbor]['weight']
+            player_total_weight[p] += weight  # Somme totale (y compris voisins Inclassés)
+            
             neighbor_tribe = current_assignments.get(neighbor, "Inclassé")
             if neighbor_tribe in TARGET_TRIBES:
                 player_network_affinity[p][neighbor_tribe] += weight
 
-    # Seuil dynamique de volume
+    # Seuil dynamique de volume (Médiane)
     all_counts = list(player_counts.values())
     global_median = statistics.median(all_counts) if all_counts else 0
     min_games_tribe = max(MIN_GAMES_FLOOR, math.ceil(global_median * MEDIAN_RATIO_THRESHOLD))
@@ -209,26 +211,24 @@ for date_idx, d in enumerate(sorted_dates):
     for name, count in sorted(player_counts.items(), key=lambda x: (-x[1], x[0])):
         louvain_tribe = current_assignments.get(name, "Inclassé")
         
-        # Filtre de volume (seul gardien conservé)
+        # Filtre de volume
         if count < min_games_tribe:
             final_tribe = "Inclassé"
         else:
             final_tribe = louvain_tribe
 
-        # Total du poids relationnel du joueur dans le graphe
-        total_affinity = sum(player_network_affinity[name].values())
+        total_weight = player_total_weight.get(name, 0.0)
 
         scores = {}
         for t in TARGET_TRIBES:
-            if total_affinity > 0:
-                pct = round((player_network_affinity[name][t] / total_affinity) * 100)
+            if total_weight > 0:
+                pct = round((player_network_affinity[name][t] / total_weight) * 100)
             else:
                 pct = 0
             scores[t] = pct
 
         tribe_summary[final_tribe] = tribe_summary.get(final_tribe, 0) + 1
 
-        # Formatage des badges pour l'affichage
         formatted_scores = {}
         for t in TARGET_TRIBES:
             pct = scores[t]
@@ -253,6 +253,11 @@ for date_idx, d in enumerate(sorted_dates):
             "scores": formatted_scores
         })
 
+    snapshots[d] = {
+        "summary": tribe_summary,
+        "players": snapshot_players
+    }
+
 # 4. Génération HTML
 env = Environment(loader=FileSystemLoader(TEMPLATE_DIR))
 env.globals["config"] = config_data
@@ -265,4 +270,4 @@ with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
         dates_json=json.dumps(sorted_dates, ensure_ascii=False)
     ))
 
-print(f"Analyse réussie : {len(sorted_dates)} dates calculées (Modèle Louvain Pur + Gardien de Volume).")
+print(f"Analyse réussie : {len(sorted_dates)} dates calculées (Modèle Graph-Native corrigé).")
