@@ -25,8 +25,8 @@ MIN_JOINT_SLOPE = 3
 MIN_COSINE_WEIGHT = 0.18    
 LOUVAIN_SEED = 42           
 LOUVAIN_RESOLUTION = 1.5    
-HYSTERESIS_MARGIN = 20      # 🔒 Marge étendue pour forcer le passage par "Wavering"
-SWITCH_MIN_PCT = 30         # 🔒 Seuil minimal dans la nouvelle tribu pour valider un transfert
+HYSTERESIS_MARGIN = 10      # Écart nécessaire pour changer physiquement de tribu principale
+WAVERING_MARGIN = 15        # ⚖️ Si l'écart entre les 2 meilleures tribus <= 15%, le joueur est "Wavering"
 
 # --- 3. Volume Filtering (Median Organic Volume) ---
 TRIBE_MEDIAN_RATIO = 0.4   
@@ -227,25 +227,23 @@ for date_idx, d in enumerate(sorted_dates):
             else:
                 scores[t] = 0
         
+        # ⚖️ Calcul de l'écart (margin) entre les deux meilleures tribus du joueur
+        sorted_scores = sorted(scores.values(), reverse=True)
+        top_margin = sorted_scores[0] - sorted_scores[1] if len(sorted_scores) > 1 else 100
+
         raw_max_tribe = max(scores, key=scores.get) if total_normalized > 0 else UNALIGNED_LABEL
         raw_max_pct = scores.get(raw_max_tribe, 0)
 
         max_tribe = raw_max_tribe
         max_pct = raw_max_pct
-        held_by_inertia = False
 
+        # 🛡️ Inertie historique pour définir la tribu d'appartenance principale (évite les sauts quotidiens)
         prev_tribe = prev_assignments.get(name, UNALIGNED_LABEL)
-        
-        # 🛡️ La Zone Tampon en action
         if prev_tribe in TARGET_TRIBES and raw_max_tribe != prev_tribe:
             prev_score = scores.get(prev_tribe, 0)
-            
-            # Condition 1 : L'écart est inférieur à 20%
-            # Condition 2 : Le score de la nouvelle tribu est inférieur à 30%
-            if (raw_max_pct - prev_score < HYSTERESIS_MARGIN) or (raw_max_pct < SWITCH_MIN_PCT):
+            if raw_max_pct - prev_score < HYSTERESIS_MARGIN:
                 max_tribe = prev_tribe
                 max_pct = prev_score
-                held_by_inertia = True
 
         is_core = any(name in cores for cores in current_cores.values())
         required_games = tribe_thresholds.get(max_tribe, MIN_GAMES_FLOOR)
@@ -266,7 +264,8 @@ for date_idx, d in enumerate(sorted_dates):
             pct = scores[t]
             status = None
             if t == final_tribe:
-                if held_by_inertia:
+                # ⚖️ Détermination du statut : Wavering prioritaire si l'écart est faible
+                if top_margin <= WAVERING_MARGIN:
                     status = "Wavering"
                 elif is_core or pct >= STATUS_CORE_PCT:
                     status = "Core"
@@ -303,4 +302,4 @@ with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
         dates_json=json.dumps(sorted_dates, ensure_ascii=False)
     ))
 
-print(f"Analysis successful: {len(sorted_dates)} dates calculated (Wavering buffer active).")
+print(f"Analysis successful: {len(sorted_dates)} dates calculated (Wavering fixed on margins).")
