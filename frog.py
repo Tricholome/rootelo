@@ -147,12 +147,13 @@ for date_idx, d in enumerate(sorted_dates):
     prev_assignments = current_assignments
     daily_tribes[d] = current_assignments
 
-# 4. Calcul de la loyauté pondérée par la taille de la table
+# 4. Calcul de la loyauté multi-tribus pondérée
+ALLOWED_TRIBES = ["Tribe A", "Tribe B", "Tribe C"]
 player_games = Counter(p for m in matches_data for p in m["players"])
 latest_date = sorted_dates[-1] if sorted_dates else ""
 latest_tribes = daily_tribes.get(latest_date, {})
 
-player_loyalty_sum = Counter()
+player_loyalty_sum = {p: Counter() for p in player_games}
 
 for m in matches_data:
     players = m["players"]
@@ -161,44 +162,42 @@ for m in matches_data:
         continue
         
     for p in players:
-        p_tribe = latest_tribes.get(p, "Inclassé")
-        if p_tribe != "Inclassé":
-            same_tribe_count = sum(
-                1 for other in players 
-                if other != p and latest_tribes.get(other, "Inclassé") == p_tribe
-            )
-            # Densité de la tribu sur la table (hors joueur lui-même)
-            player_loyalty_sum[p] += same_tribe_count / (n_players - 1)
+        for other in players:
+            if other != p:
+                other_tribe = latest_tribes.get(other, "Inclassé")
+                if other_tribe in ALLOWED_TRIBES:
+                    player_loyalty_sum[p][other_tribe] += 1 / (n_players - 1)
+
+def format_tribe_status(pct):
+    if pct >= 60:
+        return f"{pct} %", "Noyau", "background:#2e7d32; color:#fff;"
+    elif pct >= 30:
+        return f"{pct} %", "Membre", "background:#1565c0; color:#fff;"
+    elif pct >= 10:
+        return f"{pct} %", "Fragile", "background:#c62828; color:#fff;"
+    else:
+        return "-", "", ""
 
 players_list = []
 for name, count in sorted(player_games.items(), key=lambda x: (-x[1], x[0])):
-    tribe = latest_tribes.get(name, "Inclassé")
-    if tribe != "Inclassé":
-        loyalty_score = player_loyalty_sum[name] / count if count > 0 else 0
-        loyalty_pct = round(loyalty_score * 100)
-        loyalty_str = f"{loyalty_pct} %"
-        
-        if loyalty_pct >= 60:
-            status = "Noyau"
-            status_style = "background:#2e7d32; color:#fff;"
-        elif loyalty_pct >= 30:
-            status = "Membre"
-            status_style = "background:#1565c0; color:#fff;"
-        else:
-            status = "Fragile"
-            status_style = "background:#c62828; color:#fff;"
-    else:
-        loyalty_str = "-"
-        status = "Nomade"
-        status_style = "background:#6c757d; color:#fff;"
+    main_tribe = latest_tribes.get(name, "Inclassé")
+    tribe_scores = {}
+    
+    for t in ALLOWED_TRIBES:
+        score = player_loyalty_sum[name][t] / count if count > 0 else 0
+        pct = round(score * 100)
+        loyalty_str, status_label, style = format_tribe_status(pct)
+        tribe_scores[t] = {
+            "pct_str": loyalty_str,
+            "status": status_label,
+            "style": style
+        }
 
     players_list.append({
         "name": name,
         "games": count,
-        "tribe": tribe,
-        "loyalty": loyalty_str,
-        "status": status,
-        "status_style": status_style
+        "tribe": main_tribe,
+        "scores": tribe_scores
     })
 
 # 5. Génération HTML
@@ -216,4 +215,4 @@ with open(output_path, "w", encoding="utf-8") as f:
         tribes_json=json.dumps(daily_tribes, ensure_ascii=False)
     ))
 
-print(f"Analyse réussie : {len(sorted_dates)} dates calculées avec Max Overlap.")
+print(f"Analyse réussie : {len(sorted_dates)} dates calculées avec affichage 3 tribus.")
