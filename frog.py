@@ -21,7 +21,7 @@ CORE_TOP_N = 3            # Nombre de piliers suivis par tribu (Core Anchoring)
 MIN_PLAYER_GAMES_GRAPH = 3  # Nb min de parties d'un joueur pour entrer dans le graphe
 MIN_JOINT_BASE = 2          # Nb min de parties communes (début de saison)
 MIN_JOINT_SLOPE = 3         # Facteur d'augmentation des parties communes en fin de saison
-MIN_COSINE_WEIGHT = 0.12    # Seuil de similarité Cosinus (0.12 pour garder un graphe connecté)
+MIN_COSINE_WEIGHT = 0.18    # Seuil minimal de similarité Cosinus pour lier deux joueurs dans G
 LOUVAIN_SEED = 42           # Graine de reproductibilité pour Louvain
 
 # --- 3. Filtrage du Volume (Volume Guardrail) ---
@@ -187,18 +187,26 @@ for date_idx, d in enumerate(sorted_dates):
     previous_cores = current_cores
     prev_assignments = current_assignments
 
-    # ÉTAPE D : Affinité Réseau Sécurisée (Graph-Native)
-    player_network_affinity = {p: Counter() for p in player_counts}
+    # ÉTAPE D : Affinité Globale (Granularité Cosinus + Vrai Dénominateur)
+    player_global_affinity = {p: Counter() for p in player_counts}
     player_total_weight = {p: 0.0 for p in player_counts}
-    
-    for p in G.nodes():
-        for neighbor in G.neighbors(p):
-            weight = G[p][neighbor]['weight']
-            player_total_weight[p] += weight  # Somme totale (y compris voisins Inclassés)
+
+    # Balayage de TOUTES les paires historiques (y compris liens faibles et Inclassés)
+    for (p1, p2), joint_count in pair_counts.items():
+        if p1 in active_players and p2 in active_players:
+            weight = joint_count / math.sqrt(player_counts[p1] * player_counts[p2])
             
-            neighbor_tribe = current_assignments.get(neighbor, "Inclassé")
-            if neighbor_tribe in TARGET_TRIBES:
-                player_network_affinity[p][neighbor_tribe] += weight
+            # Total absolu du poids relationnel (Inclassés inclus)
+            player_total_weight[p1] += weight
+            player_total_weight[p2] += weight
+            
+            t1 = current_assignments.get(p1, "Inclassé")
+            t2 = current_assignments.get(p2, "Inclassé")
+            
+            if t2 in TARGET_TRIBES:
+                player_global_affinity[p1][t2] += weight
+            if t1 in TARGET_TRIBES:
+                player_global_affinity[p2][t1] += weight
 
     # Seuil dynamique de volume (Médiane)
     all_counts = list(player_counts.values())
@@ -210,24 +218,25 @@ for date_idx, d in enumerate(sorted_dates):
 
     for name, count in sorted(player_counts.items(), key=lambda x: (-x[1], x[0])):
         louvain_tribe = current_assignments.get(name, "Inclassé")
-        
-        # Filtre de volume
+
+        # Attribution finale : Louvain pur + filtre de volume
         if count < min_games_tribe:
             final_tribe = "Inclassé"
         else:
             final_tribe = louvain_tribe
 
-        total_weight = player_total_weight.get(name, 0.0)
+        tribe_summary[final_tribe] = tribe_summary.get(final_tribe, 0) + 1
+
+        # Vrai dénominateur relationnel
+        total_affinity = player_total_weight.get(name, 0.0)
 
         scores = {}
         for t in TARGET_TRIBES:
-            if total_weight > 0:
-                pct = round((player_network_affinity[name][t] / total_weight) * 100)
+            if total_affinity > 0:
+                pct = round((player_global_affinity[name][t] / total_affinity) * 100)
             else:
                 pct = 0
             scores[t] = pct
-
-        tribe_summary[final_tribe] = tribe_summary.get(final_tribe, 0) + 1
 
         formatted_scores = {}
         for t in TARGET_TRIBES:
@@ -270,4 +279,4 @@ with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
         dates_json=json.dumps(sorted_dates, ensure_ascii=False)
     ))
 
-print(f"Analyse réussie : {len(sorted_dates)} dates calculées (Modèle Graph-Native corrigé).")
+print(f"Analyse réussie : {len(sorted_dates)} dates calculées (Affinité Globale Cosinus + Louvain Pur).")
