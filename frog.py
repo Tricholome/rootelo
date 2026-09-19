@@ -1,6 +1,9 @@
-import networkx as nx
+import json
 from collections import Counter
 from itertools import combinations
+from pathlib import Path
+import networkx as nx
+from jinja2 import Environment, FileSystemLoader
 
 # 1. Chargement des configurations et archives
 config_path = Path("data/config/config.json") if Path("data/config/config.json").exists() else Path("data/config.json")
