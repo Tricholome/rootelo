@@ -238,15 +238,14 @@ for date_idx, d in enumerate(sorted_dates):
         elif is_core:
             # Le noyau reste fidèle à Louvain, il EST la tribu
             final_tribe = current_assignments.get(name, "Inclassé")
-        elif max_pct >= DISPLAY_MIN_PCT: # <-- CORRECTION 1 : On utilise ton paramètre existant au lieu de MIN_LOYALTY_PCT
+        elif max_pct >= DISPLAY_MIN_PCT: 
             # Les autres obéissent au pourcentage
             final_tribe = max_tribe 
         else:
             final_tribe = "Inclassé"
 
-        # CORRECTION 2 : Mettre à jour l'assignation officielle 
-        # pour que le calcul du lendemain se base sur la réalité affichée
-        current_assignments[name] = final_tribe
+        # LA CORRECTION : Ne SURTOUT PAS réinjecter final_tribe dans current_assignments
+        # On laisse current_assignments intact (pur Louvain) pour le lendemain.
 
         tribe_summary[final_tribe] = tribe_summary.get(final_tribe, 0) + 1
 
