@@ -90,26 +90,37 @@ for date_idx, d in enumerate(sorted_dates):
 
         valid_communities = [c for c in raw_communities if len(c) >= MIN_TRIBE_SIZE]
 
-        claimed_today = set()
-        unassigned_communities = []
-
-        for comm in valid_communities:
+        # Continuité historique par chevauchement maximal (Anti-hold-up)
+        candidate_matches = []
+        for comm_idx, comm in enumerate(valid_communities):
             history_counts = Counter(
                 prev_assignments.get(p)
                 for p in comm
                 if prev_assignments.get(p) in registered_tribes
             )
-            valid_history = {t: cnt for t, cnt in history_counts.items() if t not in claimed_today}
+            for tribe, count in history_counts.items():
+                candidate_matches.append((count, comm_idx, tribe))
 
-            if valid_history:
-                assigned_tribe = max(valid_history, key=valid_history.get)
-                claimed_today.add(assigned_tribe)
-                for p in comm:
-                    current_assignments[p] = assigned_tribe
-            else:
-                unassigned_communities.append(comm)
+        # Tri par score d'ancienneté décroissant : le plus grand sous-groupe gagne le nom de sa tribu historique
+        candidate_matches.sort(reverse=True, key=lambda x: x[0])
 
+        assigned_communities = set()
+        claimed_today = set()
+
+        for count, comm_idx, tribe in candidate_matches:
+            if comm_idx not in assigned_communities and tribe not in claimed_today:
+                assigned_communities.add(comm_idx)
+                claimed_today.add(tribe)
+                for p in valid_communities[comm_idx]:
+                    current_assignments[p] = tribe
+
+        # Attribuer les clusters orphelins à de nouvelles tribus
+        unassigned_communities = [
+            comm for idx, comm in enumerate(valid_communities)
+            if idx not in assigned_communities
+        ]
         unassigned_communities.sort(key=len, reverse=True)
+
         for comm in unassigned_communities:
             if len(registered_tribes) < MAX_LEAGUES:
                 new_tribe = ALLOWED_TRIBES[len(registered_tribes)]
@@ -118,7 +129,7 @@ for date_idx, d in enumerate(sorted_dates):
                 for p in comm:
                     current_assignments[p] = new_tribe
 
-    # Gestion de la rétention
+    # Gestion de la rétention individuelle
     for p in player_counts:
         if p not in current_assignments:
             prev_tribe = prev_assignments.get(p)
@@ -136,7 +147,7 @@ for date_idx, d in enumerate(sorted_dates):
     prev_assignments = current_assignments
     daily_tribes[d] = current_assignments
 
-# 4. Préparation du contexte Jinja2 avec calcul de la loyauté
+# 4. Calcul de la loyauté et préparation Jinja2
 player_games = Counter(p for m in matches_data for p in m["players"])
 latest_date = sorted_dates[-1] if sorted_dates else ""
 latest_tribes = daily_tribes.get(latest_date, {})
@@ -180,6 +191,7 @@ for name, count in sorted(player_games.items(), key=lambda x: (-x[1], x[0])):
         "status_style": status_style
     })
 
+# 5. Génération HTML
 env = Environment(loader=FileSystemLoader("templates"))
 env.globals["config"] = config_data
 template = env.get_template("frog.html")
@@ -194,4 +206,4 @@ with open(output_path, "w", encoding="utf-8") as f:
         tribes_json=json.dumps(daily_tribes, ensure_ascii=False)
     ))
 
-print(f"Mise à jour terminée : {len(sorted_dates)} dates analysées.")
+print(f"Analyse réussie : {len(sorted_dates)} dates calculées avec Max Overlap.")
