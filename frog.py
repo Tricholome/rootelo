@@ -187,21 +187,18 @@ for date_idx, d in enumerate(sorted_dates):
     previous_cores = current_cores
     prev_assignments = current_assignments
 
-    # ÉTAPE D : Loyauté indicative, Filtre de Volume et Formatage Frontend
-    player_loyalty_sum = {p: Counter() for p in player_counts}
-    for m in cumulative_matches:
-        players = m["players"]
-        n_players = len(players)
-        if n_players <= 1:
-            continue
-        for p in players:
-            for other in players:
-                if other != p:
-                    other_tribe = current_assignments.get(other, "Inclassé")
-                    if other_tribe in TARGET_TRIBES:
-                        player_loyalty_sum[p][other_tribe] += 1 / (n_players - 1)
+    # ÉTAPE D : Affinité Réseau (Poids Cosinus purs du graphe) ---
+    player_network_affinity = {p: Counter() for p in player_counts}
+    
+    # Calcul du poids relationnel direct dans le graphe G
+    for p in G.nodes():
+        for neighbor in G.neighbors(p):
+            weight = G[p][neighbor]['weight']
+            neighbor_tribe = current_assignments.get(neighbor, "Inclassé")
+            if neighbor_tribe in TARGET_TRIBES:
+                player_network_affinity[p][neighbor_tribe] += weight
 
-    # Seuil dynamique de volume (Médiane)
+    # Seuil dynamique de volume
     all_counts = list(player_counts.values())
     global_median = statistics.median(all_counts) if all_counts else 0
     min_games_tribe = max(MIN_GAMES_FLOOR, math.ceil(global_median * MEDIAN_RATIO_THRESHOLD))
@@ -211,23 +208,27 @@ for date_idx, d in enumerate(sorted_dates):
 
     for name, count in sorted(player_counts.items(), key=lambda x: (-x[1], x[0])):
         louvain_tribe = current_assignments.get(name, "Inclassé")
-
-        # Calcul des scores de loyauté à titre d'affichage
-        scores = {}
-        for t in TARGET_TRIBES:
-            score = player_loyalty_sum[name][t] / count if count > 0 else 0
-            pct = round(score * 100)
-            scores[t] = pct
-
-        # Règle d'attribution : Confiance totale en Louvain avec le seul filtre de volume
+        
+        # Filtre de volume (seul gardien conservé)
         if count < min_games_tribe:
             final_tribe = "Inclassé"
         else:
             final_tribe = louvain_tribe
 
+        # Total du poids relationnel du joueur dans le graphe
+        total_affinity = sum(player_network_affinity[name].values())
+
+        scores = {}
+        for t in TARGET_TRIBES:
+            if total_affinity > 0:
+                pct = round((player_network_affinity[name][t] / total_affinity) * 100)
+            else:
+                pct = 0
+            scores[t] = pct
+
         tribe_summary[final_tribe] = tribe_summary.get(final_tribe, 0) + 1
 
-        # Attribution des badges visuels
+        # Formatage des badges pour l'affichage
         formatted_scores = {}
         for t in TARGET_TRIBES:
             pct = scores[t]
@@ -251,11 +252,6 @@ for date_idx, d in enumerate(sorted_dates):
             "main_tribe": final_tribe,
             "scores": formatted_scores
         })
-
-    snapshots[d] = {
-        "summary": tribe_summary,
-        "players": snapshot_players
-    }
 
 # 4. Génération HTML
 env = Environment(loader=FileSystemLoader(TEMPLATE_DIR))
