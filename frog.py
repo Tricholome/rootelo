@@ -8,29 +8,29 @@ import networkx as nx
 from jinja2 import Environment, FileSystemLoader
 
 # ==============================================================================
-# ⚙️ CONFIGURATION & HYPERPARAMÈTRES (À AJUSTER SELON TES BESOINS)
+# ⚙️ CONFIGURATION & HYPERPARAMÈTRES
 # ==============================================================================
 
 # --- 1. Noms et Limites des Tribus ---
 TARGET_TRIBES = ["Tribe A", "Tribe B", "Tribe C"]
 MIN_TRIBE_SIZE = 5        # Nb min de membres pour valider une communauté Louvain
-MIN_ACTIVE_MEMBERS = 3    # Nb min de membres pour éviter de conserver une tribu fantôme
+MIN_ACTIVE_MEMBERS = 3    # Nb min de membres pour conserver une tribu
 CORE_TOP_N = 3            # Nombre de piliers suivis par tribu (Core Anchoring)
 
 # --- 2. Graphe & Filtrage des Connexions ---
 MIN_PLAYER_GAMES_GRAPH = 3  # Nb min de parties d'un joueur pour entrer dans le graphe
 MIN_JOINT_BASE = 2          # Nb min de parties communes (début de saison)
 MIN_JOINT_SLOPE = 3         # Facteur d'augmentation des parties communes en fin de saison
-MIN_COSINE_WEIGHT = 0.12    # Seuil minimal de similarité Cosinus pour relier deux joueurs
+MIN_COSINE_WEIGHT = 0.18    # Seuil minimal de similarité Cosinus (0.18 pour bien séparer)
 LOUVAIN_SEED = 42           # Graine de reproductibilité pour Louvain
 
 # --- 3. Filtrage du Volume (Volume Guardrail) ---
-MEDIAN_RATIO_THRESHOLD = 0.30  # % de la médiane globale requis (ex: 0.30 = 30 %)
-MIN_GAMES_FLOOR = 3            # Plancher absolu de parties (quel que soit le résultat de la médiane)
+MEDIAN_RATIO_THRESHOLD = 0.30  # % de la médiane globale requis
+MIN_GAMES_FLOOR = 3            # Plancher absolu de parties
 
 # --- 4. Attribution & Affiliation (Loyalty Rules) ---
-MIN_LOYALTY_PCT = 20      # Loyauté minimale (%) requise dans la tribu cible pour y être classé
-SWITCH_TRIBE_PCT = 40       # Loyauté minimale pour qu'un joueur change de sa tribu Louvain vers une autre
+MIN_LOYALTY_PCT = 20      # Loyauté min (%) pour être classé (permet le statut Fragile)
+SWITCH_TRIBE_PCT = 40     # Loyauté min (%) pour changer de la tribu Louvain vers une autre
 
 # --- 5. Seuils d'Affichage & Badges (Frontend) ---
 STATUS_CORE_PCT = 60      # Loyauté >= 60 % -> Badge "Noyau"
@@ -214,7 +214,9 @@ for date_idx, d in enumerate(sorted_dates):
     snapshot_players = []
 
     for name, count in sorted(player_counts.items(), key=lambda x: (-x[1], x[0])):
-        # Repérage du meilleur score de loyauté
+        louvain_tribe = current_assignments.get(name, "Inclassé")
+
+        # Calcul des scores de loyauté
         scores = {}
         max_tribe = None
         max_pct = -1
@@ -226,23 +228,22 @@ for date_idx, d in enumerate(sorted_dates):
                 max_pct = pct
                 max_tribe = t
 
-        ## Arbitrage métier rééquilibré
+        # Arbitrage métier rééquilibré
         if count < min_games_tribe:
             final_tribe = "Inclassé"
         else:
-            # 1. Si Louvain lui donne une tribu valide et qu'il y a au moins 20 % de loyauté
             louvain_pct = scores.get(louvain_tribe, 0)
             if louvain_tribe in TARGET_TRIBES and louvain_pct >= MIN_LOYALTY_PCT:
-                # Il ne change de tribu que si son pôle d'attraction principal est bien plus fort ailleurs
                 if max_tribe != louvain_tribe and max_pct >= SWITCH_TRIBE_PCT:
                     final_tribe = max_tribe
                 else:
                     final_tribe = louvain_tribe
-            # 2. Si Louvain l'avait mis Inclassé, on le repêche s'il atteint le seuil
             elif max_pct >= MIN_LOYALTY_PCT:
                 final_tribe = max_tribe
             else:
                 final_tribe = "Inclassé"
+
+        tribe_summary[final_tribe] = tribe_summary.get(final_tribe, 0) + 1
 
         # Attribution des badges
         formatted_scores = {}
