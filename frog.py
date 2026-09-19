@@ -71,36 +71,44 @@ for d in sorted_dates:
         # Ne retenir que les clusters significatifs (>= 5 joueurs)
         valid_communities = [c for c in raw_communities if len(c) >= MIN_TRIBE_SIZE]
 
-        # 4. Association avec les tribus existantes (Continuité historique)
-        claimed_today = set()
-        unassigned_communities = []
-
+        # 4. Attribution INDIVIDUELLE au sein des clusters Louvain (Anti-migration de masse)
         for comm in valid_communities:
-            history_counts = Counter(
-                prev_assignments.get(p)
-                for p in comm
+            # Compter les membres historiques présents dans ce cluster
+            existing_tribes = Counter(
+                prev_assignments.get(p) 
+                for p in comm 
                 if prev_assignments.get(p) in registered_tribes
             )
-            valid_history = {t: cnt for t, cnt in history_counts.items() if t not in claimed_today}
+            
+            # Déterminer la tribu dominante du cluster pour les nouveaux joueurs
+            dominant_tribe = existing_tribes.most_common(1)[0][0] if existing_tribes else None
 
-            if valid_history:
-                # Le cluster reprend la tribu historique avec laquelle il a le plus d'affinité
-                assigned_tribe = max(valid_history, key=valid_history.get)
-                claimed_today.add(assigned_tribe)
-                for p in comm:
-                    current_assignments[p] = assigned_tribe
-            else:
-                unassigned_communities.append(comm)
+            # Si aucune tribu connue n'est présente et qu'il reste des slots, on crée une nouvelle tribu
+            if not dominant_tribe and len(registered_tribes) < MAX_LEAGUES:
+                dominant_tribe = ALLOWED_TRIBES[len(registered_tribes)]
+                registered_tribes.append(dominant_tribe)
 
-        # 5. Déverrouillage progressif de nouvelles tribus (1 par 1 au fil des semaines)
-        unassigned_communities.sort(key=len, reverse=True)
-        for comm in unassigned_communities:
-            if len(registered_tribes) < MAX_LEAGUES:
-                new_tribe_name = ALLOWED_TRIBES[len(registered_tribes)]
-                registered_tribes.append(new_tribe_name)
-                claimed_today.add(new_tribe_name)
-                for p in comm:
-                    current_assignments[p] = new_tribe_name
+            for p in comm:
+                current_tribe = prev_assignments.get(p, "Inclassé")
+
+                # CAS 1 : Le joueur a déjà une tribu -> Il la GARDE (pas de basculement de masse)
+                if current_tribe in registered_tribes:
+                    # Optionnel: Changement individuel uniquement si connexion massive (> 66%) avec une autre tribu
+                    p_neighbors = list(G.neighbors(p))
+                    p_neighbor_tribes = Counter(prev_assignments.get(n) for n in p_neighbors if prev_assignments.get(n) in registered_tribes)
+                    
+                    if p_neighbor_tribes:
+                        top_tribe, top_count = p_neighbor_tribes.most_common(1)[0]
+                        if top_tribe != current_tribe and (top_count / len(p_neighbors)) >= 0.66:
+                            current_assignments[p] = top_tribe # Migration individuelle
+                        else:
+                            current_assignments[p] = current_tribe
+                    else:
+                        current_assignments[p] = current_tribe
+
+                # CAS 2 : Le joueur est Inclassé -> Il rejoint la tribu dominante de son cluster
+                elif dominant_tribe:
+                    current_assignments[p] = dominant_tribe
 
     # 6. Tous les joueurs hors des grands clusters Louvain restent "Inclassé"
     for p in player_counts:
