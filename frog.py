@@ -24,14 +24,15 @@ MIN_JOINT_SLOPE = 3         # Facteur d'augmentation des parties communes en fin
 MIN_COSINE_WEIGHT = 0.18    # Seuil minimal de similarité Cosinus pour lier deux joueurs dans G
 LOUVAIN_SEED = 42           # Graine de reproductibilité pour Louvain
 LOUVAIN_RESOLUTION = 1.5    # Résolution Louvain (isole les méga-communautés si > 1.0)
+HYSTERESIS_MARGIN = 10      # Marge de 10% requise pour changer de tribu
 
 # --- 3. Filtrage du Volume (Volume Organique par Médiane) ---
 TRIBE_MEDIAN_RATIO = 0.4   # Un joueur doit atteindre 40% du volume médian de sa tribu
 MIN_GAMES_FLOOR = 3        # Plancher absolu en tout début de saison
 
 # --- 4. Seuils d'Affichage & Badges ---
-STATUS_CORE_PCT = 60      # Affinité >= 60 % -> Badge "Noyau"
-STATUS_MEMBER_PCT = 30    # Affinité >= 30 % -> Badge "Membre" (< 30 % -> "Fragile")
+STATUS_CORE_PCT = 65      # Affinité >= 65 % -> Badge "Noyau"
+STATUS_MEMBER_PCT = 45    # Affinité >= 45 % -> Badge "Membre" (< 45 % -> "Fragile")
 DISPLAY_MIN_PCT = 10      # Affinité < 10 % -> Masqué ("-") dans le tableau
 
 # --- 5. Fichiers et Chemins ---
@@ -222,41 +223,47 @@ for date_idx, d in enumerate(sorted_dates):
     tribe_summary = {t: 0 for t in TARGET_TRIBES + ["Inclassé"]}
     snapshot_players = []
 
-    # 3. Attribution Finale par Gravité Normalisée
+    # 3. Attribution Finale avec Amortissement et Inertie
     for name, count in sorted(player_counts.items(), key=lambda x: (-x[1], x[0])):
-        
-        normalized_affinities = {}
-        total_normalized = 0.0
+            normalized_affinities = {}
+            total_normalized = 0.0
 
-        # Normalisation : on divise par la taille de la tribu pour neutraliser l'effet de masse
-        for t in TARGET_TRIBES:
-            t_size = max(1, louvain_tribe_sizes.get(t, 1))
-            norm_aff = player_global_affinity[name][t] / t_size
-            normalized_affinities[t] = norm_aff
-            total_normalized += norm_aff
+            # Amortissement par racine carrée de la taille
+            for t in TARGET_TRIBES:
+                t_size = max(1, louvain_tribe_sizes.get(t, 1))
+                norm_aff = player_global_affinity[name][t] / math.sqrt(t_size)
+                normalized_affinities[t] = norm_aff
+                total_normalized += norm_aff
+                
+            scores = {}
+            for t in TARGET_TRIBES:
+                if total_normalized > 0:
+                    scores[t] = round((normalized_affinities[t] / total_normalized) * 100)
+                else:
+                    scores[t] = 0
             
-        scores = {}
-        for t in TARGET_TRIBES:
-            if total_normalized > 0:
-                scores[t] = round((normalized_affinities[t] / total_normalized) * 100)
+            max_tribe = max(scores, key=scores.get) if total_normalized > 0 else "Inclassé"
+            max_pct = scores.get(max_tribe, 0)
+
+            # Application de l'inertie : on conserve l'ancienne tribu sauf si la nouvelle la dépasse nettement
+            prev_tribe = prev_assignments.get(name, "Inclassé")
+            if prev_tribe in TARGET_TRIBES and max_tribe != prev_tribe:
+                prev_score = scores.get(prev_tribe, 0)
+                if max_pct - prev_score < HYSTERESIS_MARGIN:
+                    max_tribe = prev_tribe
+                    max_pct = prev_score
+
+            is_core = any(name in cores for cores in current_cores.values())
+            required_games = tribe_thresholds.get(max_tribe, MIN_GAMES_FLOOR)
+
+            if count < required_games:
+                final_tribe = "Inclassé"
+            elif is_core:
+                final_tribe = current_assignments.get(name, "Inclassé")
+            elif max_pct >= DISPLAY_MIN_PCT: 
+                final_tribe = max_tribe 
             else:
-                scores[t] = 0
-        
-        max_tribe = max(scores, key=scores.get) if total_normalized > 0 else "Inclassé"
-        max_pct = scores.get(max_tribe, 0)
-
-        is_core = any(name in cores for cores in current_cores.values())
-        required_games = tribe_thresholds.get(max_tribe, MIN_GAMES_FLOOR)
-
-        # L'ARBITRAGE IMPLACABLE
-        if count < required_games:
-            final_tribe = "Inclassé"
-        elif is_core:
-            final_tribe = current_assignments.get(name, "Inclassé")
-        elif max_pct >= DISPLAY_MIN_PCT: 
-            final_tribe = max_tribe 
-        else:
-            final_tribe = "Inclassé"
+                final_tribe = "Inclassé"
 
         tribe_summary[final_tribe] = tribe_summary.get(final_tribe, 0) + 1
 
