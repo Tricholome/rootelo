@@ -13,7 +13,7 @@ from jinja2 import Environment, FileSystemLoader
 
 # --- 1. Tribe Names & Boundaries ---
 TARGET_TRIBES = ["Tribe A", "Tribe B", "Tribe C"]
-UNALIGNED_LABEL = "Unaligned"
+UNALIGNED_LABEL = "-"
 MIN_TRIBE_SIZE = 5        # Min members to validate a Louvain community
 MIN_ACTIVE_MEMBERS = 3    # Min members to keep a tribe active
 CORE_TOP_N = 3            # Number of core pillars tracked per tribe
@@ -33,8 +33,7 @@ MIN_GAMES_FLOOR = 3        # Absolute minimum games floor early in the season
 
 # --- 4. Status Tiers & Display Thresholds ---
 STATUS_CORE_PCT = 65       # Affinity >= 65% -> "Core"
-STATUS_LOYAL_PCT = 45      # Affinity >= 45% -> "Loyalist"
-STATUS_AFFILIATE_PCT = 25  # Affinity >= 25% -> "Affiliate" (< 25% -> "Wavering")
+STATUS_LOYAL_PCT = 45      # Affinity >= 45% -> "Loyalist" (< 45% -> "Affiliate")
 DISPLAY_MIN_PCT = 10       # Affinity < 10% -> Hidden ("-") in table
 
 # --- 5. Files & Paths ---
@@ -266,17 +265,14 @@ for date_idx, d in enumerate(sorted_dates):
             pct = scores[t]
             status = None
             if t == final_tribe:
-                if is_core or pct >= STATUS_CORE_PCT:
+                if held_by_inertia:
+                    status = "Wavering"
+                elif is_core or pct >= STATUS_CORE_PCT:
                     status = "Core"
                 elif pct >= STATUS_LOYAL_PCT:
                     status = "Loyalist"
-                elif pct >= STATUS_AFFILIATE_PCT:
-                    status = "Affiliate"
                 else:
-                    status = "Wavering"
-
-                if held_by_inertia:
-                    status += " ⚓"
+                    status = "Affiliate"
 
             formatted_scores[t] = {
                 "pct": pct,
@@ -287,7 +283,6 @@ for date_idx, d in enumerate(sorted_dates):
             "name": name,
             "games": count,
             "main_tribe": final_tribe,
-            "is_inertia": held_by_inertia,
             "scores": formatted_scores
         })
         
@@ -307,4 +302,4 @@ with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
         dates_json=json.dumps(sorted_dates, ensure_ascii=False)
     ))
 
-print(f"Analysis successful: {len(sorted_dates)} dates calculated (Louvain Resolution + Normalized Gravity + Inertia + 4-Tier Badges).")
+print(f"Analysis successful: {len(sorted_dates)} dates calculated.")
