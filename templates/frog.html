@@ -81,18 +81,6 @@
 
         let currentIndex = availableDates.length - 1;
 
-        function renderTribeCell(pct) {
-            if (pct >= 60) {
-                return `<span style="font-weight:600; margin-right:4px;">${pct} %</span> <span style="background:#2e7d32; color:#fff; padding:2px 6px; border-radius:10px; font-size:0.75rem; font-weight:600;">Noyau</span>`;
-            } else if (pct >= 30) {
-                return `<span style="font-weight:600; margin-right:4px;">${pct} %</span> <span style="background:#1565c0; color:#fff; padding:2px 6px; border-radius:10px; font-size:0.75rem; font-weight:600;">Membre</span>`;
-            } else if (pct >= 10) {
-                return `<span style="font-weight:600; margin-right:4px;">${pct} %</span> <span style="background:#c62828; color:#fff; padding:2px 6px; border-radius:10px; font-size:0.75rem; font-weight:600;">Fragile</span>`;
-            } else {
-                return `<span style="color:#a0aec0;">-</span>`;
-            }
-        }
-
         function renderTribeCell(pct, isMainTribe) {
             if (pct < 10) {
                 return `<span style="color:#a0aec0;">-</span>`;
@@ -214,6 +202,23 @@
 
             $prevBtn.prop('disabled', currentIndex <= 0);$nextBtn.prop('disabled', currentIndex >= availableDates.length - 1);
         }
+
+        function setDateByIndex(index) {
+            if (index >= 0 && index < availableDates.length) {
+                currentIndex = index;
+                updateTableForDate(availableDates[currentIndex]);
+            }
+        }
+
+        $prevBtn.on('click', () => setDateByIndex(currentIndex - 1));
+        $nextBtn.on('click', () => setDateByIndex(currentIndex + 1));$latestBtn.on('click', () => setDateByIndex(availableDates.length - 1));
+
+        $datePicker.on('change', function () {
+            const val = $(this).val();
+            let matchIdx = availableDates.findIndex(d => d >= val);
+            currentIndex = matchIdx !== -1 ? matchIdx : availableDates.length - 1;
+            updateTableForDate(availableDates[currentIndex]);
+        });
 
         setDateByIndex(currentIndex);
     });
