@@ -213,6 +213,8 @@ if Path(TEMPLATE_DIR).exists() and (Path(TEMPLATE_DIR) / TEMPLATE_FILE).exists()
     template = env.get_template(TEMPLATE_FILE)
     
     html_content = template.render(
+        config=config_data,             # <-- Ajouté pour alimenter base.html
+        active_section="frog",          # <-- Ajouté pour définir la section active
         dates_json=json.dumps(sorted_dates),
         snapshots_json=json.dumps(snapshots)
     )
@@ -220,7 +222,3 @@ if Path(TEMPLATE_DIR).exists() and (Path(TEMPLATE_DIR) / TEMPLATE_FILE).exists()
     with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
         f.write(html_content)
     print(f"✅ Fichier {OUTPUT_FILE} généré avec succès.")
-else:
-    print(f"⚠️ Template {TEMPLATE_DIR}/{TEMPLATE_FILE} introuvable. Écriture d'un JSON de dump pour vérifier la structure.")
-    with open("snapshots_dump.json", "w", encoding="utf-8") as f:
-        json.dump(snapshots, f, indent=4)
