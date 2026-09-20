@@ -20,15 +20,13 @@
     <table id="frogTable" class="display nowrap" style="width: 100%;">
         <thead>
             <tr>
-                <th style="width: 22%;">Player</th>
-                <th style="width: 8%;">Games</th>
-                <th>TEA</th>
-                <th>BAG</th>
-                <th>SWORD</th>
-                <th>COINS</th>
-                <th>HAMMER</th>
-                <th>CROSSBOW</th>
-                <th>BOOT</th>
+                <th style="width: 25%;">Player</th>
+                <th style="width: 10%;">Games</th>
+                <th>Tribe A</th>
+                <th>Tribe B</th>
+                <th>Tribe C</th>
+                <th>Tribe D</th>
+                <th>Tribe E</th>
             </tr>
         </thead>
         <tbody>
@@ -110,11 +108,12 @@
 
             const activeTribes = snapshot.active_tribes || [];
 
-            // 1. Visibilité dynamique des colonnes (index 2 à 8)
+            // 1. Gestion dynamique de la visibilité et du nom des colonnes
             TARGET_TRIBES.forEach((tribe, idx) => {
-                const colIdx = idx + 2; 
+                const colIdx = idx + 2; // Col 0: Player, Col 1: Games, Col 2..6: Tribus
                 const isActive = activeTribes.includes(tribe);
                 
+                // Masquer/Afficher la colonne sans redessiner immédiatement
                 table.column(colIdx).visible(isActive, false);
 
                 if (isActive) {
@@ -123,27 +122,27 @@
                 }
             });
 
-            // 2. Boutons de compteurs
-            const tribeOrder = [...activeTribes, UNALIGNED_LABEL];
-            let summaryHtml = "";
+            // 2. Boutons de compteurs avec filtrage au clic
+			const tribeOrder = [...TARGET_TRIBES.filter(t => activeTribes.includes(t)), UNALIGNED_LABEL];
+			let summaryHtml = "";
 
-            tribeOrder.forEach(tribe => {
-                const count = snapshot.summary[tribe] || 0;
-                if (count > 0 || tribe === UNALIGNED_LABEL) {
-                    const bgColor = tribe === UNALIGNED_LABEL ? '#4a5568' : '#2e7d32';
-                    const displayLabel = snapshot.tribe_labels && snapshot.tribe_labels[tribe] ? snapshot.tribe_labels[tribe] : tribe;
-                    const isActive = activeTribeFilter === tribe;
-                    const opacity = (activeTribeFilter && !isActive) ? '0.4' : '1';
-                    const border = isActive ? '2px solid #ffffff' : '2px solid transparent';
+			tribeOrder.forEach(tribe => {
+				const count = snapshot.summary[tribe] || 0;
+				if (count > 0 || tribe === UNALIGNED_LABEL) {
+					const bgColor = tribe === UNALIGNED_LABEL ? '#4a5568' : '#2e7d32';
+					const displayLabel = snapshot.tribe_labels && snapshot.tribe_labels[tribe] ? snapshot.tribe_labels[tribe] : tribe;
+					const isActive = activeTribeFilter === tribe;
+					const opacity = (activeTribeFilter && !isActive) ? '0.4' : '1';
+					const border = isActive ? '2px solid #ffffff' : '2px solid transparent';
 
-                    summaryHtml += `
-                        <button type="button" class="tribe-filter-btn" data-tribe="${tribe}" style="background-color: ${bgColor}; color: #ffffff; padding: 4px 10px; border-radius: 16px; font-weight: 600; font-size: 0.82rem; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.15); border: ${border}; opacity: ${opacity}; cursor: pointer; transition: all 0.15s ease;">
-                            <span>${displayLabel}</span>
-                            <span style="background: rgba(255,255,255,0.25); border-radius: 10px; padding: 1px 6px; font-size: 0.75rem;">${count}</span>
-                        </button>`;
-                }
-            });
-            $('#tribeSummary').html(summaryHtml);
+					summaryHtml += `
+						<button type="button" class="tribe-filter-btn" data-tribe="${tribe}" style="background-color: ${bgColor}; color: #ffffff; padding: 4px 10px; border-radius: 16px; font-weight: 600; font-size: 0.82rem; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.15); border: ${border}; opacity: ${opacity}; cursor: pointer; transition: all 0.15s ease;">
+							<span>${displayLabel}</span>
+							<span style="background: rgba(255,255,255,0.25); border-radius: 10px; padding: 1px 6px; font-size: 0.75rem;">${count}</span>
+						</button>`;
+				}
+			});
+			$('#tribeSummary').html(summaryHtml);
 
             $('.tribe-filter-btn').on('click', function () {
                 const clickedTribe = $(this).data('tribe');
@@ -151,13 +150,13 @@
                 updateTableForDate(selectedDate);
             });
 
-            // 3. Filtrage des joueurs
+            // 3. Filtrage des joueurs selon la tribu sélectionnée
             let playersToDisplay = snapshot.players;
             if (activeTribeFilter) {
                 playersToDisplay = playersToDisplay.filter(p => p.main_tribe === activeTribeFilter);
             }
 
-            // 4. Construction des lignes
+            // 4. Inscription des données et rendu final du tableau
             const newRows = playersToDisplay.map(p => {
                 return [
                     p.name,
