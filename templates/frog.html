@@ -64,34 +64,38 @@
         let currentIndex = availableDates.length - 1;
 
         function renderTribeCell(scoreData, isMainTribe) {
-            if (!scoreData || scoreData.pct < 10) {
-                return `<span style="color:#a0aec0; display:inline-block; min-width:42px; text-align:center;">-</span>`;
-            }
-            
-            const pctStr = `<span style="font-weight:600; display:inline-block; min-width:42px; text-align:right;">${scoreData.pct} %</span>`;
-            
-            if (!isMainTribe || !scoreData.status) {
-                return `<div style="display:inline-flex; align-items:center; gap:8px;">${pctStr}</div>`;
-            }
+			if (!scoreData) {
+				return `<span style="color:#a0aec0; display:inline-block; min-width:42px; text-align:center;">-</span>`;
+			}
+			
+			if (!isMainTribe && scoreData.pct < 10) {
+				return `<span style="color:#a0aec0; display:inline-block; min-width:42px; text-align:center;">-</span>`;
+			}
+			
+			const pctStr = `<span style="font-weight:600; display:inline-block; min-width:42px; text-align:right;">${scoreData.pct} %</span>`;
+			
+			if (!isMainTribe || !scoreData.status) {
+				return `<div style="display:inline-flex; align-items:center; gap:8px;">${pctStr}</div>`;
+			}
 
-            let bgColor = "#4a5568";
-            let tooltip = "";
+			let bgColor = "#4a5568";
+			let tooltip = "";
 
-            if (scoreData.status === "Core") {
-                bgColor = "#2e7d32";
-            } else if (scoreData.status === "Loyalist") {
-                bgColor = "#1565c0";
-            } else if (scoreData.status === "Affiliate") {
-                bgColor = "#d97706";
-            } else if (scoreData.status === "Wavering") {
-                bgColor = "#c62828";
-                tooltip = 'title="Maintained in tribe by historical inertia while leaning elsewhere"';
-            }
+			if (scoreData.status === "Core") {
+				bgColor = "#2e7d32";
+			} else if (scoreData.status === "Loyalist") {
+				bgColor = "#1565c0";
+			} else if (scoreData.status === "Affiliate") {
+				bgColor = "#d97706";
+			} else if (scoreData.status === "Wavering") {
+				bgColor = "#c62828";
+				tooltip = 'title="Maintained in tribe by historical inertia while leaning elsewhere"';
+			}
 
-            const badge = `<span style="background:${bgColor}; color:#fff; padding:2px 8px; border-radius:10px; font-size:0.75rem; font-weight:600; display:inline-block; text-align:center; min-width:62px;" ${tooltip}>${scoreData.status}</span>`;
+			const badge = `<span style="background:${bgColor}; color:#fff; padding:2px 8px; border-radius:10px; font-size:0.75rem; font-weight:600; display:inline-block; text-align:center; min-width:62px;" ${tooltip}>${scoreData.status}</span>`;
 
-            return `<div style="display:inline-flex; align-items:center; gap:8px;">${pctStr} ${badge}</div>`;
-        }
+			return `<div style="display:inline-flex; align-items:center; gap:8px;">${pctStr} ${badge}</div>`;
+		}
 
         function updateTableForDate(selectedDate) {
             $datePicker.val(selectedDate);
