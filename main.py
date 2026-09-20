@@ -650,7 +650,7 @@ def run_league_pipeline(league_config, all_leagues_list):
 
         path_ratings = os.path.join(season_archive_dir, "ratings.csv")
         if os.path.exists(path_ratings):
-            df_ratings = pd.read_csv(path_ratings)
+            df_ratings = pd.read_csv(path_ratings, dtype={'Last': str})
             for _, row in df_ratings.iterrows():
                 elo_ratings[str(row['Player'])] = float(row.get('ELO', 1200.0))
             df_ratings['ELO'] = df_ratings['ELO'].round().astype(int)
