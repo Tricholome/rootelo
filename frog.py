@@ -26,7 +26,7 @@ UNALIGNED_LABEL = "-"         # Étiquette des joueurs non alignés
 TRIBE_NAMES_POOL = ["Tribe A", "Tribe B", "Tribe C"]
 
 CONFIG_PATH = Path("data/config/config.json")
-DEFAULT_MATCHES_PATH = Path("data/rdl/archives/lh02/matches.json")
+DEFAULT_MATCHES_PATH = Path("data/rdl/archives/lh03/matches.json")
 TEMPLATE_DIR = "templates"
 TEMPLATE_FILE = "frog.html"
 OUTPUT_FILE = Path("frog.html")
