@@ -226,13 +226,13 @@ def player_scores(G, roster, p, active_tribes):
     for t in TRIBE_NAMES_POOL:
         status = None
         if t == main:
-            if margin <= 5 and len(active_tribes) > 1:
+            if margin <= 3 and len(active_tribes) > 1:
                 status = "Favoring"
             elif pcts[t] >= 80:
                 status = "Faithful"
-            elif pcts[t] >= 50:
+            elif pcts[t] >= 60:
                 status = "Partisan"
-            elif pcts[t] >= 30:
+            elif pcts[t] >= 40:
                 status = "Squire"
             else:
                 status = "Friend"
