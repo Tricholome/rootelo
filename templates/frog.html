@@ -17,6 +17,16 @@
         <!-- Generated dynamically in JS -->
     </div>
 
+    <!-- Journal des événements du jour -->
+    <div id="eventsLog" style="margin: 0 0 25px 0; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 14px 18px;">
+        <h3 style="font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.05em; margin: 0 0 10px 0; color: #a0aec0; display: flex; align-items: center; gap: 8px;">
+            <span>📜</span> Journal du jour
+        </h3>
+        <div id="eventsList" style="display: flex; flex-direction: column; gap: 6px; font-size: 0.88rem;">
+            <!-- Generated dynamically in JS -->
+        </div>
+    </div>
+
     <table id="frogTable" class="display nowrap" style="width:100%">
         <thead>
             <tr>
@@ -64,44 +74,45 @@
         let currentIndex = availableDates.length - 1;
 
         function renderTribeCell(scoreData, isMainTribe) {
-			if (!scoreData) {
-				return `<span style="color:#a0aec0; display:inline-block; min-width:42px; text-align:center;">-</span>`;
-			}
-			
-			if (!isMainTribe && scoreData.pct < 10) {
-				return `<span style="color:#a0aec0; display:inline-block; min-width:42px; text-align:center;">-</span>`;
-			}
-			
-			const pctStr = `<span style="font-weight:600; display:inline-block; min-width:42px; text-align:right;">${scoreData.pct} %</span>`;
-			
-			if (!isMainTribe || !scoreData.status) {
-				return `<div style="display:inline-flex; align-items:center; gap:8px;">${pctStr}</div>`;
-			}
+            if (!scoreData) {
+                return `<span style="color:#a0aec0; display:inline-block; min-width:42px; text-align:center;">-</span>`;
+            }
+            
+            if (!isMainTribe && scoreData.pct < 10) {
+                return `<span style="color:#a0aec0; display:inline-block; min-width:42px; text-align:center;">-</span>`;
+            }
+            
+            const pctStr = `<span style="font-weight:600; display:inline-block; min-width:42px; text-align:right;">${scoreData.pct} %</span>`;
+            
+            if (!isMainTribe || !scoreData.status) {
+                return `<div style="display:inline-flex; align-items:center; gap:8px;">${pctStr}</div>`;
+            }
 
-			let bgColor = "#4a5568";
-			let tooltip = "";
+            let bgColor = "#4a5568";
+            let tooltip = "";
 
-			if (scoreData.status === "Core") {
-				bgColor = "#2e7d32";
-			} else if (scoreData.status === "Loyalist") {
-				bgColor = "#1565c0";
-			} else if (scoreData.status === "Affiliate") {
-				bgColor = "#d97706";
-			} else if (scoreData.status === "Wavering") {
-				bgColor = "#c62828";
-				tooltip = 'title="Maintained in tribe by historical inertia while leaning elsewhere"';
-			}
+            if (scoreData.status === "Core") {
+                bgColor = "#2e7d32";
+            } else if (scoreData.status === "Loyalist") {
+                bgColor = "#1565c0";
+            } else if (scoreData.status === "Affiliate") {
+                bgColor = "#d97706";
+            } else if (scoreData.status === "Wavering") {
+                bgColor = "#c62828";
+                tooltip = 'title="Maintained in tribe by historical inertia while leaning elsewhere"';
+            }
 
-			const badge = `<span style="background:${bgColor}; color:#fff; padding:2px 8px; border-radius:10px; font-size:0.75rem; font-weight:600; display:inline-block; text-align:center; min-width:62px;" ${tooltip}>${scoreData.status}</span>`;
+            const badge = `<span style="background:${bgColor}; color:#fff; padding:2px 8px; border-radius:10px; font-size:0.75rem; font-weight:600; display:inline-block; text-align:center; min-width:62px;" ${tooltip}>${scoreData.status}</span>`;
 
-			return `<div style="display:inline-flex; align-items:center; gap:8px;">${pctStr} ${badge}</div>`;
-		}
+            return `<div style="display:inline-flex; align-items:center; gap:8px;">${pctStr} ${badge}</div>`;
+        }
 
         function updateTableForDate(selectedDate) {
             $datePicker.val(selectedDate);
             const snapshot = snapshots[selectedDate];
             if (!snapshot) return;
 
+            // 1. Mise à jour des compteurs de tribus
             const tribeOrder = [...TARGET_TRIBES, UNALIGNED_LABEL];
             let summaryHtml = "";
 
@@ -109,20 +120,60 @@
                 const count = snapshot.summary[tribe] || 0;
                 if (count > 0 || tribe === UNALIGNED_LABEL) {
                     const bgColor = tribe === UNALIGNED_LABEL ? '#4a5568' : '#2e7d32';
+                    const displayLabel = snapshot.tribe_labels && snapshot.tribe_labels[tribe] ? snapshot.tribe_labels[tribe] : tribe;
                     summaryHtml += `
                         <span style="background-color: ${bgColor}; color: #ffffff; padding: 6px 14px; border-radius: 20px; font-weight: 600; font-size: 0.88rem; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.15);">
-                            <span>${tribe}</span>
+                            <span>${displayLabel}</span>
                             <span style="background: rgba(255,255,255,0.25); border-radius: 10px; padding: 1px 7px; font-size: 0.82rem;">${count}</span>
                         </span>`;
                 }
             });
             $('#tribeSummary').html(summaryHtml);
 
+            // 2. Mise à jour du Journal d'événements
+            const events = snapshot.events || [];
+            let eventsHtml = "";
+
+            if (events.length === 0) {
+                eventsHtml = `<div style="color: #718096; font-style: italic; padding: 2px 0;">Aucun mouvement de tribu ce jour-ci.</div>`;
+            } else {
+                events.forEach(ev => {
+                    let badgeBg = "#4a5568";
+                    let actionText = "";
+
+                    const getLabel = (t) => (snapshot.tribe_labels && snapshot.tribe_labels[t]) ? snapshot.tribe_labels[t] : t;
+
+                    if (ev.type === "in") {
+                        badgeBg = "#2e7d32";
+                        actionText = `a rejoint <strong>${getLabel(ev.to)}</strong>`;
+                    } else if (ev.type === "out") {
+                        badgeBg = "#c62828";
+                        actionText = `a quitté <strong>${getLabel(ev.from)}</strong>`;
+                    } else if (ev.type === "transfer") {
+                        badgeBg = "#1565c0";
+                        actionText = `est passé de <strong>${getLabel(ev.from)}</strong> à <strong>${getLabel(ev.to)}</strong>`;
+                    }
+
+                    eventsHtml += `
+                        <div style="display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.2); padding: 6px 12px; border-radius: 6px; gap: 10px;">
+                            <div>
+                                <strong style="color: #edf2f7;">${ev.player}</strong> ${actionText}
+                            </div>
+                            <span style="background: ${badgeBg}; color: #fff; font-size: 0.75rem; padding: 2px 8px; border-radius: 10px; font-weight: 600; white-space: nowrap;">
+                                ${ev.label}
+                            </span>
+                        </div>`;
+                });
+            }
+            $('#eventsList').html(eventsHtml);
+
+            // 3. Mise à jour de la table
             const newRows = snapshot.players.map(p => {
+                const mainLabel = snapshot.tribe_labels && snapshot.tribe_labels[p.main_tribe] ? snapshot.tribe_labels[p.main_tribe] : p.main_tribe;
                 return [
                     p.name,
                     p.games,
-                    p.main_tribe,
+                    mainLabel,
                     ...TARGET_TRIBES.map(t => renderTribeCell(p.scores[t], p.main_tribe === t))
                 ];
             });
