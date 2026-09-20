@@ -1,28 +1,51 @@
+"""
+frog.py — tribus dynamiques de joueurs au fil d'une saison.
+
+L'idée tient en une phrase : "on ne bouge que si c'est CLAIREMENT mieux".
+
+Chaque jour :
+  1. On met à jour le graphe joueur↔joueur (les vieilles arêtes s'érodent).
+  2. LA BOUSSOLE : Louvain propose une tribu "idéale" à chaque joueur éligible.
+     Elle ne fait que SUGGÉRER : elle n'expulse jamais personne.
+  3. Un joueur sans tribu suit la boussole ; un joueur déjà en tribu ne la quitte que
+     si l'autre tribu l'attire STICKINESS fois plus (et au plus MAX_DAILY_TRANSFERS par jour).
+  4. Un cluster qui ne correspond à aucune tribu existante (et ≥ MIN_TRIBE_CREATION_SIZE
+     joueurs éligibles) fonde une nouvelle tribu, d'un bloc.
+  5. Une tribu qui tombe sous MIN_TRIBE_SURVIVAL membres disparaît.
+"""
 import json
 import math
 import statistics
 from collections import Counter
 from itertools import combinations
 from pathlib import Path
+
 import networkx as nx
 from jinja2 import Environment, FileSystemLoader
 
 # ==============================================================================
-# ⚙️ CONFIGURATION & HYPERPARAMÈTRES
+# ⚙️ CONFIGURATION
 # ==============================================================================
 
-MAX_DAILY_TRANSFERS = 3       # Max migrations autorisées par jour
-MAX_TRIBES = 3                # Limite absolue de tribus
-MIN_TRIBE_SIZE_LOUVAIN = 4    # Taille mini pour qu'un cluster soit analysé par Louvain
-MIN_TRIBE_CREATION_SIZE = 4   # Joueurs ÉLIGIBLES minimum pour FONDER une nouvelle tribu
-MIN_TRIBE_SURVIVAL = 2        # Joueurs minimum pour qu'une tribu existante SURVIVE
+# --- Tribus ---
+MAX_TRIBES = 3                # Nombre max de tribus simultanées
+MIN_TRIBE_CREATION_SIZE = 4   # Joueurs éligibles minimum pour FONDER une tribu
+MIN_TRIBE_SURVIVAL = 2        # Joueurs minimum pour qu'une tribu SURVIVE
+
+# --- Éligibilité (un seul seuil global, pas de seuil par tribu) ---
 MIN_GAMES_FLOOR = 3           # Plancher absolu de matchs
-DYNAMIC_RATIO = 0.40          # Ratio de la médiane globale pour élever le seuil
+DYNAMIC_RATIO = 0.40          # Seuil = max(plancher, ratio × médiane globale)
 
-DECAY_RATE = 0.95             # Dépréciation temporelle des arêtes
-NEW_MATCH_WEIGHT = 1.0        # Poids d'un nouveau match
-UNALIGNED_LABEL = "-"         # Étiquette des joueurs non alignés
+# --- Stabilité (LES réglages qui comptent) ---
+STICKINESS = 1.5              # Pour quitter sa tribu : affinité ailleurs > STICKINESS × affinité actuelle
+MAX_DAILY_TRANSFERS = 3       # Max de changements de tribu (A→B) par jour
 
+# --- Graphe ---
+DECAY_RATE = 0.95             # Érosion quotidienne des arêtes
+NEW_MATCH_WEIGHT = 1.0        # Poids d'un match
+MIN_EDGE_WEIGHT = 0.1         # Sous ce poids, l'arête est ignorée
+
+UNALIGNED_LABEL = "-"
 TRIBE_NAMES_POOL = ["Tribe A", "Tribe B", "Tribe C"]
 
 CONFIG_PATH = Path("data/config/config.json")
@@ -31,8 +54,149 @@ TEMPLATE_DIR = "templates"
 TEMPLATE_FILE = "frog.html"
 OUTPUT_FILE = Path("frog.html")
 
+
 # ==============================================================================
-# 🚀 CHARGEMENT DES CONFIGURATIONS ET DONNÉES
+# 🧩 BRIQUES DE L'ALGORITHME
+# ==============================================================================
+
+def min_games_required(player_games):
+    """Seuil d'éligibilité global : max(plancher, ratio × médiane)."""
+    median = statistics.median(player_games.values()) if player_games else 0
+    return max(MIN_GAMES_FLOOR, math.ceil(median * DYNAMIC_RATIO))
+
+
+def weight_by_tribe(G, roster, p):
+    """Poids total des arêtes de p vers chaque tribu (les non-alignés sont ignorés)."""
+    weights = Counter()
+    for n in G.neighbors(p):
+        tribe = roster.get(n, UNALIGNED_LABEL)
+        if tribe != UNALIGNED_LABEL:
+            weights[tribe] += G[p][n]["weight"]
+    return weights
+
+
+def is_clearly_apart(G, roster, comm):
+    """
+    Un cluster ne fonde une tribu que s'il est plus lié à LUI-MÊME qu'au reste de la tribu
+    dont il vient — sinon ce n'est qu'un sous-groupe passager (bruit de Louvain).
+    Joueurs sans tribu d'origine : rien ne les retient, donc toujours vrai.
+    """
+    inside = outside = 0.0
+    for p in comm:
+        for n in G.neighbors(p):
+            w = G[p][n]["weight"]
+            if n in comm:
+                inside += w
+            elif roster[p] != UNALIGNED_LABEL and roster[n] == roster[p]:
+                outside += w
+    return inside > STICKINESS * outside
+
+
+def compass(G, roster, eligible):
+    """
+    Louvain sur les joueurs éligibles → tribu "idéale" de chacun.
+    Retourne (cible, fondees) :
+      cible   = {joueur: nom de tribu}  (les joueurs hors des clusters retenus n'y figurent pas)
+      fondees = noms des tribus créées aujourd'hui
+    """
+    comms = nx.community.louvain_communities(G.subgraph(eligible), weight="weight", seed=42)
+    comms.sort(key=lambda c: (-len(c), sorted(c)))  # ordre stable d'un jour à l'autre
+
+    members = {}
+    for p, t in roster.items():
+        if t != UNALIGNED_LABEL:
+            members.setdefault(t, set()).add(p)
+
+    # Chaque cluster hérite de la tribu existante avec laquelle il recoupe le plus (1 pour 1)
+    overlaps = sorted(((len(c & m), i, t) for i, c in enumerate(comms) for t, m in members.items()),
+                      key=lambda x: (-x[0], x[1], x[2]))
+    name_of = {}
+    for overlap, i, t in overlaps:
+        if overlap > 0 and i not in name_of and t not in name_of.values():
+            name_of[i] = t
+
+    # Les clusters restants, assez gros, fondent une nouvelle tribu (dans la limite de MAX_TRIBES)
+    free = [n for n in TRIBE_NAMES_POOL if n not in members][:max(0, MAX_TRIBES - len(members))]
+    founded = set()
+    for i, c in enumerate(comms):
+        if i not in name_of and len(c) >= MIN_TRIBE_CREATION_SIZE and free and is_clearly_apart(G, roster, c):
+            name_of[i] = free.pop(0)
+            founded.add(name_of[i])
+
+    target = {p: name_of[i] for i, c in enumerate(comms) if i in name_of for p in c}
+    return target, founded
+
+
+def apply_compass(G, roster, target, founded):
+    """
+    Applique la boussole SANS secousses :
+      - sans tribu, ou fondateur d'une nouvelle tribu → on y va tout de suite
+      - déjà en tribu → on ne change que si l'autre tribu attire STICKINESS fois plus,
+        et seulement les MAX_DAILY_TRANSFERS cas les plus nets du jour.
+    """
+    moves, switches = [], []
+    for p, t in target.items():
+        current = roster[p]
+        if current == t:
+            continue
+        if current == UNALIGNED_LABEL or t in founded:
+            moves.append((p, t))
+        else:
+            w = weight_by_tribe(G, roster, p)
+            if w[t] > STICKINESS * w[current]:
+                switches.append((w[t] - w[current], p, t))
+
+    switches.sort(reverse=True)
+    moves += [(p, t) for _, p, t in switches[:MAX_DAILY_TRANSFERS]]
+    for p, t in moves:
+        roster[p] = t
+
+
+def dissolve_small_tribes(roster):
+    """Une tribu sous MIN_TRIBE_SURVIVAL membres disparaît."""
+    counts = Counter(t for t in roster.values() if t != UNALIGNED_LABEL)
+    for tribe, n in counts.items():
+        if n < MIN_TRIBE_SURVIVAL:
+            for p, t in roster.items():
+                if t == tribe:
+                    roster[p] = UNALIGNED_LABEL
+
+
+
+def player_scores(G, roster, p, active_tribes):
+    """Pourcentage d'interactions par tribu + statut (sur la tribu principale uniquement)."""
+    scores = {t: {"pct": 0, "status": None} for t in TRIBE_NAMES_POOL}
+    if p not in G or G.degree(p) == 0:
+        return scores
+
+    by_tribe, total = Counter(), 0.0
+    for n in G.neighbors(p):
+        w = G[p][n]["weight"]
+        total += w
+        by_tribe[roster.get(n, UNALIGNED_LABEL)] += w
+
+    pcts = {t: round(100 * by_tribe[t] / total) for t in TRIBE_NAMES_POOL}
+    top = sorted(pcts.values(), reverse=True)
+    margin = top[0] - top[1]
+
+    main = roster.get(p, UNALIGNED_LABEL)
+    for t in TRIBE_NAMES_POOL:
+        status = None
+        if t == main:
+            if margin <= 10 and len(active_tribes) > 1:
+                status = "Wavering"
+            elif pcts[t] >= 85:
+                status = "Core"
+            elif pcts[t] >= 65:
+                status = "Loyalist"
+            else:
+                status = "Affiliate"
+        scores[t] = {"pct": pcts[t], "status": status}
+    return scores
+
+
+# ==============================================================================
+# 🚀 CHARGEMENT DES DONNÉES
 # ==============================================================================
 
 config_path = CONFIG_PATH
@@ -61,228 +225,86 @@ with open(json_path, "r", encoding="utf-8") as f:
 matches_by_date = {}
 for m in matches:
     date_str = str(m.get("Date") or m.get("date") or m.get("date_closed") or "")[:10]
-    players = [p.get("name") for p in m.get("players", []) if p.get("name")]
+    players = list(dict.fromkeys(p.get("name") for p in m.get("players", []) if p.get("name")))
     if date_str and players:
         matches_by_date.setdefault(date_str, []).append(players)
 
-sorted_dates = sorted(matches_by_date.keys())
+sorted_dates = sorted(matches_by_date)
+
 
 # ==============================================================================
-# 🧠 MOTEUR D'ÉTAT TEMPOREL
+# 🧠 BOUCLE TEMPORELLE
 # ==============================================================================
 
 edge_weights = Counter()
 player_games = Counter()
-
-current_roster = {}  
-active_tribes = []   
+roster = {}       # joueur -> nom de tribu (ou UNALIGNED_LABEL)
 snapshots = {}
 
 for d in sorted_dates:
-    # 1. Atténuation & Ajout des nouveaux matchs du jour
+    # 1. Érosion des arêtes + nouveaux matchs du jour
     for pair in edge_weights:
         edge_weights[pair] *= DECAY_RATE
-        
+
     for players in matches_by_date[d]:
         for p in players:
             player_games[p] += 1
-            if p not in current_roster:
-                current_roster[p] = UNALIGNED_LABEL
-        for p1, p2 in combinations(sorted(players), 2):
+            roster.setdefault(p, UNALIGNED_LABEL)
+        for p1, p2 in combinations(sorted(set(players)), 2):
             edge_weights[(p1, p2)] += NEW_MATCH_WEIGHT
 
-    # --------------------------------------------------------------------------
-    # 🎯 CALCUL DU SEUIL DYNAMIQUE ET PURGE DES INACTIFS
-    # --------------------------------------------------------------------------
-    all_games = list(player_games.values())
-    global_median = statistics.median(all_games) if all_games else 0
-    global_min_games = max(MIN_GAMES_FLOOR, math.ceil(global_median * DYNAMIC_RATIO))
-
-    # Purge des membres sous le seuil dynamique réévalué
-    for p, curr_t in list(current_roster.items()):
-        if curr_t != UNALIGNED_LABEL:
-            tribe_members = [m for m, t in current_roster.items() if t == curr_t]
-            tribe_median = statistics.median([player_games[m] for m in tribe_members]) if tribe_members else 0
-            required_games = max(global_min_games, math.ceil(tribe_median * DYNAMIC_RATIO))
-            
-            if player_games[p] < required_games:
-                current_roster[p] = UNALIGNED_LABEL
-
-    # Construction du graphe NetworkX
     G = nx.Graph()
     for (p1, p2), w in edge_weights.items():
-        if w >= 0.1:
+        if w >= MIN_EDGE_WEIGHT:
             G.add_edge(p1, p2, weight=w)
 
-    # 2. La Boussole : Louvain pour identifier l'idéal théorique
-    ideal_assignments = {p: UNALIGNED_LABEL for p in G.nodes()}
-    
-    if G.number_of_nodes() > 0:
-        try:
-            raw_comms = sorted(nx.community.louvain_communities(G, weight="weight", seed=42), key=len, reverse=True)
-        except Exception:
-            raw_comms = []
+    min_games = min_games_required(player_games)
 
-        valid_comms = [c for c in raw_comms if len(c) >= MIN_TRIBE_SIZE_LOUVAIN][:MAX_TRIBES]
-        
-        used_ideal_names = set()
-        community_mapping = {}
-        
-        # PASSE 1 : Continuité avec les tribus déjà existantes
-        for i, comm in enumerate(valid_comms):
-            best_name = None
-            max_intersect = 0
-            for t_name in active_tribes:
-                if t_name not in used_ideal_names:
-                    current_members = {p for p, t in current_roster.items() if t == t_name}
-                    intersect = len(comm.intersection(current_members))
-                    if intersect > max_intersect and intersect > 0:
-                        max_intersect = intersect
-                        best_name = t_name
-            
-            if best_name:
-                community_mapping[i] = best_name
-                used_ideal_names.add(best_name)
-        
-        # PASSE 2 : Nouveaux clusters -> Création STRICTE si au moins MIN_TRIBE_CREATION_SIZE éligibles
-        available_names = [n for n in TRIBE_NAMES_POOL if n not in used_ideal_names]
-        for i, comm in enumerate(valid_comms):
-            if i not in community_mapping:
-                eligible_in_comm = [p for p in comm if player_games[p] >= global_min_games]
-                if len(eligible_in_comm) >= MIN_TRIBE_CREATION_SIZE and available_names:
-                    new_name = available_names.pop(0)
-                    community_mapping[i] = new_name
-                    used_ideal_names.add(new_name)
-                
-        for i, comm in enumerate(valid_comms):
-            name = community_mapping.get(i)
-            if name:
-                for p in comm:
-                    ideal_assignments[p] = name
+    # 2. La boussole propose, le roster dispose (hystérésis + quota)
+    eligible = [p for p in G.nodes() if player_games[p] >= min_games]
+    target, founded = compass(G, roster, eligible)
+    apply_compass(G, roster, target, founded)
 
-    # 3. Le Goulot d'étranglement (Quota de transfert)
-    pending_migrations = []
-    
-    for p in G.nodes():
-        curr_t = current_roster.get(p, UNALIGNED_LABEL)
-        ideal_t = ideal_assignments.get(p, UNALIGNED_LABEL)
-        
-        req_games = global_min_games
-        if ideal_t != UNALIGNED_LABEL:
-            t_members = [m for m, t in current_roster.items() if t == ideal_t]
-            if t_members:
-                t_median = statistics.median([player_games[m] for m in t_members])
-                req_games = max(global_min_games, math.ceil(t_median * DYNAMIC_RATIO))
+    # 3. Mortalité
+    dissolve_small_tribes(roster)
 
-        if curr_t != ideal_t and player_games[p] >= req_games:
-            w_ideal = sum(G[p][n]["weight"] for n in G.neighbors(p) if ideal_assignments.get(n) == ideal_t) if ideal_t != UNALIGNED_LABEL else 0
-            w_curr = sum(G[p][n]["weight"] for n in G.neighbors(p) if current_roster.get(n) == curr_t) if curr_t != UNALIGNED_LABEL else 0
-            
-            urgency = w_ideal - w_curr
-            if ideal_t == UNALIGNED_LABEL and curr_t != UNALIGNED_LABEL:
-                urgency = 0.5 
-            
-            pending_migrations.append({
-                "player": p,
-                "from": curr_t,
-                "to": ideal_t,
-                "urgency": urgency
-            })
+    active_tribes = sorted({t for t in roster.values() if t != UNALIGNED_LABEL})
 
-    # Priorité absolue aux membres fondateurs d'une nouvelle tribu
-    new_tribes_today = set(ideal_assignments.values()) - set(active_tribes) - {UNALIGNED_LABEL}
-    priority_moves = [m for m in pending_migrations if m["to"] in new_tribes_today]
-    standard_moves = [m for m in pending_migrations if m["to"] not in new_tribes_today]
-    
-    standard_moves.sort(key=lambda x: x["urgency"], reverse=True)
-    allowed_moves = priority_moves + standard_moves[:MAX_DAILY_TRANSFERS]
-        
-    for move in allowed_moves:
-        current_roster[move["player"]] = move["to"]
-
-    # 4. Mortalité : Evaluée sur le roster actuel
-    present_tribes = set(current_roster.values()) - {UNALIGNED_LABEL}
-    tribe_counts = Counter(current_roster.values())
-    
-    for t in present_tribes:
-        if tribe_counts[t] < MIN_TRIBE_SURVIVAL:
-            for p, t_assigned in list(current_roster.items()):
-                if t_assigned == t:
-                    current_roster[p] = UNALIGNED_LABEL
-                    
-    active_tribes = sorted({t for t in current_roster.values() if t != UNALIGNED_LABEL})
-
-    # 5. Formatage pour Jinja2 & Calcul des statuts (Core, Loyalist, Affiliate, Wavering)
+    # 4. Snapshot pour le template
+    summary = {t: 0 for t in TRIBE_NAMES_POOL + [UNALIGNED_LABEL]}
     snapshot_players = []
-    tribe_summary = {t: 0 for t in TRIBE_NAMES_POOL + [UNALIGNED_LABEL]}
-    
     for p, games in sorted(player_games.items(), key=lambda x: (-x[1], x[0])):
-        main_t = current_roster.get(p, UNALIGNED_LABEL)
-        tribe_summary[main_t] = tribe_summary.get(main_t, 0) + 1
-        
-        # Initialisation par défaut pour TOUTES les tribus de la pool (évite les undefined JS)
-        scores = {t: {"pct": 0, "status": None} for t in TRIBE_NAMES_POOL}
-        
-        if p in G and G.degree(p) > 0:
-            total_w = sum(G[p][n]["weight"] for n in G.neighbors(p))
-            
-            # Calcul des pourcentages pour chaque tribu
-            tribe_pcts = {}
-            for t in TRIBE_NAMES_POOL:
-                t_w = sum(G[p][n]["weight"] for n in G.neighbors(p) if current_roster.get(n) == t)
-                tribe_pcts[t] = round((t_w / total_w) * 100) if total_w > 0 else 0
-            
-            # Marge d'indécision (écart entre les deux meilleurs scores)
-            sorted_pcts = sorted(tribe_pcts.values(), reverse=True)
-            top1 = sorted_pcts[0] if len(sorted_pcts) > 0 else 0
-            top2 = sorted_pcts[1] if len(sorted_pcts) > 1 else 0
-            top_margin = top1 - top2
-
-            # Attribution du statut sur la tribu principale du joueur
-            for t in TRIBE_NAMES_POOL:
-                pct = tribe_pcts[t]
-                status = None
-                
-                if t == main_t and main_t != UNALIGNED_LABEL:
-                    if top_margin <= 10 and len(active_tribes) > 1:
-                        status = "Wavering"
-                    elif pct >= 85:
-                        status = "Core"
-                    elif pct >= 65:
-                        status = "Loyalist"
-                    else:
-                        status = "Affiliate"
-                        
-                scores[t] = {"pct": pct, "status": status}
-            
+        main_tribe = roster[p]
+        summary[main_tribe] += 1
         snapshot_players.append({
             "name": p,
             "games": games,
-            "main_tribe": main_t,
-            "scores": scores
+            "main_tribe": main_tribe,
+            "scores": player_scores(G, roster, p, active_tribes),
         })
-        
+
     snapshots[d] = {
         "active_tribes": active_tribes,
-        "summary": tribe_summary,
-        "players": snapshot_players
+        "summary": summary,
+        "players": snapshot_players,
     }
+
 
 # ==============================================================================
 # 🎨 GÉNÉRATION HTML
 # ==============================================================================
 
-if Path(TEMPLATE_DIR).exists() and (Path(TEMPLATE_DIR) / TEMPLATE_FILE).exists():
+if (Path(TEMPLATE_DIR) / TEMPLATE_FILE).exists():
     env = Environment(loader=FileSystemLoader(TEMPLATE_DIR))
     template = env.get_template(TEMPLATE_FILE)
-    
+
     html_content = template.render(
         config=config_data,
         active_section="frog",
         dates_json=json.dumps(sorted_dates),
-        snapshots_json=json.dumps(snapshots)
+        snapshots_json=json.dumps(snapshots),
     )
-    
+
     with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
         f.write(html_content)
     print(f"✅ Fichier {OUTPUT_FILE} généré avec succès ({len(snapshots)} dates).")
