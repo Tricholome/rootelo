@@ -20,13 +20,15 @@
     <table id="frogTable" class="display nowrap" style="width: 100%;">
         <thead>
             <tr>
-                <th style="width: 25%;">Player</th>
-                <th style="width: 10%;">Games</th>
-                <th>Tribe A</th>
-                <th>Tribe B</th>
-                <th>Tribe C</th>
-                <th>Tribe D</th>
-                <th>Tribe E</th>
+                <th style="width: 22%;">Player</th>
+                <th style="width: 8%;">Games</th>
+                <th>TEA</th>
+                <th>BAG</th>
+                <th>SWORD</th>
+                <th>COINS</th>
+                <th>HAMMER</th>
+                <th>CROSSBOW</th>
+                <th>BOOT</th>
             </tr>
         </thead>
         <tbody>
@@ -108,12 +110,11 @@
 
             const activeTribes = snapshot.active_tribes || [];
 
-            // 1. Gestion dynamique de la visibilité et du nom des colonnes
+            // 1. Visibilité dynamique des colonnes (index 2 à 8)
             TARGET_TRIBES.forEach((tribe, idx) => {
-                const colIdx = idx + 2; // Col 0: Player, Col 1: Games, Col 2..6: Tribus
+                const colIdx = idx + 2; 
                 const isActive = activeTribes.includes(tribe);
                 
-                // Masquer/Afficher la colonne sans redessiner immédiatement
                 table.column(colIdx).visible(isActive, false);
 
                 if (isActive) {
@@ -122,7 +123,7 @@
                 }
             });
 
-            // 2. Boutons de compteurs avec filtrage au clic
+            // 2. Boutons de compteurs
 			const tribeOrder = [...TARGET_TRIBES.filter(t => activeTribes.includes(t)), UNALIGNED_LABEL];
 			let summaryHtml = "";
 
@@ -150,13 +151,13 @@
                 updateTableForDate(selectedDate);
             });
 
-            // 3. Filtrage des joueurs selon la tribu sélectionnée
+            // 3. Filtrage des joueurs
             let playersToDisplay = snapshot.players;
             if (activeTribeFilter) {
                 playersToDisplay = playersToDisplay.filter(p => p.main_tribe === activeTribeFilter);
             }
 
-            // 4. Inscription des données et rendu final du tableau
+            // 4. Construction des lignes
             const newRows = playersToDisplay.map(p => {
                 return [
                     p.name,
