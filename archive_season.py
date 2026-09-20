@@ -87,10 +87,12 @@ def fetch_raw_matches(league_config, tournament_id=None):
     api_token = os.getenv(token_var) if token_var else os.getenv('API_TOKEN')
 
     t_id = tournament_id or api_cfg.get('tournament_id')
+    auth_prefix = api_cfg.get('auth_prefix')
 
-    if api_type == 'pliskin':
+    if api_type == 'pliskin' or (not api_type and api_cfg.get('base_url')):
         base_url = api_cfg['base_url'].rstrip('/')
-        headers = {'Authorization': f'Token {api_token}'} if api_token else {}
+        prefix = auth_prefix or 'Token'
+        headers = {'Authorization': f'{prefix} {api_token}'} if api_token else {}
         endpoint = f"{base_url}/api/match/"
         params = {'limit': 500}
         if t_id:
@@ -131,7 +133,8 @@ def fetch_raw_matches(league_config, tournament_id=None):
 
     elif api_type == 'rootdb':
         endpoint = api_cfg.get('endpoint')
-        headers = {'Authorization': f'Api-Key {api_token}'} if api_token else {}
+        prefix = auth_prefix or 'Api-Key'
+        headers = {'Authorization': f'{prefix} {api_token}'} if api_token else {}
 
         next_url = endpoint
         all_matches = []
@@ -170,12 +173,15 @@ def fetch_raw_matches(league_config, tournament_id=None):
 # =========================================================================
 
 def main():
+    env_tid = os.getenv('TOURNAMENT_ID')
+    default_tid = int(env_tid) if env_tid and env_tid.isdigit() else None
+
     parser = argparse.ArgumentParser(description="Rootelo Season Archiver Engine")
     parser.add_argument('--league', default=os.getenv('LEAGUE_SLUG', 'rdl'), help="League slug (e.g., 'rdl', 'hoot')")
     parser.add_argument('--season', default=os.getenv('SEASON_TAG', 'lh01'), help="Season tag (e.g., 'lh01')")
     parser.add_argument('--prev-season', default=os.getenv('PREVIOUS_SEASON_TAG', ''), help="Previous season tag")
     parser.add_argument('--cutoff', default=os.getenv('CUTOFF_DATE_STR', '2026-03-31'), help="Cutoff date (YYYY-MM-DD)")
-    parser.add_argument('--tournament-id', type=int, default=int(os.getenv('TOURNAMENT_ID', 0)) or None, help="Override Tournament ID")
+    parser.add_argument('--tournament-id', type=int, default=default_tid, help="Override Tournament ID")
     args = parser.parse_args()
 
     league_slug = args.league.strip().lower()
@@ -435,7 +441,7 @@ def main():
         if os.path.exists(path):
             os.remove(path)
         with open(path, 'w', encoding='utf-8') as f:
-            json.dump(data, f, indent=4) if is_json else data.to_csv(path, index=False)
+            json.dump(data, f, indent=4, ensure_ascii=False) if is_json else data.to_csv(path, index=False)
         print(f"  > {os.path.basename(path)} saved in {season_dir}.")
 
     safe_save(output_ratings, final_df)
