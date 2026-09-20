@@ -29,12 +29,12 @@ from jinja2 import Environment, FileSystemLoader
 
 # --- Tribus ---
 MAX_TRIBES = 3                # Nombre max de tribus simultanées
-MIN_TRIBE_CREATION_SIZE = 4   # Joueurs éligibles minimum pour FONDER une tribu
-MIN_TRIBE_SURVIVAL = 2        # Joueurs minimum pour qu'une tribu SURVIVE
+MIN_TRIBE_CREATION_SIZE = 6   # Joueurs éligibles minimum pour FONDER une tribu
+MIN_TRIBE_SURVIVAL = 6        # Joueurs minimum pour qu'une tribu SURVIVE
 
 # --- Éligibilité (un seul seuil global, pas de seuil par tribu) ---
 MIN_GAMES_FLOOR = 3           # Plancher absolu de matchs
-DYNAMIC_RATIO = 0.40          # Seuil = max(plancher, ratio × médiane globale)
+DYNAMIC_RATIO = 0.50          # Seuil = max(plancher, ratio × médiane globale)
 
 # --- Stabilité (LES réglages qui comptent) ---
 STICKINESS = 1.5              # Pour quitter sa tribu : affinité ailleurs > STICKINESS × affinité actuelle
