@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="codex-section">	
-    <h2>Welcome, Frogs! 🐸</h2>
+    <h2>Welcome, Frogs!</h2>
 
     <!-- Date selector controls -->
     <div class="date-controls" style="display: flex; align-items: center; justify-content: center; gap: 10px; margin: 20px 0;">
@@ -13,22 +13,23 @@
     </div>
 
     <!-- Dynamic tribe counters -->
-    <div id="tribeSummary" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin: 15px 0 10px 0;">
+    <div id="tribeSummary" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin: 15px 0 25px 0;">
         <!-- Generated dynamically in JS -->
     </div>
 
-    <!-- Daily metrics bar -->
-    <div id="metricsBar" style="text-align: center; font-size: 0.85rem; color: #a0aec0; margin-bottom: 20px;">
-        <!-- Generated dynamically in JS -->
-    </div>
-
-    <!-- Dynamic Table -->
     <table id="frogTable" class="display nowrap" style="width:100%">
-        <thead id="frogTableHead">
-            <!-- Dynamically populated by JS -->
+        <thead>
+            <tr>
+                <th>Player</th>
+                <th>Games</th>
+                <th>Main Tribe</th>
+                <th>Tribe A</th>
+                <th>Tribe B</th>
+                <th>Tribe C</th>
+            </tr>
         </thead>
-        <tbody id="frogTableBody">
-            <!-- Dynamically populated by JS -->
+        <tbody>
+            <!-- Table body populated dynamically by JS -->
         </tbody>
     </table>
 </div>
@@ -38,13 +39,18 @@
 <script>
     const snapshots = {{ snapshots_json | safe }};
     const availableDates = {{ dates_json | safe }};
+    const TARGET_TRIBES = ["Tribe A", "Tribe B", "Tribe C"];
     const UNALIGNED_LABEL = "-";
 
     $(document).ready(function () {
         if (!availableDates || availableDates.length === 0) return;
 
-        let dataTableInstance = null;
-        let currentIndex = availableDates.length - 1;
+        const table = $('#frogTable').DataTable({
+            "order": [[1, "desc"]],
+            "responsive": true,
+            "pageLength": 25,
+            "dom": 'rt<"bottom"p><"clear">'
+        });
 
         const $datePicker =$('#datePicker');
         const $prevBtn =$('#prevDateBtn');
@@ -53,17 +59,15 @@
 
         $datePicker.attr('min', availableDates[0]);$datePicker.attr('max', availableDates[availableDates.length - 1]);
 
+        let currentIndex = availableDates.length - 1;
+
         function renderTribeCell(scoreData) {
-            if (!scoreData || scoreData.pct < 5) {
+            if (!scoreData || scoreData.pct < 10) {
                 return `<span style="color:#a0aec0;">-</span>`;
             }
-
-            let pctStr = `<span style="font-weight:600; margin-right:4px;">${scoreData.pct} %</span>`;
             
-            if (scoreData.hub) {
-                pctStr += `<span title="Central Tribe Hub" style="margin-right:4px;">👑</span>`;
-            }
-
+            const pctStr = `<span style="font-weight:600; margin-right:4px;">${scoreData.pct} %</span>`;
+            
             if (!scoreData.status) {
                 return pctStr;
             }
@@ -78,8 +82,8 @@
             } else if (scoreData.status === "Affiliate") {
                 bgColor = "#d97706"; // Amber / Orange
             } else if (scoreData.status === "Wavering") {
-                bgColor = "#c62828"; // Red
-                tooltip = 'title="Maintained in tribe by historical inertia"';
+                bgColor = "#c62828";  // Red
+                tooltip = 'title="Maintained in tribe by historical inertia while leaning elsewhere"';
             }
 
             return `${pctStr} <span style="background:${bgColor}; color:#fff; padding:2px 6px; border-radius:10px; font-size:0.75rem; font-weight:600;" ${tooltip}>${scoreData.status}</span>`;
@@ -90,12 +94,10 @@
             const snapshot = snapshots[selectedDate];
             if (!snapshot) return;
 
-            const tribes = snapshot.tribes || [];
-            const summaryOrder = [...tribes, UNALIGNED_LABEL];
-
-            // 1. Render Tribe Summary Badges
+            const tribeOrder = ["Tribe A", "Tribe B", "Tribe C", UNALIGNED_LABEL];
             let summaryHtml = "";
-            summaryOrder.forEach(tribe => {
+
+            tribeOrder.forEach(tribe => {
                 const count = snapshot.summary[tribe] || 0;
                 if (count > 0 || tribe === UNALIGNED_LABEL) {
                     const bgColor = tribe === UNALIGNED_LABEL ? '#4a5568' : '#2e7d32';
@@ -108,60 +110,20 @@
             });
             $('#tribeSummary').html(summaryHtml);
 
-            // 2. Render Metrics Bar
-            const m = snapshot.metrics || {};
-            let metricsText = `Assigned: <strong>${m.assigned || 0}</strong> | Mean Tenure: <strong>${m.mean_tenure_days || 0}d</strong> | Daily Churn: <strong>${m.churn_pct || 0}%</strong>`;
-            if (m.births && m.births.length > 0) {
-                metricsText += ` | <span style="color:#2e7d32;">✨ New: ${m.births.join(', ')}</span>`;
-            }
-            $('#metricsBar').html(metricsText);
-
-            // 3. Destroy old DataTable if exists
-            if ($.fn.DataTable.isDataTable('#frogTable')) {
-                $('#frogTable').DataTable().clear().destroy();
-                $('#frogTableHead').empty();
-                $('#frogTableBody').empty();
-            }
-
-            // 4. Build Header dynamically
-            let headerHtml = '<tr><th>Player</th><th>Games</th><th>Weight</th><th>Main Tribe</th>';
-            tribes.forEach(t => {
-                headerHtml += `<th>${t}</th>`;
-            });
-            headerHtml += '</tr>';
-            $('#frogTableHead').html(headerHtml);
-
-            // 5. Build Rows
             const newRows = snapshot.players.map(p => {
-                const reasonText = p.reason ? (p.reason.rule || '') : '';
-                const mainTribeBadge = p.main_tribe === UNALIGNED_LABEL 
-                    ? `<span style="color:#a0aec0;" title="${reasonText}">${UNALIGNED_LABEL}</span>`
-                    : `<strong title="${reasonText}">${p.main_tribe}</strong>`;
-
-                const row = [
+                return [
                     p.name,
                     p.games,
-                    p.weight,
-                    mainTribeBadge
+                    p.main_tribe,
+                    renderTribeCell(p.scores["Tribe A"]),
+                    renderTribeCell(p.scores["Tribe B"]),
+                    renderTribeCell(p.scores["Tribe C"])
                 ];
-
-                tribes.forEach(t => {
-                    row.push(renderTribeCell(p.scores[t]));
-                });
-
-                return row;
             });
 
-            // 6. Re-initialize DataTable
-            dataTableInstance = $('#frogTable').DataTable({
-                "order": [[1, "desc"]],
-                "responsive": true,
-                "pageLength": 25,
-                "dom": 'rt<"bottom"p><"clear">'
-            });
-
-            dataTableInstance.rows.add(newRows);
-            dataTableInstance.draw();
+            table.clear();
+            table.rows.add(newRows);
+            table.draw();
 
             $prevBtn.prop('disabled', currentIndex <= 0);$nextBtn.prop('disabled', currentIndex >= availableDates.length - 1);
         }
