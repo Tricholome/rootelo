@@ -1,37 +1,209 @@
 import json
 import math
 from collections import Counter
-from itertools import combinations
+from itertools import combinations, permutations
 from pathlib import Path
+
+import networkx as nx
 from jinja2 import Environment, FileSystemLoader
 
 # ==============================================================================
-# ⚙️ CONFIGURATION & HYPERPARAMÈTRES
+# CONFIGURATION
 # ==============================================================================
 
 TARGET_TRIBES = ["Tribe A", "Tribe B", "Tribe C"]
 UNALIGNED_LABEL = "-"
 
-# --- Seuils du Modèle de Gravité ---
-MIN_MATCHES_TO_START = 50  # Buffer : matchs cumulés requis avant d'afficher les tribus
-MIN_CORE_GAMES = 4         # Un duo doit jouer au moins 4 fois ensemble pour pouvoir fonder une tribu
-MIN_GAMES_FLOOR = 3        # Parties minimales pour qu'un joueur puisse être classé
-STATUS_LOYAL_PCT = 60      # % d'interactions avec la tribu entière pour être Loyaliste
-STATUS_AFFILIATE_PCT = 40  # % d'interactions avec la tribu entière pour être Affilié
+MIN_PLAYER_GAMES = 3
+MIN_JOINT_GAMES = 2
+MIN_COSINE_WEIGHT = 0.18
+MIN_COMMUNITY_SIZE = 5
+MAX_TRIBES = 3
 
-# --- Fichiers & Chemins ---
+LOUVAIN_SEED = 42
+LOUVAIN_RESOLUTION = 1.5
+
+# Affiliation officielle
+MIN_GAMES_TO_JOIN = 3
+MIN_EVIDENCE = 0.20
+JOIN_MARGIN = 10
+SWITCH_MARGIN = 15
+
+# Badges
+LOYAL_PCT = 45
+WAVERING_MARGIN = 5
+
 CONFIG_PATH = Path("data/config/config.json")
-DEFAULT_MATCHES_PATH = Path("data/rdl/archives/lh02/matches.json")
+DEFAULT_MATCHES_PATH = Path("data/rdl/archives/lh03/matches.json")
 TEMPLATE_DIR = "templates"
 TEMPLATE_FILE = "frog.html"
 OUTPUT_FILE = Path("frog.html")
 
+
 # ==============================================================================
-# 🚀 INITIALISATION DES DONNÉES
+# HELPERS
+# ==============================================================================
+
+def build_graph(player_counts, pair_counts):
+    """Construit le graphe cumulatif de la saison."""
+    graph = nx.Graph()
+    active = {
+        player for player, games in player_counts.items()
+        if games >= MIN_PLAYER_GAMES
+    }
+    graph.add_nodes_from(active)
+
+    for (player_1, player_2), joint_games in pair_counts.items():
+        if player_1 not in active or player_2 not in active:
+            continue
+        if joint_games < MIN_JOINT_GAMES:
+            continue
+
+        weight = joint_games / math.sqrt(
+            player_counts[player_1] * player_counts[player_2]
+        )
+        if weight >= MIN_COSINE_WEIGHT:
+            graph.add_edge(player_1, player_2, weight=weight)
+
+    return graph
+
+
+def community_strength(community, graph):
+    """Poids interne total d'une communauté."""
+    return sum(
+        data["weight"]
+        for _, _, data in graph.subgraph(community).edges(data=True)
+    )
+
+
+def detect_communities(graph):
+    """Détecte et conserve au maximum les trois communautés principales."""
+    if graph.number_of_edges() == 0:
+        return []
+
+    communities = nx.community.louvain_communities(
+        graph,
+        weight="weight",
+        resolution=LOUVAIN_RESOLUTION,
+        seed=LOUVAIN_SEED,
+    )
+    communities = [
+        set(community)
+        for community in communities
+        if len(community) >= MIN_COMMUNITY_SIZE
+    ]
+    communities.sort(
+        key=lambda community: community_strength(community, graph),
+        reverse=True,
+    )
+    return communities[:MAX_TRIBES]
+
+
+def overlap_score(old_members, new_members):
+    """Part de l'ancienne tribu retrouvée dans la nouvelle communauté."""
+    if not old_members:
+        return 0.0
+    return len(set(old_members) & set(new_members)) / len(set(old_members))
+
+
+def name_communities(communities, previous_cores):
+    """
+    Donne aux nouvelles communautés les noms A/B/C en maximisant globalement
+    leur continuité avec la veille.
+    """
+    if not communities:
+        return {}
+
+    best_mapping = None
+    best_score = -1.0
+
+    for labels in permutations(TARGET_TRIBES, len(communities)):
+        mapping = dict(zip(labels, communities))
+        score = sum(
+            overlap_score(previous_cores.get(label, set()), community)
+            for label, community in mapping.items()
+        )
+        if score > best_score:
+            best_score = score
+            best_mapping = mapping
+
+    return best_mapping
+
+
+def player_affinities(player, tribe_cores, graph):
+    """Calcule les pourcentages d'affinité envers les noyaux des tribus."""
+    raw_scores = {}
+
+    for tribe in TARGET_TRIBES:
+        core = tribe_cores.get(tribe, set())
+        total = sum(
+            graph[player][member]["weight"]
+            for member in core
+            if member != player and graph.has_edge(player, member)
+        )
+        raw_scores[tribe] = total / math.sqrt(len(core)) if core else 0.0
+
+    evidence = sum(raw_scores.values())
+    percentages = {
+        tribe: (100 * raw_scores[tribe] / evidence if evidence else 0.0)
+        for tribe in TARGET_TRIBES
+    }
+    return percentages, evidence
+
+
+def choose_tribe(previous_tribe, games, percentages, evidence, tribe_cores):
+    """Applique une hystérésis simple à l'unique affiliation officielle."""
+    active_tribes = [tribe for tribe in TARGET_TRIBES if tribe in tribe_cores]
+    if not active_tribes or games < MIN_GAMES_TO_JOIN or evidence < MIN_EVIDENCE:
+        return UNALIGNED_LABEL
+
+    ranked = sorted(active_tribes, key=lambda tribe: percentages[tribe], reverse=True)
+    best = ranked[0]
+    second_pct = percentages[ranked[1]] if len(ranked) > 1 else 0.0
+
+    if previous_tribe not in tribe_cores:
+        previous_tribe = UNALIGNED_LABEL
+
+    if previous_tribe == UNALIGNED_LABEL:
+        return best if percentages[best] - second_pct >= JOIN_MARGIN else UNALIGNED_LABEL
+
+    if best == previous_tribe:
+        return previous_tribe
+
+    if percentages[best] - percentages[previous_tribe] >= SWITCH_MARGIN:
+        return best
+
+    return previous_tribe
+
+
+def player_status(player, tribe, percentages, tribe_cores):
+    """Le badge décrit l'affiliation sans la modifier."""
+    if tribe == UNALIGNED_LABEL:
+        return None
+    if player in tribe_cores.get(tribe, set()):
+        return "Core"
+
+    other_scores = [
+        percentages[other]
+        for other in tribe_cores
+        if other != tribe
+    ]
+    margin = percentages[tribe] - max(other_scores, default=0.0)
+
+    if margin <= WAVERING_MARGIN:
+        return "Wavering"
+    if percentages[tribe] >= LOYAL_PCT:
+        return "Loyalist"
+    return "Affiliate"
+
+
+# ==============================================================================
+# LOAD DATA
 # ==============================================================================
 
 config_path = CONFIG_PATH if CONFIG_PATH.exists() else Path("data/config.json")
-config_data = json.load(open(config_path, "r", encoding="utf-8")) if config_path.exists() else {}
+with open(config_path, "r", encoding="utf-8") as file:
+    config_data = json.load(file)
 
 json_path = DEFAULT_MATCHES_PATH
 if not json_path.exists():
@@ -39,235 +211,115 @@ if not json_path.exists():
     if archives:
         json_path = archives[0]
 
-with open(json_path, "r", encoding="utf-8") as f:
-    matches = json.load(f)
+with open(json_path, "r", encoding="utf-8") as file:
+    matches = json.load(file)
 
 matches_data = []
-dates_set = set()
-
 for match in matches:
-    raw_date = match.get("Date") or match.get("date") or match.get("date_closed") or ""
-    date_str = str(raw_date)[:10] if raw_date else "1970-01-01"
-    
-    player_names = [p.get("name") for p in match.get("players", []) if p.get("name")]
-    if player_names:
-        matches_data.append({
-            "date": date_str,
-            "players": player_names
-        })
-        dates_set.add(date_str)
+    raw_date = (
+        match.get("Date")
+        or match.get("date")
+        or match.get("date_closed")
+        or ""
+    )
+    date = str(raw_date)[:10] if raw_date else "1970-01-01"
+    players = [
+        player.get("name")
+        for player in match.get("players", [])
+        if player.get("name")
+    ]
+    if players:
+        matches_data.append({"date": date, "players": players})
 
-sorted_dates = sorted(list(dates_set))
+sorted_dates = sorted({match["date"] for match in matches_data})
+matches_by_date = {date: [] for date in sorted_dates}
+for match in matches_data:
+    matches_by_date[match["date"]].append(match)
+
 
 # ==============================================================================
-# 🧠 MOTEUR DE GRAVITÉ (APPROCHE À DOUBLE PASSE)
+# DAILY ANALYSIS
 # ==============================================================================
 
 snapshots = {}
+player_counts = Counter()
+pair_counts = Counter()
 previous_cores = {}
+previous_assignments = {}
 
-for d in sorted_dates:
-    cumulative_matches = [m for m in matches_data if m["date"] <= d]
-    
-    player_counts = Counter()
-    pair_counts = Counter()
-    
-    for m in cumulative_matches:
-        players = m["players"]
-        for p in players:
-            player_counts[p] += 1
-        for p1, p2 in combinations(sorted(players), 2):
-            pair_counts[(p1, p2)] += 1
+for date in sorted_dates:
+    # Mise à jour cumulative : tous les matchs gardent le même poids.
+    for match in matches_by_date[date]:
+        players = sorted(set(match["players"]))
+        player_counts.update(players)
+        pair_counts.update(combinations(players, 2))
 
-    # ⏳ BUFFER DE DÉBUT DE SAISON
-    # Tant que la ligue n'a pas atteint le volume minimal, on met tout le monde en attente
-    if len(cumulative_matches) < MIN_MATCHES_TO_START:
-        tribe_summary = {UNALIGNED_LABEL: len(player_counts)}
-        for t in TARGET_TRIBES:
-            tribe_summary[t] = 0
-            
-        snapshot_players = []
-        for name, games_played in sorted(player_counts.items(), key=lambda x: (-x[1], x[0])):
-            formatted_scores = {t: {"pct": 0, "status": "Wavering"} for t in TARGET_TRIBES}
-            snapshot_players.append({
-                "name": name,
-                "games": games_played,
-                "main_tribe": UNALIGNED_LABEL,
-                "scores": formatted_scores
-            })
-        snapshots[d] = {"summary": tribe_summary, "players": snapshot_players}
-        continue
+    graph = build_graph(player_counts, pair_counts)
+    communities = detect_communities(graph)
+    tribe_cores = name_communities(communities, previous_cores)
 
-    # ==========================================================================
-    # ÉTAPE 1 : IDENTIFICATION DES NOYAUX PAR FORCE GRAVITATIONNELLE
-    # ==========================================================================
-    
-    weighted_pairs = []
-    
-    for pair, joint_count in pair_counts.items():
-        if joint_count >= MIN_CORE_GAMES:
-            p1, p2 = pair
-            
-            # 1. Le Poids Relatif (Exclusivité)
-            # Privilégie les affinités fortes et filtre les joueurs qui jouent avec tout le monde
-            exclusivity = joint_count / math.sqrt(player_counts[p1] * player_counts[p2])
-            
-            # 2. Le Score Gravitationnel (Volume × Exclusivité)
-            # Empêche les joueurs occasionnels (exclusifs mais à faible volume) de détrôner les piliers
-            gravity_score = joint_count * exclusivity
-            
-            weighted_pairs.append((pair, gravity_score, joint_count))
-
-    # Tri par force gravitationnel (-x[1]), puis par volume (-x[2]), puis alphabétique
-    sorted_pairs = sorted(weighted_pairs, key=lambda x: (-x[1], -x[2], x[0][0], x[0][1]))
-    
-    top_pairs = []
-    used_players = set()
-    
-    for pair, gravity_score, joint_count in sorted_pairs:
-        if pair[0] not in used_players and pair[1] not in used_players:
-            top_pairs.append(pair)
-            used_players.update(pair)
-            if len(top_pairs) == len(TARGET_TRIBES):
-                break
-
-    # Raccord avec les noms de tribus de la veille (stabilité visuelle)
-    current_cores = {}
-    assigned_tribes = set()
-    available_tribes = TARGET_TRIBES.copy()
-
-    for pair in top_pairs:
-        best_match = None
-        max_overlap = 0
-        for t_name, prev_core in previous_cores.items():
-            if t_name in available_tribes:
-                overlap = len(set(pair).intersection(set(prev_core)))
-                if overlap > max_overlap:
-                    max_overlap = overlap
-                    best_match = t_name
-        
-        if best_match:
-            current_cores[best_match] = pair
-            assigned_tribes.add(best_match)
-            available_tribes.remove(best_match)
-
-    for pair in top_pairs:
-        if pair not in current_cores.values():
-            new_tribe = available_tribes.pop(0)
-            current_cores[new_tribe] = pair
-            assigned_tribes.add(new_tribe)
-
-    previous_cores = current_cores
-
-    # ==========================================================================
-    # ÉTAPE 2 : PASSE 1 - ASSIGNATION PROVISOIRE (GRAVITÉ DES NOYAUX)
-    # ==========================================================================
-    
-    provisional_assignments = {}
-    for name in player_counts.keys():
-        best_tribe = UNALIGNED_LABEL
-        max_core_links = 0
-        
-        for t_name, (core_p1, core_p2) in current_cores.items():
-            if name == core_p1 or name == core_p2:
-                best_tribe = t_name
-                break
-                
-            link1 = pair_counts.get(tuple(sorted((name, core_p1))), 0)
-            link2 = pair_counts.get(tuple(sorted((name, core_p2))), 0)
-            total_core_links = link1 + link2
-            
-            if total_core_links > max_core_links:
-                max_core_links = total_core_links
-                best_tribe = t_name
-                
-        provisional_assignments[name] = best_tribe
-
-    # ==========================================================================
-    # ÉTAPE 3 : PASSE 2 - CALCUL FINAL ET RENDU (GRAVITÉ DE LA TRIBU ENTIÈRE)
-    # ==========================================================================
-    
-    tribe_summary = {t: 0 for t in TARGET_TRIBES + [UNALIGNED_LABEL]}
     snapshot_players = []
+    current_assignments = {}
+    tribe_summary = Counter()
 
-    for name, games_played in sorted(player_counts.items(), key=lambda x: (-x[1], x[0])):
-        
-        raw_affinities = {t: 0 for t in TARGET_TRIBES}
-        total_interactions = 0
-        is_core_of = next((t for t, core in current_cores.items() if name in core), None)
+    for player, games in sorted(
+        player_counts.items(),
+        key=lambda item: (-item[1], item[0].lower()),
+    ):
+        percentages, evidence = player_affinities(player, tribe_cores, graph)
+        tribe = choose_tribe(
+            previous_assignments.get(player, UNALIGNED_LABEL),
+            games,
+            percentages,
+            evidence,
+            tribe_cores,
+        )
+        status = player_status(player, tribe, percentages, tribe_cores)
 
-        # Addition de l'historique complet du joueur
-        for p2 in player_counts.keys():
-            if name != p2:
-                link = pair_counts.get(tuple(sorted((name, p2))), 0)
-                if link > 0:
-                    total_interactions += link
-                    p2_tribe = provisional_assignments.get(p2, UNALIGNED_LABEL)
-                    if p2_tribe in TARGET_TRIBES:
-                        raw_affinities[p2_tribe] += link
-
-        formatted_scores = {}
-        max_pct = 0
-        best_tribe = UNALIGNED_LABEL
-
-        for t_name in TARGET_TRIBES:
-            pct = 0
-            status = "Wavering"
-
-            if is_core_of == t_name:
-                pct = 100
-                best_tribe = t_name
-                max_pct = 100
-                status = "Core"
-            elif is_core_of is None and total_interactions > 0:
-                pct = round((raw_affinities[t_name] / total_interactions) * 100)
-                if pct > max_pct:
-                    max_pct = pct
-                    best_tribe = t_name
-
-                if pct > 0:
-                    if pct >= STATUS_LOYAL_PCT:
-                        status = "Loyalist"
-                    elif pct >= STATUS_AFFILIATE_PCT:
-                        status = "Affiliate"
-
-            formatted_scores[t_name] = {
-                "pct": pct,
-                "status": status
-            }
-
-        final_tribe = best_tribe
-        # Le joueur bascule hors réseau s'il n'atteint pas l'affinité minimale ou le volume minimal
-        if games_played < MIN_GAMES_FLOOR or max_pct < STATUS_AFFILIATE_PCT:
-            final_tribe = UNALIGNED_LABEL
-
-        tribe_summary[final_tribe] = tribe_summary.get(final_tribe, 0) + 1
+        current_assignments[player] = tribe
+        tribe_summary[tribe] += 1
 
         snapshot_players.append({
-            "name": name,
-            "games": games_played,
-            "main_tribe": final_tribe,
-            "scores": formatted_scores
+            "name": player,
+            "games": games,
+            "main_tribe": tribe,
+            "scores": {
+                target: {
+                    "pct": round(percentages[target]),
+                    "status": status if target == tribe else None,
+                }
+                for target in TARGET_TRIBES
+            },
         })
-        
-    snapshots[d] = {
-        "summary": tribe_summary,
-        "players": snapshot_players
+
+    snapshots[date] = {
+        "summary": {
+            tribe: tribe_summary.get(tribe, 0)
+            for tribe in TARGET_TRIBES + [UNALIGNED_LABEL]
+        },
+        "players": snapshot_players,
     }
 
+    previous_cores = {
+        tribe: set(core)
+        for tribe, core in tribe_cores.items()
+    }
+    previous_assignments = current_assignments
+
+
 # ==============================================================================
-# 📝 RENDU HTML (JINJA2)
+# RENDER EXISTING FRONT-END
 # ==============================================================================
 
 env = Environment(loader=FileSystemLoader(TEMPLATE_DIR))
 env.globals["config"] = config_data
 template = env.get_template(TEMPLATE_FILE)
 
-with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
-    f.write(template.render(
+with open(OUTPUT_FILE, "w", encoding="utf-8") as file:
+    file.write(template.render(
         active_section="frog",
-        snapshots_json=json.dumps(snapshots, ensure_ascii=False), 
-        dates_json=json.dumps(sorted_dates, ensure_ascii=False)
+        snapshots_json=json.dumps(snapshots, ensure_ascii=False),
+        dates_json=json.dumps(sorted_dates, ensure_ascii=False),
     ))
 
-print(f"Analyse gravitationnelle réussie : {len(sorted_dates)} dates calculées.")
+print(f"Analysis successful: {len(sorted_dates)} dates calculated.")
