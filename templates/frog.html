@@ -4,33 +4,21 @@
 <div class="codex-section">	
     <h2>Welcome, Frogs!</h2>
 
-    <!-- Date selector controls -->
+    <!-- Contrôles de sélection de date -->
     <div class="date-controls" style="display: flex; align-items: center; justify-content: center; gap: 10px; margin: 20px 0;">
-        <button id="prevDateBtn" class="btn">&laquo; Previous Day</button>
+        <button id="prevDateBtn" class="btn">&laquo; Jour précédent</button>
         <input type="date" id="datePicker" style="padding: 6px 12px; font-size: 1rem;">
-        <button id="nextDateBtn" class="btn">Next Day &raquo;</button>
-        <button id="latestDateBtn" class="btn">Latest Date</button>
+        <button id="nextDateBtn" class="btn">Jour suivant &raquo;</button>
+        <button id="latestDateBtn" class="btn">Dernière date</button>
     </div>
 
-    <!-- Dynamic tribe counters -->
+    <!-- Compteurs dynamiques de tribus -->
     <div id="tribeSummary" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin: 15px 0 25px 0;">
-        <!-- Generated dynamically in JS -->
+        <!-- Généré dynamiquement par le JS -->
     </div>
 
+    <!-- Structure du tableau (remplie entièrement par JS) -->
     <table id="frogTable" class="display nowrap" style="width:100%">
-        <thead>
-            <tr>
-                <th>Player</th>
-                <th>Games</th>
-                <th>Main Tribe</th>
-                <th>Tribe A</th>
-                <th>Tribe B</th>
-                <th>Tribe C</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- Table body populated dynamically by JS -->
-        </tbody>
     </table>
 </div>
 {% endblock %}
@@ -39,18 +27,10 @@
 <script>
     const snapshots = {{ snapshots_json | safe }};
     const availableDates = {{ dates_json | safe }};
-    const TARGET_TRIBES = ["Tribe A", "Tribe B", "Tribe C"];
     const UNALIGNED_LABEL = "-";
 
     $(document).ready(function () {
         if (!availableDates || availableDates.length === 0) return;
-
-        const table = $('#frogTable').DataTable({
-            "order": [[1, "desc"]],
-            "responsive": true,
-            "pageLength": 25,
-            "dom": 'rt<"bottom"p><"clear">'
-        });
 
         const $datePicker =$('#datePicker');
         const $prevBtn =$('#prevDateBtn');
@@ -76,14 +56,14 @@
             let tooltip = "";
 
             if (scoreData.status === "Core") {
-                bgColor = "#2e7d32"; // Dark Green
+                bgColor = "#2e7d32";
             } else if (scoreData.status === "Loyalist") {
-                bgColor = "#1565c0"; // Blue
+                bgColor = "#1565c0";
             } else if (scoreData.status === "Affiliate") {
-                bgColor = "#d97706"; // Amber / Orange
+                bgColor = "#d97706";
             } else if (scoreData.status === "Wavering") {
-                bgColor = "#c62828";  // Red
-                tooltip = 'title="Maintained in tribe by historical inertia while leaning elsewhere"';
+                bgColor = "#c62828";
+                tooltip = 'title="Maintenu par inertie historique"';
             }
 
             return `${pctStr} <span style="background:${bgColor}; color:#fff; padding:2px 6px; border-radius:10px; font-size:0.75rem; font-weight:600;" ${tooltip}>${scoreData.status}</span>`;
@@ -94,36 +74,58 @@
             const snapshot = snapshots[selectedDate];
             if (!snapshot) return;
 
-            const tribeOrder = ["Tribe A", "Tribe B", "Tribe C", UNALIGNED_LABEL];
-            let summaryHtml = "";
+            const activeTribes = snapshot.active_tribes || [];
+            const allTribesDisplay = [...activeTribes, UNALIGNED_LABEL];
 
-            tribeOrder.forEach(tribe => {
+            // 1. Rendu des résumés / badges
+            let summaryHtml = "";
+            allTribesDisplay.forEach(tribe => {
                 const count = snapshot.summary[tribe] || 0;
-                if (count > 0 || tribe === UNALIGNED_LABEL) {
-                    const bgColor = tribe === UNALIGNED_LABEL ? '#4a5568' : '#2e7d32';
-                    summaryHtml += `
-                        <span style="background-color: ${bgColor}; color: #ffffff; padding: 6px 14px; border-radius: 20px; font-weight: 600; font-size: 0.88rem; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.15);">
-                            <span>${tribe}</span>
-                            <span style="background: rgba(255,255,255,0.25); border-radius: 10px; padding: 1px 7px; font-size: 0.82rem;">${count}</span>
-                        </span>`;
-                }
+                const bgColor = tribe === UNALIGNED_LABEL ? '#4a5568' : '#2e7d32';
+                summaryHtml += `
+                    <span style="background-color: ${bgColor}; color: #ffffff; padding: 6px 14px; border-radius: 20px; font-weight: 600; font-size: 0.88rem; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.15);">
+                        <span>${tribe}</span>
+                        <span style="background: rgba(255,255,255,0.25); border-radius: 10px; padding: 1px 7px; font-size: 0.82rem;">${count}</span>
+                    </span>`;
             });
             $('#tribeSummary').html(summaryHtml);
 
-            const newRows = snapshot.players.map(p => {
-                return [
+            // 2. Destruction de la table précédente si elle existe
+            if ($.fn.DataTable.isDataTable('#frogTable')) {
+                $('#frogTable').DataTable().destroy();
+                $('#frogTable').empty();
+            }
+
+            // 3. Construction dynamique de l'en-tête <thead>
+            let headerHtml = '<thead><tr><th>Player</th><th>Games</th><th>Main Tribe</th>';
+            activeTribes.forEach(t => {
+                headerHtml += `<th>${t}</th>`;
+            });
+            headerHtml += '</tr></thead>';
+
+            // 4. Construction des lignes <tbody>
+            const tableData = snapshot.players.map(p => {
+                const row = [
                     p.name,
                     p.games,
-                    p.main_tribe,
-                    renderTribeCell(p.scores["Tribe A"]),
-                    renderTribeCell(p.scores["Tribe B"]),
-                    renderTribeCell(p.scores["Tribe C"])
+                    p.main_tribe
                 ];
+                activeTribes.forEach(t => {
+                    row.push(renderTribeCell(p.scores[t]));
+                });
+                return row;
             });
 
-            table.clear();
-            table.rows.add(newRows);
-            table.draw();
+            $('#frogTable').html(headerHtml + '<tbody></tbody>');
+
+            // 5. Initialisation de DataTables avec le nouveau schéma
+            $('#frogTable').DataTable({
+                "data": tableData,
+                "order": [[1, "desc"]],
+                "responsive": true,
+                "pageLength": 25,
+                "dom": 'rt<"bottom"p><"clear">'
+            });
 
             $prevBtn.prop('disabled', currentIndex <= 0);$nextBtn.prop('disabled', currentIndex >= availableDates.length - 1);
         }
