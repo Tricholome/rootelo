@@ -99,7 +99,7 @@ for d in sorted_dates:
         continue
 
     # ==========================================================================
-    # ÉTAPE 1 : IDENTIFICATION DES NOYAUX PAR AFFINITÉ RELATIVE (COSINUS)
+    # ÉTAPE 1 : IDENTIFICATION DES NOYAUX PAR FORCE GRAVITATIONNELLE
     # ==========================================================================
     
     weighted_pairs = []
@@ -107,18 +107,24 @@ for d in sorted_dates:
     for pair, joint_count in pair_counts.items():
         if joint_count >= MIN_CORE_GAMES:
             p1, p2 = pair
-            # Formule : Matchs communs divisés par la racine carrée du produit de leurs matchs totaux.
-            # Cela privilégie les joueurs exclusifs l'un envers l'autre plutôt que les hyperactifs.
-            weight = joint_count / math.sqrt(player_counts[p1] * player_counts[p2])
-            weighted_pairs.append((pair, weight, joint_count))
+            
+            # 1. Le Poids Relatif (Exclusivité)
+            # Privilégie les affinités fortes et filtre les joueurs qui jouent avec tout le monde
+            exclusivity = joint_count / math.sqrt(player_counts[p1] * player_counts[p2])
+            
+            # 2. Le Score Gravitationnel (Volume × Exclusivité)
+            # Empêche les joueurs occasionnels (exclusifs mais à faible volume) de détrôner les piliers
+            gravity_score = joint_count * exclusivity
+            
+            weighted_pairs.append((pair, gravity_score, joint_count))
 
-    # Tri par affinité relative (weight), puis par volume, puis alphabétique
+    # Tri par force gravitationnel (-x[1]), puis par volume (-x[2]), puis alphabétique
     sorted_pairs = sorted(weighted_pairs, key=lambda x: (-x[1], -x[2], x[0][0], x[0][1]))
     
     top_pairs = []
     used_players = set()
     
-    for pair, weight, joint_count in sorted_pairs:
+    for pair, gravity_score, joint_count in sorted_pairs:
         if pair[0] not in used_players and pair[1] not in used_players:
             top_pairs.append(pair)
             used_players.update(pair)
@@ -151,7 +157,7 @@ for d in sorted_dates:
             current_cores[new_tribe] = pair
             assigned_tribes.add(new_tribe)
 
-    previous_cores = current_cores 
+    previous_cores = current_cores
 
     # ==========================================================================
     # ÉTAPE 2 : PASSE 1 - ASSIGNATION PROVISOIRE (GRAVITÉ DES NOYAUX)
