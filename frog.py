@@ -220,19 +220,20 @@ def player_scores(G, roster, p, active_tribes):
 
     main = roster.get(p, UNALIGNED_LABEL)
     main_pct = pcts.get(main, 0)
-    best_other = max((pcts[t] for t in TRIBE_NAMES_POOL if t != main), default=0)
-    margin = main_pct - best_other
+
+    other_active_pcts = [pcts[t] for t in active_tribes if t != main]
+    best_other = max(other_active_pcts, default=0)
+    
+    diff = abs(main_pct - best_other)
 
     for t in TRIBE_NAMES_POOL:
         status = None
         if t == main:
-            if margin <= 3 and len(active_tribes) > 1:
+            if diff <= 3 and len(active_tribes) > 1 and best_other > 0:
                 status = "Favoring"
-            elif pcts[t] >= 80:
-                status = "Faithful"
-            elif pcts[t] >= 60:
+            elif pcts[t] >= 65:
                 status = "Partisan"
-            elif pcts[t] >= 40:
+            elif pcts[t] >= 50:
                 status = "Squire"
             else:
                 status = "Friend"
