@@ -26,6 +26,8 @@
                 <th>Tribe A</th>
                 <th>Tribe B</th>
                 <th>Tribe C</th>
+                <th>Tribe D</th>
+                <th>Tribe E</th>
             </tr>
         </thead>
         <tbody>
@@ -39,7 +41,7 @@
 <script>
     const snapshots = {{ snapshots_json | safe }};
     const availableDates = {{ dates_json | safe }};
-    const TARGET_TRIBES = ["Tribe A", "Tribe B", "Tribe C"];
+    const TARGET_TRIBES = ["Tribe A", "Tribe B", "Tribe C", "Tribe D", "Tribe E"];
     const UNALIGNED_LABEL = "-";
 
     $(document).ready(function () {
@@ -61,32 +63,34 @@
 
         let currentIndex = availableDates.length - 1;
 
-        function renderTribeCell(scoreData) {
+        function renderTribeCell(scoreData, isMainTribe) {
             if (!scoreData || scoreData.pct < 10) {
-                return `<span style="color:#a0aec0;">-</span>`;
+                return `<span style="color:#a0aec0; display:inline-block; min-width:42px; text-align:center;">-</span>`;
             }
             
-            const pctStr = `<span style="font-weight:600; margin-right:4px;">${scoreData.pct} %</span>`;
+            const pctStr = `<span style="font-weight:600; display:inline-block; min-width:42px; text-align:right;">${scoreData.pct} %</span>`;
             
-            if (!scoreData.status) {
-                return pctStr;
+            if (!isMainTribe || !scoreData.status) {
+                return `<div style="display:inline-flex; align-items:center; gap:8px;">${pctStr}</div>`;
             }
 
             let bgColor = "#4a5568";
             let tooltip = "";
 
             if (scoreData.status === "Core") {
-                bgColor = "#2e7d32"; // Dark Green
+                bgColor = "#2e7d32";
             } else if (scoreData.status === "Loyalist") {
-                bgColor = "#1565c0"; // Blue
+                bgColor = "#1565c0";
             } else if (scoreData.status === "Affiliate") {
-                bgColor = "#d97706"; // Amber / Orange
+                bgColor = "#d97706";
             } else if (scoreData.status === "Wavering") {
-                bgColor = "#c62828";  // Red
+                bgColor = "#c62828";
                 tooltip = 'title="Maintained in tribe by historical inertia while leaning elsewhere"';
             }
 
-            return `${pctStr} <span style="background:${bgColor}; color:#fff; padding:2px 6px; border-radius:10px; font-size:0.75rem; font-weight:600;" ${tooltip}>${scoreData.status}</span>`;
+            const badge = `<span style="background:${bgColor}; color:#fff; padding:2px 8px; border-radius:10px; font-size:0.75rem; font-weight:600; display:inline-block; text-align:center; min-width:62px;" ${tooltip}>${scoreData.status}</span>`;
+
+            return `<div style="display:inline-flex; align-items:center; gap:8px;">${pctStr} ${badge}</div>`;
         }
 
         function updateTableForDate(selectedDate) {
@@ -94,7 +98,7 @@
             const snapshot = snapshots[selectedDate];
             if (!snapshot) return;
 
-            const tribeOrder = ["Tribe A", "Tribe B", "Tribe C", UNALIGNED_LABEL];
+            const tribeOrder = [...TARGET_TRIBES, UNALIGNED_LABEL];
             let summaryHtml = "";
 
             tribeOrder.forEach(tribe => {
@@ -115,9 +119,7 @@
                     p.name,
                     p.games,
                     p.main_tribe,
-                    renderTribeCell(p.scores["Tribe A"]),
-                    renderTribeCell(p.scores["Tribe B"]),
-                    renderTribeCell(p.scores["Tribe C"])
+                    ...TARGET_TRIBES.map(t => renderTribeCell(p.scores[t], p.main_tribe === t))
                 ];
             });
 
