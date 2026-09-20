@@ -119,7 +119,7 @@ REASON_LABELS = {
 }
 
 CONFIG_PATH = Path("data/config/config.json")
-DEFAULT_MATCHES_PATH = Path("data/rdl/archives/lh03/matches.json")
+DEFAULT_MATCHES_PATH = Path("data/rdl/archives/lh01/matches.json")
 TEMPLATE_DIR = "templates"
 TEMPLATE_FILE = "frog.html"
 OUTPUT_FILE = Path("frog.html")
