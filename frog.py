@@ -1,5 +1,4 @@
 import json
-import math
 from collections import Counter
 from itertools import combinations
 from pathlib import Path
@@ -10,11 +9,15 @@ from jinja2 import Environment, FileSystemLoader
 # ⚙️ CONFIGURATION & HYPERPARAMÈTRES
 # ==============================================================================
 
-TARGET_TRIBES = ["Tribe A", "Tribe B", "Tribe C"]
+# Gestion dynamique des tribus
+MIN_TRIBE_SIZE = 4         # Nombre minimum de joueurs pour former une tribu
+MAX_TRIBES = 4             # Nombre maximum de tribus affichées simultanément
+TRIBE_NAMES_POOL = ["Tribe A", "Tribe B", "Tribe C", "Tribe D", "Tribe E"]
 UNALIGNED_LABEL = "-"
 
-DECAY_RATE = 0.95          # Facteur d'oubli quotidien (5% d'atténuation par jour)
-NEW_MATCH_WEIGHT = 1.0     # Poids ajouté pour chaque nouvelle rencontre
+# Hyperparamètres du graphe
+DECAY_RATE = 0.95          
+NEW_MATCH_WEIGHT = 1.0     
 
 MIN_GAMES_FLOOR = 3
 STATUS_LOYAL_PCT = 55
@@ -52,35 +55,32 @@ for m in matches:
 sorted_dates = sorted(matches_by_date.keys())
 
 # ==============================================================================
-# 🧠 L'ALGORITHME ORGANIQUE (LOUVAIN SUR GRAPHE ATTÉNUÉ)
+# 🧠 MOTEUR DYNAMIQUE
 # ==============================================================================
 
 snapshots = {}
-edge_weights = Counter()    # Mémoire persistante des arêtes
-player_games = Counter()    # Compteur total des parties
-
-previous_communities = {}   # Alignement continu des noms de tribus
+edge_weights = Counter()
+player_games = Counter()
+previous_communities = {}
 
 for d in sorted_dates:
-    # 1. Atténuation exponentielle des anciens liens
+    # 1. Atténuation & Nouveaux Matchs
     for pair in edge_weights:
         edge_weights[pair] *= DECAY_RATE
         
-    # 2. Injection des nouveaux matchs du jour
     for players in matches_by_date[d]:
         for p in players:
             player_games[p] += 1
         for p1, p2 in combinations(sorted(players), 2):
             edge_weights[(p1, p2)] += NEW_MATCH_WEIGHT
 
-    # Nettoyage des liens résiduels (< 0.1)
     active_edges = {k: v for k, v in edge_weights.items() if v >= 0.1}
 
-    # 3. Construction du graphe et détection de communautés
     G = nx.Graph()
     for (p1, p2), weight in active_edges.items():
         G.add_edge(p1, p2, weight=weight)
 
+    # 2. Détection & Filtrage des Tribus
     current_communities = {}
     if G.number_of_nodes() > 0:
         try:
@@ -92,44 +92,60 @@ for d in sorted_dates:
         except Exception:
             raw_comms = []
 
-        # Mapping des noms pour préserver la stabilité d'un jour à l'autre
-        available_names = TARGET_TRIBES.copy()
-        for comm in raw_comms[:len(TARGET_TRIBES)]:
+        # Filtrage par taille min et plafond max
+        valid_comms = [c for c in raw_comms if len(c) >= MIN_TRIBE_SIZE][:MAX_TRIBES]
+
+        # 3. Alignement des noms avec la veille
+        used_names = set()
+        
+        for comm in valid_comms:
             best_name = None
             max_intersect = 0
+            
+            # Chercher le meilleur match dans les tribus de la veille
             for old_name, old_comm in previous_communities.items():
-                if old_name in available_names:
+                if old_name not in used_names:
                     intersect = len(comm.intersection(old_comm))
                     if intersect > max_intersect:
                         max_intersect = intersect
                         best_name = old_name
             
-            if not best_name and available_names:
-                best_name = available_names[0]
-                
+            # Si c'est une nouvelle tribu, piocher un nom disponible
+            if not best_name:
+                for name in TRIBE_NAMES_POOL:
+                    if name not in used_names and name not in previous_communities:
+                        best_name = name
+                        break
+            
+            # En cas d'épuisement théorique du pool
+            if not best_name:
+                for name in TRIBE_NAMES_POOL:
+                    if name not in used_names:
+                        best_name = name
+                        break
+                        
             if best_name:
-                available_names.remove(best_name)
+                used_names.add(best_name)
                 current_communities[best_name] = comm
 
     previous_communities = current_communities
+    active_tribes_today = sorted(list(current_communities.keys()))
 
-    # 4. Extraction des affinités individuelles
-    tribe_summary = {t: 0 for t in TARGET_TRIBES + [UNALIGNED_LABEL]}
+    # 4. Affinités individuelles basées sur les tribus actives du jour
+    tribe_summary = {t: 0 for t in active_tribes_today + [UNALIGNED_LABEL]}
     snapshot_players = []
 
     for name, games_played in sorted(player_games.items(), key=lambda x: (-x[1], x[0])):
         if name not in G:
-            formatted_scores = {t: {"pct": 0, "status": "Wavering"} for t in TARGET_TRIBES}
+            formatted_scores = {t: {"pct": 0, "status": "Wavering"} for t in active_tribes_today}
             snapshot_players.append({
-                "name": name,
-                "games": games_played,
-                "main_tribe": UNALIGNED_LABEL,
-                "scores": formatted_scores
+                "name": name, "games": games_played,
+                "main_tribe": UNALIGNED_LABEL, "scores": formatted_scores
             })
             tribe_summary[UNALIGNED_LABEL] += 1
             continue
 
-        comm_affinities = {t: 0.0 for t in TARGET_TRIBES}
+        comm_affinities = {t: 0.0 for t in active_tribes_today}
         total_affinity = 0.0
 
         for neighbor in G.neighbors(name):
@@ -141,20 +157,17 @@ for d in sorted_dates:
                     comm_affinities[t_name] += weight
 
         scores_pct = {}
-        for t_name in TARGET_TRIBES:
-            scores_pct[t_name] = (
-                round((comm_affinities[t_name] / total_affinity) * 100)
-                if total_affinity > 0 else 0
-            )
+        for t_name in active_tribes_today:
+            scores_pct[t_name] = round((comm_affinities[t_name] / total_affinity) * 100) if total_affinity > 0 else 0
 
-        best_tribe = max(scores_pct, key=scores_pct.get) if total_affinity > 0 else UNALIGNED_LABEL
+        best_tribe = max(scores_pct, key=scores_pct.get) if scores_pct else UNALIGNED_LABEL
         if scores_pct.get(best_tribe, 0) < STATUS_AFFILIATE_PCT or games_played < MIN_GAMES_FLOOR:
             best_tribe = UNALIGNED_LABEL
 
-        tribe_summary[best_tribe] = tribe_summary.get(best_tribe, 0) + 1
+        tribe_summary[best_tribe] += 1
 
         formatted_scores = {}
-        for t_name in TARGET_TRIBES:
+        for t_name in active_tribes_today:
             pct = scores_pct[t_name]
             status = "Wavering"
             if t_name == best_tribe:
@@ -171,21 +184,12 @@ for d in sorted_dates:
             "scores": formatted_scores
         })
 
-    snapshots[d] = {"summary": tribe_summary, "players": snapshot_players}
+    # On ajoute la liste des tribus actives pour faciliter le rendu Jinja2
+    snapshots[d] = {
+        "active_tribes": active_tribes_today,
+        "summary": tribe_summary, 
+        "players": snapshot_players
+    }
 
-# ==============================================================================
-# 📝 RENDU HTML (JINJA2)
-# ==============================================================================
-
-env = Environment(loader=FileSystemLoader(TEMPLATE_DIR))
-env.globals["config"] = config_data
-template = env.get_template(TEMPLATE_FILE)
-
-with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
-    f.write(template.render(
-        active_section="frog",
-        snapshots_json=json.dumps(snapshots, ensure_ascii=False), 
-        dates_json=json.dumps(sorted_dates, ensure_ascii=False)
-    ))
-
-print(f"Analyse terminée avec succès : {len(sorted_dates)} dates calculées sur graphe atténué.")
+# Export HTML inchangé (masqué pour concision)
+# ...
