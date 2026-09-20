@@ -15,7 +15,7 @@ MAX_DAILY_TRANSFERS = 3       # Max migrations autorisées par jour
 MAX_TRIBES = 3                # Limite absolue de tribus
 MIN_TRIBE_SIZE_LOUVAIN = 4    # Taille mini pour qu'un cluster soit analysé par Louvain
 MIN_TRIBE_CREATION_SIZE = 4   # Joueurs ÉLIGIBLES minimum pour FONDER une nouvelle tribu
-MIN_TRIBE_SURVIVAL = 2        # Joueurs minimum pour qu'une tribu existante SURVIVE
+MIN_TRIBE_SURVIVAL = 4        # Joueurs minimum pour qu'une tribu existante SURVIVE
 MIN_GAMES_FLOOR = 3           # Plancher absolu de matchs
 DYNAMIC_RATIO = 0.40          # Ratio de la médiane globale pour élever le seuil
 
