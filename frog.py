@@ -39,7 +39,7 @@ DISPLAY_MIN_PCT = 10
 
 # --- 5. Files & Paths ---
 CONFIG_PATH = Path("data/config/config.json")
-DEFAULT_MATCHES_PATH = Path("data/rdl/archives/lh02/matches.json")
+DEFAULT_MATCHES_PATH = Path("data/rdl/archives/lh03/matches.json")
 TEMPLATE_DIR = "templates"
 TEMPLATE_FILE = "frog.html"
 OUTPUT_FILE = Path("frog.html")
