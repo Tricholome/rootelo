@@ -1,4 +1,5 @@
 import json
+import math
 from collections import Counter
 from itertools import combinations
 from pathlib import Path
@@ -13,6 +14,7 @@ UNALIGNED_LABEL = "-"
 
 # --- Seuils du Modèle de Gravité ---
 MIN_MATCHES_TO_START = 50  # Buffer : matchs cumulés requis avant d'afficher les tribus
+MIN_CORE_GAMES = 4         # Un duo doit jouer au moins 4 fois ensemble pour pouvoir fonder une tribu
 MIN_GAMES_FLOOR = 3        # Parties minimales pour qu'un joueur puisse être classé
 STATUS_LOYAL_PCT = 60      # % d'interactions avec la tribu entière pour être Loyaliste
 STATUS_AFFILIATE_PCT = 40  # % d'interactions avec la tribu entière pour être Affilié
@@ -97,25 +99,37 @@ for d in sorted_dates:
         continue
 
     # ==========================================================================
-    # ÉTAPE 1 : IDENTIFICATION DES NOYAUX ET CONTINUITÉ
+    # ÉTAPE 1 : IDENTIFICATION DES NOYAUX PAR AFFINITÉ RELATIVE (COSINUS)
     # ==========================================================================
     
-    sorted_pairs = sorted(pair_counts.items(), key=lambda x: (-x[1], x[0][0], x[0][1]))
+    weighted_pairs = []
+    
+    for pair, joint_count in pair_counts.items():
+        if joint_count >= MIN_CORE_GAMES:
+            p1, p2 = pair
+            # Formule : Matchs communs divisés par la racine carrée du produit de leurs matchs totaux.
+            # Cela privilégie les joueurs exclusifs l'un envers l'autre plutôt que les hyperactifs.
+            weight = joint_count / math.sqrt(player_counts[p1] * player_counts[p2])
+            weighted_pairs.append((pair, weight, joint_count))
+
+    # Tri par affinité relative (weight), puis par volume, puis alphabétique
+    sorted_pairs = sorted(weighted_pairs, key=lambda x: (-x[1], -x[2], x[0][0], x[0][1]))
+    
     top_pairs = []
     used_players = set()
     
-    for pair, count in sorted_pairs:
+    for pair, weight, joint_count in sorted_pairs:
         if pair[0] not in used_players and pair[1] not in used_players:
             top_pairs.append(pair)
             used_players.update(pair)
             if len(top_pairs) == len(TARGET_TRIBES):
                 break
 
+    # Raccord avec les noms de tribus de la veille (stabilité visuelle)
     current_cores = {}
     assigned_tribes = set()
     available_tribes = TARGET_TRIBES.copy()
 
-    # Raccord avec les noms de tribus de la veille (stabilité visuelle)
     for pair in top_pairs:
         best_match = None
         max_overlap = 0
@@ -250,4 +264,4 @@ with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
         dates_json=json.dumps(sorted_dates, ensure_ascii=False)
     ))
 
-print(f"Analyse gravitationnelle réussie : {len(sorted_dates)} dates calculées (Buffer de {MIN_MATCHES_TO_START} matchs actif).")
+print(f"Analyse gravitationnelle réussie : {len(sorted_dates)} dates calculées.")
