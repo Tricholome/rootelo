@@ -104,9 +104,9 @@ def is_clearly_apart(G, roster, comm):
     return inside > STICKINESS * outside #[cite: 4]
 
 
-def compass(G, roster, eligible):
+def compass(G, roster, eligible, ever_used_names):
     comms = nx.community.louvain_communities(G.subgraph(eligible), weight="weight", seed=42)
-    comms.sort(key=lambda c: (-len(c), sorted(c))) #[cite: 4]
+    comms.sort(key=lambda c: (-len(c), sorted(c)))
 
     members = {}
     for p, t in roster.items():
@@ -120,17 +120,22 @@ def compass(G, roster, eligible):
         if overlap > 0 and i not in name_of and t not in name_of.values():
             name_of[i] = t
 
-    # On ne pioche que dans la limite de MAX_TRIBES (5 max)[cite: 4]
+    currently_free = [n for n in TRIBE_NAMES_POOL if n not in members]
+    
+    currently_free.sort(key=lambda n: (n in ever_used_names, TRIBE_NAMES_POOL.index(n)))
+
     available_slots = max(0, MAX_TRIBES - len(members))
-    free = [n for n in TRIBE_NAMES_POOL if n not in members][:available_slots]
+    free = currently_free[:available_slots]
     founded = set()
     for i, c in enumerate(comms):
         if i not in name_of and len(c) >= MIN_TRIBE_CREATION_SIZE and free and is_clearly_apart(G, roster, c):
-            name_of[i] = free.pop(0)
-            founded.add(name_of[i])
+            chosen_name = free.pop(0)
+            name_of[i] = chosen_name
+            founded.add(chosen_name)
+            ever_used_names.add(chosen_name)  # Marque le nom comme utilisé au moins une fois
 
     target = {p: name_of[i] for i, c in enumerate(comms) if i in name_of for p in c}
-    return target, founded #[cite: 4]
+    return target, founded
 
 
 def _event(player, from_tribe, to_tribe, reason):
@@ -279,6 +284,7 @@ player_games = Counter()
 last_active = {}
 roster = {}
 snapshots = {}
+ever_used_names = set()
 
 for d in sorted_dates:
     # 1. Érosion des arêtes + nouveaux matchs du jour
@@ -302,7 +308,7 @@ for d in sorted_dates:
 
     # 2. Boussole
     eligible = [p for p in G.nodes() if player_games[p] >= min_games]
-    target, founded = compass(G, roster, eligible)
+    target, founded = compass(G, roster, eligible, ever_used_names)
     events = apply_compass(G, roster, target, founded)
 
     # 3. Dissolutions & inactivité
