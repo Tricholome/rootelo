@@ -68,7 +68,7 @@ REASON_LABELS = {
 } #[cite: 4]
 
 CONFIG_PATH = Path("data/config/config.json")
-DEFAULT_MATCHES_PATH = Path("data/rdl/archives/lh01/matches.json")
+DEFAULT_MATCHES_PATH = Path("data/rdl/archives/lh02/matches.json")
 TEMPLATE_DIR = "templates"
 TEMPLATE_FILE = "frog.html"
 OUTPUT_FILE = Path("frog.html")
@@ -226,16 +226,18 @@ def player_scores(G, roster, p, active_tribes):
     for t in TRIBE_NAMES_POOL:
         status = None
         if t == main:
-            if margin <= 10 and len(active_tribes) > 1:
-                status = "Wavering"
-            elif pcts[t] >= 85:
-                status = "Core"
-            elif pcts[t] >= 65:
-                status = "Loyalist"
+            if margin <= 5 and len(active_tribes) > 1:
+                status = "Favoring"
+            elif pcts[t] >= 80:
+                status = "Faithful"
+            elif pcts[t] >= 50:
+                status = "Partisan"
+            elif pcts[t] >= 30:
+                status = "Squire"
             else:
-                status = "Affiliate"
+                status = "Friend"
         scores[t] = {"pct": pcts[t], "status": status}
-    return scores #[cite: 4]
+    return scores
 
 
 # ==============================================================================
