@@ -17,16 +17,16 @@
         <!-- Generated dynamically in JS -->
     </div>
 
-    <table id="frogTable" class="display nowrap" style="width: 100%; table-layout: fixed;">
+    <table id="frogTable" class="display nowrap" style="width: 100%;">
         <thead>
             <tr>
-                <th style="width: 22%;">Player</th>
-                <th style="width: 8%;">Games</th>
-                <th style="width: 14%;">Tribe A</th>
-                <th style="width: 14%;">Tribe B</th>
-                <th style="width: 14%;">Tribe C</th>
-                <th style="width: 14%;">Tribe D</th>
-                <th style="width: 14%;">Tribe E</th>
+                <th style="width: 25%;">Player</th>
+                <th style="width: 10%;">Games</th>
+                <th>Tribe A</th>
+                <th>Tribe B</th>
+                <th>Tribe C</th>
+                <th>Tribe D</th>
+                <th>Tribe E</th>
             </tr>
         </thead>
         <tbody>
@@ -106,8 +106,24 @@
             const snapshot = snapshots[selectedDate];
             if (!snapshot) return;
 
-            // 1. Boutons de compteurs avec filtrage au clic
-            const tribeOrder = [...TARGET_TRIBES, UNALIGNED_LABEL];
+            const activeTribes = snapshot.active_tribes || [];
+
+            // 1. Gestion dynamique de la visibilité et du nom des colonnes
+            TARGET_TRIBES.forEach((tribe, idx) => {
+                const colIdx = idx + 2; // Col 0: Player, Col 1: Games, Col 2..6: Tribus
+                const isActive = activeTribes.includes(tribe);
+                
+                // Masquer/Afficher la colonne sans redessiner immédiatement
+                table.column(colIdx).visible(isActive, false);
+
+                if (isActive) {
+                    const displayLabel = (snapshot.tribe_labels && snapshot.tribe_labels[tribe]) ? snapshot.tribe_labels[tribe] : tribe;
+                    $(table.column(colIdx).header()).text(displayLabel);
+                }
+            });
+
+            // 2. Boutons de compteurs avec filtrage au clic
+            const tribeOrder = [...activeTribes, UNALIGNED_LABEL];
             let summaryHtml = "";
 
             tribeOrder.forEach(tribe => {
@@ -134,13 +150,13 @@
                 updateTableForDate(selectedDate);
             });
 
-            // 2. Filtrage des joueurs selon le bouton sélectionné
+            // 3. Filtrage des joueurs selon la tribu sélectionnée
             let playersToDisplay = snapshot.players;
             if (activeTribeFilter) {
                 playersToDisplay = playersToDisplay.filter(p => p.main_tribe === activeTribeFilter);
             }
 
-            // 3. Construction des lignes (sans la colonne Main Tribe)
+            // 4. Inscription des données et rendu final du tableau
             const newRows = playersToDisplay.map(p => {
                 return [
                     p.name,
@@ -151,6 +167,7 @@
 
             table.clear();
             table.rows.add(newRows);
+            table.columns.adjust();
             table.draw();
 
             $prevBtn.prop('disabled', currentIndex <= 0);$nextBtn.prop('disabled', currentIndex >= availableDates.length - 1);
