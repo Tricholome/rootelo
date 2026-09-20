@@ -3,16 +3,24 @@ import math
 from collections import Counter
 from itertools import combinations
 from pathlib import Path
+import networkx as nx
 from jinja2 import Environment, FileSystemLoader
 
-# --- CONFIGURATION ---
+# ==============================================================================
+# ⚙️ CONFIGURATION & HYPERPARAMÈTRES
+# ==============================================================================
+
 TARGET_TRIBES = ["Tribe A", "Tribe B", "Tribe C"]
 UNALIGNED_LABEL = "-"
 
-ALPHA_SMOOTHING = 0.15     # Poids du jour présent (0.15 = 15% jour, 85% mémoire). Empêche les sauts.
-HYSTERESIS_MARGIN = 15     # Il faut 15% d'écart lissé pour changer de tribu principale.
-MIN_GAMES_FLOOR = 3        # Minimum de parties disputées pour avoir une tribu attribuée.
+# --- NIVEAU MACRO (Louvain) ---
+LOUVAIN_INTERVAL_DAYS = 14  # Re-calcul des communautés tous les 14 jours
+MIN_GAMES_MACRO = 3         # Matchs min pour entrer dans le graphe Louvain
+RESOLUTION_LOUVAIN = 1.3
 
+# --- NIVEAU MICRO (Probation & Affichage) ---
+PROBATION_DAYS_REQUIRED = 5 # Nombre de jours de régularité requis pour valider une tribu
+MIN_GAMES_FLOOR = 3
 STATUS_LOYAL_PCT = 55
 STATUS_AFFILIATE_PCT = 35
 
@@ -22,7 +30,10 @@ TEMPLATE_DIR = "templates"
 TEMPLATE_FILE = "frog.html"
 OUTPUT_FILE = Path("frog.html")
 
-# --- CHARGEMENT ---
+# ==============================================================================
+# 🚀 CHARGEMENT DES DONNÉES
+# ==============================================================================
+
 config_path = CONFIG_PATH if CONFIG_PATH.exists() else Path("data/config.json")
 config_data = json.load(open(config_path, "r", encoding="utf-8")) if config_path.exists() else {}
 
@@ -48,11 +59,19 @@ for match in matches:
 
 sorted_dates = sorted(list(dates_set))
 
-# --- ÉTAT PERMANENT DU RESEAU ---
+# ==============================================================================
+# 🧠 MOTEUR DOUBLE VITESSE
+# ==============================================================================
+
 snapshots = {}
-player_smoothed_scores = {}  # Stocke l'EMA des scores {player: {Tribe A: pct, Tribe B: pct, ...}}
-player_assigned_tribe = {}   # Stocke la tribu attribuée au joueur
-stable_cores = {}            # Anciens noyaux pour garder la stabilité des noms
+
+# Mémoire Macro (Louvain)
+active_macro_cores = {}
+last_louvain_date_idx = -LOUVAIN_INTERVAL_DAYS
+
+# Mémoire Micro (Probation individuelle)
+# { player_name: {"candidate_tribe": str, "consecutive_days": int, "official_tribe": str} }
+player_probation = {}
 
 for date_idx, d in enumerate(sorted_dates):
     cumulative_matches = [m for m in matches_data if m["date"] <= d]
@@ -67,122 +86,135 @@ for date_idx, d in enumerate(sorted_dates):
         for p1, p2 in combinations(sorted(players), 2):
             pair_counts[(p1, p2)] += 1
 
-    # 1. IDENTIFICATION DES PÔLES PAR DENSITÉ RELATIVE (COSINUS)
-    weighted_pairs = []
-    for (p1, p2), joint_count in pair_counts.items():
-        if joint_count >= 2:
-            # Similarité Cosinus : mesure l'exclusivité de la relation
-            weight = joint_count / math.sqrt(player_counts[p1] * player_counts[p2])
-            weighted_pairs.append(((p1, p2), weight))
+    # --------------------------------------------------------------------------
+    # 1. ARRIÈRE-PLAN : MISE À JOUR MACRO PAR LOUVAIN (Tous les N jours)
+    # --------------------------------------------------------------------------
+    should_run_louvain = (date_idx - last_louvain_date_idx) >= LOUVAIN_INTERVAL_DAYS or not active_macro_cores
 
-    sorted_pairs = sorted(weighted_pairs, key=lambda x: -x[1])
-    
-    top_pairs = []
-    used_players = set()
-    for pair, weight in sorted_pairs:
-        if pair[0] not in used_players and pair[1] not in used_players:
-            top_pairs.append(pair)
-            used_players.update(pair)
-            if len(top_pairs) == len(TARGET_TRIBES):
-                break
+    if should_run_louvain:
+        G = nx.Graph()
+        active_players = {p for p, c in player_counts.items() if c >= MIN_GAMES_MACRO}
+        G.add_nodes_from(active_players)
 
-    # Alignement continu des nom de tribus
-    current_cores = {}
-    available_tribes = TARGET_TRIBES.copy()
-    
-    for pair in top_pairs:
-        best_match = None
-        max_overlap = 0
-        for t_name, prev_core in stable_cores.items():
-            if t_name in available_tribes:
-                overlap = len(set(pair).intersection(set(prev_core)))
-                if overlap > max_overlap:
-                    max_overlap = overlap
-                    best_match = t_name
-        if best_match:
-            current_cores[best_match] = pair
-            available_tribes.remove(best_match)
+        for (p1, p2), joint_count in pair_counts.items():
+            if p1 in active_players and p2 in active_players:
+                weight = joint_count / math.sqrt(player_counts[p1] * player_counts[p2])
+                if weight >= 0.15:
+                    G.add_edge(p1, p2, weight=weight)
 
-    for pair in top_pairs:
-        if pair not in current_cores.values() and available_tribes:
-            new_t = available_tribes.pop(0)
-            current_cores[new_t] = pair
+        raw_communities = []
+        if G.number_of_nodes() > 0:
+            try:
+                raw_communities = list(nx.community.louvain_communities(G, weight="weight", resolution=RESOLUTION_LOUVAIN, seed=42))
+            except Exception:
+                pass
 
-    stable_cores = current_cores
+        # Ne garder que les 3 plus grandes communautés
+        raw_communities = sorted(raw_communities, key=len, reverse=True)[:len(TARGET_TRIBES)]
+        
+        # Extraire le "Core" (top 2 joueurs les plus centraux) de chaque communauté
+        new_cores = {}
+        for idx, comm in enumerate(raw_communities):
+            subgraph = G.subgraph(comm)
+            centrality = nx.degree_centrality(subgraph)
+            top_2 = sorted(centrality.keys(), key=lambda x: centrality[x], reverse=True)[:2]
+            
+            # Attribuer un nom de tribu stable
+            tribe_name = TARGET_TRIBES[idx] if idx < len(TARGET_TRIBES) else f"Tribe {idx}"
+            new_cores[tribe_name] = top_2
 
-    # 2. CALCUL DU SCORE BRUT DU JOUR
-    snapshot_players = []
+        # Raccordement des noms avec la session macro précédente
+        if active_macro_cores:
+            mapped_cores = {}
+            available_names = TARGET_TRIBES.copy()
+            for t_new, core_players in new_cores.items():
+                best_match = None
+                max_overlap = 0
+                for t_old, old_players in active_macro_cores.items():
+                    if t_old in available_names:
+                        overlap = len(set(core_players).intersection(set(old_players)))
+                        if overlap > max_overlap:
+                            max_overlap = overlap
+                            best_match = t_old
+                
+                assigned_name = best_match if best_match else (available_names[0] if available_names else t_new)
+                if assigned_name in available_names:
+                    available_names.remove(assigned_name)
+                mapped_cores[assigned_name] = core_players
+            
+            active_macro_cores = mapped_cores
+        else:
+            active_macro_cores = new_cores
+
+        last_louvain_date_idx = date_idx
+
+    # --------------------------------------------------------------------------
+    # 2. PREMIER PLAN : ÉVOLUTION QUOTIDIENNE ET SAS DE PROBATION
+    # --------------------------------------------------------------------------
     tribe_summary = {t: 0 for t in TARGET_TRIBES + [UNALIGNED_LABEL]}
+    snapshot_players = []
 
     for name, games_played in sorted(player_counts.items(), key=lambda x: (-x[1], x[0])):
         
-        # Calcul de l'affinité brute du jour envers chaque pôle
+        # Calcul des affinités brutes avec les noyaux macro actuels
         raw_scores = {}
-        total_rel_weight = 0.0
+        total_weight = 0.0
 
         for t_name in TARGET_TRIBES:
-            if t_name in current_cores:
-                core_p1, core_p2 = current_cores[t_name]
+            if t_name in active_macro_cores:
+                core_p1, core_p2 = active_macro_cores[t_name][0], (active_macro_cores[t_name][1] if len(active_macro_cores[t_name]) > 1 else active_macro_cores[t_name][0])
                 w1 = pair_counts.get(tuple(sorted((name, core_p1))), 0) / math.sqrt(max(1, player_counts[name] * player_counts[core_p1]))
                 w2 = pair_counts.get(tuple(sorted((name, core_p2))), 0) / math.sqrt(max(1, player_counts[name] * player_counts[core_p2]))
                 score = w1 + w2
                 raw_scores[t_name] = score
-                total_rel_weight += score
+                total_weight += score
             else:
                 raw_scores[t_name] = 0.0
 
-        # Normalisation en pourcentages bruts
-        raw_pcts = {}
+        # Calcul des pourcentages d'affinité
+        scores_pct = {}
         for t_name in TARGET_TRIBES:
-            if total_rel_weight > 0:
-                raw_pcts[t_name] = (raw_scores[t_name] / total_rel_weight) * 100
-            else:
-                raw_pcts[t_name] = 0.0
+            scores_pct[t_name] = round((raw_scores[t_name] / total_weight) * 100) if total_weight > 0 else 0
 
-        # 3. APPLICATION DU LISSAGE TEMPOREL (EMA)
-        if name not in player_smoothed_scores:
-            # Premier jour du joueur : score brut direct
-            player_smoothed_scores[name] = raw_pcts
+        # Identifier la tribu candidate du jour
+        best_tribe = max(scores_pct, key=scores_pct.get) if total_weight > 0 else UNALIGNED_LABEL
+        best_pct = scores_pct.get(best_tribe, 0)
+
+        if best_pct < STATUS_AFFILIATE_PCT or games_played < MIN_GAMES_FLOOR:
+            best_tribe = UNALIGNED_LABEL
+
+        # --- Gestion de la probation (Inertie temporelle) ---
+        if name not in player_probation:
+            player_probation[name] = {
+                "candidate_tribe": best_tribe,
+                "consecutive_days": 1,
+                "official_tribe": best_tribe
+            }
         else:
-            # Jour suivant : lissage exponentiel
-            prev_scores = player_smoothed_scores[name]
-            smoothed = {}
-            for t_name in TARGET_TRIBES:
-                smoothed[t_name] = (1 - ALPHA_SMOOTHING) * prev_scores.get(t_name, 0.0) + ALPHA_SMOOTHING * raw_pcts[t_name]
-            player_smoothed_scores[name] = smoothed
-
-        current_smoothed = player_smoothed_scores[name]
-
-        # 4. DETERMINATION DE LA TRIBU ET HYSTERESIS
-        best_tribe = max(current_smoothed, key=current_smoothed.get)
-        best_val = current_smoothed[best_tribe]
-        
-        current_assigned = player_assigned_tribe.get(name, UNALIGNED_LABEL)
-
-        if current_assigned in TARGET_TRIBES and best_tribe != current_assigned:
-            current_val = current_smoothed.get(current_assigned, 0.0)
-            # Règle de bascule : la nouvelle tribu doit dépasser l'ancienne de la marge d'hystérésis
-            if best_val > current_val + HYSTERESIS_MARGIN:
-                final_tribe = best_tribe
+            prob = player_probation[name]
+            if best_tribe == prob["candidate_tribe"]:
+                prob["consecutive_days"] += 1
             else:
-                final_tribe = current_assigned
-        else:
-            final_tribe = best_tribe if best_val >= STATUS_AFFILIATE_PCT else UNALIGNED_LABEL
+                prob["candidate_tribe"] = best_tribe
+                prob["consecutive_days"] = 1
 
-        # Filtre sur le nombre de matchs minimum
-        if games_played < MIN_GAMES_FLOOR:
-            final_tribe = UNALIGNED_LABEL
+            # Si le joueur est stable dans sa tribu candidate depuis assez longtemps, la mutation est validée
+            if prob["consecutive_days"] >= PROBATION_DAYS_REQUIRED:
+                prob["official_tribe"] = prob["candidate_tribe"]
 
-        player_assigned_tribe[name] = final_tribe
+        final_tribe = player_probation[name]["official_tribe"]
         tribe_summary[final_tribe] = tribe_summary.get(final_tribe, 0) + 1
 
-        # Formattage pour Jinja2
+        # Formattage pour le template HTML
         formatted_scores = {}
         for t_name in TARGET_TRIBES:
-            pct_val = round(current_smoothed[t_name])
+            pct_val = scores_pct[t_name]
             status = None
             if t_name == final_tribe:
-                if pct_val >= STATUS_LOYAL_PCT:
+                is_core = any(name in core for core in active_macro_cores.values())
+                if is_core:
+                    status = "Core"
+                elif pct_val >= STATUS_LOYAL_PCT:
                     status = "Loyalist"
                 elif pct_val >= STATUS_AFFILIATE_PCT:
                     status = "Affiliate"
@@ -206,7 +238,10 @@ for date_idx, d in enumerate(sorted_dates):
         "players": snapshot_players
     }
 
-# --- RENDU ---
+# ==============================================================================
+# 📝 RENDU JINJA2
+# ==============================================================================
+
 env = Environment(loader=FileSystemLoader(TEMPLATE_DIR))
 env.globals["config"] = config_data
 template = env.get_template(TEMPLATE_FILE)
@@ -218,4 +253,4 @@ with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
         dates_json=json.dumps(sorted_dates, ensure_ascii=False)
     ))
 
-print("Traitement terminé : affinités lissées sans sauts de tribu.")
+print(f"Analyse double vitesse réussie : Louvain exécuté tous les {LOUVAIN_INTERVAL_DAYS} jours avec {PROBATION_DAYS_REQUIRED} jours de probation.")
