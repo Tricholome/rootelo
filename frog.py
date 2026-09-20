@@ -189,9 +189,8 @@ for d in sorted_dates:
                 "urgency": urgency
             })
 
-    # Traitement prioritaire : les fondations de nouvelles tribus migrent d'un bloc
+    # Priorité absolue aux membres fondateurs d'une nouvelle tribu
     new_tribes_today = set(ideal_assignments.values()) - set(active_tribes) - {UNALIGNED_LABEL}
-    
     priority_moves = [m for m in pending_migrations if m["to"] in new_tribes_today]
     standard_moves = [m for m in pending_migrations if m["to"] not in new_tribes_today]
     
@@ -201,7 +200,7 @@ for d in sorted_dates:
     for move in allowed_moves:
         current_roster[move["player"]] = move["to"]
 
-    # 4. Mortalité : Dissolution si inférieure à MIN_TRIBE_SURVIVAL (évalué sur le roster actuel)
+    # 4. Mortalité : Evaluée sur le roster actuel
     present_tribes = set(current_roster.values()) - {UNALIGNED_LABEL}
     tribe_counts = Counter(current_roster.values())
     
@@ -213,36 +212,38 @@ for d in sorted_dates:
                     
     active_tribes = sorted({t for t in current_roster.values() if t != UNALIGNED_LABEL})
 
-    # 5. Formatage pour Jinja2 & Calcul dynamique des statuts
+    # 5. Formatage pour Jinja2 & Calcul des statuts (Core, Loyalist, Affiliate, Wavering)
     snapshot_players = []
-    tribe_summary = {t: 0 for t in active_tribes + [UNALIGNED_LABEL]}
+    tribe_summary = {t: 0 for t in TRIBE_NAMES_POOL + [UNALIGNED_LABEL]}
     
     for p, games in sorted(player_games.items(), key=lambda x: (-x[1], x[0])):
         main_t = current_roster.get(p, UNALIGNED_LABEL)
         tribe_summary[main_t] = tribe_summary.get(main_t, 0) + 1
         
-        scores = {}
+        # Initialisation par défaut pour TOUTES les tribus de la pool (évite les undefined JS)
+        scores = {t: {"pct": 0, "status": None} for t in TRIBE_NAMES_POOL}
+        
         if p in G and G.degree(p) > 0:
             total_w = sum(G[p][n]["weight"] for n in G.neighbors(p))
             
-            # 1. Calcul des pourcentages d'affinité pour toutes les tribus
+            # Calcul des pourcentages pour chaque tribu
             tribe_pcts = {}
-            for t in active_tribes:
+            for t in TRIBE_NAMES_POOL:
                 t_w = sum(G[p][n]["weight"] for n in G.neighbors(p) if current_roster.get(n) == t)
                 tribe_pcts[t] = round((t_w / total_w) * 100) if total_w > 0 else 0
             
-            # 2. Calcul de l'écart d'indécision (top_margin)
+            # Marge d'indécision (écart entre les deux meilleurs scores)
             sorted_pcts = sorted(tribe_pcts.values(), reverse=True)
             top1 = sorted_pcts[0] if len(sorted_pcts) > 0 else 0
             top2 = sorted_pcts[1] if len(sorted_pcts) > 1 else 0
             top_margin = top1 - top2
 
-            # 3. Attribution du statut sur la tribu principale
-            for t in active_tribes:
+            # Attribution du statut sur la tribu principale du joueur
+            for t in TRIBE_NAMES_POOL:
                 pct = tribe_pcts[t]
                 status = None
                 
-                if t == main_t:
+                if t == main_t and main_t != UNALIGNED_LABEL:
                     if top_margin <= 10 and len(active_tribes) > 1:
                         status = "Wavering"
                     elif pct >= 85:
@@ -253,8 +254,6 @@ for d in sorted_dates:
                         status = "Affiliate"
                         
                 scores[t] = {"pct": pct, "status": status}
-        else:
-            scores = {t: {"pct": 0, "status": None} for t in active_tribes}
             
         snapshot_players.append({
             "name": p,
@@ -262,6 +261,12 @@ for d in sorted_dates:
             "main_tribe": main_t,
             "scores": scores
         })
+        
+    snapshots[d] = {
+        "active_tribes": active_tribes,
+        "summary": tribe_summary,
+        "players": snapshot_players
+    }
 
 # ==============================================================================
 # 🎨 GÉNÉRATION HTML
@@ -280,6 +285,6 @@ if Path(TEMPLATE_DIR).exists() and (Path(TEMPLATE_DIR) / TEMPLATE_FILE).exists()
     
     with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
         f.write(html_content)
-    print(f"✅ Fichier {OUTPUT_FILE} généré avec succès.")
+    print(f"✅ Fichier {OUTPUT_FILE} généré avec succès ({len(snapshots)} dates).")
 else:
     print(f"⚠️ Template {TEMPLATE_DIR}/{TEMPLATE_FILE} introuvable.")
