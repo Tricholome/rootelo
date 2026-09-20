@@ -11,7 +11,7 @@ from jinja2 import Environment, FileSystemLoader
 # ==============================================================================
 
 MAX_DAILY_TRANSFERS = 3    # Le goulot d'étranglement (2-3 par jour max)
-MAX_TRIBES = 3             # Limite stricte à 3 tribus
+MAX_TRIBES = 3             # Limite absolue de tribus
 MIN_TRIBE_SIZE_LOUVAIN = 4 # Taille mini pour qu'un cluster soit considéré par Louvain
 MIN_TRIBE_SURVIVAL = 2     # Si une tribu tombe sous 2 joueurs, elle est dissoute
 MIN_GAMES_FLOOR = 3        # Matchs minimum pour avoir le droit de rejoindre une tribu
@@ -19,7 +19,9 @@ MIN_GAMES_FLOOR = 3        # Matchs minimum pour avoir le droit de rejoindre une
 DECAY_RATE = 0.95
 NEW_MATCH_WEIGHT = 1.0
 UNALIGNED_LABEL = "-"
-TRIBE_NAMES_POOL = [f"Tribe {chr(65+i)}" for i in range(26)] # Tribe A, Tribe B, etc.
+
+# On verrouille STRICTEMENT les noms disponibles à 3. Impossible de créer Tribe D.
+TRIBE_NAMES_POOL = ["Tribe A", "Tribe B", "Tribe C"] 
 
 CONFIG_PATH = Path("data/config/config.json")
 DEFAULT_MATCHES_PATH = Path("data/rdl/archives/lh02/matches.json")
@@ -31,7 +33,6 @@ OUTPUT_FILE = Path("frog.html")
 # 🚀 CHARGEMENT DES CONFIGURATIONS ET DONNÉES
 # ==============================================================================
 
-# 1. Chargement de config.json
 config_path = CONFIG_PATH
 if not config_path.exists():
     configs = list(Path(".").rglob("config.json"))
@@ -43,7 +44,6 @@ if config_path.exists():
     with open(config_path, "r", encoding="utf-8") as f:
         config_data = json.load(f)
 
-# 2. Chargement de matches.json
 json_path = DEFAULT_MATCHES_PATH
 if not json_path.exists():
     archives = list(Path("data/rdl/archives").rglob("matches.json"))
@@ -69,15 +69,14 @@ for m in matches:
 sorted_dates = sorted(matches_by_date.keys())
 
 # ==============================================================================
-# 🧠 MOTEUR D'ÉTAT : LOUVAIN BRIDÉ
+# 🧠 MOTEUR D'ÉTAT : LOUVAIN BRIDÉ ET VERROUILLÉ
 # ==============================================================================
 
 edge_weights = Counter()
 player_games = Counter()
 
-current_roster = {}  # L'état OFFICIEL des tribus { "Player": "Tribe A" }
-active_tribes = []   # Liste des tribus vivantes ["Tribe A", "Tribe B"]
-next_name_idx = 0    # Pour piocher A, puis B, puis C...
+current_roster = {}  
+active_tribes = []   
 snapshots = {}
 
 for d in sorted_dates:
@@ -98,7 +97,7 @@ for d in sorted_dates:
         if w >= 0.1:
             G.add_edge(p1, p2, weight=w)
 
-    # 2. La Boussole : Calcul de l'idéal théorique avec Louvain
+    # 2. La Boussole : Calcul de l'idéal théorique
     ideal_assignments = {p: UNALIGNED_LABEL for p in G.nodes()}
     
     if G.number_of_nodes() > 0:
@@ -110,28 +109,39 @@ for d in sorted_dates:
         valid_comms = [c for c in raw_comms if len(c) >= MIN_TRIBE_SIZE_LOUVAIN][:MAX_TRIBES]
         
         used_ideal_names = set()
-        for comm in valid_comms:
+        community_mapping = {}
+        
+        # PASSE 1 : Continuité. On tente de lier les nouveaux clusters aux tribus existantes
+        for i, comm in enumerate(valid_comms):
             best_name = None
             max_intersect = 0
-            
-            # Tente de lier ce cluster à une tribu existante
             for t_name in active_tribes:
                 if t_name not in used_ideal_names:
                     current_members = {p for p, t in current_roster.items() if t == t_name}
                     intersect = len(comm.intersection(current_members))
-                    if intersect > max_intersect:
+                    if intersect > max_intersect and intersect > 0:
                         max_intersect = intersect
                         best_name = t_name
             
-            # Si le cluster est nouveau, on le baptise
-            if not best_name and next_name_idx < len(TRIBE_NAMES_POOL):
-                best_name = TRIBE_NAMES_POOL[next_name_idx]
-                next_name_idx += 1
-                
             if best_name:
+                community_mapping[i] = best_name
                 used_ideal_names.add(best_name)
+        
+        # PASSE 2 : Nouveaux clusters. On pioche UNIQUEMENT dans les noms restants du pool (A, B, C)
+        available_names = [n for n in TRIBE_NAMES_POOL if n not in used_ideal_names]
+        for i, comm in enumerate(valid_comms):
+            if i not in community_mapping:
+                if available_names:
+                    new_name = available_names.pop(0)
+                    community_mapping[i] = new_name
+                    used_ideal_names.add(new_name)
+                
+        # On assigne les joueurs à leur tribu idéale
+        for i, comm in enumerate(valid_comms):
+            name = community_mapping.get(i)
+            if name:
                 for p in comm:
-                    ideal_assignments[p] = best_name
+                    ideal_assignments[p] = name
 
     # 3. Le Goulot d'étranglement (Quota de transfert)
     pending_migrations = []
@@ -141,12 +151,17 @@ for d in sorted_dates:
         ideal_t = ideal_assignments.get(p, UNALIGNED_LABEL)
         
         if curr_t != ideal_t and player_games[p] >= MIN_GAMES_FLOOR:
-            # Force d'attraction vers la NOUVELLE tribu théorique (Louvain)
-            w_ideal = sum(G[p][n]["weight"] for n in G.neighbors(p) if ideal_assignments.get(n) == ideal_t)
-            # Force d'ancrage dans l'ANCIENNE tribu (Roster actuel)
-            w_curr = sum(G[p][n]["weight"] for n in G.neighbors(p) if current_roster.get(n) == curr_t)
+            # Force d'attraction
+            w_ideal = sum(G[p][n]["weight"] for n in G.neighbors(p) if ideal_assignments.get(n) == ideal_t) if ideal_t != UNALIGNED_LABEL else 0
+            # Force d'ancrage
+            w_curr = sum(G[p][n]["weight"] for n in G.neighbors(p) if current_roster.get(n) == curr_t) if curr_t != UNALIGNED_LABEL else 0
             
             urgency = w_ideal - w_curr
+            
+            # Ajustement : Si le joueur perd sa tribu (Louvain le met en non-aligné), on lui donne une légère
+            # urgence pour qu'il libère la place dans la file d'attente doucement.
+            if ideal_t == UNALIGNED_LABEL and curr_t != UNALIGNED_LABEL:
+                urgency = 0.5 
             
             pending_migrations.append({
                 "player": p,
@@ -155,10 +170,9 @@ for d in sorted_dates:
                 "urgency": urgency
             })
 
-    # On trie par urgence (les plus forts écarts passent en premier)
     pending_migrations.sort(key=lambda x: x["urgency"], reverse=True)
     
-    # Exception de Bootstrap : Le premier jour, on laisse initialiser le groupe.
+    # Bootstrap le 1er jour, quota strict ensuite
     if len(active_tribes) == 0:
         allowed_moves = pending_migrations
     else:
@@ -167,7 +181,7 @@ for d in sorted_dates:
     for move in allowed_moves:
         current_roster[move["player"]] = move["to"]
 
-    # 4. Nettoyage & Mortalité
+    # 4. Nettoyage & Mortalité (crucial pour libérer un nom)
     tribe_counts = Counter(current_roster.values())
     for t in list(active_tribes):
         if tribe_counts[t] < MIN_TRIBE_SURVIVAL:
@@ -231,6 +245,4 @@ if Path(TEMPLATE_DIR).exists() and (Path(TEMPLATE_DIR) / TEMPLATE_FILE).exists()
         f.write(html_content)
     print(f"✅ Fichier {OUTPUT_FILE} généré avec succès.")
 else:
-    print(f"⚠️ Template {TEMPLATE_DIR}/{TEMPLATE_FILE} introuvable. Écriture d'un JSON dump.")
-    with open("snapshots_dump.json", "w", encoding="utf-8") as f:
-        json.dump(snapshots, f, indent=4)
+    print(f"⚠️ Template {TEMPLATE_DIR}/{TEMPLATE_FILE} introuvable.")
