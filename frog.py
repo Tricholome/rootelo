@@ -1,6 +1,5 @@
 import json
 import math
-import os
 import statistics
 from collections import Counter
 from itertools import combinations
@@ -12,18 +11,18 @@ from jinja2 import Environment, FileSystemLoader
 # ⚙️ CONFIGURATION & HYPERPARAMÈTRES
 # ==============================================================================
 
-MAX_DAILY_TRANSFERS = 3    # Le goulot d'étranglement (3 par jour max)
-MAX_TRIBES = 3             # Limite absolue de tribus
-MIN_TRIBE_SIZE_LOUVAIN = 4 # Taille mini pour qu'un cluster soit considéré par Louvain
-MIN_TRIBE_SURVIVAL = 5     # Si une tribu tombe sous 2 joueurs, elle est dissoute
-MIN_GAMES_FLOOR = 3        # Matchs minimum pour avoir le droit de rejoindre une tribu
-TRIBE_MEDIAN_RATIO = 0.30  # Ratio de la médiane de la tribu visée (ex: 30 %)
+MAX_DAILY_TRANSFERS = 3       # Le goulot d'étranglement (3 par jour max)
+MAX_TRIBES = 3                # Limite absolue de tribus
+MIN_TRIBE_SIZE_LOUVAIN = 4    # Taille mini pour qu'un cluster soit considéré par Louvain
+MIN_TRIBE_SURVIVAL = 2        # Si une tribu tombe sous 2 joueurs, elle est dissoute
+MIN_GAMES_FLOOR = 3           # Matchs minimum pour avoir le droit de rejoindre une tribu
+DYNAMIC_THRESHOLD_RATIO = 0.35# Ratio de la médiane globale pour l'éligibilité
 
 DECAY_RATE = 0.95
 NEW_MATCH_WEIGHT = 1.0
 UNALIGNED_LABEL = "-"
 
-# On verrouille STRICTEMENT les noms disponibles à 3. Impossible de créer Tribe D.
+# On verrouille STRICTEMENT les noms disponibles à 3.
 TRIBE_NAMES_POOL = ["Tribe A", "Tribe B", "Tribe C"] 
 
 CONFIG_PATH = Path("data/config/config.json")
@@ -50,10 +49,7 @@ if config_path.exists():
 json_path = DEFAULT_MATCHES_PATH
 if not json_path.exists():
     archives = list(Path("data/rdl/archives").rglob("matches.json"))
-    if archives:
-        json_path = archives[0]
-    else:
-        json_path = Path("matches.json")
+    json_path = archives[0] if archives else Path("matches.json")
 
 if not json_path.exists():
     print(f"❌ Erreur : Fichier de matchs introuvable à {json_path}")
@@ -95,6 +91,15 @@ for d in sorted_dates:
         for p1, p2 in combinations(sorted(players), 2):
             edge_weights[(p1, p2)] += NEW_MATCH_WEIGHT
 
+    # --- Seuil dynamique du jour & Purge des inactifs ---
+    all_games = list(player_games.values())
+    season_median = statistics.median(all_games) if all_games else 0
+    daily_min_games = max(MIN_GAMES_FLOOR, math.ceil(season_median * DYNAMIC_THRESHOLD_RATIO))
+
+    for p, curr_t in list(current_roster.items()):
+        if curr_t != UNALIGNED_LABEL and player_games[p] < daily_min_games:
+            current_roster[p] = UNALIGNED_LABEL
+
     G = nx.Graph()
     for (p1, p2), w in edge_weights.items():
         if w >= 0.1:
@@ -132,12 +137,11 @@ for d in sorted_dates:
         
         # PASSE 2 : Nouveaux clusters. On pioche UNIQUEMENT dans les noms restants du pool (A, B, C)
         available_names = [n for n in TRIBE_NAMES_POOL if n not in used_ideal_names]
-        for i, comm in enumerate(valid_comms):
-            if i not in community_mapping:
-                if available_names:
-                    new_name = available_names.pop(0)
-                    community_mapping[i] = new_name
-                    used_ideal_names.add(new_name)
+        for i in range(len(valid_comms)):
+            if i not in community_mapping and available_names:
+                new_name = available_names.pop(0)
+                community_mapping[i] = new_name
+                used_ideal_names.add(new_name)
                 
         # On assigne les joueurs à leur tribu idéale
         for i, comm in enumerate(valid_comms):
@@ -153,16 +157,7 @@ for d in sorted_dates:
         curr_t = current_roster.get(p, UNALIGNED_LABEL)
         ideal_t = ideal_assignments.get(p, UNALIGNED_LABEL)
         
-        # Calcul du seuil dynamique d'entrée selon la tribu visée
-        required_games = MIN_GAMES_FLOOR
-        if ideal_t != UNALIGNED_LABEL:
-            # Membres actuels installés dans la tribu visée
-            tribe_members = [m for m, t in current_roster.items() if t == ideal_t]
-            if tribe_members:
-                tribe_median = statistics.median([player_games[m] for m in tribe_members])
-                required_games = max(MIN_GAMES_FLOOR, math.ceil(tribe_median * TRIBE_MEDIAN_RATIO))
-
-        if curr_t != ideal_t and player_games[p] >= required_games:
+        if curr_t != ideal_t and player_games[p] >= daily_min_games:
             # Force d'attraction
             w_ideal = sum(G[p][n]["weight"] for n in G.neighbors(p) if ideal_assignments.get(n) == ideal_t) if ideal_t != UNALIGNED_LABEL else 0
             # Force d'ancrage
@@ -170,8 +165,6 @@ for d in sorted_dates:
             
             urgency = w_ideal - w_curr
             
-            # Ajustement : Si le joueur perd sa tribu (Louvain le met en non-aligné), on lui donne une légère
-            # urgence pour qu'il libère la place dans la file d'attente doucement.
             if ideal_t == UNALIGNED_LABEL and curr_t != UNALIGNED_LABEL:
                 urgency = 0.5 
             
