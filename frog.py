@@ -230,7 +230,8 @@ for date_idx, d in enumerate(sorted_dates):
                 scores[t] = round((normalized_affinities[t] / total_normalized) * 100)
             else:
                 scores[t] = 0
-
+                
+        sorted_scores = sorted(scores.values(), reverse=True)
         top_margin = sorted_scores[0] - sorted_scores[1] if len(sorted_scores) > 1 else 100
 
         raw_max_tribe = max(scores, key=scores.get) if total_normalized > 0 else UNALIGNED_LABEL
