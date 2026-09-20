@@ -28,7 +28,7 @@ from jinja2 import Environment, FileSystemLoader
 # ==============================================================================
 
 # --- Tribus ---
-MAX_TRIBES = 3                # Nombre max de tribus simultanées
+MAX_TRIBES = 5                # Nombre max de tribus simultanées
 MIN_TRIBE_CREATION_SIZE = 6   # Joueurs éligibles minimum pour FONDER une tribu
 MIN_TRIBE_SURVIVAL = 6        # Joueurs minimum pour qu'une tribu SURVIVE
 
@@ -46,7 +46,7 @@ NEW_MATCH_WEIGHT = 1.0        # Poids d'un match
 MIN_EDGE_WEIGHT = 0.1         # Sous ce poids, l'arête est ignorée
 
 UNALIGNED_LABEL = "-"
-TRIBE_NAMES_POOL = ["Tribe A", "Tribe B", "Tribe C"]
+TRIBE_NAMES_POOL = ["Tribe A", "Tribe B", "Tribe C", "Tribe D", "Tribe E"]
 
 CONFIG_PATH = Path("data/config/config.json")
 DEFAULT_MATCHES_PATH = Path("data/rdl/archives/lh02/matches.json")
