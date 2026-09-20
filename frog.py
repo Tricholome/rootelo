@@ -192,8 +192,9 @@ for date_idx, d in enumerate(sorted_dates):
             t1 = current_assignments.get(p1, UNALIGNED_LABEL)
             t2 = current_assignments.get(p2, UNALIGNED_LABEL)
             
-            if t2 in TARGET_TRIBES: player_global_affinity[p1][t2] += weight
-            if t1 in TARGET_TRIBES: player_global_affinity[p2][t1] += weight
+            # Enregistre TOUTES les interactions (y compris inclassés)
+            player_global_affinity[p1][t2] += weight
+            player_global_affinity[p2][t1] += weight
 
     louvain_tribe_sizes = Counter(current_assignments.values())
 
@@ -210,14 +211,17 @@ for date_idx, d in enumerate(sorted_dates):
     tribe_summary = {t: 0 for t in TARGET_TRIBES + [UNALIGNED_LABEL]}
     snapshot_players = []
 
+    all_categories = TARGET_TRIBES + [UNALIGNED_LABEL]
+
     for name, count in sorted(player_counts.items(), key=lambda x: (-x[1], x[0])):
         normalized_affinities = {}
         total_normalized = 0.0
 
-        for t in TARGET_TRIBES:
-            t_size = max(1, louvain_tribe_sizes.get(t, 1))
-            norm_aff = player_global_affinity[name][t] / math.sqrt(t_size)
-            normalized_affinities[t] = norm_aff
+        # Normalisation sur TOUTES les catégories (tribus + inclassés)
+        for cat in all_categories:
+            cat_size = max(1, louvain_tribe_sizes.get(cat, 1))
+            norm_aff = player_global_affinity[name][cat] / math.sqrt(cat_size)
+            normalized_affinities[cat] = norm_aff
             total_normalized += norm_aff
             
         scores = {}
@@ -226,8 +230,7 @@ for date_idx, d in enumerate(sorted_dates):
                 scores[t] = round((normalized_affinities[t] / total_normalized) * 100)
             else:
                 scores[t] = 0
-        
-        sorted_scores = sorted(scores.values(), reverse=True)
+
         top_margin = sorted_scores[0] - sorted_scores[1] if len(sorted_scores) > 1 else 100
 
         raw_max_tribe = max(scores, key=scores.get) if total_normalized > 0 else UNALIGNED_LABEL
