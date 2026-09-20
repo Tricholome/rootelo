@@ -7,16 +7,68 @@ Chaque jour :
   1. On met à jour le graphe joueur↔joueur (les vieilles arêtes s'érodent).
   2. LA BOUSSOLE : Louvain propose une tribu "idéale" à chaque joueur éligible.
      Elle ne fait que SUGGÉRER : elle n'expulse jamais personne.
-  3. Un joueur sans tribu suit la boussole ; un joueur déjà en tribu ne la quitte que
-     si l'autre tribu l'attire STICKINESS fois plus (et au plus MAX_DAILY_TRANSFERS par jour).
+  3. Un joueur sans tribu suit la boussole SI ELLE CONFIRME son lien le plus fort ;
+     un joueur déjà en tribu ne la quitte que si l'autre tribu l'attire STICKINESS
+     fois plus (et au plus MAX_DAILY_TRANSFERS par jour).
   4. Un cluster qui ne correspond à aucune tribu existante (et ≥ MIN_TRIBE_CREATION_SIZE
      joueurs éligibles) fonde une nouvelle tribu, d'un bloc.
-  5. Une tribu qui tombe sous MIN_TRIBE_SURVIVAL membres disparaît.
+  5. Une tribu qui tombe sous MIN_TRIBE_SURVIVAL membres disparaît ; un joueur resté
+     inactif trop longtemps quitte aussi sa tribu, individuellement.
+
+--------------------------------------------------------------------------------
+CORRECTIFS apportés à la version précédente (voir commentaires "# FIX" inline) :
+
+1. DÉTERMINISME — networkx.community.louvain_communities n'est PAS reproductible
+   d'une exécution à l'autre malgré seed=42 : l'ordre de parcours des nœuds dépend
+   en partie du hachage des chaînes Python, randomisé par processus. On fige
+   PYTHONHASHSEED avant même que le script ne démarre (ré-exécution unique).
+
+2. ENTRÉE DEPUIS "NON-ALIGNÉ" SANS FILTRE — un joueur qui devient éligible suivait
+   la boussole (Louvain) sans aucune vérification, même si son lien réel le plus
+   fort était ailleurs. On n'accepte plus le placement immédiat que si la tribu
+   proposée est aussi celle avec qui il a le plus de poids réel.
+
+3. SEUIL DE FONDATION == SEUIL DE SURVIE (6 = 6) — une tribu tout juste fondée
+   pouvait disparaître entièrement en perdant un seul membre. On fonde plus large
+   (8) qu'il ne faut pour survivre (6), pour laisser un peu de marge aux tribus
+   naissantes.
+
+4. STATUT "WAVERING" MAL CALCULÉ — la marge comparait les deux meilleurs scores
+   globaux, pas la tribu principale contre sa meilleure alternative : un joueur
+   pouvait être affiché "Wavering" sur sa tribu principale simplement parce que
+   deux AUTRES tribus se talonnaient. Corrigé pour comparer tribu principale vs
+   meilleure alternative.
+
+5. MEMBRES FANTÔMES — un joueur inactif restait dans sa tribu indéfiniment tant
+   que celle-ci ne s'effondrait pas globalement. On retire désormais aussi les
+   joueurs individuellement inactifs depuis plus de INACTIVITY_LIMIT_DAYS jours.
+
+6. IDENTITÉ DES TRIBUS — un nom de tribu libéré (dissolution) pouvait être
+   réutilisé pour un groupe de joueurs complètement différent, ce qui brouille
+   toute lecture dans le temps ("Tribe D" en avril ≠ "Tribe D" en juin). On
+   numérote désormais chaque (re)fondation et on expose un libellé distinct
+   (ex. "Tribe D #2") en plus du nom technique, sans rien changer à la logique
+   interne (roster, dissolution, etc. utilisent toujours le nom technique).
+--------------------------------------------------------------------------------
 """
+
+# --- FIX 1 : déterminisme --------------------------------------------------
+# networkx (Louvain) est sensible au hachage des chaînes, qui est randomisé par
+# processus par défaut en Python. On fige PYTHONHASHSEED avant tout le reste en
+# relançant le script une seule fois avec la variable d'environnement posée.
+import os
+import sys
+
+if os.environ.get("PYTHONHASHSEED") != "0":
+    os.environ["PYTHONHASHSEED"] = "0"
+    os.execv(sys.executable, [sys.executable] + sys.argv)
+# -----------------------------------------------------------------------------
+
 import json
 import math
 import statistics
 from collections import Counter
+from datetime import date
 from itertools import combinations
 from pathlib import Path
 
@@ -28,22 +80,23 @@ from jinja2 import Environment, FileSystemLoader
 # ==============================================================================
 
 # --- Tribus ---
-MAX_TRIBES = 5                # Nombre max de tribus simultanées
-MIN_TRIBE_CREATION_SIZE = 6   # Joueurs éligibles minimum pour FONDER une tribu
-MIN_TRIBE_SURVIVAL = 6        # Joueurs minimum pour qu'une tribu SURVIVE
+MAX_TRIBES = 5                 # Nombre max de tribus simultanées
+MIN_TRIBE_CREATION_SIZE = 8    # FIX 3 : fonder plus large que le seuil de survie
+MIN_TRIBE_SURVIVAL = 6         # Joueurs minimum pour qu'une tribu SURVIVE
 
 # --- Éligibilité (un seul seuil global, pas de seuil par tribu) ---
-MIN_GAMES_FLOOR = 3           # Plancher absolu de matchs
-DYNAMIC_RATIO = 2.0          # Seuil = max(plancher, ratio × médiane globale)
+MIN_GAMES_FLOOR = 3            # Plancher absolu de matchs
+DYNAMIC_RATIO = 2.0            # Seuil = max(plancher, ratio × médiane globale)
 
 # --- Stabilité (LES réglages qui comptent) ---
-STICKINESS = 1.5              # Pour quitter sa tribu : affinité ailleurs > STICKINESS × affinité actuelle
-MAX_DAILY_TRANSFERS = 3       # Max de changements de tribu (A→B) par jour
+STICKINESS = 1.5               # Pour quitter sa tribu : affinité ailleurs > STICKINESS × affinité actuelle
+MAX_DAILY_TRANSFERS = 3        # Max de changements de tribu (A→B) par jour
+INACTIVITY_LIMIT_DAYS = 21     # FIX 5 : au-delà, un joueur sort individuellement de sa tribu
 
 # --- Graphe ---
-DECAY_RATE = 0.95             # Érosion quotidienne des arêtes
-NEW_MATCH_WEIGHT = 1.0        # Poids d'un match
-MIN_EDGE_WEIGHT = 0.1         # Sous ce poids, l'arête est ignorée
+DECAY_RATE = 0.95              # Érosion quotidienne des arêtes
+NEW_MATCH_WEIGHT = 1.0         # Poids d'un match
+MIN_EDGE_WEIGHT = 0.1          # Sous ce poids, l'arête est ignorée
 
 UNALIGNED_LABEL = "-"
 TRIBE_NAMES_POOL = ["Tribe A", "Tribe B", "Tribe C", "Tribe D", "Tribe E"]
@@ -130,7 +183,11 @@ def compass(G, roster, eligible):
 def apply_compass(G, roster, target, founded):
     """
     Applique la boussole SANS secousses :
-      - sans tribu, ou fondateur d'une nouvelle tribu → on y va tout de suite
+      - fondateur d'une nouvelle tribu → on y va tout de suite (le cluster vient d'être
+        validé par is_clearly_apart, pas besoin d'un test de poids supplémentaire)
+      - sans tribu, boussole pointant vers une tribu EXISTANTE → on ne suit que si cette
+        tribu est aussi celle avec qui le joueur a le plus de poids réel (FIX 2) ; sinon
+        on attend un jour de plus plutôt que de sauter sur un signal encore fragile
       - déjà en tribu → on ne change que si l'autre tribu attire STICKINESS fois plus,
         et seulement les MAX_DAILY_TRANSFERS cas les plus nets du jour.
     """
@@ -139,8 +196,15 @@ def apply_compass(G, roster, target, founded):
         current = roster[p]
         if current == t:
             continue
-        if current == UNALIGNED_LABEL or t in founded:
+
+        if t in founded:
             moves.append((p, t))
+        elif current == UNALIGNED_LABEL:
+            # FIX 2 : ne pas suivre la boussole aveuglément à la première éligibilité.
+            w = weight_by_tribe(G, roster, p)
+            if not w or w[t] == max(w.values()):
+                moves.append((p, t))
+            # sinon : signal encore trop faible/ambigu, on reste "-" un jour de plus
         else:
             w = weight_by_tribe(G, roster, p)
             if w[t] > STICKINESS * w[current]:
@@ -152,6 +216,20 @@ def apply_compass(G, roster, target, founded):
         roster[p] = t
 
 
+def prune_inactive(roster, last_active, current_date):
+    """FIX 5 : un joueur individuellement inactif depuis trop longtemps quitte sa tribu,
+    même si celle-ci reste par ailleurs au-dessus du seuil de survie."""
+    if INACTIVITY_LIMIT_DAYS is None:
+        return
+    cur = date.fromisoformat(current_date)
+    for p, t in roster.items():
+        if t == UNALIGNED_LABEL:
+            continue
+        last = last_active.get(p)
+        if last is None or (cur - date.fromisoformat(last)).days > INACTIVITY_LIMIT_DAYS:
+            roster[p] = UNALIGNED_LABEL
+
+
 def dissolve_small_tribes(roster):
     """Une tribu sous MIN_TRIBE_SURVIVAL membres disparaît."""
     counts = Counter(t for t in roster.values() if t != UNALIGNED_LABEL)
@@ -160,7 +238,6 @@ def dissolve_small_tribes(roster):
             for p, t in roster.items():
                 if t == tribe:
                     roster[p] = UNALIGNED_LABEL
-
 
 
 def player_scores(G, roster, p, active_tribes):
@@ -176,10 +253,14 @@ def player_scores(G, roster, p, active_tribes):
         by_tribe[roster.get(n, UNALIGNED_LABEL)] += w
 
     pcts = {t: round(100 * by_tribe[t] / total) for t in TRIBE_NAMES_POOL}
-    top = sorted(pcts.values(), reverse=True)
-    margin = top[0] - top[1]
 
     main = roster.get(p, UNALIGNED_LABEL)
+    # FIX 4 : la marge doit comparer la tribu PRINCIPALE à sa meilleure alternative,
+    # pas les deux meilleurs scores globaux (qui peuvent ne rien avoir à voir avec main).
+    main_pct = pcts.get(main, 0)
+    best_other = max((pcts[t] for t in TRIBE_NAMES_POOL if t != main), default=0)
+    margin = main_pct - best_other
+
     for t in TRIBE_NAMES_POOL:
         status = None
         if t == main:
@@ -238,7 +319,9 @@ sorted_dates = sorted(matches_by_date)
 
 edge_weights = Counter()
 player_games = Counter()
-roster = {}       # joueur -> nom de tribu (ou UNALIGNED_LABEL)
+last_active = {}      # FIX 5 : joueur -> dernière date jouée
+roster = {}            # joueur -> nom de tribu (ou UNALIGNED_LABEL)
+tribe_generation = Counter()   # FIX 6 : nom de tribu -> combien de fois il a été (re)fondé
 snapshots = {}
 
 for d in sorted_dates:
@@ -249,6 +332,7 @@ for d in sorted_dates:
     for players in matches_by_date[d]:
         for p in players:
             player_games[p] += 1
+            last_active[p] = d
             roster.setdefault(p, UNALIGNED_LABEL)
         for p1, p2 in combinations(sorted(set(players)), 2):
             edge_weights[(p1, p2)] += NEW_MATCH_WEIGHT
@@ -264,11 +348,21 @@ for d in sorted_dates:
     eligible = [p for p in G.nodes() if player_games[p] >= min_games]
     target, founded = compass(G, roster, eligible)
     apply_compass(G, roster, target, founded)
+    for t in founded:
+        tribe_generation[t] += 1   # FIX 6 : on numérote chaque (re)fondation
 
-    # 3. Mortalité
+    # 3. Mortalité (collective, puis individuelle pour inactivité)
     dissolve_small_tribes(roster)
+    prune_inactive(roster, last_active, d)
+    dissolve_small_tribes(roster)  # une tribu peut retomber sous le seuil après le pruning
 
     active_tribes = sorted({t for t in roster.values() if t != UNALIGNED_LABEL})
+
+    # FIX 6 : libellé d'affichage distinct par génération, sans toucher aux noms internes
+    tribe_labels = {
+        t: (t if tribe_generation[t] <= 1 else f"{t} #{tribe_generation[t]}")
+        for t in TRIBE_NAMES_POOL
+    }
 
     # 4. Snapshot pour le template
     summary = {t: 0 for t in TRIBE_NAMES_POOL + [UNALIGNED_LABEL]}
@@ -285,6 +379,7 @@ for d in sorted_dates:
 
     snapshots[d] = {
         "active_tribes": active_tribes,
+        "tribe_labels": tribe_labels,   # FIX 6 : {"Tribe D": "Tribe D #2", ...}
         "summary": summary,
         "players": snapshot_players,
     }
