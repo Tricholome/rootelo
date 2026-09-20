@@ -9,7 +9,10 @@ import requests
 # =========================================================================
 SEASON_TAG = os.getenv('SEASON_TAG', 'lh01').strip().lower()
 PREVIOUS_SEASON_TAG = os.getenv('PREVIOUS_SEASON_TAG', '').strip().lower() or None
-TOURNAMENT_ID = int(os.getenv('TOURNAMENT_ID', 24))
+
+env_tid = os.getenv('TOURNAMENT_ID')
+TOURNAMENT_ID = int(env_tid) if env_tid and env_tid.isdigit() else 24
+
 CUTOFF_DATE_STR = os.getenv('CUTOFF_DATE_STR', '2026-03-31').strip()
 CUTOFF_DATE = datetime.strptime(CUTOFF_DATE_STR, "%Y-%m-%d").date()
 
@@ -49,11 +52,11 @@ else:
 # =========================================================================
 # --- 3. LOAD CORRECTIONS ---
 # =========================================================================
-game_id_mapping = pd.Series(dtype='datetime64[ns]')
+game_id_mapping = pd.Series(dtype='object')
 try:
     if os.path.exists(CORRECTIONS_PATH):
-        df_updates = pd.read_csv(CORRECTIONS_PATH, parse_dates=['Date_Closed'])
-        if not df_updates.empty and 'GameID' in df_updates.columns:
+        df_updates = pd.read_csv(CORRECTIONS_PATH)
+        if not df_updates.empty and 'GameID' in df_updates.columns and 'Date_Closed' in df_updates.columns:
             df_valid = df_updates.dropna(subset=['Date_Closed'])
             game_id_mapping = df_valid.set_index('GameID')['Date_Closed']
             game_id_mapping.index = game_id_mapping.index.astype(int)
@@ -86,8 +89,11 @@ for m in all_matches:
     if len(participants) == 4:
         for p in participants:
             raw_data.append({
-                'GameID': m['id'], 'Player': p.get('player'),
-                'Score': float(p.get('tournament_score', 0.0)), 'Date_Closed': m.get('date_closed'), 'Turn_Timing': m.get('turn_timing')
+                'GameID': m['id'],
+                'Player': p.get('player'),
+                'Score': float(p.get('tournament_score', 0.0)),
+                'Date_Closed': m.get('date_closed'),
+                'Turn_Timing': m.get('turn_timing')
             })
 
 df = pd.DataFrame(raw_data)
@@ -97,15 +103,15 @@ if not df.empty:
     if not game_id_mapping.empty:
         mask = df['GameID'].isin(game_id_mapping.index)
         if mask.any():
-            original_times = df.loc[mask, 'Date_Closed'].dt.strftime('%H:%M:%S.%f')
-            new_dates = df.loc[mask, 'GameID'].map(game_id_mapping).dt.strftime('%Y-%m-%d')
-            df.loc[mask, 'Date_Closed'] = pd.to_datetime(new_dates + ' ' + original_times, utc=True)
+            df.loc[mask, 'Date_Closed'] = pd.to_datetime(
+                df.loc[mask, 'GameID'].map(game_id_mapping), utc=True
+            )
 
     df = df[df['Date_Closed'].dt.date <= CUTOFF_DATE].copy()
     df = df.sort_values(by='Date_Closed').reset_index(drop=True)
 
 # =========================================================================
-# --- 5. ELO CALCULATION & STATS ---
+# --- 5. ELO CALCULATION & STATS (LEGACY K-FACTORS) ---
 # =========================================================================
 print("\n=== CALCULATING ELO & STATS ===")
 print("  > Processing matches and generating history...")
@@ -140,6 +146,7 @@ for game_id, group in df.groupby('GameID', sort=False):
         stats['games'] += 1
         stats['wins'] += actual
         
+        # Legacy K-factor step-function
         k = 80 if stats['games'] <= 10 else (40 if stats['games'] <= 50 else 20)
         change = k * (actual - expected)
         
@@ -274,7 +281,7 @@ def safe_save(path, data, is_json=False):
     if os.path.exists(path):
         os.remove(path)
     with open(path, 'w', encoding='utf-8') as f:
-        json.dump(data, f, indent=4) if is_json else data.to_csv(path, index=False)
+        json.dump(data, f, indent=4, ensure_ascii=False) if is_json else data.to_csv(path, index=False)
     print(f"  > {os.path.basename(path)} saved in {SEASON_DIR}.")
 
 safe_save(OUTPUT_RATINGS, final_df)
