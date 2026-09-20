@@ -84,10 +84,11 @@
 				return `<div style="display:inline-flex; align-items:center; gap:4px;">${pctStr}</div>`;
 			}
 
-			let bgColor = "#4a5568";
+			let bgColor = "#4a5568"; 
 
 			if (scoreData.status === "Faithful") {
-				bgColor = "#1b5e20"; // Vert très foncé
+				bgColor = "#f59e0b"; // Jaune d'or
+				textColor = "#000000"; // Texte noir très lisible
 			} else if (scoreData.status === "Partisan") {
 				bgColor = "#2e7d32"; // Vert
 			} else if (scoreData.status === "Squire") {
