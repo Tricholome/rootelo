@@ -189,16 +189,23 @@ for d in sorted_dates:
                 "urgency": urgency
             })
 
-    pending_migrations.sort(key=lambda x: x["urgency"], reverse=True)
+    # Traitement prioritaire : les fondations de nouvelles tribus migrent d'un bloc
+    new_tribes_today = set(ideal_assignments.values()) - set(active_tribes) - {UNALIGNED_LABEL}
     
-    allowed_moves = pending_migrations if len(active_tribes) == 0 else pending_migrations[:MAX_DAILY_TRANSFERS]
+    priority_moves = [m for m in pending_migrations if m["to"] in new_tribes_today]
+    standard_moves = [m for m in pending_migrations if m["to"] not in new_tribes_today]
+    
+    standard_moves.sort(key=lambda x: x["urgency"], reverse=True)
+    allowed_moves = priority_moves + standard_moves[:MAX_DAILY_TRANSFERS]
         
     for move in allowed_moves:
         current_roster[move["player"]] = move["to"]
 
-    # 4. Mortalité : Dissolution si inférieure à MIN_TRIBE_SURVIVAL
+    # 4. Mortalité : Dissolution si inférieure à MIN_TRIBE_SURVIVAL (évalué sur le roster actuel)
+    present_tribes = set(current_roster.values()) - {UNALIGNED_LABEL}
     tribe_counts = Counter(current_roster.values())
-    for t in list(active_tribes):
+    
+    for t in present_tribes:
         if tribe_counts[t] < MIN_TRIBE_SURVIVAL:
             for p, t_assigned in list(current_roster.items()):
                 if t_assigned == t:
