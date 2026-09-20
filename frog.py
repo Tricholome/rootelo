@@ -13,10 +13,11 @@ from jinja2 import Environment, FileSystemLoader
 
 MAX_DAILY_TRANSFERS = 3       # Max migrations autorisées par jour
 MAX_TRIBES = 3                # Limite absolue de tribus
-MIN_TRIBE_SIZE_LOUVAIN = 4    # Taille mini pour qu'un cluster soit valide dans Louvain
-MIN_TRIBE_SURVIVAL = 2        # Dissolution d'une tribu si moins de 2 membres
+MIN_TRIBE_SIZE_LOUVAIN = 4    # Taille mini pour qu'un cluster soit analysé par Louvain
+MIN_TRIBE_CREATION_SIZE = 4   # Joueurs ÉLIGIBLES minimum pour FONDER une nouvelle tribu
+MIN_TRIBE_SURVIVAL = 2        # Joueurs minimum pour qu'une tribu existante SURVIVE
 MIN_GAMES_FLOOR = 3           # Plancher absolu de matchs
-DYNAMIC_RATIO = 0.40          # Ratio de la médiane (ex: 40 %) pour élever le seuil
+DYNAMIC_RATIO = 0.40          # Ratio de la médiane globale pour élever le seuil
 
 DECAY_RATE = 0.95             # Dépréciation temporelle des arêtes
 NEW_MATCH_WEIGHT = 1.0        # Poids d'un nouveau match
@@ -67,7 +68,7 @@ for m in matches:
 sorted_dates = sorted(matches_by_date.keys())
 
 # ==============================================================================
-# 🧠 MOTEUR D'ÉTAT : LOUVAIN BRIDÉ ET VERROUILLÉ
+# 🧠 MOTEUR D'ÉTAT TEMPOREL
 # ==============================================================================
 
 edge_weights = Counter()
@@ -97,7 +98,7 @@ for d in sorted_dates:
     global_median = statistics.median(all_games) if all_games else 0
     global_min_games = max(MIN_GAMES_FLOOR, math.ceil(global_median * DYNAMIC_RATIO))
 
-    # PURGE : Expulsion directe des membres sous le seuil dynamique du jour
+    # Purge des membres sous le seuil dynamique réévalué
     for p, curr_t in list(current_roster.items()):
         if curr_t != UNALIGNED_LABEL:
             tribe_members = [m for m, t in current_roster.items() if t == curr_t]
@@ -127,7 +128,7 @@ for d in sorted_dates:
         used_ideal_names = set()
         community_mapping = {}
         
-        # PASSE 1 : Continuité avec les tribus existantes
+        # PASSE 1 : Continuité avec les tribus déjà existantes
         for i, comm in enumerate(valid_comms):
             best_name = None
             max_intersect = 0
@@ -143,13 +144,15 @@ for d in sorted_dates:
                 community_mapping[i] = best_name
                 used_ideal_names.add(best_name)
         
-        # PASSE 2 : Nouveaux clusters depuis le pool autorisé
+        # PASSE 2 : Nouveaux clusters -> Création STRICTE si au moins MIN_TRIBE_CREATION_SIZE éligibles
         available_names = [n for n in TRIBE_NAMES_POOL if n not in used_ideal_names]
-        for i in range(len(valid_comms)):
-            if i not in community_mapping and available_names:
-                new_name = available_names.pop(0)
-                community_mapping[i] = new_name
-                used_ideal_names.add(new_name)
+        for i, comm in enumerate(valid_comms):
+            if i not in community_mapping:
+                eligible_in_comm = [p for p in comm if player_games[p] >= global_min_games]
+                if len(eligible_in_comm) >= MIN_TRIBE_CREATION_SIZE and available_names:
+                    new_name = available_names.pop(0)
+                    community_mapping[i] = new_name
+                    used_ideal_names.add(new_name)
                 
         for i, comm in enumerate(valid_comms):
             name = community_mapping.get(i)
@@ -164,7 +167,6 @@ for d in sorted_dates:
         curr_t = current_roster.get(p, UNALIGNED_LABEL)
         ideal_t = ideal_assignments.get(p, UNALIGNED_LABEL)
         
-        # Calcul du seuil d'accès requis pour la tribu visée
         req_games = global_min_games
         if ideal_t != UNALIGNED_LABEL:
             t_members = [m for m, t in current_roster.items() if t == ideal_t]
@@ -172,7 +174,6 @@ for d in sorted_dates:
                 t_median = statistics.median([player_games[m] for m in t_members])
                 req_games = max(global_min_games, math.ceil(t_median * DYNAMIC_RATIO))
 
-        # Condition de migration : le joueur doit avoir atteint req_games
         if curr_t != ideal_t and player_games[p] >= req_games:
             w_ideal = sum(G[p][n]["weight"] for n in G.neighbors(p) if ideal_assignments.get(n) == ideal_t) if ideal_t != UNALIGNED_LABEL else 0
             w_curr = sum(G[p][n]["weight"] for n in G.neighbors(p) if current_roster.get(n) == curr_t) if curr_t != UNALIGNED_LABEL else 0
@@ -195,7 +196,7 @@ for d in sorted_dates:
     for move in allowed_moves:
         current_roster[move["player"]] = move["to"]
 
-    # 4. Nettoyage & Mortalité
+    # 4. Mortalité : Dissolution si inférieure à MIN_TRIBE_SURVIVAL
     tribe_counts = Counter(current_roster.values())
     for t in list(active_tribes):
         if tribe_counts[t] < MIN_TRIBE_SURVIVAL:
