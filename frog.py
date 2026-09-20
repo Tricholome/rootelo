@@ -15,7 +15,7 @@ MAX_DAILY_TRANSFERS = 3       # Max migrations autorisées par jour
 MAX_TRIBES = 3                # Limite absolue de tribus
 MIN_TRIBE_SIZE_LOUVAIN = 4    # Taille mini pour qu'un cluster soit analysé par Louvain
 MIN_TRIBE_CREATION_SIZE = 4   # Joueurs ÉLIGIBLES minimum pour FONDER une nouvelle tribu
-MIN_TRIBE_SURVIVAL = 4        # Joueurs minimum pour qu'une tribu existante SURVIVE
+MIN_TRIBE_SURVIVAL = 2        # Joueurs minimum pour qu'une tribu existante SURVIVE
 MIN_GAMES_FLOOR = 3           # Plancher absolu de matchs
 DYNAMIC_RATIO = 0.40          # Ratio de la médiane globale pour élever le seuil
 
@@ -26,7 +26,7 @@ UNALIGNED_LABEL = "-"         # Étiquette des joueurs non alignés
 TRIBE_NAMES_POOL = ["Tribe A", "Tribe B", "Tribe C"]
 
 CONFIG_PATH = Path("data/config/config.json")
-DEFAULT_MATCHES_PATH = Path("data/rdl/archives/lh03/matches.json")
+DEFAULT_MATCHES_PATH = Path("data/rdl/archives/lh02/matches.json")
 TEMPLATE_DIR = "templates"
 TEMPLATE_FILE = "frog.html"
 OUTPUT_FILE = Path("frog.html")
@@ -213,7 +213,7 @@ for d in sorted_dates:
                     
     active_tribes = sorted({t for t in current_roster.values() if t != UNALIGNED_LABEL})
 
-    # 5. Formatage pour Jinja2
+    # 5. Formatage pour Jinja2 & Calcul dynamique des statuts
     snapshot_players = []
     tribe_summary = {t: 0 for t in active_tribes + [UNALIGNED_LABEL]}
     
@@ -224,16 +224,37 @@ for d in sorted_dates:
         scores = {}
         if p in G and G.degree(p) > 0:
             total_w = sum(G[p][n]["weight"] for n in G.neighbors(p))
+            
+            # 1. Calcul des pourcentages d'affinité pour toutes les tribus
+            tribe_pcts = {}
             for t in active_tribes:
                 t_w = sum(G[p][n]["weight"] for n in G.neighbors(p) if current_roster.get(n) == t)
-                pct = round((t_w / total_w) * 100) if total_w > 0 else 0
+                tribe_pcts[t] = round((t_w / total_w) * 100) if total_w > 0 else 0
+            
+            # 2. Calcul de l'écart d'indécision (top_margin)
+            sorted_pcts = sorted(tribe_pcts.values(), reverse=True)
+            top1 = sorted_pcts[0] if len(sorted_pcts) > 0 else 0
+            top2 = sorted_pcts[1] if len(sorted_pcts) > 1 else 0
+            top_margin = top1 - top2
+
+            # 3. Attribution du statut sur la tribu principale
+            for t in active_tribes:
+                pct = tribe_pcts[t]
+                status = None
                 
-                status = "Wavering"
                 if t == main_t:
-                    status = "Loyalist" if pct >= 55 else "Affiliate"
+                    if top_margin <= 10 and len(active_tribes) > 1:
+                        status = "Wavering"
+                    elif pct >= 85:
+                        status = "Core"
+                    elif pct >= 65:
+                        status = "Loyalist"
+                    else:
+                        status = "Affiliate"
+                        
                 scores[t] = {"pct": pct, "status": status}
         else:
-            scores = {t: {"pct": 0, "status": "Wavering"} for t in active_tribes}
+            scores = {t: {"pct": 0, "status": None} for t in active_tribes}
             
         snapshot_players.append({
             "name": p,
@@ -241,12 +262,6 @@ for d in sorted_dates:
             "main_tribe": main_t,
             "scores": scores
         })
-        
-    snapshots[d] = {
-        "active_tribes": active_tribes,
-        "summary": tribe_summary,
-        "players": snapshot_players
-    }
 
 # ==============================================================================
 # 🎨 GÉNÉRATION HTML
