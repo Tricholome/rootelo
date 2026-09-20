@@ -34,7 +34,7 @@ MIN_TRIBE_SURVIVAL = 6        # Joueurs minimum pour qu'une tribu SURVIVE
 
 # --- Éligibilité (un seul seuil global, pas de seuil par tribu) ---
 MIN_GAMES_FLOOR = 3           # Plancher absolu de matchs
-DYNAMIC_RATIO = 0.50          # Seuil = max(plancher, ratio × médiane globale)
+DYNAMIC_RATIO = 1.0          # Seuil = max(plancher, ratio × médiane globale)
 
 # --- Stabilité (LES réglages qui comptent) ---
 STICKINESS = 1.5              # Pour quitter sa tribu : affinité ailleurs > STICKINESS × affinité actuelle
