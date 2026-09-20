@@ -1,5 +1,7 @@
 import json
+import math
 import os
+import statistics
 from collections import Counter
 from itertools import combinations
 from pathlib import Path
@@ -10,11 +12,12 @@ from jinja2 import Environment, FileSystemLoader
 # ⚙️ CONFIGURATION & HYPERPARAMÈTRES
 # ==============================================================================
 
-MAX_DAILY_TRANSFERS = 3    # Le goulot d'étranglement (2-3 par jour max)
+MAX_DAILY_TRANSFERS = 3    # Le goulot d'étranglement (3 par jour max)
 MAX_TRIBES = 3             # Limite absolue de tribus
 MIN_TRIBE_SIZE_LOUVAIN = 4 # Taille mini pour qu'un cluster soit considéré par Louvain
-MIN_TRIBE_SURVIVAL = 2     # Si une tribu tombe sous 2 joueurs, elle est dissoute
+MIN_TRIBE_SURVIVAL = 5     # Si une tribu tombe sous 2 joueurs, elle est dissoute
 MIN_GAMES_FLOOR = 3        # Matchs minimum pour avoir le droit de rejoindre une tribu
+TRIBE_MEDIAN_RATIO = 0.30  # Ratio de la médiane de la tribu visée (ex: 30 %)
 
 DECAY_RATE = 0.95
 NEW_MATCH_WEIGHT = 1.0
@@ -150,7 +153,16 @@ for d in sorted_dates:
         curr_t = current_roster.get(p, UNALIGNED_LABEL)
         ideal_t = ideal_assignments.get(p, UNALIGNED_LABEL)
         
-        if curr_t != ideal_t and player_games[p] >= MIN_GAMES_FLOOR:
+        # Calcul du seuil dynamique d'entrée selon la tribu visée
+        required_games = MIN_GAMES_FLOOR
+        if ideal_t != UNALIGNED_LABEL:
+            # Membres actuels installés dans la tribu visée
+            tribe_members = [m for m, t in current_roster.items() if t == ideal_t]
+            if tribe_members:
+                tribe_median = statistics.median([player_games[m] for m in tribe_members])
+                required_games = max(MIN_GAMES_FLOOR, math.ceil(tribe_median * TRIBE_MEDIAN_RATIO))
+
+        if curr_t != ideal_t and player_games[p] >= required_games:
             # Force d'attraction
             w_ideal = sum(G[p][n]["weight"] for n in G.neighbors(p) if ideal_assignments.get(n) == ideal_t) if ideal_t != UNALIGNED_LABEL else 0
             # Force d'ancrage
