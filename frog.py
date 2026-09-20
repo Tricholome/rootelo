@@ -10,7 +10,7 @@ from jinja2 import Environment, FileSystemLoader
 # ⚙️ CONFIGURATION & HYPERPARAMÈTRES
 # ==============================================================================
 
-MAX_DAILY_TRANSFERS = 3    # Le fameux goulot d'étranglement (2-3 par jour max)
+MAX_DAILY_TRANSFERS = 3    # Le goulot d'étranglement (2-3 par jour max)
 MAX_TRIBES = 3             # Limite stricte à 3 tribus
 MIN_TRIBE_SIZE_LOUVAIN = 4 # Taille mini pour qu'un cluster soit considéré par Louvain
 MIN_TRIBE_SURVIVAL = 2     # Si une tribu tombe sous 2 joueurs, elle est dissoute
@@ -28,17 +28,28 @@ TEMPLATE_FILE = "frog.html"
 OUTPUT_FILE = Path("frog.html")
 
 # ==============================================================================
-# 🚀 CHARGEMENT DES DONNÉES
+# 🚀 CHARGEMENT DES CONFIGURATIONS ET DONNÉES
 # ==============================================================================
 
-# Si le script ne trouve pas le json, il cherche dans les sous-dossiers
+# 1. Chargement de config.json
+config_path = CONFIG_PATH
+if not config_path.exists():
+    configs = list(Path(".").rglob("config.json"))
+    if configs:
+        config_path = configs[0]
+
+config_data = {}
+if config_path.exists():
+    with open(config_path, "r", encoding="utf-8") as f:
+        config_data = json.load(f)
+
+# 2. Chargement de matches.json
 json_path = DEFAULT_MATCHES_PATH
 if not json_path.exists():
     archives = list(Path("data/rdl/archives").rglob("matches.json"))
     if archives:
         json_path = archives[0]
     else:
-        # Fallback pour test local sans la structure de dossiers
         json_path = Path("matches.json")
 
 if not json_path.exists():
@@ -64,7 +75,7 @@ sorted_dates = sorted(matches_by_date.keys())
 edge_weights = Counter()
 player_games = Counter()
 
-current_roster = {}  # L'état OFFICIEL des tribus { "Adrien": "Tribe A" }
+current_roster = {}  # L'état OFFICIEL des tribus { "Player": "Tribe A" }
 active_tribes = []   # Liste des tribus vivantes ["Tribe A", "Tribe B"]
 next_name_idx = 0    # Pour piocher A, puis B, puis C...
 snapshots = {}
@@ -144,11 +155,10 @@ for d in sorted_dates:
                 "urgency": urgency
             })
 
-    # On trie par urgence (ceux qui ont le plus grand écart de poids passent en premier)
+    # On trie par urgence (les plus forts écarts passent en premier)
     pending_migrations.sort(key=lambda x: x["urgency"], reverse=True)
     
-    # Exception de Bootstrap : Le tout premier jour, on laisse passer tout le monde. 
-    # Ensuite, le plafond de 3 joueurs/jour s'active.
+    # Exception de Bootstrap : Le premier jour, on laisse initialiser le groupe.
     if len(active_tribes) == 0:
         allowed_moves = pending_migrations
     else:
@@ -161,15 +171,13 @@ for d in sorted_dates:
     tribe_counts = Counter(current_roster.values())
     for t in list(active_tribes):
         if tribe_counts[t] < MIN_TRIBE_SURVIVAL:
-            # Dissolution : La tribu meurt, ses rescapés deviennent non-alignés
             for p, t_assigned in list(current_roster.items()):
                 if t_assigned == t:
                     current_roster[p] = UNALIGNED_LABEL
                     
-    # Mise à jour stricte des tribus actives pour l'affichage
     active_tribes = sorted({t for t in current_roster.values() if t != UNALIGNED_LABEL})
 
-    # 5. Formatage pour le frontend (Jinja2)
+    # 5. Formatage pour Jinja2
     snapshot_players = []
     tribe_summary = {t: 0 for t in active_tribes + [UNALIGNED_LABEL]}
     
@@ -213,8 +221,8 @@ if Path(TEMPLATE_DIR).exists() and (Path(TEMPLATE_DIR) / TEMPLATE_FILE).exists()
     template = env.get_template(TEMPLATE_FILE)
     
     html_content = template.render(
-        config=config_data,             # <-- Ajouté pour alimenter base.html
-        active_section="frog",          # <-- Ajouté pour définir la section active
+        config=config_data,
+        active_section="frog",
         dates_json=json.dumps(sorted_dates),
         snapshots_json=json.dumps(snapshots)
     )
@@ -222,3 +230,7 @@ if Path(TEMPLATE_DIR).exists() and (Path(TEMPLATE_DIR) / TEMPLATE_FILE).exists()
     with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
         f.write(html_content)
     print(f"✅ Fichier {OUTPUT_FILE} généré avec succès.")
+else:
+    print(f"⚠️ Template {TEMPLATE_DIR}/{TEMPLATE_FILE} introuvable. Écriture d'un JSON dump.")
+    with open("snapshots_dump.json", "w", encoding="utf-8") as f:
+        json.dump(snapshots, f, indent=4)
