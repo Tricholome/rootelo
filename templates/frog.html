@@ -70,38 +70,38 @@
         let currentIndex = availableDates.length - 1;
 
         function renderTribeCell(scoreData, isMainTribe) {
-            if (!scoreData) {
-                return `<span style="color:#a0aec0;">-</span>`;
-            }
-            
-            if (!isMainTribe && scoreData.pct < 10) {
-                return `<span style="color:#a0aec0;">-</span>`;
-            }
-            
-            const pctStr = `<span style="font-weight:600; font-size:0.82rem;">${scoreData.pct}%</span>`;
-            
-            if (!isMainTribe || !scoreData.status) {
-                return `<div style="display:inline-flex; align-items:center; gap:4px;">${pctStr}</div>`;
-            }
+			if (!scoreData) {
+				return `<span style="color:#a0aec0;">-</span>`;
+			}
+			
+			if (!isMainTribe && scoreData.pct < 10) {
+				return `<span style="color:#a0aec0;">-</span>`;
+			}
+			
+			const pctStr = `<span style="font-weight:600; font-size:0.82rem;">${scoreData.pct}%</span>`;
+			
+			if (!isMainTribe || !scoreData.status) {
+				return `<div style="display:inline-flex; align-items:center; gap:4px;">${pctStr}</div>`;
+			}
 
-            let bgColor = "#4a5568";
-            let tooltip = "";
+			let bgColor = "#4a5568";
 
-            if (scoreData.status === "Core") {
-                bgColor = "#2e7d32";
-            } else if (scoreData.status === "Loyalist") {
-                bgColor = "#1565c0";
-            } else if (scoreData.status === "Affiliate") {
-                bgColor = "#d97706";
-            } else if (scoreData.status === "Wavering") {
-                bgColor = "#c62828";
-                tooltip = 'title="Maintained in tribe by historical inertia while leaning elsewhere"';
-            }
+			if (scoreData.status === "Faithful") {
+				bgColor = "#1b5e20"; // Vert très foncé
+			} else if (scoreData.status === "Partisan") {
+				bgColor = "#2e7d32"; // Vert
+			} else if (scoreData.status === "Squire") {
+				bgColor = "#1565c0"; // Bleu
+			} else if (scoreData.status === "Friend") {
+				bgColor = "#d97706"; // Orange
+			} else if (scoreData.status === "Favoring") {
+				bgColor = "#c62828"; // Rouge
+			}
 
-            const badge = `<span style="background:${bgColor}; color:#fff; padding:1px 5px; border-radius:4px; font-size:0.68rem; font-weight:600; white-space:nowrap;" ${tooltip}>${scoreData.status}</span>`;
+			const badge = `<span style="background:${bgColor}; color:#fff; padding:1px 5px; border-radius:4px; font-size:0.68rem; font-weight:600; white-space:nowrap;">${scoreData.status}</span>`;
 
-            return `<div style="display:inline-flex; align-items:center; gap:4px;">${pctStr} ${badge}</div>`;
-        }
+			return `<div style="display:inline-flex; align-items:center; gap:4px;">${pctStr} ${badge}</div>`;
+		}
 
         function updateTableForDate(selectedDate) {
             $datePicker.val(selectedDate);
