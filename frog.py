@@ -191,5 +191,19 @@ for d in sorted_dates:
         "players": snapshot_players
     }
 
-# Export HTML inchangé (masqué pour concision)
-# ...
+# ==============================================================================
+# 📝 RENDU HTML (JINJA2)
+# ==============================================================================
+
+env = Environment(loader=FileSystemLoader(TEMPLATE_DIR))
+env.globals["config"] = config_data
+template = env.get_template(TEMPLATE_FILE)
+
+with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
+    f.write(template.render(
+        active_section="frog",
+        snapshots_json=json.dumps(snapshots, ensure_ascii=False), 
+        dates_json=json.dumps(sorted_dates, ensure_ascii=False)
+    ))
+
+print(f"Analyse terminée avec succès : {len(sorted_dates)} dates calculées sur graphe atténué.")
