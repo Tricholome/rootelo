@@ -1,8 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="codex-section" style="max-width: clamp(600px, 60vw, 1600px); margin: 0 auto;">	
-    <h2>Welcome, Frogs!</h2>
+<div style="max-width: clamp(600px, 60vw, 1600px); margin: 0 auto;">	
 
     <!-- Date selector controls -->
     <div class="date-controls" style="display: flex; align-items: center; justify-content: center; gap: 10px; margin: 20px 0;">
@@ -15,15 +14,10 @@
     <!-- Carte interactive des clairières -->
 	<div id="tribeMapContainer" style="width: 100%; height: 380px; background: transparent; margin: 10px 0 20px 0; position: relative; overflow: hidden;">
 		<div style="position: absolute; top: 5px; left: 10px; color: rgba(255, 255, 255, 0.4); font-size: 0.75rem; font-weight: 600; letter-spacing: 0.05em;">
-			HOMELANDS
+			Click on a homeland to filter its member in the table
 		</div>
 		<svg id="tribeMapSvg" style="width: 100%; height: 100%;"></svg>
 	</div>
-
-    <!-- Dynamic tribe counters (Click to filter) -->
-    <div id="tribeSummary" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 15px 0 25px 0;">
-        <!-- Generated dynamically in JS -->
-    </div>
 
     <table id="frogTable" class="display nowrap" style="width: 100%;">
         <thead>
@@ -228,12 +222,11 @@
 
 			nodeEnter.append("circle")
 				.attr("r", 0)
-				.attr("fill", "transparent")
-				.attr("stroke", "rgba(255, 255, 255, 0.55)")
+				.attr("fill", "rgba(0, 0, 0, 0.35)") // Fond sombre très léger en transparence
+				.attr("stroke", "rgba(255, 255, 255, 0.6)")
 				.attr("stroke-width", 1.5)
 				.attr("stroke-dasharray", "4, 4");
 
-			// Re-création de l'élément d'icône
 			nodeEnter.append("image")
 				.attr("class", "node-icon")
 				.attr("pointer-events", "none");
@@ -241,11 +234,9 @@
 			nodeEnter.append("text")
 				.attr("class", "count-text")
 				.attr("text-anchor", "middle")
-				.attr("fill", "rgba(255, 255, 255, 0.85)")
-				.style("font-size", "0.72rem")
-				.style("font-weight", "600")
 				.style("pointer-events", "none");
 
+			// --- MERGE (Enter + Update) : Transition des clairières actives ---
 			const node = nodeEnter.merge(nodeSel);
 
 			node.transition().duration(duration)
@@ -254,10 +245,23 @@
 			node.select("circle")
 				.transition().duration(duration)
 				.attr("r", d => d.radius)
-				.attr("fill", "transparent")
-				.attr("stroke", d => activeTribeFilter === d.id ? "#ffffff" : "rgba(255, 255, 255, 0.55)")
+				.attr("fill", "rgba(0, 0, 0, 0.35)") // Conserve le fond sombre en transparence
+				.attr("stroke", d => activeTribeFilter === d.id ? "#ffffff" : "rgba(255, 255, 255, 0.6)")
 				.attr("stroke-width", d => activeTribeFilter === d.id ? 2.5 : 1.5)
 				.attr("stroke-dasharray", d => activeTribeFilter === d.id ? "none" : "4, 4");
+
+			node.select(".node-icon")
+				.attr("href", d => `assets/items/${d.id.toLowerCase()}.png`)
+				.attr("xlink:href", d => `assets/items/${d.id.toLowerCase()}.png`)
+				.attr("width", d => Math.max(26, d.radius * 0.85))
+				.attr("height", d => Math.max(26, d.radius * 0.85))
+				.attr("x", d => -Math.max(26, d.radius * 0.85) / 2)
+				.attr("y", d => -Math.max(26, d.radius * 0.85) / 2 - 8);
+
+			// Affichage grand chiffre + "members" discret en petit
+			node.select(".count-text")
+				.html(d => `<tspan style="font-size: 1.1rem; font-weight: 700; fill: #ffffff;">${d.count}</tspan> <tspan style="font-size: 0.65rem; font-weight: 500; fill: rgba(255,255,255,0.75);">members</tspan>`)
+				.attr("dy", d => `${Math.max(26, d.radius * 0.85) / 2 + 12}px`);
 
 			// Injection et centrage de l'image de l'objet
 			node.select(".node-icon")
