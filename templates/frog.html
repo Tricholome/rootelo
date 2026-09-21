@@ -15,7 +15,7 @@
     <!-- Carte interactive des clairières -->
     <div id="tribeMapContainer" style="width: 100%; height: 380px; background: #1a202c; border-radius: 12px; margin: 20px 0; position: relative; overflow: hidden; border: 1px solid #2d3748;">
         <div style="position: absolute; top: 10px; left: 15px; color: #a0aec0; font-size: 0.8rem; font-weight: 600;">
-            CARTE DU SOUS-BOIS (CLAIRIÈRES & SENTIERS)
+            HOMELANDS
         </div>
         <svg id="tribeMapSvg" style="width: 100%; height: 100%;"></svg>
     </div>
@@ -279,7 +279,7 @@
 					.force("link", d3.forceLink().id(d => d.id).distance(140))
 					.force("charge", d3.forceManyBody().strength(-380))
 					.force("center", d3.forceCenter(width / 2, height / 2))
-					.force("collision", d3.forceCollide().radius(d => d.radius + 14));
+					.force("collision", d3.forceCollide().radius(d => d.radius + 18))
 			}
 
 			simulation.nodes(newNodes);
