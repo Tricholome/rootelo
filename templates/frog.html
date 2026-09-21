@@ -13,12 +13,12 @@
     </div>
 	
     <!-- Carte interactive des clairières -->
-    <div id="tribeMapContainer" style="width: 100%; height: 380px; background: #1a202c; border-radius: 12px; margin: 20px 0; position: relative; overflow: hidden; border: 1px solid #2d3748;">
-        <div style="position: absolute; top: 10px; left: 15px; color: #a0aec0; font-size: 0.8rem; font-weight: 600;">
-            HOMELANDS
-        </div>
-        <svg id="tribeMapSvg" style="width: 100%; height: 100%;"></svg>
-    </div>
+	<div id="tribeMapContainer" style="width: 100%; height: 380px; background: transparent; margin: 10px 0 20px 0; position: relative; overflow: hidden;">
+		<div style="position: absolute; top: 5px; left: 10px; color: rgba(255, 255, 255, 0.4); font-size: 0.75rem; font-weight: 600; letter-spacing: 0.05em;">
+			HOMELANDS
+		</div>
+		<svg id="tribeMapSvg" style="width: 100%; height: 100%;"></svg>
+	</div>
 
     <!-- Dynamic tribe counters (Click to filter) -->
     <div id="tribeSummary" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 15px 0 25px 0;">
@@ -196,15 +196,16 @@
 				.remove();
 
 			const linkEnter = linkSel.enter().append("line")
-				.attr("stroke", "#4a5568")
+				.attr("stroke", "rgba(255, 255, 255, 0.3)")
 				.attr("stroke-opacity", 0)
-				.attr("stroke-dasharray", "4, 4")
-				.attr("stroke-width", d => Math.max(1.5, d.value / 4));
+				.attr("stroke-dasharray", "3, 4")
+				.attr("stroke-width", d => Math.max(1, d.value / 5));
 
 			const link = linkEnter.merge(linkSel);
 			link.transition().duration(duration)
-				.attr("stroke-opacity", 0.6)
-				.attr("stroke-width", d => Math.max(1.5, d.value / 4));
+				.attr("stroke", "rgba(255, 255, 255, 0.3)")
+				.attr("stroke-opacity", 0.4)
+				.attr("stroke-width", d => Math.max(1, d.value / 5));
 
 			// 5. ANIMATION DES NOEUDS (Clairières)
 			const nodeSel = svg.select("g.nodes-layer")
@@ -234,9 +235,9 @@
 			nodeEnter.append("circle")
 				.attr("r", 0)
 				.attr("fill", "transparent")
-				.attr("stroke", "#cbd5e1")
-				.attr("stroke-width", 2)
-				.attr("stroke-dasharray", "6, 3");
+				.attr("stroke", "rgba(255, 255, 255, 0.55)")
+				.attr("stroke-width", 1.5)
+				.attr("stroke-dasharray", "4, 4");
 
 			nodeEnter.append("image")
 				.attr("class", "node-icon")
@@ -245,8 +246,8 @@
 			nodeEnter.append("text")
 				.attr("class", "count-text")
 				.attr("text-anchor", "middle")
-				.attr("fill", "rgba(255,255,255,0.85)")
-				.style("font-size", "0.7rem")
+				.attr("fill", "rgba(255, 255, 255, 0.85)")
+				.style("font-size", "0.72rem")
 				.style("font-weight", "600")
 				.style("pointer-events", "none");
 
@@ -260,21 +261,9 @@
 				.transition().duration(duration)
 				.attr("r", d => d.radius)
 				.attr("fill", "transparent")
-				.attr("stroke", d => activeTribeFilter === d.id ? "#ffffff" : "#cbd5e1")
-				.attr("stroke-width", d => activeTribeFilter === d.id ? 3 : 2)
-				.attr("stroke-dasharray", d => activeTribeFilter === d.id ? "none" : "6, 3");
-
-			node.select(".node-icon")
-				.attr("href", d => `assets/items/${d.id.toLowerCase()}.png`)
-				.attr("xlink:href", d => `assets/items/${d.id.toLowerCase()}.png`)
-				.attr("width", d => Math.max(24, d.radius * 0.85))
-				.attr("height", d => Math.max(24, d.radius * 0.85))
-				.attr("x", d => -Math.max(24, d.radius * 0.85) / 2)
-				.attr("y", d => -Math.max(24, d.radius * 0.85) / 2 - 5);
-
-			node.select(".count-text")
-				.text(d => `${d.count} members`)
-				.attr("dy", d => `${Math.max(24, d.radius * 0.85) / 2 + 8}px`);
+				.attr("stroke", d => activeTribeFilter === d.id ? "#ffffff" : "rgba(255, 255, 255, 0.55)")
+				.attr("stroke-width", d => activeTribeFilter === d.id ? 2.5 : 1.5)
+				.attr("stroke-dasharray", d => activeTribeFilter === d.id ? "none" : "4, 4");
 
 			// 6. MOTEUR PHYSIQUE (Mise à jour douce de la simulation)
 			if (!simulation) {
