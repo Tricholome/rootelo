@@ -39,7 +39,7 @@
       "squirrel": "#94C160",
       "stag":     "#C686FF",
       "bear":     "#ffffff",
-	  "frog":     "#ffffff",
+	  "frog":     "#58B05C",
       "default":  "#7A7347"
     }
   },
@@ -76,7 +76,8 @@
       "mouse":    "assets/icons/mouse.webp",
       "squirrel": "assets/icons/squirrel.webp",
       "stag":     "assets/icons/stag.webp",
-      "bear":     "assets/icons/bear.webp"
+      "bear":     "assets/icons/bear.webp",
+	  "frog":     "assets/icons/bear.webp"
     },
     "decorations": {
       "index":   {"left": "assets/images/leaderboard_img_left.webp", "right": "assets/images/leaderboard_img_right.webp"},
