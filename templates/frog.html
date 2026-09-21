@@ -92,13 +92,13 @@
             let bgColor = "#4a5568"; 
 
             if (scoreData.status === "Partisan") {
-                bgColor = "#2e7d32";
+                bgColor = "#918F08";
             } else if (scoreData.status === "Squire") {
-                bgColor = "#1565c0";
+                bgColor = "#256D75";
             } else if (scoreData.status === "Friend") {
-                bgColor = "#d97706";
+                bgColor = "#B8681A";
             } else if (scoreData.status === "Favoring") {
-                bgColor = "#c62828";
+                bgColor = "#A0402B";
             }
 
             const badge = `<span style="background:${bgColor}; color:#fff; padding:1px 5px; border-radius:4px; font-size:0.68rem; font-weight:600; white-space:nowrap;">${scoreData.status}</span>`;
