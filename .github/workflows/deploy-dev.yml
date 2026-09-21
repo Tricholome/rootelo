@@ -38,6 +38,7 @@ jobs:
           python frog.py
           mkdir -p build_site
           cp frog.html build_site/
+          cp -r assets build_site/
 
       - name: Deploy to rootelo-dev repository
         uses: peaceiris/actions-gh-pages@v3
