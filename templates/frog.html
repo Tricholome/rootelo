@@ -24,13 +24,13 @@
             <tr>
                 <th style="width: 22%;">Player</th>
                 <th style="width: 8%;">Games</th>
-                <th>TEA</th>
-                <th>BAG</th>
-                <th>SWORD</th>
-                <th>COINS</th>
-                <th>HAMMER</th>
-                <th>CROSSBOW</th>
-                <th>BOOT</th>
+                <th><img src="assets/items/tea.png" title="TEA" alt="TEA" style="height:26px; width:26px; vertical-align:middle; object-fit:contain;"></th>
+                <th><img src="assets/items/bag.png" title="BAG" alt="BAG" style="height:26px; width:26px; vertical-align:middle; object-fit:contain;"></th>
+                <th><img src="assets/items/sword.png" title="SWORD" alt="SWORD" style="height:26px; width:26px; vertical-align:middle; object-fit:contain;"></th>
+                <th><img src="assets/items/coins.png" title="COINS" alt="COINS" style="height:26px; width:26px; vertical-align:middle; object-fit:contain;"></th>
+                <th><img src="assets/items/hammer.png" title="HAMMER" alt="HAMMER" style="height:26px; width:26px; vertical-align:middle; object-fit:contain;"></th>
+                <th><img src="assets/items/crossbow.png" title="CROSSBOW" alt="CROSSBOW" style="height:26px; width:26px; vertical-align:middle; object-fit:contain;"></th>
+                <th><img src="assets/items/boot.png" title="BOOT" alt="BOOT" style="height:26px; width:26px; vertical-align:middle; object-fit:contain;"></th>
             </tr>
         </thead>
         <tbody>
@@ -46,16 +46,6 @@
     const snapshots = {{ snapshots_json | safe }};
     const availableDates = {{ dates_json | safe }};
     const TARGET_TRIBES = ["TEA", "BAG", "SWORD", "COINS", "HAMMER", "CROSSBOW", "BOOT"];
-
-    const ITEM_COLORS = {
-        "TEA": "#2e7d32",
-        "BAG": "#d97706",
-        "SWORD": "#c62828",
-        "COINS": "#f59e0b",
-        "HAMMER": "#4a5568",
-        "CROSSBOW": "#7c3aed",
-        "BOOT": "#1565c0"
-    };
 
     let activeTribeFilter = null;
     let simulation = null;
@@ -236,13 +226,13 @@
             node.transition().duration(duration)
                 .style("opacity", 1);
 
-            // Style visuel adapté au fond vert sombre
+            // Style visuel avec support de var(--main-color) lors de la sélection
             node.select(".node-circle")
                 .transition().duration(duration)
                 .attr("r", d => d.radius)
-                .attr("fill", d => activeTribeFilter === d.id ? "rgba(18, 38, 25, 0.85)" : "rgba(10, 22, 14, 0.65)")
-                .attr("stroke", d => activeTribeFilter === d.id ? "#f59e0b" : "rgba(255, 255, 255, 0.22)")
-                .attr("stroke-width", d => activeTribeFilter === d.id ? 2.5 : 1.5);
+                .style("fill", d => activeTribeFilter === d.id ? "rgba(18, 38, 25, 0.9)" : "rgba(10, 22, 14, 0.65)")
+                .style("stroke", d => activeTribeFilter === d.id ? "var(--main-color)" : "rgba(255, 255, 255, 0.22)")
+                .style("stroke-width", d => activeTribeFilter === d.id ? "3px" : "1.5px");
 
             node.select(".node-icon")
                 .attr("href", d => `assets/items/${d.id.toLowerCase()}.png`)
@@ -252,7 +242,6 @@
                 .attr("x", d => -Math.max(26, d.radius * 0.75) / 2)
                 .attr("y", d => -Math.max(26, d.radius * 0.75) / 2 - 8);
 
-            // Rendu textuel propre avec tspan (Chiffre grand + label petit)
             node.select(".count-text")
                 .attr("transform", d => `translate(0, ${Math.max(26, d.radius * 0.75) / 2 + 8})`);
 
@@ -278,7 +267,7 @@
                 updateTableForDate($datePicker.val());
             });
 
-            // 3. SIMULATION PHYSIQUE ET BORNES STRICTES (Empêche les bulles d'être coupées)
+            // 3. SIMULATION PHYSIQUE ET BORNES STRICTES
             if (!simulation) {
                 simulation = d3.forceSimulation()
                     .force("link", d3.forceLink().id(d => d.id).distance(145))
@@ -292,14 +281,12 @@
             simulation.alpha(0.3).restart();
 
             simulation.on("tick", () => {
-                // Confinement strict à l'intérieur du conteneur SVG
                 newNodes.forEach(d => {
                     const margin = d.radius + 8;
                     d.x = Math.max(margin, Math.min(width - margin, d.x));
                     d.y = Math.max(margin, Math.min(height - margin, d.y));
                 });
 
-                // Calcul de l'ancrage des lignes au bord des cercles
                 link
                     .attr("x1", d => {
                         const dx = d.target.x - d.source.x;
@@ -357,7 +344,7 @@
             // 1. Rendu du graphe D3.js
             renderTribeGraph(snapshot);
 
-            // 2. Visibilité dynamique des colonnes
+            // 2. Visibilité dynamique et en-tête avec icône d'objet
             TARGET_TRIBES.forEach((tribe, idx) => {
                 const colIdx = idx + 2; 
                 const isActive = activeTribes.includes(tribe);
@@ -366,7 +353,8 @@
 
                 if (isActive) {
                     const displayLabel = (snapshot.tribe_labels && snapshot.tribe_labels[tribe]) ? snapshot.tribe_labels[tribe] : tribe;
-                    $(table.column(colIdx).header()).text(displayLabel);
+                    const iconPath = `assets/items/${tribe.toLowerCase()}.png`;
+                    $(table.column(colIdx).header()).html(`<img src="${iconPath}" title="${displayLabel}" alt="${displayLabel}" style="height:26px; width:26px; vertical-align:middle; object-fit:contain;">`);
                 }
             });
 
