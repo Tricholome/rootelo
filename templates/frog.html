@@ -8,7 +8,7 @@
 <!-- Date selector controls -->
     <div class="date-controls" style="display: flex; align-items: center; justify-content: center; gap: 10px; margin: 20px 0;">
         <button id="earliestDateBtn" class="btn">Earliest Date</button>
-		<button id="prevDateBtn" class="btn">&laquo; Previous Day</button>
+		<button id="prevDateBtn" class="btn">&laquo; Prev. Day</button>
         <input type="date" id="datePicker" style="padding: 6px 12px; font-size: 1rem;">
         <button id="nextDateBtn" class="btn">Next Day &raquo;</button>
         <button id="latestDateBtn" class="btn">Latest Date</button>
@@ -396,7 +396,9 @@
         }
 
         $prevBtn.on('click', () => setDateByIndex(currentIndex - 1));
-        $nextBtn.on('click', () => setDateByIndex(currentIndex + 1));$latestBtn.on('click', () => setDateByIndex(availableDates.length - 1));
+        $nextBtn.on('click', () => setDateByIndex(currentIndex + 1));
+		$latestBtn.on('click', () => setDateByIndex(availableDates.length - 1));
+		$earliestBtn.on('click', () => setDateByIndex(0));
 
         $datePicker.on('change', function () {
             const val = $(this).val();
