@@ -362,7 +362,7 @@ if (Path(TEMPLATE_DIR) / TEMPLATE_FILE).exists():
         config=config_data,
         page_id="homelands",
         section_id="homelands",
-        active_section="homelands",
+        path_prefix="",
         dates_json=json.dumps(sorted_dates),
         snapshots_json=json.dumps(snapshots),
         **pages_content.get("homelands", {}),
