@@ -32,8 +32,8 @@ from jinja2 import Environment, FileSystemLoader
 
 # --- Tribus ---
 MAX_TRIBES = 5                 # Nombre max de tribus simultanées[cite: 4]
-MIN_TRIBE_CREATION_SIZE = 6    # Fonder plus large que le seuil de survie[cite: 4]
-MIN_TRIBE_SURVIVAL = 4         # Joueurs minimum pour qu'une tribu SURVIVE[cite: 4]
+MIN_TRIBE_CREATION_SIZE = 8    # Fonder plus large que le seuil de survie[cite: 4]
+MIN_TRIBE_SURVIVAL = 6         # Joueurs minimum pour qu'une tribu SURVIVE[cite: 4]
 
 # --- Éligibilité ---
 MIN_GAMES_FLOOR = 3            # Plancher absolu de matchs[cite: 4]
@@ -42,7 +42,7 @@ DYNAMIC_RATIO = 2.0            # Seuil = max(plancher, ratio × médiane globale
 # --- Stabilité ---
 STICKINESS = 1.5               # Pour quitter sa tribu : affinité ailleurs > STICKINESS × affinité actuelle[cite: 4]
 MAX_DAILY_TRANSFERS = 3        # Max de changements de tribu (A→B) par jour[cite: 4]
-INACTIVITY_LIMIT_DAYS = 21     # Au-delà, un joueur sort individuellement[cite: 4]
+INACTIVITY_LIMIT_DAYS = 30     # Au-delà, un joueur sort individuellement[cite: 4]
 
 # --- Graphe ---
 DECAY_RATE = 0.95              # Érosion quotidienne des arêtes[cite: 4]
@@ -66,7 +66,7 @@ REASON_LABELS = {
 } #[cite: 4]
 
 CONFIG_PATH = Path("data/config/config.json")
-DEFAULT_MATCHES_PATH = Path("data/rdl/archives/lh01/matches.json")
+DEFAULT_MATCHES_PATH = Path("data/rdl/archives/lh03/matches.json")
 TEMPLATE_DIR = "templates"
 TEMPLATE_FILE = "frog.html"
 OUTPUT_FILE = Path("frog.html")
