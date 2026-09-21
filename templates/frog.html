@@ -266,7 +266,7 @@
 				.attr("stroke-width", d => activeTribeFilter === d.id ? 4 : 2);
 
 			node.select(".label-text").text(d => d.label);
-			node.select(".count-text").text(d => `${d.count} membres`);
+			node.select(".count-text").text(d => `${d.count} members`);
 
 			node.on("click", (event, d) => {
 				activeTribeFilter = (activeTribeFilter === d.id) ? null : d.id;
