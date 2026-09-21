@@ -233,7 +233,10 @@
 
 			nodeEnter.append("circle")
 				.attr("r", 0)
-				.attr("fill", d => ITEM_COLORS[d.id] || "#2d3748");
+				.attr("fill", "transparent")
+				.attr("stroke", "#cbd5e1")
+				.attr("stroke-width", 2)
+				.attr("stroke-dasharray", "6, 3");
 
 			nodeEnter.append("image")
 				.attr("class", "node-icon")
@@ -256,13 +259,14 @@
 			node.select("circle")
 				.transition().duration(duration)
 				.attr("r", d => d.radius)
-				.attr("fill", d => ITEM_COLORS[d.id] || "#2d3748")
-				.attr("stroke", d => activeTribeFilter === d.id ? "#ffffff" : "#1a202c")
-				.attr("stroke-width", d => activeTribeFilter === d.id ? 4 : 2);
+				.attr("fill", "transparent")
+				.attr("stroke", d => activeTribeFilter === d.id ? "#ffffff" : "#cbd5e1")
+				.attr("stroke-width", d => activeTribeFilter === d.id ? 3 : 2)
+				.attr("stroke-dasharray", d => activeTribeFilter === d.id ? "none" : "6, 3");
 
 			node.select(".node-icon")
-				.attr("href", d => `./assets/items/${d.id.toLowerCase()}.png`)
-				.attr("xlink:href", d => `./assets/items/${d.id.toLowerCase()}.png`)
+				.attr("href", d => `assets/items/${d.id.toLowerCase()}.png`)
+				.attr("xlink:href", d => `assets/items/${d.id.toLowerCase()}.png`)
 				.attr("width", d => Math.max(24, d.radius * 0.85))
 				.attr("height", d => Math.max(24, d.radius * 0.85))
 				.attr("x", d => -Math.max(24, d.radius * 0.85) / 2)
@@ -271,11 +275,6 @@
 			node.select(".count-text")
 				.text(d => `${d.count} members`)
 				.attr("dy", d => `${Math.max(24, d.radius * 0.85) / 2 + 8}px`);
-
-			node.on("click", (event, d) => {
-				activeTribeFilter = (activeTribeFilter === d.id) ? null : d.id;
-				updateTableForDate($datePicker.val());
-			});
 
 			// 6. MOTEUR PHYSIQUE (Mise à jour douce de la simulation)
 			if (!simulation) {
