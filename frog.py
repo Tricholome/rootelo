@@ -357,6 +357,7 @@ if (Path(TEMPLATE_DIR) / TEMPLATE_FILE).exists():
         active_section="frog",
         dates_json=json.dumps(sorted_dates),
         snapshots_json=json.dumps(snapshots),
+        **pages_content.get("homelands", {}),
     )
 
     with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
