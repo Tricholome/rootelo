@@ -7,14 +7,12 @@ Modifications apportées :
 3. Conservation de la limite stricte à 5 tribus simultanées max[cite: 4].
 """
 
-# --- FIX 1 : déterminisme --------------------------------------------------
 import os
 import sys
 
 if os.environ.get("PYTHONHASHSEED") != "0":
     os.environ["PYTHONHASHSEED"] = "0"
     os.execv(sys.executable, [sys.executable] + sys.argv)
-# -----------------------------------------------------------------------------
 
 import json
 import math
@@ -34,8 +32,8 @@ from jinja2 import Environment, FileSystemLoader
 
 # --- Tribus ---
 MAX_TRIBES = 5                 # Nombre max de tribus simultanées[cite: 4]
-MIN_TRIBE_CREATION_SIZE = 8    # Fonder plus large que le seuil de survie[cite: 4]
-MIN_TRIBE_SURVIVAL = 6         # Joueurs minimum pour qu'une tribu SURVIVE[cite: 4]
+MIN_TRIBE_CREATION_SIZE = 6    # Fonder plus large que le seuil de survie[cite: 4]
+MIN_TRIBE_SURVIVAL = 4         # Joueurs minimum pour qu'une tribu SURVIVE[cite: 4]
 
 # --- Éligibilité ---
 MIN_GAMES_FLOOR = 3            # Plancher absolu de matchs[cite: 4]
