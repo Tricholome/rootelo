@@ -70,6 +70,7 @@ DEFAULT_MATCHES_PATH = Path("data/rdl/archives/lh01/matches.json")
 TEMPLATE_DIR = "templates"
 TEMPLATE_FILE = "frog.html"
 OUTPUT_FILE = Path("frog.html")
+PAGES_CONTENT_PATH = Path("data/config/pages_content.json")
 
 
 # ==============================================================================
@@ -249,6 +250,11 @@ if not config_path.exists():
     if configs:
         config_path = configs[0]
 
+pages_content = {}
+if PAGES_CONTENT_PATH.exists():
+    with open(PAGES_CONTENT_PATH, "r", encoding="utf-8") as f:
+        pages_content = json.load(f)
+
 config_data = {}
 if config_path.exists():
     with open(config_path, "r", encoding="utf-8") as f:
@@ -363,5 +369,3 @@ if (Path(TEMPLATE_DIR) / TEMPLATE_FILE).exists():
     with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
         f.write(html_content)
     print(f"✅ Fichier {OUTPUT_FILE} généré avec succès ({len(snapshots)} dates).")
-else:
-    print(f"⚠️ Template {TEMPLATE_DIR}/{TEMPLATE_FILE} introuvable.")
