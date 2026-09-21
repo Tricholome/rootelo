@@ -122,132 +122,197 @@
 		}
 
         function renderTribeGraph(snapshot) {
-            const svg = d3.select("#tribeMapSvg");
-            svg.selectAll("*").remove();
+			const svg = d3.select("#tribeMapSvg");
+			const container = document.getElementById('tribeMapContainer');
+			const width = container.clientWidth || 800;
+			const height = 380;
+			const duration = 600; // Durée de la transition en ms
 
-            const container = document.getElementById('tribeMapContainer');
-            const width = container.clientWidth || 800;
-            const height = 380;
+			// 1. Initialisation des conteneurs persistants (Liens sous les Noeuds)
+			if (svg.select("g.links-layer").empty()) {
+				svg.append("g").attr("class", "links-layer");
+				svg.append("g").attr("class", "nodes-layer");
+			}
 
-            const activeTribes = snapshot.active_tribes || [];
-            if (activeTribes.length === 0) return;
+			const activeTribes = snapshot.active_tribes || [];
 
-            const nodes = activeTribes.map(t => {
-                const count = snapshot.summary[t] || 0;
-                return {
-                    id: t,
-                    label: (snapshot.tribe_labels && snapshot.tribe_labels[t]) ? snapshot.tribe_labels[t] : t,
-                    count: count,
-                    radius: Math.max(28, 20 + Math.sqrt(count) * 9)
-                };
-            });
+			// 2. Préparation des données de Noeuds
+			const newNodes = activeTribes.map(t => {
+				const count = snapshot.summary[t] || 0;
+				return {
+					id: t,
+					label: (snapshot.tribe_labels && snapshot.tribe_labels[t]) ? snapshot.tribe_labels[t] : t,
+					count: count,
+					radius: Math.max(28, 20 + Math.sqrt(count) * 9)
+				};
+			});
 
-            const links = [];
-            for (let i = 0; i < activeTribes.length; i++) {
-                for (let j = i + 1; j < activeTribes.length; j++) {
-                    const t1 = activeTribes[i];
-                    const t2 = activeTribes[j];
-                    
-                    let totalAffinity = 0;
-                    let count = 0;
+			// Conserve la position actuelle des clairières existantes pour éviter le saut
+			const prevNodesMap = new Map(simulation ? simulation.nodes().map(d => [d.id, d]) : []);
+			newNodes.forEach(d => {
+				if (prevNodesMap.has(d.id)) {
+					const prev = prevNodesMap.get(d.id);
+					d.x = prev.x;
+					d.y = prev.y;
+					d.vx = prev.vx;
+					d.vy = prev.vy;
+				}
+			});
 
-                    snapshot.players.forEach(p => {
-                        if (p.main_tribe === t1 && p.scores[t2]) {
-                            totalAffinity += p.scores[t2].pct;
-                            count++;
-                        } else if (p.main_tribe === t2 && p.scores[t1]) {
-                            totalAffinity += p.scores[t1].pct;
-                            count++;
-                        }
-                    });
+			// 3. Préparation des Liens
+			const newLinks = [];
+			for (let i = 0; i < activeTribes.length; i++) {
+				for (let j = i + 1; j < activeTribes.length; j++) {
+					const t1 = activeTribes[i];
+					const t2 = activeTribes[j];
+					let totalAffinity = 0;
+					let count = 0;
 
-                    const avg = count > 0 ? (totalAffinity / count) : 0;
-                    if (avg > 2) {
-                        links.push({ source: t1, target: t2, value: avg });
-                    }
-                }
-            }
+					snapshot.players.forEach(p => {
+						if (p.main_tribe === t1 && p.scores[t2]) {
+							totalAffinity += p.scores[t2].pct;
+							count++;
+						} else if (p.main_tribe === t2 && p.scores[t1]) {
+							totalAffinity += p.scores[t1].pct;
+							count++;
+						}
+					});
 
-            simulation = d3.forceSimulation(nodes)
-                .force("link", d3.forceLink(links).id(d => d.id).distance(140))
-                .force("charge", d3.forceManyBody().strength(-400))
-                .force("center", d3.forceCenter(width / 2, height / 2))
-                .force("collision", d3.forceCollide().radius(d => d.radius + 12));
+					const avg = count > 0 ? (totalAffinity / count) : 0;
+					if (avg > 2) {
+						newLinks.push({ source: t1, target: t2, value: avg });
+					}
+				}
+			}
 
-            const link = svg.append("g")
-                .selectAll("line")
-                .data(links)
-                .enter().append("line")
-                .attr("stroke", "#4a5568")
-                .attr("stroke-opacity", 0.6)
-                .attr("stroke-width", d => Math.max(1.5, d.value / 4))
-                .attr("stroke-dasharray", "4, 4");
+			// 4. ANIMATION DES LIENS (Sentiers)
+			const linkSel = svg.select("g.links-layer")
+				.selectAll("line")
+				.data(newLinks, d => `${d.source.id || d.source}-${d.target.id || d.target}`);
 
-            const node = svg.append("g")
-                .selectAll("g")
-                .data(nodes)
-                .enter().append("g")
-                .style("cursor", "pointer")
-                .call(d3.drag()
-                    .on("start", dragstarted)
-                    .on("drag", dragged)
-                    .on("end", dragended));
+			linkSel.exit()
+				.transition().duration(duration)
+				.attr("stroke-opacity", 0)
+				.remove();
 
-            node.append("circle")
-                .attr("r", d => d.radius)
-                .attr("fill", d => ITEM_COLORS[d.id] || "#2d3748")
-                .attr("stroke", d => activeTribeFilter === d.id ? "#ffffff" : "#1a202c")
-                .attr("stroke-width", d => activeTribeFilter === d.id ? 4 : 2);
+			const linkEnter = linkSel.enter().append("line")
+				.attr("stroke", "#4a5568")
+				.attr("stroke-opacity", 0)
+				.attr("stroke-dasharray", "4, 4")
+				.attr("stroke-width", d => Math.max(1.5, d.value / 4));
 
-            node.append("text")
-                .text(d => d.label)
-                .attr("text-anchor", "middle")
-                .attr("dy", "-0.2em")
-                .attr("fill", "#ffffff")
-                .style("font-weight", "bold")
-                .style("font-size", "0.85rem")
-                .style("pointer-events", "none");
+			const link = linkEnter.merge(linkSel);
+			link.transition().duration(duration)
+				.attr("stroke-opacity", 0.6)
+				.attr("stroke-width", d => Math.max(1.5, d.value / 4));
 
-            node.append("text")
-                .text(d => `${d.count} membres`)
-                .attr("text-anchor", "middle")
-                .attr("dy", "1.1em")
-                .attr("fill", "rgba(255,255,255,0.75)")
-                .style("font-size", "0.7rem")
-                .style("pointer-events", "none");
+			// 5. ANIMATION DES NOEUDS (Clairières)
+			const nodeSel = svg.select("g.nodes-layer")
+				.selectAll("g.node-group")
+				.data(newNodes, d => d.id);
 
-            node.on("click", (event, d) => {
-                activeTribeFilter = (activeTribeFilter === d.id) ? null : d.id;
-                updateTableForDate($datePicker.val());
-            });
+			// --- EXIT : Disparition progressive des clairières dissoutes ---
+			nodeSel.exit()
+				.transition().duration(duration)
+				.style("opacity", 0)
+				.remove();
 
-            simulation.on("tick", () => {
-                link
-                    .attr("x1", d => d.source.x)
-                    .attr("y1", d => d.source.y)
-                    .attr("x2", d => d.target.x)
-                    .attr("y2", d => d.target.y);
+			nodeSel.exit().selectAll("circle")
+				.transition().duration(duration)
+				.attr("r", 0);
 
-                node.attr("transform", d => `translate(${d.x},${d.y})`);
-            });
+			// --- ENTER : Création des nouvelles clairières ---
+			const nodeEnter = nodeSel.enter().append("g")
+				.attr("class", "node-group")
+				.style("cursor", "pointer")
+				.style("opacity", 0)
+				.call(d3.drag()
+					.on("start", dragstarted)
+					.on("drag", dragged)
+					.on("end", dragended));
 
-            function dragstarted(event, d) {
-                if (!event.active) simulation.alphaTarget(0.3).restart();
-                d.fx = d.x;
-                d.fy = d.y;
-            }
+			nodeEnter.append("circle")
+				.attr("r", 0)
+				.attr("fill", d => ITEM_COLORS[d.id] || "#2d3748");
 
-            function dragged(event, d) {
-                d.fx = event.x;
-                d.fy = event.y;
-            }
+			nodeEnter.append("text")
+				.attr("class", "label-text")
+				.attr("text-anchor", "middle")
+				.attr("dy", "-0.2em")
+				.attr("fill", "#ffffff")
+				.style("font-weight", "bold")
+				.style("font-size", "0.85rem")
+				.style("pointer-events", "none");
 
-            function dragended(event, d) {
-                if (!event.active) simulation.alphaTarget(0);
-                d.fx = null;
-                d.fy = null;
-            }
-        }
+			nodeEnter.append("text")
+				.attr("class", "count-text")
+				.attr("text-anchor", "middle")
+				.attr("dy", "1.1em")
+				.attr("fill", "rgba(255,255,255,0.75)")
+				.style("font-size", "0.7rem")
+				.style("pointer-events", "none");
+
+			// --- MERGE (Enter + Update) : Transition des clairières actives ---
+			const node = nodeEnter.merge(nodeSel);
+
+			node.transition().duration(duration)
+				.style("opacity", 1);
+
+			node.select("circle")
+				.transition().duration(duration)
+				.attr("r", d => d.radius)
+				.attr("fill", d => ITEM_COLORS[d.id] || "#2d3748")
+				.attr("stroke", d => activeTribeFilter === d.id ? "#ffffff" : "#1a202c")
+				.attr("stroke-width", d => activeTribeFilter === d.id ? 4 : 2);
+
+			node.select(".label-text").text(d => d.label);
+			node.select(".count-text").text(d => `${d.count} membres`);
+
+			node.on("click", (event, d) => {
+				activeTribeFilter = (activeTribeFilter === d.id) ? null : d.id;
+				updateTableForDate($datePicker.val());
+			});
+
+			// 6. MOTEUR PHYSIQUE (Mise à jour douce de la simulation)
+			if (!simulation) {
+				simulation = d3.forceSimulation()
+					.force("link", d3.forceLink().id(d => d.id).distance(140))
+					.force("charge", d3.forceManyBody().strength(-380))
+					.force("center", d3.forceCenter(width / 2, height / 2))
+					.force("collision", d3.forceCollide().radius(d => d.radius + 14));
+			}
+
+			simulation.nodes(newNodes);
+			simulation.force("link").links(newLinks);
+			simulation.alpha(0.3).restart(); // Réactivation douce de la physique
+
+			simulation.on("tick", () => {
+				link
+					.attr("x1", d => d.source.x)
+					.attr("y1", d => d.source.y)
+					.attr("x2", d => d.target.x)
+					.attr("y2", d => d.target.y);
+
+				node.attr("transform", d => `translate(${d.x},${d.y})`);
+			});
+
+			function dragstarted(event, d) {
+				if (!event.active) simulation.alphaTarget(0.3).restart();
+				d.fx = d.x;
+				d.fy = d.y;
+			}
+
+			function dragged(event, d) {
+				d.fx = event.x;
+				d.fy = event.y;
+			}
+
+			function dragended(event, d) {
+				if (!event.active) simulation.alphaTarget(0);
+				d.fx = null;
+				d.fy = null;
+			}
+		}
 
         function updateTableForDate(selectedDate) {
             $datePicker.val(selectedDate);
