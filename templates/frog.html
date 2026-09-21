@@ -19,11 +19,11 @@
         <svg id="tribeMapSvg" style="width: 100%; height: 100%; display: block;"></svg>
     </div>
 
-    <table id="frogTable" class="display nowrap" style="width: 100%;">
+    <table id="frogTable" class="display nowrap" style="width: 100%; table-layout: fixed;">
         <thead>
             <tr>
-                <th style="width: 22%; text-align: left;">Player</th>
-                <th style="width: 8%; text-align: center;">Games</th>
+                <th style="width: 25%; text-align: left; overflow: hidden; text-overflow: ellipsis;">Player</th>
+                <th style="width: 10%; text-align: center;">Games</th>
                 <th style="text-align: center;"><img src="assets/items/tea.png" title="TEA" alt="TEA" style="height:26px; width:26px; vertical-align:middle; object-fit:contain;"></th>
                 <th style="text-align: center;"><img src="assets/items/bag.png" title="BAG" alt="BAG" style="height:26px; width:26px; vertical-align:middle; object-fit:contain;"></th>
                 <th style="text-align: center;"><img src="assets/items/sword.png" title="SWORD" alt="SWORD" style="height:26px; width:26px; vertical-align:middle; object-fit:contain;"></th>
@@ -56,10 +56,12 @@
         const table = $('#frogTable').DataTable({
             "order": [[1, "desc"]],
             "responsive": false,
+            "autoWidth": false,
             "pageLength": 25,
             "dom": 'rt<"bottom"p><"clear">',
             "columnDefs": [
-                { "className": "dt-nowrap", "targets": "_all" }
+                { "className": "dt-nowrap", "targets": "_all" },
+                { "className": "dt-center", "targets": [1, 2, 3, 4, 5, 6, 7, 8] }
             ]
         });
 
@@ -74,17 +76,17 @@
 
         function renderTribeCell(scoreData, isMainTribe) {
             if (!scoreData) {
-                return `<span style="color:#a0aec0;">-</span>`;
+                return `<div style="display:flex; justify-content:center;"><span style="color:#a0aec0;">-</span></div>`;
             }
             
             if (!isMainTribe && scoreData.pct < 10) {
-                return `<span style="color:#a0aec0;">-</span>`;
+                return `<div style="display:flex; justify-content:center;"><span style="color:#a0aec0;">-</span></div>`;
             }
             
             const pctStr = `<span style="font-weight:600; font-size:0.82rem;">${scoreData.pct}%</span>`;
             
             if (!isMainTribe || !scoreData.status) {
-                return `<div style="display:inline-flex; align-items:center; gap:4px;">${pctStr}</div>`;
+                return `<div style="display:inline-flex; align-items:center; justify-content:center; gap:4px; width:100%;">${pctStr}</div>`;
             }
 
             let bgColor = "#4a5568"; 
@@ -101,7 +103,7 @@
 
             const badge = `<span style="background:${bgColor}; color:#fff; padding:1px 5px; border-radius:4px; font-size:0.68rem; font-weight:600; white-space:nowrap;">${scoreData.status}</span>`;
 
-            return `<div style="display:inline-flex; align-items:center; gap:4px;">${pctStr} ${badge}</div>`;
+            return `<div style="display:inline-flex; align-items:center; justify-content:center; gap:4px; width:100%;">${pctStr} ${badge}</div>`;
         }
 
         function renderTribeGraph(snapshot) {
@@ -226,7 +228,6 @@
             node.transition().duration(duration)
                 .style("opacity", 1);
 
-            // Style visuel avec support de var(--main-color) lors de la sélection
             node.select(".node-circle")
                 .transition().duration(duration)
                 .attr("r", d => d.radius)
@@ -267,13 +268,19 @@
                 updateTableForDate($datePicker.val());
             });
 
-            // 3. SIMULATION PHYSIQUE ET BORNES STRICTES
+            // 3. FORCE DE CENTRAGE
             if (!simulation) {
                 simulation = d3.forceSimulation()
                     .force("link", d3.forceLink().id(d => d.id).distance(145))
-                    .force("charge", d3.forceManyBody().strength(-350))
+                    .force("charge", d3.forceManyBody().strength(-320))
+                    .force("x", d3.forceX(width / 2).strength(0.08))
+                    .force("y", d3.forceY(height / 2).strength(0.08))
                     .force("center", d3.forceCenter(width / 2, height / 2))
                     .force("collision", d3.forceCollide().radius(d => d.radius + 15));
+            } else {
+                simulation.force("center", d3.forceCenter(width / 2, height / 2));
+                simulation.force("x", d3.forceX(width / 2).strength(0.08));
+                simulation.force("y", d3.forceY(height / 2).strength(0.08));
             }
 
             simulation.nodes(newNodes);
@@ -344,7 +351,7 @@
             // 1. Rendu du graphe D3.js
             renderTribeGraph(snapshot);
 
-            // 2. Visibilité dynamique et en-tête avec icône d'objet
+            // 2. Visibilité dynamique et en-tête avec icône d'objet centrée
             TARGET_TRIBES.forEach((tribe, idx) => {
                 const colIdx = idx + 2; 
                 const isActive = activeTribes.includes(tribe);
@@ -354,7 +361,7 @@
                 if (isActive) {
                     const displayLabel = (snapshot.tribe_labels && snapshot.tribe_labels[tribe]) ? snapshot.tribe_labels[tribe] : tribe;
                     const iconPath = `assets/items/${tribe.toLowerCase()}.png`;
-                    $(table.column(colIdx).header()).html(`<img src="${iconPath}" title="${displayLabel}" alt="${displayLabel}" style="height:26px; width:26px; vertical-align:middle; object-fit:contain;">`);
+                    $(table.column(colIdx).header()).html(`<img src="${iconPath}" title="${displayLabel}" alt="${displayLabel}" style="height:26px; width:26px; vertical-align:middle; object-fit:contain; display:inline-block;">`);
                 }
             });
 
@@ -396,6 +403,12 @@
             let matchIdx = availableDates.findIndex(d => d >= val);
             currentIndex = matchIdx !== -1 ? matchIdx : availableDates.length - 1;
             updateTableForDate(availableDates[currentIndex]);
+        });
+
+        $(window).on('resize', function() {
+            if (availableDates[currentIndex]) {
+                updateTableForDate(availableDates[currentIndex]);
+            }
         });
 
         setDateByIndex(currentIndex);
