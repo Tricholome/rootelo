@@ -360,6 +360,8 @@ if (Path(TEMPLATE_DIR) / TEMPLATE_FILE).exists():
 
     html_content = template.render(
         config=config_data,
+        page_id="homelands",
+        section_id="homelands",
         active_section="homelands",
         dates_json=json.dumps(sorted_dates),
         snapshots_json=json.dumps(snapshots),
