@@ -42,7 +42,7 @@ DYNAMIC_RATIO = 2.0            # Seuil = max(plancher, ratio × médiane globale
 # --- Stabilité ---
 STICKINESS = 1.5               # Pour quitter sa tribu : affinité ailleurs > STICKINESS × affinité actuelle[cite: 4]
 MAX_DAILY_TRANSFERS = 3        # Max de changements de tribu (A→B) par jour[cite: 4]
-INACTIVITY_LIMIT_DAYS = 30     # Au-delà, un joueur sort individuellement[cite: 4]
+INACTIVITY_LIMIT_DAYS = 21     # Au-delà, un joueur sort individuellement[cite: 4]
 
 # --- Graphe ---
 DECAY_RATE = 0.95              # Érosion quotidienne des arêtes[cite: 4]
