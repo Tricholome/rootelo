@@ -47,12 +47,6 @@ MIN_EDGE_WEIGHT = 0.1          # Edge weight threshold below which edges are ign
 
 UNALIGNED_LABEL = "-"
 
-# --- Root Items used as Homeland Names (deterministically shuffled) ---
-ROOT_ITEMS_POOL = ["TEA", "BAG", "SWORD", "COINS", "HAMMER", "CROSSBOW", "BOOT"]
-rng = random.Random(42)
-TRIBE_NAMES_POOL = ROOT_ITEMS_POOL.copy()
-rng.shuffle(TRIBE_NAMES_POOL)
-
 # --- File Paths ---
 CONFIG_PATH = Path("data/config/config.json")
 DEFAULT_MATCHES_PATH = Path("data/rdl/archives/lh01/matches.json")
@@ -60,6 +54,20 @@ TEMPLATE_DIR = "templates"
 TEMPLATE_FILE = "frog.html"
 OUTPUT_FILE = Path("frog.html")
 PAGES_CONTENT_PATH = Path("data/config/pages_content.json")
+
+# --- Root Items used as Homeland Names ---
+ROOT_ITEMS_POOL = ["TEA", "BAG", "SWORD", "COINS", "HAMMER", "CROSSBOW", "BOOT"]
+
+matches_file = DEFAULT_MATCHES_PATH
+if not matches_file.exists():
+    archives = list(Path("data/rdl/archives").rglob("matches.json"))
+    matches_file = archives[0] if archives else Path("matches.json")
+
+season_id = matches_file.parent.name if matches_file.exists() else "default"
+rng = random.Random(season_id)
+
+TRIBE_NAMES_POOL = ROOT_ITEMS_POOL.copy()
+rng.shuffle(TRIBE_NAMES_POOL)
 
 
 # ==============================================================================
