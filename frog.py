@@ -1,23 +1,13 @@
 """
-frog.py — tribus dynamiques de joueurs au fil d'une saison.
-
-Modifications apportées :
-1. Suppression de la numérotation des régénérations (#2, #3, etc.)[cite: 4].
-2. Remplacement du pool de noms par les 7 objets de Root[cite: 6].
-3. Conservation de la limite stricte à 5 tribus simultanées max[cite: 4].
+frog.py — Dynamic player homelands simulation over a season.
 """
-
-import os
-import sys
-
-if os.environ.get("PYTHONHASHSEED") != "0":
-    os.environ["PYTHONHASHSEED"] = "0"
-    os.execv(sys.executable, [sys.executable] + sys.argv)
 
 import json
 import math
+import os
 import random
 import statistics
+import sys
 from collections import Counter
 from datetime import date
 from itertools import combinations
@@ -26,47 +16,46 @@ from pathlib import Path
 import networkx as nx
 from jinja2 import Environment, FileSystemLoader
 
+# Ensure deterministic seed for Python execution
+if os.environ.get("PYTHONHASHSEED") != "0":
+    os.environ["PYTHONHASHSEED"] = "0"
+    os.execv(sys.executable, [sys.executable] + sys.argv)
+
+
 # ==============================================================================
 # ⚙️ CONFIGURATION
 # ==============================================================================
 
-# --- Tribus ---
-MAX_TRIBES = 5                 # Nombre max de tribus simultanées[cite: 4]
-MIN_TRIBE_CREATION_SIZE = 8    # Fonder plus large que le seuil de survie[cite: 4]
-MIN_TRIBE_SURVIVAL = 6         # Joueurs minimum pour qu'une tribu SURVIVE[cite: 4]
+# --- Homelands ---
+MAX_TRIBES = 5                 # Maximum concurrent active homelands
+MIN_TRIBE_CREATION_SIZE = 6    # Minimum players required to found a new homeland
+MIN_TRIBE_SURVIVAL = 4         # Minimum players required for a homeland to survive
 
-# --- Éligibilité ---
-MIN_GAMES_FLOOR = 3            # Plancher absolu de matchs[cite: 4]
-DYNAMIC_RATIO = 2.0            # Seuil = max(plancher, ratio × médiane globale)[cite: 4]
+# --- Eligibility ---
+MIN_GAMES_FLOOR = 3            # Absolute floor for games required
+DYNAMIC_RATIO = 2.0            # Threshold = max(floor, ratio * global median)
 
-# --- Stabilité ---
-STICKINESS = 1.5               # Pour quitter sa tribu : affinité ailleurs > STICKINESS × affinité actuelle[cite: 4]
-MAX_DAILY_TRANSFERS = 3        # Max de changements de tribu (A→B) par jour[cite: 4]
-INACTIVITY_LIMIT_DAYS = 21     # Au-delà, un joueur sort individuellement[cite: 4]
+# --- Stability ---
+STICKINESS = 1.5               # Affinity ratio required to switch homeland
+MAX_DAILY_TRANSFERS = 3        # Maximum daily transfers allowed
+INACTIVITY_LIMIT_DAYS = 21     # Days of inactivity before a player is unaligned
 
-# --- Graphe ---
-DECAY_RATE = 0.95              # Érosion quotidienne des arêtes[cite: 4]
-NEW_MATCH_WEIGHT = 1.0         # Poids d'un match[cite: 4]
-MIN_EDGE_WEIGHT = 0.1          # Sous ce poids, l'arête est ignorée[cite: 4]
+# --- Graph Decay & Edge Weights ---
+DECAY_RATE = 0.95              # Daily decay factor applied to edge weights
+NEW_MATCH_WEIGHT = 1.0         # Weight added for each match played
+MIN_EDGE_WEIGHT = 0.1          # Edge weight threshold below which edges are ignored
 
 UNALIGNED_LABEL = "-"
 
-# --- Objets de Root comme nom de tribus (mélangés de manière déterministe) ---
-ROOT_ITEMS_POOL = ["TEA", "BAG", "SWORD", "COINS", "HAMMER", "CROSSBOW", "BOOT"] #[cite: 6]
+# --- Root Items used as Homeland Names (deterministically shuffled) ---
+ROOT_ITEMS_POOL = ["TEA", "BAG", "SWORD", "COINS", "HAMMER", "CROSSBOW", "BOOT"]
 rng = random.Random(42)
 TRIBE_NAMES_POOL = ROOT_ITEMS_POOL.copy()
 rng.shuffle(TRIBE_NAMES_POOL)
 
-REASON_LABELS = {
-    "fondation":    "Nouvelle tribu fondée",
-    "confirmation": "Lien le plus fort confirmé",
-    "attraction":   "Attiré par une tribu plus forte",
-    "dissolution":  "Tribu dissoute (sous le seuil)",
-    "inactivite":   f"Inactif depuis plus de {INACTIVITY_LIMIT_DAYS}j" if INACTIVITY_LIMIT_DAYS else "Inactif",
-} #[cite: 4]
-
+# --- File Paths ---
 CONFIG_PATH = Path("data/config/config.json")
-DEFAULT_MATCHES_PATH = Path("data/rdl/archives/lh03/matches.json")
+DEFAULT_MATCHES_PATH = Path("data/rdl/archives/lh01/matches.json")
 TEMPLATE_DIR = "templates"
 TEMPLATE_FILE = "frog.html"
 OUTPUT_FILE = Path("frog.html")
@@ -74,24 +63,27 @@ PAGES_CONTENT_PATH = Path("data/config/pages_content.json")
 
 
 # ==============================================================================
-# 🧩 BRIQUES DE L'ALGORITHME
+# 🧩 ALGORITHM HELPER FUNCTIONS
 # ==============================================================================
 
 def min_games_required(player_games):
+    """Calculate the minimum number of games required for eligibility."""
     median = statistics.median(player_games.values()) if player_games else 0
-    return max(MIN_GAMES_FLOOR, math.ceil(median * DYNAMIC_RATIO)) #[cite: 4]
+    return max(MIN_GAMES_FLOOR, math.ceil(median * DYNAMIC_RATIO))
 
 
 def weight_by_tribe(G, roster, p):
+    """Calculate player p's weight distribution towards each homeland."""
     weights = Counter()
     for n in G.neighbors(p):
         tribe = roster.get(n, UNALIGNED_LABEL)
         if tribe != UNALIGNED_LABEL:
             weights[tribe] += G[p][n]["weight"]
-    return weights #[cite: 4]
+    return weights
 
 
 def is_clearly_apart(G, roster, comm):
+    """Check if a community has strong enough internal cohesion to form a homeland."""
     inside = outside = 0.0
     for p in comm:
         for n in G.neighbors(p):
@@ -100,10 +92,11 @@ def is_clearly_apart(G, roster, comm):
                 inside += w
             elif roster[p] != UNALIGNED_LABEL and roster[n] == roster[p]:
                 outside += w
-    return inside > STICKINESS * outside #[cite: 4]
+    return inside > STICKINESS * outside
 
 
 def compass(G, roster, eligible, ever_used_names):
+    """Identify player communities and assign homeland names."""
     comms = nx.community.louvain_communities(G.subgraph(eligible), weight="weight", seed=42)
     comms.sort(key=lambda c: (-len(c), sorted(c)))
 
@@ -112,15 +105,16 @@ def compass(G, roster, eligible, ever_used_names):
         if t != UNALIGNED_LABEL:
             members.setdefault(t, set()).add(p)
 
-    overlaps = sorted(((len(c & m), i, t) for i, c in enumerate(comms) for t, m in members.items()),
-                      key=lambda x: (-x[0], x[1], x[2]))
+    overlaps = sorted(
+        ((len(c & m), i, t) for i, c in enumerate(comms) for t, m in members.items()),
+        key=lambda x: (-x[0], x[1], x[2])
+    )
     name_of = {}
     for overlap, i, t in overlaps:
         if overlap > 0 and i not in name_of and t not in name_of.values():
             name_of[i] = t
 
     currently_free = [n for n in TRIBE_NAMES_POOL if n not in members]
-    
     currently_free.sort(key=lambda n: (n in ever_used_names, TRIBE_NAMES_POOL.index(n)))
 
     available_slots = max(0, MAX_TRIBES - len(members))
@@ -131,25 +125,14 @@ def compass(G, roster, eligible, ever_used_names):
             chosen_name = free.pop(0)
             name_of[i] = chosen_name
             founded.add(chosen_name)
-            ever_used_names.add(chosen_name)  # Marque le nom comme utilisé au moins une fois
+            ever_used_names.add(chosen_name)
 
     target = {p: name_of[i] for i, c in enumerate(comms) if i in name_of for p in c}
     return target, founded
 
 
-def _event(player, from_tribe, to_tribe, reason):
-    etype = "in" if from_tribe == UNALIGNED_LABEL else ("out" if to_tribe == UNALIGNED_LABEL else "transfer")
-    return {
-        "player": player,
-        "type": etype,
-        "from": from_tribe,
-        "to": to_tribe,
-        "reason": reason,
-        "label": REASON_LABELS[reason],
-    } #[cite: 4]
-
-
 def apply_compass(G, roster, target, founded):
+    """Apply target assignments and player transfers to the roster."""
     moves, switches = [], []
     for p, t in target.items():
         current = roster[p]
@@ -157,30 +140,27 @@ def apply_compass(G, roster, target, founded):
             continue
 
         if t in founded:
-            moves.append((p, current, t, "fondation"))
+            moves.append((p, t))
         elif current == UNALIGNED_LABEL:
             w = weight_by_tribe(G, roster, p)
             if not w or w[t] == max(w.values()):
-                moves.append((p, current, t, "confirmation"))
+                moves.append((p, t))
         else:
             w = weight_by_tribe(G, roster, p)
             if w[t] > STICKINESS * w[current]:
-                switches.append((w[t] - w[current], p, current, t))
+                switches.append((w[t] - w[current], p, t))
 
     switches.sort(reverse=True)
-    moves += [(p, current, t, "attraction") for _, p, current, t in switches[:MAX_DAILY_TRANSFERS]]
+    moves += [(p, t) for _, p, t in switches[:MAX_DAILY_TRANSFERS]]
 
-    events = []
-    for p, current, t, reason in moves:
+    for p, t in moves:
         roster[p] = t
-        events.append(_event(p, current, t, reason))
-    return events #[cite: 4]
 
 
 def prune_inactive(roster, last_active, current_date):
-    events = []
+    """Remove players who have been inactive beyond the inactivity threshold."""
     if INACTIVITY_LIMIT_DAYS is None:
-        return events
+        return
     cur = date.fromisoformat(current_date)
     for p, t in roster.items():
         if t == UNALIGNED_LABEL:
@@ -188,23 +168,20 @@ def prune_inactive(roster, last_active, current_date):
         last = last_active.get(p)
         if last is None or (cur - date.fromisoformat(last)).days > INACTIVITY_LIMIT_DAYS:
             roster[p] = UNALIGNED_LABEL
-            events.append(_event(p, t, UNALIGNED_LABEL, "inactivite"))
-    return events #[cite: 4]
 
 
 def dissolve_small_tribes(roster):
-    events = []
+    """Dissolve homelands that drop below the minimum survival threshold."""
     counts = Counter(t for t in roster.values() if t != UNALIGNED_LABEL)
     for tribe, n in counts.items():
         if n < MIN_TRIBE_SURVIVAL:
-            for p, t in roster.items():
+            for p, t in list(roster.items()):
                 if t == tribe:
                     roster[p] = UNALIGNED_LABEL
-                    events.append(_event(p, tribe, UNALIGNED_LABEL, "dissolution"))
-    return events #[cite: 4]
 
 
 def player_scores(G, roster, p, active_tribes):
+    """Calculate affiliation percentage and title status for a player across all homelands."""
     scores = {t: {"pct": 0, "status": None} for t in TRIBE_NAMES_POOL}
     if p not in G or G.degree(p) == 0:
         return scores
@@ -222,7 +199,6 @@ def player_scores(G, roster, p, active_tribes):
 
     other_active_pcts = [pcts[t] for t in active_tribes if t != main]
     best_other = max(other_active_pcts, default=0)
-    
     diff = abs(main_pct - best_other)
 
     for t in TRIBE_NAMES_POOL:
@@ -241,7 +217,7 @@ def player_scores(G, roster, p, active_tribes):
 
 
 # ==============================================================================
-# 🚀 CHARGEMENT DES DONNÉES
+# 🚀 DATA LOADING
 # ==============================================================================
 
 config_path = CONFIG_PATH
@@ -250,9 +226,15 @@ if not config_path.exists():
     if configs:
         config_path = configs[0]
 
+pages_content_path = PAGES_CONTENT_PATH
+if not pages_content_path.exists():
+    found = list(Path(".").rglob("pages_content.json"))
+    if found:
+        pages_content_path = found[0]
+
 pages_content = {}
-if PAGES_CONTENT_PATH.exists():
-    with open(PAGES_CONTENT_PATH, "r", encoding="utf-8") as f:
+if pages_content_path.exists():
+    with open(pages_content_path, "r", encoding="utf-8") as f:
         pages_content = json.load(f)
 
 config_data = {}
@@ -266,8 +248,8 @@ if not json_path.exists():
     json_path = archives[0] if archives else Path("matches.json")
 
 if not json_path.exists():
-    print(f"❌ Erreur : Fichier de matchs introuvable à {json_path}")
-    exit(1)
+    print(f"❌ Error: Matches file not found at {json_path}")
+    sys.exit(1)
 
 with open(json_path, "r", encoding="utf-8") as f:
     matches = json.load(f)
@@ -283,7 +265,7 @@ sorted_dates = sorted(matches_by_date)
 
 
 # ==============================================================================
-# 🧠 BOUCLE TEMPORELLE
+# 🧠 SIMULATION LOOP
 # ==============================================================================
 
 edge_weights = Counter()
@@ -294,7 +276,7 @@ snapshots = {}
 ever_used_names = set()
 
 for d in sorted_dates:
-    # 1. Érosion des arêtes + nouveaux matchs du jour
+    # 1. Decay existing edges & parse new daily matches
     for pair in edge_weights:
         edge_weights[pair] *= DECAY_RATE
 
@@ -313,22 +295,20 @@ for d in sorted_dates:
 
     min_games = min_games_required(player_games)
 
-    # 2. Boussole
+    # 2. Run compass algorithm and apply transfers
     eligible = [p for p in G.nodes() if player_games[p] >= min_games]
     target, founded = compass(G, roster, eligible, ever_used_names)
-    events = apply_compass(G, roster, target, founded)
+    apply_compass(G, roster, target, founded)
 
-    # 3. Dissolutions & inactivité
-    events += dissolve_small_tribes(roster)
-    events += prune_inactive(roster, last_active, d)
-    events += dissolve_small_tribes(roster)
+    # 3. Handle dissolutions and inactivity pruning
+    dissolve_small_tribes(roster)
+    prune_inactive(roster, last_active, d)
+    dissolve_small_tribes(roster)
 
     active_tribes = sorted({t for t in roster.values() if t != UNALIGNED_LABEL})
-
-    # Libellés simples (sans numérotation #2, #3...)[cite: 4]
     tribe_labels = {t: t for t in TRIBE_NAMES_POOL}
 
-    # 4. Snapshot
+    # 4. Generate snapshot
     summary = {t: 0 for t in TRIBE_NAMES_POOL + [UNALIGNED_LABEL]}
     snapshot_players = []
     for p, games in sorted(player_games.items(), key=lambda x: (-x[1], x[0])):
@@ -346,12 +326,11 @@ for d in sorted_dates:
         "tribe_labels": tribe_labels,
         "summary": summary,
         "players": snapshot_players,
-        "events": events,
     }
 
 
 # ==============================================================================
-# 🎨 GÉNÉRATION HTML
+# 🎨 HTML GENERATION
 # ==============================================================================
 
 if (Path(TEMPLATE_DIR) / TEMPLATE_FILE).exists():
@@ -362,6 +341,7 @@ if (Path(TEMPLATE_DIR) / TEMPLATE_FILE).exists():
         config=config_data,
         page_id="homelands",
         section_id="homelands",
+        active_section="homelands",
         path_prefix="",
         dates_json=json.dumps(sorted_dates),
         snapshots_json=json.dumps(snapshots),
@@ -370,4 +350,4 @@ if (Path(TEMPLATE_DIR) / TEMPLATE_FILE).exists():
 
     with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
         f.write(html_content)
-    print(f"✅ Fichier {OUTPUT_FILE} généré avec succès ({len(snapshots)} dates).")
+    print(f"✅ File {OUTPUT_FILE} successfully generated ({len(snapshots)} dates).")
