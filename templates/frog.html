@@ -261,7 +261,8 @@
 				.attr("stroke-width", d => activeTribeFilter === d.id ? 4 : 2);
 
 			node.select(".node-icon")
-				.attr("href", d => `assets/items/${d.id.toLowerCase()}.png`)
+				.attr("href", d => `./assets/items/${d.id.toLowerCase()}.png`)
+				.attr("xlink:href", d => `./assets/items/${d.id.toLowerCase()}.png`)
 				.attr("width", d => Math.max(24, d.radius * 0.85))
 				.attr("height", d => Math.max(24, d.radius * 0.85))
 				.attr("x", d => -Math.max(24, d.radius * 0.85) / 2)
