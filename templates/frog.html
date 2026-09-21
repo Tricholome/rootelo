@@ -2,15 +2,13 @@
 
 {% block subnav %}
 <!-- Carte interactive des clairières -->
-<div id="tribeMapContainer" style="width: 100%; height: 380px; margin: 10px 0 25px 0; position: relative; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.08);">
-    <div style="position: absolute; top: 12px; left: 16px; color: rgba(255, 255, 255, 0.45); font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; pointer-events: none;">
-        <span style="font-weight: 400; text-transform: none; opacity: 0.85;">Click a clearing to filter members</span>
-    </div>
+<div id="tribeMapContainer" style="width: 100%; height: 380px; margin: 10px 0 25px 0; position: relative; overflow: hidden;">
     <svg id="tribeMapSvg" style="width: 100%; height: 100%; display: block;"></svg>
 </div>
 <!-- Date selector controls -->
     <div class="date-controls" style="display: flex; align-items: center; justify-content: center; gap: 10px; margin: 20px 0;">
-        <button id="prevDateBtn" class="btn">&laquo; Previous Day</button>
+        <button id="earliestDateBtn" class="btn">Earliest Date</button>
+		<button id="prevDateBtn" class="btn">&laquo; Previous Day</button>
         <input type="date" id="datePicker" style="padding: 6px 12px; font-size: 1rem;">
         <button id="nextDateBtn" class="btn">Next Day &raquo;</button>
         <button id="latestDateBtn" class="btn">Latest Date</button>
@@ -67,6 +65,7 @@
         });
 
         const $datePicker =$('#datePicker');
+		const $earliestBtn = $('#earliestDateBtn');
         const $prevBtn =$('#prevDateBtn');
         const $nextBtn =$('#nextDateBtn');
         const $latestBtn =$('#latestDateBtn');
