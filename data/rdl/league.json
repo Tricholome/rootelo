@@ -23,21 +23,6 @@
     "t_inactivity": null
   },
   "network": {
-    "max_tribes": 5,
-    "min_tribe_creation_size": 6,
-    "min_tribe_survival": 4,
-    "min_games_floor": 3,
-    "dynamic_ratio": 2.0,
-    "stickiness": 1.5,
-    "max_daily_transfers": 3,
-    "inactivity_limit_days": 21,
-    "pillar_percentile": 90,
-    "satellite_percentile": 60,
-    "pillar_min": 1,
-    "pillar_max": 6,
-    "satellite_max": 10,
-    "decay_rate": 0.95,
-    "new_match_weight": 1.0,
-    "min_edge_weight": 0.1
+    "enabled": true
   }
 }
