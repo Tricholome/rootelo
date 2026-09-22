@@ -5,7 +5,8 @@
     "matches": "fox",
     "trends": "rabbit",
     "codex": "mouse",
-    "cache": "squirrel"
+    "cache": "squirrel",
+	"network": "frog"
   },
   "colors": {
     "ui": {
@@ -38,7 +39,8 @@
       "squirrel": "#94C160",
       "stag":     "#C686FF",
       "bear":     "#ffffff",
-      "default":  "#7A7347"
+	  "frog":     "#918F08",
+      "default":  "#ffffff"
     }
   },
   "typography": {
@@ -74,14 +76,19 @@
       "mouse":    "assets/icons/mouse.webp",
       "squirrel": "assets/icons/squirrel.webp",
       "stag":     "assets/icons/stag.webp",
-      "bear":     "assets/icons/bear.webp"
+      "bear":     "assets/icons/bear.webp",
+	  "frog":     ""
     },
     "decorations": {
       "index":   {"left": "assets/images/leaderboard_img_left.webp", "right": "assets/images/leaderboard_img_right.webp"},
       "matches": {"left": "assets/images/matches_img_left.webp",     "right": "assets/images/matches_img_right.webp"},
       "trends":  {"left": "assets/images/trends_img_left.webp",      "right": "assets/images/trends_img_right.webp"},
       "codex":   {"left": "assets/images/about_img_left.webp",       "right": "assets/images/about_img_right.webp"},
-      "cache":   {"left": "assets/images/cache_img_left.webp",       "right": "assets/images/cache_img_right.webp"}
+      "cache":   {"left": "assets/images/cache_img_left.webp",       "right": "assets/images/cache_img_right.webp"},
+	  "network":   {"left": "",       "right": ""}
+    },
+	"network": {
+    "item_pool": ["TEA", "BAG", "SWORD", "COINS", "HAMMER", "CROSSBOW", "BOOT"]
     }
   }
 }
