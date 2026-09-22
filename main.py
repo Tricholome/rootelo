@@ -9,6 +9,7 @@ from jinja2 import Environment, FileSystemLoader
 import pandas as pd
 import requests
 import re
+from frog import run_homelands_simulation
 
 # =========================================================================
 # --- 0. GLOBAL CONSTANTS & LOGGING ---
@@ -906,9 +907,25 @@ def run_league_pipeline(league_config, all_leagues_list):
             sources.append((p_name, h))
 
     hall_of_fame_data = build_hall_of_fame(sources, player_registry)
+    
+    # Homelands Network Simulation
+    Logger.section("4. HOMELANDS NETWORK SIMULATION")
+    try:
+        homelands_snapshots = run_homelands_simulation(df)
+    except TypeError:
+        try:
+            homelands_snapshots = run_homelands_simulation(raw_data)
+        except TypeError:
+            homelands_snapshots = run_homelands_simulation(league_config)
+    except Exception as e:
+        Logger.warn(f"Failed to run homelands simulation: {e}")
+        homelands_snapshots = {}
+
+    if not homelands_snapshots:
+        homelands_snapshots = {}
 
     # HTML Page Rendering
-    Logger.section("4. HTML RENDERING")
+    Logger.section("5. HTML RENDERING")
     
     player_data_map_json = json.dumps({
         player_registry.get_clean_name(p): {
@@ -989,6 +1006,15 @@ def run_league_pipeline(league_config, all_leagues_list):
             **pages_content.get("trends", {}),
             **season_context
         )
+        
+        render_page(
+            "network.html", f"network{suffix}.html",
+            page_id="network",
+            section_id="network",
+            dates_json=json.dumps(sorted(list(homelands_snapshots.keys()))),
+            snapshots_json=json.dumps(homelands_snapshots),
+            **pages_content.get("network", {})
+        )
 
     # Render Current Season
     render_season_pages(
@@ -1033,7 +1059,7 @@ def run_league_pipeline(league_config, all_leagues_list):
         )
 
     # API JSON Generation
-    Logger.section("5. REST JSON API EXPORT")
+    Logger.section("6. REST JSON API EXPORT")
     site_base_url = config.get('site_base_url', '').rstrip('/')
     tier_colors = config.get('colors', {}).get('tiers', {})
     tier_icons = config.get('assets', {}).get('icons', {})
