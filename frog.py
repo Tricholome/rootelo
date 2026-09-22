@@ -264,7 +264,7 @@ def run_homelands_simulation(matches: list, custom_config: dict = None, season_i
 
     Args:
         matches (list): List of match dicts containing date and player list.
-        custom_config (dict, optional): Overrides for simulation parameters and item_pool.
+        custom_config (dict, optional): Overrides for simulation parameters and tribe_names.
         season_id (str, optional): Seed string for deterministic RNG pooling.
 
     Returns:
@@ -285,7 +285,7 @@ def run_homelands_simulation(matches: list, custom_config: dict = None, season_i
         cfg.update(custom_config)
 
     # Retrieve tribe names pool from custom_config
-    tribe_names_pool = cfg.get("item_pool", []).copy()
+    tribe_names_pool = cfg.get("tribe_names", []).copy()
 
     # Group matches strictly by date
     matches_by_date = {}
