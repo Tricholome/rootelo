@@ -158,8 +158,9 @@
                 });
             });
 
-            // B. Nœuds Satellites (Joueurs en orbite)
-            activeTribes.forEach(t => {
+            // B. Nœuds Satellites (Joueurs) : Uniquement si une clairière est active
+            if (activeTribeFilter && activeTribes.includes(activeTribeFilter)) {
+                const t = activeTribeFilter;
                 const layout = tribeLayout[t] || { pillars: [], satellites: [] };
                 const satellites = layout.satellites || [];
 
@@ -188,7 +189,7 @@
                         distance: (nodes.find(n => n.id === `tribe_${t}`)?.radius || 50) + 35
                     });
                 });
-            });
+            }
 
             // C. Sentiers Inter-Tribus (Liens entre clairières)
             for (let i = 0; i < activeTribes.length; i++) {
@@ -289,8 +290,8 @@
             tribeGroup.select(".clearing-circle")
                 .transition().duration(duration)
                 .attr("r", d => d.radius)
-                .attr("stroke", d => activeTribeFilter === d.tribeId ? "#ffffff" : "rgba(255, 255, 255, 0.55)")
-                .attr("stroke-width", d => activeTribeFilter === d.tribeId ? 2.5 : 1.5)
+                .attr("stroke", d => activeTribeFilter === d.tribeId ? "#68d391" : "rgba(255, 255, 255, 0.55)")
+                .attr("stroke-width", d => activeTribeFilter === d.tribeId ? 3 : 1.5)
                 .attr("stroke-dasharray", d => activeTribeFilter === d.tribeId ? "none" : "4, 4");
 
             tribeGroup.select(".tribe-icon")
@@ -332,7 +333,7 @@
             });
 
             // -------------------------------------------------------------------------
-            // 4. RENDU DES SATELLITES (Joueurs en orbite)
+            // 4. RENDU DES SATELLITES (Joueurs uniquement sur sélection)
             // -------------------------------------------------------------------------
             const satNodes = nodes.filter(n => n.nodeType === 'satellite');
             const satSel = svg.select("g.satellites-layer")
@@ -433,7 +434,6 @@
             }
         }
 
-        // --- FONCTION DE MISE À JOUR RESTAURÉE ---
         function updateTableForDate(dateStr) {
             const snapshot = snapshots[dateStr];
             if (!snapshot) return;
