@@ -107,239 +107,286 @@
         }
 
         function renderTribeGraph(snapshot) {
-            const svg = d3.select("#tribeMapSvg");
-            const container = document.getElementById('tribeMapContainer');
-            const width = container.clientWidth || 800;
-            const height = 380;
-            const duration = 500;
+			const svg = d3.select("#tribeMapSvg");
+			const container = document.getElementById('tribeMapContainer');
+			const width = container.clientWidth || 800;
+			const height = 380;
+			const duration = 500;
 
-            if (svg.select("g.links-layer").empty()) {
-                svg.append("g").attr("class", "links-layer");
-                svg.append("g").attr("class", "nodes-layer");
-            }
+			if (svg.select("g.links-layer").empty()) {
+				svg.append("g").attr("class", "links-layer");
+				svg.append("g").attr("class", "nodes-layer");
+			}
 
-            const activeTribes = snapshot.active_tribes || [];
+			const activeTribes = snapshot.active_tribes || [];
 
-            const newNodes = activeTribes.map(t => {
-                const count = snapshot.summary[t] || 0;
-                return {
-                    id: t,
-                    label: (snapshot.tribe_labels && snapshot.tribe_labels[t]) ? snapshot.tribe_labels[t] : t,
-                    count: count,
-                    radius: Math.max(28, 20 + Math.sqrt(count) * 10)
-                };
-            });
+			let newNodes = [];
+			let newLinks = [];
 
-            const prevNodesMap = new Map(simulation ? simulation.nodes().map(d => [d.id, d]) : []);
-            newNodes.forEach(d => {
-                if (prevNodesMap.has(d.id)) {
-                    const prev = prevNodesMap.get(d.id);
-                    d.x = prev.x;
-                    d.y = prev.y;
-                    d.vx = prev.vx;
-                    d.vy = prev.vy;
-                }
-            });
+			if (!activeTribeFilter) {
+				// =========================================================
+				// 1. VUE GLOBALE : TOUTES LES CLAIRIÈRES
+				// =========================================================
+				newNodes = activeTribes.map(t => {
+					const count = snapshot.summary[t] || 0;
+					return {
+						id: t,
+						type: 'tribe',
+						label: (snapshot.tribe_labels && snapshot.tribe_labels[t]) ? snapshot.tribe_labels[t] : t,
+						count: count,
+						radius: Math.max(28, 20 + Math.sqrt(count) * 10)
+					};
+				});
 
-            const newLinks = [];
-            for (let i = 0; i < activeTribes.length; i++) {
-                for (let j = i + 1; j < activeTribes.length; j++) {
-                    const t1 = activeTribes[i];
-                    const t2 = activeTribes[j];
-                    let totalAffinity = 0;
-                    let count = 0;
+				// Chemins entre les clairières
+				for (let i = 0; i < activeTribes.length; i++) {
+					for (let j = i + 1; j < activeTribes.length; j++) {
+						const t1 = activeTribes[i];
+						const t2 = activeTribes[j];
+						let totalAffinity = 0;
+						let count = 0;
 
-                    snapshot.players.forEach(p => {
-                        if (p.main_tribe === t1 && p.scores[t2]) {
-                            totalAffinity += p.scores[t2].pct;
-                            count++;
-                        } else if (p.main_tribe === t2 && p.scores[t1]) {
-                            totalAffinity += p.scores[t1].pct;
-                            count++;
-                        }
-                    });
+						snapshot.players.forEach(p => {
+							if (p.main_tribe === t1 && p.scores[t2]) {
+								totalAffinity += p.scores[t2].pct;
+								count++;
+							} else if (p.main_tribe === t2 && p.scores[t1]) {
+								totalAffinity += p.scores[t1].pct;
+								count++;
+							}
+						});
 
-                    const avg = count > 0 ? (totalAffinity / count) : 0;
-                    if (avg > 2) {
-                        newLinks.push({ source: t1, target: t2, value: avg });
-                    }
-                }
-            }
+						const avg = count > 0 ? (totalAffinity / count) : 0;
+						if (avg > 2) {
+							newLinks.push({ source: t1, target: t2, value: avg, type: 'inter-tribe' });
+						}
+					}
+				}
+			} else {
+				// =========================================================
+				// 2. VUE ÉTOILE : CLAIRIÈRE UNIQUE + MEMBRES PIONNIERS
+				// =========================================================
+				const tribe = activeTribeFilter;
+				const count = snapshot.summary[tribe] || 0;
 
-            // 1. LIENS ENTRE LES CLAIRIÈRES
-            const linkSel = svg.select("g.links-layer")
-                .selectAll("line")
-                .data(newLinks, d => `${d.source.id || d.source}-${d.target.id || d.target}`);
+				// Clairière centrale fixée au milieu
+				const centerNode = {
+					id: tribe,
+					type: 'tribe',
+					label: (snapshot.tribe_labels && snapshot.tribe_labels[tribe]) ? snapshot.tribe_labels[tribe] : tribe,
+					count: count,
+					radius: Math.max(32, 24 + Math.sqrt(count) * 10),
+					fx: width / 2,
+					fy: height / 2
+				};
+				newNodes.push(centerNode);
 
-            linkSel.exit()
-                .transition().duration(duration)
-                .attr("stroke-opacity", 0)
-                .remove();
+				// Sélection des 5 membres les plus centraux / actifs
+				const topMembers = snapshot.players
+					.filter(p => p.main_tribe === tribe)
+					.sort((a, b) => (b.core_score || b.games) - (a.core_score || a.games))
+					.slice(0, 5);
 
-            const linkEnter = linkSel.enter().append("line")
-                .attr("stroke", "rgba(255, 255, 255, 0.25)")
-                .attr("stroke-opacity", 0)
-                .attr("stroke-dasharray", "4, 4")
-                .attr("stroke-width", d => Math.max(1, d.value / 5));
+				const radiusDist = 115;
+				topMembers.forEach((p, idx) => {
+					const angle = (2 * Math.PI * idx / topMembers.length) - (Math.PI / 2);
+					const playerId = `player_${p.name}`;
+					
+					newNodes.push({
+						id: playerId,
+						type: 'player',
+						name: p.name,
+						games: p.games,
+						radius: 20,
+						targetX: width / 2 + radiusDist * Math.cos(angle),
+						targetY: height / 2 + radiusDist * Math.sin(angle)
+					});
 
-            const link = linkEnter.merge(linkSel);
-            link.transition().duration(duration)
-                .attr("stroke", "rgba(255, 255, 255, 0.25)")
-                .attr("stroke-opacity", 0.4)
-                .attr("stroke-width", d => Math.max(1, d.value / 5));
+					newLinks.push({
+						source: tribe,
+						target: playerId,
+						type: 'star-link'
+					});
+				});
+			}
 
-            // 2. NOEUDS (CLAIRIÈRES)
-            const nodeSel = svg.select("g.nodes-layer")
-                .selectAll("g.node-group")
-                .data(newNodes, d => d.id);
+			// Conservation des coordonnées précédentes pour fluidifier l'animation
+			const prevNodesMap = new Map(simulation ? simulation.nodes().map(d => [d.id, d]) : []);
+			newNodes.forEach(d => {
+				if (prevNodesMap.has(d.id)) {
+					const prev = prevNodesMap.get(d.id);
+					d.x = prev.x;
+					d.y = prev.y;
+				} else if (d.targetX !== undefined) {
+					d.x = width / 2;
+					d.y = height / 2;
+				}
+			});
 
-            nodeSel.exit()
-                .transition().duration(duration)
-                .style("opacity", 0)
-                .remove();
+			// --- RENDU DES LIENS ---
+			const linkSel = svg.select("g.links-layer")
+				.selectAll("line")
+				.data(newLinks, d => `${d.source.id || d.source}-${d.target.id || d.target}`);
 
-            const nodeEnter = nodeSel.enter().append("g")
-                .attr("class", "node-group")
-                .style("cursor", "pointer")
-                .style("opacity", 0)
-                .call(d3.drag()
-                    .on("start", dragstarted)
-                    .on("drag", dragged)
-                    .on("end", dragended));
+			linkSel.exit()
+				.transition().duration(duration)
+				.attr("stroke-opacity", 0)
+				.remove();
 
-            nodeEnter.append("circle")
-                .attr("class", "node-circle")
-                .attr("r", 0);
+			const linkEnter = linkSel.enter().append("line")
+				.attr("stroke-opacity", 0);
 
-            nodeEnter.append("image")
-                .attr("class", "node-icon")
-                .attr("pointer-events", "none");
+			const link = linkEnter.merge(linkSel);
+			link.transition().duration(duration)
+				.attr("stroke", d => d.type === 'star-link' ? "rgba(72, 187, 120, 0.85)" : "rgba(255, 255, 255, 0.25)")
+				.attr("stroke-opacity", d => d.type === 'star-link' ? 0.8 : 0.4)
+				.attr("stroke-dasharray", d => d.type === 'star-link' ? "2, 2" : "4, 4")
+				.attr("stroke-width", d => d.type === 'star-link' ? 2 : Math.max(1, d.value / 5));
 
-            const textGroup = nodeEnter.append("text")
-                .attr("class", "count-text")
-                .attr("text-anchor", "middle")
-                .attr("pointer-events", "none");
+			// --- RENDU DES NOEUDS (CLAIRIÈRE / JOUEURS) ---
+			const nodeSel = svg.select("g.nodes-layer")
+				.selectAll("g.node-group")
+				.data(newNodes, d => d.id);
 
-            textGroup.append("tspan").attr("class", "num-span");
-            textGroup.append("tspan").attr("class", "lbl-span");
+			nodeSel.exit()
+				.transition().duration(duration)
+				.style("opacity", 0)
+				.remove();
 
-            const node = nodeEnter.merge(nodeSel);
+			const nodeEnter = nodeSel.enter().append("g")
+				.attr("class", "node-group")
+				.style("cursor", "pointer")
+				.style("opacity", 0);
 
-            node.transition().duration(duration)
-                .style("opacity", 1);
+			// Structure HTML SVG
+			nodeEnter.append("circle").attr("class", "node-circle");
+			nodeEnter.append("image").attr("class", "node-icon").attr("pointer-events", "none");
+			
+			const textGroup = nodeEnter.append("text")
+				.attr("class", "count-text")
+				.attr("text-anchor", "middle")
+				.attr("pointer-events", "none");
 
-            node.select(".node-circle")
-                .transition().duration(duration)
-                .attr("r", d => d.radius)
-                .style("fill", d => activeTribeFilter === d.id ? "rgba(18, 38, 25, 0.9)" : "rgba(10, 22, 14, 0.65)")
-                .style("stroke", d => activeTribeFilter === d.id ? "var(--main-color)" : "rgba(255, 255, 255, 0.22)")
-                .style("stroke-width", d => activeTribeFilter === d.id ? "3px" : "1.5px");
+			textGroup.append("tspan").attr("class", "num-span");
+			textGroup.append("tspan").attr("class", "lbl-span");
 
-            node.select(".node-icon")
-                .attr("href", d => `assets/items/${d.id.toLowerCase()}.png`)
-                .attr("xlink:href", d => `assets/items/${d.id.toLowerCase()}.png`)
-                .attr("width", d => Math.max(26, d.radius * 0.75))
-                .attr("height", d => Math.max(26, d.radius * 0.75))
-                .attr("x", d => -Math.max(26, d.radius * 0.75) / 2)
-                .attr("y", d => -Math.max(26, d.radius * 0.75) / 2 - 8);
+			nodeEnter.append("text")
+				.attr("class", "player-label")
+				.attr("text-anchor", "middle")
+				.attr("pointer-events", "none");
 
-            node.select(".count-text")
-                .attr("transform", d => `translate(0, ${Math.max(26, d.radius * 0.75) / 2 + 8})`);
+			const node = nodeEnter.merge(nodeSel);
 
-            node.select(".num-span")
-                .text(d => d.count)
-                .attr("x", 0)
-                .attr("dy", "0")
-                .style("font-size", "1.05rem")
-                .style("font-weight", "800")
-                .style("fill", "#ffffff");
+			node.transition().duration(duration)
+				.style("opacity", 1);
 
-            node.select(".lbl-span")
-                .text(" members")
-                .attr("x", 0)
-                .attr("dy", "1.15em")
-                .style("font-size", "0.62rem")
-                .style("font-weight", "600")
-                .style("letter-spacing", "0.06em")
-                .style("fill", "rgba(255, 255, 255, 0.65)");
+			node.each(function(d) {
+				const g = d3.select(this);
 
-            node.on("click", (event, d) => {
-                activeTribeFilter = (activeTribeFilter === d.id) ? null : d.id;
-                updateTableForDate($datePicker.val());
-            });
+				if (d.type === 'tribe') {
+					g.select(".node-circle")
+						.transition().duration(duration)
+						.attr("r", d.radius)
+						.style("fill", activeTribeFilter === d.id ? "rgba(18, 38, 25, 0.95)" : "rgba(10, 22, 14, 0.65)")
+						.style("stroke", activeTribeFilter === d.id ? "var(--main-color, #48bb78)" : "rgba(255, 255, 255, 0.22)")
+						.style("stroke-width", activeTribeFilter === d.id ? "3px" : "1.5px");
 
-            // 3. FORCE DE CENTRAGE
-            if (!simulation) {
-                simulation = d3.forceSimulation()
-                    .force("link", d3.forceLink().id(d => d.id).distance(145))
-                    .force("charge", d3.forceManyBody().strength(-320))
-                    .force("x", d3.forceX(width / 2).strength(0.08))
-                    .force("y", d3.forceY(height / 2).strength(0.08))
-                    .force("center", d3.forceCenter(width / 2, height / 2))
-                    .force("collision", d3.forceCollide().radius(d => d.radius + 15));
-            } else {
-                simulation.force("center", d3.forceCenter(width / 2, height / 2));
-                simulation.force("x", d3.forceX(width / 2).strength(0.08));
-                simulation.force("y", d3.forceY(height / 2).strength(0.08));
-            }
+					g.select(".node-icon")
+						.attr("href", `assets/items/${d.id.toLowerCase()}.png`)
+						.attr("xlink:href", `assets/items/${d.id.toLowerCase()}.png`)
+						.attr("width", Math.max(26, d.radius * 0.75))
+						.attr("height", Math.max(26, d.radius * 0.75))
+						.attr("x", -Math.max(26, d.radius * 0.75) / 2)
+						.attr("y", -Math.max(26, d.radius * 0.75) / 2 - 8)
+						.style("display", "block");
 
-            simulation.nodes(newNodes);
-            simulation.force("link").links(newLinks);
-            simulation.alpha(0.3).restart();
+					g.select(".count-text")
+						.attr("transform", `translate(0, ${Math.max(26, d.radius * 0.75) / 2 + 8})`)
+						.style("display", "block");
 
-            simulation.on("tick", () => {
-                newNodes.forEach(d => {
-                    const margin = d.radius + 8;
-                    d.x = Math.max(margin, Math.min(width - margin, d.x));
-                    d.y = Math.max(margin, Math.min(height - margin, d.y));
-                });
+					g.select(".num-span")
+						.text(d.count)
+						.attr("x", 0)
+						.attr("dy", "0")
+						.style("font-size", "1.05rem")
+						.style("font-weight", "800")
+						.style("fill", "#ffffff");
 
-                link
-                    .attr("x1", d => {
-                        const dx = d.target.x - d.source.x;
-                        const dy = d.target.y - d.source.y;
-                        const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-                        return d.source.x + (dx / dist) * d.source.radius;
-                    })
-                    .attr("y1", d => {
-                        const dx = d.target.x - d.source.x;
-                        const dy = d.target.y - d.source.y;
-                        const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-                        return d.source.y + (dy / dist) * d.source.radius;
-                    })
-                    .attr("x2", d => {
-                        const dx = d.target.x - d.source.x;
-                        const dy = d.target.y - d.source.y;
-                        const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-                        return d.target.x - (dx / dist) * d.target.radius;
-                    })
-                    .attr("y2", d => {
-                        const dx = d.target.x - d.source.x;
-                        const dy = d.target.y - d.source.y;
-                        const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-                        return d.target.y - (dy / dist) * d.target.radius;
-                    });
+					g.select(".lbl-span")
+						.text(" members")
+						.attr("x", 0)
+						.attr("dy", "1.15em")
+						.style("font-size", "0.62rem")
+						.style("font-weight", "600")
+						.style("fill", "rgba(255, 255, 255, 0.65)");
 
-                node.attr("transform", d => `translate(${d.x},${d.y})`);
-            });
+					g.select(".player-label").style("display", "none");
 
-            function dragstarted(event, d) {
-                if (!event.active) simulation.alphaTarget(0.3).restart();
-                d.fx = d.x;
-                d.fy = d.y;
-            }
+				} else if (d.type === 'player') {
+					g.select(".node-circle")
+						.transition().duration(duration)
+						.attr("r", d.radius)
+						.style("fill", "#2b6cb0")
+						.style("stroke", "#63b3ed")
+						.style("stroke-width", "2px");
 
-            function dragged(event, d) {
-                d.fx = event.x;
-                d.fy = event.y;
-            }
+					g.select(".node-icon").style("display", "none");
+					g.select(".count-text").style("display", "none");
 
-            function dragended(event, d) {
-                if (!event.active) simulation.alphaTarget(0);
-                d.fx = null;
-                d.fy = null;
-            }
-        }
+					g.select(".player-label")
+						.style("display", "block")
+						.text(d.name)
+						.attr("dy", "0.35em")
+						.style("font-size", "0.72rem")
+						.style("font-weight", "700")
+						.style("fill", "#ffffff");
+				}
+			});
+
+			// Clic pour filtrer / réinitialiser
+			node.on("click", (event, d) => {
+				if (d.type === 'tribe') {
+					activeTribeFilter = (activeTribeFilter === d.id) ? null : d.id;
+					updateTableForDate($datePicker.val());
+				}
+			});
+
+			// --- MOTEUR DE SIMULATION ---
+			if (!simulation) {
+				simulation = d3.forceSimulation();
+			}
+
+			if (!activeTribeFilter) {
+				simulation
+					.force("link", d3.forceLink().id(d => d.id).distance(145))
+					.force("charge", d3.forceManyBody().strength(-320))
+					.force("x", d3.forceX(width / 2).strength(0.08))
+					.force("y", d3.forceY(height / 2).strength(0.08))
+					.force("center", d3.forceCenter(width / 2, height / 2))
+					.force("collision", d3.forceCollide().radius(d => d.radius + 15));
+			} else {
+				simulation
+					.force("link", d3.forceLink().id(d => d.id).distance(115))
+					.force("x", d3.forceX(d => d.targetX || width / 2).strength(0.25))
+					.force("y", d3.forceY(d => d.targetY || height / 2).strength(0.25))
+					.force("charge", d3.forceManyBody().strength(-50))
+					.force("collision", d3.forceCollide().radius(d => d.radius + 8));
+			}
+
+			simulation.nodes(newNodes);
+			simulation.force("link").links(newLinks);
+			simulation.alpha(0.35).restart();
+
+			simulation.on("tick", () => {
+				link
+					.attr("x1", d => d.source.x)
+					.attr("y1", d => d.source.y)
+					.attr("x2", d => d.target.x)
+					.attr("y2", d => d.target.y);
+
+				node.attr("transform", d => `translate(${d.x},${d.y})`);
+			});
+		}
 
         function updateTableForDate(selectedDate) {
             $datePicker.val(selectedDate);
