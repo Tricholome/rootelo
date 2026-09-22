@@ -910,13 +910,23 @@ def run_league_pipeline(league_config, all_leagues_list):
     
     # Homelands Network Simulation
     Logger.section("4. HOMELANDS NETWORK SIMULATION")
+    homelands_snapshots = {}
+
     try:
-        homelands_snapshots = run_homelands_simulation(df)
-    except TypeError:
+        # 1. Tenter d'abord avec raw_data (liste Python, évite l'ambiguïté de valeur booléenne de Pandas)
+        homelands_snapshots = run_homelands_simulation(raw_data)
+    except (TypeError, ValueError, AttributeError):
         try:
-            homelands_snapshots = run_homelands_simulation(raw_data)
-        except TypeError:
-            homelands_snapshots = run_homelands_simulation(league_config)
+            # 2. Si la fonction attend un DataFrame, vérifier qu'il n'est pas vide
+            if isinstance(df, pd.DataFrame) and not df.empty:
+                homelands_snapshots = run_homelands_simulation(df)
+        except (TypeError, ValueError, AttributeError):
+            try:
+                # 3. Fallback sur league_config
+                homelands_snapshots = run_homelands_simulation(league_config)
+            except Exception as e:
+                Logger.warn(f"Failed to run homelands simulation: {e}")
+                homelands_snapshots = {}
     except Exception as e:
         Logger.warn(f"Failed to run homelands simulation: {e}")
         homelands_snapshots = {}
