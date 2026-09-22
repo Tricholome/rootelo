@@ -273,7 +273,12 @@ def run_homelands_simulation(matches: list, custom_config: dict = None, season_i
         dict: Snapshots dictionary mapping dates to active tribes and player statuses.
               Returns empty dict if parameters/matches are missing or empty.
     """
-    if not matches:
+    # Safe check for None, empty lists, or DataFrames
+    if matches is None:
+        return {}
+    if hasattr(matches, "empty") and matches.empty:
+        return {}
+    if not hasattr(matches, "empty") and not matches:
         return {}
 
     # Merge configuration
@@ -284,7 +289,11 @@ def run_homelands_simulation(matches: list, custom_config: dict = None, season_i
     # Group matches strictly by date
     matches_by_date = {}
     for m in matches:
-        date_str = str(m.get("date_closed") or m.get("date") or m.get("Date") or "")[:10]
+        # Check all casing variations for date fields
+        date_str = str(
+            m.get("Date_Closed") or m.get("date_closed") or m.get("Date") or m.get("date") or ""
+        )[:10]
+        
         players = list(
             dict.fromkeys(p.get("name") for p in m.get("players", []) if p.get("name"))
         )
