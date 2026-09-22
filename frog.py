@@ -14,7 +14,9 @@ import random
 import statistics
 import networkx as nx
 
-# Default configuration parameters (used if not explicitly overridden)
+UNALIGNED = None
+
+# Default mathematical/algorithmic configuration parameters
 DEFAULT_CONFIG = {
     "MAX_TRIBES": 5,
     "MIN_TRIBE_CREATION_SIZE": 6,
@@ -32,8 +34,6 @@ DEFAULT_CONFIG = {
     "DECAY_RATE": 0.95,
     "NEW_MATCH_WEIGHT": 1.0,
     "MIN_EDGE_WEIGHT": 0.1,
-    "UNALIGNED_LABEL": "-",
-    "ROOT_ITEMS_POOL": ["TEA", "BAG", "SWORD", "COINS", "HAMMER", "CROSSBOW", "BOOT"],
 }
 
 
@@ -43,17 +43,17 @@ def min_games_required(player_games: Counter, floor: int, ratio: float) -> int:
     return max(floor, math.ceil(median * ratio))
 
 
-def weight_by_tribe(G: nx.Graph, roster: dict, p: str, unaligned_label: str) -> Counter:
+def weight_by_tribe(G: nx.Graph, roster: dict, p: str) -> Counter:
     """Calculate player p's weight distribution towards each homeland."""
     weights = Counter()
     for n in G.neighbors(p):
-        tribe = roster.get(n, unaligned_label)
-        if tribe != unaligned_label:
+        tribe = roster.get(n, UNALIGNED)
+        if tribe is not UNALIGNED:
             weights[tribe] += G[p][n]["weight"]
     return weights
 
 
-def is_clearly_apart(G: nx.Graph, roster: dict, comm: set, stickiness: float, unaligned_label: str) -> bool:
+def is_clearly_apart(G: nx.Graph, roster: dict, comm: set, stickiness: float) -> bool:
     """Check if a community has strong enough internal cohesion to form a homeland."""
     inside = outside = 0.0
     for p in comm:
@@ -61,7 +61,7 @@ def is_clearly_apart(G: nx.Graph, roster: dict, comm: set, stickiness: float, un
             w = G[p][n]["weight"]
             if n in comm:
                 inside += w
-            elif roster[p] != unaligned_label and roster[n] == roster[p]:
+            elif roster.get(p) is not UNALIGNED and roster.get(n) == roster.get(p):
                 outside += w
     return inside > stickiness * outside
 
@@ -85,7 +85,7 @@ def compass(
 
     members = {}
     for p, t in roster.items():
-        if t != cfg["UNALIGNED_LABEL"]:
+        if t is not UNALIGNED:
             members.setdefault(t, set()).add(p)
 
     overlaps = sorted(
@@ -103,7 +103,7 @@ def compass(
 
     currently_free = [n for n in tribe_names_pool if n not in members]
     currently_free.sort(
-        key=lambda n: (n in ever_used_names, tribe_names_pool.index(n))
+        key=lambda n: (n in ever_used_names, tribe_names_pool.index(n) if n in tribe_names_pool else 999)
     )
 
     available_slots = max(0, cfg["MAX_TRIBES"] - len(members))
@@ -114,7 +114,7 @@ def compass(
             i not in name_of
             and len(c) >= cfg["MIN_TRIBE_CREATION_SIZE"]
             and free
-            and is_clearly_apart(G, roster, c, cfg["STICKINESS"], cfg["UNALIGNED_LABEL"])
+            and is_clearly_apart(G, roster, c, cfg["STICKINESS"])
         ):
             chosen_name = free.pop(0)
             name_of[i] = chosen_name
@@ -128,21 +128,20 @@ def compass(
 def apply_compass(G: nx.Graph, roster: dict, target: dict, founded: set, cfg: dict) -> None:
     """Apply target assignments and player transfers to the roster."""
     moves, switches = [], []
-    unaligned = cfg["UNALIGNED_LABEL"]
 
     for p, t in target.items():
-        current = roster[p]
+        current = roster.get(p, UNALIGNED)
         if current == t:
             continue
 
         if t in founded:
             moves.append((p, t))
-        elif current == unaligned:
-            w = weight_by_tribe(G, roster, p, unaligned)
+        elif current is UNALIGNED:
+            w = weight_by_tribe(G, roster, p)
             if not w or w[t] == max(w.values()):
                 moves.append((p, t))
         else:
-            w = weight_by_tribe(G, roster, p, unaligned)
+            w = weight_by_tribe(G, roster, p)
             if w[t] > cfg["STICKINESS"] * w[current]:
                 switches.append((w[t] - w[current], p, t))
 
@@ -159,25 +158,23 @@ def prune_inactive(roster: dict, last_active: dict, current_date: str, cfg: dict
     if inactivity_limit is None:
         return
     cur = date.fromisoformat(current_date)
-    unaligned = cfg["UNALIGNED_LABEL"]
 
     for p, t in roster.items():
-        if t == unaligned:
+        if t is UNALIGNED:
             continue
         last = last_active.get(p)
         if last is None or (cur - date.fromisoformat(last)).days > inactivity_limit:
-            roster[p] = unaligned
+            roster[p] = UNALIGNED
 
 
 def dissolve_small_tribes(roster: dict, cfg: dict) -> None:
     """Dissolve homelands that drop below the minimum survival threshold."""
-    unaligned = cfg["UNALIGNED_LABEL"]
-    counts = Counter(t for t in roster.values() if t != unaligned)
+    counts = Counter(t for t in roster.values() if t is not UNALIGNED)
     for tribe, n in counts.items():
         if n < cfg["MIN_TRIBE_SURVIVAL"]:
             for p, t in list(roster.items()):
                 if t == tribe:
-                    roster[p] = unaligned
+                    roster[p] = UNALIGNED
 
 
 def tribe_core_scores(G: nx.Graph, members: list) -> dict:
@@ -225,7 +222,6 @@ def classify_tribe_tiers(scores: dict, cfg: dict) -> tuple[set, set]:
 
 def player_scores(G: nx.Graph, roster: dict, p: str, active_tribes: list, cfg: dict, tribe_names_pool: list) -> dict:
     """Calculate affiliation percentage and status title for a player."""
-    unaligned = cfg["UNALIGNED_LABEL"]
     scores = {t: {"pct": 0, "status": None} for t in tribe_names_pool}
     if p not in G or G.degree(p) == 0:
         return scores
@@ -234,12 +230,14 @@ def player_scores(G: nx.Graph, roster: dict, p: str, active_tribes: list, cfg: d
     for n in G.neighbors(p):
         w = G[p][n]["weight"]
         total += w
-        by_tribe[roster.get(n, unaligned)] += w
+        tribe = roster.get(n, UNALIGNED)
+        if tribe is not UNALIGNED:
+            by_tribe[tribe] += w
 
-    pcts = {t: round(100 * by_tribe[t] / total) for t in tribe_names_pool}
+    pcts = {t: round(100 * by_tribe[t] / total) if total > 0 else 0 for t in tribe_names_pool}
 
-    main = roster.get(p, unaligned)
-    main_pct = pcts.get(main, 0)
+    main = roster.get(p, UNALIGNED)
+    main_pct = pcts.get(main, 0) if main is not UNALIGNED else 0
 
     other_active_pcts = [pcts[t] for t in active_tribes if t != main]
     best_other = max(other_active_pcts, default=0)
@@ -247,7 +245,7 @@ def player_scores(G: nx.Graph, roster: dict, p: str, active_tribes: list, cfg: d
 
     for t in tribe_names_pool:
         status = None
-        if t == main:
+        if main is not UNALIGNED and t == main:
             if diff <= 3 and len(active_tribes) > 1 and best_other > 0:
                 status = "Favoring"
             elif pcts[t] >= 65:
@@ -266,7 +264,7 @@ def run_homelands_simulation(matches: list, custom_config: dict = None, season_i
 
     Args:
         matches (list): List of match dicts containing date and player list.
-        custom_config (dict, optional): Overrides for simulation parameters.
+        custom_config (dict, optional): Overrides for simulation parameters and item_pool.
         season_id (str, optional): Seed string for deterministic RNG pooling.
 
     Returns:
@@ -286,28 +284,28 @@ def run_homelands_simulation(matches: list, custom_config: dict = None, season_i
     if custom_config:
         cfg.update(custom_config)
 
+    # Retrieve tribe names pool from custom_config
+    tribe_names_pool = cfg.get("item_pool", []).copy()
+
     # Group matches strictly by date
     matches_by_date = {}
     for m in matches:
-        # Check all casing variations for date fields
         date_str = str(
             m.get("Date_Closed") or m.get("date_closed") or m.get("Date") or m.get("date") or ""
         )[:10]
-        
         players = list(
             dict.fromkeys(p.get("name") for p in m.get("players", []) if p.get("name"))
         )
         if date_str and players:
             matches_by_date.setdefault(date_str, []).append(players)
 
-    if not matches_by_date:
+    if not matches_by_date or not tribe_names_pool:
         return {}
 
     sorted_dates = sorted(matches_by_date)
 
     # Deterministic RNG for tribe name order
     rng = random.Random(season_id)
-    tribe_names_pool = cfg["ROOT_ITEMS_POOL"].copy()
     rng.shuffle(tribe_names_pool)
 
     edge_weights = Counter()
@@ -326,7 +324,7 @@ def run_homelands_simulation(matches: list, custom_config: dict = None, season_i
             for p in players:
                 player_games[p] += 1
                 last_active[p] = d
-                roster.setdefault(p, cfg["UNALIGNED_LABEL"])
+                roster.setdefault(p, UNALIGNED)
             for p1, p2 in combinations(sorted(set(players)), 2):
                 edge_weights[(p1, p2)] += cfg["NEW_MATCH_WEIGHT"]
 
@@ -349,8 +347,7 @@ def run_homelands_simulation(matches: list, custom_config: dict = None, season_i
         prune_inactive(roster, last_active, d, cfg)
         dissolve_small_tribes(roster, cfg)
 
-        unaligned = cfg["UNALIGNED_LABEL"]
-        active_tribes = sorted({t for t in roster.values() if t != unaligned})
+        active_tribes = sorted({t for t in roster.values() if t is not UNALIGNED})
         tribe_labels = {t: t for t in tribe_names_pool}
 
         # 4. Core scores & tier classification
@@ -369,12 +366,18 @@ def run_homelands_simulation(matches: list, custom_config: dict = None, season_i
             }
 
         # 5. Generate daily snapshot
-        summary = {t: 0 for t in tribe_names_pool + [unaligned]}
+        summary = {t: 0 for t in tribe_names_pool}
+        summary[UNALIGNED] = 0
+
         snapshot_players = []
 
         for p, games in sorted(player_games.items(), key=lambda x: (-x[1], x[0])):
             main_tribe = roster[p]
-            summary[main_tribe] += 1
+            if main_tribe in summary:
+                summary[main_tribe] += 1
+            else:
+                summary[UNALIGNED] += 1
+
             snapshot_players.append({
                 "name": p,
                 "games": games,
