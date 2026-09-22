@@ -641,13 +641,14 @@ def run_league_pipeline(league_config, all_leagues_list):
         season_archive_dir = os.path.join(archives_dir, tag)
         archives_raw_data[tag] = {
             'final_df': pd.DataFrame(), 'matches_list': [], 'history': {},
-            'metadata': {"cutoff_date": "N/A", "match_count": 0}, 'relations': {}
+            'metadata': {"cutoff_date": "N/A", "match_count": 0}, 'relations': {}, 'homelands_snapshots': {}
         }
 
         archives_raw_data[tag]['metadata'] = load_json(os.path.join(season_archive_dir, "metadata.json"), archives_raw_data[tag]['metadata'])
         archives_raw_data[tag]['relations'] = load_json(os.path.join(season_archive_dir, "relations.json"), archives_raw_data[tag]['relations'])
         archives_raw_data[tag]['matches_list'] = load_json(os.path.join(season_archive_dir, "matches.json"), [])
         archives_raw_data[tag]['history'] = load_json(os.path.join(season_archive_dir, "history.json"), {})
+        archives_raw_data[tag]['homelands_snapshots'] = load_json(os.path.join(season_archive_dir, "network.json"), {})
 
         path_ratings = os.path.join(season_archive_dir, "ratings.csv")
         if os.path.exists(path_ratings):
@@ -974,7 +975,7 @@ def run_league_pipeline(league_config, all_leagues_list):
             f.write(template.render(**full_vars))
         Logger.step(f"Page generated: {target_path}")
 
-    def render_season_pages(tag, is_archive, lb_data, match_data, trends_data, meta, relations_data=None, champ_match=None, suffix=""):
+    def render_season_pages(tag, is_archive, lb_data, match_data, trends_data, meta, snapshots_data, relations_data=None, champ_match=None, suffix=""):
         season_context = {
             "is_archive": is_archive,
             "has_seasons": bool(archive_seasons),
@@ -1013,14 +1014,15 @@ def run_league_pipeline(league_config, all_leagues_list):
             **season_context
         )
         
-        if homelands_snapshots:
+        if snapshots_data:
             render_page(
                 "network.html", f"network{suffix}.html",
                 page_id="network",
                 section_id="network",
-                dates_json=json.dumps(sorted(list(homelands_snapshots.keys()))),
-                snapshots_json=json.dumps(homelands_snapshots),
-                **pages_content.get("network", {})
+                dates_json=json.dumps(sorted(list(snapshots_data.keys()))),
+                snapshots_json=json.dumps(snapshots_data),
+                **pages_content.get("network", {}),
+                **season_context
             )
 
     # Render Current Season
