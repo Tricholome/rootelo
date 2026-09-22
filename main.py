@@ -912,7 +912,7 @@ def run_league_pipeline(league_config, all_leagues_list):
     Logger.section("4. HOMELANDS NETWORK SIMULATION")
     homelands_snapshots = {}
 
-    homelands_cfg = league_config.get("homelands", {}).copy()
+    homelands_cfg = league_config.get("network", {}).copy()
 
     if not homelands_cfg.get("enabled", True):
         Logger.info(f"Homelands simulation disabled for league '{slug}'. Skipping.")
