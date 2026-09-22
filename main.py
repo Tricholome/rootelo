@@ -1027,9 +1027,14 @@ def run_league_pipeline(league_config, all_leagues_list):
 
     # Render Current Season
     render_season_pages(
-        current_season_tag, False,
-        display_leaderboard_current, display_matches_current, display_trends_current,
-        current_meta, current_relations,
+        tag=current_season_tag,
+        is_archive=False,
+        lb_data=display_leaderboard_current,
+        match_data=display_matches_current,
+        trends_data=display_trends_current,
+        meta=current_meta,
+        snapshots_data=homelands_snapshots,
+        relations_data=current_relations,
         champ_match=champions_data.get(archive_seasons[-1]) if archive_seasons else None
     )
 
@@ -1037,10 +1042,16 @@ def run_league_pipeline(league_config, all_leagues_list):
     for tag in archive_seasons:
         archive_relations_clean = prepare_archive_relations(archives_raw_data[tag].get('relations', {}), player_registry)
         render_season_pages(
-            tag, True,
-            display_archives[tag]['leaderboard'], display_archives[tag]['matches'], display_archives[tag]['trends'],
-            archives_raw_data[tag]['metadata'], archive_relations_clean,
-            champ_match=champions_data.get(tag), suffix=f"_{tag}"
+            tag=tag,
+            is_archive=True,
+            lb_data=display_archives[tag]['leaderboard'],
+            match_data=display_archives[tag]['matches'],
+            trends_data=display_archives[tag]['trends'],
+            meta=archives_raw_data[tag]['metadata'],
+            snapshots_data=archives_raw_data[tag].get('homelands_snapshots', {}),
+            relations_data=archive_relations_clean,
+            champ_match=champions_data.get(tag),
+            suffix=f"_{tag}"
         )
 
     # Render Static Pages (About, Simulator, Cache)
