@@ -40,9 +40,9 @@ STICKINESS = 1.5               # Affinity ratio required to switch homeland
 MAX_DAILY_TRANSFERS = 3        # Maximum daily transfers allowed
 INACTIVITY_LIMIT_DAYS = 21     # Days of inactivity before a player is unaligned
 
-# --- Graph Decay & Edge Weights ---
-DECAY_RATE = 0.95              # Daily decay factor applied to edge weights
-																				   
+# --- Edge Weights ---
+# All matches count equally, whenever they were played (no decay): a "tribe"
+# reflects who a player has played with across the whole season, not just recently.
 NEW_MATCH_WEIGHT = 1.0         # Weight added for each match played
 MIN_EDGE_WEIGHT = 0.1          # Edge weight threshold below which edges are ignored
 
@@ -189,19 +189,19 @@ def dissolve_small_tribes(roster):
                     roster[p] = UNALIGNED_LABEL
 
 
-								  
-																		 
-																			  
-																		  
-																				 
-					
-			 
-				 
-						   
-			
-																		  
-						
-	 
+def tribe_core_scores(G, members):
+    """Weighted-degree centrality of each member within their own tribe's
+    subgraph: how strongly, on average, a player is tied to their tribe-mates.
+    This is purely descriptive (computed after assignment) and never feeds
+    back into compass/apply_compass, so it never influences who belongs where."""
+    n = len(members)
+    if n < 2:
+        return {}
+    H = G.subgraph(members)
+    return {
+        p: sum(d["weight"] for _, _, d in H.edges(p, data=True)) / (n - 1)
+        for p in members
+    }
 
 
 def player_scores(G, roster, p, active_tribes):
@@ -300,9 +300,9 @@ snapshots = {}
 ever_used_names = set()
 
 for d in sorted_dates:
-    # 1. Decay existing edges & parse new daily matches
-    for pair in edge_weights:
-        edge_weights[pair] *= DECAY_RATE
+    # 1. Parse the day's matches (all matches, past or present, count equally)
+                             
+                                        
 
     for players in matches_by_date[d]:
         for p in players:
@@ -332,13 +332,13 @@ for d in sorted_dates:
     active_tribes = sorted({t for t in roster.values() if t != UNALIGNED_LABEL})
     tribe_labels = {t: t for t in TRIBE_NAMES_POOL}
 
-																				
-					
-						   
-															
-														 
+    # 4. Core players ("piliers") — who each tribe currently gravitates around
+    core_scores = {}
+    for t in active_tribes:
+        members = [p for p, tt in roster.items() if tt == t]
+        core_scores.update(tribe_core_scores(G, members))
 
-    # 4. Generate snapshot
+    # 5. Generate snapshot
     summary = {t: 0 for t in TRIBE_NAMES_POOL + [UNALIGNED_LABEL]}
     snapshot_players = []
     for p, games in sorted(player_games.items(), key=lambda x: (-x[1], x[0])):
@@ -348,7 +348,7 @@ for d in sorted_dates:
             "name": p,
             "games": games,
             "main_tribe": main_tribe,
-															
+            "core_score": round(core_scores.get(p, 0.0), 3),
             "scores": player_scores(G, roster, p, active_tribes),
         })
 
