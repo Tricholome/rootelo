@@ -910,15 +910,25 @@ def run_league_pipeline(league_config, all_leagues_list):
     
     # Homelands Network Simulation
     Logger.section("4. HOMELANDS NETWORK SIMULATION")
-    try:
-        homelands_snapshots = run_homelands_simulation(
-            match_history_data, 
-            season_id=slug
-        )
-        Logger.success(f"Homelands simulation completed ({len(homelands_snapshots)} daily snapshots)")
-    except Exception as e:
-        Logger.warn(f"Failed to run homelands simulation: {e}")
-        homelands_snapshots = {}
+    homelands_snapshots = {}
+
+    homelands_cfg = league_config.get("homelands", {}).copy()
+
+    if not homelands_cfg.get("enabled", True):
+        Logger.info(f"Homelands simulation disabled for league '{slug}'. Skipping.")
+    else:
+        homelands_cfg["tribe_names"] = config.get("network", {}).get("tribe_names", [])
+
+        try:
+            homelands_snapshots = run_homelands_simulation(
+                match_history_data,
+                custom_config=homelands_cfg,
+                season_id=slug
+            )
+            Logger.success(f"Homelands simulation completed ({len(homelands_snapshots)} daily snapshots)")
+        except Exception as e:
+            Logger.warn(f"Failed to run homelands simulation: {e}")
+            homelands_snapshots = {}
 
     # HTML Page Rendering
     Logger.section("5. HTML RENDERING")
