@@ -1,9 +1,9 @@
-name: Update Rootelo DEV Mirror
+name: Update Rootelo DEV Mirror (Future)
 
 on:
   push:
     branches:
-      - dev
+      - future
   workflow_dispatch:
 
 jobs:
@@ -12,8 +12,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          ref: dev
 
       - name: Set up Python
         uses: actions/setup-python@v5
