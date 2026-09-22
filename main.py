@@ -914,7 +914,7 @@ def run_league_pipeline(league_config, all_leagues_list):
 
     homelands_cfg = league_config.get("network", {}).copy()
 
-    if not homelands_cfg.get("enabled", True):
+    if not homelands_cfg.get("enabled", False):
         Logger.info(f"Homelands simulation disabled for league '{slug}'. Skipping.")
     else:
         homelands_cfg["tribe_names"] = config.get("network", {}).get("tribe_names", [])
@@ -1013,14 +1013,15 @@ def run_league_pipeline(league_config, all_leagues_list):
             **season_context
         )
         
-        render_page(
-            "network.html", f"network{suffix}.html",
-            page_id="network",
-            section_id="network",
-            dates_json=json.dumps(sorted(list(homelands_snapshots.keys()))),
-            snapshots_json=json.dumps(homelands_snapshots),
-            **pages_content.get("network", {})
-        )
+        if homelands_snapshots:
+            render_page(
+                "network.html", f"network{suffix}.html",
+                page_id="network",
+                section_id="network",
+                dates_json=json.dumps(sorted(list(homelands_snapshots.keys()))),
+                snapshots_json=json.dumps(homelands_snapshots),
+                **pages_content.get("network", {})
+            )
 
     # Render Current Season
     render_season_pages(
