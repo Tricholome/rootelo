@@ -42,7 +42,7 @@ INACTIVITY_LIMIT_DAYS = 21     # Days of inactivity before a player is unaligned
 
 # --- Graph Decay & Edge Weights ---
 DECAY_RATE = 0.95              # Daily decay factor applied to edge weights
-																				   
+
 NEW_MATCH_WEIGHT = 1.0         # Weight added for each match played
 MIN_EDGE_WEIGHT = 0.1          # Edge weight threshold below which edges are ignored
 
@@ -204,7 +204,7 @@ def tribe_core_scores(G, members):
     }
 
 
-scores(G, roster, p, active_tribes):
+def player_scores(G, roster, p, active_tribes):
     """Calculate affiliation percentage and title status for a player across all homelands."""
     scores = {t: {"pct": 0, "status": None} for t in TRIBE_NAMES_POOL}
     if p not in G or G.degree(p) == 0:
@@ -336,7 +336,7 @@ for d in sorted_dates:
     core_scores_by_tribe = {}
     for t in active_tribes:
         members = [p for p, tribe in roster.items() if tribe == t]
-        core_scores_by_tribe.update(tribe_core_scores(G, members))    
+        core_scores_by_tribe.update(tribe_core_scores(G, members))
 
     # 5. Generate snapshot
     summary = {t: 0 for t in TRIBE_NAMES_POOL + [UNALIGNED_LABEL]}
@@ -348,7 +348,7 @@ for d in sorted_dates:
             "name": p,
             "games": games,
             "main_tribe": main_tribe,
-			"core_score": round(core_scores_by_tribe.get(p, 0.0), 2),												
+            "core_score": round(core_scores_by_tribe.get(p, 0.0), 2),
             "scores": player_scores(G, roster, p, active_tribes),
         })
 
