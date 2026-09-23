@@ -86,9 +86,25 @@
       "codex":   {"left": "assets/images/about_img_left.webp",       "right": "assets/images/about_img_right.webp"},
       "cache":   {"left": "assets/images/cache_img_left.webp",       "right": "assets/images/cache_img_right.webp"},
 	  "network":   {"left": "",       "right": ""}
-    }
-  },
-  "network": {
-    "tribe_names": ["TEA", "BAG", "SWORD", "COINS", "HAMMER", "CROSSBOW", "BOOT"]
+    },
   }
+  "network": {
+    "tribe_names": ["TEA", "BAG", "SWORD", "COINS", "HAMMER", "CROSSBOW", "BOOT"],
+	"tribes": {
+		"TEA": { "icon": "assets/items/tea.png" },
+		"BAG": { "icon": "assets/items/bag.png" },
+		"SWORD": { "icon": "assets/items/sword.png" },
+		"COINS": { "icon": "assets/items/coins.png" },
+		"HAMMER": { "icon": "assets/items/hammer.png" },
+		"CROSSBOW": { "icon": "assets/items/crossbow.png" },
+		"BOOT": { "icon": "assets/items/boot.png" }
+		},
+		"tiers": {
+		  "Partisan": "#2e7d32",
+		  "Squire": "#1565c0",
+		  "Friend": "#d97706",
+		  "Favoring": "#c62828",
+		  "Default": "#4a5568"
+		}
+	}
 }
