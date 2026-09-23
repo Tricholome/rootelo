@@ -1849,6 +1849,91 @@ table.dataTable tbody tr.loser td {
 }
 
 /* =========================================================================
+   --- NETWORK MAP STYLES ---
+   ========================================================================= */
+
+/* Structure de base SVG */
+#tribeMapSvg .node-group {
+    cursor: grab;
+}
+#tribeMapSvg .node-group:active {
+    cursor: grabbing;
+}
+#tribeMapSvg text,
+#tribeMapSvg image {
+    pointer-events: none;
+}
+#tribeMapSvg text {
+    text-anchor: middle;
+}
+
+/* --- Liens --- */
+#tribeMapSvg line {
+    stroke: rgba(255, 255, 255, 0.25);
+    stroke-opacity: 0.35;
+    stroke-dasharray: 4, 4;
+    transition: stroke 0.3s, stroke-opacity 0.3s;
+}
+
+#tribeMapSvg line.constellation-link {
+    stroke: rgba(255, 255, 255, 0.35);
+    stroke-opacity: 0.75;
+    stroke-dasharray: 2, 3;
+    stroke-width: 1.2px;
+}
+
+#tribeMapSvg line.constellation-link.is-pillar {
+    stroke: var(--main-color, #48bb78);
+    stroke-width: 2px;
+}
+
+/* --- Nœuds --- */
+#tribeMapSvg .node-circle {
+    transition: fill 0.3s, stroke 0.3s, stroke-width 0.3s, r 0.3s;
+}
+
+/* Nœuds Tribus */
+#tribeMapSvg .node-group.type-tribe .node-circle {
+    fill: rgba(10, 22, 14, 0.65);
+    stroke: rgba(255, 255, 255, 0.35);
+    stroke-width: 1.5px;
+}
+
+#tribeMapSvg .node-group.type-tribe.is-selected .node-circle {
+    fill: rgba(18, 38, 25, 0.95);
+    stroke: var(--main-color, #48bb78);
+    stroke-width: 3px;
+}
+
+/* Nœuds Joueurs */
+#tribeMapSvg .node-group.type-player .node-circle {
+    fill: var(--node-color, #4a5568);
+    stroke: var(--node-color, #4a5568);
+    fill-opacity: 0.85;
+    stroke-width: 1.5px;
+}
+
+#tribeMapSvg .node-group.type-player.is-pillar .node-circle {
+    fill-opacity: 0.35;
+    stroke-width: 2.5px;
+}
+
+/* --- Visibilité selon le type --- */
+#tribeMapSvg .type-tribe .player-label,
+#tribeMapSvg .type-player .node-icon,
+#tribeMapSvg .type-player .count-text {
+    display: none;
+}
+
+/* Typographie SVG */
+#tribeMapSvg .lbl-span {
+    dy: 1.15em;
+}
+#tribeMapSvg .player-label {
+    dy: 0.35em;
+}
+
+/* =========================================================================
    --- V. SPECIAL EFFECTS & SECRET CONTENT ---
    ========================================================================= */
 
