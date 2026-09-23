@@ -1252,7 +1252,7 @@ $(document).ready(function () {
 		
 		const svg = d3.select("#tribeMapSvg");
 		const container = document.getElementById('tribeMapContainer');
-		const width = container.clientWidth || 800;
+		const width = container ? (container.clientWidth || 800) : 800;
 		const height = 380;
 		const duration = 400;
 
@@ -1313,15 +1313,13 @@ $(document).ready(function () {
 			const layout = tribeLayout[tribe] || { pillars: [], satellites: [] };
 			const pillarsSet = new Set(layout.pillars || []);
 
-			// Nœud central (Tribu)
+			// Nœud central (Tribu) - Pas de position fixe (fx/fy) pour permettre un glissement fluide
 			newNodes.push({
 				id: tribe,
 				type: 'tribe',
 				label: (snapshot.tribe_labels && snapshot.tribe_labels[tribe]) ? snapshot.tribe_labels[tribe] : tribe,
 				count: count,
-				radius: Math.max(36, 26 + Math.sqrt(count) * 10),
-				fx: width / 2,
-				fy: height / 2
+				radius: Math.max(36, 26 + Math.sqrt(count) * 10)
 			});
 
 			const satellitesList = layout.satellites || (snapshot.players || [])
@@ -1330,7 +1328,6 @@ $(document).ready(function () {
 
 			const constellationMembers = Array.from(new Set([...(layout.pillars || []), ...satellitesList]));
 
-			// Piliers 3x plus grands que les satellites (24px vs 8px)
 			const SATELLITE_RADIUS = 8;
 			const PILLAR_RADIUS = 24;
 
@@ -1357,7 +1354,6 @@ $(document).ready(function () {
 				const dist = item.isPillar ? innerRadius : outerRadius;
 				const playerId = `player_${item.name}`;
 
-				// Couleur de badge pour TOUT LE MONDE
 				const badgeColor = getStatusBadgeColor(status);
 				const nodeRadius = item.isPillar ? PILLAR_RADIUS : SATELLITE_RADIUS;
 
@@ -1383,20 +1379,32 @@ $(document).ready(function () {
 			});
 		}
 
-		// Réutilisation des positions existantes pour lissage
+		// --- 2. GESTION DES POSITIONS INITIALES POUR UN ÉCOULEMENT FLUIDE ---
 		const prevNodesMap = new Map(simulation ? simulation.nodes().map(d => [d.id, d]) : []);
+		
+		// Position de référence de la tribu sélectionnée dans la vue précédente
+		let originX = width / 2;
+		let originY = height / 2;
+		if (activeTribeFilter && prevNodesMap.has(activeTribeFilter)) {
+			const prevTribe = prevNodesMap.get(activeTribeFilter);
+			originX = prevTribe.x;
+			originY = prevTribe.y;
+		}
+
 		newNodes.forEach(d => {
 			if (prevNodesMap.has(d.id)) {
+				// Le nœud existait déjà : on conserve sa position actuelle (pas de saut)
 				const prev = prevNodesMap.get(d.id);
 				d.x = prev.x;
 				d.y = prev.y;
-			} else if (d.targetX !== undefined) {
-				d.x = width / 2;
-				d.y = height / 2;
+			} else {
+				// Les nouveaux satellites naissent depuis la position courante de la tribu centrale
+				d.x = originX;
+				d.y = originY;
 			}
 		});
 
-		// --- 2. FONCTIONS DE DRAG & DROP ---
+		// --- 3. FONCTIONS DE DRAG & DROP ---
 		function dragstarted(event, d) {
 			if (!event.active) simulation.alphaTarget(0.3).restart();
 			d.fx = d.x;
@@ -1410,17 +1418,11 @@ $(document).ready(function () {
 
 		function dragended(event, d) {
 			if (!event.active) simulation.alphaTarget(0);
-			// Conserver le centre fixe uniquement pour la tribu sélectionnée en constellation
-			if (activeTribeFilter && d.type === 'tribe' && d.id === activeTribeFilter) {
-				d.fx = width / 2;
-				d.fy = height / 2;
-			} else {
-				d.fx = null;
-				d.fy = null;
-			}
+			d.fx = null;
+			d.fy = null;
 		}
 
-		// --- 3. RENDU DES LIENS ---
+		// --- 4. RENDU DES LIENS ---
 		const linkSel = svg.select("g.links-layer")
 			.selectAll("line")
 			.data(newLinks, d => `${d.source.id || d.source}-${d.target.id || d.target}`);
@@ -1445,7 +1447,7 @@ $(document).ready(function () {
 			.attr("stroke-dasharray", d => d.type === 'constellation-link' ? "2, 3" : "4, 4")
 			.attr("stroke-width", d => d.type === 'constellation-link' ? (d.isPillar ? 2 : 1.2) : Math.max(1, d.value / 5));
 
-		// --- 4. RENDU DES NŒUDS ---
+		// --- 5. RENDU DES NŒUDS ---
 		const nodeSel = svg.select("g.nodes-layer")
 			.selectAll("g.node-group")
 			.data(newNodes, d => d.id);
@@ -1496,7 +1498,7 @@ $(document).ready(function () {
 					.style("stroke", activeTribeFilter === d.id ? "var(--main-color, #48bb78)" : "rgba(255, 255, 255, 0.35)")
 					.style("stroke-width", activeTribeFilter === d.id ? "3px" : "1.5px");
 
-				const tribeIconPath = config.tribes[d.id] ? config.tribes[d.id].icon : '';
+				const tribeIconPath = (typeof config !== 'undefined' && config.tribes && config.tribes[d.id]) ? config.tribes[d.id].icon : '';
 				g.select(".node-icon")
 					.attr("href", tribeIconPath)
 					.attr("xlink:href", tribeIconPath)
@@ -1544,19 +1546,20 @@ $(document).ready(function () {
 		});
 
 		node.on("click", (event, d) => {
-			if (event.defaultPrevented) return; // Ignore le clic si c'était un glisser-déposer
+			if (event.defaultPrevented) return;
 			if (d.type === 'tribe') {
 				activeTribeFilter = (activeTribeFilter === d.id) ? null : d.id;
 				updateTableForDate($datePicker.val());
 			}
 		});
 
-		// --- 5. SIMULATION PHYSIQUE ---
+		// --- 6. SIMULATION PHYSIQUE ET ATTRACTION PROGRESSIVE ---
 		if (!simulation) {
 			simulation = d3.forceSimulation();
 		}
 
 		if (!activeTribeFilter) {
+			// Vue Globale
 			simulation
 				.force("link", d3.forceLink().id(d => d.id).distance(145))
 				.force("charge", d3.forceManyBody().strength(-320))
@@ -1565,17 +1568,28 @@ $(document).ready(function () {
 				.force("center", d3.forceCenter(width / 2, height / 2))
 				.force("collision", d3.forceCollide().radius(d => d.radius + 15));
 		} else {
+			// Vue Constellation : La tribu centrale est attirée doucement vers le centre (force 0.15)
+			// pendant que les satellites s'écartent vers leurs orbites cibles (force 0.3)
 			simulation
-				.force("link", d3.forceLink().id(d => d.id).distance(d => d.isPillar ? 80 : 120))
-				.force("x", d3.forceX(d => d.targetX || width / 2).strength(0.35))
-				.force("y", d3.forceY(d => d.targetY || height / 2).strength(0.35))
+				.force("center", null)
+				.force("link", d3.forceLink().id(d => d.id).distance(d => d.isPillar ? 70 : 110))
 				.force("charge", d3.forceManyBody().strength(-40))
-				.force("collision", d3.forceCollide().radius(d => d.radius + 10));
+				.force("x", d3.forceX(d => {
+					if (d.type === 'tribe' && d.id === activeTribeFilter) return width / 2;
+					return d.targetX || width / 2;
+				}).strength(d => (d.type === 'tribe' && d.id === activeTribeFilter) ? 0.15 : 0.3))
+				.force("y", d3.forceY(d => {
+					if (d.type === 'tribe' && d.id === activeTribeFilter) return height / 2;
+					return d.targetY || height / 2;
+				}).strength(d => (d.type === 'tribe' && d.id === activeTribeFilter) ? 0.15 : 0.3))
+				.force("collision", d3.forceCollide().radius(d => d.radius + 8));
 		}
 
 		simulation.nodes(newNodes);
 		simulation.force("link").links(newLinks);
-		simulation.alpha(0.35).restart();
+
+		// Relance la simulation avec assez d'énergie (alpha 0.6) pour glisser en douceur
+		simulation.alpha(0.6).restart();
 
 		simulation.on("tick", () => {
 			link
