@@ -1455,8 +1455,15 @@ $(document).ready(function () {
         nodeEnter.append("image").attr("class", "node-icon");
 
         const textGroup = nodeEnter.append("text").attr("class", "count-text");
-        textGroup.append("tspan").attr("class", "num-span").attr("x", 0);
-        textGroup.append("tspan").attr("class", "lbl-span").attr("x", 0);
+        textGroup.append("tspan")
+            .attr("class", "num-span")
+            .attr("x", 0)
+            .attr("dy", "0");
+            
+        textGroup.append("tspan")
+            .attr("class", "lbl-span")
+            .attr("x", 0)
+            .attr("dy", "1.2em");
 
         nodeEnter.append("text").attr("class", "player-label");
 
