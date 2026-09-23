@@ -1367,21 +1367,22 @@ $(document).ready(function () {
                 });
             };
 
-            // 1. Anneau intérieur : Pillars (Grandes bulles à 75px sur 360°)
-            pillars.forEach((p, i) => {
-                addMemberNode(p, i, pillars.length, 75, 24, 'pillar', true, false);
-            });
+            // 1. Anneau intérieur : Pillars (Pas de décalage : 0°)
+			pillars.forEach((p, i) => {
+				addMemberNode(p, i, pillars.length, 75, 24, 'pillar', true, false, 0);
+			});
 
-            // 2. Anneau intermédiaire : Satellites (Bulles moyennes à 110px sur 360°, décalées)
-            satellites.forEach((p, i) => {
-                const offset = satellites.length > 0 ? (Math.PI / satellites.length) : 0;
-                addMemberNode(p, i, satellites.length, 110, 14, 'satellite', false, true, offset);
-            });
+			// 2. Anneau intermédiaire : Satellites (Décalé de 30° / PI/6)
+			satellites.forEach((p, i) => {
+				const offset = Math.PI / 6; // 30 degrés de rotation
+				addMemberNode(p, i, satellites.length, 110, 14, 'satellite', false, true, offset);
+			});
 
-            // 3. Anneau extérieur : Autres membres (Petites bulles à 145px sur 360°)
-            others.forEach((p, i) => {
-                addMemberNode(p, i, others.length, 145, 8, 'member', false, false);
-            });
+			// 3. Anneau extérieur : Autres membres (Décalé de 45° / PI/4)
+			others.forEach((p, i) => {
+				const offset = Math.PI / 4; // 45 degrés de rotation
+				addMemberNode(p, i, others.length, 145, 8, 'member', false, false, offset);
+			});
         }
 		
 		nodes.sort((a, b) => {
