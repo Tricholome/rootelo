@@ -1330,59 +1330,53 @@ $(document).ready(function () {
             // Récupération de TOUS les membres de la tribu
             const allTribePlayers = (snapshot.players || []).filter(p => p.main_tribe === tribe);
 
-            // Répartition des membres dans les 3 catégories
+            // Classification par rôle
             const pillars = allTribePlayers.filter(p => pillarsSet.has(p.name));
             const satellites = allTribePlayers.filter(p => satellitesSet.has(p.name) && !pillarsSet.has(p.name));
             const others = allTribePlayers.filter(p => !pillarsSet.has(p.name) && !satellitesSet.has(p.name));
 
-            // Fonction utilitaire pour générer les nœuds sur leur couronne respective (360°)
-            const addMemberNode = (item, idx, total, dist, radius, role, isPillar, isSatellite, angleOffset = 0) => {
+            // Liste unifiée des membres avec leurs propriétés physiques (distance et rayon)
+            const placementList = [
+                ...pillars.map(p => ({ name: p.name, role: 'pillar', isPillar: true, isSatellite: false, dist: 75, radius: 24 })),
+                ...satellites.map(p => ({ name: p.name, role: 'satellite', isPillar: false, isSatellite: true, dist: 110, radius: 14 })),
+                ...others.map(p => ({ name: p.name, role: 'member', isPillar: false, isSatellite: false, dist: 145, radius: 8 }))
+            ];
+
+            // Distribution angulaire GLOBALE uniforme sur 360°
+            const totalMembers = placementList.length || 1;
+
+            placementList.forEach((item, idx) => {
                 const pData = playersMap.get(item.name);
                 const scoreObj = pData?.scores?.[tribe];
-                const angle = (2 * Math.PI * idx / (total || 1)) - (Math.PI / 2) + angleOffset;
+
+                // Chaque joueur a un axe unique réparti régulièrement sur tout le cadran
+                const angle = (2 * Math.PI * idx / totalMembers) - (Math.PI / 2);
                 const playerId = `player_${item.name}`;
 
                 nodes.push({
                     id: playerId,
                     type: 'player',
                     name: item.name,
-                    role: role,
-                    isPillar: isPillar,
-                    isSatellite: isSatellite,
+                    role: item.role,
+                    isPillar: item.isPillar,
+                    isSatellite: item.isSatellite,
                     pct: scoreObj?.pct || 0,
                     status: scoreObj?.status || null,
                     color: getBadgeColor(scoreObj?.status),
-                    radius: radius,
-                    targetX: width / 2 + dist * Math.cos(angle),
-                    targetY: height / 2 + dist * Math.sin(angle)
+                    radius: item.radius,
+                    targetX: width / 2 + item.dist * Math.cos(angle),
+                    targetY: height / 2 + item.dist * Math.sin(angle)
                 });
 
                 links.push({
                     source: tribe,
                     target: playerId,
                     type: 'constellation-link',
-                    isPillar: isPillar,
-                    isSatellite: isSatellite,
-                    role: role
+                    isPillar: item.isPillar,
+                    isSatellite: item.isSatellite,
+                    role: item.role
                 });
-            };
-
-            // 1. Anneau intérieur : Pillars (Pas de décalage : 0°)
-			pillars.forEach((p, i) => {
-				addMemberNode(p, i, pillars.length, 75, 24, 'pillar', true, false, 0);
-			});
-
-			// 2. Anneau intermédiaire : Satellites (Décalé de 30° / PI/6)
-			satellites.forEach((p, i) => {
-				const offset = Math.PI / 6; // 30 degrés de rotation
-				addMemberNode(p, i, satellites.length, 110, 14, 'satellite', false, true, offset);
-			});
-
-			// 3. Anneau extérieur : Autres membres (Décalé de 45° / PI/4)
-			others.forEach((p, i) => {
-				const offset = Math.PI / 4; // 45 degrés de rotation
-				addMemberNode(p, i, others.length, 145, 8, 'member', false, false, offset);
-			});
+            });
         }
 		
 		nodes.sort((a, b) => {
