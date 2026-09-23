@@ -23,7 +23,7 @@
             <tr>
                 <th class="player-col">Player</th>
                 <th class="games-col">Games</th>
-                {% for tribe, data in network_config.tribes.items() %}
+                {% for tribe, data in config.network.tribes.items() %}
                 <th><img src="{{ data.icon }}" title="{{ tribe }}" alt="{{ tribe }}" class="tribe-icon"></th>
                 {% endfor %}
             </tr>
