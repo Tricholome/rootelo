@@ -1181,139 +1181,368 @@ function showVisitorRow(name, date) {
 }
 
 /* =========================================================================
-   --- 10. NETWORK MAP & TABLE (OPTIMIZED) ---
+   --- 10. NETWORK MAP & TABLE ---
    ========================================================================= */
 
-$(() => {
-    // 1. Initialisation & Déstructuration globale
-    const { NETWORK_DATES: dates, NETWORK_SNAPSHOTS: snaps, NETWORK_CONFIG: cfg = { tribes: {}, tiers: {} } } = window;
-    if (!dates?.length || !snaps) return;
+$(document).ready(function () {
+    // 1. Guard Clause & Extraction des données globales
+    const dates = window.NETWORK_DATES;
+    const snapshots = window.NETWORK_SNAPSHOTS;
+    const config = window.NETWORK_CONFIG || { tribes: {}, tiers: {} };
 
-    const TARGETS = Object.keys(cfg.tribes || {});
-    let activeFilter = null, sim = null, cIdx = dates.length - 1;
-    const $dp =$('#datePicker').attr({ min: dates[0], max: dates[dates.length - 1] });
+    if (!dates || !dates.length || !snapshots) return;
 
-    // 2. DataTables (Configuration & Rendu compact)
+    // --- Variables d'état ---
+    const TARGET_TRIBES = Object.keys(config.tribes || {});
+    const centerCols = TARGET_TRIBES.map((_, i) => i + 1);
+    let activeTribeFilter = null;
+    let simulation = null;
+    let currentIndex = dates.length - 1;
+
+    // --- Éléments DOM ---
+    const $datePicker =$('#datePicker').attr({ min: dates[0], max: dates[dates.length - 1] });
+    const $prevBtn =$('#prevDateBtn');
+    const $nextBtn =$('#nextDateBtn');
+    const $earliestBtn =$('#earliestDateBtn');
+    const $latestBtn =$('#latestDateBtn');
+
+    /* -------------------------------------------------------------------------
+       10.1 DATA TABLE MANAGEMENT
+       ------------------------------------------------------------------------- */
     const table = $('#frogTable').DataTable({
-        order: [[1, "desc"]], responsive: false, autoWidth: false, pageLength: 50, dom: 'rt<"bottom"p><"clear">',
-        columnDefs: [{ className: "dt-nowrap", targets: "_all" }, { className: "dt-center", targets: TARGETS.map((_, i) => i + 1) }]
+        "order": [[1, "desc"]],
+        "responsive": false,
+        "autoWidth": false,
+        "pageLength": 50,
+        "dom": 'rt<"bottom"p><"clear">',
+        "columnDefs": [
+            { "className": "dt-nowrap", "targets": "_all" },
+            { "className": "dt-center", "targets": centerCols }
+        ]
     });
 
-    const getColor = s => cfg.tiers?.[s] || cfg.tiers?.Default || "#4a5568";
-    const renderCell = (s, isMain) => (!s || (!isMain && s.pct < 10)) ? `<div class="tribe-cell-empty">-</div>` :
-        `<div class="tribe-cell"><span class="tribe-pct">${s.pct}%</span> ${isMain && s.status ? `<span class="tribe-badge" style="background-color:${getColor(s.status)}">${s.status}</span>` : ''}</div>`;
+    function getBadgeColor(status) {
+        return config.tiers?.[status] || config.tiers?.Default || "#4a5568";
+    }
 
-    const updateTable = snap => {
-        TARGETS.forEach((t, i) => {
-            const isActive = (snap.active_tribes || []).includes(t);
-            table.column(i + 2).visible(isActive, false);
-            if (isActive) $(table.column(i + 2).header()).html(`<img src="${cfg.tribes[t]?.icon||''}" title="${snap.tribe_labels?.[t]||t}" class="tribe-icon">`);
+    function renderTribeCell(scoreData, isMainTribe) {
+        if (!scoreData || (!isMainTribe && scoreData.pct < 10)) {
+            return `<div class="tribe-cell-empty">-</div>`;
+        }
+        const pctStr = `<span class="tribe-pct">${scoreData.pct}%</span>`;
+        if (!isMainTribe || !scoreData.status) {
+            return `<div class="tribe-cell">${pctStr}</div>`;
+        }
+        return `<div class="tribe-cell">${pctStr} <span class="tribe-badge" style="background-color: ${getBadgeColor(scoreData.status)};">${scoreData.status}</span></div>`;
+    }
+
+    function updateTable(snapshot) {
+        const activeTribes = snapshot.active_tribes || [];
+
+        TARGET_TRIBES.forEach((tribe, idx) => {
+            const colIdx = idx + 2;
+            const isActive = activeTribes.includes(tribe);
+            table.column(colIdx).visible(isActive, false);
+
+            if (isActive) {
+                const label = snapshot.tribe_labels?.[tribe] || tribe;
+                const icon = config.tribes[tribe]?.icon || '';
+                $(table.column(colIdx).header()).html(`<img src="${icon}" title="${label}" alt="${label}" class="tribe-icon">`);
+            }
         });
-        const rows = (snap.players || []).filter(p => !activeFilter || p.main_tribe === activeFilter)
-            .map(p => [p.name, p.games, ...TARGETS.map(t => renderCell(p.scores?.[t], p.main_tribe === t))]);
-        table.clear().rows.add(rows).columns.adjust().draw();
-    };
 
-    // 3. Génération des données D3 (Fusion des logiques)
-    const buildData = (snap, w, h) => {
-        const pMap = new Map((snap.players || []).map(p => [p.name, p])), nodes = [], links = [];
-        
-        if (!activeFilter) {
-            (snap.active_tribes || []).forEach(t => nodes.push({ id: t, type: 'tribe', count: snap.summary?.[t]||0, radius: Math.max(30, 22 + Math.sqrt(snap.summary?.[t]||0) * 10) }));
-            for (let i = 0; i < nodes.length; i++) {
-                for (let j = i + 1; j < nodes.length; j++) {
-                    const [t1, t2] = [nodes[i].id, nodes[j].id];
-                    const affinity = (snap.players || []).reduce((acc, p) => acc + ((p.main_tribe === t1 && p.scores?.[t2]) ? p.scores[t2].pct : (p.main_tribe === t2 && p.scores?.[t1]) ? p.scores[t1].pct : 0), 0);
-                    const count = (snap.players || []).filter(p => (p.main_tribe === t1 && p.scores?.[t2]) || (p.main_tribe === t2 && p.scores?.[t1])).length;
-                    if (count > 0 && (affinity / count) > 2) links.push({ source: t1, target: t2, value: affinity / count, type: 'inter-tribe' });
+        let players = snapshot.players || [];
+        if (activeTribeFilter) {
+            players = players.filter(p => p.main_tribe === activeTribeFilter);
+        }
+
+        const rows = players.map(p => [
+            p.name,
+            p.games,
+            ...TARGET_TRIBES.map(t => renderTribeCell(p.scores?.[t], p.main_tribe === t))
+        ]);
+
+        table.clear().rows.add(rows).columns.adjust().draw();
+    }
+
+    /* -------------------------------------------------------------------------
+       10.2 GRAPH DATA GENERATOR
+       ------------------------------------------------------------------------- */
+    function buildGraphData(snapshot, width, height) {
+        const activeTribes = snapshot.active_tribes || [];
+        const tribeLayout = snapshot.tribe_layout || {};
+        const playersMap = new Map((snapshot.players || []).map(p => [p.name, p]));
+        const nodes = [];
+        const links = [];
+
+        if (!activeTribeFilter) {
+            // Vue Globale
+            activeTribes.forEach(t => {
+                const count = snapshot.summary?.[t] || 0;
+                nodes.push({
+                    id: t,
+                    type: 'tribe',
+                    label: snapshot.tribe_labels?.[t] || t,
+                    count: count,
+                    radius: Math.max(30, 22 + Math.sqrt(count) * 10)
+                });
+            });
+
+            for (let i = 0; i < activeTribes.length; i++) {
+                for (let j = i + 1; j < activeTribes.length; j++) {
+                    const t1 = activeTribes[i];
+                    const t2 = activeTribes[j];
+                    let totalAffinity = 0;
+                    let count = 0;
+
+                    (snapshot.players || []).forEach(p => {
+                        if (p.main_tribe === t1 && p.scores?.[t2]) {
+                            totalAffinity += p.scores[t2].pct;
+                            count++;
+                        } else if (p.main_tribe === t2 && p.scores?.[t1]) {
+                            totalAffinity += p.scores[t1].pct;
+                            count++;
+                        }
+                    });
+
+                    const avg = count > 0 ? totalAffinity / count : 0;
+                    if (avg > 2) {
+                        links.push({ source: t1, target: t2, value: avg, type: 'inter-tribe' });
+                    }
                 }
             }
         } else {
-            const count = snap.summary?.[activeFilter] || 0;
-            nodes.push({ id: activeFilter, type: 'tribe', count, radius: Math.max(36, 26 + Math.sqrt(count) * 10) });
-            
-            const layout = snap.tribe_layout?.[activeFilter] || { pillars: [], satellites: [] };
-            const members = Array.from(new Set([...(layout.pillars || []), ...(layout.satellites || (snap.players || []).filter(p => p.main_tribe === activeFilter).map(p => p.name))]));
-            
-            members.forEach((m, i) => {
-                const isPillar = (layout.pillars || []).includes(m), sObj = pMap.get(m)?.scores?.[activeFilter], angle = (2 * Math.PI * i / members.length) - (Math.PI / 2), dist = isPillar ? 80 : 120;
-                nodes.push({ id: `p_${m}`, type: 'player', name: m, isPillar, color: getColor(sObj?.status), radius: isPillar ? 24 : 8, targetX: w / 2 + dist * Math.cos(angle), targetY: h / 2 + dist * Math.sin(angle) });
-                links.push({ source: activeFilter, target: `p_${m}`, type: 'constellation', isPillar });
+            // Vue Constellation par tribu
+            const tribe = activeTribeFilter;
+            const count = snapshot.summary?.[tribe] || 0;
+            const layout = tribeLayout[tribe] || { pillars: [], satellites: [] };
+            const pillarsSet = new Set(layout.pillars || []);
+
+            nodes.push({
+                id: tribe,
+                type: 'tribe',
+                label: snapshot.tribe_labels?.[tribe] || tribe,
+                count: count,
+                radius: Math.max(36, 26 + Math.sqrt(count) * 10)
+            });
+
+            const satellites = layout.satellites || (snapshot.players || [])
+                .filter(p => p.main_tribe === tribe)
+                .map(p => p.name);
+
+            const members = Array.from(new Set([...(layout.pillars || []), ...satellites]));
+            const placementList = [
+                ...members.filter(m => pillarsSet.has(m)).map(m => ({ name: m, isPillar: true })),
+                ...members.filter(m => !pillarsSet.has(m)).map(m => ({ name: m, isPillar: false }))
+            ];
+
+            const total = placementList.length || 1;
+            placementList.forEach((item, idx) => {
+                const pData = playersMap.get(item.name);
+                const scoreObj = pData?.scores?.[tribe];
+                const angle = (2 * Math.PI * idx / total) - (Math.PI / 2);
+                const dist = item.isPillar ? 80 : 120;
+                const playerId = `player_${item.name}`;
+
+                nodes.push({
+                    id: playerId,
+                    type: 'player',
+                    name: item.name,
+                    isPillar: item.isPillar,
+                    pct: scoreObj?.pct || 0,
+                    status: scoreObj?.status || null,
+                    color: getBadgeColor(scoreObj?.status),
+                    radius: item.isPillar ? 24 : 8,
+                    targetX: width / 2 + dist * Math.cos(angle),
+                    targetY: height / 2 + dist * Math.sin(angle)
+                });
+
+                links.push({ source: tribe, target: playerId, type: 'constellation-link', isPillar: item.isPillar });
             });
         }
+
         return { nodes, links };
-    };
+    }
 
-    // 4. Moteur D3 (Simplifié avec .join() et forces dynamiques)
-    const renderGraph = snap => {
+    /* -------------------------------------------------------------------------
+       10.3 D3 NETWORK GRAPH ENGINE
+       ------------------------------------------------------------------------- */
+    function renderTribeGraph(snapshot) {
         if (typeof d3 === 'undefined') return;
-        const svg = d3.select("#tribeMapSvg"), w = document.getElementById('tribeMapContainer')?.clientWidth || 800, h = 380;
-        if (svg.select("g.links-layer").empty()) svg.append("g").attr("class", "links-layer") && svg.append("g").attr("class", "nodes-layer");
 
-        const { nodes: nData, links: lData } = buildData(snap, w, h);
-        
-        // Liens
-        const link = svg.select("g.links-layer").selectAll("line").data(lData, d => `${d.source.id || d.source}-${d.target.id || d.target}`)
-            .join("line").transition().duration(400)
-            .attr("stroke", d => d.type === 'constellation' ? (d.isPillar ? "var(--main-color, #48bb78)" : "rgba(255,255,255,0.35)") : "rgba(255,255,255,0.25)")
-            .attr("stroke-dasharray", d => d.type === 'constellation' ? "2,3" : "4,4")
-            .attr("stroke-width", d => d.type === 'constellation' ? (d.isPillar ? 2 : 1.2) : Math.max(1, d.value / 5));
+        const svg = d3.select("#tribeMapSvg");
+        const container = document.getElementById('tribeMapContainer');
+        const width = container?.clientWidth || 800;
+        const height = 380;
+        const duration = 400;
 
-        // Nœuds
-        const node = svg.select("g.nodes-layer").selectAll("g.node-group").data(nData, d => d.id)
-            .join(enter => {
-                const g = enter.append("g").attr("class", "node-group").style("cursor", "grab").call(d3.drag()
-                    .on("start", (e, d) => { if (!e.active) sim.alphaTarget(0.3).restart(); d.fx = d.x; d.fy = d.y; })
-                    .on("drag", (e, d) => { d.fx = e.x; d.fy = e.y; })
-                    .on("end", (e, d) => { if (!e.active) sim.alphaTarget(0); d.fx = d.fy = null; }));
-                g.append("circle").attr("class", "node-circle");
-                g.append("image").attr("class", "node-icon").attr("pointer-events", "none");
-                g.append("text").attr("class", "player-label").attr("text-anchor", "middle").attr("dy", "0.35em");
-                return g;
-            });
+        if (svg.select("g.links-layer").empty()) {
+            svg.append("g").attr("class", "links-layer");
+            svg.append("g").attr("class", "nodes-layer");
+        }
 
-        node.each(function (d) {
-            const g = d3.select(this), isTribe = d.type === 'tribe', isSel = activeFilter === d.id, sz = Math.max(24, d.radius * 0.7);
-            g.select(".node-circle").transition().duration(400).attr("r", d.radius)
-                .style("fill", isTribe ? (isSel ? "rgba(18, 38, 25, 0.95)" : "rgba(10, 22, 14, 0.65)") : d.color)
-                .style("fill-opacity", !isTribe && d.isPillar ? 0.35 : 0.85)
-                .style("stroke", isTribe ? (isSel ? "var(--main-color, #48bb78)" : "rgba(255,255,255,0.35)") : d.color)
-                .style("stroke-width", isSel || (!isTribe && d.isPillar) ? "2.5px" : "1.5px");
-            
-            g.select(".node-icon").style("display", isTribe ? "block" : "none").attr("href", cfg.tribes?.[d.id]?.icon).attr("width", sz).attr("height", sz).attr("x", -sz/2).attr("y", -sz/2 - 6);
-            g.select(".player-label").style("display", isTribe ? "none" : "block").text(isTribe ? "" : (d.isPillar ? `★ ${d.name}` : d.name)).attr("class", d.isPillar ? "player-label pillar-label" : "player-label member-label");
-        }).on("click", (e, d) => { if (!e.defaultPrevented && d.type === 'tribe') { activeFilter = activeFilter === d.id ? null : d.id; updateView(dates[cIdx]); }});
+        const { nodes: newNodes, links: newLinks } = buildGraphData(snapshot, width, height);
 
-        // Simulation unifiée
-        if (!sim) sim = d3.forceSimulation().on("tick", () => {
-            svg.selectAll("line").attr("x1", d => d.source.x).attr("y1", d => d.source.y).attr("x2", d => d.target.x).attr("y2", d => d.target.y);
-            node.attr("transform", d => `translate(${d.x},${d.y})`);
+        // Maintien des positions lors des transitions
+        const prevNodesMap = new Map(simulation ? simulation.nodes().map(d => [d.id, d]) : []);
+        let originX = width / 2, originY = height / 2;
+
+        if (activeTribeFilter && prevNodesMap.has(activeTribeFilter)) {
+            const prevTribe = prevNodesMap.get(activeTribeFilter);
+            originX = prevTribe.x;
+            originY = prevTribe.y;
+        }
+
+        newNodes.forEach(d => {
+            if (prevNodesMap.has(d.id)) {
+                const prev = prevNodesMap.get(d.id);
+                d.x = prev.x; d.y = prev.y;
+            } else {
+                d.x = originX; d.y = originY;
+            }
         });
 
-        const isTgt = !!activeFilter;
-        sim.nodes(nData)
-           .force("center", isTgt ? null : d3.forceCenter(w/2, h/2))
-           .force("link", d3.forceLink(lData).id(d => d.id).distance(d => isTgt ? (d.isPillar ? 70 : 110) : 145))
-           .force("charge", d3.forceManyBody().strength(isTgt ? -40 : -320))
-           .force("x", d3.forceX(d => (isTgt && d.id === activeFilter) ? w/2 : (d.targetX || w/2)).strength(isTgt ? 0.3 : 0.08))
-           .force("y", d3.forceY(d => (isTgt && d.id === activeFilter) ? h/2 : (d.targetY || h/2)).strength(isTgt ? 0.3 : 0.08))
-           .force("collision", d3.forceCollide().radius(d => d.radius + (isTgt ? 8 : 15)))
-           .alpha(0.6).restart();
-    };
+        const drag = d3.drag()
+            .on("start", (e, d) => { if (!e.active) simulation.alphaTarget(0.3).restart(); d.fx = d.x; d.fy = d.y; })
+            .on("drag", (e, d) => { d.fx = e.x; d.fy = e.y; })
+            .on("end", (e, d) => { if (!e.active) simulation.alphaTarget(0); d.fx = null; d.fy = null; });
 
-    // 5. Contrôles & UI
-    const updateView = (date) => {
-        if (!snaps[date]) return;
-        $dp.val(date); renderGraph(snaps[date]); updateTable(snaps[date]);
-        $('#prevDateBtn').prop('disabled', cIdx <= 0); $('#nextDateBtn').prop('disabled', cIdx >= dates.length - 1);
-    };
-    const setDate = i => { if (i >= 0 && i < dates.length) updateView(dates[cIdx = i]); };
+        // --- Liens ---
+        const linkSel = svg.select("g.links-layer").selectAll("line")
+            .data(newLinks, d => `${d.source.id || d.source}-${d.target.id || d.target}`);
 
-    $('#prevDateBtn').on('click', () => setDate(cIdx - 1));
-    $('#nextDateBtn').on('click', () => setDate(cIdx + 1));
-    $('#earliestDateBtn').on('click', () => setDate(0));
-    $('#latestDateBtn').on('click', () => setDate(dates.length - 1));
-    $dp.on('change', function() { setDate(Math.max(0, dates.findIndex(d => d >= $(this).val()))); });$(window).on('resize', () => setDate(cIdx));
-    
-    setDate(cIdx); // Init
+        linkSel.exit().transition().duration(duration).attr("stroke-opacity", 0).remove();
+
+        const link = linkSel.enter().append("line").merge(linkSel);
+
+        link.attr("class", d => `link ${d.type} ${d.isPillar ? 'is-pillar' : ''}`)
+            .transition().duration(duration)
+            .attr("stroke-width", d => d.type === 'inter-tribe' ? Math.max(1, d.value / 5) : null);
+
+        // --- Nœuds ---
+        const nodeSel = svg.select("g.nodes-layer").selectAll("g.node-group")
+            .data(newNodes, d => d.id);
+
+        nodeSel.exit().transition().duration(duration).style("opacity", 0).remove();
+
+        const nodeEnter = nodeSel.enter().append("g")
+            .call(drag);
+
+        nodeEnter.append("circle").attr("class", "node-circle");
+        nodeEnter.append("image").attr("class", "node-icon");
+
+        const textGroup = nodeEnter.append("text").attr("class", "count-text");
+        textGroup.append("tspan").attr("class", "num-span").attr("x", 0);
+        textGroup.append("tspan").attr("class", "lbl-span").attr("x", 0);
+
+        nodeEnter.append("text").attr("class", "player-label");
+
+        const node = nodeEnter.merge(nodeSel);
+
+        // Mise à jour simplifiée via les classes CSS et variables
+        node.attr("class", d => `node-group type-${d.type} ${activeTribeFilter === d.id ? 'is-selected' : ''} ${d.isPillar ? 'is-pillar' : ''}`)
+            .style("--node-color", d => d.color || null)
+            .transition().duration(duration).style("opacity", 1);
+
+        node.each(function (d) {
+            const g = d3.select(this);
+
+            if (d.type === 'tribe') {
+                const iconPath = config.tribes?.[d.id]?.icon || '';
+                const iconSize = Math.max(24, d.radius * 0.7);
+
+                g.select(".node-circle").transition().duration(duration).attr("r", d.radius);
+                g.select(".node-icon")
+                    .attr("href", iconPath).attr("xlink:href", iconPath)
+                    .attr("width", iconSize).attr("height", iconSize)
+                    .attr("x", -iconSize / 2).attr("y", -iconSize / 2 - 6);
+
+                g.select(".count-text").attr("transform", `translate(0, ${iconSize / 2 + 8})`);
+                g.select(".num-span").text(d.count);
+                g.select(".lbl-span").text(" membres");
+            } else {
+                g.select(".node-circle").transition().duration(duration).attr("r", d.radius);
+                g.select(".player-label")
+                    .text(d.isPillar ? `★ ${d.name}` : d.name)
+                    .attr("class", d.isPillar ? "player-label pillar-label" : "player-label member-label");
+            }
+        });
+
+        node.on("click", (event, d) => {
+            if (event.defaultPrevented || d.type !== 'tribe') return;
+            activeTribeFilter = (activeTribeFilter === d.id) ? null : d.id;
+            updateView(dates[currentIndex]);
+        });
+
+        // --- Simulation Physique ---
+        if (!simulation) simulation = d3.forceSimulation();
+        const linkForce = d3.forceLink().id(d => d.id);
+
+        if (!activeTribeFilter) {
+            simulation
+                .force("center", d3.forceCenter(width / 2, height / 2))
+                .force("link", linkForce.distance(145))
+                .force("charge", d3.forceManyBody().strength(-320))
+                .force("x", d3.forceX(width / 2).strength(0.08))
+                .force("y", d3.forceY(height / 2).strength(0.08))
+                .force("collision", d3.forceCollide().radius(d => d.radius + 15));
+        } else {
+            simulation
+                .force("center", null)
+                .force("link", linkForce.distance(d => d.isPillar ? 70 : 110))
+                .force("charge", d3.forceManyBody().strength(-40))
+                .force("x", d3.forceX(d => (d.type === 'tribe' && d.id === activeTribeFilter) ? width / 2 : (d.targetX || width / 2)).strength(d => (d.type === 'tribe' && d.id === activeTribeFilter) ? 0.15 : 0.3))
+                .force("y", d3.forceY(d => (d.type === 'tribe' && d.id === activeTribeFilter) ? height / 2 : (d.targetY || height / 2)).strength(d => (d.type === 'tribe' && d.id === activeTribeFilter) ? 0.15 : 0.3))
+                .force("collision", d3.forceCollide().radius(d => d.radius + 8));
+        }
+
+        simulation.nodes(newNodes);
+        simulation.force("link").links(newLinks);
+        simulation.alpha(0.6).restart();
+
+        simulation.on("tick", () => {
+            link.attr("x1", d => d.source.x).attr("y1", d => d.source.y)
+                .attr("x2", d => d.target.x).attr("y2", d => d.target.y);
+            node.attr("transform", d => `translate(${d.x},${d.y})`);
+        });
+    }
+
+    /* -------------------------------------------------------------------------
+       10.4 TIMELINE & CONTROLS
+       ------------------------------------------------------------------------- */
+    function updateView(selectedDate) {
+        $datePicker.val(selectedDate);
+        const snapshot = snapshots[selectedDate];
+        if (!snapshot) return;
+
+        renderTribeGraph(snapshot);
+        updateTable(snapshot);
+
+        $prevBtn.prop('disabled', currentIndex <= 0);$nextBtn.prop('disabled', currentIndex >= dates.length - 1);
+    }
+
+    function setDateByIndex(index) {
+        if (index >= 0 && index < dates.length) {
+            currentIndex = index;
+            updateView(dates[currentIndex]);
+        }
+    }
+
+    // Écouteurs d'événements UI
+    $prevBtn.on('click', () => setDateByIndex(currentIndex - 1));$nextBtn.on('click', () => setDateByIndex(currentIndex + 1));
+    $earliestBtn.on('click', () => setDateByIndex(0));$latestBtn.on('click', () => setDateByIndex(dates.length - 1));
+
+    $datePicker.on('change', function () {
+        const val = $(this).val();
+        const matchIdx = dates.findIndex(d => d >= val);
+        currentIndex = matchIdx !== -1 ? matchIdx : dates.length - 1;
+        updateView(dates[currentIndex]);
+    });
+
+    $(window).on('resize', () => {
+        if (dates[currentIndex]) updateView(dates[currentIndex]);
+    });
+
+    // Lancement
+    setDateByIndex(currentIndex);
 });
