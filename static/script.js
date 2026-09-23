@@ -1317,6 +1317,7 @@ $(document).ready(function () {
             const count = snapshot.summary?.[tribe] || 0;
             const layout = tribeLayout[tribe] || { pillars: [], satellites: [] };
             const pillarsSet = new Set(layout.pillars || []);
+            const satellitesSet = new Set(layout.satellites || []);
 
             nodes.push({
                 id: tribe,
@@ -1326,14 +1327,18 @@ $(document).ready(function () {
                 radius: Math.max(36, 26 + Math.sqrt(count) * 10)
             });
 
-            const satellites = layout.satellites || (snapshot.players || [])
-                .filter(p => p.main_tribe === tribe)
-                .map(p => p.name);
+            // Récupération de TOUS les membres de la tribu
+            const allTribePlayers = (snapshot.players || []).filter(p => p.main_tribe === tribe);
 
-            const members = Array.from(new Set([...(layout.pillars || []), ...satellites]));
+            // Répartition des membres dans les 3 catégories
+            const pillars = allTribePlayers.filter(p => pillarsSet.has(p.name));
+            const satellites = allTribePlayers.filter(p => satellitesSet.has(p.name) && !pillarsSet.has(p.name));
+            const others = allTribePlayers.filter(p => !pillarsSet.has(p.name) && !satellitesSet.has(p.name));
+
             const placementList = [
-                ...members.filter(m => pillarsSet.has(m)).map(m => ({ name: m, isPillar: true })),
-                ...members.filter(m => !pillarsSet.has(m)).map(m => ({ name: m, isPillar: false }))
+                ...pillars.map(p => ({ name: p.name, role: 'pillar', isPillar: true, isSatellite: false })),
+                ...satellites.map(p => ({ name: p.name, role: 'satellite', isPillar: false, isSatellite: true })),
+                ...others.map(p => ({ name: p.name, role: 'member', isPillar: false, isSatellite: false }))
             ];
 
             const total = placementList.length || 1;
@@ -1341,23 +1346,44 @@ $(document).ready(function () {
                 const pData = playersMap.get(item.name);
                 const scoreObj = pData?.scores?.[tribe];
                 const angle = (2 * Math.PI * idx / total) - (Math.PI / 2);
-                const dist = item.isPillar ? 80 : 120;
+
+                // Définition des 3 tailles de bulles et de leurs orbites
+                let dist = 140;
+                let radius = 8; // Petite taille pour le reste des membres
+
+                if (item.role === 'pillar') {
+                    dist = 75;
+                    radius = 24; // Grande taille pour les pillars
+                } else if (item.role === 'satellite') {
+                    dist = 110;
+                    radius = 14; // Taille moyenne pour les satellites
+                }
+
                 const playerId = `player_${item.name}`;
 
                 nodes.push({
                     id: playerId,
                     type: 'player',
                     name: item.name,
+                    role: item.role,
                     isPillar: item.isPillar,
+                    isSatellite: item.isSatellite,
                     pct: scoreObj?.pct || 0,
                     status: scoreObj?.status || null,
                     color: getBadgeColor(scoreObj?.status),
-                    radius: item.isPillar ? 24 : 8,
+                    radius: radius,
                     targetX: width / 2 + dist * Math.cos(angle),
                     targetY: height / 2 + dist * Math.sin(angle)
                 });
 
-                links.push({ source: tribe, target: playerId, type: 'constellation-link', isPillar: item.isPillar });
+                links.push({
+                    source: tribe,
+                    target: playerId,
+                    type: 'constellation-link',
+                    isPillar: item.isPillar,
+                    isSatellite: item.isSatellite,
+                    role: item.role
+                });
             });
         }
 
@@ -1415,7 +1441,7 @@ $(document).ready(function () {
 
         const link = linkSel.enter().append("line").merge(linkSel);
 
-        link.attr("class", d => `link ${d.type} ${d.isPillar ? 'is-pillar' : ''}`)
+        link.attr("class", d => `link ${d.type} ${d.isPillar ? 'is-pillar' : ''} ${d.isSatellite ? 'is-satellite' : ''}`)
             .transition().duration(duration)
             .attr("stroke-width", d => d.type === 'inter-tribe' ? Math.max(1, d.value / 5) : null);
 
@@ -1439,8 +1465,8 @@ $(document).ready(function () {
 
         const node = nodeEnter.merge(nodeSel);
 
-        // Mise à jour simplifiée via les classes CSS et variables
-        node.attr("class", d => `node-group type-${d.type} ${activeTribeFilter === d.id ? 'is-selected' : ''} ${d.isPillar ? 'is-pillar' : ''}`)
+        // Application des classes dynamiques pour le styling CSS
+        node.attr("class", d => `node-group type-${d.type} ${activeTribeFilter === d.id ? 'is-selected' : ''} ${d.isPillar ? 'is-pillar' : ''} ${d.isSatellite ? 'is-satellite' : ''} role-${d.role || 'none'}`)
             .style("--node-color", d => d.color || null)
             .transition().duration(duration).style("opacity", 1);
 
@@ -1459,12 +1485,20 @@ $(document).ready(function () {
 
                 g.select(".count-text").attr("transform", `translate(0, ${iconSize / 2 + 8})`);
                 g.select(".num-span").text(d.count);
-                g.select(".lbl-span").text(" membres");
+                g.select(".lbl-span").text(" members");
             } else {
                 g.select(".node-circle").transition().duration(duration).attr("r", d.radius);
+
+                let labelClass = "player-label member-label";
+                if (d.isPillar) {
+                    labelClass = "player-label pillar-label";
+                } else if (d.isSatellite) {
+                    labelClass = "player-label satellite-label";
+                }
+
                 g.select(".player-label")
-                    .text(d.isPillar ? `★ ${d.name}` : d.name)
-                    .attr("class", d.isPillar ? "player-label pillar-label" : "player-label member-label");
+                    .text(d.name)
+                    .attr("class", labelClass);
             }
         });
 
@@ -1489,7 +1523,11 @@ $(document).ready(function () {
         } else {
             simulation
                 .force("center", null)
-                .force("link", linkForce.distance(d => d.isPillar ? 70 : 110))
+                .force("link", linkForce.distance(d => {
+                    if (d.isPillar) return 70;
+                    if (d.isSatellite) return 110;
+                    return 140;
+                }))
                 .force("charge", d3.forceManyBody().strength(-40))
                 .force("x", d3.forceX(d => (d.type === 'tribe' && d.id === activeTribeFilter) ? width / 2 : (d.targetX || width / 2)).strength(d => (d.type === 'tribe' && d.id === activeTribeFilter) ? 0.15 : 0.3))
                 .force("y", d3.forceY(d => (d.type === 'tribe' && d.id === activeTribeFilter) ? height / 2 : (d.targetY || height / 2)).strength(d => (d.type === 'tribe' && d.id === activeTribeFilter) ? 0.15 : 0.3))
