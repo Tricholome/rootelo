@@ -1442,16 +1442,12 @@ $(document).ready(function () {
             .on("end", (e, d) => { if (!e.active) simulation.alphaTarget(0); d.fx = null; d.fy = null; });
 
         // --- Liens ---
-        const linkSel = svg.select("g.links-layer").selectAll("line")
-            .data(newLinks, d => `${d.source.id || d.source}-${d.target.id || d.target}`);
+		const link = linkEnter.merge(linkSel);
 
-        linkSel.exit().transition().duration(duration).attr("stroke-opacity", 0).remove();
-
-        const link = linkSel.enter().append("line").merge(linkSel);
-
-        link.attr("class", d => `link ${d.type} ${d.isPillar ? 'is-pillar' : ''} ${d.isSatellite ? 'is-satellite' : ''}`)
-            .transition().duration(duration)
-            .attr("stroke-width", d => d.type === 'inter-tribe' ? Math.max(1, d.value / 5) : null);
+		link.attr("class", d => `link ${d.type} ${d.isPillar ? 'is-pillar' : ''} ${d.isSatellite ? 'is-satellite' : ''}`)
+			.style("stroke-dasharray", "none") // Force des lignes pleines et continues
+			.transition().duration(duration)
+			.attr("stroke-width", d => d.type === 'inter-tribe' ? Math.max(1, d.value / 5) : null);
 
         // --- Nœuds ---
         const nodeSel = svg.select("g.nodes-layer").selectAll("g.node-group")
