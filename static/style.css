@@ -1725,7 +1725,7 @@ table.dataTable tbody tr.loser td {
    [COMPONENTS] 8. NETWORK MAP & TABLE
    ------------------------------------------------------------------------- */
 
-/* Container & Layout */
+/* --- A. Container & Layout --- */
 .network-container {
     max-width: clamp(600px, 60vw, 1600px);
     margin: 0 auto;
@@ -1743,9 +1743,16 @@ table.dataTable tbody tr.loser td {
     width: 100%;
     height: 100%;
     display: block;
+    
+    /* Local SVG Variables for easy theming */
+    --link-color: rgba(255, 255, 255, 0.25);
+    --link-active-color: rgba(255, 255, 255, 0.35);
+    --node-tribe-bg: rgba(10, 22, 14, 0.65);
+    --node-tribe-active: rgba(18, 38, 25, 0.95);
+    --node-tribe-stroke: rgba(255, 255, 255, 0.35);
 }
 
-/* Date Controls */
+/* --- B. Date Controls --- */
 .date-controls {
     display: flex;
     align-items: center;
@@ -1756,16 +1763,22 @@ table.dataTable tbody tr.loser td {
 
 .date-picker {
     padding: 6px 12px;
-    font-size: var(--size-base, 1rem);
-    background-color: var(--dt-input-bg, transparent);
+    font-size: var(--size-base);
+    background-color: var(--dt-input-bg);
     color: var(--text-main);
     border: 1px solid var(--border-soft);
     border-radius: 4px;
     font-family: var(--font-ui);
     outline: none;
+    transition: border-color 0.2s, background-color 0.2s;
 }
 
-/* Network Data Table */
+.date-picker:focus {
+    border-color: var(--main-color);
+    background-color: var(--dt-row-hover);
+}
+
+/* --- C. Network Data Table --- */
 .network-table {
     width: 100%;
     table-layout: fixed;
@@ -1806,109 +1819,80 @@ table.dataTable tbody tr.loser td {
 .tribe-cell-empty {
     display: flex;
     justify-content: center;
-    color: var(--text-muted, #a0aec0);
+    color: var(--text-muted);
 }
 
 .tribe-pct {
-    font-weight: var(--bold, 600);
-    font-size: 0.82rem;
+    font-weight: var(--bold);
+    font-size: var(--size-sm);
 }
 
 .tribe-badge {
-    color: #ffffff;
+    color: var(--text-bright);
     padding: 1px 5px;
     border-radius: 4px;
-    font-size: 0.68rem;
-    font-weight: var(--bold, 600);
+    font-size: var(--size-xs);
+    font-weight: var(--bold);
     white-space: nowrap;
 }
 
-/* D3 SVG Label Classes */
-.node-group .num-span {
-    font-size: 0.95rem;
-    font-weight: var(--bold, 800);
-    fill: var(--text-main, #ffffff);
-}
+/* --- D. Interactive SVG Map Styles (D3.js) --- */
 
-.node-group .lbl-span {
-    font-size: 0.6rem;
-    font-weight: var(--bold, 600);
-    fill: var(--text-muted, rgba(255, 255, 255, 0.65));
-}
+/* Base SVG Structure & Cursors */
+#tribeMapSvg .node-group { cursor: grab; }
+#tribeMapSvg .node-group:active { cursor: grabbing; }
 
-.node-group .pillar-label {
-    font-size: 0.72rem;
-    font-weight: var(--bold, 800);
-    fill: var(--main-color, #68d391);
-}
-
-.node-group .member-label {
-    font-size: 0.65rem;
-    font-weight: var(--bold, 600);
-    fill: var(--text-bright, #e2e8f0);
-}
-
-/* =========================================================================
-   --- NETWORK MAP STYLES ---
-   ========================================================================= */
-
-/* Structure de base SVG */
-#tribeMapSvg .node-group {
-    cursor: grab;
-}
-#tribeMapSvg .node-group:active {
-    cursor: grabbing;
-}
 #tribeMapSvg text,
 #tribeMapSvg image {
     pointer-events: none;
 }
+
 #tribeMapSvg text {
     text-anchor: middle;
 }
 
-/* --- Liens --- */
+/* Links & Connectors */
 #tribeMapSvg line {
-    stroke: rgba(255, 255, 255, 0.25);
+    stroke: var(--link-color);
     stroke-opacity: 0.35;
     stroke-dasharray: 4, 4;
     transition: stroke 0.3s, stroke-opacity 0.3s;
 }
 
 #tribeMapSvg line.constellation-link {
-    stroke: rgba(255, 255, 255, 0.35);
+    stroke: var(--link-active-color);
     stroke-opacity: 0.75;
     stroke-dasharray: 2, 3;
     stroke-width: 1.2px;
 }
 
 #tribeMapSvg line.constellation-link.is-pillar {
-    stroke: var(--main-color, #48bb78);
+    stroke: var(--main-color);
     stroke-width: 2px;
 }
 
-/* --- Nœuds --- */
+/* Nodes */
 #tribeMapSvg .node-circle {
     transition: fill 0.3s, stroke 0.3s, stroke-width 0.3s, r 0.3s;
 }
 
-/* Nœuds Tribus */
+/* Tribe Nodes */
 #tribeMapSvg .node-group.type-tribe .node-circle {
-    fill: rgba(10, 22, 14, 0.65);
-    stroke: rgba(255, 255, 255, 0.35);
+    fill: var(--node-tribe-bg);
+    stroke: var(--node-tribe-stroke);
     stroke-width: 1.5px;
 }
 
 #tribeMapSvg .node-group.type-tribe.is-selected .node-circle {
-    fill: rgba(18, 38, 25, 0.95);
-    stroke: var(--main-color, #48bb78);
+    fill: var(--node-tribe-active);
+    stroke: var(--main-color);
     stroke-width: 3px;
 }
 
-/* Nœuds Joueurs */
+/* Player Nodes */
 #tribeMapSvg .node-group.type-player .node-circle {
-    fill: var(--node-color, #4a5568);
-    stroke: var(--node-color, #4a5568);
+    fill: var(--node-color, var(--text-muted));
+    stroke: var(--node-color, var(--text-muted));
     fill-opacity: 0.85;
     stroke-width: 1.5px;
 }
@@ -1918,17 +1902,39 @@ table.dataTable tbody tr.loser td {
     stroke-width: 2.5px;
 }
 
-/* --- Visibilité selon le type --- */
+/* Type-specific Visibility */
 #tribeMapSvg .type-tribe .player-label,
 #tribeMapSvg .type-player .node-icon,
 #tribeMapSvg .type-player .count-text {
     display: none;
 }
 
-/* Typographie SVG */
+/* SVG Typography & Labels */
+#tribeMapSvg .num-span {
+    font-size: var(--size-base);
+    font-weight: var(--bold);
+    fill: var(--text-main);
+}
+
 #tribeMapSvg .lbl-span {
+    font-size: var(--size-xs);
+    font-weight: var(--bold);
+    fill: var(--text-muted);
     dy: 1.15em;
 }
+
+#tribeMapSvg .pillar-label {
+    font-size: var(--size-sm);
+    font-weight: var(--bold);
+    fill: var(--text-bright);
+}
+
+#tribeMapSvg .member-label {
+    font-size: var(--size-xs);
+    font-weight: var(--bold);
+    fill: var(--text-bright);
+}
+
 #tribeMapSvg .player-label {
     dy: 0.35em;
 }
