@@ -1902,6 +1902,11 @@ table.dataTable tbody tr.loser td {
     stroke-width: 2.5px;
 }
 
+#tribeMapSvg .node-group.type-player.is-satellite .node-circle {
+    fill-opacity: 0.6;
+    stroke-width: 2px;
+}
+
 /* Type-specific Visibility */
 #tribeMapSvg .type-tribe .player-label,
 #tribeMapSvg .type-player .node-icon,
@@ -1929,14 +1934,16 @@ table.dataTable tbody tr.loser td {
     fill: var(--text-bright);
 }
 
-#tribeMapSvg .member-label {
+#tribeMapSvg .satellite-label {
     font-size: var(--size-xs);
     font-weight: var(--bold);
     fill: var(--text-bright);
 }
 
-#tribeMapSvg .player-label {
-    dy: 0.35em;
+#tribeMapSvg .member-label {
+    font-size: var(--size-xs);
+    font-weight: var(--normal);
+    fill: var(--text-muted);
 }
 
 /* =========================================================================
