@@ -1330,26 +1330,37 @@ $(document).ready(function () {
             // Récupération de TOUS les membres de la tribu
             const allTribePlayers = (snapshot.players || []).filter(p => p.main_tribe === tribe);
 
-            // Classification par rôle
-            const pillars = allTribePlayers.filter(p => pillarsSet.has(p.name));
-            const satellites = allTribePlayers.filter(p => satellitesSet.has(p.name) && !pillarsSet.has(p.name));
-            const others = allTribePlayers.filter(p => !pillarsSet.has(p.name) && !satellitesSet.has(p.name));
+            // 1. Préparation des 3 listes par rôle
+            const pillarsList = allTribePlayers
+                .filter(p => pillarsSet.has(p.name))
+                .map(p => ({ name: p.name, role: 'pillar', isPillar: true, isSatellite: false, dist: 75, radius: 24 }));
 
-            // Liste unifiée des membres avec leurs propriétés physiques (distance et rayon)
-            const placementList = [
-                ...pillars.map(p => ({ name: p.name, role: 'pillar', isPillar: true, isSatellite: false, dist: 75, radius: 24 })),
-                ...satellites.map(p => ({ name: p.name, role: 'satellite', isPillar: false, isSatellite: true, dist: 110, radius: 14 })),
-                ...others.map(p => ({ name: p.name, role: 'member', isPillar: false, isSatellite: false, dist: 145, radius: 8 }))
-            ];
+            const satellitesList = allTribePlayers
+                .filter(p => satellitesSet.has(p.name) && !pillarsSet.has(p.name))
+                .map(p => ({ name: p.name, role: 'satellite', isPillar: false, isSatellite: true, dist: 110, radius: 14 }));
 
-            // Distribution angulaire GLOBALE uniforme sur 360°
+            const othersList = allTribePlayers
+                .filter(p => !pillarsSet.has(p.name) && !satellitesSet.has(p.name))
+                .map(p => ({ name: p.name, role: 'member', isPillar: false, isSatellite: false, dist: 145, radius: 8 }));
+
+            // 2. Entrelacement (Round-Robin) pour mélanger les tailles sur tout le tour du cercle
+            const placementList = [];
+            const maxLen = Math.max(pillarsList.length, satellitesList.length, othersList.length);
+
+            for (let i = 0; i < maxLen; i++) {
+                if (i < pillarsList.length) placementList.push(pillarsList[i]);
+                if (i < satellitesList.length) placementList.push(satellitesList[i]);
+                if (i < othersList.length) placementList.push(othersList[i]);
+            }
+
+            // 3. Distribution angulaire globale sur 360°
             const totalMembers = placementList.length || 1;
 
             placementList.forEach((item, idx) => {
                 const pData = playersMap.get(item.name);
                 const scoreObj = pData?.scores?.[tribe];
 
-                // Chaque joueur a un axe unique réparti régulièrement sur tout le cadran
+                // Distribution régulière autour du cadran
                 const angle = (2 * Math.PI * idx / totalMembers) - (Math.PI / 2);
                 const playerId = `player_${item.name}`;
 
