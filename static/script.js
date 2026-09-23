@@ -1248,294 +1248,345 @@ $(document).ready(function () {
     }
 
     function renderTribeGraph(snapshot) {
-        if (typeof d3 === 'undefined') return;
-        
-        const svg = d3.select("#tribeMapSvg");
-        const container = document.getElementById('tribeMapContainer');
-        const width = container.clientWidth || 800;
-        const height = 380;
-        const duration = 500;
+		if (typeof d3 === 'undefined') return;
+		
+		const svg = d3.select("#tribeMapSvg");
+		const container = document.getElementById('tribeMapContainer');
+		const width = container.clientWidth || 800;
+		const height = 380;
+		const duration = 400;
 
-        if (svg.select("g.links-layer").empty()) {
-            svg.append("g").attr("class", "links-layer");
-            svg.append("g").attr("class", "nodes-layer");
-        }
+		// Couches D3 (Liens en dessous, Nœuds au-dessus)
+		if (svg.select("g.links-layer").empty()) {
+			svg.append("g").attr("class", "links-layer");
+			svg.append("g").attr("class", "nodes-layer");
+		}
 
-        const activeTribes = snapshot.active_tribes || [];
-        const tribeLayout = snapshot.tribe_layout || {};
-        const playersMap = new Map((snapshot.players || []).map(p => [p.name, p]));
+		const activeTribes = snapshot.active_tribes || [];
+		const tribeLayout = snapshot.tribe_layout || {};
+		const playersMap = new Map((snapshot.players || []).map(p => [p.name, p]));
 
-        let newNodes = [];
-        let newLinks = [];
+		let newNodes = [];
+		let newLinks = [];
 
-        if (!activeTribeFilter) {
-            newNodes = activeTribes.map(t => {
-                const count = (snapshot.summary && snapshot.summary[t]) ? snapshot.summary[t] : 0;
-                return {
-                    id: t,
-                    type: 'tribe',
-                    label: (snapshot.tribe_labels && snapshot.tribe_labels[t]) ? snapshot.tribe_labels[t] : t,
-                    count: count,
-                    radius: Math.max(30, 22 + Math.sqrt(count) * 10)
-                };
-            });
+		// --- 1. CONSTRUCTION DU GRAPH (GLOBAL OU CONSTELLATION) ---
+		if (!activeTribeFilter) {
+			// Vue Globale : Tribus et connexions inter-tribus
+			newNodes = activeTribes.map(t => {
+				const count = (snapshot.summary && snapshot.summary[t]) ? snapshot.summary[t] : 0;
+				return {
+					id: t,
+					type: 'tribe',
+					label: (snapshot.tribe_labels && snapshot.tribe_labels[t]) ? snapshot.tribe_labels[t] : t,
+					count: count,
+					radius: Math.max(30, 22 + Math.sqrt(count) * 10)
+				};
+			});
 
-            for (let i = 0; i < activeTribes.length; i++) {
-                for (let j = i + 1; j < activeTribes.length; j++) {
-                    const t1 = activeTribes[i];
-                    const t2 = activeTribes[j];
-                    let totalAffinity = 0;
-                    let count = 0;
+			for (let i = 0; i < activeTribes.length; i++) {
+				for (let j = i + 1; j < activeTribes.length; j++) {
+					const t1 = activeTribes[i];
+					const t2 = activeTribes[j];
+					let totalAffinity = 0;
+					let count = 0;
 
-                    (snapshot.players || []).forEach(p => {
-                        if (p.main_tribe === t1 && p.scores && p.scores[t2]) {
-                            totalAffinity += p.scores[t2].pct;
-                            count++;
-                        } else if (p.main_tribe === t2 && p.scores && p.scores[t1]) {
-                            totalAffinity += p.scores[t1].pct;
-                            count++;
-                        }
-                    });
+					(snapshot.players || []).forEach(p => {
+						if (p.main_tribe === t1 && p.scores && p.scores[t2]) {
+							totalAffinity += p.scores[t2].pct;
+							count++;
+						} else if (p.main_tribe === t2 && p.scores && p.scores[t1]) {
+							totalAffinity += p.scores[t1].pct;
+							count++;
+						}
+					});
 
-                    const avg = count > 0 ? (totalAffinity / count) : 0;
-                    if (avg > 2) {
-                        newLinks.push({ source: t1, target: t2, value: avg, type: 'inter-tribe' });
-                    }
-                }
-            }
-        } else {
-            const tribe = activeTribeFilter;
-            const count = (snapshot.summary && snapshot.summary[tribe]) ? snapshot.summary[tribe] : 0;
-            const layout = tribeLayout[tribe] || { pillars: [], satellites: [] };
-            const pillarsSet = new Set(layout.pillars || []);
+					const avg = count > 0 ? (totalAffinity / count) : 0;
+					if (avg > 2) {
+						newLinks.push({ source: t1, target: t2, value: avg, type: 'inter-tribe' });
+					}
+				}
+			}
+		} else {
+			// Vue Constellation : Tribu au centre + membres en orbite
+			const tribe = activeTribeFilter;
+			const count = (snapshot.summary && snapshot.summary[tribe]) ? snapshot.summary[tribe] : 0;
+			const layout = tribeLayout[tribe] || { pillars: [], satellites: [] };
+			const pillarsSet = new Set(layout.pillars || []);
 
-            const centerNode = {
-                id: tribe,
-                type: 'tribe',
-                label: (snapshot.tribe_labels && snapshot.tribe_labels[tribe]) ? snapshot.tribe_labels[tribe] : tribe,
-                count: count,
-                radius: Math.max(36, 26 + Math.sqrt(count) * 10),
-                fx: width / 2,
-                fy: height / 2
-            };
-            newNodes.push(centerNode);
+			// Nœud central (Tribu)
+			newNodes.push({
+				id: tribe,
+				type: 'tribe',
+				label: (snapshot.tribe_labels && snapshot.tribe_labels[tribe]) ? snapshot.tribe_labels[tribe] : tribe,
+				count: count,
+				radius: Math.max(36, 26 + Math.sqrt(count) * 10),
+				fx: width / 2,
+				fy: height / 2
+			});
 
-            const satellitesList = layout.satellites || (snapshot.players || [])
-                .filter(p => p.main_tribe === tribe)
-                .map(p => p.name);
+			const satellitesList = layout.satellites || (snapshot.players || [])
+				.filter(p => p.main_tribe === tribe)
+				.map(p => p.name);
 
-            const constellationMembers = Array.from(new Set([...(layout.pillars || []), ...satellitesList]));
+			const constellationMembers = Array.from(new Set([...(layout.pillars || []), ...satellitesList]));
 
-            const innerRadius = 75; 
-            const outerRadius = 105; 
+			// Piliers 3x plus grands que les satellites (24px vs 8px)
+			const SATELLITE_RADIUS = 8;
+			const PILLAR_RADIUS = 24;
 
-            const pillarNodes = constellationMembers.filter(m => pillarsSet.has(m));
-            const memberNodes = constellationMembers.filter(m => !pillarsSet.has(m));
+			const innerRadius = 80; 
+			const outerRadius = 120; 
 
-            const placementList = [
-                ...pillarNodes.map(m => ({ name: m, isPillar: true })),
-                ...memberNodes.map(m => ({ name: m, isPillar: false }))
-            ];
+			const pillarNodes = constellationMembers.filter(m => pillarsSet.has(m));
+			const memberNodes = constellationMembers.filter(m => !pillarsSet.has(m));
 
-            const totalMembers = placementList.length || 1;
+			const placementList = [
+				...pillarNodes.map(m => ({ name: m, isPillar: true })),
+				...memberNodes.map(m => ({ name: m, isPillar: false }))
+			];
 
-            placementList.forEach((item, idx) => {
-                const pData = playersMap.get(item.name);
-                const scoreObj = (pData && pData.scores) ? pData.scores[tribe] : null;
-                const pct = scoreObj ? scoreObj.pct : 0;
-                const status = scoreObj ? scoreObj.status : null;
+			const totalMembers = placementList.length || 1;
 
-                const angle = (2 * Math.PI * idx / totalMembers) - (Math.PI / 2);
-                const dist = item.isPillar ? innerRadius : outerRadius;
-                const playerId = `player_${item.name}`;
+			placementList.forEach((item, idx) => {
+				const pData = playersMap.get(item.name);
+				const scoreObj = (pData && pData.scores) ? pData.scores[tribe] : null;
+				const pct = scoreObj ? scoreObj.pct : 0;
+				const status = scoreObj ? scoreObj.status : null;
 
-                newNodes.push({
-                    id: playerId,
-                    type: 'player',
-                    name: item.name,
-                    isPillar: item.isPillar,
-                    pct: pct,
-                    status: status,
-                    color: item.isPillar ? "var(--main-color, #48bb78)" : getStatusBadgeColor(status),
-                    radius: item.isPillar ? 16 : 13,
-                    targetX: width / 2 + dist * Math.cos(angle),
-                    targetY: height / 2 + dist * Math.sin(angle)
-                });
+				const angle = (2 * Math.PI * idx / totalMembers) - (Math.PI / 2);
+				const dist = item.isPillar ? innerRadius : outerRadius;
+				const playerId = `player_${item.name}`;
 
-                newLinks.push({
-                    source: tribe,
-                    target: playerId,
-                    type: 'constellation-link',
-                    isPillar: item.isPillar
-                });
-            });
-        }
+				// Couleur de badge pour TOUT LE MONDE
+				const badgeColor = getStatusBadgeColor(status);
+				const nodeRadius = item.isPillar ? PILLAR_RADIUS : SATELLITE_RADIUS;
 
-        const prevNodesMap = new Map(simulation ? simulation.nodes().map(d => [d.id, d]) : []);
-        newNodes.forEach(d => {
-            if (prevNodesMap.has(d.id)) {
-                const prev = prevNodesMap.get(d.id);
-                d.x = prev.x;
-                d.y = prev.y;
-            } else if (d.targetX !== undefined) {
-                d.x = width / 2;
-                d.y = height / 2;
-            }
-        });
+				newNodes.push({
+					id: playerId,
+					type: 'player',
+					name: item.name,
+					isPillar: item.isPillar,
+					pct: pct,
+					status: status,
+					color: badgeColor,
+					radius: nodeRadius,
+					targetX: width / 2 + dist * Math.cos(angle),
+					targetY: height / 2 + dist * Math.sin(angle)
+				});
 
-        const linkSel = svg.select("g.links-layer")
-            .selectAll("line")
-            .data(newLinks, d => `${d.source.id || d.source}-${d.target.id || d.target}`);
+				newLinks.push({
+					source: tribe,
+					target: playerId,
+					type: 'constellation-link',
+					isPillar: item.isPillar
+				});
+			});
+		}
 
-        linkSel.exit()
-            .transition().duration(duration)
-            .attr("stroke-opacity", 0)
-            .remove();
+		// Réutilisation des positions existantes pour lissage
+		const prevNodesMap = new Map(simulation ? simulation.nodes().map(d => [d.id, d]) : []);
+		newNodes.forEach(d => {
+			if (prevNodesMap.has(d.id)) {
+				const prev = prevNodesMap.get(d.id);
+				d.x = prev.x;
+				d.y = prev.y;
+			} else if (d.targetX !== undefined) {
+				d.x = width / 2;
+				d.y = height / 2;
+			}
+		});
 
-        const linkEnter = linkSel.enter().append("line")
-            .attr("stroke-opacity", 0);
+		// --- 2. FONCTIONS DE DRAG & DROP ---
+		function dragstarted(event, d) {
+			if (!event.active) simulation.alphaTarget(0.3).restart();
+			d.fx = d.x;
+			d.fy = d.y;
+		}
 
-        const link = linkEnter.merge(linkSel);
-        link.transition().duration(duration)
-            .attr("stroke", d => d.type === 'constellation-link' ? (d.isPillar ? "var(--main-color, #48bb78)" : "rgba(255, 255, 255, 0.4)") : "rgba(255, 255, 255, 0.25)")
-            .attr("stroke-opacity", d => d.type === 'constellation-link' ? 0.75 : 0.35)
-            .attr("stroke-dasharray", d => d.type === 'constellation-link' ? "2, 3" : "4, 4")
-            .attr("stroke-width", d => d.type === 'constellation-link' ? (d.isPillar ? 2 : 1.2) : Math.max(1, d.value / 5));
+		function dragged(event, d) {
+			d.fx = event.x;
+			d.fy = event.y;
+		}
 
-        const nodeSel = svg.select("g.nodes-layer")
-            .selectAll("g.node-group")
-            .data(newNodes, d => d.id);
+		function dragended(event, d) {
+			if (!event.active) simulation.alphaTarget(0);
+			// Conserver le centre fixe uniquement pour la tribu sélectionnée en constellation
+			if (activeTribeFilter && d.type === 'tribe' && d.id === activeTribeFilter) {
+				d.fx = width / 2;
+				d.fy = height / 2;
+			} else {
+				d.fx = null;
+				d.fy = null;
+			}
+		}
 
-        nodeSel.exit()
-            .transition().duration(duration)
-            .style("opacity", 0)
-            .remove();
+		// --- 3. RENDU DES LIENS ---
+		const linkSel = svg.select("g.links-layer")
+			.selectAll("line")
+			.data(newLinks, d => `${d.source.id || d.source}-${d.target.id || d.target}`);
 
-        const nodeEnter = nodeSel.enter().append("g")
-            .attr("class", "node-group")
-            .style("cursor", "pointer")
-            .style("opacity", 0);
+		linkSel.exit()
+			.transition().duration(duration)
+			.attr("stroke-opacity", 0)
+			.remove();
 
-        nodeEnter.append("circle").attr("class", "node-circle");
-        nodeEnter.append("image").attr("class", "node-icon").attr("pointer-events", "none");
-        
-        const textGroup = nodeEnter.append("text")
-            .attr("class", "count-text")
-            .attr("text-anchor", "middle")
-            .attr("pointer-events", "none");
+		const linkEnter = linkSel.enter().append("line")
+			.attr("stroke-opacity", 0);
 
-        textGroup.append("tspan").attr("class", "num-span");
-        textGroup.append("tspan").attr("class", "lbl-span");
+		const link = linkEnter.merge(linkSel);
+		link.transition().duration(duration)
+			.attr("stroke", d => {
+				if (d.type === 'constellation-link') {
+					return d.isPillar ? "var(--main-color, #48bb78)" : "rgba(255, 255, 255, 0.35)";
+				}
+				return "rgba(255, 255, 255, 0.25)";
+			})
+			.attr("stroke-opacity", d => d.type === 'constellation-link' ? 0.75 : 0.35)
+			.attr("stroke-dasharray", d => d.type === 'constellation-link' ? "2, 3" : "4, 4")
+			.attr("stroke-width", d => d.type === 'constellation-link' ? (d.isPillar ? 2 : 1.2) : Math.max(1, d.value / 5));
 
-        nodeEnter.append("text")
-            .attr("class", "player-label")
-            .attr("text-anchor", "middle")
-            .attr("pointer-events", "none");
+		// --- 4. RENDU DES NŒUDS ---
+		const nodeSel = svg.select("g.nodes-layer")
+			.selectAll("g.node-group")
+			.data(newNodes, d => d.id);
 
-        const node = nodeEnter.merge(nodeSel);
+		nodeSel.exit()
+			.transition().duration(duration)
+			.style("opacity", 0)
+			.remove();
 
-        node.transition().duration(duration)
-            .style("opacity", 1);
+		const nodeEnter = nodeSel.enter().append("g")
+			.attr("class", "node-group")
+			.style("cursor", "grab")
+			.style("opacity", 0)
+			.call(d3.drag()
+				.on("start", dragstarted)
+				.on("drag", dragged)
+				.on("end", dragended));
 
-        node.each(function(d) {
-            const g = d3.select(this);
+		nodeEnter.append("circle").attr("class", "node-circle");
+		nodeEnter.append("image").attr("class", "node-icon").attr("pointer-events", "none");
+		
+		const textGroup = nodeEnter.append("text")
+			.attr("class", "count-text")
+			.attr("text-anchor", "middle")
+			.attr("pointer-events", "none");
 
-            if (d.type === 'tribe') {
-                g.select(".node-circle")
-                    .transition().duration(duration)
-                    .attr("r", d.radius)
-                    .style("fill", activeTribeFilter === d.id ? "rgba(18, 38, 25, 0.95)" : "rgba(10, 22, 14, 0.65)")
-                    .style("stroke", activeTribeFilter === d.id ? "var(--main-color, #48bb78)" : "rgba(255, 255, 255, 0.35)")
-                    .style("stroke-width", activeTribeFilter === d.id ? "3px" : "1.5px");
+		textGroup.append("tspan").attr("class", "num-span");
+		textGroup.append("tspan").attr("class", "lbl-span");
 
-                const tribeIconPath = config.tribes[d.id] ? config.tribes[d.id].icon : '';
-                g.select(".node-icon")
-                    .attr("href", tribeIconPath)
-                    .attr("xlink:href", tribeIconPath)
-                    .attr("width", Math.max(24, d.radius * 0.7))
-                    .attr("height", Math.max(24, d.radius * 0.7))
-                    .attr("x", -Math.max(24, d.radius * 0.7) / 2)
-                    .attr("y", -Math.max(24, d.radius * 0.7) / 2 - 6)
-                    .style("display", "block");
+		nodeEnter.append("text")
+			.attr("class", "player-label")
+			.attr("text-anchor", "middle")
+			.attr("pointer-events", "none");
 
-                g.select(".count-text")
-                    .attr("transform", `translate(0, ${Math.max(24, d.radius * 0.7) / 2 + 8})`)
-                    .style("display", "block");
+		const node = nodeEnter.merge(nodeSel);
 
-                g.select(".num-span")
-                    .text(d.count)
-                    .attr("x", 0)
-                    .attr("dy", "0");
+		node.transition().duration(duration)
+			.style("opacity", 1);
 
-                g.select(".lbl-span")
-                    .text(" membres")
-                    .attr("x", 0)
-                    .attr("dy", "1.15em");
+		node.each(function(d) {
+			const g = d3.select(this);
 
-                g.select(".player-label").style("display", "none");
+			if (d.type === 'tribe') {
+				g.select(".node-circle")
+					.transition().duration(duration)
+					.attr("r", d.radius)
+					.style("fill", activeTribeFilter === d.id ? "rgba(18, 38, 25, 0.95)" : "rgba(10, 22, 14, 0.65)")
+					.style("stroke", activeTribeFilter === d.id ? "var(--main-color, #48bb78)" : "rgba(255, 255, 255, 0.35)")
+					.style("stroke-width", activeTribeFilter === d.id ? "3px" : "1.5px");
 
-            } else if (d.type === 'player') {
-                g.select(".node-circle")
-                    .transition().duration(duration)
-                    .attr("r", d.radius)
-                    .style("fill", d.isPillar ? "rgba(72, 187, 120, 0.25)" : "rgba(26, 32, 44, 0.85)")
-                    .style("stroke", d.color)
-                    .style("stroke-width", d.isPillar ? "2.5px" : "1.5px");
+				const tribeIconPath = config.tribes[d.id] ? config.tribes[d.id].icon : '';
+				g.select(".node-icon")
+					.attr("href", tribeIconPath)
+					.attr("xlink:href", tribeIconPath)
+					.attr("width", Math.max(24, d.radius * 0.7))
+					.attr("height", Math.max(24, d.radius * 0.7))
+					.attr("x", -Math.max(24, d.radius * 0.7) / 2)
+					.attr("y", -Math.max(24, d.radius * 0.7) / 2 - 6)
+					.style("display", "block");
 
-                g.select(".node-icon").style("display", "none");
-                g.select(".count-text").style("display", "none");
+				g.select(".count-text")
+					.attr("transform", `translate(0, ${Math.max(24, d.radius * 0.7) / 2 + 8})`)
+					.style("display", "block");
 
-                const labelText = d.isPillar ? `★ ${d.name}` : d.name;
-                g.select(".player-label")
-                    .style("display", "block")
-                    .text(labelText)
-                    .attr("dy", "0.35em")
-                    .attr("class", d.isPillar ? "player-label pillar-label" : "player-label member-label");
-            }
-        });
+				g.select(".num-span")
+					.text(d.count)
+					.attr("x", 0)
+					.attr("dy", "0");
 
-        node.on("click", (event, d) => {
-            if (d.type === 'tribe') {
-                activeTribeFilter = (activeTribeFilter === d.id) ? null : d.id;
-                updateTableForDate($datePicker.val());
-            }
-        });
+				g.select(".lbl-span")
+					.text(" membres")
+					.attr("x", 0)
+					.attr("dy", "1.15em");
 
-        if (!simulation) {
-            simulation = d3.forceSimulation();
-        }
+				g.select(".player-label").style("display", "none");
 
-        if (!activeTribeFilter) {
-            simulation
-                .force("link", d3.forceLink().id(d => d.id).distance(145))
-                .force("charge", d3.forceManyBody().strength(-320))
-                .force("x", d3.forceX(width / 2).strength(0.08))
-                .force("y", d3.forceY(height / 2).strength(0.08))
-                .force("center", d3.forceCenter(width / 2, height / 2))
-                .force("collision", d3.forceCollide().radius(d => d.radius + 15));
-        } else {
-            simulation
-                .force("link", d3.forceLink().id(d => d.id).distance(d => d.isPillar ? 75 : 105))
-                .force("x", d3.forceX(d => d.targetX || width / 2).strength(0.35))
-                .force("y", d3.forceY(d => d.targetY || height / 2).strength(0.35))
-                .force("charge", d3.forceManyBody().strength(-40))
-                .force("collision", d3.forceCollide().radius(d => d.radius + 10));
-        }
+			} else if (d.type === 'player') {
+				g.select(".node-circle")
+					.transition().duration(duration)
+					.attr("r", d.radius)
+					.style("fill", d.color)
+					.style("fill-opacity", d.isPillar ? 0.35 : 0.85)
+					.style("stroke", d.color)
+					.style("stroke-width", d.isPillar ? "2.5px" : "1.5px");
 
-        simulation.nodes(newNodes);
-        simulation.force("link").links(newLinks);
-        simulation.alpha(0.35).restart();
+				g.select(".node-icon").style("display", "none");
+				g.select(".count-text").style("display", "none");
 
-        simulation.on("tick", () => {
-            link
-                .attr("x1", d => d.source.x)
-                .attr("y1", d => d.source.y)
-                .attr("x2", d => d.target.x)
-                .attr("y2", d => d.target.y);
+				const labelText = d.isPillar ? `★ ${d.name}` : d.name;
+				g.select(".player-label")
+					.style("display", "block")
+					.text(labelText)
+					.attr("dy", "0.35em")
+					.attr("class", d.isPillar ? "player-label pillar-label" : "player-label member-label");
+			}
+		});
 
-            node.attr("transform", d => `translate(${d.x},${d.y})`);
-        });
-    }
+		node.on("click", (event, d) => {
+			if (event.defaultPrevented) return; // Ignore le clic si c'était un glisser-déposer
+			if (d.type === 'tribe') {
+				activeTribeFilter = (activeTribeFilter === d.id) ? null : d.id;
+				updateTableForDate($datePicker.val());
+			}
+		});
+
+		// --- 5. SIMULATION PHYSIQUE ---
+		if (!simulation) {
+			simulation = d3.forceSimulation();
+		}
+
+		if (!activeTribeFilter) {
+			simulation
+				.force("link", d3.forceLink().id(d => d.id).distance(145))
+				.force("charge", d3.forceManyBody().strength(-320))
+				.force("x", d3.forceX(width / 2).strength(0.08))
+				.force("y", d3.forceY(height / 2).strength(0.08))
+				.force("center", d3.forceCenter(width / 2, height / 2))
+				.force("collision", d3.forceCollide().radius(d => d.radius + 15));
+		} else {
+			simulation
+				.force("link", d3.forceLink().id(d => d.id).distance(d => d.isPillar ? 80 : 120))
+				.force("x", d3.forceX(d => d.targetX || width / 2).strength(0.35))
+				.force("y", d3.forceY(d => d.targetY || height / 2).strength(0.35))
+				.force("charge", d3.forceManyBody().strength(-40))
+				.force("collision", d3.forceCollide().radius(d => d.radius + 10));
+		}
+
+		simulation.nodes(newNodes);
+		simulation.force("link").links(newLinks);
+		simulation.alpha(0.35).restart();
+
+		simulation.on("tick", () => {
+			link
+				.attr("x1", d => d.source.x)
+				.attr("y1", d => d.source.y)
+				.attr("x2", d => d.target.x)
+				.attr("y2", d => d.target.y);
+
+			node.attr("transform", d => `translate(${d.x},${d.y})`);
+		});
+	}
 
     function updateTableForDate(selectedDate) {
         $datePicker.val(selectedDate);
