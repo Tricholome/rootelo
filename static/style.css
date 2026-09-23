@@ -1839,8 +1839,12 @@ table.dataTable tbody tr.loser td {
 /* --- D. Interactive SVG Map Styles (D3.js) --- */
 
 /* Base SVG Structure & Cursors */
-#tribeMapSvg .node-group { cursor: grab; }
-#tribeMapSvg .node-group:active { cursor: grabbing; }
+#tribeMapSvg .node-group { 
+    cursor: grab; 
+}
+#tribeMapSvg .node-group:active { 
+    cursor: grabbing; 
+}
 
 #tribeMapSvg text,
 #tribeMapSvg image {
@@ -1851,79 +1855,89 @@ table.dataTable tbody tr.loser td {
     text-anchor: middle;
 }
 
-/* Links & Connectors */
+/* 1. LIENS & CONNECTEURS : Lignes continues nettes et très subtiles */
 #tribeMapSvg line {
-    stroke: var(--link-color);
-    stroke-opacity: 0.35;
-    stroke-dasharray: 4, 4;
-    transition: stroke 0.3s, stroke-opacity 0.3s;
+    stroke: var(--border-soft);
+    stroke-opacity: 0.4;
+    stroke-width: 1px;
+    transition: stroke 0.3s, stroke-opacity 0.3s, stroke-width 0.3s;
+    pointer-events: none;
 }
 
 #tribeMapSvg line.constellation-link {
-    stroke: var(--link-active-color);
-    stroke-opacity: 0.75;
-    stroke-dasharray: 2, 3;
-    stroke-width: 1.2px;
+    stroke: var(--border-soft);
+    stroke-opacity: 0.5;
+    stroke-width: 1px;
 }
 
 #tribeMapSvg line.constellation-link.is-pillar {
     stroke: var(--main-color);
+    stroke-opacity: 0.8;
+    stroke-width: 1.5px;
+}
+
+/* 2. NOEUDS DES JOUEURS : Style plat et sobre */
+#tribeMapSvg .node-circle {
+    transition: fill 0.25s ease, stroke 0.25s ease, stroke-width 0.25s ease, r 0.25s ease;
+}
+
+/* Base joueur : Fond sombre opaque avec bordure fine selon la couleur du rang */
+#tribeMapSvg .node-group.type-player .node-circle {
+    fill: var(--bg-container); /* Fond opaque sombre */
+    stroke: var(--node-color, var(--text-muted)); /* Bordure nette avec la couleur du rang */
+    stroke-width: 1.5px;
+}
+
+/* Satellites : Accentuation légère de la bordure */
+#tribeMapSvg .node-group.type-player.is-satellite .node-circle {
+    fill: var(--bg-container);
+    stroke: var(--node-color, var(--text-muted));
     stroke-width: 2px;
 }
 
-/* Nodes */
-#tribeMapSvg .node-circle {
-    transition: fill 0.3s, stroke 0.3s, stroke-width 0.3s, r 0.3s;
+/* Piliers : Remplissage plein avec la couleur principale du site ou du rang */
+#tribeMapSvg .node-group.type-player.is-pillar .node-circle {
+    fill: color-mix(in srgb, var(--node-color, var(--main-color)) 20%, var(--bg-container));
+    stroke: var(--node-color, var(--main-color));
+    stroke-width: 2px;
 }
 
-/* Tribe Nodes */
+/* Interaction au survol d'un nœud joueur */
+#tribeMapSvg .node-group.type-player:hover .node-circle {
+    stroke-width: 3px;
+    fill: color-mix(in srgb, var(--node-color, var(--text-main)) 30%, var(--bg-container));
+}
+
+/* 3. NOEUDS DES TRIBUS (CENTRALES) */
 #tribeMapSvg .node-group.type-tribe .node-circle {
-    fill: var(--node-tribe-bg);
-    stroke: var(--node-tribe-stroke);
-    stroke-width: 1.5px;
+    fill: var(--bg-container);
+    stroke: var(--border-soft);
+    stroke-width: 2px;
 }
 
 #tribeMapSvg .node-group.type-tribe.is-selected .node-circle {
-    fill: var(--node-tribe-active);
+    fill: color-mix(in srgb, var(--main-color) 15%, var(--bg-container));
     stroke: var(--main-color);
-    stroke-width: 3px;
-}
-
-/* Player Nodes */
-#tribeMapSvg .node-group.type-player .node-circle {
-    fill: var(--node-color, var(--text-muted));
-    stroke: var(--node-color, var(--text-muted));
-    fill-opacity: 0.85;
-    stroke-width: 1.5px;
-}
-
-#tribeMapSvg .node-group.type-player.is-pillar .node-circle {
-    fill-opacity: 0.35;
     stroke-width: 2.5px;
 }
 
-#tribeMapSvg .node-group.type-player.is-satellite .node-circle {
-    fill-opacity: 0.6;
-    stroke-width: 2px;
-}
-
-/* Type-specific Visibility */
+/* Visibility Rules */
 #tribeMapSvg .type-tribe .player-label,
 #tribeMapSvg .type-player .node-icon,
 #tribeMapSvg .type-player .count-text {
     display: none;
 }
 
-/* SVG Typography & Labels */
+/* 4. TYPOGRAPHIE SOBRE */
 #tribeMapSvg .num-span {
     font-size: var(--size-base);
     font-weight: var(--bold);
-    fill: var(--text-main);
+    fill: var(--text-bright);
 }
 
 #tribeMapSvg .lbl-span {
     font-size: var(--size-xs);
-    font-weight: var(--bold);
+    font-weight: var(--medium);
     fill: var(--text-muted);
 }
 
