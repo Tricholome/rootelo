@@ -1876,36 +1876,34 @@ table.dataTable tbody tr.loser td {
     stroke-width: 1.5px;
 }
 
-/* 2. NOEUDS DES JOUEURS : Style plat et sobre */
+/* 2. NOEUDS DES JOUEURS : Pastilles pleines sans contour */
 #tribeMapSvg .node-circle {
-    transition: fill 0.25s ease, stroke 0.25s ease, stroke-width 0.25s ease, r 0.25s ease;
+    stroke: none !important; /* Suppression totale des contours */
+    transition: fill 0.25s ease, opacity 0.25s ease, r 0.25s ease;
 }
 
-/* Base joueur : Fond sombre opaque avec bordure fine selon la couleur du rang */
+/* Membres ordinaires : Petite pastille pleine très sobre */
 #tribeMapSvg .node-group.type-player .node-circle {
-    fill: var(--bg-container); /* Fond opaque sombre */
-    stroke: var(--node-color, var(--text-muted)); /* Bordure nette avec la couleur du rang */
-    stroke-width: 1.5px;
+    fill: var(--border-soft);
+    opacity: 0.6;
 }
 
-/* Satellites : Accentuation légère de la bordure */
+/* Satellites : Pastille pleine teintée avec la couleur du rang */
 #tribeMapSvg .node-group.type-player.is-satellite .node-circle {
-    fill: var(--bg-container);
-    stroke: var(--node-color, var(--text-muted));
-    stroke-width: 2px;
+    fill: var(--node-color, var(--text-muted));
+    opacity: 0.8;
 }
 
-/* Piliers : Remplissage plein avec la couleur principale du site ou du rang */
+/* Piliers : Pastille pleine vive et bien opaque */
 #tribeMapSvg .node-group.type-player.is-pillar .node-circle {
-    fill: color-mix(in srgb, var(--node-color, var(--main-color)) 20%, var(--bg-container));
-    stroke: var(--node-color, var(--main-color));
-    stroke-width: 2px;
+    fill: var(--node-color, var(--main-color));
+    opacity: 1;
 }
 
-/* Interaction au survol d'un nœud joueur */
+/* Survol : Mise en lumière de la pastille pleine */
 #tribeMapSvg .node-group.type-player:hover .node-circle {
-    stroke-width: 3px;
-    fill: color-mix(in srgb, var(--node-color, var(--text-main)) 30%, var(--bg-container));
+    opacity: 1;
+    fill: var(--text-bright);
 }
 
 /* 3. NOEUDS DES TRIBUS (CENTRALES) */
