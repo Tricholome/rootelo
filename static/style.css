@@ -1839,114 +1839,88 @@ table.dataTable tbody tr.loser td {
 /* --- D. Interactive SVG Map Styles (D3.js) --- */
 
 /* Base SVG Structure & Cursors */
-#tribeMapSvg .node-group { 
-    cursor: grab; 
-}
-#tribeMapSvg .node-group:active { 
-    cursor: grabbing; 
-}
+#tribeMapSvg .node-group { cursor: grab; }
+#tribeMapSvg .node-group:active { cursor: grabbing; }
+#tribeMapSvg text, #tribeMapSvg image { pointer-events: none; }
+#tribeMapSvg text { text-anchor: middle; }
 
-#tribeMapSvg text,
-#tribeMapSvg image {
-    pointer-events: none;
-}
-
-#tribeMapSvg text {
-    text-anchor: middle;
-}
-
-/* 1. LIENS & CONNECTEURS : Lignes continues nettes et très subtiles */
-#tribeMapSvg line {
-    stroke: var(--border-soft);
-    stroke-opacity: 0.65;
-    stroke-dasharray: 6, 8;      /* Pointillés espacés */
-    stroke-linecap: round;       /* Extrémités arrondies pour un bel effet pointillé */
-    stroke-width: 3.5px;         /* Sentiers épais */
-    transition: stroke 0.3s, stroke-opacity 0.3s, stroke-width 0.3s;
-    pointer-events: none;
-}
-
+/* 1. SENTIERS ENTRE CLAIRIÈRES (Vue Globale) */
 #tribeMapSvg line.inter-tribe {
     stroke: var(--text-muted);
-    stroke-dasharray: 8, 10;
-    stroke-width: 4px;           /* Grands chemins principaux entre tribus */
     stroke-opacity: 0.55;
+    stroke-dasharray: 6, 6;
+    stroke-linecap: round;
+    stroke-width: 3px;
+    pointer-events: none;
 }
 
+/* 2. LIENS CONSTELLATION (Vue Tribu) : Ultra-discrets pour supprimer le fouillis */
 #tribeMapSvg line.constellation-link {
-    stroke: var(--main-color);
-    stroke-dasharray: 5, 7;
-    stroke-width: 2.5px;
-    stroke-opacity: 0.7;
+    stroke: rgba(255, 255, 255, 0.15);
+    stroke-dasharray: 2, 4;
+    stroke-width: 1px;
+    pointer-events: none;
 }
 
 #tribeMapSvg line.constellation-link.is-pillar {
-    stroke-width: 3.5px;
-    stroke-opacity: 0.9;
+    stroke: var(--main-color);
+    stroke-opacity: 0.4;
+    stroke-width: 1.5px;
 }
 
-/* 2. NOEUDS DES JOUEURS : Pastilles pleines sans contour */
-#tribeMapSvg .node-circle {
-    stroke: none !important; /* Suppression totale des contours */
-    transition: fill 0.25s ease, opacity 0.25s ease, r 0.25s ease;
+/* 3. CLAIRIÈRES : Cercles de craie clairs & fond transparent */
+#tribeMapSvg .node-group.type-tribe .node-circle {
+    fill: transparent !important;                   /* Suppression du fond noir */
+    stroke: rgba(255, 255, 255, 0.65);             /* Craie claire */
+    stroke-width: 2px;
+    stroke-dasharray: 6, 4;                         /* Trait pointillé craie */
+    stroke-linecap: round;
+    transition: stroke 0.3s, stroke-width 0.3s;
 }
 
-/* Membres ordinaires : Petite pastille pleine très sobre */
+/* Clairière sélectionnée : Trait craie appuyé à la couleur du thème */
+#tribeMapSvg .node-group.type-tribe.is-selected .node-circle {
+    fill: rgba(255, 255, 255, 0.03) !important;     /* Teinte ultra discrète */
+    stroke: var(--main-color);
+    stroke-width: 2.5px;
+    stroke-dasharray: none;
+}
+
+#tribeMapSvg .node-group.type-tribe:hover .node-circle {
+    stroke: var(--text-bright);
+    stroke-width: 2.5px;
+}
+
+/* 4. NOEUDS JOUEURS : Disques pleins sans contour */
 #tribeMapSvg .node-group.type-player .node-circle {
-    fill: var(--border-soft);
-    opacity: 0.6;
+    stroke: none !important;
+    transition: fill 0.25s, opacity 0.25s, r 0.25s;
 }
 
-/* Satellites : Pastille pleine teintée avec la couleur du rang */
+/* Membres simples : Petites pastilles sobres */
+#tribeMapSvg .node-group.type-player .node-circle {
+    fill: var(--text-muted);
+    opacity: 0.4;
+}
+
+/* Satellites : Pastilles moyennes aux couleurs des badges */
 #tribeMapSvg .node-group.type-player.is-satellite .node-circle {
     fill: var(--node-color, var(--text-muted));
-    opacity: 0.8;
+    opacity: 0.85;
 }
 
-/* Piliers : Pastille pleine vive et bien opaque */
+/* Piliers : Grandes pastilles bien visibles */
 #tribeMapSvg .node-group.type-player.is-pillar .node-circle {
     fill: var(--node-color, var(--main-color));
     opacity: 1;
 }
 
-/* Survol : Mise en lumière de la pastille pleine */
 #tribeMapSvg .node-group.type-player:hover .node-circle {
     opacity: 1;
     fill: var(--text-bright);
 }
 
-/* 3. NOEUDS DES TRIBUS (CENTRALES) */
-#tribeMapSvg .node-group.type-tribe .node-circle {
-    fill: var(--bg-container);                    /* Fond sombre plat de la clairière */
-    stroke: var(--text-main);                     /* Couleur craie claire */
-    stroke-width: 3px;
-    stroke-dasharray: 16, 3, 8, 3;                /* Motif irrégulier style tracé craie */
-    stroke-linecap: round;
-    filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.7));
-}
-
-/* Clairière active / sélectionnée */
-#tribeMapSvg .node-group.type-tribe.is-selected .node-circle {
-    fill: color-mix(in srgb, var(--main-color) 25%, var(--bg-container));
-    stroke: var(--main-color);                    /* Trait craie teinté à la couleur de la ligue */
-    stroke-width: 3.5px;
-    stroke-dasharray: none;                       /* Trait de craie appuyé et continu */
-}
-
-/* Survol de clairière */
-#tribeMapSvg .node-group.type-tribe:hover .node-circle {
-    stroke: var(--text-bright);
-    stroke-width: 4px;
-}
-
-/* Visibility Rules */
-#tribeMapSvg .type-tribe .player-label,
-#tribeMapSvg .type-player .node-icon,
-#tribeMapSvg .type-player .count-text {
-    display: none;
-}
-
-/* 4. TYPOGRAPHIE SOBRE */
+/* 5. TYPOGRAPHIE & LISIBILITÉ DU TEXTE */
 #tribeMapSvg .num-span {
     font-size: var(--size-base);
     font-weight: var(--bold);
@@ -1971,10 +1945,17 @@ table.dataTable tbody tr.loser td {
     fill: var(--text-main);
 }
 
+/* Nettoyage visuel : Le nom des membres simples est caché et s'affiche au survol */
 #tribeMapSvg .member-label {
     font-size: var(--size-xs);
     font-weight: var(--normal);
     fill: var(--text-muted);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+#tribeMapSvg .node-group.type-player:hover .member-label {
+    opacity: 1;
 }
 
 /* =========================================================================
