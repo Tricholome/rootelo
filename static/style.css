@@ -1721,6 +1721,133 @@ table.dataTable tbody tr.loser td {
     }
 }
 
+/* -------------------------------------------------------------------------
+   [COMPONENTS] 8. NETWORK MAP & TABLE
+   ------------------------------------------------------------------------- */
+
+/* Container & Layout */
+.network-container {
+    max-width: clamp(600px, 60vw, 1600px);
+    margin: 0 auto;
+}
+
+.tribe-map-container {
+    width: 100%;
+    height: 380px;
+    margin: 10px 0 25px 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.tribe-map-svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+/* Date Controls */
+.date-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.date-picker {
+    padding: 6px 12px;
+    font-size: var(--size-base, 1rem);
+    background-color: var(--dt-input-bg, transparent);
+    color: var(--text-main);
+    border: 1px solid var(--border-soft);
+    border-radius: 4px;
+    font-family: var(--font-ui);
+    outline: none;
+}
+
+/* Network Data Table */
+.network-table {
+    width: 100%;
+    table-layout: fixed;
+}
+
+.network-table th {
+    text-align: center;
+}
+
+.network-table th.player-col {
+    width: 25%;
+    text-align: left;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.network-table th.games-col {
+    width: 10%;
+}
+
+.tribe-icon {
+    height: 26px;
+    width: 26px;
+    vertical-align: middle;
+    object-fit: contain;
+    display: inline-block;
+}
+
+/* Generated Table Cells */
+.tribe-cell {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    width: 100%;
+}
+
+.tribe-cell-empty {
+    display: flex;
+    justify-content: center;
+    color: var(--text-muted, #a0aec0);
+}
+
+.tribe-pct {
+    font-weight: var(--bold, 600);
+    font-size: 0.82rem;
+}
+
+.tribe-badge {
+    color: #ffffff;
+    padding: 1px 5px;
+    border-radius: 4px;
+    font-size: 0.68rem;
+    font-weight: var(--bold, 600);
+    white-space: nowrap;
+}
+
+/* D3 SVG Label Classes */
+.node-group .num-span {
+    font-size: 0.95rem;
+    font-weight: var(--bold, 800);
+    fill: var(--text-main, #ffffff);
+}
+
+.node-group .lbl-span {
+    font-size: 0.6rem;
+    font-weight: var(--bold, 600);
+    fill: var(--text-muted, rgba(255, 255, 255, 0.65));
+}
+
+.node-group .pillar-label {
+    font-size: 0.72rem;
+    font-weight: var(--bold, 800);
+    fill: var(--main-color, #68d391);
+}
+
+.node-group .member-label {
+    font-size: 0.65rem;
+    font-weight: var(--bold, 600);
+    fill: var(--text-bright, #e2e8f0);
+}
+
 /* =========================================================================
    --- V. SPECIAL EFFECTS & SECRET CONTENT ---
    ========================================================================= */
