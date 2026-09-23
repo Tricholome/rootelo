@@ -100,10 +100,10 @@
 		"BOOT": { "icon": "assets/items/boot.png" }
 		},
 		"tiers": {
-		  "Partisan": "#2e7d32",
-		  "Squire": "#1565c0",
-		  "Friend": "#d97706",
-		  "Favoring": "#c62828",
+		  "Partisan": "#918F08",
+		  "Squire": "#256D75",
+		  "Friend": "#B8681A",
+		  "Favoring": "#A0402B",
 		  "Default": "#4a5568"
 		}
 	}
