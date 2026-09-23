@@ -1332,16 +1332,16 @@ $(document).ready(function () {
 
             // 1. Préparation des 3 listes par rôle
             const pillarsList = allTribePlayers
-                .filter(p => pillarsSet.has(p.name))
-                .map(p => ({ name: p.name, role: 'pillar', isPillar: true, isSatellite: false, dist: 75, radius: 24 }));
+				.filter(p => pillarsSet.has(p.name))
+				.map(p => ({ name: p.name, role: 'pillar', isPillar: true, isSatellite: false, dist: 90, radius: 20 }));
 
-            const satellitesList = allTribePlayers
-                .filter(p => satellitesSet.has(p.name) && !pillarsSet.has(p.name))
-                .map(p => ({ name: p.name, role: 'satellite', isPillar: false, isSatellite: true, dist: 110, radius: 14 }));
+			const satellitesList = allTribePlayers
+				.filter(p => satellitesSet.has(p.name) && !pillarsSet.has(p.name))
+				.map(p => ({ name: p.name, role: 'satellite', isPillar: false, isSatellite: true, dist: 135, radius: 11 }));
 
-            const othersList = allTribePlayers
-                .filter(p => !pillarsSet.has(p.name) && !satellitesSet.has(p.name))
-                .map(p => ({ name: p.name, role: 'member', isPillar: false, isSatellite: false, dist: 145, radius: 8 }));
+			const othersList = allTribePlayers
+				.filter(p => !pillarsSet.has(p.name) && !satellitesSet.has(p.name))
+				.map(p => ({ name: p.name, role: 'member', isPillar: false, isSatellite: false, dist: 175, radius: 6 }));
 
             // 2. Entrelacement (Round-Robin) pour mélanger les tailles sur tout le tour du cercle
             const placementList = [];
