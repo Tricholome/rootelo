@@ -1335,39 +1335,20 @@ $(document).ready(function () {
             const satellites = allTribePlayers.filter(p => satellitesSet.has(p.name) && !pillarsSet.has(p.name));
             const others = allTribePlayers.filter(p => !pillarsSet.has(p.name) && !satellitesSet.has(p.name));
 
-            const placementList = [
-                ...pillars.map(p => ({ name: p.name, role: 'pillar', isPillar: true, isSatellite: false })),
-                ...satellites.map(p => ({ name: p.name, role: 'satellite', isPillar: false, isSatellite: true })),
-                ...others.map(p => ({ name: p.name, role: 'member', isPillar: false, isSatellite: false }))
-            ];
-
-            const total = placementList.length || 1;
-            placementList.forEach((item, idx) => {
+            // Fonction utilitaire pour générer les nœuds sur leur couronne respective (360°)
+            const addMemberNode = (item, idx, total, dist, radius, role, isPillar, isSatellite, angleOffset = 0) => {
                 const pData = playersMap.get(item.name);
                 const scoreObj = pData?.scores?.[tribe];
-                const angle = (2 * Math.PI * idx / total) - (Math.PI / 2);
-
-                // Définition des 3 tailles de bulles et de leurs orbites
-                let dist = 140;
-                let radius = 8; // Petite taille pour le reste des membres
-
-                if (item.role === 'pillar') {
-                    dist = 75;
-                    radius = 24; // Grande taille pour les pillars
-                } else if (item.role === 'satellite') {
-                    dist = 110;
-                    radius = 14; // Taille moyenne pour les satellites
-                }
-
+                const angle = (2 * Math.PI * idx / (total || 1)) - (Math.PI / 2) + angleOffset;
                 const playerId = `player_${item.name}`;
 
                 nodes.push({
                     id: playerId,
                     type: 'player',
                     name: item.name,
-                    role: item.role,
-                    isPillar: item.isPillar,
-                    isSatellite: item.isSatellite,
+                    role: role,
+                    isPillar: isPillar,
+                    isSatellite: isSatellite,
                     pct: scoreObj?.pct || 0,
                     status: scoreObj?.status || null,
                     color: getBadgeColor(scoreObj?.status),
@@ -1380,10 +1361,26 @@ $(document).ready(function () {
                     source: tribe,
                     target: playerId,
                     type: 'constellation-link',
-                    isPillar: item.isPillar,
-                    isSatellite: item.isSatellite,
-                    role: item.role
+                    isPillar: isPillar,
+                    isSatellite: isSatellite,
+                    role: role
                 });
+            };
+
+            // 1. Anneau intérieur : Pillars (Grandes bulles à 75px sur 360°)
+            pillars.forEach((p, i) => {
+                addMemberNode(p, i, pillars.length, 75, 24, 'pillar', true, false);
+            });
+
+            // 2. Anneau intermédiaire : Satellites (Bulles moyennes à 110px sur 360°, décalées)
+            satellites.forEach((p, i) => {
+                const offset = satellites.length > 0 ? (Math.PI / satellites.length) : 0;
+                addMemberNode(p, i, satellites.length, 110, 14, 'satellite', false, true, offset);
+            });
+
+            // 3. Anneau extérieur : Autres membres (Petites bulles à 145px sur 360°)
+            others.forEach((p, i) => {
+                addMemberNode(p, i, others.length, 145, 8, 'member', false, false);
             });
         }
 
