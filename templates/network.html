@@ -38,8 +38,8 @@
 {% block custom_js %}
 <script src="https://d3js.org/d3.v7.min.js"></script>
 <script>
-    window.NETWORK_SNAPSHOTS = {{ snapshots_json | default('{}') | safe }};
-    window.NETWORK_DATES = {{ dates_json | default('[]') | safe }};
-    window.NETWORK_CONFIG = {{ network_config_json | default('{}') | safe }};
+    window.NETWORK_DATES = {{ dates_json | safe }};
+    window.NETWORK_SNAPSHOTS = {{ snapshots_json | safe }};
+    window.NETWORK_CONFIG = {{ config.network | tojson | safe }};
 </script>
 {% endblock %}
