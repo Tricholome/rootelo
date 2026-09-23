@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block subnav %}
+{% block content %}
 <!-- Interactive Map -->
 <div id="tribeMapContainer" class="tribe-map-container">
     <svg id="tribeMapSvg" class="tribe-map-svg"></svg>
@@ -14,9 +14,8 @@
     <button id="nextDateBtn" class="btn">Next Day &raquo;</button>
     <button id="latestDateBtn" class="btn">Latest Date</button>
 </div>
-{% endblock %}
 
-{% block content %}
+<!-- Tribe Table -->
 <div class="network-container">
     <table id="frogTable" class="display nowrap network-table">
         <thead>
