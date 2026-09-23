@@ -10,6 +10,7 @@
    7. Narrative Journey
    8. Global Player Search
    9. Match Simulator Engine
+   10. Network Map & Table
    
    --- EASTER EGGS ---
    11. Secrets Engine
@@ -1178,3 +1179,428 @@ function showVisitorRow(name, date) {
     const recognitionZone = document.getElementById('visitor-recognition');
     if (recognitionZone) recognitionZone.style.display = 'none';
 }
+
+/* =========================================================================
+   --- 10. NETWORK MAP & TABLE ---
+   ========================================================================= */
+
+$(document).ready(function () {
+    // Only execute if we are on the network page and variables are initialized
+    if (typeof window.NETWORK_DATES === 'undefined' || typeof window.NETWORK_SNAPSHOTS === 'undefined') return;
+    
+    const snapshots = window.NETWORK_SNAPSHOTS;
+    const availableDates = window.NETWORK_DATES;
+    const config = window.NETWORK_CONFIG || { tribes: {}, tiers: {} };
+    
+    if (!availableDates || availableDates.length === 0) return;
+
+    // Dynamically pull targets from config instead of hardcoding
+    const TARGET_TRIBES = Object.keys(config.tribes || {});
+    let activeTribeFilter = null;
+    let simulation = null;
+
+    // Center all columns starting from index 1 to the end dynamically
+    const centerCols = Array.from({length: TARGET_TRIBES.length + 1}, (_, i) => i + 1);
+
+    const table = $('#frogTable').DataTable({
+        "order": [[1, "desc"]],
+        "responsive": false,
+        "autoWidth": false,
+        "pageLength": 50,
+        "dom": 'rt<"bottom"p><"clear">',
+        "columnDefs": [
+            { "className": "dt-nowrap", "targets": "_all" },
+            { "className": "dt-center", "targets": centerCols }
+        ]
+    });
+
+    const $datePicker =$('#datePicker');
+    const $earliestBtn =$('#earliestDateBtn');
+    const $prevBtn =$('#prevDateBtn');
+    const $nextBtn =$('#nextDateBtn');
+    const $latestBtn =$('#latestDateBtn');
+
+    $datePicker.attr('min', availableDates[0]);$datePicker.attr('max', availableDates[availableDates.length - 1]);
+
+    let currentIndex = availableDates.length - 1;
+
+    function getStatusBadgeColor(status) {
+        return (config.tiers && config.tiers[status]) ? config.tiers[status] : (config.tiers?.Default || "#4a5568");
+    }
+
+    function renderTribeCell(scoreData, isMainTribe) {
+        if (!scoreData) {
+            return `<div class="tribe-cell-empty">-</div>`;
+        }
+        
+        if (!isMainTribe && scoreData.pct < 10) {
+            return `<div class="tribe-cell-empty">-</div>`;
+        }
+        
+        const pctStr = `<span class="tribe-pct">${scoreData.pct}%</span>`;
+        
+        if (!isMainTribe || !scoreData.status) {
+            return `<div class="tribe-cell">${pctStr}</div>`;
+        }
+
+        const badgeColor = getStatusBadgeColor(scoreData.status);
+        return `<div class="tribe-cell">${pctStr} <span class="tribe-badge" style="background-color: ${badgeColor};">${scoreData.status}</span></div>`;
+    }
+
+    function renderTribeGraph(snapshot) {
+        if (typeof d3 === 'undefined') return;
+        
+        const svg = d3.select("#tribeMapSvg");
+        const container = document.getElementById('tribeMapContainer');
+        const width = container.clientWidth || 800;
+        const height = 380;
+        const duration = 500;
+
+        if (svg.select("g.links-layer").empty()) {
+            svg.append("g").attr("class", "links-layer");
+            svg.append("g").attr("class", "nodes-layer");
+        }
+
+        const activeTribes = snapshot.active_tribes || [];
+        const tribeLayout = snapshot.tribe_layout || {};
+        const playersMap = new Map((snapshot.players || []).map(p => [p.name, p]));
+
+        let newNodes = [];
+        let newLinks = [];
+
+        if (!activeTribeFilter) {
+            newNodes = activeTribes.map(t => {
+                const count = (snapshot.summary && snapshot.summary[t]) ? snapshot.summary[t] : 0;
+                return {
+                    id: t,
+                    type: 'tribe',
+                    label: (snapshot.tribe_labels && snapshot.tribe_labels[t]) ? snapshot.tribe_labels[t] : t,
+                    count: count,
+                    radius: Math.max(30, 22 + Math.sqrt(count) * 10)
+                };
+            });
+
+            for (let i = 0; i < activeTribes.length; i++) {
+                for (let j = i + 1; j < activeTribes.length; j++) {
+                    const t1 = activeTribes[i];
+                    const t2 = activeTribes[j];
+                    let totalAffinity = 0;
+                    let count = 0;
+
+                    (snapshot.players || []).forEach(p => {
+                        if (p.main_tribe === t1 && p.scores && p.scores[t2]) {
+                            totalAffinity += p.scores[t2].pct;
+                            count++;
+                        } else if (p.main_tribe === t2 && p.scores && p.scores[t1]) {
+                            totalAffinity += p.scores[t1].pct;
+                            count++;
+                        }
+                    });
+
+                    const avg = count > 0 ? (totalAffinity / count) : 0;
+                    if (avg > 2) {
+                        newLinks.push({ source: t1, target: t2, value: avg, type: 'inter-tribe' });
+                    }
+                }
+            }
+        } else {
+            const tribe = activeTribeFilter;
+            const count = (snapshot.summary && snapshot.summary[tribe]) ? snapshot.summary[tribe] : 0;
+            const layout = tribeLayout[tribe] || { pillars: [], satellites: [] };
+            const pillarsSet = new Set(layout.pillars || []);
+
+            const centerNode = {
+                id: tribe,
+                type: 'tribe',
+                label: (snapshot.tribe_labels && snapshot.tribe_labels[tribe]) ? snapshot.tribe_labels[tribe] : tribe,
+                count: count,
+                radius: Math.max(36, 26 + Math.sqrt(count) * 10),
+                fx: width / 2,
+                fy: height / 2
+            };
+            newNodes.push(centerNode);
+
+            const satellitesList = layout.satellites || (snapshot.players || [])
+                .filter(p => p.main_tribe === tribe)
+                .map(p => p.name);
+
+            const constellationMembers = Array.from(new Set([...(layout.pillars || []), ...satellitesList]));
+
+            const innerRadius = 75; 
+            const outerRadius = 105; 
+
+            const pillarNodes = constellationMembers.filter(m => pillarsSet.has(m));
+            const memberNodes = constellationMembers.filter(m => !pillarsSet.has(m));
+
+            const placementList = [
+                ...pillarNodes.map(m => ({ name: m, isPillar: true })),
+                ...memberNodes.map(m => ({ name: m, isPillar: false }))
+            ];
+
+            const totalMembers = placementList.length || 1;
+
+            placementList.forEach((item, idx) => {
+                const pData = playersMap.get(item.name);
+                const scoreObj = (pData && pData.scores) ? pData.scores[tribe] : null;
+                const pct = scoreObj ? scoreObj.pct : 0;
+                const status = scoreObj ? scoreObj.status : null;
+
+                const angle = (2 * Math.PI * idx / totalMembers) - (Math.PI / 2);
+                const dist = item.isPillar ? innerRadius : outerRadius;
+                const playerId = `player_${item.name}`;
+
+                newNodes.push({
+                    id: playerId,
+                    type: 'player',
+                    name: item.name,
+                    isPillar: item.isPillar,
+                    pct: pct,
+                    status: status,
+                    color: item.isPillar ? "var(--main-color, #48bb78)" : getStatusBadgeColor(status),
+                    radius: item.isPillar ? 16 : 13,
+                    targetX: width / 2 + dist * Math.cos(angle),
+                    targetY: height / 2 + dist * Math.sin(angle)
+                });
+
+                newLinks.push({
+                    source: tribe,
+                    target: playerId,
+                    type: 'constellation-link',
+                    isPillar: item.isPillar
+                });
+            });
+        }
+
+        const prevNodesMap = new Map(simulation ? simulation.nodes().map(d => [d.id, d]) : []);
+        newNodes.forEach(d => {
+            if (prevNodesMap.has(d.id)) {
+                const prev = prevNodesMap.get(d.id);
+                d.x = prev.x;
+                d.y = prev.y;
+            } else if (d.targetX !== undefined) {
+                d.x = width / 2;
+                d.y = height / 2;
+            }
+        });
+
+        const linkSel = svg.select("g.links-layer")
+            .selectAll("line")
+            .data(newLinks, d => `${d.source.id || d.source}-${d.target.id || d.target}`);
+
+        linkSel.exit()
+            .transition().duration(duration)
+            .attr("stroke-opacity", 0)
+            .remove();
+
+        const linkEnter = linkSel.enter().append("line")
+            .attr("stroke-opacity", 0);
+
+        const link = linkEnter.merge(linkSel);
+        link.transition().duration(duration)
+            .attr("stroke", d => d.type === 'constellation-link' ? (d.isPillar ? "var(--main-color, #48bb78)" : "rgba(255, 255, 255, 0.4)") : "rgba(255, 255, 255, 0.25)")
+            .attr("stroke-opacity", d => d.type === 'constellation-link' ? 0.75 : 0.35)
+            .attr("stroke-dasharray", d => d.type === 'constellation-link' ? "2, 3" : "4, 4")
+            .attr("stroke-width", d => d.type === 'constellation-link' ? (d.isPillar ? 2 : 1.2) : Math.max(1, d.value / 5));
+
+        const nodeSel = svg.select("g.nodes-layer")
+            .selectAll("g.node-group")
+            .data(newNodes, d => d.id);
+
+        nodeSel.exit()
+            .transition().duration(duration)
+            .style("opacity", 0)
+            .remove();
+
+        const nodeEnter = nodeSel.enter().append("g")
+            .attr("class", "node-group")
+            .style("cursor", "pointer")
+            .style("opacity", 0);
+
+        nodeEnter.append("circle").attr("class", "node-circle");
+        nodeEnter.append("image").attr("class", "node-icon").attr("pointer-events", "none");
+        
+        const textGroup = nodeEnter.append("text")
+            .attr("class", "count-text")
+            .attr("text-anchor", "middle")
+            .attr("pointer-events", "none");
+
+        textGroup.append("tspan").attr("class", "num-span");
+        textGroup.append("tspan").attr("class", "lbl-span");
+
+        nodeEnter.append("text")
+            .attr("class", "player-label")
+            .attr("text-anchor", "middle")
+            .attr("pointer-events", "none");
+
+        const node = nodeEnter.merge(nodeSel);
+
+        node.transition().duration(duration)
+            .style("opacity", 1);
+
+        node.each(function(d) {
+            const g = d3.select(this);
+
+            if (d.type === 'tribe') {
+                g.select(".node-circle")
+                    .transition().duration(duration)
+                    .attr("r", d.radius)
+                    .style("fill", activeTribeFilter === d.id ? "rgba(18, 38, 25, 0.95)" : "rgba(10, 22, 14, 0.65)")
+                    .style("stroke", activeTribeFilter === d.id ? "var(--main-color, #48bb78)" : "rgba(255, 255, 255, 0.35)")
+                    .style("stroke-width", activeTribeFilter === d.id ? "3px" : "1.5px");
+
+                const tribeIconPath = config.tribes[d.id] ? config.tribes[d.id].icon : '';
+                g.select(".node-icon")
+                    .attr("href", tribeIconPath)
+                    .attr("xlink:href", tribeIconPath)
+                    .attr("width", Math.max(24, d.radius * 0.7))
+                    .attr("height", Math.max(24, d.radius * 0.7))
+                    .attr("x", -Math.max(24, d.radius * 0.7) / 2)
+                    .attr("y", -Math.max(24, d.radius * 0.7) / 2 - 6)
+                    .style("display", "block");
+
+                g.select(".count-text")
+                    .attr("transform", `translate(0, ${Math.max(24, d.radius * 0.7) / 2 + 8})`)
+                    .style("display", "block");
+
+                g.select(".num-span")
+                    .text(d.count)
+                    .attr("x", 0)
+                    .attr("dy", "0");
+
+                g.select(".lbl-span")
+                    .text(" membres")
+                    .attr("x", 0)
+                    .attr("dy", "1.15em");
+
+                g.select(".player-label").style("display", "none");
+
+            } else if (d.type === 'player') {
+                g.select(".node-circle")
+                    .transition().duration(duration)
+                    .attr("r", d.radius)
+                    .style("fill", d.isPillar ? "rgba(72, 187, 120, 0.25)" : "rgba(26, 32, 44, 0.85)")
+                    .style("stroke", d.color)
+                    .style("stroke-width", d.isPillar ? "2.5px" : "1.5px");
+
+                g.select(".node-icon").style("display", "none");
+                g.select(".count-text").style("display", "none");
+
+                const labelText = d.isPillar ? `★ ${d.name}` : d.name;
+                g.select(".player-label")
+                    .style("display", "block")
+                    .text(labelText)
+                    .attr("dy", "0.35em")
+                    .attr("class", d.isPillar ? "player-label pillar-label" : "player-label member-label");
+            }
+        });
+
+        node.on("click", (event, d) => {
+            if (d.type === 'tribe') {
+                activeTribeFilter = (activeTribeFilter === d.id) ? null : d.id;
+                updateTableForDate($datePicker.val());
+            }
+        });
+
+        if (!simulation) {
+            simulation = d3.forceSimulation();
+        }
+
+        if (!activeTribeFilter) {
+            simulation
+                .force("link", d3.forceLink().id(d => d.id).distance(145))
+                .force("charge", d3.forceManyBody().strength(-320))
+                .force("x", d3.forceX(width / 2).strength(0.08))
+                .force("y", d3.forceY(height / 2).strength(0.08))
+                .force("center", d3.forceCenter(width / 2, height / 2))
+                .force("collision", d3.forceCollide().radius(d => d.radius + 15));
+        } else {
+            simulation
+                .force("link", d3.forceLink().id(d => d.id).distance(d => d.isPillar ? 75 : 105))
+                .force("x", d3.forceX(d => d.targetX || width / 2).strength(0.35))
+                .force("y", d3.forceY(d => d.targetY || height / 2).strength(0.35))
+                .force("charge", d3.forceManyBody().strength(-40))
+                .force("collision", d3.forceCollide().radius(d => d.radius + 10));
+        }
+
+        simulation.nodes(newNodes);
+        simulation.force("link").links(newLinks);
+        simulation.alpha(0.35).restart();
+
+        simulation.on("tick", () => {
+            link
+                .attr("x1", d => d.source.x)
+                .attr("y1", d => d.source.y)
+                .attr("x2", d => d.target.x)
+                .attr("y2", d => d.target.y);
+
+            node.attr("transform", d => `translate(${d.x},${d.y})`);
+        });
+    }
+
+    function updateTableForDate(selectedDate) {
+        $datePicker.val(selectedDate);
+        const snapshot = snapshots[selectedDate];
+        if (!snapshot) return;
+
+        const activeTribes = snapshot.active_tribes || [];
+        renderTribeGraph(snapshot);
+
+        TARGET_TRIBES.forEach((tribe, idx) => {
+            const colIdx = idx + 2; 
+            const isActive = activeTribes.includes(tribe);
+            
+            table.column(colIdx).visible(isActive, false);
+
+            if (isActive) {
+                const displayLabel = (snapshot.tribe_labels && snapshot.tribe_labels[tribe]) ? snapshot.tribe_labels[tribe] : tribe;
+                const iconPath = config.tribes[tribe] ? config.tribes[tribe].icon : '';
+                $(table.column(colIdx).header()).html(`<img src="${iconPath}" title="${displayLabel}" alt="${displayLabel}" class="tribe-icon">`);
+            }
+        });
+
+        let playersToDisplay = snapshot.players || [];
+        if (activeTribeFilter) {
+            playersToDisplay = playersToDisplay.filter(p => p.main_tribe === activeTribeFilter);
+        }
+
+        const newRows = playersToDisplay.map(p => {
+            return [
+                p.name,
+                p.games,
+                ...TARGET_TRIBES.map(t => renderTribeCell(p.scores ? p.scores[t] : null, p.main_tribe === t))
+            ];
+        });
+
+        table.clear();
+        table.rows.add(newRows);
+        table.columns.adjust();
+        table.draw();
+
+        $prevBtn.prop('disabled', currentIndex <= 0);$nextBtn.prop('disabled', currentIndex >= availableDates.length - 1);
+    }
+
+    function setDateByIndex(index) {
+        if (index >= 0 && index < availableDates.length) {
+            currentIndex = index;
+            updateTableForDate(availableDates[currentIndex]);
+        }
+    }
+
+    $prevBtn.on('click', () => setDateByIndex(currentIndex - 1));$nextBtn.on('click', () => setDateByIndex(currentIndex + 1));
+    $latestBtn.on('click', () => setDateByIndex(availableDates.length - 1));$earliestBtn.on('click', () => setDateByIndex(0));
+
+    $datePicker.on('change', function () {
+        const val = $(this).val();
+        let matchIdx = availableDates.findIndex(d => d >= val);
+        currentIndex = matchIdx !== -1 ? matchIdx : availableDates.length - 1;
+        updateTableForDate(availableDates[currentIndex]);
+    });
+
+    $(window).on('resize', function() {
+        if (availableDates[currentIndex]) {
+            updateTableForDate(availableDates[currentIndex]);
+        }
+    });
+
+    setDateByIndex(currentIndex);
+});
