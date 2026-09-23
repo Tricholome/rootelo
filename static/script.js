@@ -1383,6 +1383,11 @@ $(document).ready(function () {
                 addMemberNode(p, i, others.length, 145, 8, 'member', false, false);
             });
         }
+		
+		nodes.sort((a, b) => {
+            const weights = { 'member': 1, 'satellite': 2, 'pillar': 3, 'tribe': 4 };
+            return (weights[a.role] || 0) - (weights[b.role] || 0);
+        });
 
         return { nodes, links };
     }
