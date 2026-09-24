@@ -1409,7 +1409,12 @@ $(document).ready(function () {
                     angle
                 });
 
-                links.push({ source: tribe, target: playerId, tier });
+                links.push({ 
+					source: tribe, 
+					target: playerId, 
+					tier, 
+					color: getBadgeColor(scoreObj?.status) 
+				});
             });
         });
 
@@ -1479,7 +1484,8 @@ $(document).ready(function () {
         linkSel.exit().transition().duration(duration).attr("stroke-opacity", 0).remove();
 
         const link = linkSel.enter().append("line").merge(linkSel);
-        link.attr("class", d => `link ${d.type || 'constellation-link'} ${d.tier ? 'tier-' + d.tier : ''}`);
+		link.attr("class", d => `link ${d.type || 'constellation-link'} ${d.tier ? 'tier-' + d.tier : ''}`)
+			.style("stroke", d => d.color || null);
 
         // --- Nœuds ---
         const nodeSel = svg.select("g.nodes-layer").selectAll("g.node-group")
