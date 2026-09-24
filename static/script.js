@@ -1525,17 +1525,17 @@ $(document).ready(function () {
                 .force("collision", d3.forceCollide().radius(d => d.radius + 15));
         } else {
             // Vue constellation : chaque membre orbite le hub à une distance
-            // fixe selon son palier. Une seule force gère cette distance
-            // (forceRadial, recalculée sur la position RÉELLE du hub à
-            // chaque tick) : c'est ce qui évite que la mise en page
-            // "tremble" en permanence entre deux consignes contradictoires.
-            const hub = newNodes.find(n => n.id === activeTribeFilter);
-
+            // fixe selon son palier. Cette distance est appliquée "à la
+            // main" dans le tick handler plus bas plutôt que via
+            // d3.forceRadial : cette force-là ne relit son centre qu'UNE
+            // fois, à l'initialisation, puis le fige — si le hub bouge
+            // ensuite (et il bouge), les membres continuent à s'accrocher à
+            // son ancienne position. D'où l'effondrement dans un coin.
             simulation
                 .force("center", null)
-                .force("link", linkForce.distance(d => d.tier ? TIERS[d.tier].dist : 0).strength(0.15))
+                .force("link", linkForce.distance(0).strength(0)) // purement visuel, la distance réelle est gérée dans le tick
                 .force("charge", d3.forceManyBody().strength(d => d.type === 'tribe' ? 0 : -25))
-                .force("radial", d3.forceRadial(d => d.dist || 0, () => hub.x, () => hub.y).strength(d => d.type === 'tribe' ? 0 : 0.85))
+                .force("radial", null)
                 .force("x", d3.forceX(width / 2).strength(d => d.type === 'tribe' ? 0.3 : 0))
                 .force("y", d3.forceY(height / 2).strength(d => d.type === 'tribe' ? 0.3 : 0))
                 .force("collision", d3.forceCollide().radius(d => d.radius + 6));
@@ -1546,8 +1546,24 @@ $(document).ready(function () {
         simulation.alpha(0.5).restart();
 
         simulation.on("tick", () => {
+            // Orbite des membres autour du hub, recalculée sur sa position
+            // COURANTE à chaque image (jamais mise en cache).
+            if (activeTribeFilter) {
+                const hub = newNodes.find(n => n.id === activeTribeFilter);
+                if (hub) {
+                    newNodes.forEach(d => {
+                        if (d.type !== 'player' || d.dist == null || d.fx != null) return;
+                        const dx = d.x - hub.x, dy = d.y - hub.y;
+                        const r = Math.sqrt(dx * dx + dy * dy) || 1e-6;
+                        const k = (d.dist - r) / r * 0.12; // rappel doux, pas un claquement brutal
+                        d.x += dx * k;
+                        d.y += dy * k;
+                    });
+                }
+            }
+
             // Filet de sécurité : quelle que soit la cause (déséquilibre de
-            // forces, drag near un bord...), aucune bulle ne doit pouvoir
+            // forces, drag près d'un bord...), aucune bulle ne doit pouvoir
             // sortir du cadre visible.
             newNodes.forEach(d => {
                 d.x = Math.max(d.radius, Math.min(width - d.radius, d.x));
