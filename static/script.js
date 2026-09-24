@@ -1353,37 +1353,41 @@ $(document).ready(function () {
                 tiered[tier].push(p);
             });
 
-        // Entrelacement round-robin : mélange les 3 tailles tout autour du
-        // cercle plutôt que de les regrouper en trois arcs séparés.
-        const placement = [];
-        const maxLen = Math.max(tiered.pillar.length, tiered.satellite.length, tiered.member.length);
-        for (let i = 0; i < maxLen; i++) {
-            ['pillar', 'satellite', 'member'].forEach(tier => {
-                if (tiered[tier][i]) placement.push({ player: tiered[tier][i], tier });
-            });
-        }
-
-        const total = placement.length || 1;
-        placement.forEach(({ player, tier }, idx) => {
+        // Répartition par palier : chaque palier (pillar / satellite / member)
+        // est distribué sur son PROPRE cercle complet (0→360°), indépendamment
+        // des autres. Un round-robin à compteur partagé entre paliers de
+        // tailles très inégales (les piliers, toujours peu nombreux, plafonnés
+        // à 6) s'épuise après quelques tours : les piliers se retrouvaient
+        // compressés dans les ~12 premiers % du cercle au lieu d'être répartis
+        // sur 360°. Comme les paliers ont des rayons d'orbite différents
+        // (TIERS[tier].dist), ils forment déjà des anneaux concentriques
+        // distincts — inutile de les entrelacer sur un même indice global pour
+        // éviter les arcs, il suffit que chaque anneau soit uniforme.
+        ['pillar', 'satellite', 'member'].forEach(tier => {
+            const group = tiered[tier];
             const { radius, dist } = TIERS[tier];
-            const scoreObj = player.scores?.[tribe];
-            const angle = (2 * Math.PI * idx / total) - (Math.PI / 2);
-            const playerId = `player_${player.name}`;
+            const total = group.length || 1;
 
-            nodes.push({
-                id: playerId,
-                type: 'player',
-                name: player.name,
-                tier,
-                pct: scoreObj?.pct || 0,
-                status: scoreObj?.status || null,
-                color: getBadgeColor(scoreObj?.status),
-                radius,
-                dist,
-                angle
+            group.forEach((player, idx) => {
+                const scoreObj = player.scores?.[tribe];
+                const angle = (2 * Math.PI * idx / total) - (Math.PI / 2);
+                const playerId = `player_${player.name}`;
+
+                nodes.push({
+                    id: playerId,
+                    type: 'player',
+                    name: player.name,
+                    tier,
+                    pct: scoreObj?.pct || 0,
+                    status: scoreObj?.status || null,
+                    color: getBadgeColor(scoreObj?.status),
+                    radius,
+                    dist,
+                    angle
+                });
+
+                links.push({ source: tribe, target: playerId, tier });
             });
-
-            links.push({ source: tribe, target: playerId, tier });
         });
 
         return { nodes, links };
