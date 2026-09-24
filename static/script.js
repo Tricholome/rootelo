@@ -1508,13 +1508,19 @@ $(document).ready(function () {
         if (!simulation) {
             simulation = d3.forceSimulation().alphaDecay(0.05);
         }
+        // Le lien est créé sans sa liste de liens : il ne doit résoudre les
+        // identifiants source/target qu'une fois que la simulation connaît
+        // déjà les nœuds de CE rendu (simulation.nodes(newNodes) plus bas).
+        // Sinon d3 cherche ces identifiants dans l'ancien jeu de nœuds (ou
+        // dans un jeu vide au tout premier rendu) et lève une erreur.
+        const linkForce = d3.forceLink().id(d => d.id);
 
         if (!activeTribeFilter) {
             // Vue globale : disposition libre, légèrement recentrée.
             simulation
                 .force("center", d3.forceCenter(width / 2, height / 2))
                 .force("radial", null)
-                .force("link", d3.forceLink(newLinks).id(d => d.id).distance(145))
+                .force("link", linkForce.distance(145))
                 .force("charge", d3.forceManyBody().strength(-320))
                 .force("collision", d3.forceCollide().radius(d => d.radius + 15));
         } else {
@@ -1527,7 +1533,7 @@ $(document).ready(function () {
 
             simulation
                 .force("center", null)
-                .force("link", d3.forceLink(newLinks).id(d => d.id).distance(d => d.tier ? TIERS[d.tier].dist : 0).strength(0.15))
+                .force("link", linkForce.distance(d => d.tier ? TIERS[d.tier].dist : 0).strength(0.15))
                 .force("charge", d3.forceManyBody().strength(d => d.type === 'tribe' ? 0 : -25))
                 .force("radial", d3.forceRadial(d => d.dist || 0, () => hub.x, () => hub.y).strength(d => d.type === 'tribe' ? 0 : 0.85))
                 .force("x", d3.forceX(width / 2).strength(d => d.type === 'tribe' ? 0.1 : 0))
@@ -1536,6 +1542,7 @@ $(document).ready(function () {
         }
 
         simulation.nodes(newNodes);
+        simulation.force("link").links(newLinks);
         simulation.alpha(0.5).restart();
 
         simulation.on("tick", () => {
