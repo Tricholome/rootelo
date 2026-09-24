@@ -1743,8 +1743,8 @@ table.dataTable tbody tr.loser td {
     width: 100%;
     height: 100%;
     display: block;
-    
-    /* Local SVG Variables for easy theming */
+
+    /* Variables locales pour le thème du SVG */
     --link-color: rgba(255, 255, 255, 0.25);
     --link-active-color: rgba(255, 255, 255, 0.35);
     --node-tribe-bg: rgba(10, 22, 14, 0.65);
@@ -1807,7 +1807,6 @@ table.dataTable tbody tr.loser td {
     display: inline-block;
 }
 
-/* Generated Table Cells */
 .tribe-cell {
     display: inline-flex;
     align-items: center;
@@ -1838,8 +1837,14 @@ table.dataTable tbody tr.loser td {
 
 /* --- D. Interactive SVG Map Styles (D3.js) --- */
 
-/* Base SVG Structure & Cursors */
-#tribeMapSvg .node-group { cursor: grab; }
+#tribeMapSvg .node-group {
+    cursor: grab;
+    /* Le déplacement (transform) est piloté image par image par la
+       simulation D3 ; on n'anime QUE ce qui change entre deux relances
+       (rayon, opacité, couleur), jamais transform, pour ne pas faire
+       lutter une transition CSS contre les ticks de la physique. */
+    will-change: transform;
+}
 #tribeMapSvg .node-group:active { cursor: grabbing; }
 #tribeMapSvg text, #tribeMapSvg image { pointer-events: none; }
 #tribeMapSvg text { text-anchor: middle; }
@@ -1854,7 +1859,8 @@ table.dataTable tbody tr.loser td {
     pointer-events: none;
 }
 
-/* 2. LIENS CONSTELLATION (Vue Tribu) : Ultra-discrets pour supprimer le fouillis */
+/* 2. LIENS CONSTELLATION (Vue Tribu) : discrets, un peu plus marqués pour
+      les piliers pour renforcer la hiérarchie visuelle. */
 #tribeMapSvg line.constellation-link {
     stroke: rgba(255, 255, 255, 0.15);
     stroke-dasharray: 2, 4;
@@ -1862,25 +1868,24 @@ table.dataTable tbody tr.loser td {
     pointer-events: none;
 }
 
-#tribeMapSvg line.constellation-link.is-pillar {
+#tribeMapSvg line.constellation-link.tier-pillar {
     stroke: var(--main-color);
     stroke-opacity: 0.4;
     stroke-width: 1.5px;
 }
 
-/* 3. CLAIRIÈRES : Cercles de craie clairs & fond transparent */
+/* 3. CLAIRIÈRES : cercle de craie clair, fond transparent */
 #tribeMapSvg .node-group.type-tribe .node-circle {
-    fill: transparent !important;                   /* Suppression du fond noir */
-    stroke: rgba(255, 255, 255, 0.65);             /* Craie claire */
+    fill: transparent !important;
+    stroke: rgba(255, 255, 255, 0.65);
     stroke-width: 2px;
-    stroke-dasharray: 6, 4;                         /* Trait pointillé craie */
+    stroke-dasharray: 6, 4;
     stroke-linecap: round;
     transition: stroke 0.3s, stroke-width 0.3s;
 }
 
-/* Clairière sélectionnée : Trait craie appuyé à la couleur du thème */
 #tribeMapSvg .node-group.type-tribe.is-selected .node-circle {
-    fill: rgba(255, 255, 255, 0.03) !important;     /* Teinte ultra discrète */
+    fill: rgba(255, 255, 255, 0.03) !important;
     stroke: var(--main-color);
     stroke-width: 2.5px;
     stroke-dasharray: none;
@@ -1891,26 +1896,24 @@ table.dataTable tbody tr.loser td {
     stroke-width: 2.5px;
 }
 
-/* 4. NOEUDS JOUEURS : Disques pleins sans contour */
+/* 4. NŒUDS JOUEURS : un seul système de paliers (tier-pillar / tier-satellite
+      / tier-member), plutôt que deux jeux de classes qui se recoupaient. */
 #tribeMapSvg .node-group.type-player .node-circle {
     stroke: none !important;
-    transition: fill 0.25s, opacity 0.25s, r 0.25s;
+    transition: fill 0.25s, opacity 0.25s;
 }
 
-/* Membres simples : Petites pastilles sobres */
-#tribeMapSvg .node-group.type-player .node-circle {
+#tribeMapSvg .node-group.type-player.tier-member .node-circle {
     fill: var(--text-muted);
     opacity: 0.4;
 }
 
-/* Satellites : Pastilles moyennes aux couleurs des badges */
-#tribeMapSvg .node-group.type-player.is-satellite .node-circle {
+#tribeMapSvg .node-group.type-player.tier-satellite .node-circle {
     fill: var(--node-color, var(--text-muted));
     opacity: 0.85;
 }
 
-/* Piliers : Grandes pastilles bien visibles */
-#tribeMapSvg .node-group.type-player.is-pillar .node-circle {
+#tribeMapSvg .node-group.type-player.tier-pillar .node-circle {
     fill: var(--node-color, var(--main-color));
     opacity: 1;
 }
@@ -1945,7 +1948,7 @@ table.dataTable tbody tr.loser td {
     fill: var(--text-main);
 }
 
-/* Nettoyage visuel : Le nom des membres simples est caché et s'affiche au survol */
+/* Le nom des membres simples reste caché et s'affiche au survol */
 #tribeMapSvg .member-label {
     font-size: var(--size-xs);
     font-weight: var(--normal);
