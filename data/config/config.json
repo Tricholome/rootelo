@@ -100,10 +100,10 @@
 		"BOOT": { "icon": "assets/items/boot.png" }
 		},
 		"tiers": {
-		  "Partisan": "#918F08",
-		  "Squire":   "#96710F",
-		  "Friend":   "#A64F14",
-		  "Favoring": "#9B2828",
+		  "Partisan": "#4A7822", /* Vert Fougère : un vert très "nature", chaud, mais plus vif et profond que ton fond */
+		  "Squire":   "#946A10", /* Ocre / Bronze : un jaune-or terreux, sombre pour soutenir le blanc */
+		  "Friend":   "#A34316", /* Rouille : un orange cuivré d'automne, très lisible */
+		  "Favoring": "#942626",
 		  "Default": "#4a5568"
 		}
 	}
