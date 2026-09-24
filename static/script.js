@@ -1200,11 +1200,11 @@ $(document).ready(function () {
     let currentIndex = dates.length - 1;
 
     // --- Éléments DOM ---
-    const $datePicker =$('#datePicker').attr({ min: dates[0], max: dates[dates.length - 1] });
-    const $prevBtn =$('#prevDateBtn');
-    const $nextBtn =$('#nextDateBtn');
-    const $earliestBtn =$('#earliestDateBtn');
-    const $latestBtn =$('#latestDateBtn');
+    const $datePicker = $('#datePicker').attr({ min: dates[0], max: dates[dates.length - 1] });
+    const $prevBtn = $('#prevDateBtn');
+    const $nextBtn = $('#nextDateBtn');
+    const $earliestBtn = $('#earliestDateBtn');
+    const $latestBtn = $('#latestDateBtn');
 
     /* -------------------------------------------------------------------------
        10.1 DATA TABLE MANAGEMENT
@@ -1268,15 +1268,28 @@ $(document).ready(function () {
     /* -------------------------------------------------------------------------
        10.2 GRAPH DATA GENERATOR
        ------------------------------------------------------------------------- */
-    function buildGraphData(snapshot, width, height) {
+
+    // Un seul endroit pour définir ce qu'est un pilier / satellite / membre :
+    // rayon de la bulle ET distance d'orbite autour du hub de la tribu.
+    // (radius du hub lui-même reste calculé séparément, via tribeRadius().)
+    const TIERS = {
+        pillar: { radius: 20, dist: 85 },
+        satellite: { radius: 12, dist: 130 },
+        member: { radius: 7, dist: 170 }
+    };
+
+    function tribeRadius(count) {
+        return Math.max(32, 24 + Math.sqrt(count || 0) * 10);
+    }
+
+    function buildGraphData(snapshot) {
         const activeTribes = snapshot.active_tribes || [];
         const tribeLayout = snapshot.tribe_layout || {};
-        const playersMap = new Map((snapshot.players || []).map(p => [p.name, p]));
         const nodes = [];
         const links = [];
 
         if (!activeTribeFilter) {
-            // Vue Globale
+            // --- Vue Globale : une bulle par tribu ---
             activeTribes.forEach(t => {
                 const count = snapshot.summary?.[t] || 0;
                 nodes.push({
@@ -1284,7 +1297,7 @@ $(document).ready(function () {
                     type: 'tribe',
                     label: snapshot.tribe_labels?.[t] || t,
                     count: count,
-                    radius: Math.max(30, 22 + Math.sqrt(count) * 10)
+                    radius: tribeRadius(count)
                 });
             });
 
@@ -1292,16 +1305,13 @@ $(document).ready(function () {
                 for (let j = i + 1; j < activeTribes.length; j++) {
                     const t1 = activeTribes[i];
                     const t2 = activeTribes[j];
-                    let totalAffinity = 0;
-                    let count = 0;
+                    let totalAffinity = 0, count = 0;
 
                     (snapshot.players || []).forEach(p => {
                         if (p.main_tribe === t1 && p.scores?.[t2]) {
-                            totalAffinity += p.scores[t2].pct;
-                            count++;
+                            totalAffinity += p.scores[t2].pct; count++;
                         } else if (p.main_tribe === t2 && p.scores?.[t1]) {
-                            totalAffinity += p.scores[t1].pct;
-                            count++;
+                            totalAffinity += p.scores[t1].pct; count++;
                         }
                     });
 
@@ -1311,88 +1321,69 @@ $(document).ready(function () {
                     }
                 }
             }
-        } else {
-            // Vue Constellation par tribu
-            const tribe = activeTribeFilter;
-            const count = snapshot.summary?.[tribe] || 0;
-            const layout = tribeLayout[tribe] || { pillars: [], satellites: [] };
-            const pillarsSet = new Set(layout.pillars || []);
-            const satellitesSet = new Set(layout.satellites || []);
+            return { nodes, links };
+        }
 
-            nodes.push({
-                id: tribe,
-                type: 'tribe',
-                label: snapshot.tribe_labels?.[tribe] || tribe,
-                count: count,
-                radius: Math.max(36, 26 + Math.sqrt(count) * 10)
+        // --- Vue Constellation : une tribu + ses membres, classés par palier ---
+        const tribe = activeTribeFilter;
+        const count = snapshot.summary?.[tribe] || 0;
+        const layout = tribeLayout[tribe] || { pillars: [], satellites: [] };
+        const pillarsSet = new Set(layout.pillars || []);
+        const satellitesSet = new Set(layout.satellites || []);
+
+        nodes.push({
+            id: tribe,
+            type: 'tribe',
+            label: snapshot.tribe_labels?.[tribe] || tribe,
+            count: count,
+            radius: tribeRadius(count)
+        });
+
+        // Un membre = un palier (pillar / satellite / member), triés par nom
+        // pour que l'ordre autour du cercle reste stable d'un jour à l'autre
+        // (sinon tout le monde tourne dès qu'un joueur change de statut).
+        const tiered = { pillar: [], satellite: [], member: [] };
+        (snapshot.players || [])
+            .filter(p => p.main_tribe === tribe)
+            .sort((a, b) => a.name.localeCompare(b.name))
+            .forEach(p => {
+                const tier = pillarsSet.has(p.name) ? 'pillar'
+                    : satellitesSet.has(p.name) ? 'satellite'
+                        : 'member';
+                tiered[tier].push(p);
             });
 
-            // Récupération de TOUS les membres de la tribu
-            const allTribePlayers = (snapshot.players || []).filter(p => p.main_tribe === tribe);
-
-            // 1. Préparation des 3 listes par rôle
-            const pillarsList = allTribePlayers
-				.filter(p => pillarsSet.has(p.name))
-				.map(p => ({ name: p.name, role: 'pillar', isPillar: true, isSatellite: false, dist: 90, radius: 20 }));
-
-			const satellitesList = allTribePlayers
-				.filter(p => satellitesSet.has(p.name) && !pillarsSet.has(p.name))
-				.map(p => ({ name: p.name, role: 'satellite', isPillar: false, isSatellite: true, dist: 135, radius: 11 }));
-
-			const othersList = allTribePlayers
-				.filter(p => !pillarsSet.has(p.name) && !satellitesSet.has(p.name))
-				.map(p => ({ name: p.name, role: 'member', isPillar: false, isSatellite: false, dist: 175, radius: 6 }));
-
-            // 2. Entrelacement (Round-Robin) pour mélanger les tailles sur tout le tour du cercle
-            const placementList = [];
-            const maxLen = Math.max(pillarsList.length, satellitesList.length, othersList.length);
-
-            for (let i = 0; i < maxLen; i++) {
-                if (i < pillarsList.length) placementList.push(pillarsList[i]);
-                if (i < satellitesList.length) placementList.push(satellitesList[i]);
-                if (i < othersList.length) placementList.push(othersList[i]);
-            }
-
-            // 3. Distribution angulaire globale sur 360°
-            const totalMembers = placementList.length || 1;
-
-            placementList.forEach((item, idx) => {
-                const pData = playersMap.get(item.name);
-                const scoreObj = pData?.scores?.[tribe];
-
-                // Distribution régulière autour du cadran
-                const angle = (2 * Math.PI * idx / totalMembers) - (Math.PI / 2);
-                const playerId = `player_${item.name}`;
-
-                nodes.push({
-                    id: playerId,
-                    type: 'player',
-                    name: item.name,
-                    role: item.role,
-                    isPillar: item.isPillar,
-                    isSatellite: item.isSatellite,
-                    pct: scoreObj?.pct || 0,
-                    status: scoreObj?.status || null,
-                    color: getBadgeColor(scoreObj?.status),
-                    radius: item.radius,
-                    targetX: width / 2 + item.dist * Math.cos(angle),
-                    targetY: height / 2 + item.dist * Math.sin(angle)
-                });
-
-                links.push({
-                    source: tribe,
-                    target: playerId,
-                    type: 'constellation-link',
-                    isPillar: item.isPillar,
-                    isSatellite: item.isSatellite,
-                    role: item.role
-                });
+        // Entrelacement round-robin : mélange les 3 tailles tout autour du
+        // cercle plutôt que de les regrouper en trois arcs séparés.
+        const placement = [];
+        const maxLen = Math.max(tiered.pillar.length, tiered.satellite.length, tiered.member.length);
+        for (let i = 0; i < maxLen; i++) {
+            ['pillar', 'satellite', 'member'].forEach(tier => {
+                if (tiered[tier][i]) placement.push({ player: tiered[tier][i], tier });
             });
         }
-		
-		nodes.sort((a, b) => {
-            const weights = { 'member': 1, 'satellite': 2, 'pillar': 3, 'tribe': 4 };
-            return (weights[a.role] || 0) - (weights[b.role] || 0);
+
+        const total = placement.length || 1;
+        placement.forEach(({ player, tier }, idx) => {
+            const { radius, dist } = TIERS[tier];
+            const scoreObj = player.scores?.[tribe];
+            const angle = (2 * Math.PI * idx / total) - (Math.PI / 2);
+            const playerId = `player_${player.name}`;
+
+            nodes.push({
+                id: playerId,
+                type: 'player',
+                name: player.name,
+                tier,
+                pct: scoreObj?.pct || 0,
+                status: scoreObj?.status || null,
+                color: getBadgeColor(scoreObj?.status),
+                radius,
+                dist,
+                angle
+            });
+
+            links.push({ source: tribe, target: playerId, tier });
         });
 
         return { nodes, links };
@@ -1415,25 +1406,21 @@ $(document).ready(function () {
             svg.append("g").attr("class", "nodes-layer");
         }
 
-        const { nodes: newNodes, links: newLinks } = buildGraphData(snapshot, width, height);
+        const { nodes: newNodes, links: newLinks } = buildGraphData(snapshot);
 
-        // Maintien des positions lors des transitions
+        // Conserve la position des nœuds déjà présents (transition douce),
+        // place les nouveaux au point d'entrée (hub actif ou centre).
         const prevNodesMap = new Map(simulation ? simulation.nodes().map(d => [d.id, d]) : []);
         let originX = width / 2, originY = height / 2;
-
         if (activeTribeFilter && prevNodesMap.has(activeTribeFilter)) {
             const prevTribe = prevNodesMap.get(activeTribeFilter);
             originX = prevTribe.x;
             originY = prevTribe.y;
         }
-
         newNodes.forEach(d => {
-            if (prevNodesMap.has(d.id)) {
-                const prev = prevNodesMap.get(d.id);
-                d.x = prev.x; d.y = prev.y;
-            } else {
-                d.x = originX; d.y = originY;
-            }
+            const prev = prevNodesMap.get(d.id);
+            if (prev) { d.x = prev.x; d.y = prev.y; }
+            else { d.x = originX; d.y = originY; }
         });
 
         const drag = d3.drag()
@@ -1448,10 +1435,7 @@ $(document).ready(function () {
         linkSel.exit().transition().duration(duration).attr("stroke-opacity", 0).remove();
 
         const link = linkSel.enter().append("line").merge(linkSel);
-
-        link.attr("class", d => `link ${d.type} ${d.isPillar ? 'is-pillar' : ''} ${d.isSatellite ? 'is-satellite' : ''}`)
-            .transition().duration(duration)
-            .attr("stroke-width", d => d.type === 'inter-tribe' ? Math.max(1, d.value / 5) : null);
+        link.attr("class", d => `link ${d.type || 'constellation-link'} ${d.tier ? 'tier-' + d.tier : ''}`);
 
         // --- Nœuds ---
         const nodeSel = svg.select("g.nodes-layer").selectAll("g.node-group")
@@ -1459,61 +1443,41 @@ $(document).ready(function () {
 
         nodeSel.exit().transition().duration(duration).style("opacity", 0).remove();
 
-        const nodeEnter = nodeSel.enter().append("g")
-            .call(drag);
-
+        const nodeEnter = nodeSel.enter().append("g").call(drag);
         nodeEnter.append("circle").attr("class", "node-circle");
         nodeEnter.append("image").attr("class", "node-icon");
 
         const textGroup = nodeEnter.append("text").attr("class", "count-text");
-        textGroup.append("tspan")
-            .attr("class", "num-span")
-            .attr("x", 0)
-            .attr("dy", "0");
-            
-        textGroup.append("tspan")
-            .attr("class", "lbl-span")
-            .attr("x", 0)
-            .attr("dy", "1.2em");
+        textGroup.append("tspan").attr("class", "num-span").attr("x", 0).attr("dy", "0");
+        textGroup.append("tspan").attr("class", "lbl-span").attr("x", 0).attr("dy", "1.2em");
 
         nodeEnter.append("text").attr("class", "player-label");
 
         const node = nodeEnter.merge(nodeSel);
 
-        // Application des classes dynamiques pour le styling CSS
-        node.attr("class", d => `node-group type-${d.type} ${activeTribeFilter === d.id ? 'is-selected' : ''} ${d.isPillar ? 'is-pillar' : ''} ${d.isSatellite ? 'is-satellite' : ''} role-${d.role || 'none'}`)
+        node.attr("class", d => `node-group type-${d.type} tier-${d.tier || 'hub'} ${activeTribeFilter === d.id ? 'is-selected' : ''}`)
             .style("--node-color", d => d.color || null)
             .transition().duration(duration).style("opacity", 1);
 
         node.each(function (d) {
             const g = d3.select(this);
+            g.select(".node-circle").transition().duration(duration).attr("r", d.radius);
 
             if (d.type === 'tribe') {
                 const iconPath = config.tribes?.[d.id]?.icon || '';
                 const iconSize = Math.max(24, d.radius * 0.7);
-
-                g.select(".node-circle").transition().duration(duration).attr("r", d.radius);
                 g.select(".node-icon")
                     .attr("href", iconPath).attr("xlink:href", iconPath)
                     .attr("width", iconSize).attr("height", iconSize)
                     .attr("x", -iconSize / 2).attr("y", -iconSize / 2 - 6);
-
                 g.select(".count-text").attr("transform", `translate(0, ${iconSize / 2 + 8})`);
                 g.select(".num-span").text(d.count);
                 g.select(".lbl-span").text(" members");
             } else {
-                g.select(".node-circle").transition().duration(duration).attr("r", d.radius);
-
-                let labelClass = "player-label member-label";
-                if (d.isPillar) {
-                    labelClass = "player-label pillar-label";
-                } else if (d.isSatellite) {
-                    labelClass = "player-label satellite-label";
-                }
-
-                g.select(".player-label")
-                    .text(d.name)
-                    .attr("class", labelClass);
+                const labelClass = d.tier === 'pillar' ? "player-label pillar-label"
+                    : d.tier === 'satellite' ? "player-label satellite-label"
+                        : "player-label member-label";
+                g.select(".player-label").text(d.name).attr("class", labelClass);
             }
         });
 
@@ -1523,35 +1487,39 @@ $(document).ready(function () {
             updateView(dates[currentIndex]);
         });
 
-        // --- Simulation Physique ---
-        if (!simulation) simulation = d3.forceSimulation();
-        const linkForce = d3.forceLink().id(d => d.id);
+        // --- Simulation physique ---
+        if (!simulation) {
+            simulation = d3.forceSimulation().alphaDecay(0.05);
+        }
 
         if (!activeTribeFilter) {
+            // Vue globale : disposition libre, légèrement recentrée.
             simulation
                 .force("center", d3.forceCenter(width / 2, height / 2))
-                .force("link", linkForce.distance(145))
+                .force("radial", null)
+                .force("link", d3.forceLink(newLinks).id(d => d.id).distance(145))
                 .force("charge", d3.forceManyBody().strength(-320))
-                .force("x", d3.forceX(width / 2).strength(0.08))
-                .force("y", d3.forceY(height / 2).strength(0.08))
                 .force("collision", d3.forceCollide().radius(d => d.radius + 15));
         } else {
+            // Vue constellation : chaque membre orbite le hub à une distance
+            // fixe selon son palier. Une seule force gère cette distance
+            // (forceRadial, recalculée sur la position RÉELLE du hub à
+            // chaque tick) : c'est ce qui évite que la mise en page
+            // "tremble" en permanence entre deux consignes contradictoires.
+            const hub = newNodes.find(n => n.id === activeTribeFilter);
+
             simulation
                 .force("center", null)
-                .force("link", linkForce.distance(d => {
-                    if (d.isPillar) return 70;
-                    if (d.isSatellite) return 110;
-                    return 140;
-                }))
-                .force("charge", d3.forceManyBody().strength(-40))
-                .force("x", d3.forceX(d => (d.type === 'tribe' && d.id === activeTribeFilter) ? width / 2 : (d.targetX || width / 2)).strength(d => (d.type === 'tribe' && d.id === activeTribeFilter) ? 0.15 : 0.3))
-                .force("y", d3.forceY(d => (d.type === 'tribe' && d.id === activeTribeFilter) ? height / 2 : (d.targetY || height / 2)).strength(d => (d.type === 'tribe' && d.id === activeTribeFilter) ? 0.15 : 0.3))
-                .force("collision", d3.forceCollide().radius(d => d.radius + 8));
+                .force("link", d3.forceLink(newLinks).id(d => d.id).distance(d => d.tier ? TIERS[d.tier].dist : 0).strength(0.15))
+                .force("charge", d3.forceManyBody().strength(d => d.type === 'tribe' ? 0 : -25))
+                .force("radial", d3.forceRadial(d => d.dist || 0, () => hub.x, () => hub.y).strength(d => d.type === 'tribe' ? 0 : 0.85))
+                .force("x", d3.forceX(width / 2).strength(d => d.type === 'tribe' ? 0.1 : 0))
+                .force("y", d3.forceY(height / 2).strength(d => d.type === 'tribe' ? 0.1 : 0))
+                .force("collision", d3.forceCollide().radius(d => d.radius + 6));
         }
 
         simulation.nodes(newNodes);
-        simulation.force("link").links(newLinks);
-        simulation.alpha(0.6).restart();
+        simulation.alpha(0.5).restart();
 
         simulation.on("tick", () => {
             link.attr("x1", d => d.source.x).attr("y1", d => d.source.y)
@@ -1571,7 +1539,8 @@ $(document).ready(function () {
         renderTribeGraph(snapshot);
         updateTable(snapshot);
 
-        $prevBtn.prop('disabled', currentIndex <= 0);$nextBtn.prop('disabled', currentIndex >= dates.length - 1);
+        $prevBtn.prop('disabled', currentIndex <= 0);
+        $nextBtn.prop('disabled', currentIndex >= dates.length - 1);
     }
 
     function setDateByIndex(index) {
@@ -1582,8 +1551,10 @@ $(document).ready(function () {
     }
 
     // Écouteurs d'événements UI
-    $prevBtn.on('click', () => setDateByIndex(currentIndex - 1));$nextBtn.on('click', () => setDateByIndex(currentIndex + 1));
-    $earliestBtn.on('click', () => setDateByIndex(0));$latestBtn.on('click', () => setDateByIndex(dates.length - 1));
+    $prevBtn.on('click', () => setDateByIndex(currentIndex - 1));
+    $nextBtn.on('click', () => setDateByIndex(currentIndex + 1));
+    $earliestBtn.on('click', () => setDateByIndex(0));
+    $latestBtn.on('click', () => setDateByIndex(dates.length - 1));
 
     $datePicker.on('change', function () {
         const val = $(this).val();
