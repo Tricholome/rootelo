@@ -1353,6 +1353,17 @@ $(document).ready(function () {
                 tiered[tier].push(p);
             });
 
+        // Hash déterministe (0..1) dérivé du nom : donne un écart "aléatoire"
+        // mais stable d'un jour à l'autre (même joueur -> même écart), pour
+        // ne pas faire sauter tout le monde à chaque re-rendu.
+        function nameJitter01(name) {
+            let hash = 0;
+            for (let i = 0; i < name.length; i++) {
+                hash = (Math.imul(hash, 31) + name.charCodeAt(i)) >>> 0;
+            }
+            return (hash % 10000) / 10000;
+        }
+
         // Répartition par palier : chaque palier (pillar / satellite / member)
         // est distribué sur son PROPRE cercle complet (0→360°), indépendamment
         // des autres. Un round-robin à compteur partagé entre paliers de
@@ -1363,14 +1374,26 @@ $(document).ready(function () {
         // (TIERS[tier].dist), ils forment déjà des anneaux concentriques
         // distincts — inutile de les entrelacer sur un même indice global pour
         // éviter les arcs, il suffit que chaque anneau soit uniforme.
+        //
+        // Deux ajustements pour un rendu organique plutôt que "roue à
+        // rayons" (surtout visible quand un palier a peu de membres) :
+        // - un déphasage fixe différent par palier, pour que pillar/
+        //   satellite/member ne démarrent pas tous les trois à midi ;
+        // - un jitter stable (basé sur le nom) qui casse l'espacement
+        //   parfaitement régulier au sein d'un même palier.
+        const TIER_PHASE = { pillar: 0, satellite: 0.22, member: 0.47 }; // fraction de tour
+
         ['pillar', 'satellite', 'member'].forEach(tier => {
             const group = tiered[tier];
             const { radius, dist } = TIERS[tier];
             const total = group.length || 1;
+            const slot = (2 * Math.PI) / total;
+            const phase = TIER_PHASE[tier] * 2 * Math.PI;
 
             group.forEach((player, idx) => {
                 const scoreObj = player.scores?.[tribe];
-                const angle = (2 * Math.PI * idx / total) - (Math.PI / 2);
+                const jitter = (nameJitter01(player.name) - 0.5) * slot * 0.7; // ±35% du slot, pas de collision
+                const angle = phase + (slot * idx) + jitter - (Math.PI / 2);
                 const playerId = `player_${player.name}`;
 
                 nodes.push({
