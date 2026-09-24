@@ -1906,21 +1906,18 @@ table.dataTable tbody tr.loser td {
 
 /* Membres : Plus petits, avec leur couleur d'affinité et une opacité réduite */
 #tribeMapSvg .node-group.type-player.tier-member .node-circle {
-    r: 6px !important; 
     fill: var(--node-color, var(--text-muted)); 
     opacity: 0.55;
 }
 
 /* Satellites : Taille intermédiaire */
 #tribeMapSvg .node-group.type-player.tier-satellite .node-circle {
-    r: 9px !important;
     fill: var(--node-color, var(--text-muted));
     opacity: 0.85;
 }
 
 /* Piliers : Plus grands, 100% opaques (réduits par rapport aux 20px d'origine) */
 #tribeMapSvg .node-group.type-player.tier-pillar .node-circle {
-    r: 12px !important;
     fill: var(--node-color, var(--main-color));
     opacity: 1;
 }
