@@ -1536,8 +1536,8 @@ $(document).ready(function () {
                 .force("link", linkForce.distance(d => d.tier ? TIERS[d.tier].dist : 0).strength(0.15))
                 .force("charge", d3.forceManyBody().strength(d => d.type === 'tribe' ? 0 : -25))
                 .force("radial", d3.forceRadial(d => d.dist || 0, () => hub.x, () => hub.y).strength(d => d.type === 'tribe' ? 0 : 0.85))
-                .force("x", d3.forceX(width / 2).strength(d => d.type === 'tribe' ? 0.1 : 0))
-                .force("y", d3.forceY(height / 2).strength(d => d.type === 'tribe' ? 0.1 : 0))
+                .force("x", d3.forceX(width / 2).strength(d => d.type === 'tribe' ? 0.3 : 0))
+                .force("y", d3.forceY(height / 2).strength(d => d.type === 'tribe' ? 0.3 : 0))
                 .force("collision", d3.forceCollide().radius(d => d.radius + 6));
         }
 
@@ -1546,6 +1546,13 @@ $(document).ready(function () {
         simulation.alpha(0.5).restart();
 
         simulation.on("tick", () => {
+            // Filet de sécurité : quelle que soit la cause (déséquilibre de
+            // forces, drag near un bord...), aucune bulle ne doit pouvoir
+            // sortir du cadre visible.
+            newNodes.forEach(d => {
+                d.x = Math.max(d.radius, Math.min(width - d.radius, d.x));
+                d.y = Math.max(d.radius, Math.min(height - d.radius, d.y));
+            });
             link.attr("x1", d => d.source.x).attr("y1", d => d.source.y)
                 .attr("x2", d => d.target.x).attr("y2", d => d.target.y);
             node.attr("transform", d => `translate(${d.x},${d.y})`);
