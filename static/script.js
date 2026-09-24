@@ -1589,15 +1589,35 @@ $(document).ready(function () {
                 }
             }
 
-            // Filet de sécurité : quelle que soit la cause (déséquilibre de
-            // forces, drag près d'un bord...), aucune bulle ne doit pouvoir
-            // sortir du cadre visible.
+            // Filet de sécurité : aucune bulle ne sort du cadre visible.
             newNodes.forEach(d => {
                 d.x = Math.max(d.radius, Math.min(width - d.radius, d.x));
                 d.y = Math.max(d.radius, Math.min(height - d.radius, d.y));
             });
-            link.attr("x1", d => d.source.x).attr("y1", d => d.source.y)
-                .attr("x2", d => d.target.x).attr("y2", d => d.target.y);
+
+            // --- CALCUL PRÉCIS DU DÉPART ET DE L'ARRIVÉE DES LIGNES ---
+            link
+                .attr("x1", d => {
+                    const dx = d.target.x - d.source.x, dy = d.target.y - d.source.y;
+                    const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+                    return d.source.x + (dx / dist) * (d.source.radius || 0);
+                })
+                .attr("y1", d => {
+                    const dx = d.target.x - d.source.x, dy = d.target.y - d.source.y;
+                    const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+                    return d.source.y + (dy / dist) * (d.source.radius || 0);
+                })
+                .attr("x2", d => {
+                    const dx = d.target.x - d.source.x, dy = d.target.y - d.source.y;
+                    const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+                    return d.target.x - (dx / dist) * (d.target.radius || 0);
+                })
+                .attr("y2", d => {
+                    const dx = d.target.x - d.source.x, dy = d.target.y - d.source.y;
+                    const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+                    return d.target.y - (dy / dist) * (d.target.radius || 0);
+                });
+
             node.attr("transform", d => `translate(${d.x},${d.y})`);
         });
     }
