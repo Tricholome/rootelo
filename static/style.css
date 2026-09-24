@@ -1874,91 +1874,104 @@ table.dataTable tbody tr.loser td {
     stroke-width: 1.5px;
 }
 
-/* 3. CLAIRIÈRES : cercle de craie clair, fond transparent */
+/* 3. CLAIRIÈRES : Cercle de craie avec fond opaque */
 #tribeMapSvg .node-group.type-tribe .node-circle {
-    fill: transparent !important;
-    stroke: rgba(255, 255, 255, 0.65);
+    /* Le fond opaque masque les pointillés des sentiers qui passent dessous */
+    fill: var(--node-tribe-bg) !important;
+    stroke: rgba(255, 255, 255, 0.7);
     stroke-width: 2px;
-    stroke-dasharray: 6, 4;
+    stroke-dasharray: 6, 4; /* Effet tracé à la craie */
     stroke-linecap: round;
-    transition: stroke 0.3s, stroke-width 0.3s;
+    transition: stroke 0.3s, stroke-width 0.3s, fill 0.3s;
 }
 
+/* Clairière sélectionnée : Plus de vert, juste un trait continu et affirmé */
 #tribeMapSvg .node-group.type-tribe.is-selected .node-circle {
-    fill: rgba(255, 255, 255, 0.03) !important;
-    stroke: var(--main-color);
+    fill: var(--node-tribe-active) !important;
+    stroke: #ffffff;
     stroke-width: 2.5px;
-    stroke-dasharray: none;
+    stroke-dasharray: none; 
 }
 
 #tribeMapSvg .node-group.type-tribe:hover .node-circle {
-    stroke: var(--text-bright);
+    stroke: #ffffff;
     stroke-width: 2.5px;
 }
 
-/* 4. NŒUDS JOUEURS : un seul système de paliers (tier-pillar / tier-satellite
-      / tier-member), plutôt que deux jeux de classes qui se recoupaient. */
+/* 4. NŒUDS JOUEURS : Échelle adoucie et préservation des couleurs (affinités) */
 #tribeMapSvg .node-group.type-player .node-circle {
     stroke: none !important;
-    transition: fill 0.25s, opacity 0.25s;
+    transition: transform 0.2s, opacity 0.25s, filter 0.25s;
 }
 
+/* Membres : Plus petits, avec leur couleur d'affinité et une opacité réduite */
 #tribeMapSvg .node-group.type-player.tier-member .node-circle {
-    fill: var(--text-muted);
-    opacity: 0.4;
+    r: 6px !important; 
+    fill: var(--node-color, var(--text-muted)); 
+    opacity: 0.55;
 }
 
+/* Satellites : Taille intermédiaire */
 #tribeMapSvg .node-group.type-player.tier-satellite .node-circle {
+    r: 9px !important;
     fill: var(--node-color, var(--text-muted));
     opacity: 0.85;
 }
 
+/* Piliers : Plus grands, 100% opaques (réduits par rapport aux 20px d'origine) */
 #tribeMapSvg .node-group.type-player.tier-pillar .node-circle {
+    r: 12px !important;
     fill: var(--node-color, var(--main-color));
     opacity: 1;
 }
 
+/* Survol : On garde la couleur d'affinité mais on la fait briller avec un léger zoom */
 #tribeMapSvg .node-group.type-player:hover .node-circle {
     opacity: 1;
-    fill: var(--text-bright);
+    filter: brightness(1.3) drop-shadow(0 0 4px rgba(255, 255, 255, 0.3));
+    transform: scale(1.15);
 }
 
-/* 5. TYPOGRAPHIE & LISIBILITÉ DU TEXTE */
+/* 5. TYPOGRAPHIE & LISIBILITÉ : Suppression des polices trop grasses */
 #tribeMapSvg .num-span {
     font-size: var(--size-base);
-    font-weight: var(--bold);
+    font-weight: var(--medium); /* Remplacé: était bold */
     fill: var(--text-bright);
 }
 
 #tribeMapSvg .lbl-span {
     font-size: var(--size-xs);
-    font-weight: var(--medium);
+    font-weight: var(--normal); /* Remplacé: était medium */
     fill: var(--text-muted);
 }
 
+/* Noms des joueurs : Hiérarchie par l'épaisseur de la police */
 #tribeMapSvg .pillar-label {
     font-size: var(--size-sm);
-    font-weight: var(--bold);
+    font-weight: var(--medium); /* Remplacé: était bold */
     fill: var(--text-bright);
 }
 
 #tribeMapSvg .satellite-label {
     font-size: var(--size-xs);
-    font-weight: var(--medium);
+    font-weight: var(--normal); /* Remplacé: était medium */
     fill: var(--text-main);
 }
 
-/* Le nom des membres simples reste caché et s'affiche au survol */
+/* Noms des membres simples : Désormais toujours visibles mais discrets */
 #tribeMapSvg .member-label {
     font-size: var(--size-xs);
     font-weight: var(--normal);
     fill: var(--text-muted);
-    opacity: 0;
-    transition: opacity 0.2s ease;
+    opacity: 0.45; /* Remplacé: était 0 pour les cacher */
+    transition: opacity 0.2s ease, fill 0.2s ease;
 }
 
-#tribeMapSvg .node-group.type-player:hover .member-label {
+/* Mise en évidence du texte au survol de n'importe quel joueur */
+#tribeMapSvg .node-group.type-player:hover text {
     opacity: 1;
+    fill: var(--text-bright);
+    font-weight: var(--medium);
 }
 
 /* =========================================================================
