@@ -250,7 +250,7 @@ def player_scores(G: nx.Graph, roster: dict, p: str, active_tribes: list, cfg: d
     for t in tribe_names_pool:
         status = None
         if main is not UNALIGNED and t == main:
-            if pcts[t] >= 75:
+            if pcts[t] >= 65:
                 status = "Partisan"
             elif pcts[t] >= 35:
                 status = "Squire"
