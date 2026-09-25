@@ -34,6 +34,7 @@ DEFAULT_CONFIG = {
     "DECAY_RATE": 0.95,
     "NEW_MATCH_WEIGHT": 1.0,
     "MIN_EDGE_WEIGHT": 0.1,
+    "RESOLUTION": 1.2,
 }
 
 
@@ -79,7 +80,10 @@ def compass(
         return {}, set()
 
     comms = nx.community.louvain_communities(
-        G.subgraph(eligible), weight="weight", seed=42
+        G.subgraph(eligible),
+        weight="weight",
+        resolution=cfg["RESOLUTION"],
+        seed=42
     )
     comms.sort(key=lambda c: (-len(c), sorted(c)))
 
