@@ -9,7 +9,12 @@ from jinja2 import Environment, FileSystemLoader
 import pandas as pd
 import requests
 import re
+import sys
 from frog import run_homelands_simulation
+
+if os.environ.get("PYTHONHASHSEED") != "0":
+    os.environ["PYTHONHASHSEED"] = "0"
+    os.execv(sys.executable, [sys.executable] + sys.argv)
 
 # =========================================================================
 # --- 0. GLOBAL CONSTANTS & LOGGING ---
