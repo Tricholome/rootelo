@@ -1,19 +1,9 @@
 {
-  "updated_at": "2026-09-27 00:27 UTC",
+  "updated_at": "2026-09-28 00:27 UTC",
   "players": {
-    "bw": {
-      "elo": 1382,
-      "rank": 1,
-      "tier": "rabbit",
-      "bg_color": "#F2C14E",
-      "icon_url": "https://tricholome.github.io/rootelo/assets/icons/rabbit.webp",
-      "games": 37,
-      "wins": 19.0,
-      "win_rate": "51.4%"
-    },
     "uwtron": {
       "elo": 1372,
-      "rank": 2,
+      "rank": 1,
       "tier": "rabbit",
       "bg_color": "#F2C14E",
       "icon_url": "https://tricholome.github.io/rootelo/assets/icons/rabbit.webp",
@@ -21,8 +11,18 @@
       "wins": 10.0,
       "win_rate": "58.8%"
     },
+    "bw": {
+      "elo": 1368,
+      "rank": 2,
+      "tier": "rabbit",
+      "bg_color": "#F2C14E",
+      "icon_url": "https://tricholome.github.io/rootelo/assets/icons/rabbit.webp",
+      "games": 38,
+      "wins": 19.0,
+      "win_rate": "50.0%"
+    },
     "wyvernelement": {
-      "elo": 1351,
+      "elo": 1352,
       "rank": "-",
       "tier": "unassigned",
       "bg_color": null,
@@ -162,7 +162,7 @@
       "win_rate": "50.0%"
     },
     "jermcurry": {
-      "elo": 1245,
+      "elo": 1246,
       "rank": 10,
       "tier": "mouse",
       "bg_color": "#F49E52",
@@ -312,7 +312,7 @@
       "win_rate": "33.3%"
     },
     "victorvee": {
-      "elo": 1213,
+      "elo": 1214,
       "rank": 18,
       "tier": "mouse",
       "bg_color": "#F49E52",
@@ -349,6 +349,16 @@
       "icon_url": null,
       "games": 8,
       "wins": 2.0,
+      "win_rate": "25.0%"
+    },
+    "scotchbonnet11": {
+      "elo": 1204,
+      "rank": 20,
+      "tier": "mouse",
+      "bg_color": "#F49E52",
+      "icon_url": "https://tricholome.github.io/rootelo/assets/icons/mouse.webp",
+      "games": 12,
+      "wins": 3.0,
       "win_rate": "25.0%"
     },
     "nvt2508_78037": {
@@ -413,7 +423,7 @@
     },
     "aedalus": {
       "elo": 1201,
-      "rank": 20,
+      "rank": 21,
       "tier": "mouse",
       "bg_color": "#F49E52",
       "icon_url": "https://tricholome.github.io/rootelo/assets/icons/mouse.webp",
@@ -423,7 +433,7 @@
     },
     "rootvietnam": {
       "elo": 1201,
-      "rank": 21,
+      "rank": 22,
       "tier": "mouse",
       "bg_color": "#F49E52",
       "icon_url": "https://tricholome.github.io/rootelo/assets/icons/mouse.webp",
@@ -501,6 +511,16 @@
       "wins": 1.0,
       "win_rate": "20.0%"
     },
+    "mes10": {
+      "elo": 1191,
+      "rank": "-",
+      "tier": "unassigned",
+      "bg_color": null,
+      "icon_url": null,
+      "games": 1,
+      "wins": 0.0,
+      "win_rate": "0.0%"
+    },
     "flowercardianwillow": {
       "elo": 1191,
       "rank": "-",
@@ -511,7 +531,7 @@
       "wins": 0.0,
       "win_rate": "0.0%"
     },
-    "stephkuriboh": {
+    "calvinfun": {
       "elo": 1190,
       "rank": "-",
       "tier": "unassigned",
@@ -521,7 +541,7 @@
       "wins": 0.0,
       "win_rate": "0.0%"
     },
-    "calvinfun": {
+    "stephkuriboh": {
       "elo": 1190,
       "rank": "-",
       "tier": "unassigned",
@@ -671,16 +691,6 @@
       "wins": 2.0,
       "win_rate": "18.2%"
     },
-    "scotchbonnet11": {
-      "elo": 1176,
-      "rank": "-",
-      "tier": "squirrel",
-      "bg_color": "#94C160",
-      "icon_url": "https://tricholome.github.io/rootelo/assets/icons/squirrel.webp",
-      "games": 11,
-      "wins": 2.0,
-      "win_rate": "18.2%"
-    },
     "thesofly": {
       "elo": 1175,
       "rank": "-",
@@ -722,16 +732,6 @@
       "win_rate": "0.0%"
     },
     "rabbitwarlord": {
-      "elo": 1169,
-      "rank": "-",
-      "tier": "unassigned",
-      "bg_color": null,
-      "icon_url": null,
-      "games": 7,
-      "wins": 1.0,
-      "win_rate": "14.3%"
-    },
-    "lesslobster": {
       "elo": 1169,
       "rank": "-",
       "tier": "unassigned",
@@ -990,6 +990,16 @@
       "games": 3,
       "wins": 0.0,
       "win_rate": "0.0%"
+    },
+    "lesslobster": {
+      "elo": 1163,
+      "rank": "-",
+      "tier": "unassigned",
+      "bg_color": null,
+      "icon_url": null,
+      "games": 8,
+      "wins": 1.0,
+      "win_rate": "12.5%"
     },
     "pheobii": {
       "elo": 1163,
