@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-01 00:27 UTC",
+  "updated_at": "2026-10-02 00:27 UTC",
   "players": {
     "nadav253-6419": {
       "elo": 1602,
@@ -3941,16 +3941,6 @@
       "wins": 0.0,
       "win_rate": "0.0%"
     },
-    "juf3333-2975": {
-      "elo": 1167,
-      "rank": "-",
-      "tier": "unassigned",
-      "bg_color": null,
-      "icon_url": null,
-      "games": 2,
-      "wins": 0.0,
-      "win_rate": "0.0%"
-    },
     "edacm-9189": {
       "elo": 1167,
       "rank": "-",
@@ -4851,6 +4841,16 @@
       "wins": 0.0,
       "win_rate": "0.0%"
     },
+    "juf3333-2975": {
+      "elo": 1135,
+      "rank": "-",
+      "tier": "unassigned",
+      "bg_color": null,
+      "icon_url": null,
+      "games": 3,
+      "wins": 0.0,
+      "win_rate": "0.0%"
+    },
     "dgdkami-9860": {
       "elo": 1135,
       "rank": "-",
@@ -5351,16 +5351,6 @@
       "wins": 2.0,
       "win_rate": "7.1%"
     },
-    "kangourouiambic-846": {
-      "elo": 1108,
-      "rank": "-",
-      "tier": "squirrel",
-      "bg_color": "#94C160",
-      "icon_url": "https://tricholome.github.io/rootelo/assets/icons/squirrel.webp",
-      "games": 58,
-      "wins": 6.0,
-      "win_rate": "10.3%"
-    },
     "hollykat902-1703": {
       "elo": 1108,
       "rank": "-",
@@ -5460,6 +5450,16 @@
       "games": 0,
       "wins": 0.0,
       "win_rate": "0.0%"
+    },
+    "kangourouiambic-846": {
+      "elo": 1102,
+      "rank": "-",
+      "tier": "squirrel",
+      "bg_color": "#94C160",
+      "icon_url": "https://tricholome.github.io/rootelo/assets/icons/squirrel.webp",
+      "games": 59,
+      "wins": 6.0,
+      "win_rate": "10.2%"
     },
     "re_al_-5392": {
       "elo": 1101,
@@ -6042,14 +6042,14 @@
       "win_rate": "7.7%"
     },
     "solsuke-409": {
-      "elo": 1005,
+      "elo": 1002,
       "rank": "-",
       "tier": "squirrel",
       "bg_color": "#94C160",
       "icon_url": "https://tricholome.github.io/rootelo/assets/icons/squirrel.webp",
-      "games": 105,
+      "games": 106,
       "wins": 5.0,
-      "win_rate": "4.8%"
+      "win_rate": "4.7%"
     },
     "delsol-6479": {
       "elo": 1001,
@@ -6060,6 +6060,16 @@
       "games": 10,
       "wins": 0.0,
       "win_rate": "0.0%"
+    },
+    "hyenadon-4502": {
+      "elo": 947,
+      "rank": "-",
+      "tier": "squirrel",
+      "bg_color": "#94C160",
+      "icon_url": "https://tricholome.github.io/rootelo/assets/icons/squirrel.webp",
+      "games": 51,
+      "wins": 3.0,
+      "win_rate": "5.9%"
     },
     "munchking-5998": {
       "elo": 947,
@@ -6080,16 +6090,6 @@
       "games": 9,
       "wins": 0.0,
       "win_rate": "0.0%"
-    },
-    "hyenadon-4502": {
-      "elo": 929,
-      "rank": "-",
-      "tier": "squirrel",
-      "bg_color": "#94C160",
-      "icon_url": "https://tricholome.github.io/rootelo/assets/icons/squirrel.webp",
-      "games": 50,
-      "wins": 2.0,
-      "win_rate": "4.0%"
     }
   }
 }

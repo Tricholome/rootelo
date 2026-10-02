@@ -1,25 +1,25 @@
 {
-  "updated_at": "2026-10-01 00:27 UTC",
+  "updated_at": "2026-10-02 00:27 UTC",
   "players": {
+    "bw": {
+      "elo": 1382,
+      "rank": 1,
+      "tier": "rabbit",
+      "bg_color": "#F2C14E",
+      "icon_url": "https://tricholome.github.io/rootelo/assets/icons/rabbit.webp",
+      "games": 39,
+      "wins": 20.0,
+      "win_rate": "51.3%"
+    },
     "uwtron": {
       "elo": 1372,
-      "rank": 1,
+      "rank": 2,
       "tier": "rabbit",
       "bg_color": "#F2C14E",
       "icon_url": "https://tricholome.github.io/rootelo/assets/icons/rabbit.webp",
       "games": 17,
       "wins": 10.0,
       "win_rate": "58.8%"
-    },
-    "bw": {
-      "elo": 1368,
-      "rank": 2,
-      "tier": "rabbit",
-      "bg_color": "#F2C14E",
-      "icon_url": "https://tricholome.github.io/rootelo/assets/icons/rabbit.webp",
-      "games": 38,
-      "wins": 19.0,
-      "win_rate": "50.0%"
     },
     "wyvernelement": {
       "elo": 1352,
@@ -312,7 +312,7 @@
       "win_rate": "33.3%"
     },
     "victorvee": {
-      "elo": 1214,
+      "elo": 1213,
       "rank": 18,
       "tier": "mouse",
       "bg_color": "#F49E52",
@@ -531,7 +531,7 @@
       "wins": 0.0,
       "win_rate": "0.0%"
     },
-    "calvinfun": {
+    "thungon": {
       "elo": 1190,
       "rank": "-",
       "tier": "unassigned",
@@ -690,6 +690,16 @@
       "games": 11,
       "wins": 2.0,
       "win_rate": "18.2%"
+    },
+    "calvinfun": {
+      "elo": 1181,
+      "rank": "-",
+      "tier": "unassigned",
+      "bg_color": null,
+      "icon_url": null,
+      "games": 2,
+      "wins": 0.0,
+      "win_rate": "0.0%"
     },
     "thesofly": {
       "elo": 1175,
@@ -1101,16 +1111,6 @@
       "wins": 0.0,
       "win_rate": "0.0%"
     },
-    "mentalmendel": {
-      "elo": 1128,
-      "rank": "-",
-      "tier": "squirrel",
-      "bg_color": "#94C160",
-      "icon_url": "https://tricholome.github.io/rootelo/assets/icons/squirrel.webp",
-      "games": 21,
-      "wins": 2.0,
-      "win_rate": "9.5%"
-    },
     "pooge": {
       "elo": 1126,
       "rank": "-",
@@ -1120,6 +1120,16 @@
       "games": 12,
       "wins": 1.0,
       "win_rate": "8.3%"
+    },
+    "mentalmendel": {
+      "elo": 1125,
+      "rank": "-",
+      "tier": "squirrel",
+      "bg_color": "#94C160",
+      "icon_url": "https://tricholome.github.io/rootelo/assets/icons/squirrel.webp",
+      "games": 22,
+      "wins": 2.0,
+      "win_rate": "9.1%"
     },
     "malefic7m": {
       "elo": 1121,
