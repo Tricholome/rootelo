@@ -429,36 +429,6 @@ def prepare_archive_relations(raw_relations, player_registry):
             }
         }
     return prepared
-    
-    
-def prepare_network_data(snapshots, player_registry):
-    name_cache = {}
-
-    def get_cached_name(raw_name):
-        if raw_name not in name_cache:
-            name_cache[raw_name] = player_registry.get_clean_name(raw_name)
-        return name_cache[raw_name]
-
-    cleaned_snapshots = {}
-    
-    for date, snapshot in snapshots.items():
-        cleaned_snapshot = {'nodes': [], 'links': []}
-        
-        for node in snapshot.get('nodes', []):
-            cleaned_node = node.copy()
-            cleaned_node['id'] = get_cached_name(node['id'])
-            cleaned_node['label'] = get_cached_name(node['label'])
-            cleaned_snapshot['nodes'].append(cleaned_node)
-            
-        for link in snapshot.get('links', []):
-            cleaned_link = link.copy()
-            cleaned_link['source'] = get_cached_name(link['source'])
-            cleaned_link['target'] = get_cached_name(link['target'])
-            cleaned_snapshot['links'].append(cleaned_link)
-            
-        cleaned_snapshots[date] = cleaned_snapshot
-        
-    return cleaned_snapshots
 
 
 # --- Hall of Fame Engine ---
@@ -933,8 +903,7 @@ def run_league_pipeline(league_config, all_leagues_list):
         display_archives[tag] = {
             'leaderboard': lb_data,
             'matches': prepare_matches_data(raw['matches_list'], player_registry, league_config),
-            'trends': prepare_trends_data(raw['history'], player_registry, league_config),
-            'network': prepare_network_data(raw['homelands_snapshots'], player_registry)
+            'trends': prepare_trends_data(raw['history'], player_registry, league_config)
         }
 
     # Hall of Fame Compilation
@@ -1084,7 +1053,7 @@ def run_league_pipeline(league_config, all_leagues_list):
             match_data=display_archives[tag]['matches'],
             trends_data=display_archives[tag]['trends'],
             meta=archives_raw_data[tag]['metadata'],
-            snapshots_data=display_archives[tag]['network'],
+            snapshots_data=archives_raw_data[tag].get('homelands_snapshots', {}),
             relations_data=archive_relations_clean,
             champ_match=champions_data.get(tag),
             suffix=f"_{tag}"
