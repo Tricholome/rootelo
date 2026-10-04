@@ -7,6 +7,7 @@ import sys
 from datetime import datetime
 import pandas as pd
 import requests
+from frog import run_homelands_simulation
 
 # =========================================================================
 # --- 1. UTILS & LEAGUE CONFIGURATION ---
@@ -163,6 +164,7 @@ def main():
     output_matches   = os.path.join(season_dir, "matches.json")
     output_metadata  = os.path.join(season_dir, "metadata.json")
     output_relations = os.path.join(season_dir, "relations.json")
+    output_network   = os.path.join(season_dir, "network.json")
 
     print(f"\n=== INITIALIZING ARCHIVE: {season_tag.upper()} ({league_config.get('name', league_slug).upper()}) ===")
     
@@ -394,6 +396,26 @@ def main():
 
     relations_map = extract_relations(archive_matches_list, pre_match_elos)
 
+    # Homelands Network Simulation
+    print("\n=== GENERATING HOMELANDS SNAPSHOTS ===")
+    homelands_snapshots = {}
+    homelands_cfg = league_config.get("network", {}).copy()
+
+    if homelands_cfg.get("enabled", False):
+        global_config = load_json(os.path.join("data", "config", "config.json"))
+        homelands_cfg["tribe_names"] = global_config.get("network", {}).get("tribe_names", [])
+        try:
+            homelands_snapshots = run_homelands_simulation(
+                archive_matches_list,
+                custom_config=homelands_cfg,
+                season_id=league_slug
+            )
+            print(f"  > Homelands simulation completed ({len(homelands_snapshots)} daily snapshots).")
+        except Exception as e:
+            print(f"  ⚠️ Failed to run homelands simulation: {e}")
+    else:
+        print("  > Homelands simulation disabled in league configuration.")
+
     # Exports
     print("\n=== EXPORTING ARCHIVES ===")
     os.makedirs(season_dir, exist_ok=True)
@@ -415,6 +437,7 @@ def main():
 
     safe_save(output_history, player_history, is_json=True)
     safe_save(output_relations, relations_map, is_json=True)
+    safe_save(output_network, homelands_snapshots, is_json=True)
 
     metadata = {"season_tag": season_tag.upper(), "cutoff_date": cutoff_date_str, "match_count": len(archive_matches_list)}
     safe_save(output_metadata, metadata, is_json=True)
