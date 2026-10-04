@@ -431,22 +431,34 @@ def prepare_archive_relations(raw_relations, player_registry):
     return prepared
     
     
-def prepare_network_data(snapshots_dict, player_registry):
-    if not snapshots_dict:
-        return {}
+def prepare_network_data(snapshots, player_registry):
+    name_cache = {}
 
-    cleaned = {}
-    for date_key, snapshot in snapshots_dict.items():
-        nodes = [
-            {**n, 'id': player_registry.get_clean_name(n.get('id')), 'label': player_registry.get_clean_name(n.get('label', n.get('id')))}
-            for n in snapshot.get('nodes', [])
-        ]
-        edges = [
-            {**e, 'source': player_registry.get_clean_name(e.get('source')), 'target': player_registry.get_clean_name(e.get('target'))}
-            for e in snapshot.get('edges', snapshot.get('links', []))
-        ]
-        cleaned[date_key] = {**snapshot, 'nodes': nodes, 'edges': edges}
-    return cleaned
+    def get_cached_name(raw_name):
+        if raw_name not in name_cache:
+            name_cache[raw_name] = player_registry.get_clean_name(raw_name)
+        return name_cache[raw_name]
+
+    cleaned_snapshots = {}
+    
+    for date, snapshot in snapshots.items():
+        cleaned_snapshot = {'nodes': [], 'links': []}
+        
+        for node in snapshot.get('nodes', []):
+            cleaned_node = node.copy()
+            cleaned_node['id'] = get_cached_name(node['id'])
+            cleaned_node['label'] = get_cached_name(node['label'])
+            cleaned_snapshot['nodes'].append(cleaned_node)
+            
+        for link in snapshot.get('links', []):
+            cleaned_link = link.copy()
+            cleaned_link['source'] = get_cached_name(link['source'])
+            cleaned_link['target'] = get_cached_name(link['target'])
+            cleaned_snapshot['links'].append(cleaned_link)
+            
+        cleaned_snapshots[date] = cleaned_snapshot
+        
+    return cleaned_snapshots
 
 
 # --- Hall of Fame Engine ---
