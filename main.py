@@ -429,6 +429,24 @@ def prepare_archive_relations(raw_relations, player_registry):
             }
         }
     return prepared
+    
+    
+def prepare_network_data(snapshots_dict, player_registry):
+    if not snapshots_dict:
+        return {}
+
+    cleaned = {}
+    for date_key, snapshot in snapshots_dict.items():
+        nodes = [
+            {**n, 'id': player_registry.get_clean_name(n.get('id')), 'label': player_registry.get_clean_name(n.get('label', n.get('id')))}
+            for n in snapshot.get('nodes', [])
+        ]
+        edges = [
+            {**e, 'source': player_registry.get_clean_name(e.get('source')), 'target': player_registry.get_clean_name(e.get('target'))}
+            for e in snapshot.get('edges', snapshot.get('links', []))
+        ]
+        cleaned[date_key] = {**snapshot, 'nodes': nodes, 'edges': edges}
+    return cleaned
 
 
 # --- Hall of Fame Engine ---
@@ -903,7 +921,8 @@ def run_league_pipeline(league_config, all_leagues_list):
         display_archives[tag] = {
             'leaderboard': lb_data,
             'matches': prepare_matches_data(raw['matches_list'], player_registry, league_config),
-            'trends': prepare_trends_data(raw['history'], player_registry, league_config)
+            'trends': prepare_trends_data(raw['history'], player_registry, league_config),
+            'network': prepare_network_data(raw['homelands_snapshots'], player_registry)
         }
 
     # Hall of Fame Compilation
@@ -1053,7 +1072,7 @@ def run_league_pipeline(league_config, all_leagues_list):
             match_data=display_archives[tag]['matches'],
             trends_data=display_archives[tag]['trends'],
             meta=archives_raw_data[tag]['metadata'],
-            snapshots_data=archives_raw_data[tag].get('homelands_snapshots', {}),
+            snapshots_data=display_archives[tag]['network'],
             relations_data=archive_relations_clean,
             champ_match=champions_data.get(tag),
             suffix=f"_{tag}"
