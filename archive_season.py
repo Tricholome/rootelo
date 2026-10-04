@@ -45,9 +45,9 @@ def calculate_k_factor(games_count, last_date, current_date, k_config, is_ranked
     """Calculates K-factor dynamically using league config, or uses legacy step formula if is_legacy is True."""
     # Legacy Step Mode
     if is_legacy:
-        if games_count <= 10:
+        if games_count < 10:
             return 80.0
-        elif games_count <= 50:
+        elif games_count < 50:
             return 40.0
         return 20.0
 
@@ -228,9 +228,9 @@ def main():
                         closed_map = df_corr.set_index('GameID')['Date_Closed'].dropna()
                         mask_closed = df['GameID'].isin(closed_map.index)
                         if mask_closed.any():
-                            df.loc[mask_closed, 'Date_Closed'] = pd.to_datetime(
-                                df.loc[mask_closed, 'GameID'].map(closed_map), utc=True
-                            )
+                            original_times = df.loc[mask_closed, 'Date_Closed'].dt.strftime('%H:%M:%S.%f')
+                            new_dates = pd.to_datetime(df.loc[mask_closed, 'GameID'].map(closed_map)).dt.strftime('%Y-%m-%d')
+                            df.loc[mask_closed, 'Date_Closed'] = pd.to_datetime(new_dates + ' ' + original_times, utc=True)
 
                     if not is_legacy and 'Date_Created' in df_corr.columns:
                         created_map = df_corr.set_index('GameID')['Date_Created'].dropna()
