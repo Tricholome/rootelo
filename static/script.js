@@ -332,7 +332,27 @@ $(document).ready(function() {
 		});
 	}
 	
-	// --- 6. GLOBAL FIX FOR ORIENTATION & RESIZE ---
+	// --- 6. NETWORK TABLE ---
+	if ($('#frogTable').length > 0) {
+		const netConfig = window.NETWORK_CONFIG || { tribes: {} };
+		const targetTribes = Object.keys(netConfig.tribes || {});
+		const centerCols = targetTribes.map((_, i) => i + 1);
+
+		$('#frogTable').DataTable({
+			"order": [[1, "desc"]],
+			"responsive": false,
+			"autoWidth": false,
+			"pageLength": 50,
+			"dom": 'rt<"bottom"p><"clear">',
+			"columnDefs": [
+				{ "className": "player-name-cell", "targets": 0 },
+				{ "className": "dt-nowrap", "targets": "_all" },
+				{ "className": "dt-center", "targets": centerCols }
+			]
+		});
+	}
+
+	// --- 7. GLOBAL FIX FOR ORIENTATION & RESIZE ---
     window.addEventListener('resize', () => {
         $('.dataTable').each(function() {
             if ($.fn.dataTable.isDataTable(this)) {
@@ -1209,17 +1229,7 @@ $(document).ready(function () {
     /* -------------------------------------------------------------------------
        10.1 DATA TABLE MANAGEMENT
        ------------------------------------------------------------------------- */
-    const table = $('#frogTable').DataTable({
-        "order": [[1, "desc"]],
-        "responsive": false,
-        "autoWidth": false,
-        "pageLength": 50,
-        "dom": 'rt<"bottom"p><"clear">',
-        "columnDefs": [
-            { "className": "dt-nowrap", "targets": "_all" },
-            { "className": "dt-center", "targets": centerCols }
-        ]
-    });
+    const table = $('#frogTable').DataTable();
 
     function getBadgeColor(status) {
         return config.tiers?.[status] || config.tiers?.Default || "#4a5568";
