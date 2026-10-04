@@ -429,6 +429,29 @@ def prepare_archive_relations(raw_relations, player_registry):
             }
         }
     return prepared
+    
+def clean_homelands_snapshots(snapshots: dict, registry) -> dict:
+    cleaned = {}
+    for date_key, snapshot in snapshots.items():
+        cleaned_players = []
+        for player_info in snapshot.get("players", []):
+            p_copy = dict(player_info)
+            p_copy["name"] = registry.get_clean_name(p_copy["name"])
+            cleaned_players.append(p_copy)
+
+        cleaned_layout = {}
+        for tribe_name, layout in snapshot.get("tribe_layout", {}).items():
+            cleaned_layout[tribe_name] = {
+                "pillars": [registry.get_clean_name(p) for p in layout.get("pillars", [])],
+                "satellites": [registry.get_clean_name(p) for p in layout.get("satellites", [])],
+            }
+
+        cleaned[date_key] = {
+            **snapshot,
+            "players": cleaned_players,
+            "tribe_layout": cleaned_layout,
+        }
+    return cleaned
 
 
 # --- Hall of Fame Engine ---
@@ -1046,6 +1069,8 @@ def run_league_pipeline(league_config, all_leagues_list):
     # Render Historical Archives
     for tag in archive_seasons:
         archive_relations_clean = prepare_archive_relations(archives_raw_data[tag].get('relations', {}), player_registry)
+        raw_homelands = archives_raw_data[tag].get('homelands_snapshots', {})
+        archive_homelands_clean = clean_homelands_snapshots(raw_homelands, player_registry) if raw_homelands else {}
         render_season_pages(
             tag=tag,
             is_archive=True,
@@ -1053,7 +1078,7 @@ def run_league_pipeline(league_config, all_leagues_list):
             match_data=display_archives[tag]['matches'],
             trends_data=display_archives[tag]['trends'],
             meta=archives_raw_data[tag]['metadata'],
-            snapshots_data=archives_raw_data[tag].get('homelands_snapshots', {}),
+            snapshots_data=archive_homelands_clean,
             relations_data=archive_relations_clean,
             champ_match=champions_data.get(tag),
             suffix=f"_{tag}"
