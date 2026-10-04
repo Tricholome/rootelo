@@ -7,7 +7,6 @@ import sys
 from datetime import datetime
 import pandas as pd
 import requests
-from frog import run_homelands_simulation
 
 # =========================================================================
 # --- 1. UTILS & LEAGUE CONFIGURATION ---
@@ -42,8 +41,17 @@ def load_league_config(league_slug):
         raise FileNotFoundError(f"League config file not found for '{league_slug}' in {data_dir}")
 
 
-def calculate_k_factor(games_count, last_date, current_date, k_config, is_ranked=False):
-    """Calculates K-factor dynamically using standardized parameters defined in league.json."""
+def calculate_k_factor(games_count, last_date, current_date, k_config, is_ranked=False, is_legacy=False):
+    """Calculates K-factor dynamically using league config, or uses legacy step formula if is_legacy is True."""
+    # Legacy Step Mode
+    if is_legacy:
+        if games_count <= 10:
+            return 80.0
+        elif games_count <= 50:
+            return 40.0
+        return 20.0
+
+    # Dynamic Mode
     k_floor = float(k_config.get("k_floor", 20.0))
     k_start = float(k_config.get("k_start", 50.0))
     exp_decay = float(k_config.get("exp_decay", 10.0))
@@ -79,7 +87,7 @@ def get_discord_created_at(table_talk_url):
     return None
 
 
-def fetch_raw_matches(league_config, tournament_id=None):
+def fetch_raw_matches(league_config, tournament_id=None, is_legacy=False):
     """Fetches raw match data dynamically using specified league API configuration."""
     raw_data = []
     api_cfg = league_config.get('api', {})
@@ -111,13 +119,14 @@ def fetch_raw_matches(league_config, tournament_id=None):
             all_matches.extend(data.get('results', []))
             next_url = data.get('next')
         except requests.RequestException as e:
-            print(f"  ⚠️ API Error ({league_config.get('name', 'League')}): {e}")
+            print(f"  ⚠️️ API Error ({league_config.get('name', 'League')}): {e}")
             break
 
     for m in all_matches:
         participants = m.get('participants', [])
         if len(participants) == 4:
-            created_at = get_discord_created_at(m.get('table_talk_url'))
+            # Omit Date_Created extraction in legacy mode
+            created_at = None if is_legacy else get_discord_created_at(m.get('table_talk_url'))
             turn_timing = m.get('turn_timing')
 
             for p in participants:
@@ -139,18 +148,21 @@ def fetch_raw_matches(league_config, tournament_id=None):
 
 def main():
     parser = argparse.ArgumentParser(description="Rootelo Season Archiver Engine")
-    parser.add_argument('--league', default=os.getenv('LEAGUE_SLUG', 'rdl'), help="League slug (e.g., 'rdl', 'hoot')")
-    parser.add_argument('--season', default=os.getenv('SEASON_TAG', 'lh01'), help="Season tag (e.g., 'lh01')")
-    parser.add_argument('--prev-season', default=os.getenv('PREVIOUS_SEASON_TAG', ''), help="Previous season tag")
-    parser.add_argument('--cutoff', default=os.getenv('CUTOFF_DATE_STR', '2026-03-31'), help="Cutoff date (YYYY-MM-DD)")
-    parser.add_argument('--tournament-id', type=int, default=int(os.getenv('TOURNAMENT_ID', 0)) or None, help="Override Tournament ID")
+    parser.add_argument('--league', required=True, help="League slug (e.g., 'rdl', 'hoot')")
+    parser.add_argument('--season', required=True, help="Season tag (e.g., 'lh01')")
+    parser.add_argument('--cutoff', required=True, help="Cutoff date (YYYY-MM-DD)")
+    parser.add_argument('--tournament-id', type=int, required=True, help="Tournament ID")
+    parser.add_argument('--prev-season', default=None, help="Previous season tag")
+    parser.add_argument('--legacy', action='store_true', help="Enable legacy mode (step K-factor 80/40/20 and omit Date_Created)")
     args = parser.parse_args()
 
     league_slug = args.league.strip().lower()
     season_tag = args.season.strip().lower()
-    previous_season_tag = args.prev_season.strip().lower() or None
     cutoff_date_str = args.cutoff.strip()
     cutoff_date = datetime.strptime(cutoff_date_str, "%Y-%m-%d").date()
+    tournament_id = args.tournament_id
+    previous_season_tag = args.prev_season.strip().lower() if args.prev_season else None
+    is_legacy = args.legacy
 
     league_config = load_league_config(league_slug)
     k_config = league_config.get('k_factor', {})
@@ -167,7 +179,11 @@ def main():
     output_network   = os.path.join(season_dir, "network.json")
 
     print(f"\n=== INITIALIZING ARCHIVE: {season_tag.upper()} ({league_config.get('name', league_slug).upper()}) ===")
-    
+    if is_legacy:
+        print("  ⚙️ LEGACY mode active: Step K-factor (80/40/20), Date_Created ignored.")
+    else:
+        print("  ⚙️ DYNAMIC mode active: Exponential decay K-factor, Discord creation timestamp extraction enabled.")
+
     inherited_elo = {}
     last_season_ranked_players = set()
 
@@ -193,12 +209,12 @@ def main():
     # Fetch Data
     print("\n=== FETCHING API DATA ===")
     print(f"  > Requesting matches (Cutoff date: {cutoff_date_str})...")
-    raw_data = fetch_raw_matches(league_config, tournament_id=args.tournament_id)
+    raw_data = fetch_raw_matches(league_config, tournament_id=args.tournament_id, is_legacy=is_legacy)
 
     df = pd.DataFrame(raw_data)
     if not df.empty:
         df['Date_Closed'] = pd.to_datetime(df['Date_Closed'], format='ISO8601', utc=True)
-        if 'Date_Created' in df.columns:
+        if 'Date_Created' in df.columns and not is_legacy:
             df['Date_Created'] = pd.to_datetime(df['Date_Created'], utc=True)
 
         # Apply Manual Corrections (Date_Closed / Date_Created)
@@ -216,7 +232,7 @@ def main():
                                 df.loc[mask_closed, 'GameID'].map(closed_map), utc=True
                             )
 
-                    if 'Date_Created' in df_corr.columns:
+                    if not is_legacy and 'Date_Created' in df_corr.columns:
                         created_map = df_corr.set_index('GameID')['Date_Created'].dropna()
                         mask_created = df['GameID'].isin(created_map.index)
                         if mask_created.any():
@@ -232,7 +248,7 @@ def main():
         df = df.sort_values(by='Date_Closed').reset_index(drop=True)
 
     # Elo Computation
-    print("\n=== CALCULATING ELO & STATS (DYNAMIC K-FACTOR) ===")
+    print("\n=== CALCULATING ELO & STATS ===")
     elo_ratings = {**{p: 1200.0 for p in df['Player'].unique()}, **inherited_elo} if not df.empty else inherited_elo.copy()
     peak_elo = elo_ratings.copy()
     player_stats = {p: {'games': 0, 'wins': 0.0, 'last_date': None} for p in elo_ratings}
@@ -276,7 +292,7 @@ def main():
                 last_dt = player_stats[name]['last_date']
                 is_ranked = name in last_season_ranked_players
                 
-                k = calculate_k_factor(g_count, last_dt, current_dt, k_config, is_ranked=is_ranked)
+                k = calculate_k_factor(g_count, last_dt, current_dt, k_config, is_ranked=is_ranked, is_legacy=is_legacy)
                 change = k * (actual - expected)
                 
                 elo_ratings[name] += change
@@ -396,25 +412,26 @@ def main():
 
     relations_map = extract_relations(archive_matches_list, pre_match_elos)
 
-    # Homelands Network Simulation
-    print("\n=== GENERATING HOMELANDS SNAPSHOTS ===")
+    # Homelands Simulation (Network)
     homelands_snapshots = {}
-    homelands_cfg = league_config.get("network", {}).copy()
+    try:
+        from frog import run_homelands_simulation
+        print("\n=== GENERATING HOMELANDS SNAPSHOTS (NETWORK) ===")
+        global_config_path = os.path.join("data", "config", "config.json")
+        tribe_names = []
+        if os.path.exists(global_config_path):
+            tribe_names = load_json(global_config_path).get("network", {}).get("tribe_names", [])
 
-    if homelands_cfg.get("enabled", False):
-        global_config = load_json(os.path.join("data", "config", "config.json"))
-        homelands_cfg["tribe_names"] = global_config.get("network", {}).get("tribe_names", [])
-        try:
-            homelands_snapshots = run_homelands_simulation(
-                archive_matches_list,
-                custom_config=homelands_cfg,
-                season_id=league_slug
-            )
-            print(f"  > Homelands simulation completed ({len(homelands_snapshots)} daily snapshots).")
-        except Exception as e:
-            print(f"  ⚠️ Failed to run homelands simulation: {e}")
-    else:
-        print("  > Homelands simulation disabled in league configuration.")
+        homelands_snapshots = run_homelands_simulation(
+            archive_matches_list,
+            custom_config={"enabled": True, "tribe_names": tribe_names},
+            season_id=season_tag
+        )
+        print(f"  > Homelands simulation finished successfully ({len(homelands_snapshots)} daily snapshots).")
+    except ImportError:
+        print("\n=== SKIPPING HOMELANDS SNAPSHOTS (frog.py not found) ===")
+    except Exception as e:
+        print(f"\n⚠️ Homelands simulation error: {e}")
 
     # Exports
     print("\n=== EXPORTING ARCHIVES ===")
@@ -437,9 +454,16 @@ def main():
 
     safe_save(output_history, player_history, is_json=True)
     safe_save(output_relations, relations_map, is_json=True)
-    safe_save(output_network, homelands_snapshots, is_json=True)
 
-    metadata = {"season_tag": season_tag.upper(), "cutoff_date": cutoff_date_str, "match_count": len(archive_matches_list)}
+    if homelands_snapshots:
+        safe_save(output_network, homelands_snapshots, is_json=True)
+
+    metadata = {
+        "season_tag": season_tag.upper(),
+        "cutoff_date": cutoff_date_str,
+        "match_count": len(archive_matches_list),
+        "is_legacy": is_legacy
+    }
     safe_save(output_metadata, metadata, is_json=True)
 
     print(f"\n✨ Archives for {season_tag.upper()} successfully generated in {season_dir}!")
