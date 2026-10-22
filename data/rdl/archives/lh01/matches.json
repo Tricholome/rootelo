@@ -126,14 +126,14 @@
                 "is_winner": false
             },
             {
-                "name": "Led_Slash+3579",
-                "delta": 12,
-                "is_winner": true
-            },
-            {
                 "name": "Tad604+8004",
                 "delta": -9,
                 "is_winner": false
+            },
+            {
+                "name": "Led_Slash+3579",
+                "delta": 12,
+                "is_winner": true
             },
             {
                 "name": "Mouseman+7870",
@@ -527,6 +527,11 @@
         "Turn_Timing": "async",
         "players": [
             {
+                "name": "KFull+1226",
+                "delta": 4,
+                "is_winner": true
+            },
+            {
                 "name": "BMPerJMPer+9145",
                 "delta": -7,
                 "is_winner": false
@@ -539,11 +544,6 @@
             {
                 "name": "TurkeyNoNo+9522",
                 "delta": 8,
-                "is_winner": true
-            },
-            {
-                "name": "KFull+1226",
-                "delta": 4,
                 "is_winner": true
             }
         ],
@@ -735,7 +735,7 @@
                 "is_winner": false
             },
             {
-                "name": "Dramsss+1",
+                "name": "Dramsss+5465",
                 "delta": 35,
                 "is_winner": true
             },
@@ -1233,7 +1233,7 @@
                 "is_winner": false
             },
             {
-                "name": "Dramsss+1",
+                "name": "Dramsss+5465",
                 "delta": -5,
                 "is_winner": false
             },
@@ -1692,12 +1692,12 @@
                 "is_winner": false
             },
             {
-                "name": "Led_Slash+3579",
+                "name": "sparrowhawk+9374",
                 "delta": -9,
                 "is_winner": false
             },
             {
-                "name": "sparrowhawk+9374",
+                "name": "Led_Slash+3579",
                 "delta": -9,
                 "is_winner": false
             },
@@ -2069,13 +2069,13 @@
                 "is_winner": false
             },
             {
-                "name": "kayajam+9348",
-                "delta": -20,
+                "name": "Pandapapst+8323",
+                "delta": -7,
                 "is_winner": false
             },
             {
-                "name": "Pandapapst+8323",
-                "delta": -7,
+                "name": "kayajam+9348",
+                "delta": -20,
                 "is_winner": false
             },
             {
@@ -2557,11 +2557,6 @@
         "Turn_Timing": "async",
         "players": [
             {
-                "name": "NadtyLite+7330",
-                "delta": -2,
-                "is_winner": false
-            },
-            {
                 "name": "TurkeyNoNo+9522",
                 "delta": -16,
                 "is_winner": false
@@ -2575,6 +2570,11 @@
                 "name": "Led_Slash+3579",
                 "delta": 13,
                 "is_winner": true
+            },
+            {
+                "name": "NadtyLite+7330",
+                "delta": -2,
+                "is_winner": false
             }
         ],
         "ELO_Sum": 5203,
@@ -3055,9 +3055,9 @@
                 "is_winner": false
             },
             {
-                "name": "Led_Slash+3579",
-                "delta": 8,
-                "is_winner": true
+                "name": "Ptitmxz+6986",
+                "delta": -14,
+                "is_winner": false
             },
             {
                 "name": "Nymmer+3243",
@@ -3065,9 +3065,9 @@
                 "is_winner": false
             },
             {
-                "name": "Ptitmxz+6986",
-                "delta": -14,
-                "is_winner": false
+                "name": "Led_Slash+3579",
+                "delta": 8,
+                "is_winner": true
             }
         ],
         "ELO_Sum": 5169,
@@ -3722,13 +3722,13 @@
                 "is_winner": false
             },
             {
-                "name": "mouseinabox+992",
-                "delta": -10,
+                "name": "ChippZamoose+906",
+                "delta": -19,
                 "is_winner": false
             },
             {
-                "name": "ChippZamoose+906",
-                "delta": -19,
+                "name": "mouseinabox+992",
+                "delta": -10,
                 "is_winner": false
             },
             {
@@ -3862,8 +3862,8 @@
         "Turn_Timing": "async",
         "players": [
             {
-                "name": "Led_Slash+3579",
-                "delta": -8,
+                "name": "swiftsusan+8662",
+                "delta": -14,
                 "is_winner": false
             },
             {
@@ -3877,8 +3877,8 @@
                 "is_winner": true
             },
             {
-                "name": "swiftsusan+8662",
-                "delta": -14,
+                "name": "Led_Slash+3579",
+                "delta": -8,
                 "is_winner": false
             }
         ],
@@ -3978,7 +3978,7 @@
         "Turn_Timing": "live",
         "players": [
             {
-                "name": "Dramsss+1",
+                "name": "Dramsss+5465",
                 "delta": -6,
                 "is_winner": false
             },
@@ -4036,24 +4036,24 @@
         "Turn_Timing": "live",
         "players": [
             {
+                "name": "Cookies+3700",
+                "delta": -8,
+                "is_winner": false
+            },
+            {
                 "name": "tofuwater+4853",
                 "delta": -43,
                 "is_winner": false
             },
             {
-                "name": "Cookies+3700",
-                "delta": -8,
+                "name": "DemaRogue+7727",
+                "delta": -3,
                 "is_winner": false
             },
             {
                 "name": "udon66+6395",
                 "delta": 70,
                 "is_winner": true
-            },
-            {
-                "name": "DemaRogue+7727",
-                "delta": -3,
-                "is_winner": false
             }
         ],
         "ELO_Sum": 5123,
@@ -4355,7 +4355,7 @@
         "Turn_Timing": "live",
         "players": [
             {
-                "name": "Dramsss+1",
+                "name": "Dramsss+5465",
                 "delta": -6,
                 "is_winner": false
             },
@@ -4568,7 +4568,7 @@
                 "is_winner": false
             },
             {
-                "name": "Dramsss+1",
+                "name": "Dramsss+5465",
                 "delta": -7,
                 "is_winner": false
             },
@@ -4824,7 +4824,7 @@
                 "is_winner": true
             },
             {
-                "name": "Dramsss+1",
+                "name": "Dramsss+5465",
                 "delta": -7,
                 "is_winner": false
             },
@@ -5138,24 +5138,24 @@
         "Turn_Timing": "live",
         "players": [
             {
-                "name": "ChippZamoose+906",
-                "delta": -17,
-                "is_winner": false
-            },
-            {
                 "name": "kaiser+8343",
                 "delta": -9,
                 "is_winner": false
             },
             {
-                "name": "LutherStr+1358",
-                "delta": -3,
+                "name": "ChippZamoose+906",
+                "delta": -17,
                 "is_winner": false
             },
             {
                 "name": "Tolfan",
                 "delta": 29,
                 "is_winner": true
+            },
+            {
+                "name": "LutherStr+1358",
+                "delta": -3,
+                "is_winner": false
             }
         ],
         "ELO_Sum": 5085,
@@ -5399,11 +5399,6 @@
         "Turn_Timing": "live",
         "players": [
             {
-                "name": "Nadav253+6419",
-                "delta": 71,
-                "is_winner": true
-            },
-            {
                 "name": "sleepylabone+1003",
                 "delta": -9,
                 "is_winner": false
@@ -5417,6 +5412,11 @@
                 "name": "LHlegend+5313",
                 "delta": -8,
                 "is_winner": false
+            },
+            {
+                "name": "Nadav253+6419",
+                "delta": 71,
+                "is_winner": true
             }
         ],
         "ELO_Sum": 5070,
@@ -6371,7 +6371,7 @@
                 "is_winner": true
             },
             {
-                "name": "Dramsss+1",
+                "name": "Dramsss+5465",
                 "delta": -10,
                 "is_winner": false
             }
@@ -6414,13 +6414,13 @@
         "Turn_Timing": "async",
         "players": [
             {
-                "name": "BaconBoy+9689",
-                "delta": -21,
+                "name": "Ctfox+5431",
+                "delta": -11,
                 "is_winner": false
             },
             {
-                "name": "Ctfox+5431",
-                "delta": -11,
+                "name": "BaconBoy+9689",
+                "delta": -21,
                 "is_winner": false
             },
             {
@@ -6506,6 +6506,11 @@
                 "is_winner": false
             },
             {
+                "name": "BadScra+3199",
+                "delta": 36,
+                "is_winner": true
+            },
+            {
                 "name": "IMPERATOR+2570",
                 "delta": -46,
                 "is_winner": false
@@ -6514,11 +6519,6 @@
                 "name": "Valzaan+3564",
                 "delta": -6,
                 "is_winner": false
-            },
-            {
-                "name": "BadScra+3199",
-                "delta": 36,
-                "is_winner": true
             }
         ],
         "ELO_Sum": 5048,
@@ -6675,23 +6675,23 @@
         "Turn_Timing": "live",
         "players": [
             {
-                "name": "tofuwater+4853",
-                "delta": 14,
-                "is_winner": true
-            },
-            {
                 "name": "Snivylover12+1064",
                 "delta": -10,
                 "is_winner": false
             },
             {
-                "name": "Banzai7000+1191",
-                "delta": -3,
+                "name": "alevGO+2990",
+                "delta": -12,
                 "is_winner": false
             },
             {
-                "name": "alevGO+2990",
-                "delta": -12,
+                "name": "tofuwater+4853",
+                "delta": 14,
+                "is_winner": true
+            },
+            {
+                "name": "Banzai7000+1191",
+                "delta": -3,
                 "is_winner": false
             }
         ],
@@ -6733,9 +6733,9 @@
         "Turn_Timing": "async",
         "players": [
             {
-                "name": "LucianTheFak+3697",
-                "delta": 38,
-                "is_winner": true
+                "name": "Killerstorm17+3440",
+                "delta": -30,
+                "is_winner": false
             },
             {
                 "name": "TheDolphinman+2630",
@@ -6743,14 +6743,14 @@
                 "is_winner": false
             },
             {
-                "name": "Killerstorm17+3440",
-                "delta": -30,
-                "is_winner": false
-            },
-            {
                 "name": "HobGungan+2914",
                 "delta": -4,
                 "is_winner": false
+            },
+            {
+                "name": "LucianTheFak+3697",
+                "delta": 38,
+                "is_winner": true
             }
         ],
         "ELO_Sum": 5041,
@@ -6859,7 +6859,7 @@
                 "is_winner": false
             },
             {
-                "name": "Dramsss+1",
+                "name": "Dramsss+5465",
                 "delta": -8,
                 "is_winner": false
             },
@@ -7516,13 +7516,13 @@
         "Turn_Timing": "async",
         "players": [
             {
-                "name": "Ljaz7+6925",
-                "delta": -12,
+                "name": "Kmahussier+2186",
+                "delta": -13,
                 "is_winner": false
             },
             {
-                "name": "Kmahussier+2186",
-                "delta": -13,
+                "name": "Ljaz7+6925",
+                "delta": -12,
                 "is_winner": false
             },
             {
@@ -7531,7 +7531,7 @@
                 "is_winner": true
             },
             {
-                "name": "Dramsss+1",
+                "name": "Dramsss+5465",
                 "delta": -10,
                 "is_winner": false
             }
@@ -7777,7 +7777,7 @@
         "Turn_Timing": "async",
         "players": [
             {
-                "name": "Dramsss+1",
+                "name": "Dramsss+5465",
                 "delta": -7,
                 "is_winner": false
             },
@@ -8270,11 +8270,6 @@
         "Turn_Timing": "live",
         "players": [
             {
-                "name": "kaiser+8343",
-                "delta": -23,
-                "is_winner": false
-            },
-            {
                 "name": "bigcathedral+1133",
                 "delta": -15,
                 "is_winner": false
@@ -8287,6 +8282,11 @@
             {
                 "name": "BaconBoy+9689",
                 "delta": -10,
+                "is_winner": false
+            },
+            {
+                "name": "kaiser+8343",
+                "delta": -23,
                 "is_winner": false
             }
         ],
@@ -8386,11 +8386,6 @@
         "Turn_Timing": "async",
         "players": [
             {
-                "name": "FakeSki+4232",
-                "delta": 15,
-                "is_winner": true
-            },
-            {
                 "name": "Pliskin+7357",
                 "delta": -18,
                 "is_winner": false
@@ -8404,6 +8399,11 @@
                 "name": "Rabbitwarlord+1983",
                 "delta": -15,
                 "is_winner": false
+            },
+            {
+                "name": "FakeSki+4232",
+                "delta": 15,
+                "is_winner": true
             }
         ],
         "ELO_Sum": 5005,
@@ -8879,8 +8879,13 @@
         "Turn_Timing": "live",
         "players": [
             {
-                "name": "marksoz00+1780",
-                "delta": -11,
+                "name": "Led_Slash+3579",
+                "delta": 18,
+                "is_winner": true
+            },
+            {
+                "name": "BaconBoy+9689",
+                "delta": -16,
                 "is_winner": false
             },
             {
@@ -8889,13 +8894,8 @@
                 "is_winner": false
             },
             {
-                "name": "Led_Slash+3579",
-                "delta": 18,
-                "is_winner": true
-            },
-            {
-                "name": "BaconBoy+9689",
-                "delta": -16,
+                "name": "marksoz00+1780",
+                "delta": -11,
                 "is_winner": false
             }
         ],
@@ -9256,24 +9256,24 @@
         "Turn_Timing": "async",
         "players": [
             {
-                "name": "chux88+4717",
-                "delta": -8,
+                "name": "mouseinabox+992",
+                "delta": -2,
                 "is_winner": false
             },
             {
-                "name": "aelisheneithlon+4087",
-                "delta": 71,
-                "is_winner": true
-            },
-            {
-                "name": "mouseinabox+992",
-                "delta": -2,
+                "name": "chux88+4717",
+                "delta": -8,
                 "is_winner": false
             },
             {
                 "name": "tofuwater+4853",
                 "delta": -27,
                 "is_winner": false
+            },
+            {
+                "name": "aelisheneithlon+4087",
+                "delta": 71,
+                "is_winner": true
             }
         ],
         "ELO_Sum": 4984,
@@ -9343,13 +9343,8 @@
         "Turn_Timing": "async",
         "players": [
             {
-                "name": "MrDrouf+3826",
-                "delta": -6,
-                "is_winner": false
-            },
-            {
-                "name": "matemato+5004",
-                "delta": -21,
+                "name": "Hydro033+5014",
+                "delta": -20,
                 "is_winner": false
             },
             {
@@ -9358,8 +9353,13 @@
                 "is_winner": true
             },
             {
-                "name": "Hydro033+5014",
-                "delta": -20,
+                "name": "MrDrouf+3826",
+                "delta": -6,
+                "is_winner": false
+            },
+            {
+                "name": "matemato+5004",
+                "delta": -21,
                 "is_winner": false
             }
         ],
@@ -9759,7 +9759,7 @@
                 "is_winner": false
             },
             {
-                "name": "Dramsss+1",
+                "name": "Dramsss+5465",
                 "delta": -7,
                 "is_winner": false
             },
@@ -10155,11 +10155,6 @@
         "Turn_Timing": "async",
         "players": [
             {
-                "name": "Schkitz+8222",
-                "delta": 15,
-                "is_winner": true
-            },
-            {
                 "name": "Nefkano+8780",
                 "delta": -9,
                 "is_winner": false
@@ -10173,6 +10168,11 @@
                 "name": "MisterGume+9687",
                 "delta": -14,
                 "is_winner": false
+            },
+            {
+                "name": "Schkitz+8222",
+                "delta": 15,
+                "is_winner": true
             }
         ],
         "ELO_Sum": 4965,
@@ -10184,11 +10184,6 @@
         "Turn_Timing": "live",
         "players": [
             {
-                "name": "MrDrouf+3826",
-                "delta": -11,
-                "is_winner": false
-            },
-            {
                 "name": "BareGammon+82",
                 "delta": -30,
                 "is_winner": false
@@ -10196,6 +10191,11 @@
             {
                 "name": "100pctskillz+6186",
                 "delta": -7,
+                "is_winner": false
+            },
+            {
+                "name": "MrDrouf+3826",
+                "delta": -11,
                 "is_winner": false
             },
             {
@@ -10358,8 +10358,8 @@
         "Turn_Timing": "live",
         "players": [
             {
-                "name": "100pctskillz+6186",
-                "delta": -7,
+                "name": "brrrlinguist+929",
+                "delta": -19,
                 "is_winner": false
             },
             {
@@ -10368,8 +10368,8 @@
                 "is_winner": true
             },
             {
-                "name": "brrrlinguist+929",
-                "delta": -19,
+                "name": "100pctskillz+6186",
+                "delta": -7,
                 "is_winner": false
             },
             {
@@ -10416,6 +10416,16 @@
         "Turn_Timing": "live",
         "players": [
             {
+                "name": "Dramsss+5465",
+                "delta": -14,
+                "is_winner": false
+            },
+            {
+                "name": "Tolfan",
+                "delta": 24,
+                "is_winner": true
+            },
+            {
                 "name": "Kmahussier+2186",
                 "delta": -10,
                 "is_winner": false
@@ -10424,16 +10434,6 @@
                 "name": "mishaelh1+6045",
                 "delta": -14,
                 "is_winner": false
-            },
-            {
-                "name": "Dramsss+1",
-                "delta": -14,
-                "is_winner": false
-            },
-            {
-                "name": "Tolfan",
-                "delta": 24,
-                "is_winner": true
             }
         ],
         "ELO_Sum": 4961,
@@ -10450,7 +10450,7 @@
                 "is_winner": false
             },
             {
-                "name": "Dramsss+1",
+                "name": "Dramsss+5465",
                 "delta": 32,
                 "is_winner": true
             },
@@ -10542,7 +10542,7 @@
                 "is_winner": false
             },
             {
-                "name": "Dramsss+1",
+                "name": "Dramsss+5465",
                 "delta": -12,
                 "is_winner": false
             },
@@ -10677,6 +10677,11 @@
         "Turn_Timing": "async",
         "players": [
             {
+                "name": "cliuless+2304",
+                "delta": -10,
+                "is_winner": false
+            },
+            {
                 "name": "BaliHoo+3674",
                 "delta": -16,
                 "is_winner": false
@@ -10690,11 +10695,6 @@
                 "name": "buurn+343",
                 "delta": 58,
                 "is_winner": true
-            },
-            {
-                "name": "cliuless+2304",
-                "delta": -10,
-                "is_winner": false
             }
         ],
         "ELO_Sum": 4955,
@@ -10706,11 +10706,6 @@
         "Turn_Timing": "live",
         "players": [
             {
-                "name": "Snivylover12+1064",
-                "delta": 25,
-                "is_winner": true
-            },
-            {
                 "name": "DemaRogue+7727",
                 "delta": -4,
                 "is_winner": false
@@ -10718,6 +10713,11 @@
             {
                 "name": "IMPERATOR+2570",
                 "delta": 4,
+                "is_winner": true
+            },
+            {
+                "name": "Snivylover12+1064",
+                "delta": 25,
                 "is_winner": true
             },
             {
@@ -10967,6 +10967,11 @@
         "Turn_Timing": "async",
         "players": [
             {
+                "name": "HyenaDon+4502",
+                "delta": -4,
+                "is_winner": false
+            },
+            {
                 "name": "NadtyLite+7330",
                 "delta": -3,
                 "is_winner": false
@@ -10980,11 +10985,6 @@
                 "name": "ShuShuBana+2889",
                 "delta": 17,
                 "is_winner": true
-            },
-            {
-                "name": "HyenaDon+4502",
-                "delta": -4,
-                "is_winner": false
             }
         ],
         "ELO_Sum": 4946,
@@ -11117,8 +11117,8 @@
                 "is_winner": false
             },
             {
-                "name": "BadScra+3199",
-                "delta": -17,
+                "name": "Darkwonderer+1035",
+                "delta": -9,
                 "is_winner": false
             },
             {
@@ -11127,8 +11127,8 @@
                 "is_winner": true
             },
             {
-                "name": "Darkwonderer+1035",
-                "delta": -9,
+                "name": "BadScra+3199",
+                "delta": -17,
                 "is_winner": false
             }
         ],
@@ -11402,11 +11402,6 @@
         "Turn_Timing": "async",
         "players": [
             {
-                "name": "MrDrouf+3826",
-                "delta": -8,
-                "is_winner": false
-            },
-            {
                 "name": "lumpyprol+3206",
                 "delta": -16,
                 "is_winner": false
@@ -11414,6 +11409,11 @@
             {
                 "name": "BuliBaka+6658",
                 "delta": -14,
+                "is_winner": false
+            },
+            {
+                "name": "MrDrouf+3826",
+                "delta": -8,
                 "is_winner": false
             },
             {
@@ -11523,7 +11523,7 @@
                 "is_winner": false
             },
             {
-                "name": "Dramsss+1",
+                "name": "Dramsss+5465",
                 "delta": -10,
                 "is_winner": false
             },
@@ -11547,13 +11547,13 @@
         "Turn_Timing": "async",
         "players": [
             {
-                "name": "buurn+343",
-                "delta": -7,
+                "name": "MrDrouf+3826",
+                "delta": -8,
                 "is_winner": false
             },
             {
-                "name": "MrDrouf+3826",
-                "delta": -8,
+                "name": "buurn+343",
+                "delta": -7,
                 "is_winner": false
             },
             {
@@ -11692,9 +11692,9 @@
         "Turn_Timing": "live",
         "players": [
             {
-                "name": "BadScra+3199",
-                "delta": 61,
-                "is_winner": true
+                "name": "nikkan+7933",
+                "delta": -14,
+                "is_winner": false
             },
             {
                 "name": "DemaRogue+7727",
@@ -11702,14 +11702,14 @@
                 "is_winner": false
             },
             {
-                "name": "nikkan+7933",
-                "delta": -14,
-                "is_winner": false
-            },
-            {
                 "name": "Emperia+9282",
                 "delta": -23,
                 "is_winner": false
+            },
+            {
+                "name": "BadScra+3199",
+                "delta": 61,
+                "is_winner": true
             }
         ],
         "ELO_Sum": 4933,
@@ -11837,24 +11837,24 @@
         "Turn_Timing": "live",
         "players": [
             {
-                "name": "GamerTower+410",
-                "delta": -15,
+                "name": "BaconBoy+9689",
+                "delta": -5,
                 "is_winner": false
             },
             {
-                "name": "BaconBoy+9689",
-                "delta": -5,
+                "name": "DemaRogue+7727",
+                "delta": -12,
+                "is_winner": false
+            },
+            {
+                "name": "GamerTower+410",
+                "delta": -15,
                 "is_winner": false
             },
             {
                 "name": "Tolfan",
                 "delta": 24,
                 "is_winner": true
-            },
-            {
-                "name": "DemaRogue+7727",
-                "delta": -12,
-                "is_winner": false
             }
         ],
         "ELO_Sum": 4929,
@@ -11871,6 +11871,11 @@
                 "is_winner": false
             },
             {
+                "name": "hauntedpebbles2+8720",
+                "delta": -7,
+                "is_winner": false
+            },
+            {
                 "name": "IMPERATOR+2570",
                 "delta": 25,
                 "is_winner": true
@@ -11878,11 +11883,6 @@
             {
                 "name": "BadScra+3199",
                 "delta": -5,
-                "is_winner": false
-            },
-            {
-                "name": "hauntedpebbles2+8720",
-                "delta": -7,
                 "is_winner": false
             }
         ],
@@ -12040,11 +12040,6 @@
         "Turn_Timing": "async",
         "players": [
             {
-                "name": "MrDrouf+3826",
-                "delta": -13,
-                "is_winner": false
-            },
-            {
                 "name": "ToasterTrash+8502",
                 "delta": -14,
                 "is_winner": false
@@ -12052,6 +12047,11 @@
             {
                 "name": "cliuless+2304",
                 "delta": -10,
+                "is_winner": false
+            },
+            {
+                "name": "MrDrouf+3826",
+                "delta": -13,
                 "is_winner": false
             },
             {
@@ -12200,7 +12200,7 @@
                 "is_winner": true
             },
             {
-                "name": "Dramsss+1",
+                "name": "Dramsss+5465",
                 "delta": -11,
                 "is_winner": false
             }
@@ -12214,13 +12214,13 @@
         "Turn_Timing": "async",
         "players": [
             {
-                "name": "LucianTheFak+3697",
-                "delta": 3,
+                "name": "cliuless+2304",
+                "delta": 5,
                 "is_winner": true
             },
             {
-                "name": "cliuless+2304",
-                "delta": 5,
+                "name": "LucianTheFak+3697",
+                "delta": 3,
                 "is_winner": true
             },
             {
@@ -12543,14 +12543,14 @@
                 "is_winner": false
             },
             {
-                "name": "tofuwater+4853",
-                "delta": 14,
-                "is_winner": true
-            },
-            {
                 "name": "Munchking+5998",
                 "delta": -2,
                 "is_winner": false
+            },
+            {
+                "name": "tofuwater+4853",
+                "delta": 14,
+                "is_winner": true
             }
         ],
         "ELO_Sum": 4921,
@@ -12635,7 +12635,7 @@
                 "is_winner": false
             },
             {
-                "name": "Dramsss+1",
+                "name": "Dramsss+5465",
                 "delta": -11,
                 "is_winner": false
             }
@@ -12678,11 +12678,6 @@
         "Turn_Timing": "async",
         "players": [
             {
-                "name": "MrDrouf+3826",
-                "delta": -8,
-                "is_winner": false
-            },
-            {
                 "name": "darkcat+794",
                 "delta": -12,
                 "is_winner": false
@@ -12696,6 +12691,11 @@
                 "name": "kayajam+9348",
                 "delta": 39,
                 "is_winner": true
+            },
+            {
+                "name": "MrDrouf+3826",
+                "delta": -8,
+                "is_winner": false
             }
         ],
         "ELO_Sum": 4919,
@@ -12741,7 +12741,7 @@
                 "is_winner": false
             },
             {
-                "name": "Dramsss+1",
+                "name": "Dramsss+5465",
                 "delta": -9,
                 "is_winner": false
             },
@@ -13171,6 +13171,16 @@
         "Turn_Timing": "live",
         "players": [
             {
+                "name": "FVMLion+1706",
+                "delta": -19,
+                "is_winner": false
+            },
+            {
+                "name": "ellbelle+9011",
+                "delta": -15,
+                "is_winner": false
+            },
+            {
                 "name": "MrDrouf+3826",
                 "delta": -11,
                 "is_winner": false
@@ -13179,16 +13189,6 @@
                 "name": "ReoWulf+5368",
                 "delta": 57,
                 "is_winner": true
-            },
-            {
-                "name": "ellbelle+9011",
-                "delta": -15,
-                "is_winner": false
-            },
-            {
-                "name": "FVMLion+1706",
-                "delta": -19,
-                "is_winner": false
             }
         ],
         "ELO_Sum": 4908,
@@ -13258,14 +13258,14 @@
         "Turn_Timing": "live",
         "players": [
             {
-                "name": "MrDrouf+3826",
-                "delta": -9,
-                "is_winner": false
-            },
-            {
                 "name": "Nadav253+6419",
                 "delta": 55,
                 "is_winner": true
+            },
+            {
+                "name": "MrDrouf+3826",
+                "delta": -9,
+                "is_winner": false
             },
             {
                 "name": "uwtron+573",
@@ -13563,7 +13563,7 @@
                 "is_winner": true
             },
             {
-                "name": "Dramsss+1",
+                "name": "Dramsss+5465",
                 "delta": -11,
                 "is_winner": false
             }
@@ -13867,7 +13867,7 @@
         "Turn_Timing": "async",
         "players": [
             {
-                "name": "Dramsss+1",
+                "name": "Dramsss+5465",
                 "delta": -7,
                 "is_winner": false
             },
@@ -14075,14 +14075,14 @@
                 "is_winner": false
             },
             {
-                "name": "Tricholome+4276",
-                "delta": -15,
-                "is_winner": false
-            },
-            {
                 "name": "Led_Slash+3579",
                 "delta": 48,
                 "is_winner": true
+            },
+            {
+                "name": "Tricholome+4276",
+                "delta": -15,
+                "is_winner": false
             },
             {
                 "name": "ToasterTrash+8502",
@@ -14418,7 +14418,7 @@
         "Turn_Timing": "live",
         "players": [
             {
-                "name": "Dramsss+1",
+                "name": "Dramsss+5465",
                 "delta": 32,
                 "is_winner": true
             },
@@ -14592,11 +14592,6 @@
         "Turn_Timing": "async",
         "players": [
             {
-                "name": "Tad604+8004",
-                "delta": -24,
-                "is_winner": false
-            },
-            {
                 "name": "benssoon+802",
                 "delta": -15,
                 "is_winner": false
@@ -14605,6 +14600,11 @@
                 "name": "Pliskin+7357",
                 "delta": 66,
                 "is_winner": true
+            },
+            {
+                "name": "Tad604+8004",
+                "delta": -24,
+                "is_winner": false
             },
             {
                 "name": "FakeSki+4232",
@@ -14708,8 +14708,8 @@
         "Turn_Timing": "async",
         "players": [
             {
-                "name": "Gregoola+1424",
-                "delta": -17,
+                "name": "EdacM+9189",
+                "delta": -15,
                 "is_winner": false
             },
             {
@@ -14723,8 +14723,8 @@
                 "is_winner": true
             },
             {
-                "name": "EdacM+9189",
-                "delta": -15,
+                "name": "Gregoola+1424",
+                "delta": -17,
                 "is_winner": false
             }
         ],
@@ -15230,11 +15230,6 @@
         "Turn_Timing": "live",
         "players": [
             {
-                "name": "BaconBoy+9689",
-                "delta": -3,
-                "is_winner": false
-            },
-            {
                 "name": "HungryJeff+6786",
                 "delta": -15,
                 "is_winner": false
@@ -15242,6 +15237,11 @@
             {
                 "name": "1coolguy+6294",
                 "delta": -13,
+                "is_winner": false
+            },
+            {
+                "name": "BaconBoy+9689",
+                "delta": -3,
                 "is_winner": false
             },
             {
@@ -15288,9 +15288,9 @@
         "Turn_Timing": "live",
         "players": [
             {
-                "name": "Tolfan",
-                "delta": -14,
-                "is_winner": false
+                "name": "BadScra+3199",
+                "delta": 63,
+                "is_winner": true
             },
             {
                 "name": "Valzaan+3564",
@@ -15298,14 +15298,14 @@
                 "is_winner": false
             },
             {
-                "name": "DemaRogue+7727",
-                "delta": -10,
+                "name": "Tolfan",
+                "delta": -14,
                 "is_winner": false
             },
             {
-                "name": "BadScra+3199",
-                "delta": 63,
-                "is_winner": true
+                "name": "DemaRogue+7727",
+                "delta": -10,
+                "is_winner": false
             }
         ],
         "ELO_Sum": 4874,
@@ -15530,13 +15530,13 @@
                 "is_winner": true
             },
             {
-                "name": "mouseinabox+992",
-                "delta": -6,
+                "name": "RangerEpic+3948",
+                "delta": -12,
                 "is_winner": false
             },
             {
-                "name": "RangerEpic+3948",
-                "delta": -12,
+                "name": "mouseinabox+992",
+                "delta": -6,
                 "is_winner": false
             }
         ],
@@ -15955,13 +15955,8 @@
         "Turn_Timing": "async",
         "players": [
             {
-                "name": "lumpyprol+3206",
-                "delta": -6,
-                "is_winner": false
-            },
-            {
-                "name": "Tad604+8004",
-                "delta": -8,
+                "name": "Led_Slash+3579",
+                "delta": -11,
                 "is_winner": false
             },
             {
@@ -15970,8 +15965,13 @@
                 "is_winner": true
             },
             {
-                "name": "Led_Slash+3579",
-                "delta": -11,
+                "name": "lumpyprol+3206",
+                "delta": -6,
+                "is_winner": false
+            },
+            {
+                "name": "Tad604+8004",
+                "delta": -8,
                 "is_winner": false
             }
         ],
@@ -16419,6 +16419,11 @@
         "Turn_Timing": "live",
         "players": [
             {
+                "name": "mouseinabox+992",
+                "delta": -5,
+                "is_winner": false
+            },
+            {
                 "name": "BaconBoy+9689",
                 "delta": -10,
                 "is_winner": false
@@ -16426,11 +16431,6 @@
             {
                 "name": "tunnndz+4720",
                 "delta": -7,
-                "is_winner": false
-            },
-            {
-                "name": "mouseinabox+992",
-                "delta": -5,
                 "is_winner": false
             },
             {
@@ -16709,6 +16709,11 @@
         "Turn_Timing": "async",
         "players": [
             {
+                "name": "WyvernElement+1816",
+                "delta": -11,
+                "is_winner": false
+            },
+            {
                 "name": "Tad604+8004",
                 "delta": -11,
                 "is_winner": false
@@ -16717,11 +16722,6 @@
                 "name": "Schkitz+8222",
                 "delta": 15,
                 "is_winner": true
-            },
-            {
-                "name": "WyvernElement+1816",
-                "delta": -11,
-                "is_winner": false
             },
             {
                 "name": "Kmahussier+2186",
@@ -16941,6 +16941,11 @@
         "Turn_Timing": "live",
         "players": [
             {
+                "name": "mishaelh1+6045",
+                "delta": -14,
+                "is_winner": false
+            },
+            {
                 "name": "Hurple+6007",
                 "delta": -11,
                 "is_winner": false
@@ -16948,11 +16953,6 @@
             {
                 "name": "vanillapoppy+9303",
                 "delta": -16,
-                "is_winner": false
-            },
-            {
-                "name": "mishaelh1+6045",
-                "delta": -14,
                 "is_winner": false
             },
             {
@@ -17096,13 +17096,13 @@
                 "is_winner": true
             },
             {
-                "name": "FrancescoBr+4009",
-                "delta": -14,
+                "name": "Hadjiya+4475",
+                "delta": -6,
                 "is_winner": false
             },
             {
-                "name": "Hadjiya+4475",
-                "delta": -6,
+                "name": "FrancescoBr+4009",
+                "delta": -14,
                 "is_winner": false
             }
         ],
@@ -17202,7 +17202,7 @@
         "Turn_Timing": "async",
         "players": [
             {
-                "name": "Dramsss+1",
+                "name": "Dramsss+5465",
                 "delta": 30,
                 "is_winner": true
             },
@@ -17362,7 +17362,7 @@
                 "is_winner": true
             },
             {
-                "name": "Dramsss+1",
+                "name": "Dramsss+5465",
                 "delta": -16,
                 "is_winner": false
             }
@@ -18159,7 +18159,7 @@
         "Turn_Timing": "async",
         "players": [
             {
-                "name": "Dramsss+1",
+                "name": "Dramsss+5465",
                 "delta": -14,
                 "is_winner": false
             },
@@ -18362,6 +18362,11 @@
         "Turn_Timing": "async",
         "players": [
             {
+                "name": "Pandapapst+8323",
+                "delta": 33,
+                "is_winner": true
+            },
+            {
                 "name": "pooge+6189",
                 "delta": -21,
                 "is_winner": false
@@ -18375,11 +18380,6 @@
                 "name": "Lante+1268",
                 "delta": -19,
                 "is_winner": false
-            },
-            {
-                "name": "Pandapapst+8323",
-                "delta": 33,
-                "is_winner": true
             }
         ],
         "ELO_Sum": 4833,
@@ -18420,8 +18420,13 @@
         "Turn_Timing": "live",
         "players": [
             {
-                "name": "MrDrouf+3826",
-                "delta": -27,
+                "name": "Oppapi+9478",
+                "delta": -14,
+                "is_winner": false
+            },
+            {
+                "name": "KuperMeister+8518",
+                "delta": -23,
                 "is_winner": false
             },
             {
@@ -18430,13 +18435,8 @@
                 "is_winner": true
             },
             {
-                "name": "Oppapi+9478",
-                "delta": -14,
-                "is_winner": false
-            },
-            {
-                "name": "KuperMeister+8518",
-                "delta": -23,
+                "name": "MrDrouf+3826",
+                "delta": -27,
                 "is_winner": false
             }
         ],
@@ -18599,13 +18599,13 @@
                 "is_winner": true
             },
             {
-                "name": "tunnndz+4720",
-                "delta": -5,
+                "name": "Schkitz+8222",
+                "delta": -13,
                 "is_winner": false
             },
             {
-                "name": "Schkitz+8222",
-                "delta": -13,
+                "name": "tunnndz+4720",
+                "delta": -5,
                 "is_winner": false
             },
             {
@@ -18686,13 +18686,13 @@
                 "is_winner": true
             },
             {
-                "name": "cliuless+2304",
-                "delta": -12,
+                "name": "NadtyLite+7330",
+                "delta": -5,
                 "is_winner": false
             },
             {
-                "name": "NadtyLite+7330",
-                "delta": -5,
+                "name": "cliuless+2304",
+                "delta": -12,
                 "is_winner": false
             },
             {
@@ -18971,9 +18971,9 @@
         "Turn_Timing": "async",
         "players": [
             {
-                "name": "Bengal3+6710",
-                "delta": 58,
-                "is_winner": true
+                "name": "cringelordirl+3838",
+                "delta": -10,
+                "is_winner": false
             },
             {
                 "name": "NadtyLite+7330",
@@ -18986,9 +18986,9 @@
                 "is_winner": false
             },
             {
-                "name": "cringelordirl+3838",
-                "delta": -10,
-                "is_winner": false
+                "name": "Bengal3+6710",
+                "delta": 58,
+                "is_winner": true
             }
         ],
         "ELO_Sum": 4821,
@@ -19160,7 +19160,7 @@
                 "is_winner": false
             },
             {
-                "name": "Dramsss+1",
+                "name": "Dramsss+5465",
                 "delta": 30,
                 "is_winner": true
             }
@@ -19387,7 +19387,7 @@
                 "is_winner": false
             },
             {
-                "name": "Dramsss+1",
+                "name": "Dramsss+5465",
                 "delta": -9,
                 "is_winner": false
             },
@@ -19638,8 +19638,8 @@
         "Turn_Timing": "live",
         "players": [
             {
-                "name": "BaconBoy+9689",
-                "delta": -6,
+                "name": "Munchking+5998",
+                "delta": -12,
                 "is_winner": false
             },
             {
@@ -19648,13 +19648,13 @@
                 "is_winner": true
             },
             {
-                "name": "mkcy3+8006",
-                "delta": -15,
+                "name": "BaconBoy+9689",
+                "delta": -6,
                 "is_winner": false
             },
             {
-                "name": "Munchking+5998",
-                "delta": -12,
+                "name": "mkcy3+8006",
+                "delta": -15,
                 "is_winner": false
             }
         ],
@@ -19677,7 +19677,7 @@
                 "is_winner": false
             },
             {
-                "name": "Dramsss+1",
+                "name": "Dramsss+5465",
                 "delta": -12,
                 "is_winner": false
             },
@@ -19841,8 +19841,8 @@
         "Turn_Timing": "live",
         "players": [
             {
-                "name": "CodPieceZ+7710",
-                "delta": -15,
+                "name": "MrDrouf+3826",
+                "delta": -24,
                 "is_winner": false
             },
             {
@@ -19851,14 +19851,14 @@
                 "is_winner": false
             },
             {
+                "name": "CodPieceZ+7710",
+                "delta": -15,
+                "is_winner": false
+            },
+            {
                 "name": "Aleph+9548",
                 "delta": 55,
                 "is_winner": true
-            },
-            {
-                "name": "MrDrouf+3826",
-                "delta": -24,
-                "is_winner": false
             }
         ],
         "ELO_Sum": 4809,
@@ -20199,7 +20199,7 @@
                 "is_winner": false
             },
             {
-                "name": "Dramsss+1",
+                "name": "Dramsss+5465",
                 "delta": 34,
                 "is_winner": true
             },
@@ -20305,8 +20305,8 @@
         "Turn_Timing": "live",
         "players": [
             {
-                "name": "Hadjiya+4475",
-                "delta": -5,
+                "name": "Lokfok+5204",
+                "delta": -14,
                 "is_winner": false
             },
             {
@@ -20320,8 +20320,8 @@
                 "is_winner": true
             },
             {
-                "name": "Lokfok+5204",
-                "delta": -14,
+                "name": "Hadjiya+4475",
+                "delta": -5,
                 "is_winner": false
             }
         ],
@@ -20537,17 +20537,17 @@
         "Turn_Timing": "live",
         "players": [
             {
-                "name": "MrDrouf+3826",
-                "delta": -20,
-                "is_winner": false
-            },
-            {
                 "name": "100pctskillz+6186",
                 "delta": -20,
                 "is_winner": false
             },
             {
                 "name": "metalnooze+4817",
+                "delta": -20,
+                "is_winner": false
+            },
+            {
+                "name": "MrDrouf+3826",
                 "delta": -20,
                 "is_winner": false
             },
@@ -20827,16 +20827,6 @@
         "Turn_Timing": "async",
         "players": [
             {
-                "name": "Acecreamsundae+1472",
-                "delta": -25,
-                "is_winner": false
-            },
-            {
-                "name": "cliuless+2304",
-                "delta": -9,
-                "is_winner": false
-            },
-            {
                 "name": "Wrestler+3756",
                 "delta": -13,
                 "is_winner": false
@@ -20845,6 +20835,16 @@
                 "name": "BaconBoy+9689",
                 "delta": 56,
                 "is_winner": true
+            },
+            {
+                "name": "cliuless+2304",
+                "delta": -9,
+                "is_winner": false
+            },
+            {
+                "name": "Acecreamsundae+1472",
+                "delta": -25,
+                "is_winner": false
             }
         ],
         "ELO_Sum": 4798,
@@ -21001,13 +21001,8 @@
         "Turn_Timing": "async",
         "players": [
             {
-                "name": "LutherStr+1358",
-                "delta": -12,
-                "is_winner": false
-            },
-            {
-                "name": "NadtyLite+7330",
-                "delta": -4,
+                "name": "Led_Slash+3579",
+                "delta": -22,
                 "is_winner": false
             },
             {
@@ -21016,8 +21011,13 @@
                 "is_winner": true
             },
             {
-                "name": "Led_Slash+3579",
-                "delta": -22,
+                "name": "LutherStr+1358",
+                "delta": -12,
+                "is_winner": false
+            },
+            {
+                "name": "NadtyLite+7330",
+                "delta": -4,
                 "is_winner": false
             }
         ],
@@ -21818,6 +21818,11 @@
                 "is_winner": false
             },
             {
+                "name": "100pctskillz+6186",
+                "delta": -10,
+                "is_winner": false
+            },
+            {
                 "name": "Acecreamsundae+1472",
                 "delta": 62,
                 "is_winner": true
@@ -21825,11 +21830,6 @@
             {
                 "name": "BugMuff44+9091",
                 "delta": -21,
-                "is_winner": false
-            },
-            {
-                "name": "100pctskillz+6186",
-                "delta": -10,
                 "is_winner": false
             }
         ],
@@ -22016,11 +22016,6 @@
         "Turn_Timing": "live",
         "players": [
             {
-                "name": "Akayami+8372",
-                "delta": -20,
-                "is_winner": false
-            },
-            {
                 "name": "darkcat+794",
                 "delta": -7,
                 "is_winner": false
@@ -22033,6 +22028,11 @@
             {
                 "name": "Perdita+9449",
                 "delta": -13,
+                "is_winner": false
+            },
+            {
+                "name": "Akayami+8372",
+                "delta": -20,
                 "is_winner": false
             }
         ],
@@ -22195,6 +22195,11 @@
                 "is_winner": false
             },
             {
+                "name": "BugMuff44+9091",
+                "delta": 59,
+                "is_winner": true
+            },
+            {
                 "name": "ImEpy+9148",
                 "delta": -21,
                 "is_winner": false
@@ -22203,11 +22208,6 @@
                 "name": "TheDolphinman+2630",
                 "delta": -21,
                 "is_winner": false
-            },
-            {
-                "name": "BugMuff44+9091",
-                "delta": 59,
-                "is_winner": true
             }
         ],
         "ELO_Sum": 4780,
@@ -22345,14 +22345,14 @@
                 "is_winner": false
             },
             {
-                "name": "BaconBoy+9689",
-                "delta": -7,
-                "is_winner": false
-            },
-            {
                 "name": "Bengal3+6710",
                 "delta": 60,
                 "is_winner": true
+            },
+            {
+                "name": "BaconBoy+9689",
+                "delta": -7,
+                "is_winner": false
             }
         ],
         "ELO_Sum": 4779,
@@ -22393,23 +22393,23 @@
         "Turn_Timing": "live",
         "players": [
             {
-                "name": "mouseinabox+992",
-                "delta": -8,
-                "is_winner": false
-            },
-            {
-                "name": "Perdita+9449",
-                "delta": -9,
-                "is_winner": false
-            },
-            {
                 "name": "Tolfan",
                 "delta": 61,
                 "is_winner": true
             },
             {
+                "name": "mouseinabox+992",
+                "delta": -8,
+                "is_winner": false
+            },
+            {
                 "name": "TimidTailwind+2597",
                 "delta": -28,
+                "is_winner": false
+            },
+            {
+                "name": "Perdita+9449",
+                "delta": -9,
                 "is_winner": false
             }
         ],
@@ -22451,9 +22451,9 @@
         "Turn_Timing": "async",
         "players": [
             {
-                "name": "kaiser+8343",
-                "delta": -16,
-                "is_winner": false
+                "name": "Schkitz+8222",
+                "delta": 15,
+                "is_winner": true
             },
             {
                 "name": "TheFourthJesse+9103",
@@ -22461,14 +22461,14 @@
                 "is_winner": false
             },
             {
-                "name": "DanzigMF+6351",
-                "delta": -7,
+                "name": "kaiser+8343",
+                "delta": -16,
                 "is_winner": false
             },
             {
-                "name": "Schkitz+8222",
-                "delta": 15,
-                "is_winner": true
+                "name": "DanzigMF+6351",
+                "delta": -7,
+                "is_winner": false
             }
         ],
         "ELO_Sum": 4778,
@@ -22485,6 +22485,11 @@
                 "is_winner": false
             },
             {
+                "name": "Tolfan",
+                "delta": 27,
+                "is_winner": true
+            },
+            {
                 "name": "Mossfusion+6189",
                 "delta": -22,
                 "is_winner": false
@@ -22493,11 +22498,6 @@
                 "name": "DemaRogue+7727",
                 "delta": -12,
                 "is_winner": false
-            },
-            {
-                "name": "Tolfan",
-                "delta": 27,
-                "is_winner": true
             }
         ],
         "ELO_Sum": 4778,
@@ -22973,14 +22973,14 @@
         "Turn_Timing": "async",
         "players": [
             {
-                "name": "ReoWulf+5368",
-                "delta": 33,
-                "is_winner": true
-            },
-            {
                 "name": "Wrestler+3756",
                 "delta": -8,
                 "is_winner": false
+            },
+            {
+                "name": "ReoWulf+5368",
+                "delta": 33,
+                "is_winner": true
             },
             {
                 "name": "Excitedteapot+2857",
@@ -23060,8 +23060,8 @@
         "Turn_Timing": "live",
         "players": [
             {
-                "name": "Munchking+5998",
-                "delta": -9,
+                "name": "Banzai7000+1191",
+                "delta": -14,
                 "is_winner": false
             },
             {
@@ -23070,8 +23070,8 @@
                 "is_winner": true
             },
             {
-                "name": "Banzai7000+1191",
-                "delta": -14,
+                "name": "Munchking+5998",
+                "delta": -9,
                 "is_winner": false
             },
             {
@@ -23384,6 +23384,11 @@
                 "is_winner": false
             },
             {
+                "name": "NadtyLite+7330",
+                "delta": -7,
+                "is_winner": false
+            },
+            {
                 "name": "voltigeur+3314",
                 "delta": -14,
                 "is_winner": false
@@ -23392,11 +23397,6 @@
                 "name": "Schkitz+8222",
                 "delta": 14,
                 "is_winner": true
-            },
-            {
-                "name": "NadtyLite+7330",
-                "delta": -7,
-                "is_winner": false
             }
         ],
         "ELO_Sum": 4768,
@@ -23418,14 +23418,14 @@
                 "is_winner": false
             },
             {
-                "name": "mouseinabox+992",
-                "delta": 32,
-                "is_winner": true
-            },
-            {
                 "name": "AJIJIi",
                 "delta": -21,
                 "is_winner": false
+            },
+            {
+                "name": "mouseinabox+992",
+                "delta": 32,
+                "is_winner": true
             }
         ],
         "ELO_Sum": 4767,
@@ -23495,13 +23495,13 @@
         "Turn_Timing": "live",
         "players": [
             {
-                "name": "tunnndz+4720",
-                "delta": -24,
+                "name": "Oppapi+9478",
+                "delta": -6,
                 "is_winner": false
             },
             {
-                "name": "Oppapi+9478",
-                "delta": -6,
+                "name": "MrDrouf+3826",
+                "delta": -14,
                 "is_winner": false
             },
             {
@@ -23510,8 +23510,8 @@
                 "is_winner": true
             },
             {
-                "name": "MrDrouf+3826",
-                "delta": -14,
+                "name": "tunnndz+4720",
+                "delta": -24,
                 "is_winner": false
             }
         ],
@@ -23597,7 +23597,7 @@
                 "is_winner": false
             },
             {
-                "name": "Dramsss+1",
+                "name": "Dramsss+5465",
                 "delta": 26,
                 "is_winner": true
             }
@@ -24336,6 +24336,11 @@
         "Turn_Timing": "async",
         "players": [
             {
+                "name": "Wubba+9310",
+                "delta": -20,
+                "is_winner": false
+            },
+            {
                 "name": "MylesMoose+6850",
                 "delta": -31,
                 "is_winner": false
@@ -24344,11 +24349,6 @@
                 "name": "HobGungan+2914",
                 "delta": 13,
                 "is_winner": true
-            },
-            {
-                "name": "Wubba+9310",
-                "delta": -20,
-                "is_winner": false
             },
             {
                 "name": "Odinius+897",
@@ -24655,16 +24655,6 @@
         "Turn_Timing": "live",
         "players": [
             {
-                "name": "kaiser+8343",
-                "delta": -21,
-                "is_winner": false
-            },
-            {
-                "name": "LutherStr+1358",
-                "delta": 33,
-                "is_winner": true
-            },
-            {
                 "name": "BaconBoy+9689",
                 "delta": -7,
                 "is_winner": false
@@ -24673,6 +24663,16 @@
                 "name": "Hadjiya+4475",
                 "delta": -5,
                 "is_winner": false
+            },
+            {
+                "name": "kaiser+8343",
+                "delta": -21,
+                "is_winner": false
+            },
+            {
+                "name": "LutherStr+1358",
+                "delta": 33,
+                "is_winner": true
             }
         ],
         "ELO_Sum": 4755,
@@ -24974,16 +24974,6 @@
         "Turn_Timing": "live",
         "players": [
             {
-                "name": "FalconBird+7701",
-                "delta": -18,
-                "is_winner": false
-            },
-            {
-                "name": "DemaRogue+7727",
-                "delta": -11,
-                "is_winner": false
-            },
-            {
                 "name": "mishaelh1+6045",
                 "delta": 55,
                 "is_winner": true
@@ -24991,6 +24981,16 @@
             {
                 "name": "ReoWulf+5368",
                 "delta": -7,
+                "is_winner": false
+            },
+            {
+                "name": "FalconBird+7701",
+                "delta": -18,
+                "is_winner": false
+            },
+            {
+                "name": "DemaRogue+7727",
+                "delta": -11,
                 "is_winner": false
             }
         ],
@@ -25037,9 +25037,9 @@
                 "is_winner": false
             },
             {
-                "name": "uwtron+573",
-                "delta": 63,
-                "is_winner": true
+                "name": "100pctskillz+6186",
+                "delta": -9,
+                "is_winner": false
             },
             {
                 "name": "Bodnamax+6783",
@@ -25047,9 +25047,9 @@
                 "is_winner": false
             },
             {
-                "name": "100pctskillz+6186",
-                "delta": -9,
-                "is_winner": false
+                "name": "uwtron+573",
+                "delta": 63,
+                "is_winner": true
             }
         ],
         "ELO_Sum": 4748,
@@ -25206,6 +25206,16 @@
         "Turn_Timing": "async",
         "players": [
             {
+                "name": "Pandapapst+8323",
+                "delta": -17,
+                "is_winner": false
+            },
+            {
+                "name": "buurn+343",
+                "delta": -22,
+                "is_winner": false
+            },
+            {
                 "name": "HobGungan+2914",
                 "delta": -19,
                 "is_winner": false
@@ -25214,16 +25224,6 @@
                 "name": "Kmahussier+2186",
                 "delta": 58,
                 "is_winner": true
-            },
-            {
-                "name": "buurn+343",
-                "delta": -22,
-                "is_winner": false
-            },
-            {
-                "name": "Pandapapst+8323",
-                "delta": -17,
-                "is_winner": false
             }
         ],
         "ELO_Sum": 4744,
@@ -25264,23 +25264,23 @@
         "Turn_Timing": "live",
         "players": [
             {
-                "name": "FausDav+5901",
-                "delta": 62,
-                "is_winner": true
-            },
-            {
-                "name": "MrDrouf+3826",
-                "delta": -16,
-                "is_winner": false
-            },
-            {
                 "name": "100pctskillz+6186",
                 "delta": -8,
                 "is_winner": false
             },
             {
+                "name": "FausDav+5901",
+                "delta": 62,
+                "is_winner": true
+            },
+            {
                 "name": "Oppapi+9478",
                 "delta": -8,
+                "is_winner": false
+            },
+            {
+                "name": "MrDrouf+3826",
+                "delta": -16,
                 "is_winner": false
             }
         ],
@@ -25366,7 +25366,7 @@
                 "is_winner": false
             },
             {
-                "name": "Dramsss+1",
+                "name": "Dramsss+5465",
                 "delta": 26,
                 "is_winner": true
             }
@@ -25815,24 +25815,24 @@
         "Turn_Timing": "async",
         "players": [
             {
-                "name": "PlagueCarrier+5718",
-                "delta": -12,
-                "is_winner": false
-            },
-            {
-                "name": "Schkitz+8222",
-                "delta": -22,
-                "is_winner": false
-            },
-            {
                 "name": "Klishu+3272",
                 "delta": -7,
+                "is_winner": false
+            },
+            {
+                "name": "PlagueCarrier+5718",
+                "delta": -12,
                 "is_winner": false
             },
             {
                 "name": "BaconBoy+9689",
                 "delta": 24,
                 "is_winner": true
+            },
+            {
+                "name": "Schkitz+8222",
+                "delta": -22,
+                "is_winner": false
             }
         ],
         "ELO_Sum": 4738,
@@ -25854,13 +25854,13 @@
                 "is_winner": false
             },
             {
-                "name": "KarmaBurn+1193",
-                "delta": -21,
+                "name": "tunnndz+4720",
+                "delta": -18,
                 "is_winner": false
             },
             {
-                "name": "tunnndz+4720",
-                "delta": -18,
+                "name": "KarmaBurn+1193",
+                "delta": -21,
                 "is_winner": false
             }
         ],
@@ -25970,7 +25970,7 @@
                 "is_winner": true
             },
             {
-                "name": "Dramsss+1",
+                "name": "Dramsss+5465",
                 "delta": -26,
                 "is_winner": false
             },
@@ -26163,11 +26163,6 @@
         "Turn_Timing": "async",
         "players": [
             {
-                "name": "Raybit+2953",
-                "delta": -15,
-                "is_winner": false
-            },
-            {
                 "name": "DawnDiVito+5802",
                 "delta": -5,
                 "is_winner": false
@@ -26175,6 +26170,11 @@
             {
                 "name": "FavorOfTheRabbits+9523",
                 "delta": -35,
+                "is_winner": false
+            },
+            {
+                "name": "Raybit+2953",
+                "delta": -15,
                 "is_winner": false
             },
             {
@@ -26250,11 +26250,6 @@
         "Turn_Timing": "live",
         "players": [
             {
-                "name": "Lucat+9382",
-                "delta": -22,
-                "is_winner": false
-            },
-            {
                 "name": "mouseinabox+992",
                 "delta": -5,
                 "is_winner": false
@@ -26262,6 +26257,11 @@
             {
                 "name": "Whats02+5282",
                 "delta": -17,
+                "is_winner": false
+            },
+            {
+                "name": "Lucat+9382",
+                "delta": -22,
                 "is_winner": false
             },
             {
@@ -26516,9 +26516,9 @@
                 "is_winner": false
             },
             {
-                "name": "Kmahussier+2186",
-                "delta": 29,
-                "is_winner": true
+                "name": "sparrowhawk+9374",
+                "delta": -18,
+                "is_winner": false
             },
             {
                 "name": "FrancescoBr+4009",
@@ -26526,9 +26526,9 @@
                 "is_winner": false
             },
             {
-                "name": "sparrowhawk+9374",
-                "delta": -18,
-                "is_winner": false
+                "name": "Kmahussier+2186",
+                "delta": 29,
+                "is_winner": true
             }
         ],
         "ELO_Sum": 4728,
@@ -26801,24 +26801,24 @@
         "Turn_Timing": "async",
         "players": [
             {
+                "name": "fadingnovel+7335",
+                "delta": -11,
+                "is_winner": false
+            },
+            {
                 "name": "Cheesecake271+5205",
                 "delta": -17,
                 "is_winner": false
             },
             {
-                "name": "fadingnovel+7335",
-                "delta": -11,
+                "name": "LucianTheFak+3697",
+                "delta": -13,
                 "is_winner": false
             },
             {
                 "name": "LutherStr+1358",
                 "delta": 32,
                 "is_winner": true
-            },
-            {
-                "name": "LucianTheFak+3697",
-                "delta": -13,
-                "is_winner": false
             }
         ],
         "ELO_Sum": 4721,
@@ -27067,8 +27067,8 @@
                 "is_winner": true
             },
             {
-                "name": "100pctskillz+6186",
-                "delta": -7,
+                "name": "MrDrouf+3826",
+                "delta": -10,
                 "is_winner": false
             },
             {
@@ -27077,8 +27077,8 @@
                 "is_winner": false
             },
             {
-                "name": "MrDrouf+3826",
-                "delta": -10,
+                "name": "100pctskillz+6186",
+                "delta": -7,
                 "is_winner": false
             }
         ],
@@ -27294,23 +27294,23 @@
         "Turn_Timing": "async",
         "players": [
             {
-                "name": "cliuless+2304",
-                "delta": -7,
-                "is_winner": false
-            },
-            {
                 "name": "LutherStr+1358",
                 "delta": 33,
                 "is_winner": true
             },
             {
-                "name": "Cheesecake271+5205",
-                "delta": -19,
+                "name": "LucianTheFak+3697",
+                "delta": -9,
                 "is_winner": false
             },
             {
-                "name": "LucianTheFak+3697",
-                "delta": -9,
+                "name": "cliuless+2304",
+                "delta": -7,
+                "is_winner": false
+            },
+            {
+                "name": "Cheesecake271+5205",
+                "delta": -19,
                 "is_winner": false
             }
         ],
@@ -27323,13 +27323,13 @@
         "Turn_Timing": "live",
         "players": [
             {
-                "name": "hanban+3911",
-                "delta": -22,
+                "name": "Dizzz+246",
+                "delta": -17,
                 "is_winner": false
             },
             {
-                "name": "Oppapi+9478",
-                "delta": -21,
+                "name": "hanban+3911",
+                "delta": -22,
                 "is_winner": false
             },
             {
@@ -27338,8 +27338,8 @@
                 "is_winner": true
             },
             {
-                "name": "Dizzz+246",
-                "delta": -17,
+                "name": "Oppapi+9478",
+                "delta": -21,
                 "is_winner": false
             }
         ],
@@ -27410,6 +27410,11 @@
         "Turn_Timing": "live",
         "players": [
             {
+                "name": "Piechu+7320",
+                "delta": 34,
+                "is_winner": true
+            },
+            {
                 "name": "Sebby+9924",
                 "delta": -11,
                 "is_winner": false
@@ -27418,11 +27423,6 @@
                 "name": "Hadjiya+4475",
                 "delta": -7,
                 "is_winner": false
-            },
-            {
-                "name": "Piechu+7320",
-                "delta": 34,
-                "is_winner": true
             },
             {
                 "name": "DemaRogue+7727",
@@ -27497,6 +27497,11 @@
         "Turn_Timing": "live",
         "players": [
             {
+                "name": "tjudge+8299",
+                "delta": 58,
+                "is_winner": true
+            },
+            {
                 "name": "LHlegend+5313",
                 "delta": -13,
                 "is_winner": false
@@ -27510,11 +27515,6 @@
                 "name": "ForkMaster+8694",
                 "delta": -22,
                 "is_winner": false
-            },
-            {
-                "name": "tjudge+8299",
-                "delta": 58,
-                "is_winner": true
             }
         ],
         "ELO_Sum": 4713,
@@ -27613,14 +27613,14 @@
         "Turn_Timing": "async",
         "players": [
             {
-                "name": "Perdita+9449",
-                "delta": 62,
-                "is_winner": true
-            },
-            {
                 "name": "BaconBoy+9689",
                 "delta": -25,
                 "is_winner": false
+            },
+            {
+                "name": "Perdita+9449",
+                "delta": 62,
+                "is_winner": true
             },
             {
                 "name": "Oppapi+9478",
@@ -27763,14 +27763,14 @@
                 "is_winner": false
             },
             {
-                "name": "DarthPuniceus+9605",
-                "delta": 63,
-                "is_winner": true
-            },
-            {
                 "name": "Klishu+3272",
                 "delta": -8,
                 "is_winner": false
+            },
+            {
+                "name": "DarthPuniceus+9605",
+                "delta": 63,
+                "is_winner": true
             },
             {
                 "name": "cliuless+2304",
@@ -27947,7 +27947,7 @@
                 "is_winner": true
             },
             {
-                "name": "Dramsss+1",
+                "name": "Dramsss+5465",
                 "delta": -23,
                 "is_winner": false
             }
@@ -28169,6 +28169,11 @@
                 "is_winner": false
             },
             {
+                "name": "FVMLion+1706",
+                "delta": -26,
+                "is_winner": false
+            },
+            {
                 "name": "tunnndz+4720",
                 "delta": -21,
                 "is_winner": false
@@ -28177,11 +28182,6 @@
                 "name": "TheDolphinman+2630",
                 "delta": 29,
                 "is_winner": true
-            },
-            {
-                "name": "FVMLion+1706",
-                "delta": -26,
-                "is_winner": false
             }
         ],
         "ELO_Sum": 4696,
@@ -28192,11 +28192,6 @@
         "Date": "2026-02-16",
         "Turn_Timing": "async",
         "players": [
-            {
-                "name": "LucianTheFak+3697",
-                "delta": -9,
-                "is_winner": false
-            },
             {
                 "name": "AERotters+5277",
                 "delta": -5,
@@ -28210,6 +28205,11 @@
             {
                 "name": "cliuless+2304",
                 "delta": -7,
+                "is_winner": false
+            },
+            {
+                "name": "LucianTheFak+3697",
+                "delta": -9,
                 "is_winner": false
             }
         ],
@@ -28232,7 +28232,7 @@
                 "is_winner": false
             },
             {
-                "name": "Dramsss+1",
+                "name": "Dramsss+5465",
                 "delta": -20,
                 "is_winner": false
             },
@@ -28889,9 +28889,9 @@
         "Turn_Timing": "async",
         "players": [
             {
-                "name": "FrancescoBr+4009",
-                "delta": 55,
-                "is_winner": true
+                "name": "LHlegend+5313",
+                "delta": -7,
+                "is_winner": false
             },
             {
                 "name": "Kmahussier+2186",
@@ -28899,14 +28899,14 @@
                 "is_winner": false
             },
             {
-                "name": "LHlegend+5313",
-                "delta": -7,
-                "is_winner": false
-            },
-            {
                 "name": "ellbelle+9011",
                 "delta": -14,
                 "is_winner": false
+            },
+            {
+                "name": "FrancescoBr+4009",
+                "delta": 55,
+                "is_winner": true
             }
         ],
         "ELO_Sum": 4682,
@@ -29068,6 +29068,11 @@
                 "is_winner": true
             },
             {
+                "name": "mouseinabox+992",
+                "delta": -7,
+                "is_winner": false
+            },
+            {
                 "name": "ImJustExisting+9170",
                 "delta": -29,
                 "is_winner": false
@@ -29075,11 +29080,6 @@
             {
                 "name": "tunnndz+4720",
                 "delta": -8,
-                "is_winner": false
-            },
-            {
-                "name": "mouseinabox+992",
-                "delta": -7,
                 "is_winner": false
             }
         ],
@@ -29179,11 +29179,6 @@
         "Turn_Timing": "async",
         "players": [
             {
-                "name": "Piechu+7320",
-                "delta": -28,
-                "is_winner": false
-            },
-            {
                 "name": "RFMerlo+6470",
                 "delta": 65,
                 "is_winner": true
@@ -29196,6 +29191,11 @@
             {
                 "name": "DrCheeseFiend+3515",
                 "delta": -11,
+                "is_winner": false
+            },
+            {
+                "name": "Piechu+7320",
+                "delta": -28,
                 "is_winner": false
             }
         ],
@@ -29271,13 +29271,13 @@
                 "is_winner": true
             },
             {
-                "name": "Lex25+415",
-                "delta": -21,
+                "name": "Hadjiya+4475",
+                "delta": -5,
                 "is_winner": false
             },
             {
-                "name": "Hadjiya+4475",
-                "delta": -5,
+                "name": "Lex25+415",
+                "delta": -21,
                 "is_winner": false
             },
             {
@@ -29353,13 +29353,13 @@
         "Turn_Timing": "live",
         "players": [
             {
-                "name": "Zeldamon+7946",
-                "delta": -19,
+                "name": "buurn+343",
+                "delta": -1,
                 "is_winner": false
             },
             {
-                "name": "buurn+343",
-                "delta": -1,
+                "name": "Zeldamon+7946",
+                "delta": -19,
                 "is_winner": false
             },
             {
@@ -29411,8 +29411,13 @@
         "Turn_Timing": "async",
         "players": [
             {
-                "name": "Podge0303+8578",
-                "delta": -15,
+                "name": "Oppapi+9478",
+                "delta": -8,
+                "is_winner": false
+            },
+            {
+                "name": "FausDav+5901",
+                "delta": -23,
                 "is_winner": false
             },
             {
@@ -29421,13 +29426,8 @@
                 "is_winner": true
             },
             {
-                "name": "FausDav+5901",
-                "delta": -23,
-                "is_winner": false
-            },
-            {
-                "name": "Oppapi+9478",
-                "delta": -8,
+                "name": "Podge0303+8578",
+                "delta": -15,
                 "is_winner": false
             }
         ],
@@ -29614,13 +29614,8 @@
         "Turn_Timing": "live",
         "players": [
             {
-                "name": "Schkitz+8222",
-                "delta": 25,
-                "is_winner": true
-            },
-            {
-                "name": "Hurple+6007",
-                "delta": -14,
+                "name": "Sebby+9924",
+                "delta": -21,
                 "is_winner": false
             },
             {
@@ -29629,9 +29624,14 @@
                 "is_winner": false
             },
             {
-                "name": "Sebby+9924",
-                "delta": -21,
+                "name": "Hurple+6007",
+                "delta": -14,
                 "is_winner": false
+            },
+            {
+                "name": "Schkitz+8222",
+                "delta": 25,
+                "is_winner": true
             }
         ],
         "ELO_Sum": 4670,
@@ -29648,13 +29648,13 @@
                 "is_winner": false
             },
             {
-                "name": "Wrestler+3756",
-                "delta": -24,
+                "name": "WWren+25",
+                "delta": -23,
                 "is_winner": false
             },
             {
-                "name": "WWren+25",
-                "delta": -23,
+                "name": "Wrestler+3756",
+                "delta": -24,
                 "is_winner": false
             },
             {
@@ -29672,8 +29672,13 @@
         "Turn_Timing": "async",
         "players": [
             {
-                "name": "HobGungan+2914",
-                "delta": -4,
+                "name": "Yragael+5413",
+                "delta": -20,
+                "is_winner": false
+            },
+            {
+                "name": "DemaRogue+7727",
+                "delta": -15,
                 "is_winner": false
             },
             {
@@ -29682,13 +29687,8 @@
                 "is_winner": true
             },
             {
-                "name": "DemaRogue+7727",
-                "delta": -15,
-                "is_winner": false
-            },
-            {
-                "name": "Yragael+5413",
-                "delta": -20,
+                "name": "HobGungan+2914",
+                "delta": -4,
                 "is_winner": false
             }
         ],
@@ -29846,8 +29846,8 @@
         "Turn_Timing": "async",
         "players": [
             {
-                "name": "Wrestler+3756",
-                "delta": -8,
+                "name": "buurn+343",
+                "delta": -2,
                 "is_winner": false
             },
             {
@@ -29856,8 +29856,8 @@
                 "is_winner": false
             },
             {
-                "name": "buurn+343",
-                "delta": -2,
+                "name": "Wrestler+3756",
+                "delta": -8,
                 "is_winner": false
             },
             {
@@ -29933,8 +29933,13 @@
         "Turn_Timing": "live",
         "players": [
             {
-                "name": "Dandel+3128",
-                "delta": -20,
+                "name": "Dramsss+5465",
+                "delta": 59,
+                "is_winner": true
+            },
+            {
+                "name": "Hurple+6007",
+                "delta": -19,
                 "is_winner": false
             },
             {
@@ -29943,14 +29948,9 @@
                 "is_winner": false
             },
             {
-                "name": "Hurple+6007",
-                "delta": -19,
+                "name": "Dandel+3128",
+                "delta": -20,
                 "is_winner": false
-            },
-            {
-                "name": "Dramsss+1",
-                "delta": 59,
-                "is_winner": true
             }
         ],
         "ELO_Sum": 4664,
@@ -29991,8 +29991,8 @@
         "Turn_Timing": "live",
         "players": [
             {
-                "name": "mishaelh1+6045",
-                "delta": -24,
+                "name": "FVMLion+1706",
+                "delta": -12,
                 "is_winner": false
             },
             {
@@ -30006,8 +30006,8 @@
                 "is_winner": false
             },
             {
-                "name": "FVMLion+1706",
-                "delta": -12,
+                "name": "mishaelh1+6045",
+                "delta": -24,
                 "is_winner": false
             }
         ],
@@ -30107,9 +30107,9 @@
         "Turn_Timing": "async",
         "players": [
             {
-                "name": "LHlegend+5313",
-                "delta": -19,
-                "is_winner": false
+                "name": "Dandel+3128",
+                "delta": 67,
+                "is_winner": true
             },
             {
                 "name": "Perdita+9449",
@@ -30117,13 +30117,13 @@
                 "is_winner": false
             },
             {
-                "name": "Dandel+3128",
-                "delta": 67,
-                "is_winner": true
-            },
-            {
                 "name": "MrDrouf+3826",
                 "delta": -12,
+                "is_winner": false
+            },
+            {
+                "name": "LHlegend+5313",
+                "delta": -19,
                 "is_winner": false
             }
         ],
@@ -30281,11 +30281,6 @@
         "Turn_Timing": "live",
         "players": [
             {
-                "name": "MangoBlade11+7548",
-                "delta": -23,
-                "is_winner": false
-            },
-            {
                 "name": "FrancescoBr+4009",
                 "delta": 57,
                 "is_winner": true
@@ -30298,6 +30293,11 @@
             {
                 "name": "FVMLion+1706",
                 "delta": -24,
+                "is_winner": false
+            },
+            {
+                "name": "MangoBlade11+7548",
+                "delta": -23,
                 "is_winner": false
             }
         ],
@@ -30697,14 +30697,14 @@
                 "is_winner": false
             },
             {
-                "name": "DarthOblivius+1339",
-                "delta": -5,
-                "is_winner": false
-            },
-            {
                 "name": "BuliBaka+6658",
                 "delta": 61,
                 "is_winner": true
+            },
+            {
+                "name": "DarthOblivius+1339",
+                "delta": -5,
+                "is_winner": false
             }
         ],
         "ELO_Sum": 4649,
@@ -31006,13 +31006,13 @@
         "Turn_Timing": "live",
         "players": [
             {
-                "name": "Piechu+7320",
-                "delta": -24,
-                "is_winner": false
+                "name": "Sebby+9924",
+                "delta": 60,
+                "is_winner": true
             },
             {
-                "name": "mouseinabox+992",
-                "delta": -9,
+                "name": "Piechu+7320",
+                "delta": -24,
                 "is_winner": false
             },
             {
@@ -31021,9 +31021,9 @@
                 "is_winner": false
             },
             {
-                "name": "Sebby+9924",
-                "delta": 60,
-                "is_winner": true
+                "name": "mouseinabox+992",
+                "delta": -9,
+                "is_winner": false
             }
         ],
         "ELO_Sum": 4640,
@@ -31035,24 +31035,24 @@
         "Turn_Timing": "live",
         "players": [
             {
-                "name": "FatBoyyy+6258",
-                "delta": -18,
-                "is_winner": false
-            },
-            {
                 "name": "FrancescoBr+4009",
                 "delta": -18,
                 "is_winner": false
             },
             {
-                "name": "Lex25+415",
-                "delta": -11,
+                "name": "FatBoyyy+6258",
+                "delta": -18,
                 "is_winner": false
             },
             {
                 "name": "mishaelh1+6045",
                 "delta": 65,
                 "is_winner": true
+            },
+            {
+                "name": "Lex25+415",
+                "delta": -11,
+                "is_winner": false
             }
         ],
         "ELO_Sum": 4640,
@@ -31093,24 +31093,24 @@
         "Turn_Timing": "live",
         "players": [
             {
-                "name": "Emperia+9282",
-                "delta": -15,
+                "name": "cjahwon+6865",
+                "delta": -4,
                 "is_winner": false
             },
             {
-                "name": "Peppy+6321",
-                "delta": 31,
-                "is_winner": true
-            },
-            {
-                "name": "cjahwon+6865",
-                "delta": -4,
+                "name": "Emperia+9282",
+                "delta": -15,
                 "is_winner": false
             },
             {
                 "name": "idk123+6079",
                 "delta": -23,
                 "is_winner": false
+            },
+            {
+                "name": "Peppy+6321",
+                "delta": 31,
+                "is_winner": true
             }
         ],
         "ELO_Sum": 4639,
@@ -31267,13 +31267,13 @@
         "Turn_Timing": "async",
         "players": [
             {
-                "name": "Drinken+3181",
-                "delta": -15,
+                "name": "Oppapi+9478",
+                "delta": -8,
                 "is_winner": false
             },
             {
-                "name": "Oppapi+9478",
-                "delta": -8,
+                "name": "Drinken+3181",
+                "delta": -15,
                 "is_winner": false
             },
             {
@@ -31325,9 +31325,9 @@
         "Turn_Timing": "async",
         "players": [
             {
-                "name": "Napalminthebirdsong+5528",
-                "delta": 59,
-                "is_winner": true
+                "name": "TurkeyNoNo+9522",
+                "delta": -31,
+                "is_winner": false
             },
             {
                 "name": "PlagueCarrier+5718",
@@ -31335,9 +31335,9 @@
                 "is_winner": false
             },
             {
-                "name": "TurkeyNoNo+9522",
-                "delta": -31,
-                "is_winner": false
+                "name": "Napalminthebirdsong+5528",
+                "delta": 59,
+                "is_winner": true
             },
             {
                 "name": "100pctskillz+6186",
@@ -31422,14 +31422,14 @@
                 "is_winner": false
             },
             {
-                "name": "Ptitmxz+6986",
-                "delta": -9,
-                "is_winner": false
-            },
-            {
                 "name": "DarthOblivius+1339",
                 "delta": 37,
                 "is_winner": true
+            },
+            {
+                "name": "Ptitmxz+6986",
+                "delta": -9,
+                "is_winner": false
             }
         ],
         "ELO_Sum": 4629,
@@ -31528,8 +31528,13 @@
         "Turn_Timing": "async",
         "players": [
             {
-                "name": "HobGungan+2914",
-                "delta": -11,
+                "name": "WyvernElement+1816",
+                "delta": 55,
+                "is_winner": true
+            },
+            {
+                "name": "Odinius+897",
+                "delta": -8,
                 "is_winner": false
             },
             {
@@ -31538,13 +31543,8 @@
                 "is_winner": false
             },
             {
-                "name": "WyvernElement+1816",
-                "delta": 55,
-                "is_winner": true
-            },
-            {
-                "name": "Odinius+897",
-                "delta": -8,
+                "name": "HobGungan+2914",
+                "delta": -11,
                 "is_winner": false
             }
         ],
@@ -31557,7 +31557,7 @@
         "Turn_Timing": "async",
         "players": [
             {
-                "name": "Dramsss+1",
+                "name": "Dramsss+5465",
                 "delta": -19,
                 "is_winner": false
             },
@@ -31683,14 +31683,14 @@
                 "is_winner": false
             },
             {
-                "name": "Sebby+9924",
-                "delta": 29,
-                "is_winner": true
-            },
-            {
                 "name": "Hadjiya+4475",
                 "delta": -8,
                 "is_winner": false
+            },
+            {
+                "name": "Sebby+9924",
+                "delta": 29,
+                "is_winner": true
             }
         ],
         "ELO_Sum": 4624,
@@ -32224,17 +32224,17 @@
         "Turn_Timing": "live",
         "players": [
             {
-                "name": "Piechu+7320",
-                "delta": 35,
-                "is_winner": true
-            },
-            {
                 "name": "Hadjiya+4475",
                 "delta": -4,
                 "is_winner": false
             },
             {
-                "name": "Dramsss+1",
+                "name": "Piechu+7320",
+                "delta": 35,
+                "is_winner": true
+            },
+            {
+                "name": "Dramsss+5465",
                 "delta": -22,
                 "is_winner": false
             },
@@ -32490,7 +32490,7 @@
                 "is_winner": false
             },
             {
-                "name": "Dramsss+1",
+                "name": "Dramsss+5465",
                 "delta": 25,
                 "is_winner": true
             },
@@ -32664,6 +32664,11 @@
                 "is_winner": false
             },
             {
+                "name": "Tolfan",
+                "delta": 16,
+                "is_winner": true
+            },
+            {
                 "name": "mouseinabox+992",
                 "delta": -3,
                 "is_winner": false
@@ -32672,11 +32677,6 @@
                 "name": "DawnDiVito+5802",
                 "delta": -4,
                 "is_winner": false
-            },
-            {
-                "name": "Tolfan",
-                "delta": 16,
-                "is_winner": true
             }
         ],
         "ELO_Sum": 4598,
@@ -32775,13 +32775,8 @@
         "Turn_Timing": "live",
         "players": [
             {
-                "name": "mouseinabox+992",
-                "delta": -10,
-                "is_winner": false
-            },
-            {
-                "name": "mkcy3+8006",
-                "delta": -19,
+                "name": "cjahwon+6865",
+                "delta": -18,
                 "is_winner": false
             },
             {
@@ -32790,8 +32785,13 @@
                 "is_winner": true
             },
             {
-                "name": "cjahwon+6865",
-                "delta": -18,
+                "name": "mkcy3+8006",
+                "delta": -19,
+                "is_winner": false
+            },
+            {
+                "name": "mouseinabox+992",
+                "delta": -10,
                 "is_winner": false
             }
         ],
@@ -32862,7 +32862,7 @@
         "Turn_Timing": "async",
         "players": [
             {
-                "name": "Dramsss+1",
+                "name": "Dramsss+5465",
                 "delta": -17,
                 "is_winner": false
             },
@@ -32920,6 +32920,11 @@
         "Turn_Timing": "live",
         "players": [
             {
+                "name": "Piechu+7320",
+                "delta": 35,
+                "is_winner": true
+            },
+            {
                 "name": "BadScra+3199",
                 "delta": -31,
                 "is_winner": false
@@ -32933,11 +32938,6 @@
                 "name": "optimusprawn+9866",
                 "delta": -22,
                 "is_winner": false
-            },
-            {
-                "name": "Piechu+7320",
-                "delta": 35,
-                "is_winner": true
             }
         ],
         "ELO_Sum": 4589,
@@ -33022,7 +33022,7 @@
                 "is_winner": false
             },
             {
-                "name": "Dramsss+1",
+                "name": "Dramsss+5465",
                 "delta": 65,
                 "is_winner": true
             }
@@ -33152,24 +33152,24 @@
         "Turn_Timing": "async",
         "players": [
             {
-                "name": "NadtyLite+7330",
-                "delta": -8,
-                "is_winner": false
-            },
-            {
                 "name": "MrDrouf+3826",
                 "delta": -13,
-                "is_winner": false
-            },
-            {
-                "name": "HyenaDon+4502",
-                "delta": -6,
                 "is_winner": false
             },
             {
                 "name": "Hydro033+5014",
                 "delta": 55,
                 "is_winner": true
+            },
+            {
+                "name": "NadtyLite+7330",
+                "delta": -8,
+                "is_winner": false
+            },
+            {
+                "name": "HyenaDon+4502",
+                "delta": -6,
+                "is_winner": false
             }
         ],
         "ELO_Sum": 4582,
@@ -33558,16 +33558,6 @@
         "Turn_Timing": "live",
         "players": [
             {
-                "name": "Piechu+7320",
-                "delta": 33,
-                "is_winner": true
-            },
-            {
-                "name": "Hadjiya+4475",
-                "delta": -10,
-                "is_winner": false
-            },
-            {
                 "name": "Lex25+415",
                 "delta": -20,
                 "is_winner": false
@@ -33575,6 +33565,16 @@
             {
                 "name": "Sebby+9924",
                 "delta": -13,
+                "is_winner": false
+            },
+            {
+                "name": "Piechu+7320",
+                "delta": 33,
+                "is_winner": true
+            },
+            {
+                "name": "Hadjiya+4475",
+                "delta": -10,
                 "is_winner": false
             }
         ],
@@ -33679,6 +33679,11 @@
                 "is_winner": false
             },
             {
+                "name": "Kmahussier+2186",
+                "delta": -17,
+                "is_winner": false
+            },
+            {
                 "name": "Wrestler+3756",
                 "delta": 30,
                 "is_winner": true
@@ -33686,11 +33691,6 @@
             {
                 "name": "buurn+343",
                 "delta": -3,
-                "is_winner": false
-            },
-            {
-                "name": "Kmahussier+2186",
-                "delta": -17,
                 "is_winner": false
             }
         ],
@@ -34051,14 +34051,14 @@
         "Turn_Timing": "async",
         "players": [
             {
-                "name": "buurn+343",
-                "delta": -3,
-                "is_winner": false
-            },
-            {
                 "name": "Schkitz+8222",
                 "delta": 13,
                 "is_winner": true
+            },
+            {
+                "name": "buurn+343",
+                "delta": -3,
+                "is_winner": false
             },
             {
                 "name": "Banzai7000+1191",
@@ -34196,23 +34196,23 @@
         "Turn_Timing": "live",
         "players": [
             {
-                "name": "DawnDiVito+5802",
-                "delta": 35,
-                "is_winner": true
-            },
-            {
-                "name": "BaliHoo+3674",
-                "delta": -14,
-                "is_winner": false
-            },
-            {
                 "name": "Cheetah32+6800",
                 "delta": -27,
                 "is_winner": false
             },
             {
+                "name": "DawnDiVito+5802",
+                "delta": 35,
+                "is_winner": true
+            },
+            {
                 "name": "Raybit+2953",
                 "delta": -27,
+                "is_winner": false
+            },
+            {
+                "name": "BaliHoo+3674",
+                "delta": -14,
                 "is_winner": false
             }
         ],
@@ -34230,13 +34230,13 @@
                 "is_winner": true
             },
             {
-                "name": "Piechu+7320",
-                "delta": -8,
+                "name": "Sebby+9924",
+                "delta": -36,
                 "is_winner": false
             },
             {
-                "name": "Sebby+9924",
-                "delta": -36,
+                "name": "Piechu+7320",
+                "delta": -8,
                 "is_winner": false
             },
             {
@@ -34312,23 +34312,23 @@
         "Turn_Timing": "live",
         "players": [
             {
-                "name": "Emperia+9282",
-                "delta": 53,
-                "is_winner": true
-            },
-            {
                 "name": "cjahwon+6865",
                 "delta": -5,
                 "is_winner": false
             },
             {
-                "name": "Dandel+3128",
-                "delta": -8,
-                "is_winner": false
+                "name": "Emperia+9282",
+                "delta": 53,
+                "is_winner": true
             },
             {
                 "name": "Valzaan+3564",
                 "delta": -27,
+                "is_winner": false
+            },
+            {
+                "name": "Dandel+3128",
+                "delta": -8,
                 "is_winner": false
             }
         ],
@@ -34892,23 +34892,23 @@
         "Turn_Timing": "async",
         "players": [
             {
-                "name": "Bengal3+6710",
-                "delta": 57,
-                "is_winner": true
-            },
-            {
                 "name": "HobGungan+2914",
                 "delta": -5,
                 "is_winner": false
             },
             {
-                "name": "benssoon+802",
-                "delta": -13,
-                "is_winner": false
+                "name": "Bengal3+6710",
+                "delta": 57,
+                "is_winner": true
             },
             {
                 "name": "DawnDiVito+5802",
                 "delta": -7,
+                "is_winner": false
+            },
+            {
+                "name": "benssoon+802",
+                "delta": -13,
                 "is_winner": false
             }
         ],
@@ -34950,13 +34950,13 @@
         "Turn_Timing": "async",
         "players": [
             {
-                "name": "TempExtremal+1625",
-                "delta": -26,
-                "is_winner": false
+                "name": "benssoon+802",
+                "delta": 61,
+                "is_winner": true
             },
             {
-                "name": "HobGungan+2914",
-                "delta": -5,
+                "name": "TempExtremal+1625",
+                "delta": -26,
                 "is_winner": false
             },
             {
@@ -34965,9 +34965,9 @@
                 "is_winner": false
             },
             {
-                "name": "benssoon+802",
-                "delta": 61,
-                "is_winner": true
+                "name": "HobGungan+2914",
+                "delta": -5,
+                "is_winner": false
             }
         ],
         "ELO_Sum": 4464,
@@ -35066,11 +35066,6 @@
         "Turn_Timing": "async",
         "players": [
             {
-                "name": "Odinius+897",
-                "delta": -12,
-                "is_winner": false
-            },
-            {
                 "name": "Banzai7000+1191",
                 "delta": -12,
                 "is_winner": false
@@ -35078,6 +35073,11 @@
             {
                 "name": "radiantchaos+5523",
                 "delta": -11,
+                "is_winner": false
+            },
+            {
+                "name": "Odinius+897",
+                "delta": -12,
                 "is_winner": false
             },
             {
@@ -35211,13 +35211,13 @@
         "Turn_Timing": "async",
         "players": [
             {
-                "name": "radiantchaos+5523",
-                "delta": -15,
+                "name": "BaliHoo+3674",
+                "delta": -16,
                 "is_winner": false
             },
             {
-                "name": "Wubba+9310",
-                "delta": -20,
+                "name": "radiantchaos+5523",
+                "delta": -15,
                 "is_winner": false
             },
             {
@@ -35226,8 +35226,8 @@
                 "is_winner": true
             },
             {
-                "name": "BaliHoo+3674",
-                "delta": -16,
+                "name": "Wubba+9310",
+                "delta": -20,
                 "is_winner": false
             }
         ],
@@ -35385,11 +35385,6 @@
         "Turn_Timing": "async",
         "players": [
             {
-                "name": "BaliHoo+3674",
-                "delta": -7,
-                "is_winner": false
-            },
-            {
                 "name": "buurn+343",
                 "delta": -3,
                 "is_winner": false
@@ -35402,6 +35397,11 @@
             {
                 "name": "HobGungan+2914",
                 "delta": -5,
+                "is_winner": false
+            },
+            {
+                "name": "BaliHoo+3674",
+                "delta": -7,
                 "is_winner": false
             }
         ],
