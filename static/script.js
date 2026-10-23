@@ -1201,20 +1201,16 @@ function showVisitorRow(name, date) {
 }
 
 /* =========================================================================
-   --- 10. NETWORK MAP & TABLE ---
+   --- 10. HOMELANDS MAP & TIMELINE ---
    ========================================================================= */
 
 $(document).ready(function () {
-    // 1. Guard Clause & Extraction des données globales
     const dates = window.NETWORK_DATES;
     const snapshots = window.NETWORK_SNAPSHOTS;
     const config = window.NETWORK_CONFIG || { tribes: {}, tiers: {} };
 
     if (!dates || !dates.length || !snapshots) return;
 
-    // --- Variables d'état ---
-    const TARGET_TRIBES = Object.keys(config.tribes || {});
-    const centerCols = TARGET_TRIBES.map((_, i) => i + 1);
     let activeTribeFilter = null;
     let simulation = null;
     let currentIndex = dates.length - 1;
@@ -1226,72 +1222,24 @@ $(document).ready(function () {
     const $earliestBtn = $('#earliestDateBtn');
     const $latestBtn = $('#latestDateBtn');
 
-    /* -------------------------------------------------------------------------
-       10.1 DATA TABLE MANAGEMENT
-       ------------------------------------------------------------------------- */
-    const table = $('#frogTable').DataTable();
-
-    function getBadgeColor(status) {
-        return config.tiers?.[status] || config.tiers?.Default || "#4a5568";
-    }
-
-    function renderTribeCell(scoreData, isMainTribe) {
-        if (!scoreData || (!isMainTribe && scoreData.pct < 10)) {
-            return `<div class="tribe-cell-empty">-</div>`;
-        }
-        const pctStr = `<span class="tribe-pct">${scoreData.pct}%</span>`;
-        if (!isMainTribe || !scoreData.status) {
-            return `<div class="tribe-cell">${pctStr}</div>`;
-        }
-        return `<div class="tribe-cell">${pctStr} <span class="tribe-badge" style="background-color: ${getBadgeColor(scoreData.status)};">${scoreData.status}</span></div>`;
-    }
-
-    function updateTable(snapshot) {
-        const activeTribes = snapshot.active_tribes || [];
-
-        TARGET_TRIBES.forEach((tribe, idx) => {
-            const colIdx = idx + 2;
-            const isActive = activeTribes.includes(tribe);
-            table.column(colIdx).visible(isActive, false);
-
-            if (isActive) {
-                const label = snapshot.tribe_labels?.[tribe] || tribe;
-                const icon = config.tribes[tribe]?.icon || '';
-                $(table.column(colIdx).header()).html(`<img src="${icon}" title="${label}" alt="${label}" class="tribe-icon">`);
-            }
-        });
-
-        let players = snapshot.players || [];
-        if (activeTribeFilter) {
-            players = players.filter(p => p.main_tribe === activeTribeFilter);
-        }
-
-        const rows = players.map(p => [
-            p.name,
-            p.games,
-            ...TARGET_TRIBES.map(t => renderTribeCell(p.scores?.[t], p.main_tribe === t))
-        ]);
-
-        table.clear().rows.add(rows).columns.adjust().draw();
-    }
-
-    /* -------------------------------------------------------------------------
-       10.2 GRAPH DATA GENERATOR
-       ------------------------------------------------------------------------- */
-
-    // Un seul endroit pour définir ce qu'est un pilier / satellite / membre :
-    // rayon de la bulle ET distance d'orbite autour du hub de la tribu.
-    // (radius du hub lui-même reste calculé séparément, via tribeRadius().)
+    // --- Paramètres physiques des orbites ---
     const TIERS = {
-        pillar: { radius: 20, dist: 85 },
-        satellite: { radius: 12, dist: 130 },
-        member: { radius: 7, dist: 170 }
+        pillar: { radius: 18, dist: 80 },
+        satellite: { radius: 12, dist: 120 },
+        member: { radius: 7, dist: 160 }
     };
 
     function tribeRadius(count) {
         return Math.max(32, 24 + Math.sqrt(count || 0) * 10);
     }
 
+    function getBadgeColor(status) {
+        return config.tiers?.[status] || config.tiers?.Default || "#4a5568";
+    }
+
+    /* -------------------------------------------------------------------------
+       10.1 CONSTRUCTION DES DONNÉES DU GRAPHE
+       ------------------------------------------------------------------------- */
     function buildGraphData(snapshot) {
         const activeTribes = snapshot.active_tribes || [];
         const tribeLayout = snapshot.tribe_layout || {};
@@ -1299,7 +1247,7 @@ $(document).ready(function () {
         const links = [];
 
         if (!activeTribeFilter) {
-            // --- Vue Globale : une bulle par tribu ---
+            // --- Vue Macro : Les Homelands et leurs liens d'affinité croisée ---
             activeTribes.forEach(t => {
                 const count = snapshot.summary?.[t] || 0;
                 nodes.push({
@@ -1334,7 +1282,7 @@ $(document).ready(function () {
             return { nodes, links };
         }
 
-        // --- Vue Constellation : une tribu + ses membres, classés par palier ---
+        // --- Vue Constellation : Un Homeland sélectionné et ses membres en orbite ---
         const tribe = activeTribeFilter;
         const count = snapshot.summary?.[tribe] || 0;
         const layout = tribeLayout[tribe] || { pillars: [], satellites: [] };
@@ -1349,9 +1297,6 @@ $(document).ready(function () {
             radius: tribeRadius(count)
         });
 
-        // Un membre = un palier (pillar / satellite / member), triés par nom
-        // pour que l'ordre autour du cercle reste stable d'un jour à l'autre
-        // (sinon tout le monde tourne dès qu'un joueur change de statut).
         const tiered = { pillar: [], satellite: [], member: [] };
         (snapshot.players || [])
             .filter(p => p.main_tribe === tribe)
@@ -1359,13 +1304,10 @@ $(document).ready(function () {
             .forEach(p => {
                 const tier = pillarsSet.has(p.name) ? 'pillar'
                     : satellitesSet.has(p.name) ? 'satellite'
-                        : 'member';
+                    : 'member';
                 tiered[tier].push(p);
             });
 
-        // Hash déterministe (0..1) dérivé du nom : donne un écart "aléatoire"
-        // mais stable d'un jour à l'autre (même joueur -> même écart), pour
-        // ne pas faire sauter tout le monde à chaque re-rendu.
         function nameJitter01(name) {
             let hash = 0;
             for (let i = 0; i < name.length; i++) {
@@ -1374,24 +1316,7 @@ $(document).ready(function () {
             return (hash % 10000) / 10000;
         }
 
-        // Répartition par palier : chaque palier (pillar / satellite / member)
-        // est distribué sur son PROPRE cercle complet (0→360°), indépendamment
-        // des autres. Un round-robin à compteur partagé entre paliers de
-        // tailles très inégales (les piliers, toujours peu nombreux, plafonnés
-        // à 6) s'épuise après quelques tours : les piliers se retrouvaient
-        // compressés dans les ~12 premiers % du cercle au lieu d'être répartis
-        // sur 360°. Comme les paliers ont des rayons d'orbite différents
-        // (TIERS[tier].dist), ils forment déjà des anneaux concentriques
-        // distincts — inutile de les entrelacer sur un même indice global pour
-        // éviter les arcs, il suffit que chaque anneau soit uniforme.
-        //
-        // Deux ajustements pour un rendu organique plutôt que "roue à
-        // rayons" (surtout visible quand un palier a peu de membres) :
-        // - un déphasage fixe différent par palier, pour que pillar/
-        //   satellite/member ne démarrent pas tous les trois à midi ;
-        // - un jitter stable (basé sur le nom) qui casse l'espacement
-        //   parfaitement régulier au sein d'un même palier.
-        const TIER_PHASE = { pillar: 0, satellite: 0.22, member: 0.47 }; // fraction de tour
+        const TIER_PHASE = { pillar: 0, satellite: 0.22, member: 0.47 };
 
         ['pillar', 'satellite', 'member'].forEach(tier => {
             const group = tiered[tier];
@@ -1402,7 +1327,7 @@ $(document).ready(function () {
 
             group.forEach((player, idx) => {
                 const scoreObj = player.scores?.[tribe];
-                const jitter = (nameJitter01(player.name) - 0.5) * slot * 0.7; // ±35% du slot, pas de collision
+                const jitter = (nameJitter01(player.name) - 0.5) * slot * 0.7;
                 const angle = phase + (slot * idx) + jitter - (Math.PI / 2);
                 const playerId = `player_${player.name}`;
 
@@ -1411,8 +1336,6 @@ $(document).ready(function () {
                     type: 'player',
                     name: player.name,
                     tier,
-                    pct: scoreObj?.pct || 0,
-                    status: scoreObj?.status || null,
                     color: getBadgeColor(scoreObj?.status),
                     radius,
                     dist,
@@ -1420,11 +1343,11 @@ $(document).ready(function () {
                 });
 
                 links.push({ 
-					source: tribe, 
-					target: playerId, 
-					tier, 
-					color: getBadgeColor(scoreObj?.status) 
-				});
+                    source: tribe, 
+                    target: playerId, 
+                    tier, 
+                    color: getBadgeColor(scoreObj?.status) 
+                });
             });
         });
 
@@ -1432,7 +1355,7 @@ $(document).ready(function () {
     }
 
     /* -------------------------------------------------------------------------
-       10.3 D3 NETWORK GRAPH ENGINE
+       10.2 MOTEUR D3.JS (RENDU DE LA CARTE)
        ------------------------------------------------------------------------- */
     function renderTribeGraph(snapshot) {
         if (typeof d3 === 'undefined') return;
@@ -1440,7 +1363,7 @@ $(document).ready(function () {
         const svg = d3.select("#tribeMapSvg");
         const container = document.getElementById('tribeMapContainer');
         const width = container?.clientWidth || 800;
-        const height = 380;
+        const height = 450;
         const duration = 400;
 
         if (svg.select("g.links-layer").empty()) {
@@ -1450,8 +1373,6 @@ $(document).ready(function () {
 
         const { nodes: newNodes, links: newLinks } = buildGraphData(snapshot);
 
-        // Conserve la position des nœuds déjà présents (transition douce),
-        // place les nouveaux au point d'entrée (hub actif ou centre).
         const prevNodesMap = new Map(simulation ? simulation.nodes().map(d => [d.id, d]) : []);
         let originX = width / 2, originY = height / 2;
         if (activeTribeFilter && prevNodesMap.has(activeTribeFilter)) {
@@ -1459,24 +1380,15 @@ $(document).ready(function () {
             originX = prevTribe.x;
             originY = prevTribe.y;
         }
+
         newNodes.forEach(d => {
             const prev = prevNodesMap.get(d.id);
             if (prev) {
-                // Nœud déjà présent : on part de sa position précédente.
                 d.x = prev.x; d.y = prev.y;
             } else if (d.type === 'player' && d.dist != null) {
-                // Nouveau membre : on le fait naître directement sur son
-                // orbite cible (même angle/distance que ceux utilisés par
-                // forceRadial) plutôt que collé au hub. Sinon, plusieurs
-                // nœuds démarrant à distance ~0 du hub font diverger
-                // forceRadial (division par une distance quasi nulle) et
-                // les bulles partent hors du conteneur.
                 d.x = originX + d.dist * Math.cos(d.angle);
                 d.y = originY + d.dist * Math.sin(d.angle);
             } else {
-                // Nouvelle bulle de tribu : léger écart aléatoire pour la
-                // même raison (éviter une superposition exacte avec une
-                // autre bulle).
                 d.x = originX + (Math.random() - 0.5) * 10;
                 d.y = originY + (Math.random() - 0.5) * 10;
             }
@@ -1494,8 +1406,8 @@ $(document).ready(function () {
         linkSel.exit().transition().duration(duration).attr("stroke-opacity", 0).remove();
 
         const link = linkSel.enter().append("line").merge(linkSel);
-		link.attr("class", d => `link ${d.type || 'constellation-link'} ${d.tier ? 'tier-' + d.tier : ''}`)
-			.style("stroke", d => d.color || null);
+        link.attr("class", d => `link ${d.type || 'constellation-link'} ${d.tier ? 'tier-' + d.tier : ''}`)
+            .style("stroke", d => d.color || null);
 
         // --- Nœuds ---
         const nodeSel = svg.select("g.nodes-layer").selectAll("g.node-group")
@@ -1536,7 +1448,7 @@ $(document).ready(function () {
             } else {
                 const labelClass = d.tier === 'pillar' ? "player-label pillar-label"
                     : d.tier === 'satellite' ? "player-label satellite-label"
-                        : "player-label member-label";
+                    : "player-label member-label";
                 g.select(".player-label").text(d.name).attr("class", labelClass);
             }
         });
@@ -1551,15 +1463,9 @@ $(document).ready(function () {
         if (!simulation) {
             simulation = d3.forceSimulation().alphaDecay(0.05);
         }
-        // Le lien est créé sans sa liste de liens : il ne doit résoudre les
-        // identifiants source/target qu'une fois que la simulation connaît
-        // déjà les nœuds de CE rendu (simulation.nodes(newNodes) plus bas).
-        // Sinon d3 cherche ces identifiants dans l'ancien jeu de nœuds (ou
-        // dans un jeu vide au tout premier rendu) et lève une erreur.
         const linkForce = d3.forceLink().id(d => d.id);
 
         if (!activeTribeFilter) {
-            // Vue globale : disposition libre, légèrement recentrée.
             simulation
                 .force("center", d3.forceCenter(width / 2, height / 2))
                 .force("radial", null)
@@ -1567,16 +1473,9 @@ $(document).ready(function () {
                 .force("charge", d3.forceManyBody().strength(-320))
                 .force("collision", d3.forceCollide().radius(d => d.radius + 15));
         } else {
-            // Vue constellation : chaque membre orbite le hub à une distance
-            // fixe selon son palier. Cette distance est appliquée "à la
-            // main" dans le tick handler plus bas plutôt que via
-            // d3.forceRadial : cette force-là ne relit son centre qu'UNE
-            // fois, à l'initialisation, puis le fige — si le hub bouge
-            // ensuite (et il bouge), les membres continuent à s'accrocher à
-            // son ancienne position. D'où l'effondrement dans un coin.
             simulation
                 .force("center", null)
-                .force("link", linkForce.distance(0).strength(0)) // purement visuel, la distance réelle est gérée dans le tick
+                .force("link", linkForce.distance(0).strength(0))
                 .force("charge", d3.forceManyBody().strength(d => d.type === 'tribe' ? 0 : -25))
                 .force("radial", null)
                 .force("x", d3.forceX(width / 2).strength(d => d.type === 'tribe' ? 0.3 : 0))
@@ -1589,8 +1488,6 @@ $(document).ready(function () {
         simulation.alpha(0.5).restart();
 
         simulation.on("tick", () => {
-            // Orbite des membres autour du hub, recalculée sur sa position
-            // COURANTE à chaque image (jamais mise en cache).
             if (activeTribeFilter) {
                 const hub = newNodes.find(n => n.id === activeTribeFilter);
                 if (hub) {
@@ -1598,20 +1495,18 @@ $(document).ready(function () {
                         if (d.type !== 'player' || d.dist == null || d.fx != null) return;
                         const dx = d.x - hub.x, dy = d.y - hub.y;
                         const r = Math.sqrt(dx * dx + dy * dy) || 1e-6;
-                        const k = (d.dist - r) / r * 0.12; // rappel doux, pas un claquement brutal
+                        const k = (d.dist - r) / r * 0.12;
                         d.x += dx * k;
                         d.y += dy * k;
                     });
                 }
             }
 
-            // Filet de sécurité : aucune bulle ne sort du cadre visible.
             newNodes.forEach(d => {
                 d.x = Math.max(d.radius, Math.min(width - d.radius, d.x));
                 d.y = Math.max(d.radius, Math.min(height - d.radius, d.y));
             });
 
-            // --- CALCUL PRÉCIS DU DÉPART ET DE L'ARRIVÉE DES LIGNES ---
             link
                 .attr("x1", d => {
                     const dx = d.target.x - d.source.x, dy = d.target.y - d.source.y;
@@ -1639,7 +1534,7 @@ $(document).ready(function () {
     }
 
     /* -------------------------------------------------------------------------
-       10.4 TIMELINE & CONTROLS
+       10.3 TIMELINE & NAVIGATION
        ------------------------------------------------------------------------- */
     function updateView(selectedDate) {
         $datePicker.val(selectedDate);
@@ -1647,7 +1542,6 @@ $(document).ready(function () {
         if (!snapshot) return;
 
         renderTribeGraph(snapshot);
-        updateTable(snapshot);
 
         $prevBtn.prop('disabled', currentIndex <= 0);
         $nextBtn.prop('disabled', currentIndex >= dates.length - 1);
@@ -1660,7 +1554,6 @@ $(document).ready(function () {
         }
     }
 
-    // Écouteurs d'événements UI
     $prevBtn.on('click', () => setDateByIndex(currentIndex - 1));
     $nextBtn.on('click', () => setDateByIndex(currentIndex + 1));
     $earliestBtn.on('click', () => setDateByIndex(0));
@@ -1677,6 +1570,5 @@ $(document).ready(function () {
         if (dates[currentIndex]) updateView(dates[currentIndex]);
     });
 
-    // Lancement
     setDateByIndex(currentIndex);
 });
