@@ -1279,7 +1279,7 @@ $(document).ready(function () {
     }
 
     function getBadgeColor(status) {
-        return config.tiers?.[status] || config.tiers?.Default || "#4a5568";
+        return config.tiers?.[status] || config.tiers?.Friend || "#B8681A";
     }
 
     // Helper to retrieve player's tribe from constellations
@@ -1289,12 +1289,11 @@ $(document).ready(function () {
         return playerData.tribe || null;
     }
 
-    // Map fidelity percentage to network config tier keys
+    // Map fidelity percentage to network config tier keys (No default, minimum is Friend)
     function getStatusFromFidelity(fidelity) {
         if (fidelity >= 85) return 'Partisan';
         if (fidelity >= 65) return 'Squire';
-        if (fidelity >= 40) return 'Friend';
-        return 'Default';
+        return 'Friend';
     }
 
     /* -------------------------------------------------------------------------
@@ -1384,7 +1383,7 @@ $(document).ready(function () {
             return { nodes, links };
         }
 
-        // Tribe Constellation View (Size & Distance based on weight, Color & Subtitle based on fidelity)
+        // Tribe Constellation View (Fixed concentric rings by rank + Weight-driven sizes)
         const tribe = activeTribeFilter;
         const members = snapshot[tribe] || []; // [[playerName, fidelity, weight], ...]
         const count = members.length;
@@ -1397,18 +1396,27 @@ $(document).ready(function () {
             radius: tribeRadius(count)
         });
 
-        // 1. Sort members by weight descending to place heavy links near the center
+        // 1. Sort members by weight descending
         const sortedMembers = [...members].sort((a, b) => b[2] - a[2]);
         const maxWeight = sortedMembers.length > 0 ? sortedMembers[0][2] : 1;
 
         sortedMembers.forEach(([playerName, fidelity, weight], index) => {
-            const rawRatio = maxWeight > 0 ? (weight / maxWeight) : 0;
-            
-            const ratio = Math.pow(rawRatio, 0.6);
-            const radius = 6 + (ratio * 20);
-            
-            const dist = 45 + ((1 - ratio) * 125);
+            const ratio = weight / maxWeight;
 
+            // Size driven by weight (larger span: 8px to 24px)
+            const radius = 8 + (ratio * 16);
+
+            // --- 2. FIXED CONCENTRIC RINGS BY RANK (Zoning géométrique strict) ---
+            let dist;
+            if (index < Math.max(1, Math.floor(count * 0.25))) {
+                dist = 55;  // Noyau central (Gros poids)
+            } else if (index < Math.max(2, Math.floor(count * 0.65))) {
+                dist = 100; // Anneau intermédiaire
+            } else {
+                dist = 150; // Orbite extérieure (Périphérie)
+            }
+
+            // Color and status driven by fidelity (guaranteed minimum 'Friend')
             const status = getStatusFromFidelity(fidelity);
             const color = getBadgeColor(status);
 
@@ -1535,17 +1543,17 @@ $(document).ready(function () {
                 g.select(".node-icon").attr("href", "").attr("xlink:href", "");
                 g.select(".count-text").style("display", "none");
                 
-                // Text structure: Name on line 1, Status tier sub-label on line 2 (styled via CSS classes)
+                // Text structure: Name on line 1, Status tier sub-label on line 2 (guaranteed to render)
                 const labelSel = g.select(".player-label");
                 labelSel.text("");
                 
                 labelSel.append("tspan")
                     .attr("class", "player-name-tspan")
                     .attr("x", 0)
-                    .attr("dy", d.status && d.status !== 'Default' ? "-0.2em" : "0.3em")
+                    .attr("dy", "-0.2em")
                     .text(d.name);
                 
-                if (d.status && d.status !== 'Default') {
+                if (d.status) {
                     labelSel.append("tspan")
                         .attr("class", "player-status-tspan")
                         .attr("x", 0)
