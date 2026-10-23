@@ -37,6 +37,7 @@
 <script>
     window.NETWORK_DATES = {{ dates_json | safe }};
     window.NETWORK_SNAPSHOTS = {{ snapshots_json | safe }};
+    window.PLAYER_CONSTELLATIONS = {{ constellations_json | safe }};
     window.NETWORK_CONFIG = {{ config.network | tojson | safe }};
 </script>
 {% endblock %}
