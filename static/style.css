@@ -1913,38 +1913,39 @@ table.dataTable tbody tr.loser td {
 }
 
 /* Opacités selon les tiers / rôles */
-#tribeMapSvg .node-group.type-player.tier-member .node-circle,
-#tribeMapSvg .node-group.type-ego-partner.tier-member .node-circle {
-    opacity: 0.6;
-}
-
-#tribeMapSvg .node-group.type-player.tier-satellite .node-circle,
-#tribeMapSvg .node-group.type-ego-partner.tier-satellite .node-circle {
-    opacity: 0.8;
-}
-
-#tribeMapSvg .node-group.type-player.tier-pillar .node-circle,
-#tribeMapSvg .node-group.type-ego-center .node-circle,
-#tribeMapSvg .node-group.type-ego-partner.tier-pillar .node-circle {
+#tribeMapSvg .node-group.type-player.tier-core .node-circle,
+#tribeMapSvg .node-group.type-ego-partner.tier-core .node-circle {
     opacity: 1;
 }
 
-/* Cas particulier pour le joueur central en vue Ego : un contour plus net et marqué */
+#tribeMapSvg .node-group.type-player.tier-mid .node-circle,
+#tribeMapSvg .node-group.type-ego-partner.tier-mid .node-circle {
+    opacity: 0.8;
+}
+
+#tribeMapSvg .node-group.type-player.tier-outer .node-circle,
+#tribeMapSvg .node-group.type-ego-partner.tier-outer .node-circle {
+    opacity: 0.6;
+}
+
+/* Cas particulier pour le joueur central en vue Ego */
 #tribeMapSvg .node-group.type-ego-center .node-circle {
+    opacity: 1;
     stroke: var(--text-bright);
     stroke-width: 2.5px;
 }
 
+/* Survol et sélection (sans le cercle blanc parasite, juste un grossissement et contour net) */
 #tribeMapSvg .node-group.type-player:hover .node-circle,
 #tribeMapSvg .node-group.type-ego-partner:hover .node-circle,
 #tribeMapSvg .node-group.type-ego-center:hover .node-circle {
     opacity: 1 !important;
     transform: scale(1.15);
     stroke: var(--text-bright);
-    stroke-width: 2px;
+    stroke-width: 1.5px;
 }
 
-/* 5. TYPOGRAPHIE & LISIBILITÉ */
+/* 5. TYPOGRAPHIE & LISIBILITÉ (Nom du joueur + Sous-titre de tier) */
 #tribeMapSvg .num-span {
     font-size: var(--size-base, 14px);
     font-weight: var(--bold, 700);
@@ -1957,7 +1958,6 @@ table.dataTable tbody tr.loser td {
     fill: var(--text-main, #cbd5e0);
 }
 
-#tribeMapSvg .pillar-label,
 #tribeMapSvg .center-player-label {
     font-size: var(--size-sm);
     font-weight: var(--medium);
@@ -1965,26 +1965,21 @@ table.dataTable tbody tr.loser td {
     opacity: 1;
 }
 
-#tribeMapSvg .satellite-label,
-#tribeMapSvg .partner-label {
-    font-size: var(--size-xs, 12px);
-    font-weight: var(--normal, 400);
-    fill: var(--text-main);
+#tribeMapSvg .player-name-tspan {
+    font-size: 11px;
+    font-weight: 600;
+    fill: var(--text-bright, #ffffff);
+}
+
+#tribeMapSvg .player-status-tspan {
+    font-size: 9.5px;
+    font-weight: 400;
+    fill: var(--text-main, #cbd5e0);
     opacity: 0.85;
 }
 
-#tribeMapSvg .member-label {
-    font-size: var(--size-xs, 11px);
-    font-weight: var(--normal, 400);
-    fill: var(--text-main);
-    opacity: 0.7;
-    transition: opacity 0.15s;
-}
-
-#tribeMapSvg .node-group.type-player:hover .pillar-label,
-#tribeMapSvg .node-group.type-player:hover .satellite-label,
-#tribeMapSvg .node-group.type-player:hover .member-label,
-#tribeMapSvg .node-group.type-ego-partner:hover .partner-label {
+#tribeMapSvg .node-group.type-player:hover .player-name-tspan,
+#tribeMapSvg .node-group.type-player:hover .player-status-tspan {
     fill: var(--text-bright);
     opacity: 1;
 }
