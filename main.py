@@ -452,8 +452,9 @@ def clean_homelands_snapshots(snapshots: dict, registry) -> dict:
             "tribe_layout": cleaned_layout,
         }
     return cleaned
-    
- def clean_constellations(constellations: dict, registry) -> dict:
+
+
+def clean_constellations(constellations: dict, registry) -> dict:
     if not constellations or "players" not in constellations:
         return constellations
     cleaned_players = {}
