@@ -1234,7 +1234,6 @@ $(document).ready(function () {
     function populatePlayerDropdown(snapshot) {
         const playerNamesSet = new Set();
         
-        // Récupération depuis les snapshots de tribus légers { tribeName: [[player, fidelity, weight], ...] }
         if (snapshot) {
             Object.values(snapshot).forEach(members => {
                 if (Array.isArray(members)) {
@@ -1245,7 +1244,6 @@ $(document).ready(function () {
             });
         }
         
-        // Récupération depuis les constellations globales
         const constellations = window.PLAYER_CONSTELLATIONS || {};
         if (constellations.players) {
             Object.keys(constellations.players).forEach(name => playerNamesSet.add(name));
@@ -1268,12 +1266,6 @@ $(document).ready(function () {
     }
 
     // --- Helper Styling Functions ---
-    const TIERS = {
-        pillar: { radius: 18, dist: 80 },
-        satellite: { radius: 12, dist: 120 },
-        member: { radius: 7, dist: 160 }
-    };
-
     function tribeRadius(count) {
         return Math.max(32, 24 + Math.sqrt(count || 0) * 10);
     }
@@ -1282,18 +1274,26 @@ $(document).ready(function () {
         return config.tiers?.[status] || config.tiers?.Friend || "#B8681A";
     }
 
-    // Helper to retrieve player's tribe from constellations
     function getPlayerTribe(playerName) {
         const constellations = window.PLAYER_CONSTELLATIONS || { players: {} };
         const playerData = constellations.players[playerName] || {};
         return playerData.tribe || null;
     }
 
-    // Map fidelity percentage to network config tier keys (No default, minimum is Friend)
+    // Map fidelity percentage to tier keys (Minimum is Friend, no Default)
     function getStatusFromFidelity(fidelity) {
         if (fidelity >= 85) return 'Partisan';
         if (fidelity >= 65) return 'Squire';
         return 'Friend';
+    }
+
+    // Deterministic stable jitter derived from player name
+    function nameJitter01(name) {
+        let hash = 0;
+        for (let i = 0; i < name.length; i++) {
+            hash = (Math.imul(hash, 31) + name.charCodeAt(i)) >>> 0;
+        }
+        return (hash % 10000) / 10000;
     }
 
     /* -------------------------------------------------------------------------
@@ -1304,7 +1304,7 @@ $(document).ready(function () {
         const nodes = [];
         const links = [];
 
-        // --- VIEW A: PLAYER EGO-NETWORK VIEW (Latest Date, Constellations) ---
+        // --- VIEW A: PLAYER EGO-NETWORK VIEW ---
         if (currentView === 'ego') {
             if (!selectedPlayer) {
                 nodes.push({ id: 'placeholder', type: 'tribe', label: 'Select a player above', count: 0, radius: 40 });
@@ -1313,10 +1313,9 @@ $(document).ready(function () {
 
             const constellations = window.PLAYER_CONSTELLATIONS || { players: {} };
             const playerData = constellations.players[selectedPlayer] || {};
-            const topPartners = playerData.partners || []; // Format: [[partnerName, weight], ...]
+            const topPartners = playerData.partners || [];
             const maxWeight = topPartners.length > 0 ? topPartners[0][1] : 1;
 
-            // Center Node (The Focus Player)
             nodes.push({
                 id: selectedPlayer,
                 type: 'ego-center',
@@ -1383,7 +1382,7 @@ $(document).ready(function () {
             return { nodes, links };
         }
 
-        // Tribe Constellation View (Fixed concentric rings by rank + Weight-driven sizes)
+        // --- VIEW C: TRIBE CONSTELLATION VIEW (Organic Ring Layout) ---
         const tribe = activeTribeFilter;
         const members = snapshot[tribe] || []; // [[playerName, fidelity, weight], ...]
         const count = members.length;
@@ -1396,38 +1395,46 @@ $(document).ready(function () {
             radius: tribeRadius(count)
         });
 
-        // 1. Sort members by weight descending
+        // Sort members by weight descending (heavier links closer to center)
         const sortedMembers = [...members].sort((a, b) => b[2] - a[2]);
         const maxWeight = sortedMembers.length > 0 ? sortedMembers[0][2] : 1;
 
+        // Concentric ring tiers phase offsets for organic distribution
+        const TIER_PHASE = { core: 0, mid: 0.22, outer: 0.47 };
+
         sortedMembers.forEach(([playerName, fidelity, weight], index) => {
-            const ratio = weight / maxWeight;
+            const ratio = maxWeight > 0 ? (weight / maxWeight) : 0;
+            const radius = 8 + (ratio * 14);
 
-            // Size driven by weight (larger span: 8px to 24px)
-            const radius = 8 + (ratio * 16);
-
-            // --- 2. FIXED CONCENTRIC RINGS BY RANK (Zoning géométrique strict) ---
-            let dist;
+            // Zoning by rank into 3 concentric tiers
+            let dist, tierKey;
             if (index < Math.max(1, Math.floor(count * 0.25))) {
-                dist = 55;  // Noyau central (Gros poids)
+                dist = 55;  // Core / Noyau central
+                tierKey = 'core';
             } else if (index < Math.max(2, Math.floor(count * 0.65))) {
-                dist = 100; // Anneau intermédiaire
+                dist = 100; // Mid / Intermédiaire
+                tierKey = 'mid';
             } else {
-                dist = 150; // Orbite extérieure (Périphérie)
+                dist = 150; // Outer / Périphérie
+                tierKey = 'outer';
             }
 
-            // Color and status driven by fidelity (guaranteed minimum 'Friend')
             const status = getStatusFromFidelity(fidelity);
             const color = getBadgeColor(status);
 
-            const angle = (2 * Math.PI * index) / sortedMembers.length;
+            const totalTier = count || 1;
+            const slot = (2 * Math.PI) / totalTier;
+            const phase = (TIER_PHASE[tierKey] || 0) * 2 * Math.PI;
+            const jitter = (nameJitter01(playerName) - 0.5) * slot * 0.6;
+            const angle = phase + (slot * index) + jitter - (Math.PI / 2);
+
             const playerId = `player_${playerName}`;
 
             nodes.push({
                 id: playerId,
                 type: 'player',
                 name: playerName,
-                tier: status,
+                tier: tierKey,
                 status: status,
                 fidelity: fidelity,
                 weight: weight,
@@ -1440,7 +1447,7 @@ $(document).ready(function () {
             links.push({ 
                 source: tribe, 
                 target: playerId, 
-                tier: status,
+                tier: tierKey,
                 color: color 
             });
         });
@@ -1543,7 +1550,7 @@ $(document).ready(function () {
                 g.select(".node-icon").attr("href", "").attr("xlink:href", "");
                 g.select(".count-text").style("display", "none");
                 
-                // Text structure: Name on line 1, Status tier sub-label on line 2 (guaranteed to render)
+                // Multi-line tspan injection for Name + Status sub-label
                 const labelSel = g.select(".player-label");
                 labelSel.text("");
                 
@@ -1563,7 +1570,7 @@ $(document).ready(function () {
             }
         });
 
-        // Click handler: Tribes filter, Player bubbles trigger Ego View
+        // Click handler
         node.on("click", (event, d) => {
             if (event.defaultPrevented) return;
 
