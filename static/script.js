@@ -1230,20 +1230,22 @@ $(document).ready(function () {
     const $mapHeaderTitle = $('#mapHeaderTitle');
     const $dateControls = $('#dateControls');
 
-    // --- Populate Player Select Dropdown (Using Latest Date & Constellations) ---
+    // --- Populate Player Select Dropdown ---
     function populatePlayerDropdown(snapshot) {
-        const latestSnapshot = snapshots[dates[dates.length - 1]] || snapshot;
         const playerNamesSet = new Set();
         
-        if (latestSnapshot.members_by_tribe) {
-            Object.values(latestSnapshot.members_by_tribe).forEach(members => {
-                members.forEach(m => playerNamesSet.add(m.name));
+        // Récupération depuis les snapshots de tribus légers { tribeName: [[player, fidelity, weight], ...] }
+        if (snapshot) {
+            Object.values(snapshot).forEach(members => {
+                if (Array.isArray(members)) {
+                    members.forEach(m => {
+                        if (Array.isArray(m) && m[0]) playerNamesSet.add(m[0]);
+                    });
+                }
             });
         }
-        if (latestSnapshot.unaligned) {
-            latestSnapshot.unaligned.forEach(u => playerNamesSet.add(u.name));
-        }
         
+        // Récupération depuis les constellations globales
         const constellations = window.PLAYER_CONSTELLATIONS || {};
         if (constellations.players) {
             Object.keys(constellations.players).forEach(name => playerNamesSet.add(name));
@@ -1280,31 +1282,23 @@ $(document).ready(function () {
         return config.tiers?.[status] || config.tiers?.Default || "#4a5568";
     }
 
-    // Helper to retrieve player's tribe & role at the latest date
-    function getLatestPlayerInfo(playerName) {
-        const latestSnapshot = snapshots[dates[dates.length - 1]];
-        if (!latestSnapshot || !latestSnapshot.members_by_tribe) return { tribe: null, role: null };
-        for (const [tribe, members] of Object.entries(latestSnapshot.members_by_tribe)) {
-            const found = members.find(m => m.name === playerName);
-            if (found) return { tribe, role: found.role };
-        }
-        return { tribe: null, role: null };
+    // Helper to retrieve player's tribe from constellations
+    function getPlayerTribe(playerName) {
+        const constellations = window.PLAYER_CONSTELLATIONS || { players: {} };
+        const playerData = constellations.players[playerName] || {};
+        return playerData.tribe || null;
     }
 
     /* -------------------------------------------------------------------------
-       10.1 GRAPH DATA GENERATORS (Macro vs Ego-Network at Latest Date)
+       10.1 GRAPH DATA GENERATORS (Macro vs Ego-Network)
        ------------------------------------------------------------------------- */
     function buildGraphData(snapshot) {
-        const activeTribes = snapshot.active_tribes || [];
-        const tribeLayout = snapshot.tribe_layout || {};
+        const activeTribes = Object.keys(snapshot || {});
         const nodes = [];
         const links = [];
 
         // --- VIEW A: PLAYER EGO-NETWORK VIEW (Latest Date, Constellations) ---
         if (currentView === 'ego') {
-            const latestDate = dates[dates.length - 1];
-            const latestSnapshot = snapshots[latestDate] || snapshot;
-
             if (!selectedPlayer) {
                 nodes.push({ id: 'placeholder', type: 'tribe', label: 'Select a player above', count: 0, radius: 40 });
                 return { nodes, links };
@@ -1331,12 +1325,8 @@ $(document).ready(function () {
                 const radius = 8 + ratio * 14;
                 const angle = (2 * Math.PI * idx) / topPartners.length;
 
-                // Resolve tribe & role from the latest date snapshot or constellations
-                const info = getLatestPlayerInfo(partnerName);
-                const partnerData = constellations.players[partnerName] || {};
-                const tribe = info.tribe || partnerData.tribe;
-                const role = info.role || 'member';
-                const color = getBadgeColor(role) !== config.tiers?.Default ? getBadgeColor(role) : getBadgeColor(tribe);
+                const tribe = getPlayerTribe(partnerName);
+                const color = getBadgeColor(tribe);
 
                 nodes.push({
                     id: partnerId,
@@ -1365,11 +1355,12 @@ $(document).ready(function () {
         // --- VIEW B: MACRO HOMELANDS VIEW ---
         if (!activeTribeFilter) {
             activeTribes.forEach(t => {
-                const count = snapshot.summary?.[t] || 0;
+                const members = snapshot[t] || [];
+                const count = members.length;
                 nodes.push({
                     id: t,
                     type: 'tribe',
-                    label: snapshot.tribe_labels?.[t] || t,
+                    label: t,
                     count: count,
                     radius: tribeRadius(count)
                 });
@@ -1387,28 +1378,26 @@ $(document).ready(function () {
 
         // Tribe Constellation View
         const tribe = activeTribeFilter;
-        const count = snapshot.summary?.[tribe] || 0;
-        const layout = tribeLayout[tribe] || { pillars: [], satellites: [] };
-        const pillarsSet = new Set(layout.pillars || []);
-        const satellitesSet = new Set(layout.satellites || []);
+        const members = snapshot[tribe] || [];
+        const count = members.length;
 
         nodes.push({
             id: tribe,
             type: 'tribe',
-            label: snapshot.tribe_labels?.[tribe] || tribe,
+            label: tribe,
             count: count,
             radius: tribeRadius(count)
         });
 
         const tiered = { pillar: [], satellite: [], member: [] };
-        const tribeMembers = snapshot.members_by_tribe?.[tribe] || [];
         
-        tribeMembers
-            .sort((a, b) => a.name.localeCompare(b.name))
-            .forEach(p => {
-                const tier = p.role || (pillarsSet.has(p.name) ? 'pillar' : satellitesSet.has(p.name) ? 'satellite' : 'member');
-                tiered[tier].push(p);
-            });
+        members.forEach(([playerName, fidelity, weight], index) => {
+            let tier = 'member';
+            if (index < Math.max(1, Math.floor(count * 0.2))) tier = 'pillar';
+            else if (index < Math.max(2, Math.floor(count * 0.6))) tier = 'satellite';
+
+            tiered[tier].push({ name: playerName, fidelity, weight });
+        });
 
         function nameJitter01(name) {
             let hash = 0;
@@ -1431,13 +1420,14 @@ $(document).ready(function () {
                 const jitter = (nameJitter01(player.name) - 0.5) * slot * 0.7;
                 const angle = phase + (slot * idx) + jitter - (Math.PI / 2);
                 const playerId = `player_${player.name}`;
+                const tribeColor = getBadgeColor(tribe);
 
                 nodes.push({
                     id: playerId,
                     type: 'player',
                     name: player.name,
                     tier,
-                    color: getBadgeColor(player.role),
+                    color: tribeColor,
                     radius,
                     dist,
                     angle
@@ -1447,7 +1437,7 @@ $(document).ready(function () {
                     source: tribe, 
                     target: playerId, 
                     tier, 
-                    color: getBadgeColor(player.role) 
+                    color: tribeColor 
                 });
             });
         });
@@ -1553,7 +1543,7 @@ $(document).ready(function () {
             }
         });
 
-        // Click handler: Tribes filter, Player bubbles trigger Ego View at Latest Date
+        // Click handler: Tribes filter, Player bubbles trigger Ego View
         node.on("click", (event, d) => {
             if (event.defaultPrevented) return;
 
@@ -1567,7 +1557,7 @@ $(document).ready(function () {
                 $egoViewBtn.addClass('active');
                 $macroViewBtn.removeClass('active');
                 $playerSelect.show().val(selectedPlayer);
-                $dateControls.hide(); // Hide date controls in ego view (no history)
+                $dateControls.hide();
                 $mapHeaderTitle.html(`Player Network &bull; <span style="font-weight: 400; text-transform: none; opacity: 0.85;">${selectedPlayer}'s frequent opponents (Latest)</span>`);
                 
                 updateView(dates[dates.length - 1]);
@@ -1665,7 +1655,7 @@ $(document).ready(function () {
        ------------------------------------------------------------------------- */
     function updateView(selectedDate) {
         if (currentView === 'ego') {
-            selectedDate = dates[dates.length - 1]; // Force latest date in ego view
+            selectedDate = dates[dates.length - 1];
         }
         $datePicker.val(selectedDate);
         const snapshot = snapshots[selectedDate];
@@ -1696,7 +1686,7 @@ $(document).ready(function () {
         $macroViewBtn.addClass('active');
         $egoViewBtn.removeClass('active');
         $playerSelect.hide();
-        $dateControls.show(); // Show timeline controls in macro view
+        $dateControls.show();
         $mapHeaderTitle.html('Homelands Map &bull; <span style="font-weight: 400; text-transform: none; opacity: 0.85;">Click a region or player bubble</span>');
         updateView(dates[currentIndex]);
     });
@@ -1706,7 +1696,7 @@ $(document).ready(function () {
         $egoViewBtn.addClass('active');
         $macroViewBtn.removeClass('active');
         $playerSelect.show();
-        $dateControls.hide(); // Hide timeline controls in ego view (no history)
+        $dateControls.hide();
         $mapHeaderTitle.html('Player Network &bull; <span style="font-weight: 400; text-transform: none; opacity: 0.85;">Proximity reflects match frequency (Latest)</span>');
         
         currentIndex = dates.length - 1;
