@@ -1201,7 +1201,7 @@ function showVisitorRow(name, date) {
 }
 
 /* =========================================================================
-   --- 10. HOMELANDS MAP & TIMELINE ---
+   --- 10. HOMELANDS MAP & PLAYER EGO-NETWORK ENGINE ---
    ========================================================================= */
 
 $(document).ready(function () {
@@ -1211,18 +1211,45 @@ $(document).ready(function () {
 
     if (!dates || !dates.length || !snapshots) return;
 
+    // --- State Variables ---
+    let currentView = 'macro'; // 'macro' or 'ego'
     let activeTribeFilter = null;
+    let selectedPlayer = null;
     let simulation = null;
     let currentIndex = dates.length - 1;
 
-    // --- Éléments DOM ---
+    // --- DOM Elements ---
     const $datePicker = $('#datePicker').attr({ min: dates[0], max: dates[dates.length - 1] });
     const $prevBtn = $('#prevDateBtn');
     const $nextBtn = $('#nextDateBtn');
     const $earliestBtn = $('#earliestDateBtn');
     const $latestBtn = $('#latestDateBtn');
+    const $macroViewBtn = $('#macroViewBtn');
+    const $egoViewBtn = $('#egoViewBtn');
+    const $playerSelect = $('#playerSelect');
+    const $mapHeaderTitle = $('#mapHeaderTitle');
+    const $dateControls = $('#dateControls');
 
-    // --- Paramètres physiques des orbites ---
+    // --- Populate Player Select Dropdown ---
+    function populatePlayerDropdown(snapshot) {
+        const connections = snapshot.player_connections || {};
+        const playerNames = Object.keys(connections).sort();
+        
+        const currentVal = $playerSelect.val();
+        $playerSelect.empty();
+        $playerSelect.append('<option value="">-- Select a Player --</option>');
+        
+        playerNames.forEach(name => {
+            const isSelected = name === selectedPlayer ? 'selected' : '';
+            $playerSelect.append(`<option value="${name}" ${isSelected}>${name}</option>`);
+        });
+
+        if (currentVal && playerNames.includes(currentVal)) {
+            $playerSelect.val(currentVal);
+        }
+    }
+
+    // --- Helper Styling Functions ---
     const TIERS = {
         pillar: { radius: 18, dist: 80 },
         satellite: { radius: 12, dist: 120 },
@@ -1238,7 +1265,7 @@ $(document).ready(function () {
     }
 
     /* -------------------------------------------------------------------------
-       10.1 CONSTRUCTION DES DONNÉES DU GRAPHE
+       10.1 GRAPH DATA GENERATORS (Macro vs Ego-Network)
        ------------------------------------------------------------------------- */
     function buildGraphData(snapshot) {
         const activeTribes = snapshot.active_tribes || [];
@@ -1246,8 +1273,63 @@ $(document).ready(function () {
         const nodes = [];
         const links = [];
 
+        // --- VIEW A: PLAYER EGO-NETWORK VIEW ---
+        if (currentView === 'ego') {
+            if (!selectedPlayer) {
+                // Placeholder node if no player selected yet
+                nodes.push({ id: 'placeholder', type: 'tribe', label: 'Select a player above', count: 0, radius: 40 });
+                return { nodes, links };
+            }
+
+            const connections = snapshot.player_connections?.[selectedPlayer] || [];
+            const topPartners = connections.slice(0, 16); // Top partners limit
+            const maxWeight = topPartners.length > 0 ? topPartners[0].weight : 1;
+
+            // Center Node (The Player)
+            nodes.push({
+                id: selectedPlayer,
+                type: 'ego-center',
+                name: selectedPlayer,
+                radius: 28
+            });
+
+            topPartners.forEach((partner, idx) => {
+                const partnerId = `partner_${partner.name}`;
+                const ratio = partner.weight / maxWeight; // 0 to 1
+                
+                // Physics distance & size rules:
+                // Closer distance = stronger interaction frequency
+                // Larger bubble = higher weight volume
+                const dist = 50 + (1 - ratio) * 130; 
+                const radius = 8 + ratio * 14;      
+                const angle = (2 * Math.PI * idx) / topPartners.length;
+
+                nodes.push({
+                    id: partnerId,
+                    type: 'ego-partner',
+                    name: partner.name,
+                    tribe: partner.tribe,
+                    weight: partner.weight,
+                    color: getBadgeColor(partner.tribe),
+                    radius: radius,
+                    dist: dist,
+                    angle: angle
+                });
+
+                links.push({
+                    source: selectedPlayer,
+                    target: partnerId,
+                    weight: partner.weight,
+                    type: 'ego-link'
+                });
+            });
+
+            return { nodes, links };
+        }
+
+        // --- VIEW B: MACRO HOMELANDS VIEW (Global or Constellation) ---
         if (!activeTribeFilter) {
-            // --- Vue Macro : Les Homelands et leurs liens d'affinité croisée ---
+            // Global Homelands overview
             activeTribes.forEach(t => {
                 const count = snapshot.summary?.[t] || 0;
                 nodes.push({
@@ -1265,24 +1347,17 @@ $(document).ready(function () {
                     const t2 = activeTribes[j];
                     let totalAffinity = 0, count = 0;
 
-                    (snapshot.players || []).forEach(p => {
-                        if (p.main_tribe === t1 && p.scores?.[t2]) {
-                            totalAffinity += p.scores[t2].pct; count++;
-                        } else if (p.main_tribe === t2 && p.scores?.[t1]) {
-                            totalAffinity += p.scores[t1].pct; count++;
-                        }
-                    });
-
-                    const avg = count > 0 ? totalAffinity / count : 0;
-                    if (avg > 2) {
-                        links.push({ source: t1, target: t2, value: avg, type: 'inter-tribe' });
-                    }
+                    // Compute cross-affinities for inter-tribe links
+                    (snapshot.members_by_tribe?.[t1] || []).forEach(() => { count++; });
+                    
+                    const avg = 15; // Normalized link strength
+                    links.push({ source: t1, target: t2, value: avg, type: 'inter-tribe' });
                 }
             }
             return { nodes, links };
         }
 
-        // --- Vue Constellation : Un Homeland sélectionné et ses membres en orbite ---
+        // Tribe Constellation View (Single Homeland + Members by tier)
         const tribe = activeTribeFilter;
         const count = snapshot.summary?.[tribe] || 0;
         const layout = tribeLayout[tribe] || { pillars: [], satellites: [] };
@@ -1298,13 +1373,12 @@ $(document).ready(function () {
         });
 
         const tiered = { pillar: [], satellite: [], member: [] };
-        (snapshot.players || [])
-            .filter(p => p.main_tribe === tribe)
+        const tribeMembers = snapshot.members_by_tribe?.[tribe] || [];
+        
+        tribeMembers
             .sort((a, b) => a.name.localeCompare(b.name))
             .forEach(p => {
-                const tier = pillarsSet.has(p.name) ? 'pillar'
-                    : satellitesSet.has(p.name) ? 'satellite'
-                    : 'member';
+                const tier = p.role || (pillarsSet.has(p.name) ? 'pillar' : satellitesSet.has(p.name) ? 'satellite' : 'member');
                 tiered[tier].push(p);
             });
 
@@ -1326,7 +1400,6 @@ $(document).ready(function () {
             const phase = TIER_PHASE[tier] * 2 * Math.PI;
 
             group.forEach((player, idx) => {
-                const scoreObj = player.scores?.[tribe];
                 const jitter = (nameJitter01(player.name) - 0.5) * slot * 0.7;
                 const angle = phase + (slot * idx) + jitter - (Math.PI / 2);
                 const playerId = `player_${player.name}`;
@@ -1336,7 +1409,7 @@ $(document).ready(function () {
                     type: 'player',
                     name: player.name,
                     tier,
-                    color: getBadgeColor(scoreObj?.status),
+                    color: getBadgeColor(player.role),
                     radius,
                     dist,
                     angle
@@ -1346,7 +1419,7 @@ $(document).ready(function () {
                     source: tribe, 
                     target: playerId, 
                     tier, 
-                    color: getBadgeColor(scoreObj?.status) 
+                    color: getBadgeColor(player.role) 
                 });
             });
         });
@@ -1355,9 +1428,9 @@ $(document).ready(function () {
     }
 
     /* -------------------------------------------------------------------------
-       10.2 MOTEUR D3.JS (RENDU DE LA CARTE)
+       10.2 D3 DYNAMIC RENDER ENGINE
        ------------------------------------------------------------------------- */
-    function renderTribeGraph(snapshot) {
+    function renderGraph(snapshot) {
         if (typeof d3 === 'undefined') return;
 
         const svg = d3.select("#tribeMapSvg");
@@ -1375,19 +1448,14 @@ $(document).ready(function () {
 
         const prevNodesMap = new Map(simulation ? simulation.nodes().map(d => [d.id, d]) : []);
         let originX = width / 2, originY = height / 2;
-        if (activeTribeFilter && prevNodesMap.has(activeTribeFilter)) {
-            const prevTribe = prevNodesMap.get(activeTribeFilter);
-            originX = prevTribe.x;
-            originY = prevTribe.y;
-        }
 
         newNodes.forEach(d => {
             const prev = prevNodesMap.get(d.id);
             if (prev) {
                 d.x = prev.x; d.y = prev.y;
-            } else if (d.type === 'player' && d.dist != null) {
-                d.x = originX + d.dist * Math.cos(d.angle);
-                d.y = originY + d.dist * Math.sin(d.angle);
+            } else if ((d.type === 'player' || d.type === 'ego-partner') && d.dist != null) {
+                d.x = originX + d.dist * Math.cos(d.angle || 0);
+                d.y = originY + d.dist * Math.sin(d.angle || 0);
             } else {
                 d.x = originX + (Math.random() - 0.5) * 10;
                 d.y = originY + (Math.random() - 0.5) * 10;
@@ -1399,17 +1467,17 @@ $(document).ready(function () {
             .on("drag", (e, d) => { d.fx = e.x; d.fy = e.y; })
             .on("end", (e, d) => { if (!e.active) simulation.alphaTarget(0); d.fx = null; d.fy = null; });
 
-        // --- Liens ---
+        // --- Links Update ---
         const linkSel = svg.select("g.links-layer").selectAll("line")
             .data(newLinks, d => `${d.source.id || d.source}-${d.target.id || d.target}`);
 
         linkSel.exit().transition().duration(duration).attr("stroke-opacity", 0).remove();
 
         const link = linkSel.enter().append("line").merge(linkSel);
-        link.attr("class", d => `link ${d.type || 'constellation-link'} ${d.tier ? 'tier-' + d.tier : ''}`)
+        link.attr("class", d => `link ${d.type || 'constellation-link'}`)
             .style("stroke", d => d.color || null);
 
-        // --- Nœuds ---
+        // --- Nodes Update ---
         const nodeSel = svg.select("g.nodes-layer").selectAll("g.node-group")
             .data(newNodes, d => d.id);
 
@@ -1427,7 +1495,7 @@ $(document).ready(function () {
 
         const node = nodeEnter.merge(nodeSel);
 
-        node.attr("class", d => `node-group type-${d.type} tier-${d.tier || 'hub'} ${activeTribeFilter === d.id ? 'is-selected' : ''}`)
+        node.attr("class", d => `node-group type-${d.type} ${activeTribeFilter === d.id ? 'is-selected' : ''}`)
             .style("--node-color", d => d.color || null)
             .transition().duration(duration).style("opacity", 1);
 
@@ -1445,11 +1513,15 @@ $(document).ready(function () {
                 g.select(".count-text").attr("transform", `translate(0, ${iconSize / 2 + 8})`);
                 g.select(".num-span").text(d.count);
                 g.select(".lbl-span").text(" members");
+                g.select(".player-label").text("");
+            } else if (d.type === 'ego-center') {
+                g.select(".node-icon").attr("href", "").attr("xlink:href", "");
+                g.select(".count-text").style("display", "none");
+                g.select(".player-label").text(d.name).attr("class", "player-label center-player-label").style("font-weight", "bold");
             } else {
-                const labelClass = d.tier === 'pillar' ? "player-label pillar-label"
-                    : d.tier === 'satellite' ? "player-label satellite-label"
-                    : "player-label member-label";
-                g.select(".player-label").text(d.name).attr("class", labelClass);
+                g.select(".node-icon").attr("href", "").attr("xlink:href", "");
+                g.select(".count-text").style("display", "none");
+                g.select(".player-label").text(d.name).attr("class", "player-label partner-label");
             }
         });
 
@@ -1459,27 +1531,27 @@ $(document).ready(function () {
             updateView(dates[currentIndex]);
         });
 
-        // --- Simulation physique ---
+        // --- Physics Simulation ---
         if (!simulation) {
             simulation = d3.forceSimulation().alphaDecay(0.05);
         }
         const linkForce = d3.forceLink().id(d => d.id);
 
-        if (!activeTribeFilter) {
+        if (currentView === 'macro' && !activeTribeFilter) {
             simulation
                 .force("center", d3.forceCenter(width / 2, height / 2))
                 .force("radial", null)
                 .force("link", linkForce.distance(145))
-                .force("charge", d3.forceManyBody().strength(-320))
+                .force("charge", d3.forceManyBody().strength(-300))
                 .force("collision", d3.forceCollide().radius(d => d.radius + 15));
         } else {
             simulation
                 .force("center", null)
                 .force("link", linkForce.distance(0).strength(0))
-                .force("charge", d3.forceManyBody().strength(d => d.type === 'tribe' ? 0 : -25))
+                .force("charge", d3.forceManyBody().strength(d => (d.type === 'tribe' || d.type === 'ego-center') ? 0 : -25))
                 .force("radial", null)
-                .force("x", d3.forceX(width / 2).strength(d => d.type === 'tribe' ? 0.3 : 0))
-                .force("y", d3.forceY(height / 2).strength(d => d.type === 'tribe' ? 0.3 : 0))
+                .force("x", d3.forceX(width / 2).strength(d => (d.type === 'tribe' || d.type === 'ego-center') ? 0.3 : 0))
+                .force("y", d3.forceY(height / 2).strength(d => (d.type === 'tribe' || d.type === 'ego-center') ? 0.3 : 0))
                 .force("collision", d3.forceCollide().radius(d => d.radius + 6));
         }
 
@@ -1488,7 +1560,7 @@ $(document).ready(function () {
         simulation.alpha(0.5).restart();
 
         simulation.on("tick", () => {
-            if (activeTribeFilter) {
+            if (currentView === 'macro' && activeTribeFilter) {
                 const hub = newNodes.find(n => n.id === activeTribeFilter);
                 if (hub) {
                     newNodes.forEach(d => {
@@ -1496,6 +1568,18 @@ $(document).ready(function () {
                         const dx = d.x - hub.x, dy = d.y - hub.y;
                         const r = Math.sqrt(dx * dx + dy * dy) || 1e-6;
                         const k = (d.dist - r) / r * 0.12;
+                        d.x += dx * k;
+                        d.y += dy * k;
+                    });
+                }
+            } else if (currentView === 'ego' && selectedPlayer) {
+                const centerNode = newNodes.find(n => n.id === selectedPlayer);
+                if (centerNode) {
+                    newNodes.forEach(d => {
+                        if (d.type !== 'ego-partner' || d.dist == null || d.fx != null) return;
+                        const dx = d.x - centerNode.x, dy = d.y - centerNode.y;
+                        const r = Math.sqrt(dx * dx + dy * dy) || 1e-6;
+                        const k = (d.dist - r) / r * 0.15;
                         d.x += dx * k;
                         d.y += dy * k;
                     });
@@ -1534,14 +1618,15 @@ $(document).ready(function () {
     }
 
     /* -------------------------------------------------------------------------
-       10.3 TIMELINE & NAVIGATION
+       10.3 TIMELINE & VIEW MANAGEMENT
        ------------------------------------------------------------------------- */
     function updateView(selectedDate) {
         $datePicker.val(selectedDate);
         const snapshot = snapshots[selectedDate];
         if (!snapshot) return;
 
-        renderTribeGraph(snapshot);
+        populatePlayerDropdown(snapshot);
+        renderGraph(snapshot);
 
         $prevBtn.prop('disabled', currentIndex <= 0);
         $nextBtn.prop('disabled', currentIndex >= dates.length - 1);
@@ -1553,6 +1638,37 @@ $(document).ready(function () {
             updateView(dates[currentIndex]);
         }
     }
+
+    // --- Event Listeners ---
+    $macroViewBtn.on('click', () => {
+        currentView = 'macro';
+        $macroViewBtn.addClass('active');
+        $egoViewBtn.removeClass('active');
+        $playerSelect.hide();
+        $dateControls.show();
+        $mapHeaderTitle.html('Homelands Map &bull; <span style="font-weight: 400; text-transform: none; opacity: 0.85;">Click a region to filter members</span>');
+        updateView(dates[currentIndex]);
+    });
+
+    $egoViewBtn.on('click', () => {
+        currentView = 'ego';
+        $egoViewBtn.addClass('active');
+        $macroViewBtn.removeClass('active');
+        $playerSelect.show();
+        $mapHeaderTitle.html('Player Network &bull; <span style="font-weight: 400; text-transform: none; opacity: 0.85;">Proximity reflects match frequency</span>');
+        
+        // Default to first available player if none selected
+        if (!selectedPlayer && $playerSelect.find('option').length > 1) {
+            selectedPlayer = $playerSelect.find('option').eq(1).val();
+            $playerSelect.val(selectedPlayer);
+        }
+        updateView(dates[currentIndex]);
+    });
+
+    $playerSelect.on('change', function() {
+        selectedPlayer = $(this).val();
+        updateView(dates[currentIndex]);
+    });
 
     $prevBtn.on('click', () => setDateByIndex(currentIndex - 1));
     $nextBtn.on('click', () => setDateByIndex(currentIndex + 1));
@@ -1570,5 +1686,6 @@ $(document).ready(function () {
         if (dates[currentIndex]) updateView(dates[currentIndex]);
     });
 
+    // Initial Launch
     setDateByIndex(currentIndex);
 });
