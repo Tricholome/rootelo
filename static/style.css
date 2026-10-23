@@ -1902,13 +1902,23 @@ table.dataTable tbody tr.loser td {
     stroke-dasharray: none;
 }
 
+#tribeMapSvg .num-span {
+    font-size: var(--size-base);
+    font-weight: var(--bold);
+    fill: var(--text-bright);
+}
+
+#tribeMapSvg .lbl-span {
+    font-size: var(--size-xs);
+    font-weight: var(--normal);
+    fill: var(--text-main);
+}
+
 /* --- NŒUDS JOUEURS : Sans contour blanc à la sélection/survol --- */
 #tribeMapSvg .node-group.type-player .node-circle,
 #tribeMapSvg .node-group.type-ego-center .node-circle,
 #tribeMapSvg .node-group.type-ego-partner .node-circle {
     fill: var(--node-color, var(--main-color)) !important;
-    stroke: var(--border-soft);
-    stroke-width: 1px;
     transition: transform 0.15s ease-out, opacity 0.2s;
 }
 
@@ -1917,29 +1927,28 @@ table.dataTable tbody tr.loser td {
 #tribeMapSvg .node-group.type-ego-partner:hover .node-circle,
 #tribeMapSvg .node-group.type-ego-center:hover .node-circle {
     transform: scale(1.15);
-    stroke: var(--border-soft);
-    stroke-width: 1px;
 }
 
 /* --- TYPOGRAPHIE & EFFET HOVER SUR LES SOUS-TITRES --- */
 #tribeMapSvg .player-label {
     text-anchor: middle;
-    font-family: var(--font-ui, sans-serif);
+    font-family: var(--font-ui);
     pointer-events: none;
 }
 
 #tribeMapSvg .player-name-tspan {
-    font-size: 11px;
-    font-weight: 600;
-    fill: var(--text-bright, #ffffff);
+    font-size: var(--size-xxs);
+    font-weight: var(--medium);
+    fill: var(--text-main);
     transition: dy 0.2s ease;
 }
 
 /* Par défaut, le sous-titre du tier est totalement masqué */
 #tribeMapSvg .player-status-tspan {
-    font-size: 9.5px;
-    font-weight: 400;
-    fill: var(--text-main, #cbd5e0);
+    font-size: var(--size-xxs);
+    font-weight: var(--normal);
+    fill: var(--text-main);
+	font-style: italic;
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.2s ease, visibility 0.2s ease;
