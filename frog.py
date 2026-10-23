@@ -3,7 +3,7 @@ frog.py — Dynamic player homelands simulation module.
 
 This module processes season match history to compute temporal homeland 
 snapshots, player affiliations, tier classifications, and global player 
-connections.
+connections unified directly within the latest date snapshot.
 """
 
 from collections import Counter
@@ -242,15 +242,15 @@ def classify_tribe_tiers(scores: dict, cfg: dict) -> tuple[set, set]:
 def run_homelands_simulation(matches: list, custom_config: dict = None, season_id: str = "default") -> dict:
     """
     Executes the homelands simulation over matches data.
-    Returns a dict containing 'snapshots' (pure tribal state per date) and 
-    'player_connections' (global player links dictionary existing once).
+    Returns a single unified dictionary of snapshots where player_connections 
+    is embedded directly into the latest date snapshot.
     """
     if matches is None:
-        return {"snapshots": {}, "player_connections": {}}
+        return {}
     if hasattr(matches, "empty") and matches.empty:
-        return {"snapshots": {}, "player_connections": {}}
+        return {}
     if not hasattr(matches, "empty") and not matches:
-        return {"snapshots": {}, "player_connections": {}}
+        return {}
 
     cfg = DEFAULT_CONFIG.copy()
     if custom_config:
@@ -270,7 +270,7 @@ def run_homelands_simulation(matches: list, custom_config: dict = None, season_i
             matches_by_date.setdefault(date_str, []).append(players)
 
     if not matches_by_date or not tribe_names_pool:
-        return {"snapshots": {}, "player_connections": {}}
+        return {}
 
     sorted_dates = sorted(matches_by_date)
 
@@ -354,7 +354,6 @@ def run_homelands_simulation(matches: list, custom_config: dict = None, season_i
                     "games": games
                 })
 
-        # Les snapshots journaliers n'incluent QUE les données tribales, pas les liens
         snapshots[d] = {
             "active_tribes": active_tribes,
             "tribe_labels": tribe_labels,
@@ -364,25 +363,26 @@ def run_homelands_simulation(matches: list, custom_config: dict = None, season_i
             "unaligned": unaligned_players,
         }
 
-    # Calcul final unique du dictionnaire global des liens entre joueurs sur l'état final du graphe G
-    global_player_connections = {}
-    for p in player_games:
-        neighbors = []
-        if p in G:
-            for n in G.neighbors(p):
-                w = G[p][n]["weight"]
-                neighbors.append({
-                    "name": n,
-                    "weight": round(w, 2),
-                    "tribe": roster.get(n, UNALIGNED)
-                })
-        neighbors.sort(key=lambda x: -x["weight"])
-        global_player_connections[p] = neighbors
+    # Calcul final global des liens et injection directe dans le dernier snapshot
+    if sorted_dates:
+        global_player_connections = {}
+        for p in player_games:
+            neighbors = []
+            if p in G:
+                for n in G.neighbors(p):
+                    w = G[p][n]["weight"]
+                    neighbors.append({
+                        "name": n,
+                        "weight": round(w, 2),
+                        "tribe": roster.get(n, UNALIGNED)
+                    })
+            neighbors.sort(key=lambda x: -x["weight"])
+            global_player_connections[p] = neighbors
 
-    return {
-        "snapshots": snapshots,
-        "player_connections": global_player_connections
-    }
+        latest_date = sorted_dates[-1]
+        snapshots[latest_date]["player_connections"] = global_player_connections
+
+    return snapshots
 
 
 # ==============================================================================
@@ -422,9 +422,7 @@ if __name__ == "__main__":
     current_season_id = matches_file.parent.name if matches_file.exists() else "default"
     league_network_cfg = config_data.get("network", {})
 
-    result = run_homelands_simulation(matches_data, custom_config=league_network_cfg, season_id=current_season_id)
-    snapshots = result["snapshots"]
-    global_player_connections = result["player_connections"]
+    snapshots = run_homelands_simulation(matches_data, custom_config=league_network_cfg, season_id=current_season_id)
     sorted_dates = sorted(snapshots.keys())
 
     if (Path(TEMPLATE_DIR) / TEMPLATE_FILE).exists() and sorted_dates:
@@ -439,7 +437,6 @@ if __name__ == "__main__":
             path_prefix="",
             dates_json=json.dumps(sorted_dates),
             snapshots_json=json.dumps(snapshots),
-            player_connections_json=json.dumps(global_player_connections),
             **pages_content.get("homelands", {}),
         )
 
