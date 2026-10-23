@@ -1722,10 +1722,9 @@ table.dataTable tbody tr.loser td {
 }
 
 /* -------------------------------------------------------------------------
-   [COMPONENTS] 8. NETWORK MAP & TABLE
+   [COMPONENTS] 8. NETWORK MAP & TABLE (Two-View Architecture)
    ------------------------------------------------------------------------- */
 
-/* --- A. Container & Layout --- */
 .network-container {
     max-width: clamp(600px, 60vw, 1600px);
     margin: 0 auto;
@@ -1743,100 +1742,9 @@ table.dataTable tbody tr.loser td {
     width: 100%;
     height: 100%;
     display: block;
-
-    /* Variables locales pour le thème du SVG */
-    --link-color: rgba(255, 255, 255, 0.25);
-    --link-active-color: rgba(255, 255, 255, 0.35);
-    --node-tribe-bg: rgba(10, 22, 14, 0.65);
-    --node-tribe-active: rgba(18, 38, 25, 0.95);
-    --node-tribe-stroke: rgba(255, 255, 255, 0.35);
 }
 
-/* --- B. Date Controls --- */
-.date-controls {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    margin: 20px 0;
-}
-
-.date-picker {
-    padding: 6px 12px;
-    font-size: var(--size-base);
-    background-color: var(--dt-input-bg);
-    color: var(--text-main);
-    border: 1px solid var(--border-soft);
-    border-radius: 4px;
-    font-family: var(--font-ui);
-    outline: none;
-    transition: border-color 0.2s, background-color 0.2s;
-}
-
-.date-picker:focus {
-    border-color: var(--main-color);
-    background-color: var(--dt-row-hover);
-}
-
-/* --- C. Network Data Table --- */
-.network-table {
-    width: 100%;
-    table-layout: fixed;
-}
-
-.network-table th {
-    text-align: center;
-}
-
-.network-table th.player-col {
-    width: 25%;
-    text-align: left;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.network-table th.games-col {
-    width: 10%;
-}
-
-.tribe-icon {
-    height: 26px;
-    width: 26px;
-    vertical-align: middle;
-    object-fit: contain;
-    display: inline-block;
-}
-
-.tribe-cell {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 4px;
-    width: 100%;
-}
-
-.tribe-cell-empty {
-    display: flex;
-    justify-content: center;
-    color: var(--text-muted);
-}
-
-.tribe-pct {
-    font-weight: var(--bold);
-    font-size: var(--size-sm);
-}
-
-.tribe-badge {
-    color: var(--text-bright);
-    padding: 1px 5px;
-    border-radius: 4px;
-    font-size: var(--size-xs);
-    font-weight: var(--bold);
-    white-space: nowrap;
-}
-
-/* --- D. Interactive SVG Map Styles (D3.js) --- */
-
+/* --- Interactive SVG Map Styles (D3.js) --- */
 #tribeMapSvg .node-group {
     cursor: pointer;
     will-change: transform;
@@ -1848,143 +1756,101 @@ table.dataTable tbody tr.loser td {
 /* 1. SENTIERS ENTRE CLAIRIÈRES (Vue Globale) */
 #tribeMapSvg line.inter-tribe {
     stroke: var(--text-muted);
-    stroke-opacity: 0.55;
-    stroke-dasharray: 6, 6;
+    stroke-opacity: 0.4;
+    stroke-dasharray: 4, 4;
     stroke-linecap: round;
-    stroke-width: 3px;
+    stroke-width: 2px;
     pointer-events: none;
 }
 
-/* 2. LIGNES CONSTELLATION : Opacité & épaisseur croissantes selon le palier */
+/* 2. LIGNES CONSTELLATION : Subtiles et hiérarchisées selon le palier */
 #tribeMapSvg line.constellation-link {
-    stroke: var(--text-muted, #525744);
-    stroke-dasharray: none;
+    stroke: var(--text-muted);
     stroke-linecap: round;
     pointer-events: none;
     transition: stroke-opacity 0.2s, stroke-width 0.2s;
 }
 
-/* Niveau 1 : Membres (discret, filigrane) */
 #tribeMapSvg line.constellation-link.tier-member {
-    stroke-opacity: 0.25;
+    stroke-opacity: 0.2;
     stroke-width: 1px;
 }
 
-/* Niveau 2 : Satellites (intermédiaire) */
 #tribeMapSvg line.constellation-link.tier-satellite {
-    stroke-opacity: 0.7;
+    stroke-opacity: 0.5;
     stroke-width: 1.5px;
 }
 
-/* Niveau 3 : Piliers (marqué) */
 #tribeMapSvg line.constellation-link.tier-pillar {
-    stroke-opacity: 0.9;
-    stroke-width: 2.2px;
+    stroke-opacity: 0.8;
+    stroke-width: 2px;
 }
 
-/* 3. CLAIRIÈRES : Cercle de craie clair au repos, fil fin et continu en sélection */
+/* 3. CLAIRIÈRES (Vue Tribus) : Cercle de craie propre et fond opaque harmonieux */
 #tribeMapSvg .node-group.type-tribe .node-circle {
-    fill: transparent !important;
+    fill: var(--bg-overlay-bottom) !important;
     stroke: var(--text-muted);
-    stroke-width: 2.2px;
-    stroke-dasharray: 6, 4;
+    stroke-width: 2px;
+    stroke-dasharray: 5, 3;
     stroke-linecap: round;
-    transition: stroke 0.3s, stroke-width 0.3s, stroke-dasharray 0.3s;
+    transition: stroke 0.3s, stroke-width 0.3s;
 }
 
-/* Survol : renforce la craie sans casser les pointillés */
-#tribeMapSvg .node-group.type-tribe:not(.is-selected):hover .node-circle {
+#tribeMapSvg .node-group.type-tribe:hover .node-circle {
     stroke: var(--text-main);
-    stroke-width: 3px;
-	stroke-dasharray: none
+    stroke-width: 2.5px;
 }
 
-/* Tribu sélectionnée : fil continu, fin et net en main-color */
+/* Tribu sélectionnée : Contour net aux couleurs de la marque */
 #tribeMapSvg .node-group.type-tribe.is-selected .node-circle {
     stroke: var(--main-color);
-    stroke-width: 2.2px;
+    stroke-width: 2.5px;
     stroke-dasharray: none;
 }
 
-/* 4. NŒUDS JOUEURS : Opacité croissante par niveau */
+/* 4. NŒUDS JOUEURS : Respect des couleurs d'affinité et hiérarchie douce */
 #tribeMapSvg .node-group.type-player .node-circle {
     fill: var(--node-color, var(--text-main));
-    stroke: none !important;
-    transition: opacity 0.2s, transform 0.15s ease-out;
+    stroke: var(--border-soft);
+    stroke-width: 1px;
+    transition: transform 0.15s ease-out;
 }
 
-/* Niveau 1 : Membres (50% d'opacité) */
-#tribeMapSvg .node-group.type-player.tier-member .node-circle {
-    opacity: 0.5;
-}
+#tribeMapSvg .node-group.type-player.tier-member .node-circle { opacity: 0.65; }
+#tribeMapSvg .node-group.type-player.tier-satellite .node-circle { opacity: 0.85; }
+#tribeMapSvg .node-group.type-player.tier-pillar .node-circle { opacity: 1; }
 
-/* Niveau 2 : Satellites (80% d'opacité) */
-#tribeMapSvg .node-group.type-player.tier-satellite .node-circle {
-    opacity: 0.8;
-}
-
-/* Niveau 3 : Piliers (100% d'opacité) */
-#tribeMapSvg .node-group.type-player.tier-pillar .node-circle {
-    opacity: 1;
-}
-
-/* Survol Joueur : La bulle passe à 100% d'opacité et grossit */
 #tribeMapSvg .node-group.type-player:hover .node-circle {
-    opacity: 1 !important;
-    transform: scale(1.5);
+    transform: scale(1.25);
 }
 
-/* 5. TYPOGRAPHIE & LISIBILITÉ */
+/* 5. TYPOGRAPHIE DES NŒUDS (Lisible, sans gras excessif) */
 #tribeMapSvg .num-span {
     font-size: var(--size-base, 14px);
-    font-weight: var(--bold, 700);
-    fill: var(--text-bright, #ffffff);
+    font-weight: var(--medium, 500);
+    fill: var(--text-bright);
 }
 
 #tribeMapSvg .lbl-span {
     font-size: var(--size-xs, 11px);
-    font-weight: var(--normal);
-    fill: var(--text-main, #cbd5e0);
-}
-
-/* Labels des joueurs */
-#tribeMapSvg .pillar-label {
-    font-size: var(--size-sm);
-    font-weight: var(--medium);
+    font-weight: var(--normal, 400);
     fill: var(--text-main);
-    opacity: 1;
 }
 
-#tribeMapSvg .satellite-label {
+/* Labels des joueurs en mode constellation (toujours lisibles, sans disparaître) */
+#tribeMapSvg .pillar-label,
+#tribeMapSvg .satellite-label,
+#tribeMapSvg .member-label {
     font-size: var(--size-xs, 12px);
     font-weight: var(--normal, 400);
     fill: var(--text-main);
-    opacity: 0.85;
+    opacity: 0.9;
 }
 
-#tribeMapSvg .member-label {
-    font-size: var(--size-xs, 11px);
-    font-weight: var(--normal, 400);
-    fill: var(--text-main);
-    opacity: 0;
-    transition: opacity 0.15s;
-}
-
-#tribeMapSvg .node-group.type-player:hover .pillar-label {
-    fill: var(--text-bright);
-	font-weight: var(--medium);
-}
-
-
-#tribeMapSvg .node-group.type-player:hover .satellite-label {
-    fill: var(--text-bright);
-	font-weight: var(--medium);
-}
-
-/* Affichage du nom du membre au survol */
+#tribeMapSvg .node-group.type-player:hover .pillar-label,
+#tribeMapSvg .node-group.type-player:hover .satellite-label,
 #tribeMapSvg .node-group.type-player:hover .member-label {
     fill: var(--text-bright);
-	opacity: 1;
 }
 
 /* =========================================================================
