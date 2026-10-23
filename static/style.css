@@ -1938,7 +1938,7 @@ table.dataTable tbody tr.loser td {
 
 #tribeMapSvg .player-name-tspan {
     font-size: var(--size-xxs);
-    font-weight: var(--medium);
+    font-weight: var(--normal);
     fill: var(--text-main);
     transition: dy 0.2s ease;
 }
@@ -1957,6 +1957,8 @@ table.dataTable tbody tr.loser td {
 /* AU SURVOL : On remonte légèrement le nom et on révèle le sous-titre du tier ! */
 #tribeMapSvg .node-group.type-player:hover .player-name-tspan {
     dy: -0.2em;
+	font-weight: var(--medium);
+    fill: var(--text-bright);
 }
 
 #tribeMapSvg .node-group.type-player:hover .player-status-tspan {
