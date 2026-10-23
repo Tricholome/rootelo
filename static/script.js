@@ -1409,13 +1409,13 @@ $(document).ready(function () {
             // Zoning by rank into 3 concentric tiers
             let dist, tierKey;
             if (index < Math.max(1, Math.floor(count * 0.25))) {
-                dist = 55;  // Core / Noyau central
+                dist = 75;  // Core / Noyau central
                 tierKey = 'core';
             } else if (index < Math.max(2, Math.floor(count * 0.65))) {
-                dist = 100; // Mid / Intermédiaire
+                dist = 125; // Mid / Intermédiaire
                 tierKey = 'mid';
             } else {
-                dist = 150; // Outer / Périphérie
+                dist = 185; // Outer / Périphérie
                 tierKey = 'outer';
             }
 
