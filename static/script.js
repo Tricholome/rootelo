@@ -1230,12 +1230,26 @@ $(document).ready(function () {
     const $mapHeaderTitle = $('#mapHeaderTitle');
     const $dateControls = $('#dateControls');
 
-    // --- Populate Player Select Dropdown ---
+    // --- Populate Player Select Dropdown (Using Latest Date) ---
     function populatePlayerDropdown(snapshot) {
-        const connections = snapshot.player_connections || {};
-        const playerNames = Object.keys(connections).sort();
+        const latestSnapshot = snapshots[dates[dates.length - 1]] || snapshot;
+        const playerNamesSet = new Set();
         
+        if (latestSnapshot.members_by_tribe) {
+            Object.values(latestSnapshot.members_by_tribe).forEach(members => {
+                members.forEach(m => playerNamesSet.add(m.name));
+            });
+        }
+        if (latestSnapshot.unaligned) {
+            latestSnapshot.unaligned.forEach(u => playerNamesSet.add(u.name));
+        }
+        if (window.PLAYER_CONNECTIONS) {
+            Object.keys(window.PLAYER_CONNECTIONS).forEach(name => playerNamesSet.add(name));
+        }
+        
+        const playerNames = Array.from(playerNamesSet).sort();
         const currentVal = $playerSelect.val();
+        
         $playerSelect.empty();
         $playerSelect.append('<option value="">-- Select a Player --</option>');
         
@@ -1264,8 +1278,19 @@ $(document).ready(function () {
         return config.tiers?.[status] || config.tiers?.Default || "#4a5568";
     }
 
+    // Helper to retrieve player's tribe & role at the latest date
+    function getLatestPlayerInfo(playerName) {
+        const latestSnapshot = snapshots[dates[dates.length - 1]];
+        if (!latestSnapshot || !latestSnapshot.members_by_tribe) return { tribe: null, role: null };
+        for (const [tribe, members] of Object.entries(latestSnapshot.members_by_tribe)) {
+            const found = members.find(m => m.name === playerName);
+            if (found) return { tribe, role: found.role };
+        }
+        return { tribe: null, role: null };
+    }
+
     /* -------------------------------------------------------------------------
-       10.1 GRAPH DATA GENERATORS (Macro vs Ego-Network)
+       10.1 GRAPH DATA GENERATORS (Macro vs Ego-Network at Latest Date)
        ------------------------------------------------------------------------- */
     function buildGraphData(snapshot) {
         const activeTribes = snapshot.active_tribes || [];
@@ -1273,44 +1298,50 @@ $(document).ready(function () {
         const nodes = [];
         const links = [];
 
-        // --- VIEW A: PLAYER EGO-NETWORK VIEW ---
+        // --- VIEW A: PLAYER EGO-NETWORK VIEW (Latest Date, No History) ---
         if (currentView === 'ego') {
+            const latestDate = dates[dates.length - 1];
+            const latestSnapshot = snapshots[latestDate] || snapshot;
+
             if (!selectedPlayer) {
-                // Placeholder node if no player selected yet
                 nodes.push({ id: 'placeholder', type: 'tribe', label: 'Select a player above', count: 0, radius: 40 });
                 return { nodes, links };
             }
 
-            const connections = snapshot.player_connections?.[selectedPlayer] || [];
-            const topPartners = connections.slice(0, 16); // Top partners limit
+            const globalConn = window.PLAYER_CONNECTIONS || {};
+            const connections = globalConn[selectedPlayer] || latestSnapshot.player_connections?.[selectedPlayer] || [];
+            const topPartners = connections.slice(0, 16);
             const maxWeight = topPartners.length > 0 ? topPartners[0].weight : 1;
 
-            // Center Node (The Player)
+            // Center Node (The Focus Player)
             nodes.push({
                 id: selectedPlayer,
                 type: 'ego-center',
                 name: selectedPlayer,
-                radius: 28
+                radius: 28,
+                color: 'var(--main-color)'
             });
 
             topPartners.forEach((partner, idx) => {
                 const partnerId = `partner_${partner.name}`;
-                const ratio = partner.weight / maxWeight; // 0 to 1
-                
-                // Physics distance & size rules:
-                // Closer distance = stronger interaction frequency
-                // Larger bubble = higher weight volume
-                const dist = 50 + (1 - ratio) * 130; 
-                const radius = 8 + ratio * 14;      
+                const ratio = partner.weight / maxWeight;
+                const dist = 50 + (1 - ratio) * 130;
+                const radius = 8 + ratio * 14;
                 const angle = (2 * Math.PI * idx) / topPartners.length;
+
+                // Resolve tribe & role from the latest date snapshot
+                const info = getLatestPlayerInfo(partner.name);
+                const tribe = info.tribe || partner.tribe;
+                const role = info.role || 'member';
+                const color = getBadgeColor(role) !== config.tiers?.Default ? getBadgeColor(role) : getBadgeColor(tribe);
 
                 nodes.push({
                     id: partnerId,
                     type: 'ego-partner',
                     name: partner.name,
-                    tribe: partner.tribe,
+                    tribe: tribe,
                     weight: partner.weight,
-                    color: getBadgeColor(partner.tribe),
+                    color: color,
                     radius: radius,
                     dist: dist,
                     angle: angle
@@ -1320,16 +1351,16 @@ $(document).ready(function () {
                     source: selectedPlayer,
                     target: partnerId,
                     weight: partner.weight,
-                    type: 'ego-link'
+                    type: 'ego-link',
+                    color: color
                 });
             });
 
             return { nodes, links };
         }
 
-        // --- VIEW B: MACRO HOMELANDS VIEW (Global or Constellation) ---
+        // --- VIEW B: MACRO HOMELANDS VIEW ---
         if (!activeTribeFilter) {
-            // Global Homelands overview
             activeTribes.forEach(t => {
                 const count = snapshot.summary?.[t] || 0;
                 nodes.push({
@@ -1345,19 +1376,13 @@ $(document).ready(function () {
                 for (let j = i + 1; j < activeTribes.length; j++) {
                     const t1 = activeTribes[i];
                     const t2 = activeTribes[j];
-                    let totalAffinity = 0, count = 0;
-
-                    // Compute cross-affinities for inter-tribe links
-                    (snapshot.members_by_tribe?.[t1] || []).forEach(() => { count++; });
-                    
-                    const avg = 15; // Normalized link strength
-                    links.push({ source: t1, target: t2, value: avg, type: 'inter-tribe' });
+                    links.push({ source: t1, target: t2, value: 15, type: 'inter-tribe' });
                 }
             }
             return { nodes, links };
         }
 
-        // Tribe Constellation View (Single Homeland + Members by tier)
+        // Tribe Constellation View
         const tribe = activeTribeFilter;
         const count = snapshot.summary?.[tribe] || 0;
         const layout = tribeLayout[tribe] || { pillars: [], satellites: [] };
@@ -1525,10 +1550,25 @@ $(document).ready(function () {
             }
         });
 
+        // Click handler: Tribes filter, Player bubbles trigger Ego View at Latest Date
         node.on("click", (event, d) => {
-            if (event.defaultPrevented || d.type !== 'tribe') return;
-            activeTribeFilter = (activeTribeFilter === d.id) ? null : d.id;
-            updateView(dates[currentIndex]);
+            if (event.defaultPrevented) return;
+
+            if (d.type === 'tribe') {
+                activeTribeFilter = (activeTribeFilter === d.id) ? null : d.id;
+                updateView(dates[currentIndex]);
+            } else if (d.type === 'player' || d.type === 'ego-partner') {
+                selectedPlayer = d.name;
+                currentView = 'ego';
+                
+                $egoViewBtn.addClass('active');
+                $macroViewBtn.removeClass('active');
+                $playerSelect.show().val(selectedPlayer);
+                $dateControls.hide(); // Hide date controls in ego view (no history)
+                $mapHeaderTitle.html(`Player Network &bull; <span style="font-weight: 400; text-transform: none; opacity: 0.85;">${selectedPlayer}'s frequent opponents (Latest)</span>`);
+                
+                updateView(dates[dates.length - 1]);
+            }
         });
 
         // --- Physics Simulation ---
@@ -1621,6 +1661,9 @@ $(document).ready(function () {
        10.3 TIMELINE & VIEW MANAGEMENT
        ------------------------------------------------------------------------- */
     function updateView(selectedDate) {
+        if (currentView === 'ego') {
+            selectedDate = dates[dates.length - 1]; // Force latest date in ego view
+        }
         $datePicker.val(selectedDate);
         const snapshot = snapshots[selectedDate];
         if (!snapshot) return;
@@ -1628,8 +1671,13 @@ $(document).ready(function () {
         populatePlayerDropdown(snapshot);
         renderGraph(snapshot);
 
-        $prevBtn.prop('disabled', currentIndex <= 0);
-        $nextBtn.prop('disabled', currentIndex >= dates.length - 1);
+        if (currentView === 'ego') {
+            $prevBtn.prop('disabled', true);
+            $nextBtn.prop('disabled', true);
+        } else {
+            $prevBtn.prop('disabled', currentIndex <= 0);
+            $nextBtn.prop('disabled', currentIndex >= dates.length - 1);
+        }
     }
 
     function setDateByIndex(index) {
@@ -1645,8 +1693,8 @@ $(document).ready(function () {
         $macroViewBtn.addClass('active');
         $egoViewBtn.removeClass('active');
         $playerSelect.hide();
-        $dateControls.show();
-        $mapHeaderTitle.html('Homelands Map &bull; <span style="font-weight: 400; text-transform: none; opacity: 0.85;">Click a region to filter members</span>');
+        $dateControls.show(); // Show timeline controls in macro view
+        $mapHeaderTitle.html('Homelands Map &bull; <span style="font-weight: 400; text-transform: none; opacity: 0.85;">Click a region or player bubble</span>');
         updateView(dates[currentIndex]);
     });
 
@@ -1655,19 +1703,24 @@ $(document).ready(function () {
         $egoViewBtn.addClass('active');
         $macroViewBtn.removeClass('active');
         $playerSelect.show();
-        $mapHeaderTitle.html('Player Network &bull; <span style="font-weight: 400; text-transform: none; opacity: 0.85;">Proximity reflects match frequency</span>');
+        $dateControls.hide(); // Hide timeline controls in ego view (no history)
+        $mapHeaderTitle.html('Player Network &bull; <span style="font-weight: 400; text-transform: none; opacity: 0.85;">Proximity reflects match frequency (Latest)</span>');
         
-        // Default to first available player if none selected
+        currentIndex = dates.length - 1;
         if (!selectedPlayer && $playerSelect.find('option').length > 1) {
             selectedPlayer = $playerSelect.find('option').eq(1).val();
             $playerSelect.val(selectedPlayer);
         }
-        updateView(dates[currentIndex]);
+        updateView(dates[dates.length - 1]);
     });
 
     $playerSelect.on('change', function() {
         selectedPlayer = $(this).val();
-        updateView(dates[currentIndex]);
+        if (currentView === 'ego') {
+            updateView(dates[dates.length - 1]);
+        } else {
+            updateView(dates[currentIndex]);
+        }
     });
 
     $prevBtn.on('click', () => setDateByIndex(currentIndex - 1));
