@@ -1,24 +1,34 @@
 {% extends "base.html" %}
 
 {% block content %}
-<!-- En-tête minimaliste ou introduction si besoin -->
-<div class="page-intro" style="text-align: center; margin-bottom: 20px;">
-    <h2>Homelands</h2>
-    <p>Mapping the shifting allegiances and evolving hubs of the woodland.</p>
-</div>
+<div style="max-width: clamp(600px, 60vw, 1600px); margin: 0 auto;">
 
-<!-- Carte interactive des Homelands -->
-<div id="tribeMapContainer" class="tribe-map-container" style="width: 100%; height: 450px; background: #1a202c; border-radius: 12px; position: relative; overflow: hidden; border: 1px solid #2d3748; margin-bottom: 20px;">
-    <svg id="tribeMapSvg" class="tribe-map-svg" style="width: 100%; height: 100%;"></svg>
-</div>
+    <!-- View Mode Switcher Controls -->
+    <div class="view-controls" style="display: flex; align-items: center; justify-content: center; gap: 12px; margin: 15px 0 5px 0;">
+        <button id="macroViewBtn" class="btn active" style="font-weight: 600;">🌲 Homelands View</button>
+        <button id="egoViewBtn" class="btn" style="font-weight: 600;">👤 Player Network</button>
+        <select id="playerSelect" class="date-picker" style="padding: 6px 12px; font-size: 0.9rem; display: none; background: rgba(0, 0, 0, 0.4); color: #fff; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 6px;">
+            <option value="">-- Select a Player --</option>
+        </select>
+    </div>
 
-<!-- Contrôles temporels (Frise / Sélecteur de date) -->
-<div class="date-controls" style="display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 15px;">
-    <button id="earliestDateBtn" class="btn">Début</button>
-    <button id="prevDateBtn" class="btn">&laquo; Précédent</button>
-    <input type="date" id="datePicker" class="date-picker" style="background: #2d3748; color: #fff; border: 1px solid #4a5568; padding: 6px 12px; border-radius: 6px;">
-    <button id="nextDateBtn" class="btn">Suivant &raquo;</button>
-    <button id="latestDateBtn" class="btn">Aujourd'hui</button>
+    <!-- Date Selector Controls -->
+    <div id="dateControls" class="date-controls" style="display: flex; align-items: center; justify-content: center; gap: 10px; margin: 15px 0;">
+        <button id="earliestDateBtn" class="btn">Earliest Date</button>
+        <button id="prevDateBtn" class="btn">&laquo; Previous Day</button>
+        <input type="date" id="datePicker" style="padding: 6px 12px; font-size: 1rem;">
+        <button id="nextDateBtn" class="btn">Next Day &raquo;</button>
+        <button id="latestDateBtn" class="btn">Latest Date</button>
+    </div>
+
+    <!-- Interactive Map Container -->
+    <div id="tribeMapContainer" style="width: 100%; height: 450px; background: rgba(0, 0, 0, 0.18); border-radius: 12px; margin: 10px 0 25px 0; position: relative; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.08);">
+        <div id="mapHeaderTitle" style="position: absolute; top: 12px; left: 16px; color: rgba(255, 255, 255, 0.45); font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; pointer-events: none; z-index: 10;">
+            Homelands Map &bull; <span style="font-weight: 400; text-transform: none; opacity: 0.85;">Click a region to filter members</span>
+        </div>
+        <svg id="tribeMapSvg" style="width: 100%; height: 100%; display: block;"></svg>
+    </div>
+
 </div>
 {% endblock %}
 
