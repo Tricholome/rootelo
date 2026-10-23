@@ -1550,14 +1550,13 @@ $(document).ready(function () {
                 g.select(".node-icon").attr("href", "").attr("xlink:href", "");
                 g.select(".count-text").style("display", "none");
                 
-                // Multi-line tspan injection for Name + Status sub-label
                 const labelSel = g.select(".player-label");
                 labelSel.text("");
                 
                 labelSel.append("tspan")
                     .attr("class", "player-name-tspan")
                     .attr("x", 0)
-                    .attr("dy", "-0.2em")
+                    .attr("dy", "0.3em")
                     .text(d.name);
                 
                 if (d.status) {
