@@ -1722,9 +1722,10 @@ table.dataTable tbody tr.loser td {
 }
 
 /* -------------------------------------------------------------------------
-   [COMPONENTS] 8. NETWORK MAP & TABLE (Two-View Architecture)
+   [COMPONENTS] 8. NETWORK MAP & TABLE
    ------------------------------------------------------------------------- */
 
+/* --- A. Container & Layout --- */
 .network-container {
     max-width: clamp(600px, 60vw, 1600px);
     margin: 0 auto;
@@ -1744,7 +1745,91 @@ table.dataTable tbody tr.loser td {
     display: block;
 }
 
-/* --- Interactive SVG Map Styles (D3.js) --- */
+/* --- B. Date Controls --- */
+.date-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.date-picker {
+    padding: 6px 12px;
+    font-size: var(--size-base);
+    background-color: var(--dt-input-bg);
+    color: var(--text-main);
+    border: 1px solid var(--border-soft);
+    border-radius: 4px;
+    font-family: var(--font-ui);
+    outline: none;
+    transition: border-color 0.2s, background-color 0.2s;
+}
+
+.date-picker:focus {
+    border-color: var(--main-color);
+    background-color: var(--dt-row-hover);
+}
+
+/* --- C. Network Data Table --- */
+.network-table {
+    width: 100%;
+    table-layout: fixed;
+}
+
+.network-table th {
+    text-align: center;
+}
+
+.network-table th.player-col {
+    width: 25%;
+    text-align: left;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.network-table th.games-col {
+    width: 10%;
+}
+
+.tribe-icon {
+    height: 26px;
+    width: 26px;
+    vertical-align: middle;
+    object-fit: contain;
+    display: inline-block;
+}
+
+.tribe-cell {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    width: 100%;
+}
+
+.tribe-cell-empty {
+    display: flex;
+    justify-content: center;
+    color: var(--text-muted);
+}
+
+.tribe-pct {
+    font-weight: var(--bold);
+    font-size: var(--size-sm);
+}
+
+.tribe-badge {
+    color: var(--text-bright);
+    padding: 1px 5px;
+    border-radius: 4px;
+    font-size: var(--size-xs);
+    font-weight: var(--bold);
+    white-space: nowrap;
+}
+
+/* --- D. Interactive SVG Map Styles (D3.js) --- */
+
 #tribeMapSvg .node-group {
     cursor: pointer;
     will-change: transform;
@@ -1756,101 +1841,152 @@ table.dataTable tbody tr.loser td {
 /* 1. SENTIERS ENTRE CLAIRIÈRES (Vue Globale) */
 #tribeMapSvg line.inter-tribe {
     stroke: var(--text-muted);
-    stroke-opacity: 0.4;
-    stroke-dasharray: 4, 4;
+    stroke-opacity: 0.55;
+    stroke-dasharray: 6, 6;
     stroke-linecap: round;
-    stroke-width: 2px;
+    stroke-width: 3px;
     pointer-events: none;
 }
 
-/* 2. LIGNES CONSTELLATION : Subtiles et hiérarchisées selon le palier */
-#tribeMapSvg line.constellation-link {
+/* 2. LIGNES CONSTELLATION ET LIENS ENTRE JOUEURS (Ego-links inclus) */
+#tribeMapSvg line.constellation-link,
+#tribeMapSvg line.player-link,
+#tribeMapSvg line.ego-link {
     stroke: var(--text-muted);
     stroke-linecap: round;
     pointer-events: none;
     transition: stroke-opacity 0.2s, stroke-width 0.2s;
 }
 
-#tribeMapSvg line.constellation-link.tier-member {
-    stroke-opacity: 0.2;
+/* Niveau 1 : Membres (discret) */
+#tribeMapSvg line.constellation-link.tier-member,
+#tribeMapSvg line.player-link.tier-member {
+    stroke-opacity: 0.3;
     stroke-width: 1px;
 }
 
-#tribeMapSvg line.constellation-link.tier-satellite {
-    stroke-opacity: 0.5;
+/* Niveau 2 : Satellites (intermédiaire) */
+#tribeMapSvg line.constellation-link.tier-satellite,
+#tribeMapSvg line.player-link.tier-satellite {
+    stroke-opacity: 0.6;
     stroke-width: 1.5px;
 }
 
-#tribeMapSvg line.constellation-link.tier-pillar {
-    stroke-opacity: 0.8;
+/* Niveau 3 : Piliers & Liens Ego (marqué) */
+#tribeMapSvg line.constellation-link.tier-pillar,
+#tribeMapSvg line.player-link.tier-pillar,
+#tribeMapSvg line.ego-link {
+    stroke-opacity: 0.85;
     stroke-width: 2px;
 }
 
-/* 3. CLAIRIÈRES (Vue Tribus) : Cercle de craie propre et fond opaque harmonieux */
+/* 3. CLAIRIÈRES (Vue Tribus) */
 #tribeMapSvg .node-group.type-tribe .node-circle {
-    fill: var(--bg-overlay-bottom) !important;
+    fill: var(--bg-surface) !important;
     stroke: var(--text-muted);
-    stroke-width: 2px;
-    stroke-dasharray: 5, 3;
+    stroke-width: 2.2px;
+    stroke-dasharray: 6, 4;
     stroke-linecap: round;
-    transition: stroke 0.3s, stroke-width 0.3s;
+    transition: stroke 0.3s, stroke-width 0.3s, stroke-dasharray 0.3s;
 }
 
-#tribeMapSvg .node-group.type-tribe:hover .node-circle {
+#tribeMapSvg .node-group.type-tribe:not(.is-selected):hover .node-circle {
     stroke: var(--text-main);
-    stroke-width: 2.5px;
-}
-
-/* Tribu sélectionnée : Contour net aux couleurs de la marque */
-#tribeMapSvg .node-group.type-tribe.is-selected .node-circle {
-    stroke: var(--main-color);
-    stroke-width: 2.5px;
+    stroke-width: 3px;
     stroke-dasharray: none;
 }
 
-/* 4. NŒUDS JOUEURS : Respect des couleurs d'affinité et hiérarchie douce */
-#tribeMapSvg .node-group.type-player .node-circle {
-    fill: var(--node-color, var(--text-main));
+#tribeMapSvg .node-group.type-tribe.is-selected .node-circle {
+    stroke: var(--main-color);
+    stroke-width: 2.2px;
+    stroke-dasharray: none;
+}
+
+/* 4. NŒUDS JOUEURS (Vue Macro, Constellation & Vue Ego-Network) */
+#tribeMapSvg .node-group.type-player .node-circle,
+#tribeMapSvg .node-group.type-ego-center .node-circle,
+#tribeMapSvg .node-group.type-ego-partner .node-circle {
+    fill: var(--node-color, var(--main-color)) !important;
     stroke: var(--border-soft);
     stroke-width: 1px;
-    transition: transform 0.15s ease-out;
+    transition: opacity 0.2s, transform 0.15s ease-out;
 }
 
-#tribeMapSvg .node-group.type-player.tier-member .node-circle { opacity: 0.65; }
-#tribeMapSvg .node-group.type-player.tier-satellite .node-circle { opacity: 0.85; }
-#tribeMapSvg .node-group.type-player.tier-pillar .node-circle { opacity: 1; }
-
-#tribeMapSvg .node-group.type-player:hover .node-circle {
-    transform: scale(1.25);
+/* Opacités selon les tiers / rôles */
+#tribeMapSvg .node-group.type-player.tier-member .node-circle,
+#tribeMapSvg .node-group.type-ego-partner.tier-member .node-circle {
+    opacity: 0.6;
 }
 
-/* 5. TYPOGRAPHIE DES NŒUDS (Lisible, sans gras excessif) */
+#tribeMapSvg .node-group.type-player.tier-satellite .node-circle,
+#tribeMapSvg .node-group.type-ego-partner.tier-satellite .node-circle {
+    opacity: 0.8;
+}
+
+#tribeMapSvg .node-group.type-player.tier-pillar .node-circle,
+#tribeMapSvg .node-group.type-ego-center .node-circle,
+#tribeMapSvg .node-group.type-ego-partner.tier-pillar .node-circle {
+    opacity: 1;
+}
+
+/* Cas particulier pour le joueur central en vue Ego : un contour plus net et marqué */
+#tribeMapSvg .node-group.type-ego-center .node-circle {
+    stroke: var(--text-bright);
+    stroke-width: 2.5px;
+}
+
+#tribeMapSvg .node-group.type-player:hover .node-circle,
+#tribeMapSvg .node-group.type-ego-partner:hover .node-circle,
+#tribeMapSvg .node-group.type-ego-center:hover .node-circle {
+    opacity: 1 !important;
+    transform: scale(1.15);
+    stroke: var(--text-bright);
+    stroke-width: 2px;
+}
+
+/* 5. TYPOGRAPHIE & LISIBILITÉ */
 #tribeMapSvg .num-span {
     font-size: var(--size-base, 14px);
-    font-weight: var(--medium, 500);
-    fill: var(--text-bright);
+    font-weight: var(--bold, 700);
+    fill: var(--text-bright, #ffffff);
 }
 
 #tribeMapSvg .lbl-span {
     font-size: var(--size-xs, 11px);
-    font-weight: var(--normal, 400);
-    fill: var(--text-main);
+    font-weight: var(--normal);
+    fill: var(--text-main, #cbd5e0);
 }
 
-/* Labels des joueurs en mode constellation (toujours lisibles, sans disparaître) */
 #tribeMapSvg .pillar-label,
+#tribeMapSvg .center-player-label {
+    font-size: var(--size-sm);
+    font-weight: var(--medium);
+    fill: var(--text-main);
+    opacity: 1;
+}
+
 #tribeMapSvg .satellite-label,
-#tribeMapSvg .member-label {
+#tribeMapSvg .partner-label {
     font-size: var(--size-xs, 12px);
     font-weight: var(--normal, 400);
     fill: var(--text-main);
-    opacity: 0.9;
+    opacity: 0.85;
+}
+
+#tribeMapSvg .member-label {
+    font-size: var(--size-xs, 11px);
+    font-weight: var(--normal, 400);
+    fill: var(--text-main);
+    opacity: 0.7;
+    transition: opacity 0.15s;
 }
 
 #tribeMapSvg .node-group.type-player:hover .pillar-label,
 #tribeMapSvg .node-group.type-player:hover .satellite-label,
-#tribeMapSvg .node-group.type-player:hover .member-label {
+#tribeMapSvg .node-group.type-player:hover .member-label,
+#tribeMapSvg .node-group.type-ego-partner:hover .partner-label {
     fill: var(--text-bright);
+    opacity: 1;
 }
 
 /* =========================================================================
