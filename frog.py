@@ -1,29 +1,31 @@
 """
-frog.py — Dynamic player homelands simulation module.
+frog.py — Dynamic player homelands simulation module (imported by main.py).
 
-This module processes season match history to compute temporal homeland 
-snapshots, player affiliations, tier classifications, and global player 
-connections unified directly within the latest date snapshot.
+run_homelands_simulation() replays the season day by day and returns TWO light dictionaries:
+
+  tribe_snapshots  {date: {tribe: [[player, fidelity, weight], ...]}}
+      fidelity (0-100) : share of the player's links (towards players who belong to a tribe)
+                         that go to his own tribe        -> bubble colour
+      weight           : strength of the player's links to his own tribe members
+                         (decayed number of matches)      -> bubble size
+      Members are sorted by weight, biggest first. Unaligned players are not listed.
+
+  constellations   {"date": latest date, "players": {player: {"tribe", "games", "partners"}}}
+      partners = [[partner, games played together], ...] : the PARTNERS_TOP players he played
+      with the most over the season, most first. Every player of the season is listed, so any
+      partner can be looked up in "players" (tribe, total games).
+
+Tribe detection uses Louvain, which depends on string hashing: main.py fixes PYTHONHASHSEED=0.
 """
 
-from collections import Counter
+from collections import Counter, defaultdict
 from datetime import date
 from itertools import combinations
-import json
 import math
-import os
 import random
-from pathlib import Path
 import statistics
-import sys
 
-from jinja2 import Environment, FileSystemLoader
 import networkx as nx
-
-# Ensure deterministic seed for Python execution
-if os.environ.get("PYTHONHASHSEED") != "0":
-    os.environ["PYTHONHASHSEED"] = "0"
-    os.execv(sys.executable, [sys.executable] + sys.argv)
 
 
 # ==============================================================================
@@ -41,11 +43,7 @@ DEFAULT_CONFIG = {
     "STICKINESS": 1.5,
     "MAX_DAILY_TRANSFERS": 3,
     "INACTIVITY_LIMIT_DAYS": 21,
-    "PILLAR_PERCENTILE": 90,
-    "SATELLITE_PERCENTILE": 60,
-    "PILLAR_MIN": 1,
-    "PILLAR_MAX": 6,
-    "SATELLITE_MAX": 10,
+    "PARTNERS_TOP": 8,
     "DECAY_RATE": 0.95,
     "NEW_MATCH_WEIGHT": 1.0,
     "MIN_EDGE_WEIGHT": 0.1,
@@ -194,63 +192,57 @@ def dissolve_small_tribes(roster: dict, cfg: dict) -> None:
                     roster[p] = UNALIGNED
 
 
-def tribe_core_scores(G: nx.Graph, members: list) -> dict:
-    n = len(members)
-    if n < 2:
-        return {}
-    H = G.subgraph(members)
-    return {
-        p: sum(d["weight"] for _, _, d in H.edges(p, data=True)) / (n - 1)
-        for p in members
-    }
+def member_metrics(G: nx.Graph, roster: dict, tribe: str) -> list:
+    """[[player, fidelity, weight], ...] for one tribe, biggest weight first."""
+    rows = []
+    for p, t in roster.items():
+        if t != tribe:
+            continue
+        own = other = 0.0
+        if p in G:
+            for n in G.neighbors(p):
+                t_n = roster.get(n, UNALIGNED)
+                if t_n is UNALIGNED:
+                    continue
+                if t_n == tribe:
+                    own += G[p][n]["weight"]
+                else:
+                    other += G[p][n]["weight"]
+        fidelity = round(100 * own / (own + other)) if own + other else 0
+        rows.append([p, fidelity, round(own, 1)])
+    rows.sort(key=lambda r: (-r[2], r[0]))
+    return rows
 
 
-def classify_tribe_tiers(scores: dict, cfg: dict) -> tuple[set, set]:
-    items = sorted(scores.items(), key=lambda x: -x[1])
-    values = [v for _, v in items]
-
-    if not values:
-        return set(), set()
-
-    if len(values) >= 2:
-        q = statistics.quantiles(values, n=100)
-        pillar_cut = q[cfg["PILLAR_PERCENTILE"] - 1]
-        satellite_cut = q[cfg["SATELLITE_PERCENTILE"] - 1]
-    else:
-        pillar_cut = satellite_cut = values[0]
-
-    pillars = [p for p, v in items if v >= pillar_cut]
-    if len(pillars) < cfg["PILLAR_MIN"]:
-        pillars = [p for p, _ in items[: cfg["PILLAR_MIN"]]]
-    elif len(pillars) > cfg["PILLAR_MAX"]:
-        pillars = [p for p, _ in items[: cfg["PILLAR_MAX"]]]
-
-    pillar_set = set(pillars)
-
-    satellites = [
-        p for p, v in items if v >= satellite_cut and p not in pillar_set
-    ]
-    satellites = satellites[: cfg["SATELLITE_MAX"]]
-
-    return pillar_set, set(satellites)
+def build_constellations(roster: dict, player_games: Counter, shared: dict,
+                         latest_date: str, cfg: dict) -> dict:
+    """Ego-network of every player: who he played with the most (season totals, latest date)."""
+    players = {}
+    for p in sorted(player_games):
+        top = sorted(shared[p].items(), key=lambda x: (-x[1], x[0]))[: cfg["PARTNERS_TOP"]]
+        players[p] = {
+            "tribe": roster.get(p, UNALIGNED),
+            "games": player_games[p],
+            "partners": [[q, n] for q, n in top],
+        }
+    return {"date": latest_date, "players": players}
 
 
 # ==============================================================================
 # 🚀 CORE SIMULATION FUNCTION
 # ==============================================================================
 
-def run_homelands_simulation(matches: list, custom_config: dict = None, season_id: str = "default") -> dict:
+def run_homelands_simulation(matches: list, custom_config: dict = None, season_id: str = "default") -> tuple[dict, dict]:
     """
-    Executes the homelands simulation over matches data.
-    Returns a single unified dictionary of snapshots where player_connections 
-    is embedded directly into the latest date snapshot.
+    Runs the homelands simulation over the matches.
+    Returns (tribe_snapshots, constellations) -- see the module docstring for their shape.
     """
     if matches is None:
-        return {}
+        return {}, {}
     if hasattr(matches, "empty") and matches.empty:
-        return {}
+        return {}, {}
     if not hasattr(matches, "empty") and not matches:
-        return {}
+        return {}, {}
 
     cfg = DEFAULT_CONFIG.copy()
     if custom_config:
@@ -270,7 +262,7 @@ def run_homelands_simulation(matches: list, custom_config: dict = None, season_i
             matches_by_date.setdefault(date_str, []).append(players)
 
     if not matches_by_date or not tribe_names_pool:
-        return {}
+        return {}, {}
 
     sorted_dates = sorted(matches_by_date)
 
@@ -278,6 +270,7 @@ def run_homelands_simulation(matches: list, custom_config: dict = None, season_i
     rng.shuffle(tribe_names_pool)
 
     edge_weights = Counter()
+    shared = defaultdict(Counter)   # shared[a][b] = games played together (no decay)
     player_games = Counter()
     last_active = {}
     roster = {}
@@ -295,6 +288,8 @@ def run_homelands_simulation(matches: list, custom_config: dict = None, season_i
                 roster.setdefault(p, UNALIGNED)
             for p1, p2 in combinations(sorted(set(players)), 2):
                 edge_weights[(p1, p2)] += cfg["NEW_MATCH_WEIGHT"]
+                shared[p1][p2] += 1
+                shared[p2][p1] += 1
 
         G = nx.Graph()
         for (p1, p2), w in edge_weights.items():
@@ -313,135 +308,10 @@ def run_homelands_simulation(matches: list, custom_config: dict = None, season_i
         prune_inactive(roster, last_active, d, cfg)
         dissolve_small_tribes(roster, cfg)
 
-        active_tribes = sorted({t for t in roster.values() if t is not UNALIGNED})
-        tribe_labels = {t: t for t in tribe_names_pool}
-
-        tribe_layout = {}
-        for t in active_tribes:
-            members = [p for p, tribe in roster.items() if tribe == t]
-            t_scores = tribe_core_scores(G, members)
-            pillars, satellites = classify_tribe_tiers(t_scores, cfg)
-            tribe_layout[t] = {
-                "pillars": list(pillars),
-                "satellites": list(satellites),
-            }
-
-        summary = {t: 0 for t in tribe_names_pool}
-        summary[UNALIGNED] = 0
-
-        members_by_tribe = {t: [] for t in active_tribes}
-        unaligned_players = []
-
-        for p, games in sorted(player_games.items(), key=lambda x: (-x[1], x[0])):
-            main_tribe = roster[p]
-            if main_tribe in active_tribes:
-                summary[main_tribe] += 1
-                role = "member"
-                if p in tribe_layout.get(main_tribe, {}).get("pillars", []):
-                    role = "pillar"
-                elif p in tribe_layout.get(main_tribe, {}).get("satellites", []):
-                    role = "satellite"
-
-                members_by_tribe[main_tribe].append({
-                    "name": p,
-                    "games": games,
-                    "role": role
-                })
-            else:
-                summary[UNALIGNED] += 1
-                unaligned_players.append({
-                    "name": p,
-                    "games": games
-                })
-
         snapshots[d] = {
-            "active_tribes": active_tribes,
-            "tribe_labels": tribe_labels,
-            "summary": summary,
-            "tribe_layout": tribe_layout,
-            "members_by_tribe": members_by_tribe,
-            "unaligned": unaligned_players,
+            t: member_metrics(G, roster, t)
+            for t in sorted({t for t in roster.values() if t is not UNALIGNED})
         }
 
-    # Calcul final global des liens et injection directe dans le dernier snapshot
-    if sorted_dates:
-        global_player_connections = {}
-        for p in player_games:
-            neighbors = []
-            if p in G:
-                for n in G.neighbors(p):
-                    w = G[p][n]["weight"]
-                    neighbors.append({
-                        "name": n,
-                        "weight": round(w, 2),
-                        "tribe": roster.get(n, UNALIGNED)
-                    })
-            neighbors.sort(key=lambda x: -x["weight"])
-            global_player_connections[p] = neighbors
-
-        latest_date = sorted_dates[-1]
-        snapshots[latest_date]["player_connections"] = global_player_connections
-
-    return snapshots
-
-
-# ==============================================================================
-# 🖥️ STANDALONE CLI EXECUTION & HTML RENDERING
-# ==============================================================================
-
-if __name__ == "__main__":
-    CONFIG_PATH = Path("data/config/config.json")
-    DEFAULT_MATCHES_PATH = Path("data/rdl/archives/lh01/matches.json")
-    TEMPLATE_DIR = "templates"
-    TEMPLATE_FILE = "frog.html"
-    OUTPUT_FILE = Path("frog.html")
-    PAGES_CONTENT_PATH = Path("data/config/pages_content.json")
-
-    config_data = {}
-    if CONFIG_PATH.exists():
-        with open(CONFIG_PATH, "r", encoding="utf-8") as f:
-            config_data = json.load(f)
-
-    pages_content = {}
-    if PAGES_CONTENT_PATH.exists():
-        with open(PAGES_CONTENT_PATH, "r", encoding="utf-8") as f:
-            pages_content = json.load(f)
-
-    matches_file = DEFAULT_MATCHES_PATH
-    if not matches_file.exists():
-        archives = list(Path("data/rdl/archives").rglob("matches.json"))
-        matches_file = archives[0] if archives else Path("matches.json")
-
-    if not matches_file.exists():
-        print(f"❌ Error: Matches file not found at {matches_file}")
-        sys.exit(1)
-
-    with open(matches_file, "r", encoding="utf-8") as f:
-        matches_data = json.load(f)
-
-    current_season_id = matches_file.parent.name if matches_file.exists() else "default"
-    league_network_cfg = config_data.get("network", {})
-
-    snapshots = run_homelands_simulation(matches_data, custom_config=league_network_cfg, season_id=current_season_id)
-    sorted_dates = sorted(snapshots.keys())
-
-    if (Path(TEMPLATE_DIR) / TEMPLATE_FILE).exists() and sorted_dates:
-        env = Environment(loader=FileSystemLoader(TEMPLATE_DIR))
-        template = env.get_template(TEMPLATE_FILE)
-
-        html_content = template.render(
-            config=config_data,
-            page_id="homelands",
-            section_id="homelands",
-            active_section="homelands",
-            path_prefix="",
-            dates_json=json.dumps(sorted_dates),
-            snapshots_json=json.dumps(snapshots),
-            **pages_content.get("homelands", {}),
-        )
-
-        with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
-            f.write(html_content)
-        print(f"✅ File {OUTPUT_FILE} successfully generated ({len(snapshots)} dates).")
-    else:
-        print(f"⚠️ Simulation complete, but template or dates missing.")
+    constellations = build_constellations(roster, player_games, shared, sorted_dates[-1], cfg)
+    return snapshots, constellations
