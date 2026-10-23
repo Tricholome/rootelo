@@ -1,36 +1,24 @@
 {% extends "base.html" %}
 
 {% block content %}
-<!-- Interactive Map -->
-<div id="tribeMapContainer" class="tribe-map-container">
-    <svg id="tribeMapSvg" class="tribe-map-svg"></svg>
+<!-- En-tête minimaliste ou introduction si besoin -->
+<div class="page-intro" style="text-align: center; margin-bottom: 20px;">
+    <h2>Homelands</h2>
+    <p>Mapping the shifting allegiances and evolving hubs of the woodland.</p>
 </div>
 
-<!-- Date Selector Controls -->
-<div class="date-controls">
-    <button id="earliestDateBtn" class="btn">Earliest Date</button>
-    <button id="prevDateBtn" class="btn">&laquo; Prev. Day</button>
-    <input type="date" id="datePicker" class="date-picker">
-    <button id="nextDateBtn" class="btn">Next Day &raquo;</button>
-    <button id="latestDateBtn" class="btn">Latest Date</button>
+<!-- Carte interactive des Homelands -->
+<div id="tribeMapContainer" class="tribe-map-container" style="width: 100%; height: 450px; background: #1a202c; border-radius: 12px; position: relative; overflow: hidden; border: 1px solid #2d3748; margin-bottom: 20px;">
+    <svg id="tribeMapSvg" class="tribe-map-svg" style="width: 100%; height: 100%;"></svg>
 </div>
 
-<!-- Tribe Table -->
-<div class="network-container">
-    <table id="frogTable" class="display nowrap network-table">
-        <thead>
-            <tr>
-                <th class="player-col">Player</th>
-                <th class="games-col">Games</th>
-                {% for tribe, data in config.network.tribes.items() %}
-                <th><img src="{{ data.icon }}" title="{{ tribe }}" alt="{{ tribe }}" class="tribe-icon"></th>
-                {% endfor %}
-            </tr>
-        </thead>
-        <tbody>
-            <!-- Table body populated dynamically by JS -->
-        </tbody>
-    </table>
+<!-- Contrôles temporels (Frise / Sélecteur de date) -->
+<div class="date-controls" style="display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 15px;">
+    <button id="earliestDateBtn" class="btn">Début</button>
+    <button id="prevDateBtn" class="btn">&laquo; Précédent</button>
+    <input type="date" id="datePicker" class="date-picker" style="background: #2d3748; color: #fff; border: 1px solid #4a5568; padding: 6px 12px; border-radius: 6px;">
+    <button id="nextDateBtn" class="btn">Suivant &raquo;</button>
+    <button id="latestDateBtn" class="btn">Aujourd'hui</button>
 </div>
 {% endblock %}
 
