@@ -452,6 +452,25 @@ def clean_homelands_snapshots(snapshots: dict, registry) -> dict:
             "tribe_layout": cleaned_layout,
         }
     return cleaned
+    
+ def clean_constellations(constellations: dict, registry) -> dict:
+    if not constellations or "players" not in constellations:
+        return constellations
+    cleaned_players = {}
+    for p_raw, p_data in constellations["players"].items():
+        clean_p = registry.get_clean_name(p_raw)
+        cleaned_partners = []
+        for partner_name, weight in p_data.get("partners", []):
+            cleaned_partners.append([registry.get_clean_name(partner_name), weight])
+        cleaned_players[clean_p] = {
+            "tribe": p_data.get("tribe"),
+            "games": p_data.get("games"),
+            "partners": cleaned_partners
+        }
+    return {
+        "date": constellations.get("date"),
+        "players": cleaned_players
+    }
 
 
 # --- Hall of Fame Engine ---
@@ -940,6 +959,7 @@ def run_league_pipeline(league_config, all_leagues_list):
     # Homelands Network Simulation
     Logger.section("4. HOMELANDS NETWORK SIMULATION")
     homelands_snapshots = {}
+    homelands_constellations = {}
 
     homelands_cfg = league_config.get("network", {}).copy()
 
@@ -949,15 +969,16 @@ def run_league_pipeline(league_config, all_leagues_list):
         homelands_cfg["tribe_names"] = config.get("network", {}).get("tribe_names", [])
 
         try:
-            homelands_snapshots = run_homelands_simulation(
+            homelands_snapshots, raw_constellations = run_homelands_simulation(
                 match_history_data,
                 custom_config=homelands_cfg,
                 season_id=slug
             )
+            homelands_constellations = clean_constellations(raw_constellations, player_registry)
             Logger.success(f"Homelands simulation completed ({len(homelands_snapshots)} daily snapshots)")
         except Exception as e:
             Logger.warn(f"Failed to run homelands simulation: {e}")
-            homelands_snapshots = {}
+            homelands_snapshots, homelands_constellations = {}, {}
 
     # HTML Page Rendering
     Logger.section("5. HTML RENDERING")
@@ -1003,7 +1024,7 @@ def run_league_pipeline(league_config, all_leagues_list):
             f.write(template.render(**full_vars))
         Logger.step(f"Page generated: {target_path}")
 
-    def render_season_pages(tag, is_archive, lb_data, match_data, trends_data, meta, snapshots_data, relations_data=None, champ_match=None, suffix=""):
+    def render_season_pages(tag, is_archive, lb_data, match_data, trends_data, meta, snapshots_data, constellations_data=None, relations_data=None, champ_match=None, suffix=""):
         season_context = {
             "is_archive": is_archive,
             "has_seasons": bool(archive_seasons),
@@ -1049,6 +1070,7 @@ def run_league_pipeline(league_config, all_leagues_list):
                 section_id="network",
                 dates_json=json.dumps(sorted(list(snapshots_data.keys()))),
                 snapshots_json=json.dumps(snapshots_data),
+                constellations_json=json.dumps(constellations_data or {}),  # <--- Ajouté ici
                 **pages_content.get("network", {}),
                 **season_context
             )
@@ -1062,6 +1084,7 @@ def run_league_pipeline(league_config, all_leagues_list):
         trends_data=display_trends_current,
         meta=current_meta,
         snapshots_data=homelands_snapshots,
+        constellations_data=homelands_constellations,
         relations_data=current_relations,
         champ_match=champions_data.get(archive_seasons[-1]) if archive_seasons else None
     )
