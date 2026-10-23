@@ -1902,86 +1902,57 @@ table.dataTable tbody tr.loser td {
     stroke-dasharray: none;
 }
 
-/* 4. NŒUDS JOUEURS (Vue Macro, Constellation & Vue Ego-Network) */
+/* --- NŒUDS JOUEURS : Sans contour blanc à la sélection/survol --- */
 #tribeMapSvg .node-group.type-player .node-circle,
 #tribeMapSvg .node-group.type-ego-center .node-circle,
 #tribeMapSvg .node-group.type-ego-partner .node-circle {
     fill: var(--node-color, var(--main-color)) !important;
     stroke: var(--border-soft);
     stroke-width: 1px;
-    transition: opacity 0.2s, transform 0.15s ease-out;
+    transition: transform 0.15s ease-out, opacity 0.2s;
 }
 
-/* Opacités selon les tiers / rôles */
-#tribeMapSvg .node-group.type-player.tier-core .node-circle,
-#tribeMapSvg .node-group.type-ego-partner.tier-core .node-circle {
-    opacity: 1;
-}
-
-#tribeMapSvg .node-group.type-player.tier-mid .node-circle,
-#tribeMapSvg .node-group.type-ego-partner.tier-mid .node-circle {
-    opacity: 0.8;
-}
-
-#tribeMapSvg .node-group.type-player.tier-outer .node-circle,
-#tribeMapSvg .node-group.type-ego-partner.tier-outer .node-circle {
-    opacity: 0.6;
-}
-
-/* Cas particulier pour le joueur central en vue Ego */
-#tribeMapSvg .node-group.type-ego-center .node-circle {
-    opacity: 1;
-    stroke: var(--text-bright);
-    stroke-width: 2.5px;
-}
-
-/* Survol et sélection (sans le cercle blanc parasite, juste un grossissement et contour net) */
+/* Pas de changement de contour au survol ou à la sélection, juste un léger zoom optionnel */
 #tribeMapSvg .node-group.type-player:hover .node-circle,
 #tribeMapSvg .node-group.type-ego-partner:hover .node-circle,
 #tribeMapSvg .node-group.type-ego-center:hover .node-circle {
-    opacity: 1 !important;
     transform: scale(1.15);
-    stroke: var(--text-bright);
-    stroke-width: 1.5px;
+    stroke: var(--border-soft);
+    stroke-width: 1px;
 }
 
-/* 5. TYPOGRAPHIE & LISIBILITÉ (Nom du joueur + Sous-titre de tier) */
-#tribeMapSvg .num-span {
-    font-size: var(--size-base, 14px);
-    font-weight: var(--bold, 700);
-    fill: var(--text-bright, #ffffff);
-}
-
-#tribeMapSvg .lbl-span {
-    font-size: var(--size-xs, 11px);
-    font-weight: var(--normal);
-    fill: var(--text-main, #cbd5e0);
-}
-
-#tribeMapSvg .center-player-label {
-    font-size: var(--size-sm);
-    font-weight: var(--medium);
-    fill: var(--text-main);
-    opacity: 1;
+/* --- TYPOGRAPHIE & EFFET HOVER SUR LES SOUS-TITRES --- */
+#tribeMapSvg .player-label {
+    text-anchor: middle;
+    font-family: var(--font-ui, sans-serif);
+    pointer-events: none;
 }
 
 #tribeMapSvg .player-name-tspan {
     font-size: 11px;
     font-weight: 600;
     fill: var(--text-bright, #ffffff);
+    transition: dy 0.2s ease;
 }
 
+/* Par défaut, le sous-titre du tier est totalement masqué */
 #tribeMapSvg .player-status-tspan {
     font-size: 9.5px;
     font-weight: 400;
     fill: var(--text-main, #cbd5e0);
-    opacity: 0.85;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease, visibility 0.2s ease;
 }
 
-#tribeMapSvg .node-group.type-player:hover .player-name-tspan,
+/* AU SURVOL : On remonte légèrement le nom et on révèle le sous-titre du tier ! */
+#tribeMapSvg .node-group.type-player:hover .player-name-tspan {
+    dy: -0.2em;
+}
+
 #tribeMapSvg .node-group.type-player:hover .player-status-tspan {
-    fill: var(--text-bright);
-    opacity: 1;
+    opacity: 0.95;
+    visibility: visible;
 }
 
 /* =========================================================================
