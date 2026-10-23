@@ -1289,6 +1289,14 @@ $(document).ready(function () {
         return playerData.tribe || null;
     }
 
+    // Map fidelity percentage to network config tier keys
+    function getStatusFromFidelity(fidelity) {
+        if (fidelity >= 85) return 'Partisan';
+        if (fidelity >= 65) return 'Squire';
+        if (fidelity >= 40) return 'Friend';
+        return 'Default';
+    }
+
     /* -------------------------------------------------------------------------
        10.1 GRAPH DATA GENERATORS (Macro vs Ego-Network)
        ------------------------------------------------------------------------- */
@@ -1376,9 +1384,9 @@ $(document).ready(function () {
             return { nodes, links };
         }
 
-        // Tribe Constellation View
+        // Tribe Constellation View (Size & Distance based on weight, Color & Subtitle based on fidelity)
         const tribe = activeTribeFilter;
-        const members = snapshot[tribe] || [];
+        const members = snapshot[tribe] || []; // [[playerName, fidelity, weight], ...]
         const count = members.length;
 
         nodes.push({
@@ -1389,56 +1397,43 @@ $(document).ready(function () {
             radius: tribeRadius(count)
         });
 
-        const tiered = { pillar: [], satellite: [], member: [] };
-        
-        members.forEach(([playerName, fidelity, weight], index) => {
-            let tier = 'member';
-            if (index < Math.max(1, Math.floor(count * 0.2))) tier = 'pillar';
-            else if (index < Math.max(2, Math.floor(count * 0.6))) tier = 'satellite';
+        // 1. Sort members by weight descending to place heavy links near the center
+        const sortedMembers = [...members].sort((a, b) => b[2] - a[2]);
+        const maxWeight = sortedMembers.length > 0 ? sortedMembers[0][2] : 1;
 
-            tiered[tier].push({ name: playerName, fidelity, weight });
-        });
+        sortedMembers.forEach(([playerName, fidelity, weight], index) => {
+            const ratio = weight / maxWeight;
 
-        function nameJitter01(name) {
-            let hash = 0;
-            for (let i = 0; i < name.length; i++) {
-                hash = (Math.imul(hash, 31) + name.charCodeAt(i)) >>> 0;
-            }
-            return (hash % 10000) / 10000;
-        }
+            // Size and distance driven strictly by weight
+            const radius = 8 + (ratio * 14);
+            const dist = 55 + ((1 - ratio) * 95);
 
-        const TIER_PHASE = { pillar: 0, satellite: 0.22, member: 0.47 };
+            // Color and status driven by fidelity
+            const status = getStatusFromFidelity(fidelity);
+            const color = getBadgeColor(status);
 
-        ['pillar', 'satellite', 'member'].forEach(tier => {
-            const group = tiered[tier];
-            const { radius, dist } = TIERS[tier];
-            const total = group.length || 1;
-            const slot = (2 * Math.PI) / total;
-            const phase = TIER_PHASE[tier] * 2 * Math.PI;
+            const angle = (2 * Math.PI * index) / sortedMembers.length;
+            const playerId = `player_${playerName}`;
 
-            group.forEach((player, idx) => {
-                const jitter = (nameJitter01(player.name) - 0.5) * slot * 0.7;
-                const angle = phase + (slot * idx) + jitter - (Math.PI / 2);
-                const playerId = `player_${player.name}`;
-                const tribeColor = getBadgeColor(tribe);
+            nodes.push({
+                id: playerId,
+                type: 'player',
+                name: playerName,
+                tier: status,
+                status: status,
+                fidelity: fidelity,
+                weight: weight,
+                color: color,
+                radius: radius,
+                dist: dist,
+                angle: angle
+            });
 
-                nodes.push({
-                    id: playerId,
-                    type: 'player',
-                    name: player.name,
-                    tier,
-                    color: tribeColor,
-                    radius,
-                    dist,
-                    angle
-                });
-
-                links.push({ 
-                    source: tribe, 
-                    target: playerId, 
-                    tier, 
-                    color: tribeColor 
-                });
+            links.push({ 
+                source: tribe, 
+                target: playerId, 
+                tier: status,
+                color: color 
             });
         });
 
@@ -1535,11 +1530,28 @@ $(document).ready(function () {
             } else if (d.type === 'ego-center') {
                 g.select(".node-icon").attr("href", "").attr("xlink:href", "");
                 g.select(".count-text").style("display", "none");
-                g.select(".player-label").text(d.name).attr("class", "player-label center-player-label").style("font-weight", "bold");
+                g.select(".player-label").text(d.name).attr("class", "player-label center-player-label");
             } else {
                 g.select(".node-icon").attr("href", "").attr("xlink:href", "");
                 g.select(".count-text").style("display", "none");
-                g.select(".player-label").text(d.name).attr("class", "player-label partner-label");
+                
+                // Text structure: Name on line 1, Status tier sub-label on line 2 (styled via CSS classes)
+                const labelSel = g.select(".player-label");
+                labelSel.text("");
+                
+                labelSel.append("tspan")
+                    .attr("class", "player-name-tspan")
+                    .attr("x", 0)
+                    .attr("dy", d.status && d.status !== 'Default' ? "-0.2em" : "0.3em")
+                    .text(d.name);
+                
+                if (d.status && d.status !== 'Default') {
+                    labelSel.append("tspan")
+                        .attr("class", "player-status-tspan")
+                        .attr("x", 0)
+                        .attr("dy", "1.1em")
+                        .text(d.status);
+                }
             }
         });
 
