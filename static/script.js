@@ -1402,13 +1402,13 @@ $(document).ready(function () {
         const maxWeight = sortedMembers.length > 0 ? sortedMembers[0][2] : 1;
 
         sortedMembers.forEach(([playerName, fidelity, weight], index) => {
-            const ratio = weight / maxWeight;
+            const rawRatio = maxWeight > 0 ? (weight / maxWeight) : 0;
+            
+            const ratio = Math.pow(rawRatio, 0.6);
+            const radius = 6 + (ratio * 20);
+            
+            const dist = 45 + ((1 - ratio) * 125);
 
-            // Size and distance driven strictly by weight
-            const radius = 8 + (ratio * 14);
-            const dist = 55 + ((1 - ratio) * 95);
-
-            // Color and status driven by fidelity
             const status = getStatusFromFidelity(fidelity);
             const color = getBadgeColor(status);
 
