@@ -1230,7 +1230,7 @@ $(document).ready(function () {
     const $mapHeaderTitle = $('#mapHeaderTitle');
     const $dateControls = $('#dateControls');
 
-    // --- Populate Player Select Dropdown (Using Latest Date) ---
+    // --- Populate Player Select Dropdown (Using Latest Date & Constellations) ---
     function populatePlayerDropdown(snapshot) {
         const latestSnapshot = snapshots[dates[dates.length - 1]] || snapshot;
         const playerNamesSet = new Set();
@@ -1243,8 +1243,10 @@ $(document).ready(function () {
         if (latestSnapshot.unaligned) {
             latestSnapshot.unaligned.forEach(u => playerNamesSet.add(u.name));
         }
-        if (window.PLAYER_CONNECTIONS) {
-            Object.keys(window.PLAYER_CONNECTIONS).forEach(name => playerNamesSet.add(name));
+        
+        const constellations = window.PLAYER_CONSTELLATIONS || {};
+        if (constellations.players) {
+            Object.keys(constellations.players).forEach(name => playerNamesSet.add(name));
         }
         
         const playerNames = Array.from(playerNamesSet).sort();
@@ -1298,7 +1300,7 @@ $(document).ready(function () {
         const nodes = [];
         const links = [];
 
-        // --- VIEW A: PLAYER EGO-NETWORK VIEW (Latest Date, No History) ---
+        // --- VIEW A: PLAYER EGO-NETWORK VIEW (Latest Date, Constellations) ---
         if (currentView === 'ego') {
             const latestDate = dates[dates.length - 1];
             const latestSnapshot = snapshots[latestDate] || snapshot;
@@ -1308,10 +1310,10 @@ $(document).ready(function () {
                 return { nodes, links };
             }
 
-            const globalConn = window.PLAYER_CONNECTIONS || {};
-            const connections = globalConn[selectedPlayer] || latestSnapshot.player_connections?.[selectedPlayer] || [];
-            const topPartners = connections.slice(0, 16);
-            const maxWeight = topPartners.length > 0 ? topPartners[0].weight : 1;
+            const constellations = window.PLAYER_CONSTELLATIONS || { players: {} };
+            const playerData = constellations.players[selectedPlayer] || {};
+            const topPartners = playerData.partners || []; // Format: [[partnerName, weight], ...]
+            const maxWeight = topPartners.length > 0 ? topPartners[0][1] : 1;
 
             // Center Node (The Focus Player)
             nodes.push({
@@ -1322,25 +1324,26 @@ $(document).ready(function () {
                 color: 'var(--main-color)'
             });
 
-            topPartners.forEach((partner, idx) => {
-                const partnerId = `partner_${partner.name}`;
-                const ratio = partner.weight / maxWeight;
+            topPartners.forEach(([partnerName, weight], idx) => {
+                const partnerId = `partner_${partnerName}`;
+                const ratio = weight / maxWeight;
                 const dist = 50 + (1 - ratio) * 130;
                 const radius = 8 + ratio * 14;
                 const angle = (2 * Math.PI * idx) / topPartners.length;
 
-                // Resolve tribe & role from the latest date snapshot
-                const info = getLatestPlayerInfo(partner.name);
-                const tribe = info.tribe || partner.tribe;
+                // Resolve tribe & role from the latest date snapshot or constellations
+                const info = getLatestPlayerInfo(partnerName);
+                const partnerData = constellations.players[partnerName] || {};
+                const tribe = info.tribe || partnerData.tribe;
                 const role = info.role || 'member';
                 const color = getBadgeColor(role) !== config.tiers?.Default ? getBadgeColor(role) : getBadgeColor(tribe);
 
                 nodes.push({
                     id: partnerId,
                     type: 'ego-partner',
-                    name: partner.name,
+                    name: partnerName,
                     tribe: tribe,
-                    weight: partner.weight,
+                    weight: weight,
                     color: color,
                     radius: radius,
                     dist: dist,
@@ -1350,7 +1353,7 @@ $(document).ready(function () {
                 links.push({
                     source: selectedPlayer,
                     target: partnerId,
-                    weight: partner.weight,
+                    weight: weight,
                     type: 'ego-link',
                     color: color
                 });
