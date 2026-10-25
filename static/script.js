@@ -1260,12 +1260,10 @@ $(document).ready(function () {
         if (!query) return null;
 
         const trimmed = query.trim();
-        // 1. Correspondance exacte
         if (playersMap[trimmed]) {
             return { canonicalName: trimmed, data: playersMap[trimmed] };
         }
 
-        // 2. Correspondance insensible à la casse
         const lowerQ = trimmed.toLowerCase();
         for (const [name, data] of Object.entries(playersMap)) {
             if (name.toLowerCase() === lowerQ) {
@@ -1285,27 +1283,30 @@ $(document).ready(function () {
 
         // --- VIEW A: PLAYER EGO-NETWORK VIEW ---
         if (currentView === 'ego') {
-            const query = ($globalSearchInput.length ? $globalSearchInput.val().trim() : '') || selectedPlayer;
-            const found = getPlayerConstellationData(query);
-
             const constellations = window.PLAYER_CONSTELLATIONS || { players: {} };
             const allPlayersKeys = Object.keys(constellations.players || {});
 
-            // Si aucun joueur valide n'est trouvé, on prend le premier disponible par défaut
-            let targetName = found ? found.canonicalName : null;
-            let playerData = found ? found.data : null;
-
-            if (!targetName && allPlayersKeys.length > 0) {
-                targetName = allPlayersKeys[0];
-                playerData = constellations.players[targetName];
-                selectedPlayer = targetName;
-                if ($globalSearchInput.length) {
-                    $globalSearchInput.val(targetName);
-                }
+            if (allPlayersKeys.length === 0) {
+                nodes.push({ id: 'placeholder', type: 'tribe', label: 'No player data available', count: 0, radius: 40 });
+                return { nodes, links };
             }
 
-            if (!targetName || !playerData) {
-                nodes.push({ id: 'placeholder', type: 'tribe', label: 'Search a player above', count: 0, radius: 40 });
+            // Priorité absolue à selectedPlayer, sinon la valeur de la barre de recherche
+            const query = selectedPlayer || ($globalSearchInput.length ? $globalSearchInput.val().trim() : '');
+            let found = getPlayerConstellationData(query);
+
+            if (!found) {
+                selectedPlayer = allPlayersKeys[0];
+                found = { canonicalName: selectedPlayer, data: constellations.players[selectedPlayer] };
+            } else {
+                selectedPlayer = found.canonicalName;
+            }
+
+            const targetName = selectedPlayer;
+            const playerData = found.data;
+
+            if (!playerData) {
+                nodes.push({ id: 'placeholder', type: 'tribe', label: 'Player not found', count: 0, radius: 40 });
                 return { nodes, links };
             }
 
@@ -1580,7 +1581,7 @@ $(document).ready(function () {
             }
         });
 
-        // Click handler
+        // Click handler propre sans interférences de déclenchement d'événements en boucle
         node.on("click", (event, d) => {
             if (event.defaultPrevented) return;
 
@@ -1597,7 +1598,7 @@ $(document).ready(function () {
                 $mapHeaderTitle.html(`Player Network &bull; <span style="font-weight: 400; text-transform: none; opacity: 0.85;">${selectedPlayer}'s frequent opponents (Latest)</span>`);
                 
                 if ($globalSearchInput.length) {
-                    $globalSearchInput.val(selectedPlayer).trigger('input');
+                    $globalSearchInput.val(selectedPlayer); // Met à jour l'input sans .trigger('input')
                 }
                 
                 updateView(dates[dates.length - 1]);
@@ -1736,13 +1737,15 @@ $(document).ready(function () {
         $macroViewBtn.removeClass('active');
         $dateControls.hide();
         
+        const constellations = window.PLAYER_CONSTELLATIONS || { players: {} };
+        const keys = Object.keys(constellations.players || {});
         const query = $globalSearchInput.length ? $globalSearchInput.val().trim() : '';
         const found = getPlayerConstellationData(query);
+
         if (found) {
             selectedPlayer = found.canonicalName;
-        } else if (!selectedPlayer) {
-            const keys = Object.keys(window.PLAYER_CONSTELLATIONS?.players || {});
-            if (keys.length > 0) selectedPlayer = keys[0];
+        } else if (!selectedPlayer && keys.length > 0) {
+            selectedPlayer = keys[0];
         }
 
         if (selectedPlayer && $globalSearchInput.length) {
