@@ -1736,7 +1736,7 @@ table.dataTable tbody tr.loser td {
     position: relative;
     width: 100%;
     height: 450px;
-    margin: 10px 0 25px 0;
+    margin: 10px 0 20px 0;
     background: var(--dt-table-bg);
     border: 1px solid var(--glass-border);
     border-radius: 12px;
@@ -1806,41 +1806,54 @@ table.dataTable tbody tr.loser td {
     background-color: var(--bg-hover);
 }
 
-/* --- C. Allegiance Ledger Badges (PN Mode) --- */
+/* --- C. Allegiance Ledger (PN Mode) --- */
 .allegiance-ledger {
     position: absolute;
-    top: 46px;
+    top: 48px;
     left: 18px;
     z-index: 10;
     display: none;
     flex-direction: column;
+    align-items: flex-start;
     gap: 8px;
+}
+
+.allegiance-ledger-title {
+    font-family: var(--font-ui);
+    font-size: var(--size-xs);
+    font-weight: var(--bold);
+    text-transform: uppercase;
+    letter-spacing: var(--track-wide);
+    color: var(--text-muted);
+    margin-bottom: 2px;
+    pointer-events: none;
 }
 
 .allegiance-badge {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    padding: 5px 10px;
+    gap: 10px;
+    padding: 7px 14px;
     background: var(--bg-surface);
     border: 1px solid var(--border-soft);
-    border-radius: 6px;
+    border-radius: 8px;
     color: var(--text-main);
     font-family: var(--font-ui);
-    font-size: var(--size-xs);
+    font-size: var(--size-sm);
     font-weight: var(--medium);
     cursor: pointer;
     box-shadow: var(--glass-shadow);
-    transition: transform 0.15s ease, border-color 0.2s ease, opacity 0.2s ease, filter 0.2s ease;
+    transition: transform 0.15s ease, border-color 0.2s ease, background-color 0.2s ease, opacity 0.2s ease, filter 0.2s ease;
 }
 
 .allegiance-badge:hover {
     border-color: var(--main-color);
     background: var(--bg-hover);
-    transform: translateX(3px);
+    transform: translateX(4px);
 }
 
 .allegiance-badge.is-current {
+    background: color-mix(in srgb, var(--main-color) 12%, var(--bg-surface));
     border-color: var(--main-color);
     color: var(--text-bright);
 }
@@ -1856,9 +1869,19 @@ table.dataTable tbody tr.loser td {
 }
 
 .allegiance-icon {
-    width: 20px;
-    height: 20px;
+    width: 28px;
+    height: 28px;
     object-fit: contain;
+    filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.4));
+}
+
+.allegiance-empty {
+    font-family: var(--font-ui);
+    font-size: var(--size-xs);
+    font-style: italic;
+    color: var(--text-muted);
+    opacity: 0.75;
+    pointer-events: none;
 }
 
 /* --- D. Interactive SVG Map Elements (D3.js) --- */
@@ -1894,25 +1917,11 @@ table.dataTable tbody tr.loser td {
 #tribeMapSvg line.constellation-link,
 #tribeMapSvg line.ego-link {
     stroke: var(--node-color, var(--text-muted));
+    stroke-opacity: 0.65;
+    stroke-width: 1.5px;
     stroke-linecap: round;
     pointer-events: none;
     transition: stroke-opacity 0.2s, stroke-width 0.2s;
-}
-
-#tribeMapSvg line.constellation-link.tier-outer {
-    stroke-opacity: 0.35;
-    stroke-width: 1px;
-}
-
-#tribeMapSvg line.constellation-link.tier-mid {
-    stroke-opacity: 0.6;
-    stroke-width: 1.5px;
-}
-
-#tribeMapSvg line.constellation-link.tier-core,
-#tribeMapSvg line.ego-link {
-    stroke-opacity: 0.8;
-    stroke-width: 2px;
 }
 
 /* 2. Homeland Nodes (HM & HN Center) */
@@ -1925,12 +1934,7 @@ table.dataTable tbody tr.loser td {
     transition: stroke 0.25s, stroke-width 0.25s, stroke-dasharray 0.25s;
 }
 
-#tribeMapSvg .node-group.type-tribe:not(.is-selected):hover .node-circle {
-    stroke: var(--main-color);
-    stroke-width: 2.5px;
-    stroke-dasharray: none;
-}
-
+#tribeMapSvg .node-group.type-tribe:not(.is-selected):hover .node-circle,
 #tribeMapSvg .node-group.type-tribe.is-selected .node-circle {
     stroke: var(--main-color);
     stroke-width: 2.5px;
@@ -1954,17 +1958,14 @@ table.dataTable tbody tr.loser td {
 #tribeMapSvg .node-group.type-ego-center .node-circle,
 #tribeMapSvg .node-group.type-ego-partner .node-circle {
     fill: var(--node-color, var(--main-color)) !important;
-    transition: transform 0.15s ease-out, opacity 0.2s ease;
+    stroke: var(--border-soft);
+    stroke-width: 1px;
+    transition: transform 0.15s ease-out, fill 0.2s ease;
 }
-
-#tribeMapSvg .node-group.type-player.tier-outer .node-circle { opacity: 0.75; }
-#tribeMapSvg .node-group.type-player.tier-mid .node-circle   { opacity: 0.9; }
-#tribeMapSvg .node-group.type-player.tier-core .node-circle  { opacity: 1; }
 
 #tribeMapSvg .node-group.type-player:hover .node-circle,
 #tribeMapSvg .node-group.type-ego-partner:hover .node-circle,
 #tribeMapSvg .node-group.type-ego-center:hover .node-circle {
-    opacity: 1;
     transform: scale(1.15);
 }
 
