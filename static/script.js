@@ -1360,6 +1360,20 @@ $(document).ready(function () {
 
         // --- MODE HN: HOMELAND NETWORK (Zoom sur une tribu spécifique ou filtré par joueur) ---
         const tribe = activeTribeFilter;
+		
+		if (!tribe) {
+            nodes.push({
+                id: `player_solo_${selectedPlayer}`,
+                type: 'player',
+                name: selectedPlayer || 'Unknown',
+                radius: 16,
+                color: 'var(--border-soft)',
+                dist: 0,
+                angle: 0
+            });
+            return { nodes, links };
+        }
+		
         const members = snapshot.members_by_tribe?.[tribe] || snapshot[tribe] || [];
         const count = members.length;
 
@@ -1641,12 +1655,13 @@ $(document).ready(function () {
         }
     }
 
-    // --- Global Search & Reset Integration ---
+    // --- Global Search & HM -> HN Transition ---
     if ($globalSearchInput.length) {
         $globalSearchInput.on('input change', function() {
             const query = $(this).val().trim();
+            
             if (!query) {
-                // Retour en mode HM si la recherche est vidée
+                // Si on vide la recherche : retour propre en mode HM (Homelands Map)
                 currentView = 'hm';
                 activeTribeFilter = null;
                 selectedPlayer = null;
@@ -1654,14 +1669,24 @@ $(document).ready(function () {
                 $mapHeaderTitle.html('Homelands Map &bull; <span style="font-weight: 400; text-transform: none; opacity: 0.85;">Click a region or player bubble</span>');
                 updateView(dates[currentIndex]);
             } else {
-                // Passage en mode HN centré sur la tribu du joueur recherché
+                // Si on tape un nom en mode HM ou HN : on cherche sa tribu à la date actuelle
                 const snapshot = snapshots[dates[currentIndex]];
                 const tribe = getPlayerTribeAtDate(query, snapshot);
+
                 if (tribe) {
+                    // Cas 1 : Le joueur appartient à un Homeland à cette date -> Passage en mode HN sur sa tribu
                     currentView = 'hn';
                     activeTribeFilter = tribe;
                     $dateControls.show();
-                    $mapHeaderTitle.html(`${tribe} Homeland &bull; <span style="font-weight: 400; text-transform: none; opacity: 0.85;">Constellation view</span>`);
+                    $mapHeaderTitle.html(`${tribe} Homeland &bull; <span style="font-weight: 400; text-transform: none; opacity: 0.85;">Filtered for ${query}</span>`);
+                    updateView(dates[currentIndex]);
+                } else {
+                    // Cas 2 : Le joueur n'a pas de Homeland à cette date (ou inconnu) -> Mode HN neutre / bulle seule
+                    currentView = 'hn';
+                    activeTribeFilter = null; // Pas de tribu, on affichera une bulle neutre ou un état vide gracieux
+                    selectedPlayer = query;
+                    $dateControls.show();
+                    $mapHeaderTitle.html(`Player Search &bull; <span style="font-weight: 400; text-transform: none; opacity: 0.85;">${query} (No homeland at this date)</span>`);
                     updateView(dates[currentIndex]);
                 }
             }
