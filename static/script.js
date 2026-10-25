@@ -1192,13 +1192,14 @@ $(document).ready(function () {
     if (!dates || !dates.length || !snapshots) return;
 
     // --- State Variables ---
-    let currentView = 'hm'; // 'hm' (Homelands Map/Network), 'pn' (Player Network)
+    let currentView = 'hm'; // 'hm' (Homelands Map), 'hn' (Homeland Network), 'pn' (Player Network)
     let activeTribeFilter = null;
     let selectedPlayer = null;
     let simulation = null;
     let currentIndex = dates.length - 1;
 
     // --- DOM Elements ---
+    const $mapContainer = $('#tribeMapContainer');
     const $datePicker = $('#datePicker').attr({ min: dates[0], max: dates[dates.length - 1] });
     const $prevBtn = $('#prevDateBtn');
     const $nextBtn = $('#nextDateBtn');
@@ -1207,7 +1208,12 @@ $(document).ready(function () {
     const $mapHeaderTitle = $('#mapHeaderTitle');
     const $dateControls = $('#dateControls');
     const $globalSearchInput = $('#playerName');
-    const $playerLedger = $('#playerLedger');
+
+    // Création dynamique du conteneur de badges à l'intérieur du cadre de la carte s'il n'existe pas
+    let $playerLedger = $('#playerLedger');
+    if (!$playerLedger.length && $mapContainer.length) {
+        $playerLedger = $('<div id="playerLedger" class="allegiance-ledger"></div>').appendTo($mapContainer);
+    }
 
     // --- Helper Styling & Search Functions ---
     function tribeRadius(count) {
@@ -1238,6 +1244,12 @@ $(document).ready(function () {
         return (hash % 10000) / 10000;
     }
 
+    function formatShortDate(dateStr) {
+        const d = new Date(`${dateStr}T00:00:00`);
+        if (isNaN(d.getTime())) return dateStr;
+        return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    }
+
     function getPlayerConstellationData(query) {
         const constellations = window.PLAYER_CONSTELLATIONS || { players: {} };
         const playersMap = constellations.players || {};
@@ -1257,68 +1269,87 @@ $(document).ready(function () {
         return null;
     }
 
-    // --- Fonction pour extraire l'historique des allégeances d'un joueur à travers les snapshots ---
     function getPlayerAllegianceHistory(playerName) {
         const history = [];
-        if (!snapshots || !dates) return history;
+        let lastTribe = null;
 
-        dates.forEach(dateStr => {
-            const snap = snapshots[dateStr];
-            if (!snap) return;
-            
-            // On cherche dans quel homeland le joueur se trouve à cette date
+        dates.forEach((dateStr, idx) => {
+            const snap = snapshots[dateStr] || {};
             let foundTribe = null;
-            let playerDetails = null;
 
-            if (snap.members_by_tribe) {
-                for (const [tribe, members] of Object.entries(snap.members_by_tribe)) {
-                    const match = members.find(m => m.name === playerName);
-                    if (match) {
-                        foundTribe = tribe;
-                        playerDetails = match;
-                        break;
-                    }
-                }
-            } else {
-                // Fallback structure alternative si nécessaire
-                for (const [tribe, members] of Object.entries(snap)) {
-                    if (Array.isArray(members)) {
-                        const match = members.find(m => m[0] === playerName);
-                        if (match) {
-                            foundTribe = tribe;
-                            playerDetails = { name: match[0], fidelity: match[1], weight: match[2] };
-                            break;
-                        }
-                    }
+            for (const [tribe, members] of Object.entries(snap)) {
+                if (Array.isArray(members) && members.some(m => m[0] === playerName)) {
+                    foundTribe = tribe;
+                    break;
                 }
             }
 
-            if (foundTribe) {
-                // Évite les doublons consécutifs si la tribu ne change pas d'un jour sur l'autre
-                const lastEntry = history[history.length - 1];
-                if (!lastEntry || lastEntry.tribe !== foundTribe) {
-                    history.push({
-                        date: dateStr,
-                        tribe: foundTribe,
-                        fidelity: playerDetails?.fidelity || null,
-                        weight: playerDetails?.weight || null
-                    });
-                }
+            if (foundTribe && foundTribe !== lastTribe) {
+                history.push({
+                    tribe: foundTribe,
+                    joinDate: dateStr,
+                    joinIndex: idx
+                });
+                lastTribe = foundTribe;
             }
         });
 
-        return history;
+        const currentTribe = getPlayerTribe(playerName);
+        return history.reverse().map((entry, idx) => ({
+            ...entry,
+            isCurrent: idx === 0 && entry.tribe === currentTribe
+        }));
+    }
+
+    function renderAllegianceLedger() {
+        if (!$playerLedger.length) return;
+
+        if (currentView !== 'pn' || !selectedPlayer) {
+            $playerLedger.empty().hide();
+            return;
+        }
+
+        const history = getPlayerAllegianceHistory(selectedPlayer);
+        if (!history.length) {
+            $playerLedger.empty().hide();
+            return;
+        }
+
+        const badgesHtml = history.map(item => {
+            const iconPath = config.tribes?.[item.tribe]?.icon || '';
+            const stateClass = item.isCurrent ? 'is-current' : 'is-past';
+            const shortDate = formatShortDate(item.joinDate);
+
+            return `
+                <button type="button" class="allegiance-badge ${stateClass}" data-tribe="${item.tribe}" data-date-index="${item.joinIndex}" title="${item.tribe} (${shortDate})">
+                    <img src="${iconPath}" alt="${item.tribe}" class="allegiance-icon">
+                    <span class="allegiance-date">${shortDate}</span>
+                </button>
+            `;
+        }).join('');
+
+        $playerLedger.html(badgesHtml).show();
+    }
+
+    function updateHeaderTitle() {
+        if (currentView === 'pn' && selectedPlayer) {
+            $mapHeaderTitle.html(`Player Network &bull; <span class="header-subtitle">${selectedPlayer}'s frequent opponents</span>`);
+        } else if (currentView === 'hn' && activeTribeFilter) {
+            $mapHeaderTitle.html(`${activeTribeFilter} Network &bull; <span class="header-subtitle">Double-click a player bubble</span>`);
+        } else {
+            $mapHeaderTitle.html(`Homelands Map &bull; <span class="header-subtitle">Click a region or search a player</span>`);
+        }
     }
 
     /* -------------------------------------------------------------------------
-       10.1 GRAPH DATA GENERATORS
+       10.1 GRAPH DATA GENERATORS (HM, HN, PN)
        ------------------------------------------------------------------------- */
     function buildGraphData(snapshot) {
         const activeTribes = Object.keys(snapshot || {});
         const nodes = [];
         const links = [];
 
-        // --- MODE PN: PLAYER NETWORK (Centré sur un joueur) ---
+        // --- VIEW PN: PLAYER NETWORK ---
         if (currentView === 'pn') {
             const constellations = window.PLAYER_CONSTELLATIONS || { players: {} };
             const allPlayersKeys = Object.keys(constellations.players || {});
@@ -1386,8 +1417,8 @@ $(document).ready(function () {
             return { nodes, links };
         }
 
-        // --- MODE HM / HN: HOMELANDS MAP & CONSTELLATION ---
-        if (!activeTribeFilter) {
+        // --- VIEW HM: HOMELANDS MAP ---
+        if (currentView === 'hm' || !activeTribeFilter) {
             activeTribes.forEach(t => {
                 const members = snapshot[t] || [];
                 const count = members.length;
@@ -1410,7 +1441,7 @@ $(document).ready(function () {
             return { nodes, links };
         }
 
-        // Tribe Constellation View
+        // --- VIEW HN: HOMELAND NETWORK ---
         const tribe = activeTribeFilter;
         const members = snapshot[tribe] || [];
         const count = members.length;
@@ -1468,11 +1499,11 @@ $(document).ready(function () {
                 angle: angle
             });
 
-            links.push({ 
-                source: tribe, 
-                target: playerId, 
+            links.push({
+                source: tribe,
+                target: playerId,
                 tier: tierKey,
-                color: color 
+                color: color
             });
         });
 
@@ -1496,35 +1527,19 @@ $(document).ready(function () {
             svg.append("g").attr("class", "nodes-layer");
         }
 
-        // --- Gestion de l'affichage du Ledger en mode PN ---
-        if (currentView === 'pn' && selectedPlayer) {
-            $playerLedger.show();
-            const history = getPlayerAllegianceHistory(selectedPlayer);
-            const $ledgerContent = $playerLedger.find('.ledger-content');
-            
-            if (history.length > 0) {
-                let html = '<ul class="ledger-list">';
-                history.forEach(item => {
-                    html += `<li><span class="ledger-date">${item.date}</span> : <strong class="ledger-tribe">${item.tribe}</strong> ${item.fidelity ? `(Fidelity: ${item.fidelity}%)` : ''}</li>`;
-                });
-                html += '</ul>';
-                $ledgerContent.html(html);
-            } else {
-                $ledgerContent.html('<p class="ledger-empty">No recorded allegiance history for this player.</p>');
-            }
-        } else {
-            if ($playerLedger.length) $playerLedger.hide();
-        }
-
         const { nodes: newNodes, links: newLinks } = buildGraphData(snapshot);
+        renderAllegianceLedger();
+        updateHeaderTitle();
 
         const prevNodesMap = new Map(simulation ? simulation.nodes().map(d => [d.id, d]) : []);
-        let originX = width / 2, originY = height / 2;
+        const originX = width / 2;
+        const originY = height / 2;
 
         newNodes.forEach(d => {
             const prev = prevNodesMap.get(d.id);
             if (prev) {
-                d.x = prev.x; d.y = prev.y;
+                d.x = prev.x;
+                d.y = prev.y;
             } else if ((d.type === 'player' || d.type === 'ego-partner') && d.dist != null) {
                 d.x = originX + d.dist * Math.cos(d.angle || 0);
                 d.y = originY + d.dist * Math.sin(d.angle || 0);
@@ -1588,21 +1603,23 @@ $(document).ready(function () {
                 g.select(".player-label").text("");
             } else if (d.type === 'ego-center') {
                 g.select(".node-icon").attr("href", "").attr("xlink:href", "");
-                g.select(".count-text").style("display", "none");
+                g.select(".num-span").text("");
+                g.select(".lbl-span").text("");
                 g.select(".player-label").text(d.name).attr("class", "player-label center-player-label");
             } else {
                 g.select(".node-icon").attr("href", "").attr("xlink:href", "");
-                g.select(".count-text").style("display", "none");
-                
-                const labelSel = g.select(".player-label");
+                g.select(".num-span").text("");
+                g.select(".lbl-span").text("");
+
+                const labelSel = g.select(".player-label").attr("class", "player-label");
                 labelSel.text("");
-                
+
                 labelSel.append("tspan")
                     .attr("class", "player-name-tspan")
                     .attr("x", 0)
                     .attr("dy", "0.3em")
                     .text(d.name);
-                
+
                 if (d.status) {
                     labelSel.append("tspan")
                         .attr("class", "player-status-tspan")
@@ -1613,28 +1630,24 @@ $(document).ready(function () {
             }
         });
 
-        // Click handler
+        // Clic simple : bascule HM <-> HN sur une tribu, ou change de joueur en mode PN
         node.on("click", (event, d) => {
             if (event.defaultPrevented) return;
 
-            if (d.type === 'tribe') {
-                if (currentView !== 'pn') {
-                    activeTribeFilter = (activeTribeFilter === d.id) ? null : d.id;
-                    updateView(dates[currentIndex]);
+            if (d.type === 'tribe' && currentView !== 'pn') {
+                activeTribeFilter = (activeTribeFilter === d.id) ? null : d.id;
+                currentView = activeTribeFilter ? 'hn' : 'hm';
+                updateView(dates[currentIndex]);
+            } else if ((d.type === 'player' || d.type === 'ego-partner') && currentView === 'pn') {
+                selectedPlayer = d.name;
+                if ($globalSearchInput.length) {
+                    $globalSearchInput.val(selectedPlayer);
                 }
-            } else if (d.type === 'player' || d.type === 'ego-partner') {
-                if (currentView === 'pn') {
-                    selectedPlayer = d.name;
-                    if ($globalSearchInput.length) {
-                        $globalSearchInput.val(selectedPlayer);
-                    }
-                    $mapHeaderTitle.html(`Player Network &bull; <span style="font-weight: 400; text-transform: none; opacity: 0.85;">${selectedPlayer}'s frequent opponents (Latest)</span>`);
-                    updateView(dates[dates.length - 1]);
-                }
+                updateView(dates[dates.length - 1]);
             }
         });
 
-        // Double-click handler (Passe en mode PN)
+        // Double-clic : passe en mode PN (Player Network)
         node.on("dblclick", (event, d) => {
             if (event.defaultPrevented) return;
 
@@ -1642,17 +1655,16 @@ $(document).ready(function () {
                 selectedPlayer = d.name;
                 currentView = 'pn';
                 $dateControls.hide();
-                
+
                 if ($globalSearchInput.length) {
                     $globalSearchInput.val(selectedPlayer);
                 }
-                
-                $mapHeaderTitle.html(`Player Network &bull; <span style="font-weight: 400; text-transform: none; opacity: 0.85;">${selectedPlayer}'s frequent opponents (Latest)</span>`);
+
                 updateView(dates[dates.length - 1]);
             }
         });
 
-        // --- Physics Simulation ---
+        // --- Physics Simulation (Gravité et orbites stables d'origine) ---
         if (!simulation) {
             simulation = d3.forceSimulation().alphaDecay(0.05);
         }
@@ -1681,7 +1693,7 @@ $(document).ready(function () {
         simulation.alpha(0.5).restart();
 
         simulation.on("tick", () => {
-            if (currentView === 'hm' && activeTribeFilter) {
+            if (currentView === 'hn' && activeTribeFilter) {
                 const hub = newNodes.find(n => n.id === activeTribeFilter);
                 if (hub) {
                     newNodes.forEach(d => {
@@ -1767,44 +1779,51 @@ $(document).ready(function () {
         }
     }
 
-    // --- Global Search & Reset Integration ---
+    // --- Clic sur un badge d'allégeance : saut temporel en mode HN ---
+    $playerLedger.on('click', '.allegiance-badge', function (e) {
+        e.stopPropagation();
+        const tribe = $(this).data('tribe');
+        const dateIdx = parseInt($(this).data('date-index'), 10);
+
+        if (!tribe || isNaN(dateIdx)) return;
+
+        currentView = 'hn';
+        activeTribeFilter = tribe;
+        $dateControls.show();
+        setDateByIndex(dateIdx);
+    });
+
+    // --- Barre de recherche globale : vide -> HM, joueur -> PN ---
     if ($globalSearchInput.length) {
-        $globalSearchInput.on('input change', function() {
+        $globalSearchInput.on('input change', function () {
             const query = $(this).val().trim();
             if (!query) {
-                // Si on vide la recherche : retour au mode HM (Homelands Map)
                 currentView = 'hm';
                 activeTribeFilter = null;
                 selectedPlayer = null;
-                if ($playerLedger.length) $playerLedger.hide();
                 $dateControls.show();
-                $mapHeaderTitle.html('Homelands Map &bull; <span style="font-weight: 400; text-transform: none; opacity: 0.85;">Click a region or player bubble</span>');
                 updateView(dates[currentIndex]);
             } else {
-                // Dès qu'on tape un nom : passage direct en mode PN (Player Network)
                 const found = getPlayerConstellationData(query);
                 if (found) {
                     selectedPlayer = found.canonicalName;
                     currentView = 'pn';
                     $dateControls.hide();
-                    $mapHeaderTitle.html(`Player Network &bull; <span style="font-weight: 400; text-transform: none; opacity: 0.85;">${selectedPlayer}'s frequent opponents (Latest)</span>`);
                     updateView(dates[dates.length - 1]);
                 }
             }
         });
     }
 
-    // Clic sur le titre pour réinitialiser (Retour Homelands Map + vider la recherche)
+    // --- Clic sur le titre : retour en mode HM et vidage de la recherche ---
     $mapHeaderTitle.on('click', () => {
         currentView = 'hm';
         activeTribeFilter = null;
         selectedPlayer = null;
-        if ($playerLedger.length) $playerLedger.hide();
         if ($globalSearchInput.length) {
             $globalSearchInput.val('').trigger('change');
         }
         $dateControls.show();
-        $mapHeaderTitle.html('Homelands Map &bull; <span style="font-weight: 400; text-transform: none; opacity: 0.85;">Click a region or player bubble</span>');
         updateView(dates[currentIndex]);
     });
 
