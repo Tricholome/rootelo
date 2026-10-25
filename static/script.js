@@ -1216,8 +1216,10 @@ $(document).ready(function () {
     const COLOR_UNALIGNED   = palette.unaligned   || config.tiers?.Default || 'var(--color-default)';
 
     function getFidelityAttenuatedColor(fidelity) {
-        const pct = Math.max(20, Math.min(100, Number(fidelity) || 0));
-        return `color-mix(in srgb, ${COLOR_SAME_TRIBE} ${pct}%, ${COLOR_UNALIGNED})`;
+        const val = Number(fidelity) || 0;
+        const ratio = Math.max(0, Math.min(1, (val - 35) / (95 - 35)));
+        const pct = Math.round(ratio * 100);
+        return `color-mix(in srgb, ${COLOR_SAME_TRIBE} ${pct}%, ${COLOR_OTHER_TRIBE})`;
     }
 
     function getPlayerNetworkColor(centerTribe, nodeTribe, isCenter) {
