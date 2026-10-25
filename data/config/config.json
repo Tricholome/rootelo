@@ -100,10 +100,10 @@
 		"CROSSBOW": { "icon": "assets/items/crossbow.png" },
 		"BOOT": { "icon": "assets/items/boot.png" }
 		},
-		"tiers": {
-		  "Partisan": "#6A9B1A",
-		  "Squire": "#A68F0A",
-		  "Friend": "#B8681A"
-		}
+		"colors": {
+	      "same_tribe":  "var(--main-color)",
+	      "other_tribe": "#B8681A",
+	      "unaligned":   "var(--bg-surface)"
+	    }
 	}
 }
