@@ -1815,12 +1815,12 @@ table.dataTable tbody tr.loser td {
     display: none;
     flex-direction: column;
     align-items: flex-end;
-    gap: 8px;
+    gap: 6px;
 }
 
 .allegiance-ledger-title {
     font-family: var(--font-ui);
-    font-size: var(--size-xs);
+    font-size: var(--size-xxs);
     font-weight: var(--bold);
     text-transform: uppercase;
     letter-spacing: var(--track-wide);
@@ -1832,15 +1832,19 @@ table.dataTable tbody tr.loser td {
 .allegiance-badge {
     display: inline-flex;
     align-items: center;
-    gap: 10px;
-    padding: 7px 14px;
+    justify-content: flex-start;
+    width: 145px;
+    box-sizing: border-box;
+    gap: 8px;
+    padding: 4px 10px;
     background: var(--bg-surface);
     border: 1px solid var(--border-soft);
-    border-radius: 8px;
+    border-radius: 6px;
     color: var(--text-main);
     font-family: var(--font-ui);
-    font-size: var(--size-sm);
+    font-size: var(--size-xs);
     font-weight: var(--medium);
+    white-space: nowrap;
     cursor: pointer;
     box-shadow: var(--glass-shadow);
     transition: transform 0.15s ease, border-color 0.2s ease, background-color 0.2s ease, opacity 0.2s ease, filter 0.2s ease;
@@ -1871,6 +1875,7 @@ table.dataTable tbody tr.loser td {
 .allegiance-icon {
     width: 28px;
     height: 28px;
+    flex-shrink: 0;
     object-fit: contain;
     filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.4));
 }
