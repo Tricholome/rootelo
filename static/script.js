@@ -1232,9 +1232,19 @@ $(document).ready(function () {
 
     // --- Populate Player Select Dropdown ---
     function populatePlayerDropdown(snapshot) {
-        const constellations = window.PLAYER_CONSTELLATIONS || {};
         const playerNamesSet = new Set();
         
+        if (snapshot) {
+            Object.values(snapshot).forEach(members => {
+                if (Array.isArray(members)) {
+                    members.forEach(m => {
+                        if (Array.isArray(m) && m[0]) playerNamesSet.add(m[0]);
+                    });
+                }
+            });
+        }
+        
+        const constellations = window.PLAYER_CONSTELLATIONS || {};
         if (constellations.players) {
             Object.keys(constellations.players).forEach(name => playerNamesSet.add(name));
         }
@@ -1262,6 +1272,12 @@ $(document).ready(function () {
 
     function getBadgeColor(status) {
         return config.tiers?.[status] || config.tiers?.Friend || "#B8681A";
+    }
+
+    function getPlayerTribe(playerName) {
+        const constellations = window.PLAYER_CONSTELLATIONS || { players: {} };
+        const playerData = constellations.players[playerName] || {};
+        return playerData.tribe || null;
     }
 
     function getStatusFromFidelity(fidelity) {
@@ -1296,16 +1312,8 @@ $(document).ready(function () {
             const constellations = window.PLAYER_CONSTELLATIONS || { players: {} };
             const playerData = constellations.players[selectedPlayer] || {};
             const centerTribe = playerData.tribe;
-            const rawPartners = playerData.partners || [];
-
-            // Filtrage progressif : Top 30 tolérant (1 match), puis exigence accrue
-            const filteredPartners = rawPartners.filter(([partnerName, games], idx) => {
-                const k = idx + 1;
-                const minReq = k <= 30 ? 1 : (k <= 60 ? 2 : 3);
-                return games >= min_req;
-            });
-
-            const maxGames = filteredPartners.length > 0 ? filteredPartners[0][1] : 1;
+            const topPartners = playerData.partners || [];
+            const maxWeight = topPartners.length > 0 ? topPartners[0][1] : 1;
 
             nodes.push({
                 id: selectedPlayer,
@@ -1315,17 +1323,16 @@ $(document).ready(function () {
                 color: centerTribe ? getBadgeColor(centerTribe) : 'var(--main-color)'
             });
 
-            filteredPartners.forEach(([partnerName, games], idx) => {
+            topPartners.forEach(([partnerName, weight], idx) => {
                 const partnerId = `partner_${partnerName}`;
-                const ratio = games / maxGames;
+                const ratio = weight / maxWeight;
                 const dist = 50 + (1 - ratio) * 130;
                 const radius = 8 + ratio * 14;
-                const angle = (2 * Math.PI * idx) / filteredPartners.length;
+                const angle = (2 * Math.PI * idx) / topPartners.length;
 
-                const partnerData = constellations.players[partnerName] || {};
-                const partnerTribe = partnerData.tribe;
+                const partnerTribe = getPlayerTribe(partnerName);
 
-                // Règle de couleur : On ne colore QUE si le partenaire appartient à la même tribu que le centre
+                // Règle de coloration : On ne colore QUE si le partenaire appartient à la même tribu que le centre
                 const isSameTribe = centerTribe && partnerTribe && (centerTribe === partnerTribe);
                 const color = isSameTribe ? getBadgeColor(partnerTribe) : 'var(--border-soft)';
 
@@ -1334,7 +1341,7 @@ $(document).ready(function () {
                     type: 'ego-partner',
                     name: partnerName,
                     tribe: partnerTribe,
-                    games: games,
+                    weight: weight,
                     color: color,
                     radius: radius,
                     dist: dist,
@@ -1344,7 +1351,7 @@ $(document).ready(function () {
                 links.push({
                     source: selectedPlayer,
                     target: partnerId,
-                    weight: games,
+                    weight: weight,
                     type: 'ego-link',
                     color: color
                 });
@@ -1377,7 +1384,7 @@ $(document).ready(function () {
             return { nodes, links };
         }
 
-        // --- VIEW C: TRIBE CONSTELLATION VIEW ---
+        // --- VIEW C: TRIBE CONSTELLATION VIEW (Organic Ring Layout) ---
         const tribe = activeTribeFilter;
         const members = snapshot[tribe] || [];
         const count = members.length;
@@ -1550,13 +1557,7 @@ $(document).ready(function () {
                     .attr("dy", "0.3em")
                     .text(d.name);
                 
-                if (d.type === 'ego-partner' && d.games !== undefined) {
-                    labelSel.append("tspan")
-                        .attr("class", "player-status-tspan")
-                        .attr("x", 0)
-                        .attr("dy", "1.1em")
-                        .text(`${d.games} match${d.games > 1 ? 'es' : ''}`);
-                } else if (d.status) {
+                if (d.status) {
                     labelSel.append("tspan")
                         .attr("class", "player-status-tspan")
                         .attr("x", 0)
