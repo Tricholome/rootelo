@@ -1207,6 +1207,7 @@ $(document).ready(function () {
     const $mapHeaderTitle = $('#mapHeaderTitle');
     const $dateControls = $('#dateControls');
     const $globalSearchInput = $('#playerName');
+    const $playerLedger = $('#playerLedger');
 
     // --- Helper Styling & Search Functions ---
     function tribeRadius(count) {
@@ -1254,6 +1255,59 @@ $(document).ready(function () {
             }
         }
         return null;
+    }
+
+    // --- Fonction pour extraire l'historique des allégeances d'un joueur à travers les snapshots ---
+    function getPlayerAllegianceHistory(playerName) {
+        const history = [];
+        if (!snapshots || !dates) return history;
+
+        dates.forEach(dateStr => {
+            const snap = snapshots[dateStr];
+            if (!snap) return;
+            
+            // On cherche dans quel homeland le joueur se trouve à cette date
+            let foundTribe = null;
+            let playerDetails = null;
+
+            if (snap.members_by_tribe) {
+                for (const [tribe, members] of Object.entries(snap.members_by_tribe)) {
+                    const match = members.find(m => m.name === playerName);
+                    if (match) {
+                        foundTribe = tribe;
+                        playerDetails = match;
+                        break;
+                    }
+                }
+            } else {
+                // Fallback structure alternative si nécessaire
+                for (const [tribe, members] of Object.entries(snap)) {
+                    if (Array.isArray(members)) {
+                        const match = members.find(m => m[0] === playerName);
+                        if (match) {
+                            foundTribe = tribe;
+                            playerDetails = { name: match[0], fidelity: match[1], weight: match[2] };
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (foundTribe) {
+                // Évite les doublons consécutifs si la tribu ne change pas d'un jour sur l'autre
+                const lastEntry = history[history.length - 1];
+                if (!lastEntry || lastEntry.tribe !== foundTribe) {
+                    history.push({
+                        date: dateStr,
+                        tribe: foundTribe,
+                        fidelity: playerDetails?.fidelity || null,
+                        weight: playerDetails?.weight || null
+                    });
+                }
+            }
+        });
+
+        return history;
     }
 
     /* -------------------------------------------------------------------------
@@ -1426,7 +1480,7 @@ $(document).ready(function () {
     }
 
     /* -------------------------------------------------------------------------
-       10.2 D3 DYNAMIC RENDER ENGINE (Stable Physics Restored)
+       10.2 D3 DYNAMIC RENDER ENGINE
        ------------------------------------------------------------------------- */
     function renderGraph(snapshot) {
         if (typeof d3 === 'undefined') return;
@@ -1440,6 +1494,26 @@ $(document).ready(function () {
         if (svg.select("g.links-layer").empty()) {
             svg.append("g").attr("class", "links-layer");
             svg.append("g").attr("class", "nodes-layer");
+        }
+
+        // --- Gestion de l'affichage du Ledger en mode PN ---
+        if (currentView === 'pn' && selectedPlayer) {
+            $playerLedger.show();
+            const history = getPlayerAllegianceHistory(selectedPlayer);
+            const $ledgerContent = $playerLedger.find('.ledger-content');
+            
+            if (history.length > 0) {
+                let html = '<ul class="ledger-list">';
+                history.forEach(item => {
+                    html += `<li><span class="ledger-date">${item.date}</span> : <strong class="ledger-tribe">${item.tribe}</strong> ${item.fidelity ? `(Fidelity: ${item.fidelity}%)` : ''}</li>`;
+                });
+                html += '</ul>';
+                $ledgerContent.html(html);
+            } else {
+                $ledgerContent.html('<p class="ledger-empty">No recorded allegiance history for this player.</p>');
+            }
+        } else {
+            if ($playerLedger.length) $playerLedger.hide();
         }
 
         const { nodes: newNodes, links: newLinks } = buildGraphData(snapshot);
@@ -1578,7 +1652,7 @@ $(document).ready(function () {
             }
         });
 
-        // --- Physics Simulation (Stable Original Forces Restored) ---
+        // --- Physics Simulation ---
         if (!simulation) {
             simulation = d3.forceSimulation().alphaDecay(0.05);
         }
@@ -1607,7 +1681,6 @@ $(document).ready(function () {
         simulation.alpha(0.5).restart();
 
         simulation.on("tick", () => {
-            // Gravité orbitale stable d'origine
             if (currentView === 'hm' && activeTribeFilter) {
                 const hub = newNodes.find(n => n.id === activeTribeFilter);
                 if (hub) {
@@ -1703,6 +1776,7 @@ $(document).ready(function () {
                 currentView = 'hm';
                 activeTribeFilter = null;
                 selectedPlayer = null;
+                if ($playerLedger.length) $playerLedger.hide();
                 $dateControls.show();
                 $mapHeaderTitle.html('Homelands Map &bull; <span style="font-weight: 400; text-transform: none; opacity: 0.85;">Click a region or player bubble</span>');
                 updateView(dates[currentIndex]);
@@ -1725,6 +1799,7 @@ $(document).ready(function () {
         currentView = 'hm';
         activeTribeFilter = null;
         selectedPlayer = null;
+        if ($playerLedger.length) $playerLedger.hide();
         if ($globalSearchInput.length) {
             $globalSearchInput.val('').trigger('change');
         }
