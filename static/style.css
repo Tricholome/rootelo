@@ -1806,15 +1806,15 @@ table.dataTable tbody tr.loser td {
     background-color: var(--bg-hover);
 }
 
-/* --- C. Allegiance Ledger (PN Mode) --- */
+/* --- C. Allegiance Ledger (Top-Right in PN Mode) --- */
 .allegiance-ledger {
     position: absolute;
-    top: 48px;
-    left: 18px;
+    top: 14px;
+    right: 18px;
     z-index: 10;
     display: none;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: flex-end;
     gap: 8px;
 }
 
@@ -1849,7 +1849,7 @@ table.dataTable tbody tr.loser td {
 .allegiance-badge:hover {
     border-color: var(--main-color);
     background: var(--bg-hover);
-    transform: translateX(4px);
+    transform: translateX(-4px);
 }
 
 .allegiance-badge.is-current {
@@ -1970,10 +1970,8 @@ table.dataTable tbody tr.loser td {
 }
 
 /* 4. Player Labels & Hover Subtitles */
-#tribeMapSvg .center-player-label {
-    font-size: var(--size-xs);
-    font-weight: var(--bold);
-    fill: var(--text-bright);
+#tribeMapSvg .player-label {
+    transition: transform 0.2s ease;
 }
 
 #tribeMapSvg .player-name-tspan {
@@ -1983,25 +1981,39 @@ table.dataTable tbody tr.loser td {
     transition: fill 0.2s ease;
 }
 
+#tribeMapSvg .node-group.type-ego-center .player-name-tspan {
+    font-size: var(--size-xs);
+    font-weight: var(--bold);
+    fill: var(--text-bright);
+}
+
 #tribeMapSvg .player-status-tspan {
     font-size: var(--size-xxs);
-    font-weight: var(--normal);
+    font-weight: var(--medium);
     font-style: italic;
-    fill: var(--text-muted);
+    fill: var(--text-bright);
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.2s ease, visibility 0.2s ease;
 }
 
+#tribeMapSvg .node-group.type-player:hover .player-label,
+#tribeMapSvg .node-group.type-ego-partner:hover .player-label,
+#tribeMapSvg .node-group.type-ego-center:hover .player-label {
+    transform: translateY(-0.35em);
+}
+
 #tribeMapSvg .node-group.type-player:hover .player-name-tspan,
-#tribeMapSvg .node-group.type-ego-partner:hover .player-name-tspan {
-    font-weight: var(--medium);
+#tribeMapSvg .node-group.type-ego-partner:hover .player-name-tspan,
+#tribeMapSvg .node-group.type-ego-center:hover .player-name-tspan {
+    font-weight: var(--bold);
     fill: var(--text-bright);
 }
 
 #tribeMapSvg .node-group.type-player:hover .player-status-tspan,
-#tribeMapSvg .node-group.type-ego-partner:hover .player-status-tspan {
-    opacity: 0.95;
+#tribeMapSvg .node-group.type-ego-partner:hover .player-status-tspan,
+#tribeMapSvg .node-group.type-ego-center:hover .player-status-tspan {
+    opacity: 1;
     visibility: visible;
 }
 
