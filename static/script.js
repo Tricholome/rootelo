@@ -1239,12 +1239,6 @@ $(document).ready(function () {
         return config.tiers?.[status] || config.tiers?.Friend || "#B8681A";
     }
 
-    function getPlayerTribe(playerName) {
-        const constellations = window.PLAYER_CONSTELLATIONS || { players: {} };
-        const playerData = constellations.players[playerName] || {};
-        return playerData.tribe || null;
-    }
-
     function getStatusFromFidelity(fidelity) {
         if (fidelity >= 85) return 'Partisan';
         if (fidelity >= 65) return 'Squire';
@@ -1259,6 +1253,28 @@ $(document).ready(function () {
         return (hash % 10000) / 10000;
     }
 
+    // Recherche robuste et insensible à la casse dans les constellations
+    function getPlayerConstellationData(query) {
+        const constellations = window.PLAYER_CONSTELLATIONS || { players: {} };
+        const playersMap = constellations.players || {};
+        if (!query) return null;
+
+        const trimmed = query.trim();
+        // 1. Correspondance exacte
+        if (playersMap[trimmed]) {
+            return { canonicalName: trimmed, data: playersMap[trimmed] };
+        }
+
+        // 2. Correspondance insensible à la casse
+        const lowerQ = trimmed.toLowerCase();
+        for (const [name, data] of Object.entries(playersMap)) {
+            if (name.toLowerCase() === lowerQ) {
+                return { canonicalName: name, data };
+            }
+        }
+        return null;
+    }
+
     /* -------------------------------------------------------------------------
        10.1 GRAPH DATA GENERATORS (Macro vs Ego-Network)
        ------------------------------------------------------------------------- */
@@ -1269,18 +1285,30 @@ $(document).ready(function () {
 
         // --- VIEW A: PLAYER EGO-NETWORK VIEW ---
         if (currentView === 'ego') {
-            if ($globalSearchInput.length && $globalSearchInput.val().trim()) {
-                selectedPlayer = $globalSearchInput.val().trim();
-            }
+            const query = ($globalSearchInput.length ? $globalSearchInput.val().trim() : '') || selectedPlayer;
+            const found = getPlayerConstellationData(query);
 
             const constellations = window.PLAYER_CONSTELLATIONS || { players: {} };
-            
-            if (!selectedPlayer || !constellations.players[selectedPlayer]) {
+            const allPlayersKeys = Object.keys(constellations.players || {});
+
+            // Si aucun joueur valide n'est trouvé, on prend le premier disponible par défaut
+            let targetName = found ? found.canonicalName : null;
+            let playerData = found ? found.data : null;
+
+            if (!targetName && allPlayersKeys.length > 0) {
+                targetName = allPlayersKeys[0];
+                playerData = constellations.players[targetName];
+                selectedPlayer = targetName;
+                if ($globalSearchInput.length) {
+                    $globalSearchInput.val(targetName);
+                }
+            }
+
+            if (!targetName || !playerData) {
                 nodes.push({ id: 'placeholder', type: 'tribe', label: 'Search a player above', count: 0, radius: 40 });
                 return { nodes, links };
             }
 
-            const playerData = constellations.players[selectedPlayer] || {};
             const centerTribe = playerData.tribe;
             const rawPartners = playerData.partners || [];
 
@@ -1294,9 +1322,9 @@ $(document).ready(function () {
             const maxGames = filteredPartners.length > 0 ? filteredPartners[0][1] : 1;
 
             nodes.push({
-                id: selectedPlayer,
+                id: targetName,
                 type: 'ego-center',
-                name: selectedPlayer,
+                name: targetName,
                 radius: 28,
                 color: centerTribe ? getBadgeColor(centerTribe) : 'var(--main-color)'
             });
@@ -1328,7 +1356,7 @@ $(document).ready(function () {
                 });
 
                 links.push({
-                    source: selectedPlayer,
+                    source: targetName,
                     target: partnerId,
                     weight: games,
                     type: 'ego-link',
@@ -1708,7 +1736,19 @@ $(document).ready(function () {
         $macroViewBtn.removeClass('active');
         $dateControls.hide();
         
-        selectedPlayer = $globalSearchInput.val().trim() || selectedPlayer;
+        const query = $globalSearchInput.length ? $globalSearchInput.val().trim() : '';
+        const found = getPlayerConstellationData(query);
+        if (found) {
+            selectedPlayer = found.canonicalName;
+        } else if (!selectedPlayer) {
+            const keys = Object.keys(window.PLAYER_CONSTELLATIONS?.players || {});
+            if (keys.length > 0) selectedPlayer = keys[0];
+        }
+
+        if (selectedPlayer && $globalSearchInput.length) {
+            $globalSearchInput.val(selectedPlayer);
+        }
+
         $mapHeaderTitle.html(`Player Network &bull; <span style="font-weight: 400; text-transform: none; opacity: 0.85;">${selectedPlayer ? selectedPlayer + "'s frequent opponents (Latest)" : "Search a player above"}</span>`);
         
         updateView(dates[dates.length - 1]);
@@ -1717,7 +1757,11 @@ $(document).ready(function () {
     if ($globalSearchInput.length) {
         $globalSearchInput.on('input change', function() {
             if (currentView === 'ego') {
-                selectedPlayer = $(this).val().trim();
+                const query = $(this).val().trim();
+                const found = getPlayerConstellationData(query);
+                if (found) {
+                    selectedPlayer = found.canonicalName;
+                }
                 $mapHeaderTitle.html(`Player Network &bull; <span style="font-weight: 400; text-transform: none; opacity: 0.85;">${selectedPlayer ? selectedPlayer + "'s frequent opponents (Latest)" : "Search a player above"}</span>`);
                 updateView(dates[dates.length - 1]);
             }
