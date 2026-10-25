@@ -1201,7 +1201,7 @@ function showVisitorRow(name, date) {
 }
 
 /* =========================================================================
-   --- 10. HOMELANDS MAP & PLAYER NETWORK ENGINE ---
+   --- 10. HOMELANDS MAP & PLAYER EGO-NETWORK ENGINE ---
    ========================================================================= */
 
 $(document).ready(function () {
@@ -1212,9 +1212,9 @@ $(document).ready(function () {
     if (!dates || !dates.length || !snapshots) return;
 
     // --- State Variables ---
-    let currentView = 'hm'; // 'hm' (Homelands Map), 'hn' (Homeland Network), 'pn' (Player Network)
+    let currentView = 'macro'; // 'macro' or 'ego'
     let activeTribeFilter = null;
-    let selectedPlayer = null;
+    let selectedPlayer = localStorage.getItem('selectedPlayer') || null;
     let simulation = null;
     let currentIndex = dates.length - 1;
 
@@ -1224,11 +1224,13 @@ $(document).ready(function () {
     const $nextBtn = $('#nextDateBtn');
     const $earliestBtn = $('#earliestDateBtn');
     const $latestBtn = $('#latestDateBtn');
+    const $macroViewBtn = $('#macroViewBtn');
+    const $egoViewBtn = $('#egoViewBtn');
     const $mapHeaderTitle = $('#mapHeaderTitle');
     const $dateControls = $('#dateControls');
-    const $globalSearchInput = $('#playerName');
+    const $globalSearchInput = $('#playerName'); // Barre de recherche globale du site
 
-    // --- Helper Styling & Resolution Functions ---
+    // --- Helper Styling & Search Functions ---
     function tribeRadius(count) {
         return Math.max(32, 24 + Math.sqrt(count || 0) * 10);
     }
@@ -1237,22 +1239,10 @@ $(document).ready(function () {
         return config.tiers?.[status] || config.tiers?.Friend || "#B8681A";
     }
 
-    function getPlayerTribeAtDate(playerName, snapshot) {
-        if (!snapshot || !snapshot.members_by_tribe) return null;
-        for (const [tribe, members] of Object.entries(snapshot.members_by_tribe)) {
-            if (members.some(m => m.name === playerName)) return tribe;
-        }
-        return null;
-    }
-
-    function getPlayerConstellationData(playerName) {
+    function getPlayerTribe(playerName) {
         const constellations = window.PLAYER_CONSTELLATIONS || { players: {} };
-        if (!playerName) return null;
-        const lowerQ = playerName.trim().toLowerCase();
-        for (const [name, data] of Object.entries(constellations.players || {})) {
-            if (name.toLowerCase() === lowerQ) return { canonicalName: name, data };
-        }
-        return null;
+        const playerData = constellations.players[playerName] || {};
+        return playerData.tribe || null;
     }
 
     function getStatusFromFidelity(fidelity) {
@@ -1269,20 +1259,53 @@ $(document).ready(function () {
         return (hash % 10000) / 10000;
     }
 
+    // Recherche robuste et insensible à la casse dans les constellations
+    function getPlayerConstellationData(query) {
+        const constellations = window.PLAYER_CONSTELLATIONS || { players: {} };
+        const playersMap = constellations.players || {};
+        if (!query) return null;
+
+        const trimmed = query.trim();
+        if (playersMap[trimmed]) {
+            return { canonicalName: trimmed, data: playersMap[trimmed] };
+        }
+
+        const lowerQ = trimmed.toLowerCase();
+        for (const [name, data] of Object.entries(playersMap)) {
+            if (name.toLowerCase() === lowerQ) {
+                return { canonicalName: name, data };
+            }
+        }
+        return null;
+    }
+
     /* -------------------------------------------------------------------------
-       10.1 GRAPH DATA GENERATORS (HM vs HN vs PN)
+       10.1 GRAPH DATA GENERATORS (Macro vs Ego-Network)
        ------------------------------------------------------------------------- */
     function buildGraphData(snapshot) {
-        const activeTribes = snapshot.active_tribes || Object.keys(snapshot || {});
+        const activeTribes = Object.keys(snapshot || {});
         const nodes = [];
         const links = [];
 
-        // --- MODE PN: PLAYER NETWORK (Hors-temps, centré sur le joueur) ---
-        if (currentView === 'pn') {
-            const found = getPlayerConstellationData(selectedPlayer);
-            if (!found) {
-                nodes.push({ id: 'placeholder', type: 'tribe', label: 'Player not found', count: 0, radius: 40 });
+        // --- VIEW A: PLAYER EGO-NETWORK VIEW ---
+        if (currentView === 'ego') {
+            const constellations = window.PLAYER_CONSTELLATIONS || { players: {} };
+            const allPlayersKeys = Object.keys(constellations.players || {});
+
+            if (allPlayersKeys.length === 0) {
+                nodes.push({ id: 'placeholder', type: 'tribe', label: 'No player data available', count: 0, radius: 40 });
                 return { nodes, links };
+            }
+
+            // Priorité à selectedPlayer, sinon la valeur de la barre de recherche globale
+            const query = selectedPlayer || ($globalSearchInput.length ? $globalSearchInput.val().trim() : '');
+            let found = getPlayerConstellationData(query);
+
+            if (!found) {
+                selectedPlayer = allPlayersKeys[0];
+                found = { canonicalName: selectedPlayer, data: constellations.players[selectedPlayer] };
+            } else {
+                selectedPlayer = found.canonicalName;
             }
 
             const playerData = found.data;
@@ -1305,8 +1328,7 @@ $(document).ready(function () {
                 const radius = 8 + ratio * 14;
                 const angle = (2 * Math.PI * idx) / topPartners.length;
 
-                const partnerConst = getPlayerConstellationData(partnerName);
-                const partnerTribe = partnerConst ? partnerConst.data.tribe : null;
+                const partnerTribe = getPlayerTribe(partnerName);
                 const isSameTribe = centerTribe && partnerTribe && (centerTribe === partnerTribe);
                 const color = isSameTribe ? getBadgeColor(partnerTribe) : 'var(--border-soft)';
 
@@ -1334,15 +1356,15 @@ $(document).ready(function () {
             return { nodes, links };
         }
 
-        // --- MODE HM: HOMELANDS MAP (Vue globale par défaut) ---
-        if (currentView === 'hm' || !activeTribeFilter) {
+        // --- VIEW B: MACRO HOMELANDS VIEW ---
+        if (!activeTribeFilter) {
             activeTribes.forEach(t => {
-                const members = snapshot.members_by_tribe?.[t] || snapshot[t] || [];
+                const members = snapshot[t] || [];
                 const count = members.length;
                 nodes.push({
                     id: t,
                     type: 'tribe',
-                    label: snapshot.tribe_labels?.[t] || t,
+                    label: t,
                     count: count,
                     radius: tribeRadius(count)
                 });
@@ -1358,73 +1380,58 @@ $(document).ready(function () {
             return { nodes, links };
         }
 
-        // --- MODE HN: HOMELAND NETWORK (Zoom sur une tribu spécifique ou filtré par joueur) ---
+        // --- VIEW C: TRIBE CONSTELLATION VIEW ---
         const tribe = activeTribeFilter;
-		
-		if (!tribe) {
-            nodes.push({
-                id: `player_solo_${selectedPlayer}`,
-                type: 'player',
-                name: selectedPlayer || 'Unknown',
-                radius: 16,
-                color: 'var(--border-soft)',
-                dist: 0,
-                angle: 0
-            });
-            return { nodes, links };
-        }
-		
-        const members = snapshot.members_by_tribe?.[tribe] || snapshot[tribe] || [];
+        const members = snapshot[tribe] || [];
         const count = members.length;
 
         nodes.push({
             id: tribe,
             type: 'tribe',
-            label: snapshot.tribe_labels?.[tribe] || tribe,
+            label: tribe,
             count: count,
             radius: tribeRadius(count)
         });
 
-        // Gestion du format des membres (selon la structure du snapshot)
-        const formattedMembers = members.map(m => {
-            if (Array.isArray(m)) return { name: m[0], fidelity: m[1], weight: m[2], role: 'member' };
-            return { name: m.name, fidelity: m.fidelity || 50, weight: m.weight || 1, role: m.role || 'member' };
-        });
-
-        const sortedMembers = [...formattedMembers].sort((a, b) => b.weight - a.weight);
-        const maxWeight = sortedMembers.length > 0 ? sortedMembers[0].weight : 1;
+        const sortedMembers = [...members].sort((a, b) => b[2] - a[2]);
+        const maxWeight = sortedMembers.length > 0 ? sortedMembers[0][2] : 1;
         const TIER_PHASE = { core: 0, mid: 0.22, outer: 0.47 };
 
-        sortedMembers.forEach((p, index) => {
-            const ratio = maxWeight > 0 ? (p.weight / maxWeight) : 0;
+        sortedMembers.forEach(([playerName, fidelity, weight], index) => {
+            const ratio = maxWeight > 0 ? (weight / maxWeight) : 0;
             const radius = 8 + (ratio * 14);
 
             let dist, tierKey;
             if (index < Math.max(1, Math.floor(count * 0.25))) {
-                dist = 75; tierKey = 'core';
+                dist = 75;
+                tierKey = 'core';
             } else if (index < Math.max(2, Math.floor(count * 0.65))) {
-                dist = 125; tierKey = 'mid';
+                dist = 125;
+                tierKey = 'mid';
             } else {
-                dist = 185; tierKey = 'outer';
+                dist = 185;
+                tierKey = 'outer';
             }
 
-            const status = getStatusFromFidelity(p.fidelity);
+            const status = getStatusFromFidelity(fidelity);
             const color = getBadgeColor(status);
 
             const totalTier = count || 1;
             const slot = (2 * Math.PI) / totalTier;
             const phase = (TIER_PHASE[tierKey] || 0) * 2 * Math.PI;
-            const jitter = (nameJitter01(p.name) - 0.5) * slot * 0.6;
+            const jitter = (nameJitter01(playerName) - 0.5) * slot * 0.6;
             const angle = phase + (slot * index) + jitter - (Math.PI / 2);
 
+            const playerId = `player_${playerName}`;
+
             nodes.push({
-                id: `player_${p.name}`,
+                id: playerId,
                 type: 'player',
-                name: p.name,
+                name: playerName,
                 tier: tierKey,
                 status: status,
-                fidelity: p.fidelity,
-                weight: p.weight,
+                fidelity: fidelity,
+                weight: weight,
                 color: color,
                 radius: radius,
                 dist: dist,
@@ -1433,7 +1440,7 @@ $(document).ready(function () {
 
             links.push({ 
                 source: tribe, 
-                target: `player_${p.name}`, 
+                target: playerId, 
                 tier: tierKey,
                 color: color 
             });
@@ -1460,6 +1467,7 @@ $(document).ready(function () {
         }
 
         const { nodes: newNodes, links: newLinks } = buildGraphData(snapshot);
+
         const prevNodesMap = new Map(simulation ? simulation.nodes().map(d => [d.id, d]) : []);
         let originX = width / 2, originY = height / 2;
 
@@ -1486,11 +1494,15 @@ $(document).ready(function () {
             .data(newLinks, d => `${d.source.id || d.source}-${d.target.id || d.target}`);
 
         linkSel.exit().transition().duration(duration).attr("stroke-opacity", 0).remove();
+
         const link = linkSel.enter().append("line").merge(linkSel);
-        link.attr("class", d => `link ${d.type || 'constellation-link'}`).style("stroke", d => d.color || null);
+        link.attr("class", d => `link ${d.type || 'constellation-link'}`)
+            .style("stroke", d => d.color || null);
 
         // --- Nodes Update ---
-        const nodeSel = svg.select("g.nodes-layer").selectAll("g.node-group").data(newNodes, d => d.id);
+        const nodeSel = svg.select("g.nodes-layer").selectAll("g.node-group")
+            .data(newNodes, d => d.id);
+
         nodeSel.exit().transition().duration(duration).style("opacity", 0).remove();
 
         const nodeEnter = nodeSel.enter().append("g").call(drag);
@@ -1500,9 +1512,11 @@ $(document).ready(function () {
         const textGroup = nodeEnter.append("text").attr("class", "count-text");
         textGroup.append("tspan").attr("class", "num-span").attr("x", 0).attr("dy", "0");
         textGroup.append("tspan").attr("class", "lbl-span").attr("x", 0).attr("dy", "1.2em");
+
         nodeEnter.append("text").attr("class", "player-label");
 
         const node = nodeEnter.merge(nodeSel);
+
         node.attr("class", d => `node-group type-${d.type} ${activeTribeFilter === d.id ? 'is-selected' : ''}`)
             .style("--node-color", d => d.color || null)
             .transition().duration(duration).style("opacity", 1);
@@ -1514,7 +1528,8 @@ $(document).ready(function () {
             if (d.type === 'tribe') {
                 const iconPath = config.tribes?.[d.id]?.icon || '';
                 const iconSize = Math.max(24, d.radius * 0.7);
-                g.select(".node-icon").attr("href", iconPath).attr("xlink:href", iconPath)
+                g.select(".node-icon")
+                    .attr("href", iconPath).attr("xlink:href", iconPath)
                     .attr("width", iconSize).attr("height", iconSize)
                     .attr("x", -iconSize / 2).attr("y", -iconSize / 2 - 6);
                 g.select(".count-text").attr("transform", `translate(0, ${iconSize / 2 + 8})`);
@@ -1528,51 +1543,57 @@ $(document).ready(function () {
             } else {
                 g.select(".node-icon").attr("href", "").attr("xlink:href", "");
                 g.select(".count-text").style("display", "none");
+                
                 const labelSel = g.select(".player-label");
                 labelSel.text("");
-                labelSel.append("tspan").attr("class", "player-name-tspan").attr("x", 0).attr("dy", "0.3em").text(d.name);
+                
+                labelSel.append("tspan")
+                    .attr("class", "player-name-tspan")
+                    .attr("x", 0)
+                    .attr("dy", "0.3em")
+                    .text(d.name);
+                
                 if (d.status) {
-                    labelSel.append("tspan").attr("class", "player-status-tspan").attr("x", 0).attr("dy", "1.1em").text(d.status);
+                    labelSel.append("tspan")
+                        .attr("class", "player-status-tspan")
+                        .attr("x", 0)
+                        .attr("dy", "1.1em")
+                        .text(d.status);
                 }
             }
         });
 
-        // --- Interaction Handlers ---
-        // Clic simple : Homelands Map (HM) ou Homeland Network (HN)
+        // Click handler
         node.on("click", (event, d) => {
             if (event.defaultPrevented) return;
+
             if (d.type === 'tribe') {
                 activeTribeFilter = (activeTribeFilter === d.id) ? null : d.id;
-                currentView = activeTribeFilter ? 'hn' : 'hm';
                 updateView(dates[currentIndex]);
-            }
-        });
-
-        // Double-clic : Player Network (PN) (Hors-temps)
-        node.on("dblclick", (event, d) => {
-            if (event.defaultPrevented) return;
-            if (d.type === 'player' || d.type === 'ego-partner' || d.type === 'tribe') {
-                const targetName = d.name || (d.type === 'player' ? d.id.replace('player_', '') : null);
-                if (!targetName) return;
-
-                selectedPlayer = targetName;
-                currentView = 'pn';
-                $dateControls.hide(); // Masque la frise de dates
-
+            } else if (d.type === 'player' || d.type === 'ego-partner') {
+                selectedPlayer = d.name;
+                currentView = 'ego';
+                
+                $egoViewBtn.addClass('active');
+                $macroViewBtn.removeClass('active');
+                $dateControls.hide();
+                
                 if ($globalSearchInput.length) {
                     $globalSearchInput.val(selectedPlayer);
                 }
-
-                $mapHeaderTitle.html(`Player Network &bull; <span style="font-weight: 400; text-transform: none; opacity: 0.85;">${selectedPlayer} (Season History)</span>`);
+                
+                $mapHeaderTitle.html(`Player Network &bull; <span style="font-weight: 400; text-transform: none; opacity: 0.85;">${selectedPlayer}'s frequent opponents (Latest)</span>`);
                 updateView(dates[dates.length - 1]);
             }
         });
 
         // --- Physics Simulation ---
-        if (!simulation) simulation = d3.forceSimulation().alphaDecay(0.05);
+        if (!simulation) {
+            simulation = d3.forceSimulation().alphaDecay(0.05);
+        }
         const linkForce = d3.forceLink().id(d => d.id);
 
-        if (currentView === 'hm' && !activeTribeFilter) {
+        if (currentView === 'macro' && !activeTribeFilter) {
             simulation
                 .force("center", d3.forceCenter(width / 2, height / 2))
                 .force("radial", null)
@@ -1595,6 +1616,32 @@ $(document).ready(function () {
         simulation.alpha(0.5).restart();
 
         simulation.on("tick", () => {
+            if (currentView === 'macro' && activeTribeFilter) {
+                const hub = newNodes.find(n => n.id === activeTribeFilter);
+                if (hub) {
+                    newNodes.forEach(d => {
+                        if (d.type !== 'player' || d.dist == null || d.fx != null) return;
+                        const dx = d.x - hub.x, dy = d.y - hub.y;
+                        const r = Math.sqrt(dx * dx + dy * dy) || 1e-6;
+                        const k = (d.dist - r) / r * 0.12;
+                        d.x += dx * k;
+                        d.y += dy * k;
+                    });
+                }
+            } else if (currentView === 'ego' && selectedPlayer) {
+                const centerNode = newNodes.find(n => n.id === selectedPlayer);
+                if (centerNode) {
+                    newNodes.forEach(d => {
+                        if (d.type !== 'ego-partner' || d.dist == null || d.fx != null) return;
+                        const dx = d.x - centerNode.x, dy = d.y - centerNode.y;
+                        const r = Math.sqrt(dx * dx + dy * dy) || 1e-6;
+                        const k = (d.dist - r) / r * 0.15;
+                        d.x += dx * k;
+                        d.y += dy * k;
+                    });
+                }
+            }
+
             newNodes.forEach(d => {
                 d.x = Math.max(d.radius, Math.min(width - d.radius, d.x));
                 d.y = Math.max(d.radius, Math.min(height - d.radius, d.y));
@@ -1630,7 +1677,7 @@ $(document).ready(function () {
        10.3 TIMELINE & VIEW MANAGEMENT
        ------------------------------------------------------------------------- */
     function updateView(selectedDate) {
-        if (currentView === 'pn') {
+        if (currentView === 'ego') {
             selectedDate = dates[dates.length - 1];
         }
         $datePicker.val(selectedDate);
@@ -1639,7 +1686,7 @@ $(document).ready(function () {
 
         renderGraph(snapshot);
 
-        if (currentView === 'pn') {
+        if (currentView === 'ego') {
             $prevBtn.prop('disabled', true);
             $nextBtn.prop('disabled', true);
         } else {
@@ -1655,56 +1702,59 @@ $(document).ready(function () {
         }
     }
 
-    // --- Global Search & HM -> HN Transition ---
-    if ($globalSearchInput.length) {
-        $globalSearchInput.on('input change', function() {
-            const query = $(this).val().trim();
-            
-            if (!query) {
-                // Si on vide la recherche : retour propre en mode HM (Homelands Map)
-                currentView = 'hm';
-                activeTribeFilter = null;
-                selectedPlayer = null;
-                $dateControls.show();
-                $mapHeaderTitle.html('Homelands Map &bull; <span style="font-weight: 400; text-transform: none; opacity: 0.85;">Click a region or player bubble</span>');
-                updateView(dates[currentIndex]);
-            } else {
-                // Si on tape un nom en mode HM ou HN : on cherche sa tribu à la date actuelle
-                const snapshot = snapshots[dates[currentIndex]];
-                const tribe = getPlayerTribeAtDate(query, snapshot);
-
-                if (tribe) {
-                    // Cas 1 : Le joueur appartient à un Homeland à cette date -> Passage en mode HN sur sa tribu
-                    currentView = 'hn';
-                    activeTribeFilter = tribe;
-                    $dateControls.show();
-                    $mapHeaderTitle.html(`${tribe} Homeland &bull; <span style="font-weight: 400; text-transform: none; opacity: 0.85;">Filtered for ${query}</span>`);
-                    updateView(dates[currentIndex]);
-                } else {
-                    // Cas 2 : Le joueur n'a pas de Homeland à cette date (ou inconnu) -> Mode HN neutre / bulle seule
-                    currentView = 'hn';
-                    activeTribeFilter = null; // Pas de tribu, on affichera une bulle neutre ou un état vide gracieux
-                    selectedPlayer = query;
-                    $dateControls.show();
-                    $mapHeaderTitle.html(`Player Search &bull; <span style="font-weight: 400; text-transform: none; opacity: 0.85;">${query} (No homeland at this date)</span>`);
-                    updateView(dates[currentIndex]);
-                }
-            }
-        });
-    }
-
-    // Clic sur le titre pour réinitialiser (Retour Homelands Map + vider la recherche)
-    $mapHeaderTitle.on('click', () => {
-        currentView = 'hm';
+    // --- Event Listeners ---
+    $macroViewBtn.on('click', () => {
+        currentView = 'macro';
         activeTribeFilter = null;
-        selectedPlayer = null;
-        if ($globalSearchInput.length) {
-            $globalSearchInput.val('').trigger('change');
-        }
+        $macroViewBtn.addClass('active');
+        $egoViewBtn.removeClass('active');
         $dateControls.show();
         $mapHeaderTitle.html('Homelands Map &bull; <span style="font-weight: 400; text-transform: none; opacity: 0.85;">Click a region or player bubble</span>');
         updateView(dates[currentIndex]);
     });
+
+    $egoViewBtn.on('click', () => {
+        currentView = 'ego';
+        $egoViewBtn.addClass('active');
+        $macroViewBtn.removeClass('active');
+        $dateControls.hide();
+        
+        const constellations = window.PLAYER_CONSTELLATIONS || { players: {} };
+        const keys = Object.keys(constellations.players || {});
+        const query = $globalSearchInput.length ? $globalSearchInput.val().trim() : '';
+        const found = getPlayerConstellationData(query);
+
+        if (found) {
+            selectedPlayer = found.canonicalName;
+        } else if (!selectedPlayer && keys.length > 0) {
+            selectedPlayer = keys[0];
+        }
+
+        if (selectedPlayer && $globalSearchInput.length) {
+            $globalSearchInput.val(selectedPlayer);
+        }
+
+        $mapHeaderTitle.html(`Player Network &bull; <span style="font-weight: 400; text-transform: none; opacity: 0.85;">${selectedPlayer ? selectedPlayer + "'s frequent opponents (Latest)" : "Search a player above"}</span>`);
+        
+        updateView(dates[dates.length - 1]);
+    });
+
+    // Écouteur sur la barre de recherche globale pour mettre à jour la vue Ego en temps réel
+    if ($globalSearchInput.length) {
+        $globalSearchInput.on('input change', function() {
+            if (currentView === 'ego') {
+                const query = $(this).val().trim();
+                const found = getPlayerConstellationData(query);
+                if (found) {
+                    selectedPlayer = found.canonicalName;
+                } else if (!query) {
+                    selectedPlayer = null;
+                }
+                $mapHeaderTitle.html(`Player Network &bull; <span style="font-weight: 400; text-transform: none; opacity: 0.85;">${selectedPlayer ? selectedPlayer + "'s frequent opponents (Latest)" : "Search a player above"}</span>`);
+                updateView(dates[dates.length - 1]);
+            }
+        });
+    }
 
     $prevBtn.on('click', () => setDateByIndex(currentIndex - 1));
     $nextBtn.on('click', () => setDateByIndex(currentIndex + 1));
@@ -1722,6 +1772,6 @@ $(document).ready(function () {
         if (dates[currentIndex]) updateView(dates[currentIndex]);
     });
 
-    // Initial Launch (HM)
+    // Initial Launch
     setDateByIndex(currentIndex);
 });
