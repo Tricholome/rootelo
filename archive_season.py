@@ -414,6 +414,7 @@ def main():
 
     # Homelands Simulation (Network)
     homelands_snapshots = {}
+    homelands_constellations = {}
     try:
         from frog import run_homelands_simulation
         print("\n=== GENERATING HOMELANDS SNAPSHOTS (NETWORK) ===")
@@ -422,7 +423,7 @@ def main():
         if os.path.exists(global_config_path):
             tribe_names = load_json(global_config_path).get("network", {}).get("tribe_names", [])
 
-        homelands_snapshots = run_homelands_simulation(
+        homelands_snapshots, homelands_constellations = run_homelands_simulation(
             archive_matches_list,
             custom_config={"enabled": True, "tribe_names": tribe_names},
             season_id=season_tag
@@ -455,8 +456,12 @@ def main():
     safe_save(output_history, player_history, is_json=True)
     safe_save(output_relations, relations_map, is_json=True)
 
-    if homelands_snapshots:
-        safe_save(output_network, homelands_snapshots, is_json=True)
+    if homelands_snapshots or homelands_constellations:
+        network_payload = {
+            "snapshots": homelands_snapshots,
+            "constellations": homelands_constellations
+        }
+        safe_save(output_network, network_payload, is_json=True)
 
     metadata = {
         "season_tag": season_tag.upper(),
