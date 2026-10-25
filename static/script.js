@@ -1214,7 +1214,7 @@ $(document).ready(function () {
     // --- State Variables ---
     let currentView = 'macro'; // 'macro' or 'ego'
     let activeTribeFilter = null;
-    let selectedPlayer = null;
+    let selectedPlayer = localStorage.getItem('selectedPlayer') || null;
     let simulation = null;
     let currentIndex = dates.length - 1;
 
@@ -1226,44 +1226,9 @@ $(document).ready(function () {
     const $latestBtn = $('#latestDateBtn');
     const $macroViewBtn = $('#macroViewBtn');
     const $egoViewBtn = $('#egoViewBtn');
-    const $playerSelect = $('#playerSelect');
     const $mapHeaderTitle = $('#mapHeaderTitle');
     const $dateControls = $('#dateControls');
-
-    // --- Populate Player Select Dropdown ---
-    function populatePlayerDropdown(snapshot) {
-        const playerNamesSet = new Set();
-        
-        if (snapshot) {
-            Object.values(snapshot).forEach(members => {
-                if (Array.isArray(members)) {
-                    members.forEach(m => {
-                        if (Array.isArray(m) && m[0]) playerNamesSet.add(m[0]);
-                    });
-                }
-            });
-        }
-        
-        const constellations = window.PLAYER_CONSTELLATIONS || {};
-        if (constellations.players) {
-            Object.keys(constellations.players).forEach(name => playerNamesSet.add(name));
-        }
-        
-        const playerNames = Array.from(playerNamesSet).sort();
-        const currentVal = $playerSelect.val();
-        
-        $playerSelect.empty();
-        $playerSelect.append('<option value="">-- Select a Player --</option>');
-        
-        playerNames.forEach(name => {
-            const isSelected = name === selectedPlayer ? 'selected' : '';
-            $playerSelect.append(`<option value="${name}" ${isSelected}>${name}</option>`);
-        });
-
-        if (currentVal && playerNames.includes(currentVal)) {
-            $playerSelect.val(currentVal);
-        }
-    }
+    const $globalSearchInput = $('#playerName'); // Barre de recherche globale du site
 
     // --- Helper Styling Functions ---
     function tribeRadius(count) {
@@ -1280,14 +1245,12 @@ $(document).ready(function () {
         return playerData.tribe || null;
     }
 
-    // Map fidelity percentage to tier keys (Minimum is Friend, no Default)
     function getStatusFromFidelity(fidelity) {
         if (fidelity >= 85) return 'Partisan';
         if (fidelity >= 65) return 'Squire';
         return 'Friend';
     }
 
-    // Deterministic stable jitter derived from player name
     function nameJitter01(name) {
         let hash = 0;
         for (let i = 0; i < name.length; i++) {
@@ -1306,22 +1269,26 @@ $(document).ready(function () {
 
         // --- VIEW A: PLAYER EGO-NETWORK VIEW ---
         if (currentView === 'ego') {
-            if (!selectedPlayer) {
-                nodes.push({ id: 'placeholder', type: 'tribe', label: 'Select a player above', count: 0, radius: 40 });
-                return { nodes, links };
+            if ($globalSearchInput.length && $globalSearchInput.val().trim()) {
+                selectedPlayer = $globalSearchInput.val().trim();
             }
 
             const constellations = window.PLAYER_CONSTELLATIONS || { players: {} };
-            const playerData = constellations.players[selectedPlayer] || {};
-            const centerTribe = playerData.tribe; // Récupère la tribu du joueur central[cite: 1]
-            const rawPartners = playerData.partners || []; //[cite: 1]
+            
+            if (!selectedPlayer || !constellations.players[selectedPlayer]) {
+                nodes.push({ id: 'placeholder', type: 'tribe', label: 'Search a player above', count: 0, radius: 40 });
+                return { nodes, links };
+            }
 
-            // Filtrage progressif (basé sur le nombre de matchs et le rang)
+            const playerData = constellations.players[selectedPlayer] || {};
+            const centerTribe = playerData.tribe;
+            const rawPartners = playerData.partners || [];
+
+            // Filtrage progressif : Top 30 tolérant (1 match), puis exigence accrue
             const filteredPartners = rawPartners.filter(([partnerName, games], idx) => {
                 const k = idx + 1;
-                // Exemple de seuil progressif doux
                 const minReq = k <= 30 ? 1 : (k <= 60 ? 2 : 3);
-                return games >= min_req; // ou en tenant compte de ton alpha logarithmique
+                return games >= min_req;
             });
 
             const maxGames = filteredPartners.length > 0 ? filteredPartners[0][1] : 1;
@@ -1341,9 +1308,8 @@ $(document).ready(function () {
                 const radius = 8 + ratio * 14;
                 const angle = (2 * Math.PI * idx) / filteredPartners.length;
 
-                // Récupération des infos du partenaire
                 const partnerData = constellations.players[partnerName] || {};
-                const partnerTribe = partnerData.tribe; //[cite: 1]
+                const partnerTribe = partnerData.tribe;
 
                 // Règle de couleur : On ne colore QUE si le partenaire appartient à la même tribu que le centre
                 const isSameTribe = centerTribe && partnerTribe && (centerTribe === partnerTribe);
@@ -1366,7 +1332,7 @@ $(document).ready(function () {
                     target: partnerId,
                     weight: games,
                     type: 'ego-link',
-                    color: color // Le lien adopte la même logique neutre ou colorée
+                    color: color
                 });
             });
 
@@ -1399,7 +1365,7 @@ $(document).ready(function () {
 
         // --- VIEW C: TRIBE CONSTELLATION VIEW (Organic Ring Layout) ---
         const tribe = activeTribeFilter;
-        const members = snapshot[tribe] || []; // [[playerName, fidelity, weight], ...]
+        const members = snapshot[tribe] || [];
         const count = members.length;
 
         nodes.push({
@@ -1410,27 +1376,23 @@ $(document).ready(function () {
             radius: tribeRadius(count)
         });
 
-        // Sort members by weight descending (heavier links closer to center)
         const sortedMembers = [...members].sort((a, b) => b[2] - a[2]);
         const maxWeight = sortedMembers.length > 0 ? sortedMembers[0][2] : 1;
-
-        // Concentric ring tiers phase offsets for organic distribution
         const TIER_PHASE = { core: 0, mid: 0.22, outer: 0.47 };
 
         sortedMembers.forEach(([playerName, fidelity, weight], index) => {
             const ratio = maxWeight > 0 ? (weight / maxWeight) : 0;
             const radius = 8 + (ratio * 14);
 
-            // Zoning by rank into 3 concentric tiers
             let dist, tierKey;
             if (index < Math.max(1, Math.floor(count * 0.25))) {
-                dist = 75;  // Core / Noyau central
+                dist = 75;
                 tierKey = 'core';
             } else if (index < Math.max(2, Math.floor(count * 0.65))) {
-                dist = 125; // Mid / Intermédiaire
+                dist = 125;
                 tierKey = 'mid';
             } else {
-                dist = 185; // Outer / Périphérie
+                dist = 185;
                 tierKey = 'outer';
             }
 
@@ -1574,7 +1536,13 @@ $(document).ready(function () {
                     .attr("dy", "0.3em")
                     .text(d.name);
                 
-                if (d.status) {
+                if (d.type === 'ego-partner' && d.games !== undefined) {
+                    labelSel.append("tspan")
+                        .attr("class", "player-status-tspan")
+                        .attr("x", 0)
+                        .attr("dy", "1.1em")
+                        .text(`${d.games} match${d.games > 1 ? 'es' : ''}`);
+                } else if (d.status) {
                     labelSel.append("tspan")
                         .attr("class", "player-status-tspan")
                         .attr("x", 0)
@@ -1597,9 +1565,12 @@ $(document).ready(function () {
                 
                 $egoViewBtn.addClass('active');
                 $macroViewBtn.removeClass('active');
-                $playerSelect.show().val(selectedPlayer);
                 $dateControls.hide();
                 $mapHeaderTitle.html(`Player Network &bull; <span style="font-weight: 400; text-transform: none; opacity: 0.85;">${selectedPlayer}'s frequent opponents (Latest)</span>`);
+                
+                if ($globalSearchInput.length) {
+                    $globalSearchInput.val(selectedPlayer).trigger('input');
+                }
                 
                 updateView(dates[dates.length - 1]);
             }
@@ -1702,7 +1673,6 @@ $(document).ready(function () {
         const snapshot = snapshots[selectedDate];
         if (!snapshot) return;
 
-        populatePlayerDropdown(snapshot);
         renderGraph(snapshot);
 
         if (currentView === 'ego') {
@@ -1724,9 +1694,9 @@ $(document).ready(function () {
     // --- Event Listeners ---
     $macroViewBtn.on('click', () => {
         currentView = 'macro';
+        activeTribeFilter = null;
         $macroViewBtn.addClass('active');
         $egoViewBtn.removeClass('active');
-        $playerSelect.hide();
         $dateControls.show();
         $mapHeaderTitle.html('Homelands Map &bull; <span style="font-weight: 400; text-transform: none; opacity: 0.85;">Click a region or player bubble</span>');
         updateView(dates[currentIndex]);
@@ -1736,26 +1706,23 @@ $(document).ready(function () {
         currentView = 'ego';
         $egoViewBtn.addClass('active');
         $macroViewBtn.removeClass('active');
-        $playerSelect.show();
         $dateControls.hide();
-        $mapHeaderTitle.html('Player Network &bull; <span style="font-weight: 400; text-transform: none; opacity: 0.85;">Proximity reflects match frequency (Latest)</span>');
         
-        currentIndex = dates.length - 1;
-        if (!selectedPlayer && $playerSelect.find('option').length > 1) {
-            selectedPlayer = $playerSelect.find('option').eq(1).val();
-            $playerSelect.val(selectedPlayer);
-        }
+        selectedPlayer = $globalSearchInput.val().trim() || selectedPlayer;
+        $mapHeaderTitle.html(`Player Network &bull; <span style="font-weight: 400; text-transform: none; opacity: 0.85;">${selectedPlayer ? selectedPlayer + "'s frequent opponents (Latest)" : "Search a player above"}</span>`);
+        
         updateView(dates[dates.length - 1]);
     });
 
-    $playerSelect.on('change', function() {
-        selectedPlayer = $(this).val();
-        if (currentView === 'ego') {
-            updateView(dates[dates.length - 1]);
-        } else {
-            updateView(dates[currentIndex]);
-        }
-    });
+    if ($globalSearchInput.length) {
+        $globalSearchInput.on('input change', function() {
+            if (currentView === 'ego') {
+                selectedPlayer = $(this).val().trim();
+                $mapHeaderTitle.html(`Player Network &bull; <span style="font-weight: 400; text-transform: none; opacity: 0.85;">${selectedPlayer ? selectedPlayer + "'s frequent opponents (Latest)" : "Search a player above"}</span>`);
+                updateView(dates[dates.length - 1]);
+            }
+        });
+    }
 
     $prevBtn.on('click', () => setDateByIndex(currentIndex - 1));
     $nextBtn.on('click', () => setDateByIndex(currentIndex + 1));
