@@ -1213,7 +1213,7 @@ $(document).ready(function () {
     // --- Color Resolution from Config ---
     const COLOR_SAME_TRIBE  = palette.same_tribe  || 'var(--main-color)';
     const COLOR_OTHER_TRIBE = palette.other_tribe || config.tiers?.Friend || 'var(--color-mouse)';
-    const COLOR_UNALIGNED   = palette.unaligned   || 'var(--bg-surface)';
+    const COLOR_UNALIGNED   = palette.unaligned   || config.tiers?.Default || 'var(--color-default)';
 
     function getFidelityAttenuatedColor(fidelity) {
         const pct = Math.max(20, Math.min(100, Number(fidelity) || 0));
@@ -1233,9 +1233,18 @@ $(document).ready(function () {
         return COLOR_OTHER_TRIBE;
     }
 
-    // --- Helper & Lookup Functions ---
+    // --- Helper & Sizing Functions ---
     function tribeRadius(count) {
         return Math.max(32, 24 + Math.sqrt(count || 0) * 10);
+    }
+
+    function partnerAbsoluteRadius(gamesCount) {
+        return Math.min(24, 6 + Math.sqrt(Math.max(1, gamesCount)) * 3);
+    }
+
+    function centerPlayerRadius(totalGames, maxPartnerRad) {
+        const base = Math.min(30, 12 + Math.sqrt(Math.max(1, totalGames)) * 2.2);
+        return Math.max(18, base, (maxPartnerRad || 10) + 3);
     }
 
     function normalizeTribe(tribe) {
@@ -1283,8 +1292,8 @@ $(document).ready(function () {
     }
 
     function getPlayerAllegianceHistory(playerName) {
-        const history = [];
-        let lastTribe = null;
+        const segments = [];
+        let activeSeg = null;
 
         dates.forEach((dateStr, idx) => {
             const snap = snapshots[dateStr] || {};
@@ -1297,20 +1306,34 @@ $(document).ready(function () {
                 }
             }
 
-            if (foundTribe && foundTribe !== lastTribe) {
-                history.push({
-                    tribe: foundTribe,
-                    joinDate: dateStr,
-                    joinIndex: idx
-                });
-                lastTribe = foundTribe;
+            if (foundTribe) {
+                if (activeSeg && activeSeg.tribe === foundTribe) {
+                    activeSeg.endDate = dateStr;
+                    activeSeg.endIndex = idx;
+                } else {
+                    if (activeSeg) segments.push(activeSeg);
+                    activeSeg = {
+                        tribe: foundTribe,
+                        startDate: dateStr,
+                        startIndex: idx,
+                        endDate: dateStr,
+                        endIndex: idx
+                    };
+                }
+            } else if (activeSeg) {
+                segments.push(activeSeg);
+                activeSeg = null;
             }
         });
 
+        if (activeSeg) segments.push(activeSeg);
+
+        const lastDateIdx = dates.length - 1;
         const currentTribe = getPlayerTribe(playerName);
-        return history.reverse().map((entry, idx) => ({
-            ...entry,
-            isCurrent: idx === 0 && entry.tribe === currentTribe
+
+        return segments.reverse().map((seg, idx) => ({
+            ...seg,
+            isCurrent: idx === 0 && seg.endIndex === lastDateIdx && seg.tribe === currentTribe
         }));
     }
 
@@ -1331,12 +1354,22 @@ $(document).ready(function () {
             html += history.map(item => {
                 const iconPath = config.tribes?.[item.tribe]?.icon || '';
                 const stateClass = item.isCurrent ? 'is-current' : 'is-past';
-                const shortDate = formatShortDate(item.joinDate);
+                const startStr = formatShortDate(item.startDate);
+                const endStr = formatShortDate(item.endDate);
+
+                let dateLabel;
+                if (item.isCurrent) {
+                    dateLabel = `since ${startStr}`;
+                } else if (item.startDate === item.endDate) {
+                    dateLabel = startStr;
+                } else {
+                    dateLabel = `${startStr} &ndash; ${endStr}`;
+                }
 
                 return `
-                    <button type="button" class="allegiance-badge ${stateClass}" data-tribe="${item.tribe}" data-date-index="${item.joinIndex}" title="View ${item.tribe} Homeland on ${shortDate}">
+                    <button type="button" class="allegiance-badge ${stateClass}" data-tribe="${item.tribe}" data-date-index="${item.startIndex}" title="View ${item.tribe} Homeland (${startStr})">
                         <img src="${iconPath}" alt="${item.tribe}" class="allegiance-icon">
-                        <span class="allegiance-date">${shortDate}</span>
+                        <span class="allegiance-date">${dateLabel}</span>
                     </button>
                 `;
             }).join('');
@@ -1385,23 +1418,45 @@ $(document).ready(function () {
 
             const playerData = found.data;
             const centerTribe = normalizeTribe(playerData.tribe);
-            const topPartners = playerData.partners || [];
-            const maxWeight = topPartners.length > 0 ? topPartners[0][1] : 1;
+            const playerGames = playerData.games || 0;
+            const topPartners = [...(playerData.partners || [])].sort((a, b) => b[1] - a[1]);
+
+            const totalPartners = topPartners.length;
+            const maxWeight = totalPartners > 0 ? topPartners[0][1] : 1;
+            const minWeight = totalPartners > 0 ? topPartners[totalPartners - 1][1] : 1;
+            const maxPartnerRad = totalPartners > 0 ? partnerAbsoluteRadius(maxWeight) : 8;
+            const centerRad = centerPlayerRadius(playerGames, maxPartnerRad);
 
             nodes.push({
                 id: selectedPlayer,
                 type: 'ego-center',
                 name: selectedPlayer,
-                radius: 28,
+                status: `${playerGames} ${playerGames === 1 ? 'game' : 'games'}`,
+                radius: centerRad,
                 color: getPlayerNetworkColor(centerTribe, centerTribe, true)
             });
 
+            // Bornes d'éloignement adaptées au nombre de partenaires
+            const minDist = centerRad + maxPartnerRad + 16;
+            const maxDist = Math.min(198, Math.max(minDist + 40, 85 + totalPartners * 5.5));
+            const sqrtMax = Math.sqrt(maxWeight);
+            const sqrtMin = Math.sqrt(minWeight);
+            const GOLDEN_ANGLE = Math.PI * (3 - Math.sqrt(5));
+
             topPartners.forEach(([partnerName, weight], idx) => {
                 const partnerId = `partner_${partnerName}`;
-                const ratio = weight / maxWeight;
-                const dist = 50 + (1 - ratio) * 130;
-                const radius = 8 + ratio * 14;
-                const angle = (2 * Math.PI * idx) / topPartners.length;
+                const radius = partnerAbsoluteRadius(weight);
+
+                // Combinaison du ratio de parties (60%) et du rang (40%) pour étaler les ex-aequo
+                const wNorm = (sqrtMax > sqrtMin)
+                    ? (sqrtMax - Math.sqrt(weight)) / (sqrtMax - sqrtMin)
+                    : 0;
+                const rankNorm = totalPartners > 1 ? (idx / (totalPartners - 1)) : 0;
+                const t = (sqrtMax > sqrtMin) ? (0.6 * wNorm + 0.4 * rankNorm) : rankNorm;
+                const dist = minDist + t * (maxDist - minDist);
+
+                // Spirale selon l'angle d'or pour éviter les paquets de bulles de même rang
+                const angle = (idx * GOLDEN_ANGLE) - (Math.PI / 2);
 
                 const partnerTribe = getPlayerTribe(partnerName);
                 const color = getPlayerNetworkColor(centerTribe, partnerTribe, false);
@@ -1412,7 +1467,7 @@ $(document).ready(function () {
                     name: partnerName,
                     tribe: partnerTribe,
                     weight: weight,
-                    status: `${weight} games`,
+                    status: `${weight} ${weight === 1 ? 'game' : 'games'}`,
                     color: color,
                     radius: radius,
                     dist: dist,
@@ -1611,13 +1666,6 @@ $(document).ready(function () {
                 g.select(".num-span").text(d.count);
                 g.select(".lbl-span").text(" members");
                 g.select(".player-label").text("");
-            } else if (d.type === 'ego-center') {
-                g.select(".node-icon").attr("href", "").attr("xlink:href", "");
-                g.select(".num-span").text("");
-                g.select(".lbl-span").text("");
-                g.select(".player-label")
-                    .attr("class", "player-label center-player-label")
-                    .text(d.name);
             } else {
                 g.select(".node-icon").attr("href", "").attr("xlink:href", "");
                 g.select(".num-span").text("");
@@ -1636,7 +1684,7 @@ $(document).ready(function () {
                     labelSel.append("tspan")
                         .attr("class", "player-status-tspan")
                         .attr("x", 0)
-                        .attr("dy", "1.1em")
+                        .attr("dy", "1.15em")
                         .text(d.status);
                 }
             }
