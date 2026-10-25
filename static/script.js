@@ -1187,7 +1187,8 @@ function showVisitorRow(name, date) {
 $(document).ready(function () {
     const dates = window.NETWORK_DATES;
     const snapshots = window.NETWORK_SNAPSHOTS;
-    const config = window.NETWORK_CONFIG || { tribes: {}, tiers: {} };
+    const config = window.NETWORK_CONFIG || {};
+    const palette = config.colors || {};
 
     if (!dates || !dates.length || !snapshots) return;
 
@@ -1209,25 +1210,43 @@ $(document).ready(function () {
     const $globalSearchInput = $('#playerName');
     const $playerLedger = $('#playerLedger');
 
-    // --- Helper Styling & Lookup Functions ---
+    // --- Color Resolution from Config ---
+    const COLOR_SAME_TRIBE  = palette.same_tribe  || 'var(--main-color)';
+    const COLOR_OTHER_TRIBE = palette.other_tribe || config.tiers?.Friend || 'var(--color-mouse)';
+    const COLOR_UNALIGNED   = palette.unaligned   || 'var(--bg-surface)';
+
+    function getFidelityAttenuatedColor(fidelity) {
+        const pct = Math.max(20, Math.min(100, Number(fidelity) || 0));
+        return `color-mix(in srgb, ${COLOR_SAME_TRIBE} ${pct}%, ${COLOR_UNALIGNED})`;
+    }
+
+    function getPlayerNetworkColor(centerTribe, nodeTribe, isCenter) {
+        if (isCenter) {
+            return centerTribe ? COLOR_SAME_TRIBE : COLOR_UNALIGNED;
+        }
+        if (!nodeTribe) {
+            return COLOR_UNALIGNED;
+        }
+        if (centerTribe && nodeTribe === centerTribe) {
+            return COLOR_SAME_TRIBE;
+        }
+        return COLOR_OTHER_TRIBE;
+    }
+
+    // --- Helper & Lookup Functions ---
     function tribeRadius(count) {
         return Math.max(32, 24 + Math.sqrt(count || 0) * 10);
     }
 
-    function getFidelityColor(status) {
-        return config.tiers?.[status] || config.tiers?.Friend || "#B8681A";
-    }
-
-    function getStatusFromFidelity(fidelity) {
-        if (fidelity >= 85) return 'Partisan';
-        if (fidelity >= 65) return 'Squire';
-        return 'Friend';
+    function normalizeTribe(tribe) {
+        if (!tribe || tribe === '-' || tribe === 'UNALIGNED') return null;
+        return tribe;
     }
 
     function getPlayerTribe(playerName) {
         const constellations = window.PLAYER_CONSTELLATIONS || { players: {} };
         const playerData = constellations.players[playerName] || {};
-        return playerData.tribe || null;
+        return normalizeTribe(playerData.tribe);
     }
 
     function nameJitter01(name) {
@@ -1273,7 +1292,7 @@ $(document).ready(function () {
 
             for (const [tribe, members] of Object.entries(snap)) {
                 if (Array.isArray(members) && members.some(m => m[0] === playerName)) {
-                    foundTribe = tribe;
+                    foundTribe = normalizeTribe(tribe);
                     break;
                 }
             }
@@ -1304,25 +1323,26 @@ $(document).ready(function () {
         }
 
         const history = getPlayerAllegianceHistory(selectedPlayer);
+        let html = '<div class="allegiance-ledger-title">Allegiances</div>';
+
         if (!history.length) {
-            $playerLedger.empty().css('display', 'none');
-            return;
+            html += '<div class="allegiance-empty">None</div>';
+        } else {
+            html += history.map(item => {
+                const iconPath = config.tribes?.[item.tribe]?.icon || '';
+                const stateClass = item.isCurrent ? 'is-current' : 'is-past';
+                const shortDate = formatShortDate(item.joinDate);
+
+                return `
+                    <button type="button" class="allegiance-badge ${stateClass}" data-tribe="${item.tribe}" data-date-index="${item.joinIndex}" title="View ${item.tribe} Homeland on ${shortDate}">
+                        <img src="${iconPath}" alt="${item.tribe}" class="allegiance-icon">
+                        <span class="allegiance-date">${shortDate}</span>
+                    </button>
+                `;
+            }).join('');
         }
 
-        const badgesHtml = history.map(item => {
-            const iconPath = config.tribes?.[item.tribe]?.icon || '';
-            const stateClass = item.isCurrent ? 'is-current' : 'is-past';
-            const shortDate = formatShortDate(item.joinDate);
-
-            return `
-                <button type="button" class="allegiance-badge ${stateClass}" data-tribe="${item.tribe}" data-date-index="${item.joinIndex}" title="View ${item.tribe} on ${shortDate}">
-                    <img src="${iconPath}" alt="${item.tribe}" class="allegiance-icon">
-                    <span class="allegiance-date">${shortDate}</span>
-                </button>
-            `;
-        }).join('');
-
-        $playerLedger.html(badgesHtml).css('display', 'flex');
+        $playerLedger.html(html).css('display', 'flex');
     }
 
     function updateHeaderTitle() {
@@ -1364,7 +1384,7 @@ $(document).ready(function () {
             }
 
             const playerData = found.data;
-            const centerTribe = playerData.tribe;
+            const centerTribe = normalizeTribe(playerData.tribe);
             const topPartners = playerData.partners || [];
             const maxWeight = topPartners.length > 0 ? topPartners[0][1] : 1;
 
@@ -1373,7 +1393,7 @@ $(document).ready(function () {
                 type: 'ego-center',
                 name: selectedPlayer,
                 radius: 28,
-                color: 'var(--main-color)'
+                color: getPlayerNetworkColor(centerTribe, centerTribe, true)
             });
 
             topPartners.forEach(([partnerName, weight], idx) => {
@@ -1384,8 +1404,7 @@ $(document).ready(function () {
                 const angle = (2 * Math.PI * idx) / topPartners.length;
 
                 const partnerTribe = getPlayerTribe(partnerName);
-                const isSameTribe = Boolean(centerTribe && partnerTribe && centerTribe === partnerTribe);
-                const color = isSameTribe ? 'var(--main-color)' : '#4a5568';
+                const color = getPlayerNetworkColor(centerTribe, partnerTribe, false);
 
                 nodes.push({
                     id: partnerId,
@@ -1455,24 +1474,23 @@ $(document).ready(function () {
             const ratio = maxWeight > 0 ? (weight / maxWeight) : 0;
             const radius = 8 + (ratio * 14);
 
-            let dist, tierKey;
+            let dist, ringKey;
             if (index < Math.max(1, Math.floor(count * 0.25))) {
                 dist = 75;
-                tierKey = 'core';
+                ringKey = 'core';
             } else if (index < Math.max(2, Math.floor(count * 0.65))) {
                 dist = 125;
-                tierKey = 'mid';
+                ringKey = 'mid';
             } else {
                 dist = 185;
-                tierKey = 'outer';
+                ringKey = 'outer';
             }
 
-            const status = getStatusFromFidelity(fidelity);
-            const color = getFidelityColor(status);
+            const color = getFidelityAttenuatedColor(fidelity);
 
             const totalTier = count || 1;
             const slot = (2 * Math.PI) / totalTier;
-            const phase = (TIER_PHASE[tierKey] || 0) * 2 * Math.PI;
+            const phase = (TIER_PHASE[ringKey] || 0) * 2 * Math.PI;
             const jitter = (nameJitter01(playerName) - 0.5) * slot * 0.6;
             const angle = phase + (slot * index) + jitter - (Math.PI / 2);
 
@@ -1482,8 +1500,7 @@ $(document).ready(function () {
                 id: playerId,
                 type: 'player',
                 name: playerName,
-                tier: tierKey,
-                status: status,
+                status: `${Math.round(fidelity)}%`,
                 fidelity: fidelity,
                 weight: weight,
                 color: color,
@@ -1496,7 +1513,6 @@ $(document).ready(function () {
                 source: tribe,
                 target: playerId,
                 type: 'constellation-link',
-                tier: tierKey,
                 color: color
             });
         });
@@ -1555,7 +1571,7 @@ $(document).ready(function () {
         linkSel.exit().transition().duration(duration).attr("stroke-opacity", 0).remove();
 
         const link = linkSel.enter().append("line").merge(linkSel);
-        link.attr("class", d => `link ${d.type || 'constellation-link'} ${d.tier ? 'tier-' + d.tier : ''}`)
+        link.attr("class", d => `link ${d.type || 'constellation-link'}`)
             .style("--node-color", d => d.color || null);
 
         // --- Nodes Update ---
@@ -1576,7 +1592,7 @@ $(document).ready(function () {
 
         const node = nodeEnter.merge(nodeSel);
 
-        node.attr("class", d => `node-group type-${d.type} ${d.tier ? 'tier-' + d.tier : ''} ${activeTribeFilter === d.id ? 'is-selected' : ''}`)
+        node.attr("class", d => `node-group type-${d.type} ${activeTribeFilter === d.id ? 'is-selected' : ''}`)
             .style("--node-color", d => d.color || null)
             .transition().duration(duration).style("opacity", 1);
 
