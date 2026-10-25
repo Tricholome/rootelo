@@ -1201,7 +1201,7 @@ function showVisitorRow(name, date) {
 }
 
 /* =========================================================================
-   --- 10. HOMELANDS MAP & PLAYER EGO-NETWORK ENGINE ---
+   --- 10. HOMELANDS MAP & PLAYER NETWORK ENGINE ---
    ========================================================================= */
 
 $(document).ready(function () {
@@ -1212,9 +1212,9 @@ $(document).ready(function () {
     if (!dates || !dates.length || !snapshots) return;
 
     // --- State Variables ---
-    let currentView = 'macro'; // 'macro' or 'ego'
+    let currentView = 'hm'; // 'hm' (Homelands Map/Network), 'pn' (Player Network)
     let activeTribeFilter = null;
-    let selectedPlayer = localStorage.getItem('selectedPlayer') || null;
+    let selectedPlayer = null;
     let simulation = null;
     let currentIndex = dates.length - 1;
 
@@ -1224,11 +1224,9 @@ $(document).ready(function () {
     const $nextBtn = $('#nextDateBtn');
     const $earliestBtn = $('#earliestDateBtn');
     const $latestBtn = $('#latestDateBtn');
-    const $macroViewBtn = $('#macroViewBtn');
-    const $egoViewBtn = $('#egoViewBtn');
     const $mapHeaderTitle = $('#mapHeaderTitle');
     const $dateControls = $('#dateControls');
-    const $globalSearchInput = $('#playerName'); // Barre de recherche globale du site
+    const $globalSearchInput = $('#playerName');
 
     // --- Helper Styling & Search Functions ---
     function tribeRadius(count) {
@@ -1259,7 +1257,6 @@ $(document).ready(function () {
         return (hash % 10000) / 10000;
     }
 
-    // Recherche robuste et insensible à la casse dans les constellations
     function getPlayerConstellationData(query) {
         const constellations = window.PLAYER_CONSTELLATIONS || { players: {} };
         const playersMap = constellations.players || {};
@@ -1280,15 +1277,15 @@ $(document).ready(function () {
     }
 
     /* -------------------------------------------------------------------------
-       10.1 GRAPH DATA GENERATORS (Macro vs Ego-Network)
+       10.1 GRAPH DATA GENERATORS
        ------------------------------------------------------------------------- */
     function buildGraphData(snapshot) {
         const activeTribes = Object.keys(snapshot || {});
         const nodes = [];
         const links = [];
 
-        // --- VIEW A: PLAYER EGO-NETWORK VIEW ---
-        if (currentView === 'ego') {
+        // --- MODE PN: PLAYER NETWORK (Centré sur un joueur) ---
+        if (currentView === 'pn') {
             const constellations = window.PLAYER_CONSTELLATIONS || { players: {} };
             const allPlayersKeys = Object.keys(constellations.players || {});
 
@@ -1297,7 +1294,6 @@ $(document).ready(function () {
                 return { nodes, links };
             }
 
-            // Priorité à selectedPlayer, sinon la valeur de la barre de recherche globale
             const query = selectedPlayer || ($globalSearchInput.length ? $globalSearchInput.val().trim() : '');
             let found = getPlayerConstellationData(query);
 
@@ -1356,7 +1352,7 @@ $(document).ready(function () {
             return { nodes, links };
         }
 
-        // --- VIEW B: MACRO HOMELANDS VIEW ---
+        // --- MODE HM / HN: HOMELANDS MAP & CONSTELLATION ---
         if (!activeTribeFilter) {
             activeTribes.forEach(t => {
                 const members = snapshot[t] || [];
@@ -1380,7 +1376,7 @@ $(document).ready(function () {
             return { nodes, links };
         }
 
-        // --- VIEW C: TRIBE CONSTELLATION VIEW ---
+        // Tribe Constellation View
         const tribe = activeTribeFilter;
         const members = snapshot[tribe] || [];
         const count = members.length;
@@ -1563,19 +1559,23 @@ $(document).ready(function () {
             }
         });
 
-        // Click handler
+        // Click handler (Simple clic pour explorer les homelands/membres)
         node.on("click", (event, d) => {
             if (event.defaultPrevented) return;
 
-            if (d.type === 'tribe') {
+            if (d.type === 'tribe' && currentView !== 'pn') {
                 activeTribeFilter = (activeTribeFilter === d.id) ? null : d.id;
                 updateView(dates[currentIndex]);
-            } else if (d.type === 'player' || d.type === 'ego-partner') {
+            }
+        });
+
+        // Double-click handler (Passe en mode PN - Player Network)
+        node.on("dblclick", (event, d) => {
+            if (event.defaultPrevented) return;
+
+            if (d.type === 'player' || d.type === 'ego-partner') {
                 selectedPlayer = d.name;
-                currentView = 'ego';
-                
-                $egoViewBtn.addClass('active');
-                $macroViewBtn.removeClass('active');
+                currentView = 'pn';
                 $dateControls.hide();
                 
                 if ($globalSearchInput.length) {
@@ -1593,7 +1593,7 @@ $(document).ready(function () {
         }
         const linkForce = d3.forceLink().id(d => d.id);
 
-        if (currentView === 'macro' && !activeTribeFilter) {
+        if (currentView === 'hm' && !activeTribeFilter) {
             simulation
                 .force("center", d3.forceCenter(width / 2, height / 2))
                 .force("radial", null)
@@ -1616,32 +1616,6 @@ $(document).ready(function () {
         simulation.alpha(0.5).restart();
 
         simulation.on("tick", () => {
-            if (currentView === 'macro' && activeTribeFilter) {
-                const hub = newNodes.find(n => n.id === activeTribeFilter);
-                if (hub) {
-                    newNodes.forEach(d => {
-                        if (d.type !== 'player' || d.dist == null || d.fx != null) return;
-                        const dx = d.x - hub.x, dy = d.y - hub.y;
-                        const r = Math.sqrt(dx * dx + dy * dy) || 1e-6;
-                        const k = (d.dist - r) / r * 0.12;
-                        d.x += dx * k;
-                        d.y += dy * k;
-                    });
-                }
-            } else if (currentView === 'ego' && selectedPlayer) {
-                const centerNode = newNodes.find(n => n.id === selectedPlayer);
-                if (centerNode) {
-                    newNodes.forEach(d => {
-                        if (d.type !== 'ego-partner' || d.dist == null || d.fx != null) return;
-                        const dx = d.x - centerNode.x, dy = d.y - centerNode.y;
-                        const r = Math.sqrt(dx * dx + dy * dy) || 1e-6;
-                        const k = (d.dist - r) / r * 0.15;
-                        d.x += dx * k;
-                        d.y += dy * k;
-                    });
-                }
-            }
-
             newNodes.forEach(d => {
                 d.x = Math.max(d.radius, Math.min(width - d.radius, d.x));
                 d.y = Math.max(d.radius, Math.min(height - d.radius, d.y));
@@ -1677,7 +1651,7 @@ $(document).ready(function () {
        10.3 TIMELINE & VIEW MANAGEMENT
        ------------------------------------------------------------------------- */
     function updateView(selectedDate) {
-        if (currentView === 'ego') {
+        if (currentView === 'pn') {
             selectedDate = dates[dates.length - 1];
         }
         $datePicker.val(selectedDate);
@@ -1686,7 +1660,7 @@ $(document).ready(function () {
 
         renderGraph(snapshot);
 
-        if (currentView === 'ego') {
+        if (currentView === 'pn') {
             $prevBtn.prop('disabled', true);
             $nextBtn.prop('disabled', true);
         } else {
@@ -1702,59 +1676,44 @@ $(document).ready(function () {
         }
     }
 
-    // --- Event Listeners ---
-    $macroViewBtn.on('click', () => {
-        currentView = 'macro';
+    // --- Global Search & Reset Integration ---
+    if ($globalSearchInput.length) {
+        $globalSearchInput.on('input change', function() {
+            const query = $(this).val().trim();
+            if (!query) {
+                // Si on vide la recherche : retour au mode HM (Homelands Map)
+                currentView = 'hm';
+                activeTribeFilter = null;
+                selectedPlayer = null;
+                $dateControls.show();
+                $mapHeaderTitle.html('Homelands Map &bull; <span style="font-weight: 400; text-transform: none; opacity: 0.85;">Click a region or player bubble</span>');
+                updateView(dates[currentIndex]);
+            } else {
+                // Dès qu'on tape un nom : passage direct en mode PN (Player Network)
+                const found = getPlayerConstellationData(query);
+                if (found) {
+                    selectedPlayer = found.canonicalName;
+                    currentView = 'pn';
+                    $dateControls.hide();
+                    $mapHeaderTitle.html(`Player Network &bull; <span style="font-weight: 400; text-transform: none; opacity: 0.85;">${selectedPlayer}'s frequent opponents (Latest)</span>`);
+                    updateView(dates[dates.length - 1]);
+                }
+            }
+        });
+    }
+
+    // Clic sur le titre pour réinitialiser (Retour Homelands Map + vider la recherche)
+    $mapHeaderTitle.on('click', () => {
+        currentView = 'hm';
         activeTribeFilter = null;
-        $macroViewBtn.addClass('active');
-        $egoViewBtn.removeClass('active');
+        selectedPlayer = null;
+        if ($globalSearchInput.length) {
+            $globalSearchInput.val('').trigger('change');
+        }
         $dateControls.show();
         $mapHeaderTitle.html('Homelands Map &bull; <span style="font-weight: 400; text-transform: none; opacity: 0.85;">Click a region or player bubble</span>');
         updateView(dates[currentIndex]);
     });
-
-    $egoViewBtn.on('click', () => {
-        currentView = 'ego';
-        $egoViewBtn.addClass('active');
-        $macroViewBtn.removeClass('active');
-        $dateControls.hide();
-        
-        const constellations = window.PLAYER_CONSTELLATIONS || { players: {} };
-        const keys = Object.keys(constellations.players || {});
-        const query = $globalSearchInput.length ? $globalSearchInput.val().trim() : '';
-        const found = getPlayerConstellationData(query);
-
-        if (found) {
-            selectedPlayer = found.canonicalName;
-        } else if (!selectedPlayer && keys.length > 0) {
-            selectedPlayer = keys[0];
-        }
-
-        if (selectedPlayer && $globalSearchInput.length) {
-            $globalSearchInput.val(selectedPlayer);
-        }
-
-        $mapHeaderTitle.html(`Player Network &bull; <span style="font-weight: 400; text-transform: none; opacity: 0.85;">${selectedPlayer ? selectedPlayer + "'s frequent opponents (Latest)" : "Search a player above"}</span>`);
-        
-        updateView(dates[dates.length - 1]);
-    });
-
-    // Écouteur sur la barre de recherche globale pour mettre à jour la vue Ego en temps réel
-    if ($globalSearchInput.length) {
-        $globalSearchInput.on('input change', function() {
-            if (currentView === 'ego') {
-                const query = $(this).val().trim();
-                const found = getPlayerConstellationData(query);
-                if (found) {
-                    selectedPlayer = found.canonicalName;
-                } else if (!query) {
-                    selectedPlayer = null;
-                }
-                $mapHeaderTitle.html(`Player Network &bull; <span style="font-weight: 400; text-transform: none; opacity: 0.85;">${selectedPlayer ? selectedPlayer + "'s frequent opponents (Latest)" : "Search a player above"}</span>`);
-                updateView(dates[dates.length - 1]);
-            }
-        });
-    }
 
     $prevBtn.on('click', () => setDateByIndex(currentIndex - 1));
     $nextBtn.on('click', () => setDateByIndex(currentIndex + 1));
