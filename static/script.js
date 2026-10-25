@@ -1199,7 +1199,6 @@ $(document).ready(function () {
     let currentIndex = dates.length - 1;
 
     // --- DOM Elements ---
-    const $mapContainer = $('#tribeMapContainer');
     const $datePicker = $('#datePicker').attr({ min: dates[0], max: dates[dates.length - 1] });
     const $prevBtn = $('#prevDateBtn');
     const $nextBtn = $('#nextDateBtn');
@@ -1208,32 +1207,27 @@ $(document).ready(function () {
     const $mapHeaderTitle = $('#mapHeaderTitle');
     const $dateControls = $('#dateControls');
     const $globalSearchInput = $('#playerName');
+    const $playerLedger = $('#playerLedger');
 
-    // Création dynamique du conteneur de badges à l'intérieur du cadre de la carte s'il n'existe pas
-    let $playerLedger = $('#playerLedger');
-    if (!$playerLedger.length && $mapContainer.length) {
-        $playerLedger = $('<div id="playerLedger" class="allegiance-ledger"></div>').appendTo($mapContainer);
-    }
-
-    // --- Helper Styling & Search Functions ---
+    // --- Helper Styling & Lookup Functions ---
     function tribeRadius(count) {
         return Math.max(32, 24 + Math.sqrt(count || 0) * 10);
     }
 
-    function getBadgeColor(status) {
+    function getFidelityColor(status) {
         return config.tiers?.[status] || config.tiers?.Friend || "#B8681A";
-    }
-
-    function getPlayerTribe(playerName) {
-        const constellations = window.PLAYER_CONSTELLATIONS || { players: {} };
-        const playerData = constellations.players[playerName] || {};
-        return playerData.tribe || null;
     }
 
     function getStatusFromFidelity(fidelity) {
         if (fidelity >= 85) return 'Partisan';
         if (fidelity >= 65) return 'Squire';
         return 'Friend';
+    }
+
+    function getPlayerTribe(playerName) {
+        const constellations = window.PLAYER_CONSTELLATIONS || { players: {} };
+        const playerData = constellations.players[playerName] || {};
+        return playerData.tribe || null;
     }
 
     function nameJitter01(name) {
@@ -1305,13 +1299,13 @@ $(document).ready(function () {
         if (!$playerLedger.length) return;
 
         if (currentView !== 'pn' || !selectedPlayer) {
-            $playerLedger.empty().hide();
+            $playerLedger.empty().css('display', 'none');
             return;
         }
 
         const history = getPlayerAllegianceHistory(selectedPlayer);
         if (!history.length) {
-            $playerLedger.empty().hide();
+            $playerLedger.empty().css('display', 'none');
             return;
         }
 
@@ -1321,14 +1315,14 @@ $(document).ready(function () {
             const shortDate = formatShortDate(item.joinDate);
 
             return `
-                <button type="button" class="allegiance-badge ${stateClass}" data-tribe="${item.tribe}" data-date-index="${item.joinIndex}" title="${item.tribe} (${shortDate})">
+                <button type="button" class="allegiance-badge ${stateClass}" data-tribe="${item.tribe}" data-date-index="${item.joinIndex}" title="View ${item.tribe} on ${shortDate}">
                     <img src="${iconPath}" alt="${item.tribe}" class="allegiance-icon">
                     <span class="allegiance-date">${shortDate}</span>
                 </button>
             `;
         }).join('');
 
-        $playerLedger.html(badgesHtml).show();
+        $playerLedger.html(badgesHtml).css('display', 'flex');
     }
 
     function updateHeaderTitle() {
@@ -1355,7 +1349,7 @@ $(document).ready(function () {
             const allPlayersKeys = Object.keys(constellations.players || {});
 
             if (allPlayersKeys.length === 0) {
-                nodes.push({ id: 'placeholder', type: 'tribe', label: 'No player data available', count: 0, radius: 40 });
+                nodes.push({ id: 'placeholder', type: 'tribe', label: 'No player data', count: 0, radius: 40 });
                 return { nodes, links };
             }
 
@@ -1379,7 +1373,7 @@ $(document).ready(function () {
                 type: 'ego-center',
                 name: selectedPlayer,
                 radius: 28,
-                color: centerTribe ? getBadgeColor(centerTribe) : 'var(--main-color)'
+                color: 'var(--main-color)'
             });
 
             topPartners.forEach(([partnerName, weight], idx) => {
@@ -1390,8 +1384,8 @@ $(document).ready(function () {
                 const angle = (2 * Math.PI * idx) / topPartners.length;
 
                 const partnerTribe = getPlayerTribe(partnerName);
-                const isSameTribe = centerTribe && partnerTribe && (centerTribe === partnerTribe);
-                const color = isSameTribe ? getBadgeColor(partnerTribe) : 'var(--border-soft)';
+                const isSameTribe = Boolean(centerTribe && partnerTribe && centerTribe === partnerTribe);
+                const color = isSameTribe ? 'var(--main-color)' : '#4a5568';
 
                 nodes.push({
                     id: partnerId,
@@ -1399,6 +1393,7 @@ $(document).ready(function () {
                     name: partnerName,
                     tribe: partnerTribe,
                     weight: weight,
+                    status: `${weight} games`,
                     color: color,
                     radius: radius,
                     dist: dist,
@@ -1433,9 +1428,7 @@ $(document).ready(function () {
 
             for (let i = 0; i < activeTribes.length; i++) {
                 for (let j = i + 1; j < activeTribes.length; j++) {
-                    const t1 = activeTribes[i];
-                    const t2 = activeTribes[j];
-                    links.push({ source: t1, target: t2, value: 15, type: 'inter-tribe' });
+                    links.push({ source: activeTribes[i], target: activeTribes[j], value: 15, type: 'inter-tribe' });
                 }
             }
             return { nodes, links };
@@ -1475,7 +1468,7 @@ $(document).ready(function () {
             }
 
             const status = getStatusFromFidelity(fidelity);
-            const color = getBadgeColor(status);
+            const color = getFidelityColor(status);
 
             const totalTier = count || 1;
             const slot = (2 * Math.PI) / totalTier;
@@ -1502,6 +1495,7 @@ $(document).ready(function () {
             links.push({
                 source: tribe,
                 target: playerId,
+                type: 'constellation-link',
                 tier: tierKey,
                 color: color
             });
@@ -1519,7 +1513,7 @@ $(document).ready(function () {
         const svg = d3.select("#tribeMapSvg");
         const container = document.getElementById('tribeMapContainer');
         const width = container?.clientWidth || 800;
-        const height = 450;
+        const height = container?.clientHeight || 450;
         const duration = 400;
 
         if (svg.select("g.links-layer").empty()) {
@@ -1561,8 +1555,8 @@ $(document).ready(function () {
         linkSel.exit().transition().duration(duration).attr("stroke-opacity", 0).remove();
 
         const link = linkSel.enter().append("line").merge(linkSel);
-        link.attr("class", d => `link ${d.type || 'constellation-link'}`)
-            .style("stroke", d => d.color || null);
+        link.attr("class", d => `link ${d.type || 'constellation-link'} ${d.tier ? 'tier-' + d.tier : ''}`)
+            .style("--node-color", d => d.color || null);
 
         // --- Nodes Update ---
         const nodeSel = svg.select("g.nodes-layer").selectAll("g.node-group")
@@ -1582,7 +1576,7 @@ $(document).ready(function () {
 
         const node = nodeEnter.merge(nodeSel);
 
-        node.attr("class", d => `node-group type-${d.type} ${activeTribeFilter === d.id ? 'is-selected' : ''}`)
+        node.attr("class", d => `node-group type-${d.type} ${d.tier ? 'tier-' + d.tier : ''} ${activeTribeFilter === d.id ? 'is-selected' : ''}`)
             .style("--node-color", d => d.color || null)
             .transition().duration(duration).style("opacity", 1);
 
@@ -1605,7 +1599,9 @@ $(document).ready(function () {
                 g.select(".node-icon").attr("href", "").attr("xlink:href", "");
                 g.select(".num-span").text("");
                 g.select(".lbl-span").text("");
-                g.select(".player-label").text(d.name).attr("class", "player-label center-player-label");
+                g.select(".player-label")
+                    .attr("class", "player-label center-player-label")
+                    .text(d.name);
             } else {
                 g.select(".node-icon").attr("href", "").attr("xlink:href", "");
                 g.select(".num-span").text("");
@@ -1630,7 +1626,7 @@ $(document).ready(function () {
             }
         });
 
-        // Clic simple : bascule HM <-> HN sur une tribu, ou change de joueur en mode PN
+        // Clic simple : bascule HM <-> HN sur une Homeland, ou change de joueur en mode PN
         node.on("click", (event, d) => {
             if (event.defaultPrevented) return;
 
@@ -1664,7 +1660,7 @@ $(document).ready(function () {
             }
         });
 
-        // --- Physics Simulation (Gravité et orbites stables d'origine) ---
+        // --- Physics Simulation (Gravité et orbites stables) ---
         if (!simulation) {
             simulation = d3.forceSimulation().alphaDecay(0.05);
         }
