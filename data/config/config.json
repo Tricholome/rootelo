@@ -103,7 +103,7 @@
 		"colors": {
 	      "same_tribe":  "var(--main-color)",
 	      "other_tribe": "#B8681A",
-	      "unaligned":   "var(--bg-surface)"
+	      "unaligned":   "#4a5568"
 	    }
 	}
 }
