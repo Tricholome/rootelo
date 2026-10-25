@@ -433,24 +433,17 @@ def prepare_archive_relations(raw_relations, player_registry):
 def clean_homelands_snapshots(snapshots: dict, registry) -> dict:
     cleaned = {}
     for date_key, snapshot in snapshots.items():
-        cleaned_players = []
-        for player_info in snapshot.get("players", []):
-            p_copy = dict(player_info)
-            p_copy["name"] = registry.get_clean_name(p_copy["name"])
-            cleaned_players.append(p_copy)
-
-        cleaned_layout = {}
-        for tribe_name, layout in snapshot.get("tribe_layout", {}).items():
-            cleaned_layout[tribe_name] = {
-                "pillars": [registry.get_clean_name(p) for p in layout.get("pillars", [])],
-                "satellites": [registry.get_clean_name(p) for p in layout.get("satellites", [])],
-            }
-
-        cleaned[date_key] = {
-            **snapshot,
-            "players": cleaned_players,
-            "tribe_layout": cleaned_layout,
-        }
+        cleaned_snapshot = {}
+        for tribe_name, members in snapshot.items():
+            cleaned_members = []
+            for member_row in members:
+                if isinstance(member_row, list) and len(member_row) >= 3:
+                    p_clean = registry.get_clean_name(member_row[0])
+                    cleaned_members.append([p_clean, member_row[1], member_row[2]])
+                else:
+                    cleaned_members.append(member_row)
+            cleaned_snapshot[tribe_name] = cleaned_members
+        cleaned[date_key] = cleaned_snapshot
     return cleaned
 
 
@@ -689,14 +682,18 @@ def run_league_pipeline(league_config, all_leagues_list):
         season_archive_dir = os.path.join(archives_dir, tag)
         archives_raw_data[tag] = {
             'final_df': pd.DataFrame(), 'matches_list': [], 'history': {},
-            'metadata': {"cutoff_date": "N/A", "match_count": 0}, 'relations': {}, 'homelands_snapshots': {}
+            'metadata': {"cutoff_date": "N/A", "match_count": 0}, 'relations': {}, 
+            'homelands_snapshots': {}, 'homelands_constellations': {}
         }
 
         archives_raw_data[tag]['metadata'] = load_json(os.path.join(season_archive_dir, "metadata.json"), archives_raw_data[tag]['metadata'])
         archives_raw_data[tag]['relations'] = load_json(os.path.join(season_archive_dir, "relations.json"), archives_raw_data[tag]['relations'])
         archives_raw_data[tag]['matches_list'] = load_json(os.path.join(season_archive_dir, "matches.json"), [])
         archives_raw_data[tag]['history'] = load_json(os.path.join(season_archive_dir, "history.json"), {})
-        archives_raw_data[tag]['homelands_snapshots'] = load_json(os.path.join(season_archive_dir, "network.json"), {})
+        
+        net_data = load_json(os.path.join(season_archive_dir, "network.json"), {})
+        archives_raw_data[tag]['homelands_snapshots'] = net_data.get("snapshots", {})
+        archives_raw_data[tag]['homelands_constellations'] = net_data.get("constellations", {})
 
         path_ratings = os.path.join(season_archive_dir, "ratings.csv")
         if os.path.exists(path_ratings):
@@ -1093,8 +1090,13 @@ def run_league_pipeline(league_config, all_leagues_list):
     # Render Historical Archives
     for tag in archive_seasons:
         archive_relations_clean = prepare_archive_relations(archives_raw_data[tag].get('relations', {}), player_registry)
+        
         raw_homelands = archives_raw_data[tag].get('homelands_snapshots', {})
         archive_homelands_clean = clean_homelands_snapshots(raw_homelands, player_registry) if raw_homelands else {}
+        
+        raw_constellations = archives_raw_data[tag].get('homelands_constellations', {})
+        archive_constellations_clean = clean_constellations(raw_constellations, player_registry) if raw_constellations else {}
+
         render_season_pages(
             tag=tag,
             is_archive=True,
@@ -1103,6 +1105,7 @@ def run_league_pipeline(league_config, all_leagues_list):
             trends_data=display_archives[tag]['trends'],
             meta=archives_raw_data[tag]['metadata'],
             snapshots_data=archive_homelands_clean,
+            constellations_data=archive_constellations_clean,
             relations_data=archive_relations_clean,
             champ_match=champions_data.get(tag),
             suffix=f"_{tag}"
