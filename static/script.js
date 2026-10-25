@@ -1,16 +1,16 @@
 /* =========================================================================
    ROOTELO - JAVASCRIPT
    Table of Contents:
-   1. Dynamic Scroll
-   2. Double-tap
-   3. Tier Modal
-   4. Data Tables
-   5. Chart
-   6. Dynamic Trends
-   7. Narrative Journey
-   8. Global Player Search
-   9. Match Simulator Engine
-   10. Network Map & Table
+   1.  Dynamic Scroll
+   2.  Double-tap
+   3.  Tier Modal
+   4.  Data Tables
+   5.  Chart
+   6.  Dynamic Trends
+   7.  Narrative Journey
+   8.  Global Player Search
+   9.  Match Simulator Engine
+   10. Homelands Map & Player Network Engines
    
    --- EASTER EGGS ---
    11. Secrets Engine
@@ -332,27 +332,7 @@ $(document).ready(function() {
 		});
 	}
 	
-	// --- 6. NETWORK TABLE ---
-	if ($('#frogTable').length > 0) {
-		const netConfig = window.NETWORK_CONFIG || { tribes: {} };
-		const targetTribes = Object.keys(netConfig.tribes || {});
-		const centerCols = targetTribes.map((_, i) => i + 1);
-
-		$('#frogTable').DataTable({
-			"order": [[1, "desc"]],
-			"responsive": false,
-			"autoWidth": false,
-			"pageLength": 50,
-			"dom": 'rt<"bottom"p><"clear">',
-			"columnDefs": [
-				{ "className": "player-name-cell", "targets": 0 },
-				{ "className": "dt-nowrap", "targets": "_all" },
-				{ "className": "dt-center", "targets": centerCols }
-			]
-		});
-	}
-
-	// --- 7. GLOBAL FIX FOR ORIENTATION & RESIZE ---
+	// --- 6. GLOBAL FIX FOR ORIENTATION & RESIZE ---
     window.addEventListener('resize', () => {
         $('.dataTable').each(function() {
             if ($.fn.dataTable.isDataTable(this)) {
@@ -1446,7 +1426,7 @@ $(document).ready(function () {
     }
 
     /* -------------------------------------------------------------------------
-       10.2 D3 DYNAMIC RENDER ENGINE
+       10.2 D3 DYNAMIC RENDER ENGINE (Stable Physics Restored)
        ------------------------------------------------------------------------- */
     function renderGraph(snapshot) {
         if (typeof d3 === 'undefined') return;
@@ -1559,17 +1539,28 @@ $(document).ready(function () {
             }
         });
 
-        // Click handler (Simple clic pour explorer les homelands/membres)
+        // Click handler
         node.on("click", (event, d) => {
             if (event.defaultPrevented) return;
 
-            if (d.type === 'tribe' && currentView !== 'pn') {
-                activeTribeFilter = (activeTribeFilter === d.id) ? null : d.id;
-                updateView(dates[currentIndex]);
+            if (d.type === 'tribe') {
+                if (currentView !== 'pn') {
+                    activeTribeFilter = (activeTribeFilter === d.id) ? null : d.id;
+                    updateView(dates[currentIndex]);
+                }
+            } else if (d.type === 'player' || d.type === 'ego-partner') {
+                if (currentView === 'pn') {
+                    selectedPlayer = d.name;
+                    if ($globalSearchInput.length) {
+                        $globalSearchInput.val(selectedPlayer);
+                    }
+                    $mapHeaderTitle.html(`Player Network &bull; <span style="font-weight: 400; text-transform: none; opacity: 0.85;">${selectedPlayer}'s frequent opponents (Latest)</span>`);
+                    updateView(dates[dates.length - 1]);
+                }
             }
         });
 
-        // Double-click handler (Passe en mode PN - Player Network)
+        // Double-click handler (Passe en mode PN)
         node.on("dblclick", (event, d) => {
             if (event.defaultPrevented) return;
 
@@ -1587,7 +1578,7 @@ $(document).ready(function () {
             }
         });
 
-        // --- Physics Simulation ---
+        // --- Physics Simulation (Stable Original Forces Restored) ---
         if (!simulation) {
             simulation = d3.forceSimulation().alphaDecay(0.05);
         }
@@ -1616,6 +1607,33 @@ $(document).ready(function () {
         simulation.alpha(0.5).restart();
 
         simulation.on("tick", () => {
+            // Gravité orbitale stable d'origine
+            if (currentView === 'hm' && activeTribeFilter) {
+                const hub = newNodes.find(n => n.id === activeTribeFilter);
+                if (hub) {
+                    newNodes.forEach(d => {
+                        if (d.type !== 'player' || d.dist == null || d.fx != null) return;
+                        const dx = d.x - hub.x, dy = d.y - hub.y;
+                        const r = Math.sqrt(dx * dx + dy * dy) || 1e-6;
+                        const k = (d.dist - r) / r * 0.12;
+                        d.x += dx * k;
+                        d.y += dy * k;
+                    });
+                }
+            } else if (currentView === 'pn' && selectedPlayer) {
+                const centerNode = newNodes.find(n => n.id === selectedPlayer);
+                if (centerNode) {
+                    newNodes.forEach(d => {
+                        if (d.type !== 'ego-partner' || d.dist == null || d.fx != null) return;
+                        const dx = d.x - centerNode.x, dy = d.y - centerNode.y;
+                        const r = Math.sqrt(dx * dx + dy * dy) || 1e-6;
+                        const k = (d.dist - r) / r * 0.15;
+                        d.x += dx * k;
+                        d.y += dy * k;
+                    });
+                }
+            }
+
             newNodes.forEach(d => {
                 d.x = Math.max(d.radius, Math.min(width - d.radius, d.x));
                 d.y = Math.max(d.radius, Math.min(height - d.radius, d.y));
