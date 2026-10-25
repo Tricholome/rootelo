@@ -1214,7 +1214,7 @@ $(document).ready(function () {
     // --- State Variables ---
     let currentView = 'macro'; // 'macro' or 'ego'
     let activeTribeFilter = null;
-    let selectedPlayer = null;
+    let selectedPlayer = localStorage.getItem('selectedPlayer') || null;
     let simulation = null;
     let currentIndex = dates.length - 1;
 
@@ -1226,46 +1226,11 @@ $(document).ready(function () {
     const $latestBtn = $('#latestDateBtn');
     const $macroViewBtn = $('#macroViewBtn');
     const $egoViewBtn = $('#egoViewBtn');
-    const $playerSelect = $('#playerSelect');
     const $mapHeaderTitle = $('#mapHeaderTitle');
     const $dateControls = $('#dateControls');
+    const $globalSearchInput = $('#playerName'); // Barre de recherche globale du site
 
-    // --- Populate Player Select Dropdown ---
-    function populatePlayerDropdown(snapshot) {
-        const playerNamesSet = new Set();
-        
-        if (snapshot) {
-            Object.values(snapshot).forEach(members => {
-                if (Array.isArray(members)) {
-                    members.forEach(m => {
-                        if (Array.isArray(m) && m[0]) playerNamesSet.add(m[0]);
-                    });
-                }
-            });
-        }
-        
-        const constellations = window.PLAYER_CONSTELLATIONS || {};
-        if (constellations.players) {
-            Object.keys(constellations.players).forEach(name => playerNamesSet.add(name));
-        }
-        
-        const playerNames = Array.from(playerNamesSet).sort();
-        const currentVal = $playerSelect.val();
-        
-        $playerSelect.empty();
-        $playerSelect.append('<option value="">-- Select a Player --</option>');
-        
-        playerNames.forEach(name => {
-            const isSelected = name === selectedPlayer ? 'selected' : '';
-            $playerSelect.append(`<option value="${name}" ${isSelected}>${name}</option>`);
-        });
-
-        if (currentVal && playerNames.includes(currentVal)) {
-            $playerSelect.val(currentVal);
-        }
-    }
-
-    // --- Helper Styling Functions ---
+    // --- Helper Styling & Search Functions ---
     function tribeRadius(count) {
         return Math.max(32, 24 + Math.sqrt(count || 0) * 10);
     }
@@ -1294,6 +1259,26 @@ $(document).ready(function () {
         return (hash % 10000) / 10000;
     }
 
+    // Recherche robuste et insensible à la casse dans les constellations
+    function getPlayerConstellationData(query) {
+        const constellations = window.PLAYER_CONSTELLATIONS || { players: {} };
+        const playersMap = constellations.players || {};
+        if (!query) return null;
+
+        const trimmed = query.trim();
+        if (playersMap[trimmed]) {
+            return { canonicalName: trimmed, data: playersMap[trimmed] };
+        }
+
+        const lowerQ = trimmed.toLowerCase();
+        for (const [name, data] of Object.entries(playersMap)) {
+            if (name.toLowerCase() === lowerQ) {
+                return { canonicalName: name, data };
+            }
+        }
+        return null;
+    }
+
     /* -------------------------------------------------------------------------
        10.1 GRAPH DATA GENERATORS (Macro vs Ego-Network)
        ------------------------------------------------------------------------- */
@@ -1304,13 +1289,26 @@ $(document).ready(function () {
 
         // --- VIEW A: PLAYER EGO-NETWORK VIEW ---
         if (currentView === 'ego') {
-            if (!selectedPlayer) {
-                nodes.push({ id: 'placeholder', type: 'tribe', label: 'Select a player above', count: 0, radius: 40 });
+            const constellations = window.PLAYER_CONSTELLATIONS || { players: {} };
+            const allPlayersKeys = Object.keys(constellations.players || {});
+
+            if (allPlayersKeys.length === 0) {
+                nodes.push({ id: 'placeholder', type: 'tribe', label: 'No player data available', count: 0, radius: 40 });
                 return { nodes, links };
             }
 
-            const constellations = window.PLAYER_CONSTELLATIONS || { players: {} };
-            const playerData = constellations.players[selectedPlayer] || {};
+            // Priorité à selectedPlayer, sinon la valeur de la barre de recherche globale
+            const query = selectedPlayer || ($globalSearchInput.length ? $globalSearchInput.val().trim() : '');
+            let found = getPlayerConstellationData(query);
+
+            if (!found) {
+                selectedPlayer = allPlayersKeys[0];
+                found = { canonicalName: selectedPlayer, data: constellations.players[selectedPlayer] };
+            } else {
+                selectedPlayer = found.canonicalName;
+            }
+
+            const playerData = found.data;
             const centerTribe = playerData.tribe;
             const topPartners = playerData.partners || [];
             const maxWeight = topPartners.length > 0 ? topPartners[0][1] : 1;
@@ -1331,8 +1329,6 @@ $(document).ready(function () {
                 const angle = (2 * Math.PI * idx) / topPartners.length;
 
                 const partnerTribe = getPlayerTribe(partnerName);
-
-                // Règle de coloration : On ne colore QUE si le partenaire appartient à la même tribu que le centre
                 const isSameTribe = centerTribe && partnerTribe && (centerTribe === partnerTribe);
                 const color = isSameTribe ? getBadgeColor(partnerTribe) : 'var(--border-soft)';
 
@@ -1384,7 +1380,7 @@ $(document).ready(function () {
             return { nodes, links };
         }
 
-        // --- VIEW C: TRIBE CONSTELLATION VIEW (Organic Ring Layout) ---
+        // --- VIEW C: TRIBE CONSTELLATION VIEW ---
         const tribe = activeTribeFilter;
         const members = snapshot[tribe] || [];
         const count = members.length;
@@ -1580,10 +1576,13 @@ $(document).ready(function () {
                 
                 $egoViewBtn.addClass('active');
                 $macroViewBtn.removeClass('active');
-                $playerSelect.show().val(selectedPlayer);
                 $dateControls.hide();
-                $mapHeaderTitle.html(`Player Network &bull; <span style="font-weight: 400; text-transform: none; opacity: 0.85;">${selectedPlayer}'s frequent opponents (Latest)</span>`);
                 
+                if ($globalSearchInput.length) {
+                    $globalSearchInput.val(selectedPlayer);
+                }
+                
+                $mapHeaderTitle.html(`Player Network &bull; <span style="font-weight: 400; text-transform: none; opacity: 0.85;">${selectedPlayer}'s frequent opponents (Latest)</span>`);
                 updateView(dates[dates.length - 1]);
             }
         });
@@ -1685,7 +1684,6 @@ $(document).ready(function () {
         const snapshot = snapshots[selectedDate];
         if (!snapshot) return;
 
-        populatePlayerDropdown(snapshot);
         renderGraph(snapshot);
 
         if (currentView === 'ego') {
@@ -1710,7 +1708,6 @@ $(document).ready(function () {
         activeTribeFilter = null;
         $macroViewBtn.addClass('active');
         $egoViewBtn.removeClass('active');
-        $playerSelect.hide();
         $dateControls.show();
         $mapHeaderTitle.html('Homelands Map &bull; <span style="font-weight: 400; text-transform: none; opacity: 0.85;">Click a region or player bubble</span>');
         updateView(dates[currentIndex]);
@@ -1720,26 +1717,44 @@ $(document).ready(function () {
         currentView = 'ego';
         $egoViewBtn.addClass('active');
         $macroViewBtn.removeClass('active');
-        $playerSelect.show();
         $dateControls.hide();
-        $mapHeaderTitle.html('Player Network &bull; <span style="font-weight: 400; text-transform: none; opacity: 0.85;">Proximity reflects match frequency (Latest)</span>');
         
-        currentIndex = dates.length - 1;
-        if (!selectedPlayer && $playerSelect.find('option').length > 1) {
-            selectedPlayer = $playerSelect.find('option').eq(1).val();
-            $playerSelect.val(selectedPlayer);
+        const constellations = window.PLAYER_CONSTELLATIONS || { players: {} };
+        const keys = Object.keys(constellations.players || {});
+        const query = $globalSearchInput.length ? $globalSearchInput.val().trim() : '';
+        const found = getPlayerConstellationData(query);
+
+        if (found) {
+            selectedPlayer = found.canonicalName;
+        } else if (!selectedPlayer && keys.length > 0) {
+            selectedPlayer = keys[0];
         }
+
+        if (selectedPlayer && $globalSearchInput.length) {
+            $globalSearchInput.val(selectedPlayer);
+        }
+
+        $mapHeaderTitle.html(`Player Network &bull; <span style="font-weight: 400; text-transform: none; opacity: 0.85;">${selectedPlayer ? selectedPlayer + "'s frequent opponents (Latest)" : "Search a player above"}</span>`);
+        
         updateView(dates[dates.length - 1]);
     });
 
-    $playerSelect.on('change', function() {
-        selectedPlayer = $(this).val();
-        if (currentView === 'ego') {
-            updateView(dates[dates.length - 1]);
-        } else {
-            updateView(dates[currentIndex]);
-        }
-    });
+    // Écouteur sur la barre de recherche globale pour mettre à jour la vue Ego en temps réel
+    if ($globalSearchInput.length) {
+        $globalSearchInput.on('input change', function() {
+            if (currentView === 'ego') {
+                const query = $(this).val().trim();
+                const found = getPlayerConstellationData(query);
+                if (found) {
+                    selectedPlayer = found.canonicalName;
+                } else if (!query) {
+                    selectedPlayer = null;
+                }
+                $mapHeaderTitle.html(`Player Network &bull; <span style="font-weight: 400; text-transform: none; opacity: 0.85;">${selectedPlayer ? selectedPlayer + "'s frequent opponents (Latest)" : "Search a player above"}</span>`);
+                updateView(dates[dates.length - 1]);
+            }
+        });
+    }
 
     $prevBtn.on('click', () => setDateByIndex(currentIndex - 1));
     $nextBtn.on('click', () => setDateByIndex(currentIndex + 1));
