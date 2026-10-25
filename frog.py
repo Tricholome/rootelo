@@ -43,7 +43,7 @@ DEFAULT_CONFIG = {
     "STICKINESS": 1.5,
     "MAX_DAILY_TRANSFERS": 3,
     "INACTIVITY_LIMIT_DAYS": 21,
-    "PARTNERS_TOP": 8,
+    "PARTNERS_SCALE_FACTOR": 0.4,
     "DECAY_RATE": 0.95,
     "NEW_MATCH_WEIGHT": 1.0,
     "MIN_EDGE_WEIGHT": 0.1,
@@ -214,16 +214,31 @@ def member_metrics(G: nx.Graph, roster: dict, tribe: str) -> list:
     return rows
 
 
+import math
+
 def build_constellations(roster: dict, player_games: Counter, shared: dict,
                          latest_date: str, cfg: dict) -> dict:
-    """Ego-network of every player: who he played with the most (season totals, latest date)."""
+    """Ego-network of every player with smooth logarithmic partner filtering."""
+    alpha = cfg.get("PARTNERS_SCALE_FACTOR", 0.4)
     players = {}
+
     for p in sorted(player_games):
-        top = sorted(shared[p].items(), key=lambda x: (-x[1], x[0]))[: cfg["PARTNERS_TOP"]]
+        all_partners = sorted(shared[p].items(), key=lambda x: (-x[1], x[0]))
+        
+        filtered = []
+        for rank_idx, (partner, games) in enumerate(all_partners):
+            k = rank_idx + 1
+            min_req = math.floor(1 + alpha * math.log(k))
+            
+            if games >= min_req:
+                filtered.append([partner, games])
+            else:
+                break
+                
         players[p] = {
             "tribe": roster.get(p, UNALIGNED),
             "games": player_games[p],
-            "partners": [[q, n] for q, n in top],
+            "partners": filtered,
         }
     return {"date": latest_date, "players": players}
 
