@@ -1313,33 +1313,48 @@ $(document).ready(function () {
 
             const constellations = window.PLAYER_CONSTELLATIONS || { players: {} };
             const playerData = constellations.players[selectedPlayer] || {};
-            const topPartners = playerData.partners || [];
-            const maxWeight = topPartners.length > 0 ? topPartners[0][1] : 1;
+            const centerTribe = playerData.tribe; // Récupère la tribu du joueur central[cite: 1]
+            const rawPartners = playerData.partners || []; //[cite: 1]
+
+            // Filtrage progressif (basé sur le nombre de matchs et le rang)
+            const filteredPartners = rawPartners.filter(([partnerName, games], idx) => {
+                const k = idx + 1;
+                // Exemple de seuil progressif doux
+                const minReq = k <= 30 ? 1 : (k <= 60 ? 2 : 3);
+                return games >= min_req; // ou en tenant compte de ton alpha logarithmique
+            });
+
+            const maxGames = filteredPartners.length > 0 ? filteredPartners[0][1] : 1;
 
             nodes.push({
                 id: selectedPlayer,
                 type: 'ego-center',
                 name: selectedPlayer,
                 radius: 28,
-                color: 'var(--main-color)'
+                color: centerTribe ? getBadgeColor(centerTribe) : 'var(--main-color)'
             });
 
-            topPartners.forEach(([partnerName, weight], idx) => {
+            filteredPartners.forEach(([partnerName, games], idx) => {
                 const partnerId = `partner_${partnerName}`;
-                const ratio = weight / maxWeight;
+                const ratio = games / maxGames;
                 const dist = 50 + (1 - ratio) * 130;
                 const radius = 8 + ratio * 14;
-                const angle = (2 * Math.PI * idx) / topPartners.length;
+                const angle = (2 * Math.PI * idx) / filteredPartners.length;
 
-                const tribe = getPlayerTribe(partnerName);
-                const color = getBadgeColor(tribe);
+                // Récupération des infos du partenaire
+                const partnerData = constellations.players[partnerName] || {};
+                const partnerTribe = partnerData.tribe; //[cite: 1]
+
+                // Règle de couleur : On ne colore QUE si le partenaire appartient à la même tribu que le centre
+                const isSameTribe = centerTribe && partnerTribe && (centerTribe === partnerTribe);
+                const color = isSameTribe ? getBadgeColor(partnerTribe) : 'var(--border-soft)';
 
                 nodes.push({
                     id: partnerId,
                     type: 'ego-partner',
                     name: partnerName,
-                    tribe: tribe,
-                    weight: weight,
+                    tribe: partnerTribe,
+                    games: games,
                     color: color,
                     radius: radius,
                     dist: dist,
@@ -1349,9 +1364,9 @@ $(document).ready(function () {
                 links.push({
                     source: selectedPlayer,
                     target: partnerId,
-                    weight: weight,
+                    weight: games,
                     type: 'ego-link',
-                    color: color
+                    color: color // Le lien adopte la même logique neutre ou colorée
                 });
             });
 
