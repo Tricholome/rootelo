@@ -1814,7 +1814,7 @@ $(document).ready(function () {
 
         const textGroup = nodeEnter.append("text").attr("class", "count-text");
         textGroup.append("tspan").attr("class", "num-span").attr("x", 0).attr("dy", "0");
-        textGroup.append("tspan").attr("class", "lbl-span").attr("x", 0).attr("dy", "1.2em");
+        textGroup.append("tspan").attr("class", "lbl-span").attr("x", 0).attr("dy", "1.05em");
 
         nodeEnter.append("text").attr("class", "player-label");
 
@@ -1843,16 +1843,16 @@ $(document).ready(function () {
 
             if (d.type === 'tribe') {
                 const iconPath = config.tribes?.[d.id]?.icon || '';
-                const iconSize = Math.max(24, d.radius * 0.7);
+                const iconSize = Math.max(22, d.radius * 0.65);
                 g.select(".node-icon")
                     .attr("href", iconPath).attr("xlink:href", iconPath)
                     .transition().duration(duration).ease(easeFn)
                     .attr("width", iconSize).attr("height", iconSize)
-                    .attr("x", -iconSize / 2).attr("y", -iconSize / 2 - 6);
+                    .attr("x", -iconSize / 2).attr("y", -iconSize / 2 - 8);
 
                 g.select(".count-text")
                     .transition().duration(duration).ease(easeFn)
-                    .attr("transform", `translate(0, ${iconSize / 2 + 8})`);
+                    .attr("transform", `translate(0, ${iconSize / 2 + 3})`);
 
                 g.select(".num-span").text(d.count);
                 g.select(".lbl-span").text(d.count === 1 ? " member" : " members");
