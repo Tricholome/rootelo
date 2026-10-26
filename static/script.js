@@ -1180,7 +1180,7 @@ function showVisitorRow(name, date) {
     if (recognitionZone) recognitionZone.style.display = 'none';
 }
 
-/* =========================================================================
+//* =========================================================================
    --- 10. HOMELANDS MAP & PLAYER NETWORK ENGINE ---
    ========================================================================= */
 
@@ -1211,7 +1211,7 @@ $(document).ready(function () {
     const $globalSearchInput = $('#playerName');
     const $playerLedger = $('#playerLedger');
 
-    // Injection automatique du conteneur de légende UX s'il n'existe pas déjà
+    // Injection automatique du conteneur de légende sous le titre
     let $mapLegend = $('#mapLegend');
     if (!$mapLegend.length) {
         $mapLegend = $('<div id="mapLegend" class="map-legend"></div>').appendTo('#tribeMapContainer');
@@ -1220,7 +1220,7 @@ $(document).ready(function () {
     // --- Résolution des couleurs ---
     const COLOR_SAME_TRIBE  = palette.same_tribe  || 'var(--main-color)';
     const COLOR_OTHER_TRIBE = palette.other_tribe || config.tiers?.Friend || 'var(--color-mouse)';
-    const COLOR_UNALIGNED   = palette.unaligned   || config.tiers?.Default || 'var(--color-default)';
+    const COLOR_UNALIGNED   = palette.unaligned   || config.tiers?.Default || '#4a5568';
 
     function getFidelityAttenuatedColor(fidelity) {
         const val = Number(fidelity) || 0;
@@ -1234,14 +1234,6 @@ $(document).ready(function () {
         if (!nodeTribe) return COLOR_UNALIGNED;
         if (centerTribe && nodeTribe === centerTribe) return COLOR_SAME_TRIBE;
         return COLOR_OTHER_TRIBE;
-    }
-
-    // Rôles thématiques selon le niveau d'allégeance
-    function getStatusFromFidelity(fidelity) {
-        const val = Number(fidelity) || 0;
-        if (val >= 60) return 'Partisan';
-        if (val >= 40) return 'Squire';
-        return 'Friend';
     }
 
     // --- Dimensions & géométrie ---
@@ -1392,14 +1384,14 @@ $(document).ready(function () {
         }));
     }
 
-    // --- Rendu du panneau contextuel (Jalons ou allégeances) ---
+    // --- Rendu du panneau contextuel droit (Badges sans parenthèses) ---
     function renderAllegianceLedger() {
         if (!$playerLedger.length) return;
 
-        // Mode PN : Historique des allégeances du joueur
+        // Mode PN : Allégeances du joueur (sans parenthèses)
         if (currentView === 'pn' && selectedPlayer) {
             const history = getPlayerAllegianceHistory(selectedPlayer);
-            let html = '<div class="allegiance-ledger-title">Faction History</div>';
+            let html = '<div class="allegiance-ledger-title">Allegiances</div>';
 
             if (!history.length) {
                 html += '<div class="allegiance-empty">Unaligned</div>';
@@ -1420,9 +1412,9 @@ $(document).ready(function () {
                     }
 
                     return `
-                        <button type="button" class="allegiance-badge ${stateClass}" data-tribe="${item.tribe}" data-date-index="${item.startIndex}" title="View ${item.tribe} Clearing (${startStr})">
+                        <button type="button" class="allegiance-badge ${stateClass}" data-tribe="${item.tribe}" data-date-index="${item.startIndex}" title="View ${item.tribe} Clearing ${startStr}">
                             <img src="${iconPath}" alt="${item.tribe}" class="allegiance-icon">
-                            <span class="allegiance-date">${item.tribe} (${dateLabel})</span>
+                            <span class="allegiance-date">${dateLabel}</span>
                         </button>
                     `;
                 }).join('');
@@ -1432,7 +1424,7 @@ $(document).ready(function () {
             return;
         }
 
-        // Mode HN : Jalons de la clairière (Origin / Zenith / Dissolved ou Active)
+        // Mode HN : Jalons de la clairière (Founded, Apex, Dissolved si dissoute)
         if (currentView === 'hn' && activeTribeFilter) {
             const lifespan = getHomelandLifespan(activeTribeFilter);
             if (!lifespan) {
@@ -1449,32 +1441,29 @@ $(document).ready(function () {
 
             let html = '<div class="allegiance-ledger-title">Chronicle</div>';
 
+            // 1. Fondatrice
             html += `
                 <button type="button" class="allegiance-badge ${isAtStart ? 'is-current' : 'is-past'}" data-tribe="${activeTribeFilter}" data-date-index="${lifespan.firstIndex}" title="Jump to founding date">
                     <img src="${iconPath}" alt="${activeTribeFilter}" class="allegiance-icon">
-                    <span class="allegiance-date">Origin (${foundedStr})</span>
+                    <span class="allegiance-date">Founded ${foundedStr}</span>
                 </button>
             `;
 
+            // 2. Pic (Apex) si distinct
             if (lifespan.peakIndex !== lifespan.firstIndex && lifespan.peakIndex !== lifespan.lastIndex) {
                 html += `
-                    <button type="button" class="allegiance-badge ${isAtPeak ? 'is-current' : 'is-past'}" data-tribe="${activeTribeFilter}" data-date-index="${lifespan.peakIndex}" title="Jump to zenith (${lifespan.peakCount} denizens)">
-                        <span class="allegiance-date">Zenith: ${lifespan.peakCount} (${peakStr})</span>
+                    <button type="button" class="allegiance-badge ${isAtPeak ? 'is-current' : 'is-past'}" data-tribe="${activeTribeFilter}" data-date-index="${lifespan.peakIndex}" title="Jump to apex membership: ${lifespan.peakCount} denizens">
+                        <span class="allegiance-date">Apex ${peakStr}</span>
                     </button>
                 `;
             }
 
+            // 3. Dissolution (affiché UNIQUEMENT si la clairière est dissoute)
             if (lifespan.isDissolved) {
                 const dissolvedStr = formatShortDate(lifespan.dissolvedDate);
                 html += `
                     <button type="button" class="allegiance-badge ${isAtEnd ? 'is-current' : 'is-past'}" data-tribe="${activeTribeFilter}" data-date-index="${lifespan.lastIndex}" title="Jump to final active day">
-                        <span class="allegiance-date">Dissolved (${dissolvedStr})</span>
-                    </button>
-                `;
-            } else {
-                html += `
-                    <button type="button" class="allegiance-badge ${isAtEnd ? 'is-current' : 'is-past'}" data-tribe="${activeTribeFilter}" data-date-index="${lifespan.lastIndex}" title="Jump to latest date">
-                        <span class="allegiance-date">Status: Active</span>
+                        <span class="allegiance-date">Dissolved ${dissolvedStr}</span>
                     </button>
                 `;
             }
@@ -1486,7 +1475,7 @@ $(document).ready(function () {
         $playerLedger.empty().css('display', 'none');
     }
 
-    // --- Titre épuré (sans sous-titre) avec chevron de retour ---
+    // --- Titre épuré ---
     function updateHeaderTitle() {
         if (currentView === 'pn' && selectedPlayer) {
             $mapHeaderTitle.html(`&lsaquo; ${selectedPlayer.toUpperCase()}'S CIRCLE`);
@@ -1497,25 +1486,23 @@ $(document).ready(function () {
         }
     }
 
-    // --- Légende UX contextuelle en bas de cadre ---
+    // --- Légende contextuelle en liste verticale en haut à gauche ---
     function updateLegend() {
         if (!$mapLegend.length) return;
 
         if (currentView === 'hm') {
-            $mapLegend.html('Click a clearing to inspect its denizens &bull; Dashed trails indicate inter-clearing encounters');
+            $mapLegend.empty();
         } else if (currentView === 'hn') {
             $mapLegend.html(`
-                <span class="legend-dot" style="background: ${COLOR_SAME_TRIBE}"></span>Partisan (&ge;60%) &nbsp;&nbsp;
-                <span class="legend-dot" style="background: color-mix(in srgb, ${COLOR_SAME_TRIBE} 50%, ${COLOR_OTHER_TRIBE})"></span>Squire (&ge;40%) &nbsp;&nbsp;
-                <span class="legend-dot" style="background: ${COLOR_OTHER_TRIBE}"></span>Friend (&lt;40%) &bull; Double-click a player to view their circle
+                <div class="legend-item"><span class="legend-dot" style="background: ${COLOR_SAME_TRIBE}"></span><span>Partisan</span></div>
+                <div class="legend-item"><span class="legend-dot" style="background: color-mix(in srgb, ${COLOR_SAME_TRIBE} 50%, ${COLOR_OTHER_TRIBE})"></span><span>Squire</span></div>
+                <div class="legend-item"><span class="legend-dot" style="background: ${COLOR_OTHER_TRIBE}"></span><span>Friend</span></div>
             `);
         } else if (currentView === 'pn') {
-            const centerTribe = getPlayerTribe(selectedPlayer);
-            const tribeLabel = centerTribe ? `Same Homeland (${centerTribe})` : 'Affiliated Homeland';
             $mapLegend.html(`
-                <span class="legend-dot" style="background: ${COLOR_SAME_TRIBE}"></span>${tribeLabel} &nbsp;&nbsp;
-                <span class="legend-dot" style="background: ${COLOR_OTHER_TRIBE}"></span>Other Homeland &nbsp;&nbsp;
-                <span class="legend-dot" style="background: ${COLOR_UNALIGNED}"></span>Unaligned &bull; Proximity reflects shared matches
+                <div class="legend-item"><span class="legend-dot" style="background: ${COLOR_SAME_TRIBE}"></span><span>Same homeland</span></div>
+                <div class="legend-item"><span class="legend-dot" style="background: ${COLOR_OTHER_TRIBE}"></span><span>Other homeland</span></div>
+                <div class="legend-item"><span class="legend-dot" style="background: ${COLOR_UNALIGNED}"></span><span>Unaligned</span></div>
             `);
         }
     }
@@ -1565,7 +1552,7 @@ $(document).ready(function () {
                 id: selectedPlayer,
                 type: 'ego-center',
                 name: selectedPlayer,
-                status: `${playerGames} ${playerGames === 1 ? 'match' : 'matches'}`,
+                status: `${playerGames} ${playerGames === 1 ? 'game' : 'games'}`,
                 radius: centerRad,
                 color: getPlayerNetworkColor(centerTribe, centerTribe, true)
             });
@@ -1597,7 +1584,7 @@ $(document).ready(function () {
                     name: partnerName,
                     tribe: partnerTribe,
                     weight: weight,
-                    status: `${weight} ${weight === 1 ? 'match' : 'matches'}`,
+                    status: `${weight} ${weight === 1 ? 'game' : 'games'}`,
                     color: color,
                     radius: radius,
                     dist: dist,
@@ -1675,7 +1662,6 @@ $(document).ready(function () {
             }
 
             const color = getFidelityAttenuatedColor(fidelity);
-            const statusRole = getStatusFromFidelity(fidelity);
 
             const totalTier = count || 1;
             const slot = (2 * Math.PI) / totalTier;
@@ -1689,8 +1675,7 @@ $(document).ready(function () {
                 id: playerId,
                 type: 'player',
                 name: playerName,
-                status: `${statusRole} &bull; ${Math.round(fidelity)}%`,
-                tierRole: statusRole,
+                status: `${Math.round(fidelity)}%`, // Affichage unique du pourcentage
                 fidelity: fidelity,
                 weight: weight,
                 color: color,
@@ -1877,10 +1862,12 @@ $(document).ready(function () {
                 const labelSel = g.select(".player-label").attr("class", "player-label");
                 labelSel.text("");
 
+                const isEgoCenter = d.type === 'ego-center';
+
                 labelSel.append("tspan")
                     .attr("class", "player-name-tspan")
                     .attr("x", 0)
-                    .attr("dy", "0.3em")
+                    .attr("dy", isEgoCenter ? "-0.2em" : "0.3em")
                     .text(d.name);
 
                 if (d.status) {
@@ -1888,7 +1875,7 @@ $(document).ready(function () {
                         .attr("class", "player-status-tspan")
                         .attr("x", 0)
                         .attr("dy", "1.15em")
-                        .html(d.status);
+                        .text(d.status);
                 }
             }
         });
@@ -2158,7 +2145,7 @@ $(document).ready(function () {
         });
     }
 
-    // --- Clic sur le titre / fil d'Ariane (retour à la vue globale) ---
+    // --- Clic sur le titre / fil d'Ariane ---
     $mapHeaderTitle.on('click', () => {
         currentView = 'hm';
         activeTribeFilter = null;
