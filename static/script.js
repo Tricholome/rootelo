@@ -1848,11 +1848,12 @@ $(document).ready(function () {
                     .attr("href", iconPath).attr("xlink:href", iconPath)
                     .transition().duration(duration).ease(easeFn)
                     .attr("width", iconSize).attr("height", iconSize)
-                    .attr("x", -iconSize / 2).attr("y", -iconSize / 2 - 8);
+                    .attr("x", -iconSize / 2)
+                    .attr("y", -iconSize / 2 - 13);
 
                 g.select(".count-text")
                     .transition().duration(duration).ease(easeFn)
-                    .attr("transform", `translate(0, ${iconSize / 2 + 3})`);
+                    .attr("transform", `translate(0, ${iconSize / 2 - 1})`);
 
                 g.select(".num-span").text(d.count);
                 g.select(".lbl-span").text(d.count === 1 ? " member" : " members");
