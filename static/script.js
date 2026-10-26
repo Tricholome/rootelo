@@ -1198,6 +1198,7 @@ $(document).ready(function () {
     let selectedPlayer = null;
     let simulation = null;
     let currentIndex = dates.length - 1;
+    let lastRenderedView = null;
 
     // --- DOM Elements ---
     const $datePicker = $('#datePicker').attr({ min: dates[0], max: dates[dates.length - 1] });
@@ -1274,6 +1275,59 @@ $(document).ready(function () {
         return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
     }
 
+    // --- Calcul du cycle de vie (création, apogée, dissolution) d'une Homeland ---
+    function getHomelandLifespan(tribe) {
+        if (!tribe) return null;
+        const activeIndices = [];
+        let peakIndex = -1;
+        let peakCount = 0;
+
+        dates.forEach((d, idx) => {
+            const members = snapshots[d]?.[tribe];
+            const count = Array.isArray(members) ? members.length : 0;
+            if (count > 0) {
+                activeIndices.push(idx);
+                if (count > peakCount) {
+                    peakCount = count;
+                    peakIndex = idx;
+                }
+            }
+        });
+
+        if (!activeIndices.length) return null;
+
+        const firstIndex = activeIndices[0];
+        const lastIndex = activeIndices[activeIndices.length - 1];
+        const isDissolved = lastIndex < (dates.length - 1);
+        // La date de dissolution correspond au premier snapshot où la homeland a disparu (ou à son dernier jour actif)
+        const dissolvedDate = isDissolved ? dates[lastIndex + 1] || dates[lastIndex] : null;
+
+        return {
+            tribe,
+            activeIndices,
+            firstIndex,
+            lastIndex,
+            firstDate: dates[firstIndex],
+            lastDate: dates[lastIndex],
+            dissolvedDate,
+            isDissolved,
+            peakIndex,
+            peakDate: dates[peakIndex],
+            peakCount
+        };
+    }
+
+    // Distance minimale entre un point P(px, py) et un segment [A(x1, y1), B(x2, y2)]
+    function distToSegment(px, py, x1, y1, x2, y2) {
+        const dx = x2 - x1;
+        const dy = y2 - y1;
+        const lenSq = dx * dx + dy * dy;
+        if (lenSq === 0) return Math.hypot(px - x1, py - y1);
+        let t = ((px - x1) * dx + (py - y1) * dy) / lenSq;
+        t = Math.max(0.05, Math.min(0.95, t));
+        return Math.hypot(px - (x1 + t * dx), py - (y1 + t * dy));
+    }
+
     function getPlayerConstellationData(query) {
         const constellations = window.PLAYER_CONSTELLATIONS || { players: {} };
         const playersMap = constellations.players || {};
@@ -1342,49 +1396,110 @@ $(document).ready(function () {
     function renderAllegianceLedger() {
         if (!$playerLedger.length) return;
 
-        if (currentView !== 'pn' || !selectedPlayer) {
-            $playerLedger.empty().css('display', 'none');
+        // --- Mode PN : Historique des allégeances du joueur ---
+        if (currentView === 'pn' && selectedPlayer) {
+            const history = getPlayerAllegianceHistory(selectedPlayer);
+            let html = '<div class="allegiance-ledger-title">Allegiances</div>';
+
+            if (!history.length) {
+                html += '<div class="allegiance-empty">None</div>';
+            } else {
+                html += history.map(item => {
+                    const iconPath = config.tribes?.[item.tribe]?.icon || '';
+                    const stateClass = item.isCurrent ? 'is-current' : 'is-past';
+                    const startStr = formatShortDate(item.startDate);
+                    const endStr = formatShortDate(item.endDate);
+
+                    let dateLabel;
+                    if (item.isCurrent) {
+                        dateLabel = `since ${startStr}`;
+                    } else if (item.startDate === item.endDate) {
+                        dateLabel = startStr;
+                    } else {
+                        dateLabel = `${startStr} &ndash; ${endStr}`;
+                    }
+
+                    return `
+                        <button type="button" class="allegiance-badge ${stateClass}" data-tribe="${item.tribe}" data-date-index="${item.startIndex}" title="View ${item.tribe} Homeland (${startStr})">
+                            <img src="${iconPath}" alt="${item.tribe}" class="allegiance-icon">
+                            <span class="allegiance-date">${dateLabel}</span>
+                        </button>
+                    `;
+                }).join('');
+            }
+
+            $playerLedger.html(html).css('display', 'flex');
             return;
         }
 
-        const history = getPlayerAllegianceHistory(selectedPlayer);
-        let html = '<div class="allegiance-ledger-title">Allegiances</div>';
+        // --- Mode HN : Jalons de vie de la Homeland (Founded / Peak / Dissolved) ---
+        if (currentView === 'hn' && activeTribeFilter) {
+            const lifespan = getHomelandLifespan(activeTribeFilter);
+            if (!lifespan) {
+                $playerLedger.empty().css('display', 'none');
+                return;
+            }
 
-        if (!history.length) {
-            html += '<div class="allegiance-empty">None</div>';
-        } else {
-            html += history.map(item => {
-                const iconPath = config.tribes?.[item.tribe]?.icon || '';
-                const stateClass = item.isCurrent ? 'is-current' : 'is-past';
-                const startStr = formatShortDate(item.startDate);
-                const endStr = formatShortDate(item.endDate);
+            const iconPath = config.tribes?.[activeTribeFilter]?.icon || '';
+            const foundedStr = formatShortDate(lifespan.firstDate);
+            const peakStr = formatShortDate(lifespan.peakDate);
+            const isAtStart = currentIndex === lifespan.firstIndex;
+            const isAtPeak = currentIndex === lifespan.peakIndex;
+            const isAtEnd = currentIndex === lifespan.lastIndex;
 
-                let dateLabel;
-                if (item.isCurrent) {
-                    dateLabel = `since ${startStr}`;
-                } else if (item.startDate === item.endDate) {
-                    dateLabel = startStr;
-                } else {
-                    dateLabel = `${startStr} &ndash; ${endStr}`;
-                }
+            let html = '<div class="allegiance-ledger-title">Chronicle</div>';
 
-                return `
-                    <button type="button" class="allegiance-badge ${stateClass}" data-tribe="${item.tribe}" data-date-index="${item.startIndex}" title="View ${item.tribe} Homeland (${startStr})">
-                        <img src="${iconPath}" alt="${item.tribe}" class="allegiance-icon">
-                        <span class="allegiance-date">${dateLabel}</span>
+            html += `
+                <button type="button" class="allegiance-badge ${isAtStart ? 'is-current' : 'is-past'}" data-tribe="${activeTribeFilter}" data-date-index="${lifespan.firstIndex}" title="Jump to foundation date">
+                    <img src="${iconPath}" alt="${activeTribeFilter}" class="allegiance-icon">
+                    <span class="allegiance-date">Founded ${foundedStr}</span>
+                </button>
+            `;
+
+            if (lifespan.peakIndex !== lifespan.firstIndex && lifespan.peakIndex !== lifespan.lastIndex) {
+                html += `
+                    <button type="button" class="allegiance-badge ${isAtPeak ? 'is-current' : 'is-past'}" data-tribe="${activeTribeFilter}" data-date-index="${lifespan.peakIndex}" title="Jump to peak membership (${lifespan.peakCount} members)">
+                        <span class="allegiance-date">Peak: ${lifespan.peakCount} (${peakStr})</span>
                     </button>
                 `;
-            }).join('');
+            }
+
+            if (lifespan.isDissolved) {
+                const dissolvedStr = formatShortDate(lifespan.dissolvedDate);
+                html += `
+                    <button type="button" class="allegiance-badge ${isAtEnd ? 'is-current' : 'is-past'}" data-tribe="${activeTribeFilter}" data-date-index="${lifespan.lastIndex}" title="Jump to final active day before dissolution">
+                        <span class="allegiance-date">Dissolved ${dissolvedStr}</span>
+                    </button>
+                `;
+            } else {
+                html += `
+                    <button type="button" class="allegiance-badge ${isAtEnd ? 'is-current' : 'is-past'}" data-tribe="${activeTribeFilter}" data-date-index="${lifespan.lastIndex}" title="Jump to latest date">
+                        <span class="allegiance-date">Status: Active</span>
+                    </button>
+                `;
+            }
+
+            $playerLedger.html(html).css('display', 'flex');
+            return;
         }
 
-        $playerLedger.html(html).css('display', 'flex');
+        $playerLedger.empty().css('display', 'none');
     }
 
     function updateHeaderTitle() {
         if (currentView === 'pn' && selectedPlayer) {
             $mapHeaderTitle.html(`Player Network &bull; <span class="header-subtitle">${selectedPlayer}'s frequent opponents</span>`);
         } else if (currentView === 'hn' && activeTribeFilter) {
-            $mapHeaderTitle.html(`${activeTribeFilter} Network &bull; <span class="header-subtitle">Double-click a player bubble</span>`);
+            const lifespan = getHomelandLifespan(activeTribeFilter);
+            let metaText = 'Double-click a player bubble';
+            if (lifespan) {
+                const foundedStr = formatShortDate(lifespan.firstDate);
+                const statusStr = lifespan.isDissolved
+                    ? `Dissolved ${formatShortDate(lifespan.dissolvedDate)}`
+                    : 'Active';
+                metaText = `Founded ${foundedStr} &bull; ${statusStr}`;
+            }
+            $mapHeaderTitle.html(`${activeTribeFilter} Network &bull; <span class="header-subtitle">${metaText}</span>`);
         } else {
             $mapHeaderTitle.html(`Homelands Map &bull; <span class="header-subtitle">Click a region or search a player</span>`);
         }
@@ -1394,7 +1509,10 @@ $(document).ready(function () {
        10.1 GRAPH DATA GENERATORS (HM, HN, PN)
        ------------------------------------------------------------------------- */
     function buildGraphData(snapshot) {
-        const activeTribes = Object.keys(snapshot || {});
+        // Ne conserve que les Homelands ayant au moins 1 membre actif
+        const activeTribes = Object.keys(snapshot || {}).filter(
+            t => Array.isArray(snapshot[t]) && snapshot[t].length > 0
+        );
         const nodes = [];
         const links = [];
 
@@ -1438,7 +1556,6 @@ $(document).ready(function () {
                 color: getPlayerNetworkColor(centerTribe, centerTribe, true)
             });
 
-            // Bornes d'éloignement adaptées au nombre de partenaires
             const minDist = centerRad + maxPartnerRad + 16;
             const maxDist = Math.min(198, Math.max(minDist + 40, 85 + totalPartners * 5.5));
             const sqrtMax = Math.sqrt(maxWeight);
@@ -1449,15 +1566,12 @@ $(document).ready(function () {
                 const partnerId = `partner_${partnerName}`;
                 const radius = partnerAbsoluteRadius(weight);
 
-                // Combinaison du ratio de parties (60%) et du rang (40%) pour étaler les ex-aequo
                 const wNorm = (sqrtMax > sqrtMin)
                     ? (sqrtMax - Math.sqrt(weight)) / (sqrtMax - sqrtMin)
                     : 0;
                 const rankNorm = totalPartners > 1 ? (idx / (totalPartners - 1)) : 0;
                 const t = (sqrtMax > sqrtMin) ? (0.6 * wNorm + 0.4 * rankNorm) : rankNorm;
                 const dist = minDist + t * (maxDist - minDist);
-
-                // Spirale selon l'angle d'or pour éviter les paquets de bulles de même rang
                 const angle = (idx * GOLDEN_ANGLE) - (Math.PI / 2);
 
                 const partnerTribe = getPlayerTribe(partnerName);
@@ -1490,15 +1604,19 @@ $(document).ready(function () {
 
         // --- VIEW HM: HOMELANDS MAP ---
         if (currentView === 'hm' || !activeTribeFilter) {
-            activeTribes.forEach(t => {
+            const totalTribes = activeTribes.length;
+            activeTribes.forEach((t, idx) => {
                 const members = snapshot[t] || [];
                 const count = members.length;
+                // Angle de référence sur un polygone régulier pour éviter l'apparition au centre
+                const spawnAngle = (2 * Math.PI * idx / (totalTribes || 1)) - (Math.PI / 2);
                 nodes.push({
                     id: t,
                     type: 'tribe',
                     label: t,
                     count: count,
-                    radius: tribeRadius(count)
+                    radius: tribeRadius(count),
+                    spawnAngle: spawnAngle
                 });
             });
 
@@ -1587,7 +1705,8 @@ $(document).ready(function () {
         const container = document.getElementById('tribeMapContainer');
         const width = container?.clientWidth || 800;
         const height = container?.clientHeight || 450;
-        const duration = 400;
+        const duration = 450;
+        const easeFn = d3.easeCubicOut;
 
         if (svg.select("g.links-layer").empty()) {
             svg.append("g").attr("class", "links-layer");
@@ -1602,17 +1721,38 @@ $(document).ready(function () {
         const originX = width / 2;
         const originY = height / 2;
 
+        // Détecte si la topologie (liste des nœuds ou mode de vue) a changé
+        const topologyChanged =
+            lastRenderedView !== currentView ||
+            newNodes.length !== prevNodesMap.size ||
+            newNodes.some(n => !prevNodesMap.has(n.id));
+        lastRenderedView = currentView;
+
+        // Rayon de couronne pour placer proprement les clairières en mode HM
+        const hmRingRadius = newNodes.length >= 3
+            ? Math.min(width, height) * (newNodes.length >= 5 ? 0.35 : 0.30)
+            : 80;
+
         newNodes.forEach(d => {
             const prev = prevNodesMap.get(d.id);
             if (prev) {
                 d.x = prev.x;
                 d.y = prev.y;
-            } else if ((d.type === 'player' || d.type === 'ego-partner') && d.dist != null) {
-                d.x = originX + d.dist * Math.cos(d.angle || 0);
-                d.y = originY + d.dist * Math.sin(d.angle || 0);
+                d.vx = (prev.vx || 0) * 0.3;
+                d.vy = (prev.vy || 0) * 0.3;
+                d.currentRadius = prev.currentRadius ?? prev.radius;
             } else {
-                d.x = originX + (Math.random() - 0.5) * 10;
-                d.y = originY + (Math.random() - 0.5) * 10;
+                d.currentRadius = 0; // Démarre à 0 pour grandir en douceur
+                if ((d.type === 'player' || d.type === 'ego-partner') && d.dist != null) {
+                    d.x = originX + d.dist * Math.cos(d.angle || 0);
+                    d.y = originY + d.dist * Math.sin(d.angle || 0);
+                } else if (d.type === 'tribe' && currentView === 'hm' && d.spawnAngle != null) {
+                    d.x = originX + hmRingRadius * Math.cos(d.spawnAngle);
+                    d.y = originY + hmRingRadius * Math.sin(d.spawnAngle);
+                } else {
+                    d.x = originX + (Math.random() - 0.5) * 10;
+                    d.y = originY + (Math.random() - 0.5) * 10;
+                }
             }
         });
 
@@ -1625,21 +1765,52 @@ $(document).ready(function () {
         const linkSel = svg.select("g.links-layer").selectAll("line")
             .data(newLinks, d => `${d.source.id || d.source}-${d.target.id || d.target}`);
 
-        linkSel.exit().transition().duration(duration).attr("stroke-opacity", 0).remove();
+        linkSel.exit()
+            .transition().duration(duration * 0.7).ease(easeFn)
+            .style("opacity", 0)
+            .remove();
 
-        const link = linkSel.enter().append("line").merge(linkSel);
+        const linkEnter = linkSel.enter().append("line")
+            .style("opacity", 0);
+
+        const link = linkEnter.merge(linkSel);
         link.attr("class", d => `link ${d.type || 'constellation-link'}`)
-            .style("--node-color", d => d.color || null);
+            .style("--node-color", d => d.color || null)
+            .transition().duration(duration).ease(easeFn)
+            .style("opacity", 1);
 
         // --- Nodes Update ---
         const nodeSel = svg.select("g.nodes-layer").selectAll("g.node-group")
             .data(newNodes, d => d.id);
 
-        nodeSel.exit().transition().duration(duration).style("opacity", 0).remove();
+        // Disparition fluide : rétraction du cercle et de l'icône vers 0 + fondu
+        const nodeExit = nodeSel.exit();
+        nodeExit.transition().duration(duration).ease(easeFn)
+            .style("opacity", 0)
+            .remove();
+        nodeExit.select(".node-circle")
+            .transition().duration(duration).ease(easeFn)
+            .attr("r", 0);
+        nodeExit.select(".node-icon")
+            .transition().duration(duration).ease(easeFn)
+            .attr("width", 0).attr("height", 0)
+            .attr("x", 0).attr("y", 0);
 
-        const nodeEnter = nodeSel.enter().append("g").call(drag);
-        nodeEnter.append("circle").attr("class", "node-circle");
-        nodeEnter.append("image").attr("class", "node-icon");
+        // Apparition fluide : démarre à opacité 0 et rayon 0
+        const nodeEnter = nodeSel.enter().append("g")
+            .attr("class", d => `node-group type-${d.type}`)
+            .style("opacity", 0)
+            .attr("transform", d => `translate(${d.x},${d.y})`)
+            .call(drag);
+
+        nodeEnter.append("circle")
+            .attr("class", "node-circle")
+            .attr("r", 0);
+
+        nodeEnter.append("image")
+            .attr("class", "node-icon")
+            .attr("width", 0).attr("height", 0)
+            .attr("x", 0).attr("y", 0);
 
         const textGroup = nodeEnter.append("text").attr("class", "count-text");
         textGroup.append("tspan").attr("class", "num-span").attr("x", 0).attr("dy", "0");
@@ -1651,22 +1822,40 @@ $(document).ready(function () {
 
         node.attr("class", d => `node-group type-${d.type} ${activeTribeFilter === d.id ? 'is-selected' : ''}`)
             .style("--node-color", d => d.color || null)
-            .transition().duration(duration).style("opacity", 1);
+            .transition().duration(duration).ease(easeFn)
+            .style("opacity", 1);
 
         node.each(function (d) {
             const g = d3.select(this);
-            g.select(".node-circle").transition().duration(duration).attr("r", d.radius);
+            const startR = d.currentRadius ?? 0;
+            const targetR = d.radius;
+
+            // Interpolation synchronisée du rayon pour que les lignes suivent le cercle en temps réel
+            g.select(".node-circle")
+                .transition().duration(duration).ease(easeFn)
+                .attrTween("r", function () {
+                    const interp = d3.interpolateNumber(startR, targetR);
+                    return function (t) {
+                        d.currentRadius = interp(t);
+                        return d.currentRadius;
+                    };
+                });
 
             if (d.type === 'tribe') {
                 const iconPath = config.tribes?.[d.id]?.icon || '';
                 const iconSize = Math.max(24, d.radius * 0.7);
                 g.select(".node-icon")
                     .attr("href", iconPath).attr("xlink:href", iconPath)
+                    .transition().duration(duration).ease(easeFn)
                     .attr("width", iconSize).attr("height", iconSize)
                     .attr("x", -iconSize / 2).attr("y", -iconSize / 2 - 6);
-                g.select(".count-text").attr("transform", `translate(0, ${iconSize / 2 + 8})`);
+
+                g.select(".count-text")
+                    .transition().duration(duration).ease(easeFn)
+                    .attr("transform", `translate(0, ${iconSize / 2 + 8})`);
+
                 g.select(".num-span").text(d.count);
-                g.select(".lbl-span").text(" members");
+                g.select(".lbl-span").text(d.count === 1 ? " member" : " members");
                 g.select(".player-label").text("");
             } else {
                 g.select(".node-icon").attr("href", "").attr("xlink:href", "");
@@ -1726,19 +1915,29 @@ $(document).ready(function () {
             }
         });
 
-        // --- Physics Simulation (Gravité et orbites stables) ---
+        // --- Physics Simulation (Gravité, couronne anti-chevauchement et orbites) ---
         if (!simulation) {
-            simulation = d3.forceSimulation().alphaDecay(0.05);
+            simulation = d3.forceSimulation().alphaDecay(0.045).velocityDecay(0.35);
         }
         const linkForce = d3.forceLink().id(d => d.id);
 
         if (currentView === 'hm' && !activeTribeFilter) {
+            const nTribes = newNodes.length;
             simulation
-                .force("center", d3.forceCenter(width / 2, height / 2))
-                .force("radial", null)
-                .force("link", linkForce.distance(145))
-                .force("charge", d3.forceManyBody().strength(-300))
-                .force("collision", d3.forceCollide().radius(d => d.radius + 15));
+                .force("center", d3.forceCenter(width / 2, height / 2).strength(0.1))
+                .force("x", d3.forceX(width / 2).strength(0.04))
+                .force("y", d3.forceY(height / 2).strength(0.06))
+                // Couronne radiale dès 3 clairières pour éviter qu'un cercle ne soit piégé au centre
+                .force("radial", nTribes >= 3
+                    ? d3.forceRadial(hmRingRadius, width / 2, height / 2).strength(0.55)
+                    : null
+                )
+                .force("link", linkForce
+                    .distance(d => (d.source.radius || 40) + (d.target.radius || 40) + 85)
+                    .strength(nTribes >= 4 ? 0.15 : 0.35)
+                )
+                .force("charge", d3.forceManyBody().strength(-420))
+                .force("collision", d3.forceCollide().radius(d => d.radius + 22).iterations(2));
         } else {
             simulation
                 .force("center", null)
@@ -1752,7 +1951,8 @@ $(document).ready(function () {
 
         simulation.nodes(newNodes);
         simulation.force("link").links(newLinks);
-        simulation.alpha(0.5).restart();
+        // Relance douce (0.18) si seules les tailles changent, ou normale (0.45) si la topologie change
+        simulation.alpha(topologyChanged ? 0.45 : 0.18).restart();
 
         simulation.on("tick", () => {
             if (currentView === 'hn' && activeTribeFilter) {
@@ -1782,30 +1982,46 @@ $(document).ready(function () {
             }
 
             newNodes.forEach(d => {
-                d.x = Math.max(d.radius, Math.min(width - d.radius, d.x));
-                d.y = Math.max(d.radius, Math.min(height - d.radius, d.y));
+                const pad = (d.currentRadius ?? d.radius) + 4;
+                d.x = Math.max(pad, Math.min(width - pad, d.x));
+                d.y = Math.max(pad, Math.min(height - pad, d.y));
             });
 
             link
                 .attr("x1", d => {
                     const dx = d.target.x - d.source.x, dy = d.target.y - d.source.y;
                     const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-                    return d.source.x + (dx / dist) * (d.source.radius || 0);
+                    const r = d.source.currentRadius ?? d.source.radius ?? 0;
+                    return d.source.x + (dx / dist) * r;
                 })
                 .attr("y1", d => {
                     const dx = d.target.x - d.source.x, dy = d.target.y - d.source.y;
                     const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-                    return d.source.y + (dy / dist) * (d.source.radius || 0);
+                    const r = d.source.currentRadius ?? d.source.radius ?? 0;
+                    return d.source.y + (dy / dist) * r;
                 })
                 .attr("x2", d => {
                     const dx = d.target.x - d.source.x, dy = d.target.y - d.source.y;
                     const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-                    return d.target.x - (dx / dist) * (d.target.radius || 0);
+                    const r = d.target.currentRadius ?? d.target.radius ?? 0;
+                    return d.target.x - (dx / dist) * r;
                 })
                 .attr("y2", d => {
                     const dx = d.target.x - d.source.x, dy = d.target.y - d.source.y;
                     const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-                    return d.target.y - (dy / dist) * (d.target.radius || 0);
+                    const r = d.target.currentRadius ?? d.target.radius ?? 0;
+                    return d.target.y - (dy / dist) * r;
+                })
+                // Masque dynamiquement tout chemin inter-clairières qui couperait le disque d'une 3e clairière
+                .attr("stroke-opacity", d => {
+                    if (d.type !== 'inter-tribe' || newNodes.length < 3) return null;
+                    const obstructed = newNodes.some(other => {
+                        if (other.id === d.source.id || other.id === d.target.id) return false;
+                        const clearance = (other.currentRadius ?? other.radius ?? 32) + 10;
+                        const distSeg = distToSegment(other.x, other.y, d.source.x, d.source.y, d.target.x, d.target.y);
+                        return distSeg < clearance;
+                    });
+                    return obstructed ? 0 : null;
                 });
 
             node.attr("transform", d => `translate(${d.x},${d.y})`);
@@ -1813,12 +2029,41 @@ $(document).ready(function () {
     }
 
     /* -------------------------------------------------------------------------
-       10.3 TIMELINE & VIEW MANAGEMENT
+       10.3 TIMELINE & VIEW MANAGEMENT (AVEC BORNAGE EN MODE HN)
        ------------------------------------------------------------------------- */
     function updateView(selectedDate) {
         if (currentView === 'pn') {
             selectedDate = dates[dates.length - 1];
+        } else if (currentView === 'hn' && activeTribeFilter) {
+            const lifespan = getHomelandLifespan(activeTribeFilter);
+            if (!lifespan) {
+                // Sécurité : si la homeland n'existe dans aucun snapshot, retour en HM
+                currentView = 'hm';
+                activeTribeFilter = null;
+            } else {
+                // Restreint l'index temporel aux dates où la Homeland possède des membres (> 0)
+                if (!lifespan.activeIndices.includes(currentIndex)) {
+                    const closestIdx = lifespan.activeIndices.reduce((prev, curr) =>
+                        Math.abs(curr - currentIndex) < Math.abs(prev - currentIndex) ? curr : prev
+                    );
+                    currentIndex = closestIdx;
+                    selectedDate = dates[currentIndex];
+                }
+
+                $datePicker.attr({ min: lifespan.firstDate, max: lifespan.lastDate });
+                $datePicker.val(selectedDate);
+                renderGraph(snapshots[selectedDate]);
+
+                $prevBtn.prop('disabled', currentIndex <= lifespan.firstIndex);
+                $earliestBtn.prop('disabled', currentIndex <= lifespan.firstIndex);
+                $nextBtn.prop('disabled', currentIndex >= lifespan.lastIndex);
+                $latestBtn.prop('disabled', currentIndex >= lifespan.lastIndex);
+                return;
+            }
         }
+
+        // Bornes globales pour HM et PN
+        $datePicker.attr({ min: dates[0], max: dates[dates.length - 1] });
         $datePicker.val(selectedDate);
         const snapshot = snapshots[selectedDate];
         if (!snapshot) return;
@@ -1828,20 +2073,50 @@ $(document).ready(function () {
         if (currentView === 'pn') {
             $prevBtn.prop('disabled', true);
             $nextBtn.prop('disabled', true);
+            $earliestBtn.prop('disabled', true);
+            $latestBtn.prop('disabled', true);
         } else {
             $prevBtn.prop('disabled', currentIndex <= 0);
+            $earliestBtn.prop('disabled', currentIndex <= 0);
             $nextBtn.prop('disabled', currentIndex >= dates.length - 1);
+            $latestBtn.prop('disabled', currentIndex >= dates.length - 1);
         }
     }
 
     function setDateByIndex(index) {
+        if (currentView === 'hn' && activeTribeFilter) {
+            const lifespan = getHomelandLifespan(activeTribeFilter);
+            if (lifespan) {
+                const clamped = Math.max(lifespan.firstIndex, Math.min(lifespan.lastIndex, index));
+                currentIndex = clamped;
+                updateView(dates[currentIndex]);
+                return;
+            }
+        }
         if (index >= 0 && index < dates.length) {
             currentIndex = index;
             updateView(dates[currentIndex]);
         }
     }
 
-    // --- Clic sur un badge d'allégeance : saut temporel en mode HN ---
+    function stepDate(direction) {
+        if (currentView === 'hn' && activeTribeFilter) {
+            const lifespan = getHomelandLifespan(activeTribeFilter);
+            if (lifespan) {
+                const pos = lifespan.activeIndices.indexOf(currentIndex);
+                if (pos !== -1) {
+                    const nextPos = pos + direction;
+                    if (nextPos >= 0 && nextPos < lifespan.activeIndices.length) {
+                        setDateByIndex(lifespan.activeIndices[nextPos]);
+                    }
+                    return;
+                }
+            }
+        }
+        setDateByIndex(currentIndex + direction);
+    }
+
+    // --- Clic sur un badge (Allégeance en mode PN ou Jalon en mode HN) ---
     $playerLedger.on('click', '.allegiance-badge', function (e) {
         e.stopPropagation();
         const tribe = $(this).data('tribe');
@@ -1889,16 +2164,28 @@ $(document).ready(function () {
         updateView(dates[currentIndex]);
     });
 
-    $prevBtn.on('click', () => setDateByIndex(currentIndex - 1));
-    $nextBtn.on('click', () => setDateByIndex(currentIndex + 1));
-    $earliestBtn.on('click', () => setDateByIndex(0));
-    $latestBtn.on('click', () => setDateByIndex(dates.length - 1));
+    $prevBtn.on('click', () => stepDate(-1));
+    $nextBtn.on('click', () => stepDate(1));
+    $earliestBtn.on('click', () => {
+        if (currentView === 'hn' && activeTribeFilter) {
+            const lifespan = getHomelandLifespan(activeTribeFilter);
+            if (lifespan) return setDateByIndex(lifespan.firstIndex);
+        }
+        setDateByIndex(0);
+    });
+    $latestBtn.on('click', () => {
+        if (currentView === 'hn' && activeTribeFilter) {
+            const lifespan = getHomelandLifespan(activeTribeFilter);
+            if (lifespan) return setDateByIndex(lifespan.lastIndex);
+        }
+        setDateByIndex(dates.length - 1);
+    });
 
     $datePicker.on('change', function () {
         const val = $(this).val();
         const matchIdx = dates.findIndex(d => d >= val);
-        currentIndex = matchIdx !== -1 ? matchIdx : dates.length - 1;
-        updateView(dates[currentIndex]);
+        const targetIdx = matchIdx !== -1 ? matchIdx : dates.length - 1;
+        setDateByIndex(targetIdx);
     });
 
     $(window).on('resize', () => {
