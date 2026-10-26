@@ -1773,30 +1773,34 @@ table.dataTable tbody tr.loser td {
 
 .map-legend {
     position: absolute;
-    bottom: 12px;
-    left: 0;
-    right: 0;
+    top: 40px;
+    left: 18px;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 6px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
     font-family: var(--font-ui);
     font-size: var(--size-xxs);
     color: var(--text-muted);
     pointer-events: none;
     z-index: 10;
     text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
-    opacity: 0.85;
+    opacity: 0.9;
+}
+
+.map-legend .legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    line-height: 1.2;
 }
 
 .map-legend .legend-dot {
     display: inline-block;
-    width: 8px;
-    height: 8px;
+    width: 7px;
+    height: 7px;
     border-radius: 50%;
-    margin-right: 3px;
-    vertical-align: middle;
+    flex-shrink: 0;
 }
 
 /* --- B. Date Controls --- */
