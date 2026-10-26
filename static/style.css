@@ -1763,19 +1763,40 @@ table.dataTable tbody tr.loser td {
     letter-spacing: var(--track-wide);
     cursor: pointer;
     user-select: none;
-    transition: color 0.2s ease;
+    transition: color 0.2s ease, transform 0.15s ease;
 }
 
 .map-header-title:hover {
-    color: var(--main-color);
+    color: var(--text-bright);
+    transform: translateX(-2px);
 }
 
-.map-header-title .header-subtitle {
-    font-weight: var(--normal);
-    text-transform: none;
-    letter-spacing: normal;
-    color: var(--text-main);
+.map-legend {
+    position: absolute;
+    bottom: 12px;
+    left: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    font-family: var(--font-ui);
+    font-size: var(--size-xxs);
+    color: var(--text-muted);
+    pointer-events: none;
+    z-index: 10;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
     opacity: 0.85;
+}
+
+.map-legend .legend-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 3px;
+    vertical-align: middle;
 }
 
 /* --- B. Date Controls --- */
