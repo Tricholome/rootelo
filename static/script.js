@@ -1444,7 +1444,6 @@ $(document).ready(function () {
             // 1. Fondatrice
             html += `
                 <button type="button" class="allegiance-badge ${isAtStart ? 'is-current' : 'is-past'}" data-tribe="${activeTribeFilter}" data-date-index="${lifespan.firstIndex}" title="Jump to founding date">
-                    <img src="${iconPath}" alt="${activeTribeFilter}" class="allegiance-icon">
                     <span class="allegiance-date">Founded ${foundedStr}</span>
                 </button>
             `;
@@ -1452,8 +1451,8 @@ $(document).ready(function () {
             // 2. Pic (Apex) si distinct
             if (lifespan.peakIndex !== lifespan.firstIndex && lifespan.peakIndex !== lifespan.lastIndex) {
                 html += `
-                    <button type="button" class="allegiance-badge ${isAtPeak ? 'is-current' : 'is-past'}" data-tribe="${activeTribeFilter}" data-date-index="${lifespan.peakIndex}" title="Jump to apex membership: ${lifespan.peakCount} denizens">
-                        <span class="allegiance-date">Apex ${peakStr}</span>
+                    <button type="button" class="allegiance-badge ${isAtPeak ? 'is-current' : 'is-past'}" data-tribe="${activeTribeFilter}" data-date-index="${lifespan.peakIndex}" title="Jump to peak membership: ${lifespan.peakCount} denizens">
+                        <span class="allegiance-date">Culminated ${peakStr}</span>
                     </button>
                 `;
             }
