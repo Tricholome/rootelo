@@ -1,25 +1,25 @@
 {
-  "updated_at": "2026-10-27 00:27 UTC",
+  "updated_at": "2026-10-28 00:27 UTC",
   "players": {
+    "bw": {
+      "elo": 1374,
+      "rank": 1,
+      "tier": "rabbit",
+      "bg_color": "#F2C14E",
+      "icon_url": "https://tricholome.github.io/rootelo/assets/icons/rabbit.webp",
+      "games": 46,
+      "wins": 23.0,
+      "win_rate": "50.0%"
+    },
     "uwtron": {
       "elo": 1362,
-      "rank": 1,
+      "rank": 2,
       "tier": "rabbit",
       "bg_color": "#F2C14E",
       "icon_url": "https://tricholome.github.io/rootelo/assets/icons/rabbit.webp",
       "games": 20,
       "wins": 11.0,
       "win_rate": "55.0%"
-    },
-    "bw": {
-      "elo": 1362,
-      "rank": 2,
-      "tier": "rabbit",
-      "bg_color": "#F2C14E",
-      "icon_url": "https://tricholome.github.io/rootelo/assets/icons/rabbit.webp",
-      "games": 45,
-      "wins": 22.0,
-      "win_rate": "48.9%"
     },
     "wyvernelement": {
       "elo": 1340,
@@ -721,16 +721,6 @@
       "wins": 1.0,
       "win_rate": "20.0%"
     },
-    "xpertacorn": {
-      "elo": 1188,
-      "rank": "-",
-      "tier": "unassigned",
-      "bg_color": null,
-      "icon_url": null,
-      "games": 1,
-      "wins": 0.0,
-      "win_rate": "0.0%"
-    },
     "rho_sternjaeger": {
       "elo": 1187,
       "rank": "-",
@@ -783,6 +773,16 @@
     },
     "itaychang": {
       "elo": 1180,
+      "rank": "-",
+      "tier": "unassigned",
+      "bg_color": null,
+      "icon_url": null,
+      "games": 2,
+      "wins": 0.0,
+      "win_rate": "0.0%"
+    },
+    "xpertacorn": {
+      "elo": 1179,
       "rank": "-",
       "tier": "unassigned",
       "bg_color": null,
@@ -1161,16 +1161,6 @@
       "wins": 0.0,
       "win_rate": "0.0%"
     },
-    "calvinfun": {
-      "elo": 1164,
-      "rank": "-",
-      "tier": "unassigned",
-      "bg_color": null,
-      "icon_url": null,
-      "games": 4,
-      "wins": 0.0,
-      "win_rate": "0.0%"
-    },
     "kylobot": {
       "elo": 1164,
       "rank": "-",
@@ -1253,6 +1243,16 @@
     },
     "lilacteddybear": {
       "elo": 1160,
+      "rank": "-",
+      "tier": "unassigned",
+      "bg_color": null,
+      "icon_url": null,
+      "games": 5,
+      "wins": 0.0,
+      "win_rate": "0.0%"
+    },
+    "calvinfun": {
+      "elo": 1156,
       "rank": "-",
       "tier": "unassigned",
       "bg_color": null,
@@ -1402,14 +1402,14 @@
       "win_rate": "0.0%"
     },
     "mentalmendel": {
-      "elo": 1105,
+      "elo": 1101,
       "rank": "-",
       "tier": "squirrel",
       "bg_color": "#94C160",
       "icon_url": "https://tricholome.github.io/rootelo/assets/icons/squirrel.webp",
-      "games": 27,
+      "games": 28,
       "wins": 2.0,
-      "win_rate": "7.4%"
+      "win_rate": "7.1%"
     }
   }
 }
