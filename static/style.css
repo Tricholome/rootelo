@@ -1763,44 +1763,19 @@ table.dataTable tbody tr.loser td {
     letter-spacing: var(--track-wide);
     cursor: pointer;
     user-select: none;
-    transition: color 0.2s ease, transform 0.15s ease;
+    transition: color 0.2s ease;
 }
 
 .map-header-title:hover {
-    color: var(--text-bright);
-    transform: translateX(-2px);
+    color: var(--main-color);
 }
 
-.map-legend {
-    position: absolute;
-    top: 40px;
-    left: 18px;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 4px;
-    font-family: var(--font-ui);
-    font-size: var(--size-xxs);
-    color: var(--text-muted);
-    pointer-events: none;
-    z-index: 10;
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
-    opacity: 0.9;
-}
-
-.map-legend .legend-item {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    line-height: 1.2;
-}
-
-.map-legend .legend-dot {
-    display: inline-block;
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    flex-shrink: 0;
+.map-header-title .header-subtitle {
+    font-weight: var(--normal);
+    text-transform: none;
+    letter-spacing: normal;
+    color: var(--text-main);
+    opacity: 0.85;
 }
 
 /* --- B. Date Controls --- */
@@ -2045,6 +2020,37 @@ table.dataTable tbody tr.loser td {
 #tribeMapSvg .node-group.type-ego-center:hover .player-status-tspan {
     opacity: 1;
     visibility: visible;
+}
+
+/* --- Semantic Network Colors & View-State Visibility --- */
+.network-container {
+    --net-same: var(--main-color);
+    --net-other: var(--color-mouse);
+    --net-unaligned: #4a5568;
+}
+
+.network-container[data-view="pn"] #dateControls,
+.network-container[data-view="hm"] #playerLedger,
+.network-container .legend-group {
+    display: none !important;
+}
+
+.network-container[data-view="hn"] .legend-group[data-for="hn"],
+.network-container[data-view="pn"] .legend-group[data-for="pn"] {
+    display: contents;
+}
+
+/* --- Legend Dots --- */
+.legend-dot.dot-same      { background: var(--net-same); }
+.legend-dot.dot-mixed     { background: color-mix(in srgb, var(--net-same) 50%, var(--net-other)); }
+.legend-dot.dot-other     { background: var(--net-other); }
+.legend-dot.dot-unaligned { background: var(--net-unaligned); }
+
+/* --- SVG Node Sub-elements Visibility by Node Type --- */
+#tribeMapSvg .node-group.type-tribe .player-label,
+#tribeMapSvg .node-group:not(.type-tribe) .node-icon,
+#tribeMapSvg .node-group:not(.type-tribe) .count-text {
+    display: none;
 }
 
 /* =========================================================================
