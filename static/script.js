@@ -1259,12 +1259,11 @@ $(document).ready(function () {
         return key ? { name: key, data: constellations[key] } : null;
     }
 
-    // --- Historical Lifespan & Allegiance Queries ---
+	// --- Historical Lifespan & Allegiance Queries ---
     function getTribeLifespan(tribe) {
         if (!tribe) return null;
         const activeIndices = [];
         const segments = [];
-        let currentSeg = null;
         let peakIndex = -1, peakCount = 0;
 
         dates.forEach((d, idx) => {
@@ -1275,14 +1274,12 @@ $(document).ready(function () {
                     peakCount = count;
                     peakIndex = idx;
                 }
-                if (currentSeg) {
-                    currentSeg.endIndex = idx;
+                const lastSeg = segments[segments.length - 1];
+                if (lastSeg && idx - lastSeg.endIndex <= 3) {
+                    lastSeg.endIndex = idx;
                 } else {
-                    currentSeg = { startIndex: idx, endIndex: idx };
-                    segments.push(currentSeg);
+                    segments.push({ startIndex: idx, endIndex: idx });
                 }
-            } else {
-                currentSeg = null;
             }
         });
 
@@ -1332,7 +1329,12 @@ $(document).ready(function () {
             const tribe = normalizeTribe(rawTribe);
 
             if (tribe) {
+                const prev = segments[segments.length - 1];
                 if (active?.tribe === tribe) {
+                    active.endDate = dateStr;
+                    active.endIndex = idx;
+                } else if (!active && prev?.tribe === tribe && idx - prev.endIndex <= 3) {
+                    active = segments.pop();
                     active.endDate = dateStr;
                     active.endIndex = idx;
                 } else {
