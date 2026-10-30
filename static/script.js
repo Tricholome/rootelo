@@ -1195,14 +1195,17 @@ $(document).ready(function () {
     const { same_tribe, other_tribe, unaligned } = config.colors;
     const GOLDEN_ANGLE = Math.PI * (3 - Math.sqrt(5));
     const TIER_PHASE = { core: 0, mid: 0.22, outer: 0.47 };
-	const $searchInput = $('#playerName');
+
+    // Déclaration unique de l'input de recherche
+    const $searchInput = $('#playerName');
 
     let currentView = 'hm';
     let activeTribe = null;
     let selectedPlayer = null;
     let currentIndex = dates.length - 1;
 	
-	const initialQuery = ($searchInput.val() || '').trim();
+    // Vérification initiale pour ouvrir automatiquement le cercle si un joueur est déjà renseigné
+    const initialQuery = ($searchInput.val() || '').trim();
     if (initialQuery) {
         const q = initialQuery.toLowerCase();
         const foundKey = Object.keys(constellations).find(k => k.toLowerCase() === q);
@@ -1223,7 +1226,6 @@ $(document).ready(function () {
     const $latestBtn = $('#latestDateBtn');
     const $headerTitle = $('#mapHeaderTitle');
     const $legend = $('#mapLegend');
-    const $searchInput = $('#playerName');
     const $ledger = $('#playerLedger');
 
     // --- Helpers & Math Utilities ---
@@ -1347,6 +1349,12 @@ $(document).ready(function () {
                     idx: seg.endIndex,
                     label: `Dissolved ${formatShortDate(dissolvedDate)}`,
                     title: 'Jump to final active day'
+                });
+            } else if (!config.is_ongoing) {
+                milestones.push({
+                    idx: seg.endIndex,
+                    label: `Survived ${formatShortDate(dates[seg.endIndex])}`,
+                    title: 'Jump to season conclusion'
                 });
             }
         });
