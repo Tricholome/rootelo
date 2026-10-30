@@ -1263,27 +1263,62 @@ $(document).ready(function () {
     function getTribeLifespan(tribe) {
         if (!tribe) return null;
         const activeIndices = [];
+        const segments = [];
+        let currentSeg = null;
         let peakIndex = -1, peakCount = 0;
 
         dates.forEach((d, idx) => {
             const count = snapshots[d]?.[tribe]?.length || 0;
             if (count > 0) {
                 activeIndices.push(idx);
-                if (count > peakCount) { peakCount = count; peakIndex = idx; }
+                if (count > peakCount) {
+                    peakCount = count;
+                    peakIndex = idx;
+                }
+                if (currentSeg) {
+                    currentSeg.endIndex = idx;
+                } else {
+                    currentSeg = { startIndex: idx, endIndex: idx };
+                    segments.push(currentSeg);
+                }
+            } else {
+                currentSeg = null;
             }
         });
+
         if (!activeIndices.length) return null;
 
-        const firstIndex = activeIndices[0];
-        const lastIndex = activeIndices[activeIndices.length - 1];
-        const isDissolved = lastIndex < dates.length - 1;
+        const milestones = [];
+        segments.forEach((seg, segIdx) => {
+            milestones.push({
+                idx: seg.startIndex,
+                label: `${segIdx === 0 ? 'Founded' : 'Revived'} ${formatShortDate(dates[seg.startIndex])}`,
+                title: segIdx === 0 ? 'Jump to founding date' : 'Jump to revival date'
+            });
+
+            if (peakIndex > seg.startIndex && peakIndex < seg.endIndex) {
+                milestones.push({
+                    idx: peakIndex,
+                    label: `Culminated ${formatShortDate(dates[peakIndex])}`,
+                    title: `Jump to peak membership: ${peakCount} denizens`
+                });
+            }
+
+            if (seg.endIndex < dates.length - 1) {
+                const dissolvedDate = dates[seg.endIndex + 1] || dates[seg.endIndex];
+                milestones.push({
+                    idx: seg.endIndex,
+                    label: `Dissolved ${formatShortDate(dissolvedDate)}`,
+                    title: 'Jump to final active day'
+                });
+            }
+        });
 
         return {
-            activeIndices, firstIndex, lastIndex, peakIndex, peakCount, isDissolved,
-            firstDate: dates[firstIndex],
-            lastDate: dates[lastIndex],
-            peakDate: dates[peakIndex],
-            dissolvedDate: isDissolved ? (dates[lastIndex + 1] || dates[lastIndex]) : null
+            activeIndices,
+            firstIndex: activeIndices[0],
+            lastIndex: activeIndices[activeIndices.length - 1],
+            milestones
         };
     }
 
@@ -1375,25 +1410,7 @@ $(document).ready(function () {
             const life = getTribeLifespan(activeTribe);
             if (!life) return $ledger.empty();
 
-            const milestones = [
-                { idx: life.firstIndex, label: `Founded ${formatShortDate(life.firstDate)}`, title: 'Jump to founding date' }
-            ];
-            if (life.peakIndex !== life.firstIndex && life.peakIndex !== life.lastIndex) {
-                milestones.push({
-                    idx: life.peakIndex,
-                    label: `Culminated ${formatShortDate(life.peakDate)}`,
-                    title: `Jump to peak membership: ${life.peakCount} denizens`
-                });
-            }
-            if (life.isDissolved) {
-                milestones.push({
-                    idx: life.lastIndex,
-                    label: `Dissolved ${formatShortDate(life.dissolvedDate)}`,
-                    title: 'Jump to final active day'
-                });
-            }
-
-            const badges = milestones.map(m => badgeButtonHtml({
+            const badges = life.milestones.map(m => badgeButtonHtml({
                 tribe: activeTribe,
                 dateIndex: m.idx,
                 label: m.label,
