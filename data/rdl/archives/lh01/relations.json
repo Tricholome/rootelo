@@ -1,575 +1,168 @@
 {
-    "1557": {
+    "796": {
         "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "2301",
-            "elo": 1007
-        },
-        "unique_opponents": 6
-    },
-    "2105": {
-        "trophy": {
-            "id": "1661",
-            "elo": 1392
-        },
-        "bane": {
-            "id": "1539",
-            "elo": 1150
-        },
-        "unique_opponents": 23
-    },
-    "2324": {
-        "trophy": {
-            "id": "457",
-            "elo": 1501
-        },
-        "bane": {
-            "id": "2287",
-            "elo": 1010
-        },
-        "unique_opponents": 32
-    },
-    "4": {
-        "trophy": {
-            "id": "1661",
-            "elo": 1388
-        },
-        "bane": {
-            "id": "1475",
-            "elo": 1153
-        },
-        "unique_opponents": 33
-    },
-    "1599": {
-        "trophy": {
-            "id": "542",
-            "elo": 1379
-        },
-        "bane": {
-            "id": "2116",
-            "elo": 1055
-        },
-        "unique_opponents": 34
-    },
-    "2232": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "1375",
-            "elo": 1212
-        },
-        "unique_opponents": 3
-    },
-    "2284": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
             "id": "2270",
-            "elo": 1186
-        },
-        "unique_opponents": 3
-    },
-    "2191": {
-        "trophy": {
-            "id": "2098",
-            "elo": 1295
+            "elo": 1389
         },
         "bane": {
-            "id": "1889",
-            "elo": 1112
+            "id": "437",
+            "elo": 1107
         },
-        "unique_opponents": 9
+        "unique_opponents": 46
     },
-    "2141": {
-        "trophy": {
-            "id": "1661",
-            "elo": 1535
-        },
-        "bane": {
-            "id": "385",
-            "elo": 1108
-        },
-        "unique_opponents": 95
-    },
-    "1012": {
+    "2198": {
         "trophy": {
             "id": null,
             "elo": -1
         },
         "bane": {
-            "id": "1963",
-            "elo": 1105
+            "id": "1828",
+            "elo": 1211
         },
         "unique_opponents": 3
     },
-    "1924": {
-        "trophy": {
-            "id": "2197",
-            "elo": 1312
-        },
-        "bane": {
-            "id": "5",
-            "elo": 1205
-        },
-        "unique_opponents": 20
-    },
-    "2178": {
+    "1339": {
         "trophy": {
             "id": null,
             "elo": -1
         },
         "bane": {
             "id": "2161",
-            "elo": 1180
+            "elo": 1236
         },
-        "unique_opponents": 6
+        "unique_opponents": 9
     },
-    "1841": {
-        "trophy": {
-            "id": "457",
-            "elo": 1403
-        },
-        "bane": {
-            "id": "780",
-            "elo": 1158
-        },
-        "unique_opponents": 14
-    },
-    "2117": {
+    "2310": {
         "trophy": {
             "id": null,
             "elo": -1
         },
         "bane": {
-            "id": "1563",
-            "elo": 1234
+            "id": "1646",
+            "elo": 1168
         },
-        "unique_opponents": 6
+        "unique_opponents": 10
     },
-    "2298": {
+    "1435": {
         "trophy": {
             "id": null,
             "elo": -1
         },
         "bane": {
-            "id": "840",
-            "elo": 1148
+            "id": "467",
+            "elo": 1232
         },
-        "unique_opponents": 15
+        "unique_opponents": 3
     },
-    "1989": {
+    "1907": {
         "trophy": {
-            "id": "2291",
-            "elo": 1252
+            "id": "2214",
+            "elo": 1259
         },
         "bane": {
-            "id": "1963",
-            "elo": 1105
+            "id": "1646",
+            "elo": 1137
         },
         "unique_opponents": 24
     },
-    "1249": {
+    "1420": {
         "trophy": {
-            "id": "1375",
-            "elo": 1218
-        },
-        "bane": {
-            "id": "545",
-            "elo": 1539
-        },
-        "unique_opponents": 8
-    },
-    "1576": {
-        "trophy": {
-            "id": "1610",
-            "elo": 1348
-        },
-        "bane": {
-            "id": "437",
-            "elo": 1137
-        },
-        "unique_opponents": 23
-    },
-    "430": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "347",
-            "elo": 1116
-        },
-        "unique_opponents": 12
-    },
-    "87": {
-        "trophy": {
-            "id": "2130",
-            "elo": 1323
-        },
-        "bane": {
-            "id": "2142",
-            "elo": 1135
-        },
-        "unique_opponents": 16
-    },
-    "1698": {
-        "trophy": {
-            "id": "1661",
-            "elo": 1472
-        },
-        "bane": {
-            "id": "1706",
-            "elo": 1015
-        },
-        "unique_opponents": 84
-    },
-    "2248": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "2062",
-            "elo": 1155
-        },
-        "unique_opponents": 21
-    },
-    "1661": {
-        "trophy": {
-            "id": "2293",
-            "elo": 1499
-        },
-        "bane": {
-            "id": "1406",
-            "elo": 1040
-        },
-        "unique_opponents": 141
-    },
-    "730": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "2273",
-            "elo": 1047
-        },
-        "unique_opponents": 14
-    },
-    "1015": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "2191",
-            "elo": 1177
-        },
-        "unique_opponents": 7
-    },
-    "13": {
-        "trophy": {
-            "id": "1610",
-            "elo": 1424
-        },
-        "bane": {
-            "id": "2266",
-            "elo": 1069
-        },
-        "unique_opponents": 39
-    },
-    "2142": {
-        "trophy": {
-            "id": "1959",
-            "elo": 1303
-        },
-        "bane": {
-            "id": "2093",
-            "elo": 1085
-        },
-        "unique_opponents": 72
-    },
-    "2247": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "1027",
+            "id": "2298",
             "elo": 1200
         },
-        "unique_opponents": 3
-    },
-    "1885": {
-        "trophy": {
-            "id": "2142",
-            "elo": 1180
-        },
         "bane": {
-            "id": "1732",
-            "elo": 1112
-        },
-        "unique_opponents": 23
-    },
-    "2358": {
-        "trophy": {
-            "id": "714",
-            "elo": 1471
-        },
-        "bane": {
-            "id": "1841",
-            "elo": 1140
-        },
-        "unique_opponents": 16
-    },
-    "98": {
-        "trophy": {
-            "id": "1959",
-            "elo": 1294
-        },
-        "bane": {
-            "id": "2172",
-            "elo": 1021
-        },
-        "unique_opponents": 33
-    },
-    "1755": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "715",
-            "elo": 1186
-        },
-        "unique_opponents": 14
-    },
-    "1306": {
-        "trophy": {
-            "id": "1661",
-            "elo": 1482
-        },
-        "bane": {
-            "id": "2239",
-            "elo": 1085
-        },
-        "unique_opponents": 32
-    },
-    "1645": {
-        "trophy": {
-            "id": "2291",
-            "elo": 1254
-        },
-        "bane": {
-            "id": null,
-            "elo": 99999
-        },
-        "unique_opponents": 3
-    },
-    "2325": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "1027",
-            "elo": 1229
+            "id": "2119",
+            "elo": 1240
         },
         "unique_opponents": 6
     },
-    "2216": {
+    "1930": {
         "trophy": {
             "id": null,
             "elo": -1
         },
         "bane": {
-            "id": "2202",
-            "elo": 1117
+            "id": "1885",
+            "elo": 1163
         },
-        "unique_opponents": 18
+        "unique_opponents": 9
     },
-    "805": {
+    "2330": {
+        "trophy": {
+            "id": "2293",
+            "elo": 1388
+        },
+        "bane": {
+            "id": "457",
+            "elo": 1253
+        },
+        "unique_opponents": 19
+    },
+    "2098": {
         "trophy": {
             "id": "1661",
-            "elo": 1397
-        },
-        "bane": {
-            "id": "1963",
-            "elo": 1112
-        },
-        "unique_opponents": 41
-    },
-    "2292": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "2135",
-            "elo": 1123
-        },
-        "unique_opponents": 6
-    },
-    "334": {
-        "trophy": {
-            "id": "1329",
-            "elo": 1511
-        },
-        "bane": {
-            "id": "1963",
-            "elo": 1115
-        },
-        "unique_opponents": 25
-    },
-    "1963": {
-        "trophy": {
-            "id": "1661",
-            "elo": 1348
-        },
-        "bane": {
-            "id": "2172",
-            "elo": 1021
-        },
-        "unique_opponents": 68
-    },
-    "2287": {
-        "trophy": {
-            "id": "1039",
-            "elo": 1254
-        },
-        "bane": {
-            "id": "1497",
-            "elo": 1060
-        },
-        "unique_opponents": 65
-    },
-    "2187": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "542",
-            "elo": 1361
-        },
-        "unique_opponents": 3
-    },
-    "1240": {
-        "trophy": {
-            "id": "1661",
-            "elo": 1528
+            "elo": 1548
         },
         "bane": {
             "id": "2268",
             "elo": 1085
         },
-        "unique_opponents": 77
+        "unique_opponents": 81
     },
-    "2261": {
-        "trophy": {
-            "id": "235",
-            "elo": 1456
-        },
-        "bane": {
-            "id": "2273",
-            "elo": 1077
-        },
-        "unique_opponents": 71
-    },
-    "1563": {
-        "trophy": {
-            "id": "714",
-            "elo": 1480
-        },
-        "bane": {
-            "id": "1098",
-            "elo": 1101
-        },
-        "unique_opponents": 43
-    },
-    "2210": {
-        "trophy": {
-            "id": "1732",
-            "elo": 1286
-        },
-        "bane": {
-            "id": "2142",
-            "elo": 1140
-        },
-        "unique_opponents": 8
-    },
-    "2138": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "1963",
-            "elo": 1146
-        },
-        "unique_opponents": 14
-    },
-    "1436": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "2270",
-            "elo": 1337
-        },
-        "unique_opponents": 6
-    },
-    "123": {
+    "1329": {
         "trophy": {
             "id": "1661",
-            "elo": 1531
+            "elo": 1551
         },
         "bane": {
-            "id": "1240",
-            "elo": 1106
+            "id": "232",
+            "elo": 1113
         },
-        "unique_opponents": 22
+        "unique_opponents": 66
     },
-    "99": {
+    "1604": {
         "trophy": {
-            "id": "1329",
-            "elo": 1434
+            "id": "542",
+            "elo": 1437
         },
         "bane": {
-            "id": "1406",
-            "elo": 1079
+            "id": "1922",
+            "elo": 1104
         },
-        "unique_opponents": 37
+        "unique_opponents": 41
     },
-    "2115": {
+    "2161": {
         "trophy": {
-            "id": "2197",
-            "elo": 1372
+            "id": "1658",
+            "elo": 1431
         },
         "bane": {
-            "id": "1706",
-            "elo": 1012
+            "id": "1497",
+            "elo": 1096
         },
-        "unique_opponents": 51
+        "unique_opponents": 86
     },
-    "2145": {
+    "2257": {
         "trophy": {
-            "id": "2319",
-            "elo": 1200
+            "id": "2039",
+            "elo": 1294
         },
         "bane": {
-            "id": "2130",
-            "elo": 1265
+            "id": "2093",
+            "elo": 1085
         },
-        "unique_opponents": 6
+        "unique_opponents": 36
+    },
+    "1732": {
+        "trophy": {
+            "id": "2161",
+            "elo": 1331
+        },
+        "bane": {
+            "id": "715",
+            "elo": 1087
+        },
+        "unique_opponents": 32
     },
     "1785": {
         "trophy": {
@@ -582,366 +175,14 @@
         },
         "unique_opponents": 3
     },
-    "568": {
+    "2363": {
         "trophy": {
             "id": null,
             "elo": -1
         },
         "bane": {
-            "id": "437",
-            "elo": 1123
-        },
-        "unique_opponents": 3
-    },
-    "945": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "2239",
-            "elo": 1160
-        },
-        "unique_opponents": 20
-    },
-    "1512": {
-        "trophy": {
-            "id": "1661",
-            "elo": 1468
-        },
-        "bane": {
-            "id": "1095",
-            "elo": 1033
-        },
-        "unique_opponents": 34
-    },
-    "831": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "2166",
-            "elo": 1181
-        },
-        "unique_opponents": 11
-    },
-    "780": {
-        "trophy": {
-            "id": "2141",
-            "elo": 1327
-        },
-        "bane": {
-            "id": "232",
-            "elo": 1157
-        },
-        "unique_opponents": 45
-    },
-    "1806": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "2293",
-            "elo": 1267
-        },
-        "unique_opponents": 6
-    },
-    "1706": {
-        "trophy": {
-            "id": "1876",
-            "elo": 1351
-        },
-        "bane": {
-            "id": "1406",
-            "elo": 1007
-        },
-        "unique_opponents": 106
-    },
-    "1452": {
-        "trophy": {
-            "id": "1482",
-            "elo": 1163
-        },
-        "bane": {
-            "id": "545",
-            "elo": 1200
-        },
-        "unique_opponents": 19
-    },
-    "2166": {
-        "trophy": {
-            "id": "1512",
-            "elo": 1499
-        },
-        "bane": {
-            "id": "715",
-            "elo": 1031
-        },
-        "unique_opponents": 95
-    },
-    "2168": {
-        "trophy": {
-            "id": "2299",
-            "elo": 1279
-        },
-        "bane": {
-            "id": "97",
-            "elo": 1031
-        },
-        "unique_opponents": 24
-    },
-    "2276": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "2239",
-            "elo": 1135
-        },
-        "unique_opponents": 14
-    },
-    "767": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "1978",
-            "elo": 1129
-        },
-        "unique_opponents": 6
-    },
-    "1477": {
-        "trophy": {
-            "id": "1661",
-            "elo": 1548
-        },
-        "bane": {
-            "id": "2116",
-            "elo": 1080
-        },
-        "unique_opponents": 62
-    },
-    "112": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "6",
-            "elo": 1244
-        },
-        "unique_opponents": 6
-    },
-    "2246": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "1646",
-            "elo": 1137
-        },
-        "unique_opponents": 3
-    },
-    "1601": {
-        "trophy": {
-            "id": "2337",
-            "elo": 1182
-        },
-        "bane": {
-            "id": null,
-            "elo": 99999
-        },
-        "unique_opponents": 3
-    },
-    "714": {
-        "trophy": {
-            "id": "545",
-            "elo": 1503
-        },
-        "bane": {
-            "id": "2202",
-            "elo": 1111
-        },
-        "unique_opponents": 43
-    },
-    "1022": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "6",
-            "elo": 1200
-        },
-        "unique_opponents": 3
-    },
-    "2336": {
-        "trophy": {
-            "id": "1027",
-            "elo": 1315
-        },
-        "bane": {
-            "id": "2324",
-            "elo": 1188
-        },
-        "unique_opponents": 12
-    },
-    "2341": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "2301",
-            "elo": 1007
-        },
-        "unique_opponents": 6
-    },
-    "398": {
-        "trophy": {
-            "id": "542",
-            "elo": 1243
-        },
-        "bane": {
-            "id": "715",
-            "elo": 1052
-        },
-        "unique_opponents": 12
-    },
-    "1168": {
-        "trophy": {
-            "id": "1039",
-            "elo": 1241
-        },
-        "bane": {
-            "id": "1758",
-            "elo": 1069
-        },
-        "unique_opponents": 10
-    },
-    "2061": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "545",
-            "elo": 1410
-        },
-        "unique_opponents": 3
-    },
-    "1835": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "714",
-            "elo": 1179
-        },
-        "unique_opponents": 3
-    },
-    "1876": {
-        "trophy": {
-            "id": "2093",
-            "elo": 1260
-        },
-        "bane": {
-            "id": "1706",
-            "elo": 1195
-        },
-        "unique_opponents": 16
-    },
-    "1831": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "2093",
-            "elo": 1085
-        },
-        "unique_opponents": 31
-    },
-    "2320": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "265",
-            "elo": 1167
-        },
-        "unique_opponents": 10
-    },
-    "959": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "2197",
-            "elo": 1200
-        },
-        "unique_opponents": 5
-    },
-    "2252": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "2257",
-            "elo": 1178
-        },
-        "unique_opponents": 8
-    },
-    "2222": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "1452",
-            "elo": 1093
-        },
-        "unique_opponents": 15
-    },
-    "604": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "2191",
-            "elo": 1177
-        },
-        "unique_opponents": 8
-    },
-    "2279": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "1038",
-            "elo": 1145
-        },
-        "unique_opponents": 17
-    },
-    "2315": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "1706",
-            "elo": 1030
+            "id": "2291",
+            "elo": 1193
         },
         "unique_opponents": 3
     },
@@ -956,478 +197,27 @@
         },
         "unique_opponents": 3
     },
-    "1930": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "1885",
-            "elo": 1163
-        },
-        "unique_opponents": 9
-    },
-    "903": {
-        "trophy": {
-            "id": "2141",
-            "elo": 1326
-        },
-        "bane": {
-            "id": "1698",
-            "elo": 1145
-        },
-        "unique_opponents": 24
-    },
-    "796": {
-        "trophy": {
-            "id": "2270",
-            "elo": 1389
-        },
-        "bane": {
-            "id": "437",
-            "elo": 1107
-        },
-        "unique_opponents": 46
-    },
-    "1815": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "2206",
-            "elo": 1256
-        },
-        "unique_opponents": 3
-    },
-    "2283": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "2172",
-            "elo": 1040
-        },
-        "unique_opponents": 23
-    },
-    "1020": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "2141",
-            "elo": 1105
-        },
-        "unique_opponents": 14
-    },
-    "2244": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "1390",
-            "elo": 1095
-        },
-        "unique_opponents": 15
-    },
-    "929": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "1240",
-            "elo": 1106
-        },
-        "unique_opponents": 3
-    },
-    "461": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "715",
-            "elo": 1199
-        },
-        "unique_opponents": 3
-    },
-    "1912": {
+    "805": {
         "trophy": {
             "id": "1661",
-            "elo": 1491
+            "elo": 1397
         },
         "bane": {
-            "id": "2093",
-            "elo": 1091
+            "id": "1963",
+            "elo": 1112
         },
-        "unique_opponents": 68
+        "unique_opponents": 41
     },
-    "1994": {
+    "2236": {
         "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "99",
-            "elo": 1200
-        },
-        "unique_opponents": 3
-    },
-    "1828": {
-        "trophy": {
-            "id": "2119",
-            "elo": 1364
-        },
-        "bane": {
-            "id": "2184",
-            "elo": 1114
-        },
-        "unique_opponents": 21
-    },
-    "1435": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "467",
-            "elo": 1232
-        },
-        "unique_opponents": 3
-    },
-    "1260": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "2098",
-            "elo": 1385
-        },
-        "unique_opponents": 3
-    },
-    "2265": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "2165",
-            "elo": 1169
-        },
-        "unique_opponents": 9
-    },
-    "5": {
-        "trophy": {
-            "id": "1661",
-            "elo": 1481
-        },
-        "bane": {
-            "id": "1706",
-            "elo": 994
-        },
-        "unique_opponents": 75
-    },
-    "1658": {
-        "trophy": {
-            "id": "1661",
-            "elo": 1502
-        },
-        "bane": {
-            "id": "2268",
-            "elo": 1085
-        },
-        "unique_opponents": 49
-    },
-    "2266": {
-        "trophy": {
-            "id": "2119",
-            "elo": 1364
-        },
-        "bane": {
-            "id": "97",
-            "elo": 1031
-        },
-        "unique_opponents": 65
-    },
-    "2363": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "2291",
-            "elo": 1193
-        },
-        "unique_opponents": 3
-    },
-    "2356": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "2332",
-            "elo": 1096
-        },
-        "unique_opponents": 7
-    },
-    "606": {
-        "trophy": {
-            "id": "2141",
-            "elo": 1306
-        },
-        "bane": {
-            "id": "2033",
-            "elo": 1181
-        },
-        "unique_opponents": 19
-    },
-    "2089": {
-        "trophy": {
-            "id": "1329",
-            "elo": 1495
-        },
-        "bane": {
-            "id": null,
-            "elo": 99999
-        },
-        "unique_opponents": 21
-    },
-    "447": {
-        "trophy": {
-            "id": "2136",
-            "elo": 1247
-        },
-        "bane": {
-            "id": "715",
-            "elo": 1116
-        },
-        "unique_opponents": 23
-    },
-    "2183": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "6",
-            "elo": 1268
-        },
-        "unique_opponents": 3
-    },
-    "2161": {
-        "trophy": {
-            "id": "1658",
-            "elo": 1431
-        },
-        "bane": {
-            "id": "1497",
-            "elo": 1096
-        },
-        "unique_opponents": 86
-    },
-    "631": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "796",
-            "elo": 1080
-        },
-        "unique_opponents": 6
-    },
-    "2207": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "2093",
-            "elo": 1200
-        },
-        "unique_opponents": 9
-    },
-    "1889": {
-        "trophy": {
-            "id": "2098",
-            "elo": 1402
-        },
-        "bane": {
             "id": "1758",
-            "elo": 1149
-        },
-        "unique_opponents": 49
-    },
-    "348": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "715",
-            "elo": 1170
-        },
-        "unique_opponents": 10
-    },
-    "2263": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "1300",
-            "elo": 1180
-        },
-        "unique_opponents": 6
-    },
-    "1847": {
-        "trophy": {
-            "id": "2161",
-            "elo": 1238
-        },
-        "bane": {
-            "id": "2161",
-            "elo": 1280
-        },
-        "unique_opponents": 7
-    },
-    "818": {
-        "trophy": {
-            "id": "2270",
-            "elo": 1389
-        },
-        "bane": {
-            "id": "1406",
-            "elo": 1007
-        },
-        "unique_opponents": 38
-    },
-    "2308": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "1646",
-            "elo": 1136
-        },
-        "unique_opponents": 6
-    },
-    "233": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "1907",
-            "elo": 1194
-        },
-        "unique_opponents": 3
-    },
-    "2223": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "1658",
-            "elo": 1411
-        },
-        "unique_opponents": 3
-    },
-    "2169": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "1497",
-            "elo": 1060
-        },
-        "unique_opponents": 10
-    },
-    "704": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "2202",
-            "elo": 1122
-        },
-        "unique_opponents": 6
-    },
-    "1323": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "2281",
-            "elo": 1108
-        },
-        "unique_opponents": 3
-    },
-    "2249": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "1646",
-            "elo": 1163
-        },
-        "unique_opponents": 3
-    },
-    "2206": {
-        "trophy": {
-            "id": "2039",
-            "elo": 1270
-        },
-        "bane": {
-            "id": "714",
-            "elo": 1179
-        },
-        "unique_opponents": 13
-    },
-    "1961": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "1643",
-            "elo": 1173
-        },
-        "unique_opponents": 3
-    },
-    "1480": {
-        "trophy": {
-            "id": null,
-            "elo": -1
+            "elo": 1310
         },
         "bane": {
             "id": "715",
             "elo": 1196
         },
-        "unique_opponents": 3
-    },
-    "1096": {
-        "trophy": {
-            "id": "2270",
-            "elo": 1370
-        },
-        "bane": {
-            "id": "2172",
-            "elo": 1008
-        },
-        "unique_opponents": 43
+        "unique_opponents": 9
     },
     "572": {
         "trophy": {
@@ -1437,688 +227,6 @@
         "bane": {
             "id": "2270",
             "elo": 1270
-        },
-        "unique_opponents": 3
-    },
-    "1674": {
-        "trophy": {
-            "id": "2257",
-            "elo": 1204
-        },
-        "bane": {
-            "id": "2206",
-            "elo": 1256
-        },
-        "unique_opponents": 12
-    },
-    "1839": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "2142",
-            "elo": 1146
-        },
-        "unique_opponents": 9
-    },
-    "2264": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "619",
-            "elo": 1131
-        },
-        "unique_opponents": 6
-    },
-    "2202": {
-        "trophy": {
-            "id": "1450",
-            "elo": 1245
-        },
-        "bane": {
-            "id": "2142",
-            "elo": 1135
-        },
-        "unique_opponents": 44
-    },
-    "2255": {
-        "trophy": {
-            "id": "334",
-            "elo": 1270
-        },
-        "bane": {
-            "id": "1096",
-            "elo": 1092
-        },
-        "unique_opponents": 38
-    },
-    "2300": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "2039",
-            "elo": 1140
-        },
-        "unique_opponents": 17
-    },
-    "1332": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "2039",
-            "elo": 1200
-        },
-        "unique_opponents": 9
-    },
-    "1957": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "325",
-            "elo": 1186
-        },
-        "unique_opponents": 9
-    },
-    "1007": {
-        "trophy": {
-            "id": "2115",
-            "elo": 1286
-        },
-        "bane": {
-            "id": "232",
-            "elo": 1113
-        },
-        "unique_opponents": 40
-    },
-    "2332": {
-        "trophy": {
-            "id": "2356",
-            "elo": 1178
-        },
-        "bane": {
-            "id": "1593",
-            "elo": 1126
-        },
-        "unique_opponents": 23
-    },
-    "2343": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "2105",
-            "elo": 1166
-        },
-        "unique_opponents": 5
-    },
-    "1751": {
-        "trophy": {
-            "id": "2093",
-            "elo": 1210
-        },
-        "bane": {
-            "id": "2142",
-            "elo": 1159
-        },
-        "unique_opponents": 7
-    },
-    "1743": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "2291",
-            "elo": 1210
-        },
-        "unique_opponents": 3
-    },
-    "542": {
-        "trophy": {
-            "id": "1329",
-            "elo": 1500
-        },
-        "bane": {
-            "id": "1406",
-            "elo": 1007
-        },
-        "unique_opponents": 92
-    },
-    "1643": {
-        "trophy": {
-            "id": "1329",
-            "elo": 1452
-        },
-        "bane": {
-            "id": "2239",
-            "elo": 1049
-        },
-        "unique_opponents": 48
-    },
-    "2047": {
-        "trophy": {
-            "id": "2119",
-            "elo": 1232
-        },
-        "bane": {
-            "id": null,
-            "elo": 99999
-        },
-        "unique_opponents": 3
-    },
-    "1521": {
-        "trophy": {
-            "id": "1512",
-            "elo": 1482
-        },
-        "bane": {
-            "id": "1512",
-            "elo": 1409
-        },
-        "unique_opponents": 6
-    },
-    "2309": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "691",
-            "elo": 1200
-        },
-        "unique_opponents": 3
-    },
-    "2302": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "1341",
-            "elo": 1247
-        },
-        "unique_opponents": 6
-    },
-    "343": {
-        "trophy": {
-            "id": "1",
-            "elo": 1374
-        },
-        "bane": {
-            "id": "1306",
-            "elo": 1088
-        },
-        "unique_opponents": 38
-    },
-    "2219": {
-        "trophy": {
-            "id": "2222",
-            "elo": 1200
-        },
-        "bane": {
-            "id": "2210",
-            "elo": 1144
-        },
-        "unique_opponents": 10
-    },
-    "21": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "1706",
-            "elo": 994
-        },
-        "unique_opponents": 34
-    },
-    "1978": {
-        "trophy": {
-            "id": "1039",
-            "elo": 1443
-        },
-        "bane": {
-            "id": "2239",
-            "elo": 1121
-        },
-        "unique_opponents": 47
-    },
-    "1095": {
-        "trophy": {
-            "id": "1512",
-            "elo": 1473
-        },
-        "bane": {
-            "id": "1706",
-            "elo": 1015
-        },
-        "unique_opponents": 63
-    },
-    "2195": {
-        "trophy": {
-            "id": "1907",
-            "elo": 1200
-        },
-        "bane": {
-            "id": "2161",
-            "elo": 1219
-        },
-        "unique_opponents": 6
-    },
-    "1475": {
-        "trophy": {
-            "id": "4",
-            "elo": 1472
-        },
-        "bane": {
-            "id": "715",
-            "elo": 1120
-        },
-        "unique_opponents": 17
-    },
-    "2227": {
-        "trophy": {
-            "id": "2161",
-            "elo": 1273
-        },
-        "bane": {
-            "id": "1828",
-            "elo": 1145
-        },
-        "unique_opponents": 12
-    },
-    "86": {
-        "trophy": {
-            "id": "828",
-            "elo": 1219
-        },
-        "bane": {
-            "id": "2142",
-            "elo": 1180
-        },
-        "unique_opponents": 10
-    },
-    "2136": {
-        "trophy": {
-            "id": "1658",
-            "elo": 1279
-        },
-        "bane": {
-            "id": "715",
-            "elo": 1052
-        },
-        "unique_opponents": 35
-    },
-    "2083": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "1539",
-            "elo": 1145
-        },
-        "unique_opponents": 12
-    },
-    "1610": {
-        "trophy": {
-            "id": "1661",
-            "elo": 1436
-        },
-        "bane": {
-            "id": "1576",
-            "elo": 1077
-        },
-        "unique_opponents": 22
-    },
-    "1593": {
-        "trophy": {
-            "id": "1758",
-            "elo": 1272
-        },
-        "bane": {
-            "id": "2266",
-            "elo": 1105
-        },
-        "unique_opponents": 40
-    },
-    "347": {
-        "trophy": {
-            "id": "1661",
-            "elo": 1506
-        },
-        "bane": {
-            "id": "1406",
-            "elo": 1040
-        },
-        "unique_opponents": 36
-    },
-    "2184": {
-        "trophy": {
-            "id": "1706",
-            "elo": 1255
-        },
-        "bane": {
-            "id": "1646",
-            "elo": 1168
-        },
-        "unique_opponents": 18
-    },
-    "2215": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "2214",
-            "elo": 1200
-        },
-        "unique_opponents": 3
-    },
-    "1482": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "1452",
-            "elo": 1093
-        },
-        "unique_opponents": 7
-    },
-    "678": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "2166",
-            "elo": 1260
-        },
-        "unique_opponents": 3
-    },
-    "1862": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "2161",
-            "elo": 1180
-        },
-        "unique_opponents": 6
-    },
-    "2": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "257",
-            "elo": 1149
-        },
-        "unique_opponents": 3
-    },
-    "2281": {
-        "trophy": {
-            "id": "1300",
-            "elo": 1240
-        },
-        "bane": {
-            "id": "437",
-            "elo": 1124
-        },
-        "unique_opponents": 32
-    },
-    "2241": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "1593",
-            "elo": 1113
-        },
-        "unique_opponents": 13
-    },
-    "840": {
-        "trophy": {
-            "id": "1912",
-            "elo": 1359
-        },
-        "bane": {
-            "id": "97",
-            "elo": 1031
-        },
-        "unique_opponents": 36
-    },
-    "1381": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "1646",
-            "elo": 1143
-        },
-        "unique_opponents": 3
-    },
-    "257": {
-        "trophy": {
-            "id": "1661",
-            "elo": 1538
-        },
-        "bane": {
-            "id": "2062",
-            "elo": 1071
-        },
-        "unique_opponents": 66
-    },
-    "265": {
-        "trophy": {
-            "id": "2119",
-            "elo": 1278
-        },
-        "bane": {
-            "id": "2266",
-            "elo": 1104
-        },
-        "unique_opponents": 24
-    },
-    "1519": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "1610",
-            "elo": 1166
-        },
-        "unique_opponents": 3
-    },
-    "2151": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "325",
-            "elo": 1179
-        },
-        "unique_opponents": 16
-    },
-    "2277": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "2161",
-            "elo": 1278
-        },
-        "unique_opponents": 3
-    },
-    "691": {
-        "trophy": {
-            "id": "1661",
-            "elo": 1517
-        },
-        "bane": {
-            "id": "2261",
-            "elo": 1201
-        },
-        "unique_opponents": 32
-    },
-    "1604": {
-        "trophy": {
-            "id": "542",
-            "elo": 1437
-        },
-        "bane": {
-            "id": "1922",
-            "elo": 1104
-        },
-        "unique_opponents": 41
-    },
-    "1520": {
-        "trophy": {
-            "id": "1512",
-            "elo": 1444
-        },
-        "bane": {
-            "id": "1512",
-            "elo": 1346
-        },
-        "unique_opponents": 8
-    },
-    "97": {
-        "trophy": {
-            "id": "2319",
-            "elo": 1233
-        },
-        "bane": {
-            "id": "2172",
-            "elo": 1040
-        },
-        "unique_opponents": 60
-    },
-    "1224": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "232",
-            "elo": 1217
-        },
-        "unique_opponents": 8
-    },
-    "235": {
-        "trophy": {
-            "id": "1",
-            "elo": 1342
-        },
-        "bane": {
-            "id": "437",
-            "elo": 1102
-        },
-        "unique_opponents": 41
-    },
-    "715": {
-        "trophy": {
-            "id": "1661",
-            "elo": 1497
-        },
-        "bane": {
-            "id": "1406",
-            "elo": 1040
-        },
-        "unique_opponents": 127
-    },
-    "2135": {
-        "trophy": {
-            "id": "1604",
-            "elo": 1278
-        },
-        "bane": {
-            "id": "2266",
-            "elo": 1105
-        },
-        "unique_opponents": 20
-    },
-    "467": {
-        "trophy": {
-            "id": "2119",
-            "elo": 1325
-        },
-        "bane": {
-            "id": "1646",
-            "elo": 1168
-        },
-        "unique_opponents": 13
-    },
-    "325": {
-        "trophy": {
-            "id": "2270",
-            "elo": 1369
-        },
-        "bane": {
-            "id": "1098",
-            "elo": 1101
-        },
-        "unique_opponents": 61
-    },
-    "2344": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "2350",
-            "elo": 1190
-        },
-        "unique_opponents": 17
-    },
-    "1646": {
-        "trophy": {
-            "id": "2098",
-            "elo": 1396
-        },
-        "bane": {
-            "id": "2266",
-            "elo": 1036
-        },
-        "unique_opponents": 107
-    },
-    "387": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "2119",
-            "elo": 1325
-        },
-        "unique_opponents": 3
-    },
-    "2131": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "2202",
-            "elo": 1122
         },
         "unique_opponents": 3
     },
@@ -2133,16 +241,49 @@
         },
         "unique_opponents": 82
     },
-    "2025": {
+    "1224": {
         "trophy": {
-            "id": "938",
-            "elo": 1200
+            "id": null,
+            "elo": -1
         },
         "bane": {
-            "id": null,
-            "elo": 99999
+            "id": "232",
+            "elo": 1217
         },
-        "unique_opponents": 3
+        "unique_opponents": 8
+    },
+    "2166": {
+        "trophy": {
+            "id": "1512",
+            "elo": 1499
+        },
+        "bane": {
+            "id": "715",
+            "elo": 1031
+        },
+        "unique_opponents": 95
+    },
+    "123": {
+        "trophy": {
+            "id": "1661",
+            "elo": 1531
+        },
+        "bane": {
+            "id": "1240",
+            "elo": 1106
+        },
+        "unique_opponents": 22
+    },
+    "1758": {
+        "trophy": {
+            "id": "1661",
+            "elo": 1470
+        },
+        "bane": {
+            "id": "1111",
+            "elo": 1081
+        },
+        "unique_opponents": 90
     },
     "2240": {
         "trophy": {
@@ -2155,148 +296,27 @@
         },
         "unique_opponents": 3
     },
-    "382": {
+    "818": {
         "trophy": {
-            "id": "1959",
-            "elo": 1275
+            "id": "2270",
+            "elo": 1389
         },
         "bane": {
-            "id": "1661",
-            "elo": 1402
+            "id": "1406",
+            "elo": 1007
         },
-        "unique_opponents": 9
+        "unique_opponents": 38
     },
-    "1420": {
-        "trophy": {
-            "id": "2298",
-            "elo": 1200
-        },
-        "bane": {
-            "id": "2119",
-            "elo": 1240
-        },
-        "unique_opponents": 6
-    },
-    "437": {
-        "trophy": {
-            "id": "903",
-            "elo": 1360
-        },
-        "bane": {
-            "id": "2172",
-            "elo": 1008
-        },
-        "unique_opponents": 94
-    },
-    "1008": {
+    "1015": {
         "trophy": {
             "id": null,
             "elo": -1
         },
         "bane": {
-            "id": "715",
-            "elo": 1031
+            "id": "2191",
+            "elo": 1177
         },
-        "unique_opponents": 10
-    },
-    "2331": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "2329",
-            "elo": 1293
-        },
-        "unique_opponents": 3
-    },
-    "457": {
-        "trophy": {
-            "id": "2119",
-            "elo": 1283
-        },
-        "bane": {
-            "id": "1841",
-            "elo": 1140
-        },
-        "unique_opponents": 19
-    },
-    "1914": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "714",
-            "elo": 1197
-        },
-        "unique_opponents": 14
-    },
-    "1341": {
-        "trophy": {
-            "id": "2098",
-            "elo": 1315
-        },
-        "bane": {
-            "id": "1329",
-            "elo": 1388
-        },
-        "unique_opponents": 8
-    },
-    "1504": {
-        "trophy": {
-            "id": "1661",
-            "elo": 1534
-        },
-        "bane": {
-            "id": null,
-            "elo": 99999
-        },
-        "unique_opponents": 3
-    },
-    "1186": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "2105",
-            "elo": 1179
-        },
-        "unique_opponents": 3
-    },
-    "1137": {
-        "trophy": {
-            "id": "123",
-            "elo": 1320
-        },
-        "bane": {
-            "id": "1098",
-            "elo": 1099
-        },
-        "unique_opponents": 33
-    },
-    "2307": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "437",
-            "elo": 1102
-        },
-        "unique_opponents": 8
-    },
-    "2087": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "1095",
-            "elo": 1029
-        },
-        "unique_opponents": 10
+        "unique_opponents": 7
     },
     "2119": {
         "trophy": {
@@ -2309,830 +329,27 @@
         },
         "unique_opponents": 96
     },
-    "2348": {
+    "1847": {
         "trophy": {
-            "id": "714",
-            "elo": 1506
+            "id": "2161",
+            "elo": 1238
         },
         "bane": {
-            "id": null,
-            "elo": 99999
-        },
-        "unique_opponents": 3
-    },
-    "1497": {
-        "trophy": {
-            "id": "2350",
-            "elo": 1231
-        },
-        "bane": {
-            "id": "2287",
-            "elo": 1001
-        },
-        "unique_opponents": 45
-    },
-    "2110": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "1137",
-            "elo": 1173
-        },
-        "unique_opponents": 17
-    },
-    "2293": {
-        "trophy": {
-            "id": "2119",
-            "elo": 1367
-        },
-        "bane": {
-            "id": "2330",
-            "elo": 1129
-        },
-        "unique_opponents": 19
-    },
-    "2297": {
-        "trophy": {
-            "id": "2291",
-            "elo": 1216
-        },
-        "bane": {
-            "id": "2266",
-            "elo": 1105
-        },
-        "unique_opponents": 16
-    },
-    "1918": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "1876",
-            "elo": 1200
-        },
-        "unique_opponents": 5
-    },
-    "2270": {
-        "trophy": {
-            "id": "1329",
-            "elo": 1468
-        },
-        "bane": {
-            "id": "1240",
-            "elo": 1070
-        },
-        "unique_opponents": 82
-    },
-    "2004": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "715",
-            "elo": 1199
-        },
-        "unique_opponents": 13
-    },
-    "315": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "1959",
-            "elo": 1219
-        },
-        "unique_opponents": 8
-    },
-    "2330": {
-        "trophy": {
-            "id": "2293",
-            "elo": 1388
-        },
-        "bane": {
-            "id": "457",
-            "elo": 1253
-        },
-        "unique_opponents": 19
-    },
-    "2254": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "325",
-            "elo": 1222
+            "id": "2161",
+            "elo": 1280
         },
         "unique_opponents": 7
     },
-    "2311": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "691",
-            "elo": 1200
-        },
-        "unique_opponents": 3
-    },
-    "798": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "1661",
-            "elo": 1319
-        },
-        "unique_opponents": 3
-    },
-    "2093": {
+    "1563": {
         "trophy": {
             "id": "714",
-            "elo": 1459
+            "elo": 1480
         },
         "bane": {
-            "id": "2266",
-            "elo": 1069
+            "id": "1098",
+            "elo": 1101
         },
-        "unique_opponents": 52
-    },
-    "2273": {
-        "trophy": {
-            "id": "2168",
-            "elo": 1291
-        },
-        "bane": {
-            "id": "1706",
-            "elo": 994
-        },
-        "unique_opponents": 66
-    },
-    "579": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "1758",
-            "elo": 1159
-        },
-        "unique_opponents": 5
-    },
-    "1672": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "2291",
-            "elo": 1196
-        },
-        "unique_opponents": 5
-    },
-    "1329": {
-        "trophy": {
-            "id": "1661",
-            "elo": 1551
-        },
-        "bane": {
-            "id": "232",
-            "elo": 1113
-        },
-        "unique_opponents": 66
-    },
-    "2291": {
-        "trophy": {
-            "id": "542",
-            "elo": 1375
-        },
-        "bane": {
-            "id": "2287",
-            "elo": 1010
-        },
-        "unique_opponents": 80
-    },
-    "2268": {
-        "trophy": {
-            "id": "1658",
-            "elo": 1451
-        },
-        "bane": {
-            "id": "2172",
-            "elo": 1008
-        },
-        "unique_opponents": 62
-    },
-    "2313": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "2287",
-            "elo": 1001
-        },
-        "unique_opponents": 12
-    },
-    "1732": {
-        "trophy": {
-            "id": "2161",
-            "elo": 1331
-        },
-        "bane": {
-            "id": "715",
-            "elo": 1087
-        },
-        "unique_opponents": 32
-    },
-    "2299": {
-        "trophy": {
-            "id": "1604",
-            "elo": 1252
-        },
-        "bane": {
-            "id": "2168",
-            "elo": 1196
-        },
-        "unique_opponents": 13
-    },
-    "1454": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "1706",
-            "elo": 1030
-        },
-        "unique_opponents": 3
-    },
-    "762": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "2273",
-            "elo": 1047
-        },
-        "unique_opponents": 9
-    },
-    "2198": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "1828",
-            "elo": 1211
-        },
-        "unique_opponents": 3
-    },
-    "2251": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "2098",
-            "elo": 1324
-        },
-        "unique_opponents": 3
-    },
-    "2352": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "325",
-            "elo": 1179
-        },
-        "unique_opponents": 6
-    },
-    "385": {
-        "trophy": {
-            "id": "2141",
-            "elo": 1302
-        },
-        "bane": {
-            "id": "2268",
-            "elo": 1137
-        },
-        "unique_opponents": 30
-    },
-    "828": {
-        "trophy": {
-            "id": "542",
-            "elo": 1366
-        },
-        "bane": {
-            "id": "2172",
-            "elo": 1021
-        },
-        "unique_opponents": 50
-    },
-    "2217": {
-        "trophy": {
-            "id": "1390",
-            "elo": 1200
-        },
-        "bane": {
-            "id": null,
-            "elo": 99999
-        },
-        "unique_opponents": 3
-    },
-    "2116": {
-        "trophy": {
-            "id": "2166",
-            "elo": 1293
-        },
-        "bane": {
-            "id": "1889",
-            "elo": 1112
-        },
-        "unique_opponents": 50
-    },
-    "2340": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "2330",
-            "elo": 1129
-        },
-        "unique_opponents": 9
-    },
-    "1113": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "1989",
-            "elo": 1122
-        },
-        "unique_opponents": 6
-    },
-    "456": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "1643",
-            "elo": 1179
-        },
-        "unique_opponents": 5
-    },
-    "2214": {
-        "trophy": {
-            "id": "1930",
-            "elo": 1200
-        },
-        "bane": {
-            "id": "1907",
-            "elo": 1179
-        },
-        "unique_opponents": 5
-    },
-    "1450": {
-        "trophy": {
-            "id": "2293",
-            "elo": 1464
-        },
-        "bane": {
-            "id": "1646",
-            "elo": 1107
-        },
-        "unique_opponents": 31
-    },
-    "545": {
-        "trophy": {
-            "id": "1661",
-            "elo": 1449
-        },
-        "bane": {
-            "id": "2239",
-            "elo": 1049
-        },
-        "unique_opponents": 44
-    },
-    "2335": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "1497",
-            "elo": 1087
-        },
-        "unique_opponents": 14
-    },
-    "1300": {
-        "trophy": {
-            "id": "1661",
-            "elo": 1493
-        },
-        "bane": {
-            "id": "2281",
-            "elo": 1108
-        },
-        "unique_opponents": 37
-    },
-    "1812": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "1698",
-            "elo": 1177
-        },
-        "unique_opponents": 3
-    },
-    "1027": {
-        "trophy": {
-            "id": "2119",
-            "elo": 1396
-        },
-        "bane": {
-            "id": "2330",
-            "elo": 1129
-        },
-        "unique_opponents": 44
-    },
-    "530": {
-        "trophy": {
-            "id": "2098",
-            "elo": 1299
-        },
-        "bane": {
-            "id": "1007",
-            "elo": 1131
-        },
-        "unique_opponents": 12
-    },
-    "2333": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "1646",
-            "elo": 1160
-        },
-        "unique_opponents": 3
-    },
-    "2236": {
-        "trophy": {
-            "id": "1758",
-            "elo": 1310
-        },
-        "bane": {
-            "id": "715",
-            "elo": 1196
-        },
-        "unique_opponents": 9
-    },
-    "2337": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "1521",
-            "elo": 1178
-        },
-        "unique_opponents": 9
-    },
-    "2199": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "1828",
-            "elo": 1211
-        },
-        "unique_opponents": 3
-    },
-    "822": {
-        "trophy": {
-            "id": "542",
-            "elo": 1408
-        },
-        "bane": {
-            "id": "2116",
-            "elo": 1112
-        },
-        "unique_opponents": 22
-    },
-    "2000": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "691",
-            "elo": 1200
-        },
-        "unique_opponents": 3
-    },
-    "1246": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "2161",
-            "elo": 1206
-        },
-        "unique_opponents": 3
-    },
-    "2234": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "822",
-            "elo": 1200
-        },
-        "unique_opponents": 3
-    },
-    "1390": {
-        "trophy": {
-            "id": "437",
-            "elo": 1151
-        },
-        "bane": {
-            "id": "2202",
-            "elo": 1122
-        },
-        "unique_opponents": 17
-    },
-    "1972": {
-        "trophy": {
-            "id": "1963",
-            "elo": 1180
-        },
-        "bane": {
-            "id": "1270",
-            "elo": 1200
-        },
-        "unique_opponents": 12
-    },
-    "1339": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "2161",
-            "elo": 1236
-        },
-        "unique_opponents": 9
-    },
-    "6": {
-        "trophy": {
-            "id": "2161",
-            "elo": 1286
-        },
-        "bane": {
-            "id": "2261",
-            "elo": 1124
-        },
-        "unique_opponents": 35
-    },
-    "2354": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "2239",
-            "elo": 1283
-        },
-        "unique_opponents": 5
-    },
-    "1406": {
-        "trophy": {
-            "id": "1661",
-            "elo": 1551
-        },
-        "bane": {
-            "id": "715",
-            "elo": 1096
-        },
-        "unique_opponents": 69
-    },
-    "1922": {
-        "trophy": {
-            "id": "1604",
-            "elo": 1284
-        },
-        "bane": {
-            "id": "2261",
-            "elo": 1178
-        },
-        "unique_opponents": 32
-    },
-    "732": {
-        "trophy": {
-            "id": "2270",
-            "elo": 1344
-        },
-        "bane": {
-            "id": "715",
-            "elo": 1113
-        },
-        "unique_opponents": 23
-    },
-    "2224": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "1876",
-            "elo": 1303
-        },
-        "unique_opponents": 3
-    },
-    "938": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "232",
-            "elo": 1191
-        },
-        "unique_opponents": 8
-    },
-    "1270": {
-        "trophy": {
-            "id": "1889",
-            "elo": 1200
-        },
-        "bane": {
-            "id": "903",
-            "elo": 1264
-        },
-        "unique_opponents": 11
-    },
-    "1265": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "1027",
-            "elo": 1241
-        },
-        "unique_opponents": 10
-    },
-    "1907": {
-        "trophy": {
-            "id": "2214",
-            "elo": 1259
-        },
-        "bane": {
-            "id": "1646",
-            "elo": 1137
-        },
-        "unique_opponents": 24
-    },
-    "2196": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "2039",
-            "elo": 1194
-        },
-        "unique_opponents": 3
-    },
-    "2285": {
-        "trophy": {
-            "id": "715",
-            "elo": 1250
-        },
-        "bane": {
-            "id": "1706",
-            "elo": 1012
-        },
-        "unique_opponents": 25
-    },
-    "1539": {
-        "trophy": {
-            "id": "1610",
-            "elo": 1327
-        },
-        "bane": {
-            "id": "1576",
-            "elo": 1077
-        },
-        "unique_opponents": 26
-    },
-    "2290": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "2119",
-            "elo": 1347
-        },
-        "unique_opponents": 3
-    },
-    "700": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "447",
-            "elo": 1207
-        },
-        "unique_opponents": 3
-    },
-    "2319": {
-        "trophy": {
-            "id": "1027",
-            "elo": 1273
-        },
-        "bane": {
-            "id": "97",
-            "elo": 1037
-        },
-        "unique_opponents": 13
-    },
-    "2165": {
-        "trophy": {
-            "id": "1599",
-            "elo": 1256
-        },
-        "bane": {
-            "id": "1475",
-            "elo": 1153
-        },
-        "unique_opponents": 12
-    },
-    "1959": {
-        "trophy": {
-            "id": "1661",
-            "elo": 1533
-        },
-        "bane": {
-            "id": "1406",
-            "elo": 996
-        },
-        "unique_opponents": 107
-    },
-    "2306": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "2039",
-            "elo": 1123
-        },
-        "unique_opponents": 10
-    },
-    "2098": {
-        "trophy": {
-            "id": "1661",
-            "elo": 1548
-        },
-        "bane": {
-            "id": "2268",
-            "elo": 1085
-        },
-        "unique_opponents": 81
-    },
-    "1331": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "437",
-            "elo": 1109
-        },
-        "unique_opponents": 26
+        "unique_opponents": 43
     },
     "1111": {
         "trophy": {
@@ -3145,104 +362,115 @@
         },
         "unique_opponents": 30
     },
-    "2212": {
-        "trophy": {
-            "id": "456",
-            "elo": 1200
-        },
-        "bane": {
-            "id": "2184",
-            "elo": 1114
-        },
-        "unique_opponents": 15
-    },
-    "278": {
-        "trophy": {
-            "id": "1661",
-            "elo": 1405
-        },
-        "bane": {
-            "id": "1039",
-            "elo": 1396
-        },
-        "unique_opponents": 13
-    },
-    "2172": {
-        "trophy": {
-            "id": "2268",
-            "elo": 1200
-        },
-        "bane": {
-            "id": "1406",
-            "elo": 996
-        },
-        "unique_opponents": 78
-    },
-    "2072": {
+    "2277": {
         "trophy": {
             "id": null,
             "elo": -1
+        },
+        "bane": {
+            "id": "2161",
+            "elo": 1278
+        },
+        "unique_opponents": 3
+    },
+    "1812": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "1698",
+            "elo": 1177
+        },
+        "unique_opponents": 3
+    },
+    "1972": {
+        "trophy": {
+            "id": "1963",
+            "elo": 1180
+        },
+        "bane": {
+            "id": "1270",
+            "elo": 1200
+        },
+        "unique_opponents": 12
+    },
+    "2205": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "1758",
+            "elo": 1069
+        },
+        "unique_opponents": 9
+    },
+    "606": {
+        "trophy": {
+            "id": "2141",
+            "elo": 1306
+        },
+        "bane": {
+            "id": "2033",
+            "elo": 1181
+        },
+        "unique_opponents": 19
+    },
+    "2287": {
+        "trophy": {
+            "id": "1039",
+            "elo": 1254
+        },
+        "bane": {
+            "id": "1497",
+            "elo": 1060
+        },
+        "unique_opponents": 65
+    },
+    "437": {
+        "trophy": {
+            "id": "903",
+            "elo": 1360
         },
         "bane": {
             "id": "2172",
-            "elo": 1040
+            "elo": 1008
         },
-        "unique_opponents": 6
+        "unique_opponents": 94
     },
-    "253": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "2142",
-            "elo": 1135
-        },
-        "unique_opponents": 3
-    },
-    "1": {
-        "trophy": {
-            "id": "2141",
-            "elo": 1356
-        },
-        "bane": {
-            "id": "828",
-            "elo": 1120
-        },
-        "unique_opponents": 39
-    },
-    "1039": {
-        "trophy": {
-            "id": "1661",
-            "elo": 1529
-        },
-        "bane": {
-            "id": "2287",
-            "elo": 1001
-        },
-        "unique_opponents": 61
-    },
-    "2346": {
-        "trophy": {
-            "id": null,
-            "elo": -1
-        },
-        "bane": {
-            "id": "2349",
-            "elo": 1200
-        },
-        "unique_opponents": 3
-    },
-    "619": {
+    "99": {
         "trophy": {
             "id": "1329",
-            "elo": 1409
+            "elo": 1434
         },
         "bane": {
-            "id": "715",
-            "elo": 1031
+            "id": "1406",
+            "elo": 1079
         },
-        "unique_opponents": 64
+        "unique_opponents": 37
+    },
+    "2165": {
+        "trophy": {
+            "id": "1599",
+            "elo": 1256
+        },
+        "bane": {
+            "id": "1475",
+            "elo": 1153
+        },
+        "unique_opponents": 12
+    },
+    "1557": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "2301",
+            "elo": 1007
+        },
+        "unique_opponents": 6
     },
     "180": {
         "trophy": {
@@ -3252,6 +480,160 @@
         "bane": {
             "id": "1375",
             "elo": 1161
+        },
+        "unique_opponents": 3
+    },
+    "2301": {
+        "trophy": {
+            "id": "5",
+            "elo": 1440
+        },
+        "bane": {
+            "id": "796",
+            "elo": 1070
+        },
+        "unique_opponents": 54
+    },
+    "1576": {
+        "trophy": {
+            "id": "1610",
+            "elo": 1348
+        },
+        "bane": {
+            "id": "437",
+            "elo": 1137
+        },
+        "unique_opponents": 23
+    },
+    "2281": {
+        "trophy": {
+            "id": "1300",
+            "elo": 1240
+        },
+        "bane": {
+            "id": "437",
+            "elo": 1124
+        },
+        "unique_opponents": 32
+    },
+    "2254": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "325",
+            "elo": 1222
+        },
+        "unique_opponents": 7
+    },
+    "1375": {
+        "trophy": {
+            "id": "2130",
+            "elo": 1376
+        },
+        "bane": {
+            "id": "1497",
+            "elo": 1096
+        },
+        "unique_opponents": 45
+    },
+    "1831": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "2093",
+            "elo": 1085
+        },
+        "unique_opponents": 31
+    },
+    "2264": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "619",
+            "elo": 1131
+        },
+        "unique_opponents": 6
+    },
+    "2279": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "1038",
+            "elo": 1145
+        },
+        "unique_opponents": 17
+    },
+    "2309": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "691",
+            "elo": 1200
+        },
+        "unique_opponents": 3
+    },
+    "2307": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "437",
+            "elo": 1102
+        },
+        "unique_opponents": 8
+    },
+    "1599": {
+        "trophy": {
+            "id": "542",
+            "elo": 1379
+        },
+        "bane": {
+            "id": "2116",
+            "elo": 1055
+        },
+        "unique_opponents": 34
+    },
+    "2033": {
+        "trophy": {
+            "id": "2270",
+            "elo": 1287
+        },
+        "bane": {
+            "id": "385",
+            "elo": 1108
+        },
+        "unique_opponents": 22
+    },
+    "1751": {
+        "trophy": {
+            "id": "2093",
+            "elo": 1210
+        },
+        "bane": {
+            "id": "2142",
+            "elo": 1159
+        },
+        "unique_opponents": 7
+    },
+    "2246": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "1646",
+            "elo": 1137
         },
         "unique_opponents": 3
     },
@@ -3266,49 +648,214 @@
         },
         "unique_opponents": 78
     },
-    "2062": {
+    "647": {
+        "trophy": {
+            "id": "715",
+            "elo": 1185
+        },
+        "bane": {
+            "id": "5",
+            "elo": 1281
+        },
+        "unique_opponents": 10
+    },
+    "1601": {
+        "trophy": {
+            "id": "2337",
+            "elo": 1182
+        },
+        "bane": {
+            "id": null,
+            "elo": 99999
+        },
+        "unique_opponents": 3
+    },
+    "1889": {
+        "trophy": {
+            "id": "2098",
+            "elo": 1402
+        },
+        "bane": {
+            "id": "1758",
+            "elo": 1149
+        },
+        "unique_opponents": 49
+    },
+    "1022": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "6",
+            "elo": 1200
+        },
+        "unique_opponents": 3
+    },
+    "1643": {
+        "trophy": {
+            "id": "1329",
+            "elo": 1452
+        },
+        "bane": {
+            "id": "2239",
+            "elo": 1049
+        },
+        "unique_opponents": 48
+    },
+    "1755": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "715",
+            "elo": 1186
+        },
+        "unique_opponents": 14
+    },
+    "2300": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "2039",
+            "elo": 1140
+        },
+        "unique_opponents": 17
+    },
+    "1323": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "2281",
+            "elo": 1108
+        },
+        "unique_opponents": 3
+    },
+    "2195": {
+        "trophy": {
+            "id": "1907",
+            "elo": 1200
+        },
+        "bane": {
+            "id": "2161",
+            "elo": 1219
+        },
+        "unique_opponents": 6
+    },
+    "2291": {
+        "trophy": {
+            "id": "542",
+            "elo": 1375
+        },
+        "bane": {
+            "id": "2287",
+            "elo": 1010
+        },
+        "unique_opponents": 80
+    },
+    "1828": {
+        "trophy": {
+            "id": "2119",
+            "elo": 1364
+        },
+        "bane": {
+            "id": "2184",
+            "elo": 1114
+        },
+        "unique_opponents": 21
+    },
+    "2116": {
+        "trophy": {
+            "id": "2166",
+            "elo": 1293
+        },
+        "bane": {
+            "id": "1889",
+            "elo": 1112
+        },
+        "unique_opponents": 50
+    },
+    "2227": {
+        "trophy": {
+            "id": "2161",
+            "elo": 1273
+        },
+        "bane": {
+            "id": "1828",
+            "elo": 1145
+        },
+        "unique_opponents": 12
+    },
+    "929": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "1240",
+            "elo": 1106
+        },
+        "unique_opponents": 3
+    },
+    "2199": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "1828",
+            "elo": 1211
+        },
+        "unique_opponents": 3
+    },
+    "233": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "1907",
+            "elo": 1194
+        },
+        "unique_opponents": 3
+    },
+    "4": {
         "trophy": {
             "id": "1661",
-            "elo": 1414
+            "elo": 1388
         },
         "bane": {
-            "id": "1576",
-            "elo": 1077
+            "id": "1475",
+            "elo": 1153
         },
-        "unique_opponents": 76
+        "unique_opponents": 33
     },
-    "2130": {
+    "1240": {
         "trophy": {
-            "id": "545",
-            "elo": 1459
+            "id": "1661",
+            "elo": 1528
         },
         "bane": {
-            "id": "2142",
-            "elo": 1135
-        },
-        "unique_opponents": 20
-    },
-    "2257": {
-        "trophy": {
-            "id": "2039",
-            "elo": 1294
-        },
-        "bane": {
-            "id": "2093",
+            "id": "2268",
             "elo": 1085
         },
-        "unique_opponents": 36
+        "unique_opponents": 77
     },
-    "1098": {
+    "2224": {
         "trophy": {
-            "id": "1563",
-            "elo": 1395
+            "id": null,
+            "elo": -1
         },
         "bane": {
-            "id": "98",
-            "elo": 1086
+            "id": "1876",
+            "elo": 1303
         },
-        "unique_opponents": 41
+        "unique_opponents": 3
     },
     "648": {
         "trophy": {
@@ -3321,6 +868,435 @@
         },
         "unique_opponents": 12
     },
+    "2343": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "2105",
+            "elo": 1166
+        },
+        "unique_opponents": 5
+    },
+    "334": {
+        "trophy": {
+            "id": "1329",
+            "elo": 1511
+        },
+        "bane": {
+            "id": "1963",
+            "elo": 1115
+        },
+        "unique_opponents": 25
+    },
+    "2138": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "1963",
+            "elo": 1146
+        },
+        "unique_opponents": 14
+    },
+    "1137": {
+        "trophy": {
+            "id": "123",
+            "elo": 1320
+        },
+        "bane": {
+            "id": "1098",
+            "elo": 1099
+        },
+        "unique_opponents": 33
+    },
+    "417": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "1959",
+            "elo": 1219
+        },
+        "unique_opponents": 3
+    },
+    "2219": {
+        "trophy": {
+            "id": "2222",
+            "elo": 1200
+        },
+        "bane": {
+            "id": "2210",
+            "elo": 1144
+        },
+        "unique_opponents": 10
+    },
+    "1450": {
+        "trophy": {
+            "id": "2293",
+            "elo": 1464
+        },
+        "bane": {
+            "id": "1646",
+            "elo": 1107
+        },
+        "unique_opponents": 31
+    },
+    "700": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "447",
+            "elo": 1207
+        },
+        "unique_opponents": 3
+    },
+    "265": {
+        "trophy": {
+            "id": "2119",
+            "elo": 1278
+        },
+        "bane": {
+            "id": "2266",
+            "elo": 1104
+        },
+        "unique_opponents": 24
+    },
+    "2047": {
+        "trophy": {
+            "id": "2119",
+            "elo": 1232
+        },
+        "bane": {
+            "id": null,
+            "elo": 99999
+        },
+        "unique_opponents": 3
+    },
+    "2306": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "2039",
+            "elo": 1123
+        },
+        "unique_opponents": 10
+    },
+    "732": {
+        "trophy": {
+            "id": "2270",
+            "elo": 1344
+        },
+        "bane": {
+            "id": "715",
+            "elo": 1113
+        },
+        "unique_opponents": 23
+    },
+    "2000": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "691",
+            "elo": 1200
+        },
+        "unique_opponents": 3
+    },
+    "2091": {
+        "trophy": {
+            "id": "1661",
+            "elo": 1455
+        },
+        "bane": {
+            "id": "903",
+            "elo": 1318
+        },
+        "unique_opponents": 17
+    },
+    "1406": {
+        "trophy": {
+            "id": "1661",
+            "elo": 1551
+        },
+        "bane": {
+            "id": "715",
+            "elo": 1096
+        },
+        "unique_opponents": 69
+    },
+    "2297": {
+        "trophy": {
+            "id": "2291",
+            "elo": 1216
+        },
+        "bane": {
+            "id": "2266",
+            "elo": 1105
+        },
+        "unique_opponents": 16
+    },
+    "2196": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "2039",
+            "elo": 1194
+        },
+        "unique_opponents": 3
+    },
+    "1306": {
+        "trophy": {
+            "id": "1661",
+            "elo": 1482
+        },
+        "bane": {
+            "id": "2239",
+            "elo": 1085
+        },
+        "unique_opponents": 32
+    },
+    "2202": {
+        "trophy": {
+            "id": "1450",
+            "elo": 1245
+        },
+        "bane": {
+            "id": "2142",
+            "elo": 1135
+        },
+        "unique_opponents": 44
+    },
+    "903": {
+        "trophy": {
+            "id": "2141",
+            "elo": 1326
+        },
+        "bane": {
+            "id": "1698",
+            "elo": 1145
+        },
+        "unique_opponents": 24
+    },
+    "2265": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "2165",
+            "elo": 1169
+        },
+        "unique_opponents": 9
+    },
+    "780": {
+        "trophy": {
+            "id": "2141",
+            "elo": 1327
+        },
+        "bane": {
+            "id": "232",
+            "elo": 1157
+        },
+        "unique_opponents": 45
+    },
+    "619": {
+        "trophy": {
+            "id": "1329",
+            "elo": 1409
+        },
+        "bane": {
+            "id": "715",
+            "elo": 1031
+        },
+        "unique_opponents": 64
+    },
+    "2315": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "1706",
+            "elo": 1030
+        },
+        "unique_opponents": 3
+    },
+    "1957": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "325",
+            "elo": 1186
+        },
+        "unique_opponents": 9
+    },
+    "2358": {
+        "trophy": {
+            "id": "714",
+            "elo": 1471
+        },
+        "bane": {
+            "id": "1841",
+            "elo": 1140
+        },
+        "unique_opponents": 16
+    },
+    "840": {
+        "trophy": {
+            "id": "1912",
+            "elo": 1359
+        },
+        "bane": {
+            "id": "97",
+            "elo": 1031
+        },
+        "unique_opponents": 36
+    },
+    "382": {
+        "trophy": {
+            "id": "1959",
+            "elo": 1275
+        },
+        "bane": {
+            "id": "1661",
+            "elo": 1402
+        },
+        "unique_opponents": 9
+    },
+    "2216": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "2202",
+            "elo": 1117
+        },
+        "unique_opponents": 18
+    },
+    "2217": {
+        "trophy": {
+            "id": "1390",
+            "elo": 1200
+        },
+        "bane": {
+            "id": null,
+            "elo": 99999
+        },
+        "unique_opponents": 3
+    },
+    "2142": {
+        "trophy": {
+            "id": "1959",
+            "elo": 1303
+        },
+        "bane": {
+            "id": "2093",
+            "elo": 1085
+        },
+        "unique_opponents": 72
+    },
+    "822": {
+        "trophy": {
+            "id": "542",
+            "elo": 1408
+        },
+        "bane": {
+            "id": "2116",
+            "elo": 1112
+        },
+        "unique_opponents": 22
+    },
+    "1504": {
+        "trophy": {
+            "id": "1661",
+            "elo": 1534
+        },
+        "bane": {
+            "id": null,
+            "elo": 99999
+        },
+        "unique_opponents": 3
+    },
+    "1885": {
+        "trophy": {
+            "id": "2142",
+            "elo": 1180
+        },
+        "bane": {
+            "id": "1732",
+            "elo": 1112
+        },
+        "unique_opponents": 23
+    },
+    "2335": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "1497",
+            "elo": 1087
+        },
+        "unique_opponents": 14
+    },
+    "1841": {
+        "trophy": {
+            "id": "457",
+            "elo": 1403
+        },
+        "bane": {
+            "id": "780",
+            "elo": 1158
+        },
+        "unique_opponents": 14
+    },
+    "1512": {
+        "trophy": {
+            "id": "1661",
+            "elo": 1468
+        },
+        "bane": {
+            "id": "1095",
+            "elo": 1033
+        },
+        "unique_opponents": 34
+    },
+    "215": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "2210",
+            "elo": 1144
+        },
+        "unique_opponents": 13
+    },
+    "2247": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "1027",
+            "elo": 1200
+        },
+        "unique_opponents": 3
+    },
     "2190": {
         "trophy": {
             "id": "2161",
@@ -3332,43 +1308,32 @@
         },
         "unique_opponents": 11
     },
-    "2269": {
+    "1482": {
         "trophy": {
             "id": null,
             "elo": -1
         },
         "bane": {
-            "id": "1306",
-            "elo": 1126
+            "id": "1452",
+            "elo": 1093
         },
-        "unique_opponents": 14
+        "unique_opponents": 7
     },
-    "2301": {
-        "trophy": {
-            "id": "5",
-            "elo": 1440
-        },
-        "bane": {
-            "id": "796",
-            "elo": 1070
-        },
-        "unique_opponents": 54
-    },
-    "2310": {
+    "21": {
         "trophy": {
             "id": null,
             "elo": -1
         },
         "bane": {
-            "id": "1646",
-            "elo": 1168
+            "id": "1706",
+            "elo": 994
         },
-        "unique_opponents": 10
+        "unique_opponents": 34
     },
-    "2159": {
+    "1645": {
         "trophy": {
-            "id": "87",
-            "elo": 1313
+            "id": "2291",
+            "elo": 1254
         },
         "bane": {
             "id": null,
@@ -3376,60 +1341,115 @@
         },
         "unique_opponents": 3
     },
-    "1758": {
-        "trophy": {
-            "id": "1661",
-            "elo": 1470
-        },
-        "bane": {
-            "id": "1111",
-            "elo": 1081
-        },
-        "unique_opponents": 90
-    },
-    "2046": {
+    "2333": {
         "trophy": {
             "id": null,
             "elo": -1
         },
         "bane": {
-            "id": "903",
-            "elo": 1200
+            "id": "1646",
+            "elo": 1160
         },
         "unique_opponents": 3
     },
-    "1038": {
+    "2135": {
         "trophy": {
-            "id": "1643",
-            "elo": 1258
+            "id": "1604",
+            "elo": 1278
         },
         "bane": {
-            "id": "1111",
-            "elo": 1081
+            "id": "2266",
+            "elo": 1105
         },
-        "unique_opponents": 44
+        "unique_opponents": 20
     },
-    "1590": {
+    "730": {
         "trophy": {
             "id": null,
             "elo": -1
         },
         "bane": {
-            "id": "1095",
-            "elo": 1029
+            "id": "2273",
+            "elo": 1047
         },
-        "unique_opponents": 12
+        "unique_opponents": 14
     },
-    "710": {
+    "604": {
         "trophy": {
-            "id": "2141",
-            "elo": 1337
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "2191",
+            "elo": 1177
+        },
+        "unique_opponents": 8
+    },
+    "1520": {
+        "trophy": {
+            "id": "1512",
+            "elo": 1444
+        },
+        "bane": {
+            "id": "1512",
+            "elo": 1346
+        },
+        "unique_opponents": 8
+    },
+    "1593": {
+        "trophy": {
+            "id": "1758",
+            "elo": 1272
+        },
+        "bane": {
+            "id": "2266",
+            "elo": 1105
+        },
+        "unique_opponents": 40
+    },
+    "457": {
+        "trophy": {
+            "id": "2119",
+            "elo": 1283
+        },
+        "bane": {
+            "id": "1841",
+            "elo": 1140
+        },
+        "unique_opponents": 19
+    },
+    "2211": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "1661",
+            "elo": 1323
+        },
+        "unique_opponents": 3
+    },
+    "2206": {
+        "trophy": {
+            "id": "2039",
+            "elo": 1270
+        },
+        "bane": {
+            "id": "714",
+            "elo": 1179
+        },
+        "unique_opponents": 13
+    },
+    "1876": {
+        "trophy": {
+            "id": "2093",
+            "elo": 1260
         },
         "bane": {
             "id": "1706",
-            "elo": 1015
+            "elo": 1195
         },
-        "unique_opponents": 46
+        "unique_opponents": 16
     },
     "139": {
         "trophy": {
@@ -3442,51 +1462,117 @@
         },
         "unique_opponents": 12
     },
-    "2359": {
+    "6": {
+        "trophy": {
+            "id": "2161",
+            "elo": 1286
+        },
+        "bane": {
+            "id": "2261",
+            "elo": 1124
+        },
+        "unique_opponents": 35
+    },
+    "343": {
+        "trophy": {
+            "id": "1",
+            "elo": 1374
+        },
+        "bane": {
+            "id": "1306",
+            "elo": 1088
+        },
+        "unique_opponents": 38
+    },
+    "1113": {
         "trophy": {
             "id": null,
             "elo": -1
         },
         "bane": {
-            "id": "2358",
+            "id": "1989",
+            "elo": 1122
+        },
+        "unique_opponents": 6
+    },
+    "1480": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "715",
+            "elo": 1196
+        },
+        "unique_opponents": 3
+    },
+    "1994": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "99",
             "elo": 1200
         },
         "unique_opponents": 3
     },
-    "1555": {
+    "1658": {
         "trophy": {
             "id": "1661",
-            "elo": 1390
+            "elo": 1502
         },
         "bane": {
-            "id": "1539",
-            "elo": 1145
+            "id": "2268",
+            "elo": 1085
         },
-        "unique_opponents": 27
+        "unique_opponents": 49
     },
-    "1375": {
-        "trophy": {
-            "id": "2130",
-            "elo": 1376
-        },
-        "bane": {
-            "id": "1497",
-            "elo": 1096
-        },
-        "unique_opponents": 45
-    },
-    "2143": {
+    "2352": {
         "trophy": {
             "id": null,
             "elo": -1
         },
         "bane": {
-            "id": "2141",
+            "id": "325",
             "elo": 1179
+        },
+        "unique_opponents": 6
+    },
+    "2255": {
+        "trophy": {
+            "id": "334",
+            "elo": 1270
+        },
+        "bane": {
+            "id": "1096",
+            "elo": 1092
+        },
+        "unique_opponents": 38
+    },
+    "2241": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "1593",
+            "elo": 1113
+        },
+        "unique_opponents": 13
+    },
+    "2340": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "2330",
+            "elo": 1129
         },
         "unique_opponents": 9
     },
-    "2260": {
+    "2263": {
         "trophy": {
             "id": null,
             "elo": -1
@@ -3494,6 +1580,292 @@
         "bane": {
             "id": "1300",
             "elo": 1180
+        },
+        "unique_opponents": 6
+    },
+    "97": {
+        "trophy": {
+            "id": "2319",
+            "elo": 1233
+        },
+        "bane": {
+            "id": "2172",
+            "elo": 1040
+        },
+        "unique_opponents": 60
+    },
+    "1038": {
+        "trophy": {
+            "id": "1643",
+            "elo": 1258
+        },
+        "bane": {
+            "id": "1111",
+            "elo": 1081
+        },
+        "unique_opponents": 44
+    },
+    "2266": {
+        "trophy": {
+            "id": "2119",
+            "elo": 1364
+        },
+        "bane": {
+            "id": "97",
+            "elo": 1031
+        },
+        "unique_opponents": 65
+    },
+    "2159": {
+        "trophy": {
+            "id": "87",
+            "elo": 1313
+        },
+        "bane": {
+            "id": null,
+            "elo": 99999
+        },
+        "unique_opponents": 3
+    },
+    "1989": {
+        "trophy": {
+            "id": "2291",
+            "elo": 1252
+        },
+        "bane": {
+            "id": "1963",
+            "elo": 1105
+        },
+        "unique_opponents": 24
+    },
+    "1918": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "1876",
+            "elo": 1200
+        },
+        "unique_opponents": 5
+    },
+    "1": {
+        "trophy": {
+            "id": "2141",
+            "elo": 1356
+        },
+        "bane": {
+            "id": "828",
+            "elo": 1120
+        },
+        "unique_opponents": 39
+    },
+    "2356": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "2332",
+            "elo": 1096
+        },
+        "unique_opponents": 7
+    },
+    "2093": {
+        "trophy": {
+            "id": "714",
+            "elo": 1459
+        },
+        "bane": {
+            "id": "2266",
+            "elo": 1069
+        },
+        "unique_opponents": 52
+    },
+    "1672": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "2291",
+            "elo": 1196
+        },
+        "unique_opponents": 5
+    },
+    "1743": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "2291",
+            "elo": 1210
+        },
+        "unique_opponents": 3
+    },
+    "2172": {
+        "trophy": {
+            "id": "2268",
+            "elo": 1200
+        },
+        "bane": {
+            "id": "1406",
+            "elo": 996
+        },
+        "unique_opponents": 78
+    },
+    "2115": {
+        "trophy": {
+            "id": "2197",
+            "elo": 1372
+        },
+        "bane": {
+            "id": "1706",
+            "elo": 1012
+        },
+        "unique_opponents": 51
+    },
+    "1661": {
+        "trophy": {
+            "id": "2293",
+            "elo": 1499
+        },
+        "bane": {
+            "id": "1406",
+            "elo": 1040
+        },
+        "unique_opponents": 141
+    },
+    "1521": {
+        "trophy": {
+            "id": "1512",
+            "elo": 1482
+        },
+        "bane": {
+            "id": "1512",
+            "elo": 1409
+        },
+        "unique_opponents": 6
+    },
+    "2187": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "542",
+            "elo": 1361
+        },
+        "unique_opponents": 3
+    },
+    "2222": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "1452",
+            "elo": 1093
+        },
+        "unique_opponents": 15
+    },
+    "2083": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "1539",
+            "elo": 1145
+        },
+        "unique_opponents": 12
+    },
+    "2207": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "2093",
+            "elo": 1200
+        },
+        "unique_opponents": 9
+    },
+    "1249": {
+        "trophy": {
+            "id": "1375",
+            "elo": 1218
+        },
+        "bane": {
+            "id": "545",
+            "elo": 1539
+        },
+        "unique_opponents": 8
+    },
+    "2290": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "2119",
+            "elo": 1347
+        },
+        "unique_opponents": 3
+    },
+    "714": {
+        "trophy": {
+            "id": "545",
+            "elo": 1503
+        },
+        "bane": {
+            "id": "2202",
+            "elo": 1111
+        },
+        "unique_opponents": 43
+    },
+    "257": {
+        "trophy": {
+            "id": "1661",
+            "elo": 1538
+        },
+        "bane": {
+            "id": "2062",
+            "elo": 1071
+        },
+        "unique_opponents": 66
+    },
+    "1912": {
+        "trophy": {
+            "id": "1661",
+            "elo": 1491
+        },
+        "bane": {
+            "id": "2093",
+            "elo": 1091
+        },
+        "unique_opponents": 68
+    },
+    "2248": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "2062",
+            "elo": 1155
+        },
+        "unique_opponents": 21
+    },
+    "2232": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "1375",
+            "elo": 1212
         },
         "unique_opponents": 3
     },
@@ -3508,31 +1880,185 @@
         },
         "unique_opponents": 28
     },
-    "2091": {
+    "1539": {
         "trophy": {
-            "id": "1661",
-            "elo": 1455
+            "id": "1610",
+            "elo": 1327
         },
         "bane": {
-            "id": "903",
-            "elo": 1318
+            "id": "1576",
+            "elo": 1077
         },
-        "unique_opponents": 17
+        "unique_opponents": 26
     },
-    "2039": {
+    "1260": {
         "trophy": {
-            "id": "1661",
-            "elo": 1493
+            "id": null,
+            "elo": -1
         },
         "bane": {
-            "id": "2297",
-            "elo": 1137
+            "id": "2098",
+            "elo": 1385
         },
-        "unique_opponents": 93
+        "unique_opponents": 3
     },
-    "2349": {
+    "2004": {
         "trophy": {
-            "id": "2346",
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "715",
+            "elo": 1199
+        },
+        "unique_opponents": 13
+    },
+    "5": {
+        "trophy": {
+            "id": "1661",
+            "elo": 1481
+        },
+        "bane": {
+            "id": "1706",
+            "elo": 994
+        },
+        "unique_opponents": 75
+    },
+    "2341": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "2301",
+            "elo": 1007
+        },
+        "unique_opponents": 6
+    },
+    "87": {
+        "trophy": {
+            "id": "2130",
+            "elo": 1323
+        },
+        "bane": {
+            "id": "2142",
+            "elo": 1135
+        },
+        "unique_opponents": 16
+    },
+    "1454": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "1706",
+            "elo": 1030
+        },
+        "unique_opponents": 3
+    },
+    "1590": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "1095",
+            "elo": 1029
+        },
+        "unique_opponents": 12
+    },
+    "545": {
+        "trophy": {
+            "id": "1661",
+            "elo": 1449
+        },
+        "bane": {
+            "id": "2239",
+            "elo": 1049
+        },
+        "unique_opponents": 44
+    },
+    "2268": {
+        "trophy": {
+            "id": "1658",
+            "elo": 1451
+        },
+        "bane": {
+            "id": "2172",
+            "elo": 1008
+        },
+        "unique_opponents": 62
+    },
+    "13": {
+        "trophy": {
+            "id": "1610",
+            "elo": 1424
+        },
+        "bane": {
+            "id": "2266",
+            "elo": 1069
+        },
+        "unique_opponents": 39
+    },
+    "1497": {
+        "trophy": {
+            "id": "2350",
+            "elo": 1231
+        },
+        "bane": {
+            "id": "2287",
+            "elo": 1001
+        },
+        "unique_opponents": 45
+    },
+    "2143": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "2141",
+            "elo": 1179
+        },
+        "unique_opponents": 9
+    },
+    "2269": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "1306",
+            "elo": 1126
+        },
+        "unique_opponents": 14
+    },
+    "691": {
+        "trophy": {
+            "id": "1661",
+            "elo": 1517
+        },
+        "bane": {
+            "id": "2261",
+            "elo": 1201
+        },
+        "unique_opponents": 32
+    },
+    "278": {
+        "trophy": {
+            "id": "1661",
+            "elo": 1405
+        },
+        "bane": {
+            "id": "1039",
+            "elo": 1396
+        },
+        "unique_opponents": 13
+    },
+    "2025": {
+        "trophy": {
+            "id": "938",
             "elo": 1200
         },
         "bane": {
@@ -3541,71 +2067,401 @@
         },
         "unique_opponents": 3
     },
-    "232": {
+    "86": {
+        "trophy": {
+            "id": "828",
+            "elo": 1219
+        },
+        "bane": {
+            "id": "2142",
+            "elo": 1180
+        },
+        "unique_opponents": 10
+    },
+    "542": {
         "trophy": {
             "id": "1329",
             "elo": 1500
         },
         "bane": {
-            "id": "98",
-            "elo": 1086
+            "id": "1406",
+            "elo": 1007
         },
-        "unique_opponents": 64
+        "unique_opponents": 92
     },
-    "2205": {
+    "2325": {
         "trophy": {
             "id": null,
             "elo": -1
         },
         "bane": {
-            "id": "1758",
-            "elo": 1069
+            "id": "1027",
+            "elo": 1229
+        },
+        "unique_opponents": 6
+    },
+    "1270": {
+        "trophy": {
+            "id": "1889",
+            "elo": 1200
+        },
+        "bane": {
+            "id": "903",
+            "elo": 1264
+        },
+        "unique_opponents": 11
+    },
+    "1332": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "2039",
+            "elo": 1200
         },
         "unique_opponents": 9
     },
-    "647": {
-        "trophy": {
-            "id": "715",
-            "elo": 1185
-        },
-        "bane": {
-            "id": "5",
-            "elo": 1281
-        },
-        "unique_opponents": 10
-    },
-    "2314": {
-        "trophy": {
-            "id": "1661",
-            "elo": 1479
-        },
-        "bane": {
-            "id": "1406",
-            "elo": 996
-        },
-        "unique_opponents": 49
-    },
-    "417": {
+    "1961": {
         "trophy": {
             "id": null,
             "elo": -1
         },
         "bane": {
-            "id": "1959",
-            "elo": 1219
+            "id": "1643",
+            "elo": 1173
         },
         "unique_opponents": 3
     },
-    "2296": {
+    "2299": {
+        "trophy": {
+            "id": "1604",
+            "elo": 1252
+        },
+        "bane": {
+            "id": "2168",
+            "elo": 1196
+        },
+        "unique_opponents": 13
+    },
+    "325": {
+        "trophy": {
+            "id": "2270",
+            "elo": 1369
+        },
+        "bane": {
+            "id": "1098",
+            "elo": 1101
+        },
+        "unique_opponents": 61
+    },
+    "798": {
         "trophy": {
             "id": null,
             "elo": -1
         },
         "bane": {
-            "id": "2273",
-            "elo": 1089
+            "id": "1661",
+            "elo": 1319
         },
-        "unique_opponents": 28
+        "unique_opponents": 3
+    },
+    "767": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "1978",
+            "elo": 1129
+        },
+        "unique_opponents": 6
+    },
+    "347": {
+        "trophy": {
+            "id": "1661",
+            "elo": 1506
+        },
+        "bane": {
+            "id": "1406",
+            "elo": 1040
+        },
+        "unique_opponents": 36
+    },
+    "2223": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "1658",
+            "elo": 1411
+        },
+        "unique_opponents": 3
+    },
+    "631": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "796",
+            "elo": 1080
+        },
+        "unique_opponents": 6
+    },
+    "1452": {
+        "trophy": {
+            "id": "1482",
+            "elo": 1163
+        },
+        "bane": {
+            "id": "545",
+            "elo": 1200
+        },
+        "unique_opponents": 19
+    },
+    "2298": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "840",
+            "elo": 1148
+        },
+        "unique_opponents": 15
+    },
+    "2273": {
+        "trophy": {
+            "id": "2168",
+            "elo": 1291
+        },
+        "bane": {
+            "id": "1706",
+            "elo": 994
+        },
+        "unique_opponents": 66
+    },
+    "2359": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "2358",
+            "elo": 1200
+        },
+        "unique_opponents": 3
+    },
+    "1300": {
+        "trophy": {
+            "id": "1661",
+            "elo": 1493
+        },
+        "bane": {
+            "id": "2281",
+            "elo": 1108
+        },
+        "unique_opponents": 37
+    },
+    "2151": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "325",
+            "elo": 1179
+        },
+        "unique_opponents": 16
+    },
+    "530": {
+        "trophy": {
+            "id": "2098",
+            "elo": 1299
+        },
+        "bane": {
+            "id": "1007",
+            "elo": 1131
+        },
+        "unique_opponents": 12
+    },
+    "1698": {
+        "trophy": {
+            "id": "1661",
+            "elo": 1472
+        },
+        "bane": {
+            "id": "1706",
+            "elo": 1015
+        },
+        "unique_opponents": 84
+    },
+    "2293": {
+        "trophy": {
+            "id": "2119",
+            "elo": 1367
+        },
+        "bane": {
+            "id": "2330",
+            "elo": 1129
+        },
+        "unique_opponents": 19
+    },
+    "2130": {
+        "trophy": {
+            "id": "545",
+            "elo": 1459
+        },
+        "bane": {
+            "id": "2142",
+            "elo": 1135
+        },
+        "unique_opponents": 20
+    },
+    "1381": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "1646",
+            "elo": 1143
+        },
+        "unique_opponents": 3
+    },
+    "2110": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "1137",
+            "elo": 1173
+        },
+        "unique_opponents": 17
+    },
+    "1835": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "714",
+            "elo": 1179
+        },
+        "unique_opponents": 3
+    },
+    "2319": {
+        "trophy": {
+            "id": "1027",
+            "elo": 1273
+        },
+        "bane": {
+            "id": "97",
+            "elo": 1037
+        },
+        "unique_opponents": 13
+    },
+    "348": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "715",
+            "elo": 1170
+        },
+        "unique_opponents": 10
+    },
+    "1341": {
+        "trophy": {
+            "id": "2098",
+            "elo": 1315
+        },
+        "bane": {
+            "id": "1329",
+            "elo": 1388
+        },
+        "unique_opponents": 8
+    },
+    "1331": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "437",
+            "elo": 1109
+        },
+        "unique_opponents": 26
+    },
+    "1610": {
+        "trophy": {
+            "id": "1661",
+            "elo": 1436
+        },
+        "bane": {
+            "id": "1576",
+            "elo": 1077
+        },
+        "unique_opponents": 22
+    },
+    "2212": {
+        "trophy": {
+            "id": "456",
+            "elo": 1200
+        },
+        "bane": {
+            "id": "2184",
+            "elo": 1114
+        },
+        "unique_opponents": 15
+    },
+    "938": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "232",
+            "elo": 1191
+        },
+        "unique_opponents": 8
+    },
+    "1922": {
+        "trophy": {
+            "id": "1604",
+            "elo": 1284
+        },
+        "bane": {
+            "id": "2261",
+            "elo": 1178
+        },
+        "unique_opponents": 32
+    },
+    "1674": {
+        "trophy": {
+            "id": "2257",
+            "elo": 1204
+        },
+        "bane": {
+            "id": "2206",
+            "elo": 1256
+        },
+        "unique_opponents": 12
+    },
+    "2089": {
+        "trophy": {
+            "id": "1329",
+            "elo": 1495
+        },
+        "bane": {
+            "id": null,
+            "elo": 99999
+        },
+        "unique_opponents": 21
     },
     "2350": {
         "trophy": {
@@ -3618,6 +2474,94 @@
         },
         "unique_opponents": 27
     },
+    "467": {
+        "trophy": {
+            "id": "2119",
+            "elo": 1325
+        },
+        "bane": {
+            "id": "1646",
+            "elo": 1168
+        },
+        "unique_opponents": 13
+    },
+    "398": {
+        "trophy": {
+            "id": "542",
+            "elo": 1243
+        },
+        "bane": {
+            "id": "715",
+            "elo": 1052
+        },
+        "unique_opponents": 12
+    },
+    "2320": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "265",
+            "elo": 1167
+        },
+        "unique_opponents": 10
+    },
+    "2183": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "6",
+            "elo": 1268
+        },
+        "unique_opponents": 3
+    },
+    "385": {
+        "trophy": {
+            "id": "2141",
+            "elo": 1302
+        },
+        "bane": {
+            "id": "2268",
+            "elo": 1137
+        },
+        "unique_opponents": 30
+    },
+    "2348": {
+        "trophy": {
+            "id": "714",
+            "elo": 1506
+        },
+        "bane": {
+            "id": null,
+            "elo": 99999
+        },
+        "unique_opponents": 3
+    },
+    "715": {
+        "trophy": {
+            "id": "1661",
+            "elo": 1497
+        },
+        "bane": {
+            "id": "1406",
+            "elo": 1040
+        },
+        "unique_opponents": 127
+    },
+    "232": {
+        "trophy": {
+            "id": "1329",
+            "elo": 1500
+        },
+        "bane": {
+            "id": "98",
+            "elo": 1086
+        },
+        "unique_opponents": 64
+    },
     "2150": {
         "trophy": {
             "id": "2119",
@@ -3629,37 +2573,1093 @@
         },
         "unique_opponents": 14
     },
-    "215": {
+    "1246": {
         "trophy": {
             "id": null,
             "elo": -1
         },
         "bane": {
-            "id": "2210",
-            "elo": 1144
+            "id": "2161",
+            "elo": 1206
         },
-        "unique_opponents": 13
+        "unique_opponents": 3
     },
-    "2033": {
+    "1096": {
         "trophy": {
             "id": "2270",
-            "elo": 1287
+            "elo": 1370
+        },
+        "bane": {
+            "id": "2172",
+            "elo": 1008
+        },
+        "unique_opponents": 43
+    },
+    "447": {
+        "trophy": {
+            "id": "2136",
+            "elo": 1247
+        },
+        "bane": {
+            "id": "715",
+            "elo": 1116
+        },
+        "unique_opponents": 23
+    },
+    "2313": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "2287",
+            "elo": 1001
+        },
+        "unique_opponents": 12
+    },
+    "2285": {
+        "trophy": {
+            "id": "715",
+            "elo": 1250
+        },
+        "bane": {
+            "id": "1706",
+            "elo": 1012
+        },
+        "unique_opponents": 25
+    },
+    "2249": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "1646",
+            "elo": 1163
+        },
+        "unique_opponents": 3
+    },
+    "1706": {
+        "trophy": {
+            "id": "1876",
+            "elo": 1351
+        },
+        "bane": {
+            "id": "1406",
+            "elo": 1007
+        },
+        "unique_opponents": 106
+    },
+    "2354": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "2239",
+            "elo": 1283
+        },
+        "unique_opponents": 5
+    },
+    "1012": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "1963",
+            "elo": 1105
+        },
+        "unique_opponents": 3
+    },
+    "2252": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "2257",
+            "elo": 1178
+        },
+        "unique_opponents": 8
+    },
+    "1186": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "2105",
+            "elo": 1179
+        },
+        "unique_opponents": 3
+    },
+    "1815": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "2206",
+            "elo": 1256
+        },
+        "unique_opponents": 3
+    },
+    "1914": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "714",
+            "elo": 1197
+        },
+        "unique_opponents": 14
+    },
+    "2168": {
+        "trophy": {
+            "id": "2299",
+            "elo": 1279
+        },
+        "bane": {
+            "id": "97",
+            "elo": 1031
+        },
+        "unique_opponents": 24
+    },
+    "2145": {
+        "trophy": {
+            "id": "2319",
+            "elo": 1200
+        },
+        "bane": {
+            "id": "2130",
+            "elo": 1265
+        },
+        "unique_opponents": 6
+    },
+    "2136": {
+        "trophy": {
+            "id": "1658",
+            "elo": 1279
+        },
+        "bane": {
+            "id": "715",
+            "elo": 1052
+        },
+        "unique_opponents": 35
+    },
+    "2087": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "1095",
+            "elo": 1029
+        },
+        "unique_opponents": 10
+    },
+    "2251": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "2098",
+            "elo": 1324
+        },
+        "unique_opponents": 3
+    },
+    "1007": {
+        "trophy": {
+            "id": "2115",
+            "elo": 1286
+        },
+        "bane": {
+            "id": "232",
+            "elo": 1113
+        },
+        "unique_opponents": 40
+    },
+    "2244": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "1390",
+            "elo": 1095
+        },
+        "unique_opponents": 15
+    },
+    "112": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "6",
+            "elo": 1244
+        },
+        "unique_opponents": 6
+    },
+    "2062": {
+        "trophy": {
+            "id": "1661",
+            "elo": 1414
+        },
+        "bane": {
+            "id": "1576",
+            "elo": 1077
+        },
+        "unique_opponents": 76
+    },
+    "710": {
+        "trophy": {
+            "id": "2141",
+            "elo": 1337
+        },
+        "bane": {
+            "id": "1706",
+            "elo": 1015
+        },
+        "unique_opponents": 46
+    },
+    "2346": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "2349",
+            "elo": 1200
+        },
+        "unique_opponents": 3
+    },
+    "1519": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "1610",
+            "elo": 1166
+        },
+        "unique_opponents": 3
+    },
+    "2284": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "2270",
+            "elo": 1186
+        },
+        "unique_opponents": 3
+    },
+    "568": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "437",
+            "elo": 1123
+        },
+        "unique_opponents": 3
+    },
+    "2234": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "822",
+            "elo": 1200
+        },
+        "unique_opponents": 3
+    },
+    "2131": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "2202",
+            "elo": 1122
+        },
+        "unique_opponents": 3
+    },
+    "1098": {
+        "trophy": {
+            "id": "1563",
+            "elo": 1395
+        },
+        "bane": {
+            "id": "98",
+            "elo": 1086
+        },
+        "unique_opponents": 41
+    },
+    "2308": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "1646",
+            "elo": 1136
+        },
+        "unique_opponents": 6
+    },
+    "2105": {
+        "trophy": {
+            "id": "1661",
+            "elo": 1392
+        },
+        "bane": {
+            "id": "1539",
+            "elo": 1150
+        },
+        "unique_opponents": 23
+    },
+    "1095": {
+        "trophy": {
+            "id": "1512",
+            "elo": 1473
+        },
+        "bane": {
+            "id": "1706",
+            "elo": 1015
+        },
+        "unique_opponents": 63
+    },
+    "1477": {
+        "trophy": {
+            "id": "1661",
+            "elo": 1548
+        },
+        "bane": {
+            "id": "2116",
+            "elo": 1080
+        },
+        "unique_opponents": 62
+    },
+    "2302": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "1341",
+            "elo": 1247
+        },
+        "unique_opponents": 6
+    },
+    "1390": {
+        "trophy": {
+            "id": "437",
+            "elo": 1151
+        },
+        "bane": {
+            "id": "2202",
+            "elo": 1122
+        },
+        "unique_opponents": 17
+    },
+    "2184": {
+        "trophy": {
+            "id": "1706",
+            "elo": 1255
+        },
+        "bane": {
+            "id": "1646",
+            "elo": 1168
+        },
+        "unique_opponents": 18
+    },
+    "2178": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "2161",
+            "elo": 1180
+        },
+        "unique_opponents": 6
+    },
+    "1959": {
+        "trophy": {
+            "id": "1661",
+            "elo": 1533
+        },
+        "bane": {
+            "id": "1406",
+            "elo": 996
+        },
+        "unique_opponents": 107
+    },
+    "253": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "2142",
+            "elo": 1135
+        },
+        "unique_opponents": 3
+    },
+    "2344": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "2350",
+            "elo": 1190
+        },
+        "unique_opponents": 17
+    },
+    "2292": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "2135",
+            "elo": 1123
+        },
+        "unique_opponents": 6
+    },
+    "1436": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "2270",
+            "elo": 1337
+        },
+        "unique_opponents": 6
+    },
+    "945": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "2239",
+            "elo": 1160
+        },
+        "unique_opponents": 20
+    },
+    "235": {
+        "trophy": {
+            "id": "1",
+            "elo": 1342
+        },
+        "bane": {
+            "id": "437",
+            "elo": 1102
+        },
+        "unique_opponents": 41
+    },
+    "2296": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "2273",
+            "elo": 1089
+        },
+        "unique_opponents": 28
+    },
+    "1555": {
+        "trophy": {
+            "id": "1661",
+            "elo": 1390
+        },
+        "bane": {
+            "id": "1539",
+            "elo": 1145
+        },
+        "unique_opponents": 27
+    },
+    "1039": {
+        "trophy": {
+            "id": "1661",
+            "elo": 1529
+        },
+        "bane": {
+            "id": "2287",
+            "elo": 1001
+        },
+        "unique_opponents": 61
+    },
+    "2336": {
+        "trophy": {
+            "id": "1027",
+            "elo": 1315
+        },
+        "bane": {
+            "id": "2324",
+            "elo": 1188
+        },
+        "unique_opponents": 12
+    },
+    "1862": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "2161",
+            "elo": 1180
+        },
+        "unique_opponents": 6
+    },
+    "704": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "2202",
+            "elo": 1122
+        },
+        "unique_opponents": 6
+    },
+    "315": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "1959",
+            "elo": 1219
+        },
+        "unique_opponents": 8
+    },
+    "1027": {
+        "trophy": {
+            "id": "2119",
+            "elo": 1396
+        },
+        "bane": {
+            "id": "2330",
+            "elo": 1129
+        },
+        "unique_opponents": 44
+    },
+    "2260": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "1300",
+            "elo": 1180
+        },
+        "unique_opponents": 3
+    },
+    "1963": {
+        "trophy": {
+            "id": "1661",
+            "elo": 1348
+        },
+        "bane": {
+            "id": "2172",
+            "elo": 1021
+        },
+        "unique_opponents": 68
+    },
+    "2214": {
+        "trophy": {
+            "id": "1930",
+            "elo": 1200
+        },
+        "bane": {
+            "id": "1907",
+            "elo": 1179
+        },
+        "unique_opponents": 5
+    },
+    "2276": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "2239",
+            "elo": 1135
+        },
+        "unique_opponents": 14
+    },
+    "828": {
+        "trophy": {
+            "id": "542",
+            "elo": 1366
+        },
+        "bane": {
+            "id": "2172",
+            "elo": 1021
+        },
+        "unique_opponents": 50
+    },
+    "2169": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "1497",
+            "elo": 1060
+        },
+        "unique_opponents": 10
+    },
+    "2117": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "1563",
+            "elo": 1234
+        },
+        "unique_opponents": 6
+    },
+    "2039": {
+        "trophy": {
+            "id": "1661",
+            "elo": 1493
+        },
+        "bane": {
+            "id": "2297",
+            "elo": 1137
+        },
+        "unique_opponents": 93
+    },
+    "2": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "257",
+            "elo": 1149
+        },
+        "unique_opponents": 3
+    },
+    "1008": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "715",
+            "elo": 1031
+        },
+        "unique_opponents": 10
+    },
+    "579": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "1758",
+            "elo": 1159
+        },
+        "unique_opponents": 5
+    },
+    "2270": {
+        "trophy": {
+            "id": "1329",
+            "elo": 1468
+        },
+        "bane": {
+            "id": "1240",
+            "elo": 1070
+        },
+        "unique_opponents": 82
+    },
+    "2072": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "2172",
+            "elo": 1040
+        },
+        "unique_opponents": 6
+    },
+    "2337": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "1521",
+            "elo": 1178
+        },
+        "unique_opponents": 9
+    },
+    "2311": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "691",
+            "elo": 1200
+        },
+        "unique_opponents": 3
+    },
+    "430": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "347",
+            "elo": 1116
+        },
+        "unique_opponents": 12
+    },
+    "1020": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "2141",
+            "elo": 1105
+        },
+        "unique_opponents": 14
+    },
+    "678": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "2166",
+            "elo": 1260
+        },
+        "unique_opponents": 3
+    },
+    "2061": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "545",
+            "elo": 1410
+        },
+        "unique_opponents": 3
+    },
+    "1168": {
+        "trophy": {
+            "id": "1039",
+            "elo": 1241
+        },
+        "bane": {
+            "id": "1758",
+            "elo": 1069
+        },
+        "unique_opponents": 10
+    },
+    "1839": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "2142",
+            "elo": 1146
+        },
+        "unique_opponents": 9
+    },
+    "387": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "2119",
+            "elo": 1325
+        },
+        "unique_opponents": 3
+    },
+    "2046": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "903",
+            "elo": 1200
+        },
+        "unique_opponents": 3
+    },
+    "2331": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "2329",
+            "elo": 1293
+        },
+        "unique_opponents": 3
+    },
+    "456": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "1643",
+            "elo": 1179
+        },
+        "unique_opponents": 5
+    },
+    "1924": {
+        "trophy": {
+            "id": "2197",
+            "elo": 1312
+        },
+        "bane": {
+            "id": "5",
+            "elo": 1205
+        },
+        "unique_opponents": 20
+    },
+    "2349": {
+        "trophy": {
+            "id": "2346",
+            "elo": 1200
+        },
+        "bane": {
+            "id": null,
+            "elo": 99999
+        },
+        "unique_opponents": 3
+    },
+    "959": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "2197",
+            "elo": 1200
+        },
+        "unique_opponents": 5
+    },
+    "1646": {
+        "trophy": {
+            "id": "2098",
+            "elo": 1396
+        },
+        "bane": {
+            "id": "2266",
+            "elo": 1036
+        },
+        "unique_opponents": 107
+    },
+    "762": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "2273",
+            "elo": 1047
+        },
+        "unique_opponents": 9
+    },
+    "2215": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "2214",
+            "elo": 1200
+        },
+        "unique_opponents": 3
+    },
+    "2314": {
+        "trophy": {
+            "id": "1661",
+            "elo": 1479
+        },
+        "bane": {
+            "id": "1406",
+            "elo": 996
+        },
+        "unique_opponents": 49
+    },
+    "2210": {
+        "trophy": {
+            "id": "1732",
+            "elo": 1286
+        },
+        "bane": {
+            "id": "2142",
+            "elo": 1140
+        },
+        "unique_opponents": 8
+    },
+    "1475": {
+        "trophy": {
+            "id": "4",
+            "elo": 1472
+        },
+        "bane": {
+            "id": "715",
+            "elo": 1120
+        },
+        "unique_opponents": 17
+    },
+    "2332": {
+        "trophy": {
+            "id": "2356",
+            "elo": 1178
+        },
+        "bane": {
+            "id": "1593",
+            "elo": 1126
+        },
+        "unique_opponents": 23
+    },
+    "461": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "715",
+            "elo": 1199
+        },
+        "unique_opponents": 3
+    },
+    "2261": {
+        "trophy": {
+            "id": "235",
+            "elo": 1456
+        },
+        "bane": {
+            "id": "2273",
+            "elo": 1077
+        },
+        "unique_opponents": 71
+    },
+    "1978": {
+        "trophy": {
+            "id": "1039",
+            "elo": 1443
+        },
+        "bane": {
+            "id": "2239",
+            "elo": 1121
+        },
+        "unique_opponents": 47
+    },
+    "2283": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "2172",
+            "elo": 1040
+        },
+        "unique_opponents": 23
+    },
+    "2141": {
+        "trophy": {
+            "id": "1661",
+            "elo": 1535
         },
         "bane": {
             "id": "385",
             "elo": 1108
         },
-        "unique_opponents": 22
+        "unique_opponents": 95
     },
-    "2211": {
+    "831": {
         "trophy": {
             "id": null,
             "elo": -1
         },
         "bane": {
-            "id": "1661",
-            "elo": 1323
+            "id": "2166",
+            "elo": 1181
         },
-        "unique_opponents": 3
+        "unique_opponents": 11
+    },
+    "2324": {
+        "trophy": {
+            "id": "457",
+            "elo": 1501
+        },
+        "bane": {
+            "id": "2287",
+            "elo": 1010
+        },
+        "unique_opponents": 32
+    },
+    "2191": {
+        "trophy": {
+            "id": "2098",
+            "elo": 1295
+        },
+        "bane": {
+            "id": "1889",
+            "elo": 1112
+        },
+        "unique_opponents": 9
+    },
+    "1806": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "2293",
+            "elo": 1267
+        },
+        "unique_opponents": 6
+    },
+    "98": {
+        "trophy": {
+            "id": "1959",
+            "elo": 1294
+        },
+        "bane": {
+            "id": "2172",
+            "elo": 1021
+        },
+        "unique_opponents": 33
+    },
+    "1265": {
+        "trophy": {
+            "id": null,
+            "elo": -1
+        },
+        "bane": {
+            "id": "1027",
+            "elo": 1241
+        },
+        "unique_opponents": 10
     }
 }
