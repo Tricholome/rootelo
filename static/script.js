@@ -1350,12 +1350,6 @@ $(document).ready(function () {
                     label: `Dissolved ${formatShortDate(dissolvedDate)}`,
                     title: 'Jump to final active day'
                 });
-            } else if (!config.is_ongoing) {
-                milestones.push({
-                    idx: seg.endIndex,
-                    label: `Survived ${formatShortDate(dates[seg.endIndex])}`,
-                    title: 'Jump to season conclusion'
-                });
             }
         });
 
@@ -1715,9 +1709,11 @@ $(document).ready(function () {
         node.on('click', (event, d) => {
             if (event.defaultPrevented) return;
             if (d.type === 'tribe' && currentView !== 'pn') {
-                activeTribe = activeTribe === d.id ? null : d.id;
-                currentView = activeTribe ? 'hn' : 'hm';
-                updateView(dates[currentIndex]);
+				activeTribe = activeTribe === d.id ? null : d.id;
+				currentView = activeTribe ? 'hn' : 'hm';
+				selectedPlayer = null;
+				$searchInput.val('').trigger('input');
+				updateView(dates[currentIndex]);
             } else if ((d.type === 'player' || d.type === 'ego-partner') && currentView === 'pn') {
                 selectedPlayer = d.name;
                 $searchInput.val(selectedPlayer);
@@ -1865,6 +1861,8 @@ $(document).ready(function () {
         if (!tribe || isNaN(idx)) return;
         currentView = 'hn';
         activeTribe = tribe;
+        selectedPlayer = null;
+        $searchInput.val('').trigger('input');
         setDateByIndex(idx);
     });
 
@@ -1889,8 +1887,8 @@ $(document).ready(function () {
         currentView = 'hm';
         activeTribe = null;
         selectedPlayer = null;
-        if ($searchInput.val()) $searchInput.val('').trigger('change');
-        else updateView(dates[currentIndex]);
+        $searchInput.val('').trigger('input');
+        updateView(dates[currentIndex]);
     });
 
     $prevBtn.on('click', () => stepDate(-1));
