@@ -27,6 +27,7 @@ jobs:
 
       - name: Run ELO calculation and site generation
         env:
+          PYTHONHASHSEED: "0"
           API_TOKEN: ${{ secrets.API_TOKEN }}
           ROOTDB_TOKEN: ${{ secrets.ROOTDB_TOKEN }}
         run: |
