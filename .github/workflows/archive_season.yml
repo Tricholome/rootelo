@@ -46,6 +46,7 @@ jobs:
 
       - name: Run Archive Script
         env:
+          PYTHONHASHSEED: "0"
           API_TOKEN: ${{ secrets.API_TOKEN }}
           ROOTDB_API_KEY: ${{ secrets.ROOTDB_API_KEY }}
         run: |
