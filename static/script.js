@@ -1698,11 +1698,18 @@ $(document).ready(function () {
                     .attr('transform', `translate(0, ${size / 2 - 1})`);
                 g.select('.num-span').text(d.count);
                 g.select('.lbl-span').text(d.count === 1 ? ' denizen' : ' denizens');
+            } else if (d.type === 'ego-center') {
+                g.select('.player-name-tspan')
+                    .attr('dy', '-0.3em')
+                    .text(d.name);
+                g.select('.player-status-tspan')
+                    .attr('dy', '1.1em')
+                    .text(d.status || '');
             } else {
                 g.select('.player-name-tspan')
-                    .attr('dy', d.type === 'ego-center' ? '-0.2em' : '0.3em')
+                    .attr('dy', '0.3em')
                     .text(d.name);
-                g.select('.player-status-tspan').text(d.status || '');
+                g.select('.player-status-tspan').text('');
             }
         });
 
