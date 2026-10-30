@@ -7,6 +7,10 @@ from datetime import datetime
 import pandas as pd
 import requests
 
+if os.environ.get("PYTHONHASHSEED") != "0":
+    os.environ["PYTHONHASHSEED"] = "0"
+    os.execv(sys.executable, [sys.executable] + sys.argv)
+
 # =========================================================================
 # --- 1. UTILS & LEAGUE CONFIGURATION ---
 # =========================================================================
