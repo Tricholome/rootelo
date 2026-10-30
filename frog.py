@@ -1,23 +1,3 @@
-"""
-frog.py — Dynamic player homelands simulation module (imported by main.py).
-
-run_homelands_simulation() replays the season day by day and returns TWO light dictionaries:
-
-  tribe_snapshots  {date: {tribe: [[player, fidelity, weight], ...]}}
-      fidelity (0-100) : share of the player's links (towards players who belong to a tribe)
-                         that go to his own tribe        -> bubble colour
-      weight           : strength of the player's links to his own tribe members
-                         (decayed number of matches)      -> bubble size
-      Members are sorted by weight, biggest first. Unaligned players are not listed.
-
-  constellations   {"date": latest date, "players": {player: {"tribe", "games", "partners"}}}
-      partners = [[partner, games played together], ...] : the PARTNERS_TOP players he played
-      with the most over the season, most first. Every player of the season is listed, so any
-      partner can be looked up in "players" (tribe, total games).
-
-Tribe detection uses Louvain, which depends on string hashing: main.py fixes PYTHONHASHSEED=0.
-"""
-
 from collections import Counter, defaultdict
 from datetime import date
 from itertools import combinations
@@ -27,9 +7,8 @@ import statistics
 
 import networkx as nx
 
-
 # ==============================================================================
-# ⚙️ CONFIGURATION & CONSTANTS
+# CONFIGURATION & CONSTANTS
 # ==============================================================================
 
 UNALIGNED = None
@@ -53,7 +32,7 @@ DEFAULT_CONFIG = {
 
 
 # ==============================================================================
-# 🧩 ALGORITHM HELPER FUNCTIONS
+# ALGORITHM HELPER FUNCTIONS
 # ==============================================================================
 
 def min_games_required(player_games: Counter, floor: int, ratio: float) -> int:
@@ -193,7 +172,6 @@ def dissolve_small_tribes(roster: dict, cfg: dict) -> None:
 
 
 def member_metrics(G: nx.Graph, roster: dict, tribe: str) -> list:
-    """[[player, fidelity, weight], ...] for one tribe, biggest weight first."""
     rows = []
     for p, t in roster.items():
         if t != tribe:
@@ -210,31 +188,29 @@ def member_metrics(G: nx.Graph, roster: dict, tribe: str) -> list:
                     other += G[p][n]["weight"]
         fidelity = round(100 * own / (own + other)) if own + other else 0
         rows.append([p, fidelity, round(own, 1)])
-    rows.sort(key=lambda r: (-r[2], r[0]))
+    rows.sort(key=lambda r: (-r[2], str(r[0])))
     return rows
 
 
-import math
-
-def build_constellations(roster: dict, player_games: Counter, shared: dict,
-                         latest_date: str, cfg: dict) -> dict:
-    """Ego-network of every player with smooth logarithmic partner filtering."""
+def build_constellations(
+    roster: dict, player_games: Counter, shared: dict, latest_date: str, cfg: dict
+) -> dict:
     alpha = cfg.get("PARTNERS_SCALE_FACTOR", 0.4)
     players = {}
 
     for p in sorted(player_games):
-        all_partners = sorted(shared[p].items(), key=lambda x: (-x[1], x[0]))
-        
+        all_partners = sorted(shared[p].items(), key=lambda x: (-x[1], str(x[0])))
+
         filtered = []
         for rank_idx, (partner, games) in enumerate(all_partners):
             k = rank_idx + 1
             min_req = math.floor(1 + alpha * math.log(k))
-            
+
             if games >= min_req:
                 filtered.append([partner, games])
             else:
                 break
-                
+
         players[p] = {
             "tribe": roster.get(p, UNALIGNED),
             "games": player_games[p],
@@ -244,14 +220,12 @@ def build_constellations(roster: dict, player_games: Counter, shared: dict,
 
 
 # ==============================================================================
-# 🚀 CORE SIMULATION FUNCTION
+# CORE SIMULATION FUNCTION
 # ==============================================================================
 
-def run_homelands_simulation(matches: list, custom_config: dict = None, season_id: str = "default") -> tuple[dict, dict]:
-    """
-    Runs the homelands simulation over the matches.
-    Returns (tribe_snapshots, constellations) -- see the module docstring for their shape.
-    """
+def run_homelands_simulation(
+    matches: list, custom_config: dict = None, season_id: str = "default"
+) -> tuple[dict, dict]:
     if matches is None:
         return {}, {}
     if hasattr(matches, "empty") and matches.empty:
@@ -271,7 +245,11 @@ def run_homelands_simulation(matches: list, custom_config: dict = None, season_i
             m.get("Date_Closed") or m.get("date_closed") or m.get("Date") or m.get("date") or ""
         )[:10]
         players = list(
-            dict.fromkeys(p.get("name") for p in m.get("players", []) if p.get("name"))
+            dict.fromkeys(
+                str(p.get("id") or p.get("name"))
+                for p in m.get("players", [])
+                if p.get("id") is not None or p.get("name") is not None
+            )
         )
         if date_str and players:
             matches_by_date.setdefault(date_str, []).append(players)
@@ -285,7 +263,7 @@ def run_homelands_simulation(matches: list, custom_config: dict = None, season_i
     rng.shuffle(tribe_names_pool)
 
     edge_weights = Counter()
-    shared = defaultdict(Counter)   # shared[a][b] = games played together (no decay)
+    shared = defaultdict(Counter)
     player_games = Counter()
     last_active = {}
     roster = {}
