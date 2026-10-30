@@ -1195,11 +1195,23 @@ $(document).ready(function () {
     const { same_tribe, other_tribe, unaligned } = config.colors;
     const GOLDEN_ANGLE = Math.PI * (3 - Math.sqrt(5));
     const TIER_PHASE = { core: 0, mid: 0.22, outer: 0.47 };
+	const $searchInput = $('#playerName');
 
     let currentView = 'hm';
     let activeTribe = null;
     let selectedPlayer = null;
     let currentIndex = dates.length - 1;
+	
+	const initialQuery = ($searchInput.val() || '').trim();
+    if (initialQuery) {
+        const q = initialQuery.toLowerCase();
+        const foundKey = Object.keys(constellations).find(k => k.toLowerCase() === q);
+        if (foundKey) {
+            selectedPlayer = foundKey;
+            currentView = 'pn';
+        }
+    }
+	
     let lastRenderedView = null;
     let simulation = null;
 
@@ -1260,7 +1272,6 @@ $(document).ready(function () {
     }
 
 	// --- Historical Lifespan & Allegiance Queries ---
-    // --- Historical Lifespan & Chronicle Queries ---
     function getTribeLifespan(tribe) {
         if (!tribe) return null;
         const activeIndices = [];
