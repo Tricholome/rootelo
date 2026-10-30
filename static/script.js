@@ -1259,67 +1259,39 @@ $(document).ready(function () {
         return key ? { name: key, data: constellations[key] } : null;
     }
 
-	// --- Historical Lifespan & Chronicle Queries ---
+	// --- Historical Lifespan & Allegiance Queries ---
     function getTribeLifespan(tribe) {
         if (!tribe) return null;
         const activeIndices = [];
         const segments = [];
-        let currentSeg = null;
         let peakIndex = -1, peakCount = 0;
 
         dates.forEach((d, idx) => {
-            const members = (snapshots[d]?.[tribe] || []).map(m => m[0]);
-            if (members.length > 0) {
+            const count = snapshots[d]?.[tribe]?.length || 0;
+            if (count > 0) {
                 activeIndices.push(idx);
-                if (members.length > peakCount) {
-                    peakCount = members.length;
+                if (count > peakCount) {
+                    peakCount = count;
                     peakIndex = idx;
                 }
-                if (currentSeg) {
-                    currentSeg.endIndex = idx;
-                    members.forEach(p => currentSeg.allMembers.add(p));
+                const lastSeg = segments[segments.length - 1];
+                if (lastSeg && idx - lastSeg.endIndex <= 3) {
+                    lastSeg.endIndex = idx;
                 } else {
-                    currentSeg = {
-                        startIndex: idx,
-                        endIndex: idx,
-                        startMembers: new Set(members),
-                        allMembers: new Set(members)
-                    };
-                    segments.push(currentSeg);
+                    segments.push({ startIndex: idx, endIndex: idx });
                 }
-            } else {
-                currentSeg = null;
             }
         });
 
         if (!activeIndices.length) return null;
 
         const milestones = [];
-        const historicalMembers = new Set();
-
         segments.forEach((seg, segIdx) => {
-            if (segIdx === 0) {
-                milestones.push({
-                    idx: seg.startIndex,
-                    label: `Founded ${formatShortDate(dates[seg.startIndex])}`,
-                    title: 'Jump to founding date'
-                });
-            } else {
-                const overlap = [...seg.startMembers].filter(p => historicalMembers.has(p)).length;
-                const isRevival = overlap >= 3;
-                const actionLabel = isRevival ? 'Revived' : 'Reclaimed';
-                const actionTitle = isRevival
-                    ? `Jump to revival (${overlap} returning members)`
-                    : 'Jump to reclamation by a new fellowship';
-
-                milestones.push({
-                    idx: seg.startIndex,
-                    label: `${actionLabel} ${formatShortDate(dates[seg.startIndex])}`,
-                    title: actionTitle
-                });
-            }
-
-            seg.allMembers.forEach(p => historicalMembers.add(p));
+            milestones.push({
+                idx: seg.startIndex,
+                label: `${segIdx === 0 ? 'Founded' : 'Revived'} ${formatShortDate(dates[seg.startIndex])}`,
+                title: segIdx === 0 ? 'Jump to founding date' : 'Jump to revival date'
+            });
 
             if (peakIndex > seg.startIndex && peakIndex < seg.endIndex) {
                 milestones.push({
@@ -1345,6 +1317,42 @@ $(document).ready(function () {
             lastIndex: activeIndices[activeIndices.length - 1],
             milestones
         };
+    }
+
+    function getPlayerHistory(playerName) {
+        const segments = [];
+        let active = null;
+
+        dates.forEach((dateStr, idx) => {
+            const snap = snapshots[dateStr] || {};
+            const rawTribe = Object.keys(snap).find(t => snap[t]?.some(m => m[0] === playerName));
+            const tribe = normalizeTribe(rawTribe);
+
+            if (tribe) {
+                const prev = segments[segments.length - 1];
+                if (active?.tribe === tribe) {
+                    active.endDate = dateStr;
+                    active.endIndex = idx;
+                } else if (!active && prev?.tribe === tribe && idx - prev.endIndex <= 3) {
+                    active = segments.pop();
+                    active.endDate = dateStr;
+                    active.endIndex = idx;
+                } else {
+                    if (active) segments.push(active);
+                    active = { tribe, startDate: dateStr, startIndex: idx, endDate: dateStr, endIndex: idx };
+                }
+            } else if (active) {
+                segments.push(active);
+                active = null;
+            }
+        });
+        if (active) segments.push(active);
+
+        const currentTribe = getPlayerTribe(playerName);
+        return segments.reverse().map((seg, i) => ({
+            ...seg,
+            isCurrent: i === 0 && seg.endIndex === dates.length - 1 && seg.tribe === currentTribe
+        }));
     }
 
     // --- UI Context Updaters ---
