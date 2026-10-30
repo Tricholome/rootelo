@@ -1188,543 +1188,342 @@ $(document).ready(function () {
     const dates = window.NETWORK_DATES;
     const snapshots = window.NETWORK_SNAPSHOTS;
     const config = window.NETWORK_CONFIG || {};
+    const constellations = window.PLAYER_CONSTELLATIONS?.players || {};
+
+    if (!dates?.length || !snapshots) return;
+
     const palette = config.colors || {};
+    const COLOR_SAME = palette.same_tribe || 'var(--net-same)';
+    const COLOR_OTHER = palette.other_tribe || config.tiers?.Friend || 'var(--net-other)';
+    const COLOR_UNALIGNED = palette.unaligned || config.tiers?.Default || 'var(--net-unaligned)';
+    const GOLDEN_ANGLE = Math.PI * (3 - Math.sqrt(5));
+    const TIER_PHASE = { core: 0, mid: 0.22, outer: 0.47 };
 
-    if (!dates || !dates.length || !snapshots) return;
-
-    // --- Variables d'état ---
-    let currentView = 'hm'; // 'hm' (Homelands Map), 'hn' (Homeland Clearing), 'pn' (Player Circle)
-    let activeTribeFilter = null;
+    let currentView = 'hm';
+    let activeTribe = null;
     let selectedPlayer = null;
-    let simulation = null;
     let currentIndex = dates.length - 1;
     let lastRenderedView = null;
+    let simulation = null;
 
-    // --- Éléments du DOM ---
+    const $wrapper = $('#networkWrapper');
     const $datePicker = $('#datePicker').attr({ min: dates[0], max: dates[dates.length - 1] });
     const $prevBtn = $('#prevDateBtn');
     const $nextBtn = $('#nextDateBtn');
     const $earliestBtn = $('#earliestDateBtn');
     const $latestBtn = $('#latestDateBtn');
-    const $mapHeaderTitle = $('#mapHeaderTitle');
-    const $dateControls = $('#dateControls');
-    const $globalSearchInput = $('#playerName');
-    const $playerLedger = $('#playerLedger');
+    const $headerTitle = $('#mapHeaderTitle');
+    const $searchInput = $('#playerName');
+    const $ledger = $('#playerLedger');
 
-    // Injection automatique du conteneur de légende sous le titre
-    let $mapLegend = $('#mapLegend');
-    if (!$mapLegend.length) {
-        $mapLegend = $('<div id="mapLegend" class="map-legend"></div>').appendTo('#tribeMapContainer');
+    $wrapper.css({
+        '--net-same': COLOR_SAME,
+        '--net-other': COLOR_OTHER,
+        '--net-unaligned': COLOR_UNALIGNED
+    });
+
+    // --- Helpers & Math Utilities ---
+    const normalizeTribe = t => (!t || t === '-' || t === 'UNALIGNED') ? null : t;
+    const getPlayerTribe = name => normalizeTribe(constellations[name]?.tribe);
+    const tribeRadius = count => Math.max(32, 24 + Math.sqrt(count || 0) * 10);
+    const partnerRadius = games => Math.min(24, 6 + Math.sqrt(Math.max(1, games)) * 3);
+    const centerRadius = (games, maxPRad) => Math.max(18, Math.min(30, 12 + Math.sqrt(Math.max(1, games)) * 2.2), (maxPRad || 10) + 3);
+
+    function fidelityColor(fidelity) {
+        const pct = Math.round(Math.max(0, Math.min(1, ((Number(fidelity) || 0) - 35) / 60)) * 100);
+        return `color-mix(in srgb, ${COLOR_SAME} ${pct}%, ${COLOR_OTHER})`;
     }
 
-    // --- Résolution des couleurs ---
-    const COLOR_SAME_TRIBE  = palette.same_tribe  || 'var(--main-color)';
-    const COLOR_OTHER_TRIBE = palette.other_tribe || config.tiers?.Friend || 'var(--color-mouse)';
-    const COLOR_UNALIGNED   = palette.unaligned   || config.tiers?.Default || '#4a5568';
-
-    function getFidelityAttenuatedColor(fidelity) {
-        const val = Number(fidelity) || 0;
-        const ratio = Math.max(0, Math.min(1, (val - 35) / (95 - 35)));
-        const pct = Math.round(ratio * 100);
-        return `color-mix(in srgb, ${COLOR_SAME_TRIBE} ${pct}%, ${COLOR_OTHER_TRIBE})`;
-    }
-
-    function getPlayerNetworkColor(centerTribe, nodeTribe, isCenter) {
-        if (isCenter) return centerTribe ? COLOR_SAME_TRIBE : COLOR_UNALIGNED;
+    function networkColor(centerTribe, nodeTribe, isCenter) {
+        if (isCenter) return centerTribe ? COLOR_SAME : COLOR_UNALIGNED;
         if (!nodeTribe) return COLOR_UNALIGNED;
-        if (centerTribe && nodeTribe === centerTribe) return COLOR_SAME_TRIBE;
-        return COLOR_OTHER_TRIBE;
+        return (centerTribe && nodeTribe === centerTribe) ? COLOR_SAME : COLOR_OTHER;
     }
 
-    // --- Dimensions & géométrie ---
-    function tribeRadius(count) {
-        return Math.max(32, 24 + Math.sqrt(count || 0) * 10);
-    }
-
-    function partnerAbsoluteRadius(gamesCount) {
-        return Math.min(24, 6 + Math.sqrt(Math.max(1, gamesCount)) * 3);
-    }
-
-    function centerPlayerRadius(totalGames, maxPartnerRad) {
-        const base = Math.min(30, 12 + Math.sqrt(Math.max(1, totalGames)) * 2.2);
-        return Math.max(18, base, (maxPartnerRad || 10) + 3);
-    }
-
-    function normalizeTribe(tribe) {
-        if (!tribe || tribe === '-' || tribe === 'UNALIGNED') return null;
-        return tribe;
-    }
-
-    function getPlayerTribe(playerName) {
-        const constellations = window.PLAYER_CONSTELLATIONS || { players: {} };
-        const playerData = constellations.players[playerName] || {};
-        return normalizeTribe(playerData.tribe);
-    }
-
-    function nameJitter01(name) {
-        let hash = 0;
-        for (let i = 0; i < name.length; i++) {
-            hash = (Math.imul(hash, 31) + name.charCodeAt(i)) >>> 0;
-        }
-        return (hash % 10000) / 10000;
+    function nameJitter(name) {
+        let h = 0;
+        for (let i = 0; i < name.length; i++) h = (Math.imul(h, 31) + name.charCodeAt(i)) >>> 0;
+        return (h % 10000) / 10000;
     }
 
     function formatShortDate(dateStr) {
         const d = new Date(`${dateStr}T00:00:00`);
-        if (isNaN(d.getTime())) return dateStr;
-        return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        return isNaN(d) ? dateStr : d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
     }
 
-    function getHomelandLifespan(tribe) {
+    function distToSegment(px, py, x1, y1, x2, y2) {
+        const dx = x2 - x1, dy = y2 - y1, lenSq = dx * dx + dy * dy;
+        if (!lenSq) return Math.hypot(px - x1, py - y1);
+        const t = Math.max(0.05, Math.min(0.95, ((px - x1) * dx + (py - y1) * dy) / lenSq));
+        return Math.hypot(px - (x1 + t * dx), py - (y1 + t * dy));
+    }
+
+    function findPlayer(query) {
+        const q = (query || '').trim();
+        if (!q) return null;
+        if (constellations[q]) return { name: q, data: constellations[q] };
+        const low = q.toLowerCase();
+        const key = Object.keys(constellations).find(k => k.toLowerCase() === low);
+        return key ? { name: key, data: constellations[key] } : null;
+    }
+
+    // --- Historical Lifespan & Allegiance Queries ---
+    function getTribeLifespan(tribe) {
         if (!tribe) return null;
         const activeIndices = [];
-        let peakIndex = -1;
-        let peakCount = 0;
+        let peakIndex = -1, peakCount = 0;
 
         dates.forEach((d, idx) => {
-            const members = snapshots[d]?.[tribe];
-            const count = Array.isArray(members) ? members.length : 0;
+            const count = snapshots[d]?.[tribe]?.length || 0;
             if (count > 0) {
                 activeIndices.push(idx);
-                if (count > peakCount) {
-                    peakCount = count;
-                    peakIndex = idx;
-                }
+                if (count > peakCount) { peakCount = count; peakIndex = idx; }
             }
         });
-
         if (!activeIndices.length) return null;
 
         const firstIndex = activeIndices[0];
         const lastIndex = activeIndices[activeIndices.length - 1];
-        const isDissolved = lastIndex < (dates.length - 1);
-        const dissolvedDate = isDissolved ? dates[lastIndex + 1] || dates[lastIndex] : null;
+        const isDissolved = lastIndex < dates.length - 1;
 
         return {
-            tribe,
-            activeIndices,
-            firstIndex,
-            lastIndex,
+            activeIndices, firstIndex, lastIndex, peakIndex, peakCount, isDissolved,
             firstDate: dates[firstIndex],
             lastDate: dates[lastIndex],
-            dissolvedDate,
-            isDissolved,
-            peakIndex,
             peakDate: dates[peakIndex],
-            peakCount
+            dissolvedDate: isDissolved ? (dates[lastIndex + 1] || dates[lastIndex]) : null
         };
     }
 
-    function distToSegment(px, py, x1, y1, x2, y2) {
-        const dx = x2 - x1, dy = y2 - y1;
-        const lenSq = dx * dx + dy * dy;
-        if (lenSq === 0) return Math.hypot(px - x1, py - y1);
-        let t = Math.max(0.05, Math.min(0.95, ((px - x1) * dx + (py - y1) * dy) / lenSq));
-        return Math.hypot(px - (x1 + t * dx), py - (y1 + t * dy));
-    }
-
-    function getPlayerConstellationData(query) {
-        const constellations = window.PLAYER_CONSTELLATIONS || { players: {} };
-        const playersMap = constellations.players || {};
-        if (!query) return null;
-
-        const trimmed = query.trim();
-        if (playersMap[trimmed]) return { canonicalName: trimmed, data: playersMap[trimmed] };
-
-        const lowerQ = trimmed.toLowerCase();
-        for (const [name, data] of Object.entries(playersMap)) {
-            if (name.toLowerCase() === lowerQ) return { canonicalName: name, data };
-        }
-        return null;
-    }
-
-    function getPlayerAllegianceHistory(playerName) {
+    function getPlayerHistory(playerName) {
         const segments = [];
-        let activeSeg = null;
+        let active = null;
 
         dates.forEach((dateStr, idx) => {
             const snap = snapshots[dateStr] || {};
-            let foundTribe = null;
+            const rawTribe = Object.keys(snap).find(t => snap[t]?.some(m => m[0] === playerName));
+            const tribe = normalizeTribe(rawTribe);
 
-            for (const [tribe, members] of Object.entries(snap)) {
-                if (Array.isArray(members) && members.some(m => m[0] === playerName)) {
-                    foundTribe = normalizeTribe(tribe);
-                    break;
-                }
-            }
-
-            if (foundTribe) {
-                if (activeSeg && activeSeg.tribe === foundTribe) {
-                    activeSeg.endDate = dateStr;
-                    activeSeg.endIndex = idx;
+            if (tribe) {
+                if (active?.tribe === tribe) {
+                    active.endDate = dateStr;
+                    active.endIndex = idx;
                 } else {
-                    if (activeSeg) segments.push(activeSeg);
-                    activeSeg = {
-                        tribe: foundTribe,
-                        startDate: dateStr,
-                        startIndex: idx,
-                        endDate: dateStr,
-                        endIndex: idx
-                    };
+                    if (active) segments.push(active);
+                    active = { tribe, startDate: dateStr, startIndex: idx, endDate: dateStr, endIndex: idx };
                 }
-            } else if (activeSeg) {
-                segments.push(activeSeg);
-                activeSeg = null;
+            } else if (active) {
+                segments.push(active);
+                active = null;
             }
         });
+        if (active) segments.push(active);
 
-        if (activeSeg) segments.push(activeSeg);
-
-        const lastDateIdx = dates.length - 1;
         const currentTribe = getPlayerTribe(playerName);
-
-        return segments.reverse().map((seg, idx) => ({
+        return segments.reverse().map((seg, i) => ({
             ...seg,
-            isCurrent: idx === 0 && seg.endIndex === lastDateIdx && seg.tribe === currentTribe
+            isCurrent: i === 0 && seg.endIndex === dates.length - 1 && seg.tribe === currentTribe
         }));
     }
 
-    // --- Rendu du panneau contextuel droit (Badges sans parenthèses) ---
-    function renderAllegianceLedger() {
-        if (!$playerLedger.length) return;
+    // --- UI Context Updaters ---
+    function badgeButtonHtml({ tribe, dateIndex, label, isCurrent, title, icon }) {
+        const iconImg = icon ? `<img src="${icon}" alt="${tribe}" class="allegiance-icon">` : '';
+        return `
+            <button type="button" class="allegiance-badge ${isCurrent ? 'is-current' : 'is-past'}"
+                    data-tribe="${tribe}" data-date-index="${dateIndex}" title="${title}">
+                ${iconImg}<span class="allegiance-date">${label}</span>
+            </button>`;
+    }
 
-        // Mode PN : Allégeances du joueur (sans parenthèses)
+    function updateChrome() {
+        $wrapper.attr('data-view', currentView);
+
         if (currentView === 'pn' && selectedPlayer) {
-            const history = getPlayerAllegianceHistory(selectedPlayer);
-            let html = '<div class="allegiance-ledger-title">Allegiances</div>';
-
-            if (!history.length) {
-                html += '<div class="allegiance-empty">Unaligned</div>';
-            } else {
-                html += history.map(item => {
-                    const iconPath = config.tribes?.[item.tribe]?.icon || '';
-                    const stateClass = item.isCurrent ? 'is-current' : 'is-past';
-                    const startStr = formatShortDate(item.startDate);
-                    const endStr = formatShortDate(item.endDate);
-
-                    let dateLabel;
-                    if (item.isCurrent) {
-                        dateLabel = `since ${startStr}`;
-                    } else if (item.startDate === item.endDate) {
-                        dateLabel = startStr;
-                    } else {
-                        dateLabel = `${startStr} &ndash; ${endStr}`;
-                    }
-
-                    return `
-                        <button type="button" class="allegiance-badge ${stateClass}" data-tribe="${item.tribe}" data-date-index="${item.startIndex}" title="View ${item.tribe} Clearing ${startStr}">
-                            <img src="${iconPath}" alt="${item.tribe}" class="allegiance-icon">
-                            <span class="allegiance-date">${dateLabel}</span>
-                        </button>
-                    `;
+            $headerTitle.html(`&lsaquo; ${selectedPlayer.toUpperCase()}'S CIRCLE`);
+            const history = getPlayerHistory(selectedPlayer);
+            const badges = !history.length
+                ? '<div class="allegiance-empty">Unaligned</div>'
+                : history.map(s => {
+                    const start = formatShortDate(s.startDate), end = formatShortDate(s.endDate);
+                    const label = s.isCurrent ? `since ${start}` : (s.startDate === s.endDate ? start : `${start} &ndash; ${end}`);
+                    return badgeButtonHtml({
+                        tribe: s.tribe,
+                        dateIndex: s.startIndex,
+                        label,
+                        isCurrent: s.isCurrent,
+                        title: `View ${s.tribe} Clearing ${start}`,
+                        icon: config.tribes?.[s.tribe]?.icon
+                    });
                 }).join('');
-            }
-
-            $playerLedger.html(html).css('display', 'flex');
+            $ledger.html(`<div class="allegiance-ledger-title">Allegiances</div>${badges}`);
             return;
         }
 
-        // Mode HN : Jalons de la clairière (Founded, Apex, Dissolved si dissoute)
-        if (currentView === 'hn' && activeTribeFilter) {
-            const lifespan = getHomelandLifespan(activeTribeFilter);
-            if (!lifespan) {
-                $playerLedger.empty().css('display', 'none');
-                return;
+        if (currentView === 'hn' && activeTribe) {
+            $headerTitle.html(`&lsaquo; ${activeTribe.toUpperCase()} CLEARING`);
+            const life = getTribeLifespan(activeTribe);
+            if (!life) return $ledger.empty();
+
+            const milestones = [
+                { idx: life.firstIndex, label: `Founded ${formatShortDate(life.firstDate)}`, title: 'Jump to founding date' }
+            ];
+            if (life.peakIndex !== life.firstIndex && life.peakIndex !== life.lastIndex) {
+                milestones.push({
+                    idx: life.peakIndex,
+                    label: `Culminated ${formatShortDate(life.peakDate)}`,
+                    title: `Jump to peak membership: ${life.peakCount} denizens`
+                });
+            }
+            if (life.isDissolved) {
+                milestones.push({
+                    idx: life.lastIndex,
+                    label: `Dissolved ${formatShortDate(life.dissolvedDate)}`,
+                    title: 'Jump to final active day'
+                });
             }
 
-            const iconPath = config.tribes?.[activeTribeFilter]?.icon || '';
-            const foundedStr = formatShortDate(lifespan.firstDate);
-            const peakStr = formatShortDate(lifespan.peakDate);
-            const isAtStart = currentIndex === lifespan.firstIndex;
-            const isAtPeak = currentIndex === lifespan.peakIndex;
-            const isAtEnd = currentIndex === lifespan.lastIndex;
-
-            let html = '<div class="allegiance-ledger-title">Chronicle</div>';
-
-            // 1. Fondatrice
-            html += `
-                <button type="button" class="allegiance-badge ${isAtStart ? 'is-current' : 'is-past'}" data-tribe="${activeTribeFilter}" data-date-index="${lifespan.firstIndex}" title="Jump to founding date">
-                    <span class="allegiance-date">Founded ${foundedStr}</span>
-                </button>
-            `;
-
-            // 2. Pic (Apex) si distinct
-            if (lifespan.peakIndex !== lifespan.firstIndex && lifespan.peakIndex !== lifespan.lastIndex) {
-                html += `
-                    <button type="button" class="allegiance-badge ${isAtPeak ? 'is-current' : 'is-past'}" data-tribe="${activeTribeFilter}" data-date-index="${lifespan.peakIndex}" title="Jump to peak membership: ${lifespan.peakCount} denizens">
-                        <span class="allegiance-date">Culminated ${peakStr}</span>
-                    </button>
-                `;
-            }
-
-            // 3. Dissolution (affiché UNIQUEMENT si la clairière est dissoute)
-            if (lifespan.isDissolved) {
-                const dissolvedStr = formatShortDate(lifespan.dissolvedDate);
-                html += `
-                    <button type="button" class="allegiance-badge ${isAtEnd ? 'is-current' : 'is-past'}" data-tribe="${activeTribeFilter}" data-date-index="${lifespan.lastIndex}" title="Jump to final active day">
-                        <span class="allegiance-date">Dissolved ${dissolvedStr}</span>
-                    </button>
-                `;
-            }
-
-            $playerLedger.html(html).css('display', 'flex');
+            const badges = milestones.map(m => badgeButtonHtml({
+                tribe: activeTribe,
+                dateIndex: m.idx,
+                label: m.label,
+                isCurrent: currentIndex === m.idx,
+                title: m.title
+            })).join('');
+            $ledger.html(`<div class="allegiance-ledger-title">Chronicle</div>${badges}`);
             return;
         }
 
-        $playerLedger.empty().css('display', 'none');
+        $headerTitle.text('HOMELANDS MAP');
+        $ledger.empty();
     }
 
-    // --- Titre épuré ---
-    function updateHeaderTitle() {
-        if (currentView === 'pn' && selectedPlayer) {
-            $mapHeaderTitle.html(`&lsaquo; ${selectedPlayer.toUpperCase()}'S CIRCLE`);
-        } else if (currentView === 'hn' && activeTribeFilter) {
-            $mapHeaderTitle.html(`&lsaquo; ${activeTribeFilter.toUpperCase()} CLEARING`);
-        } else {
-            $mapHeaderTitle.text('HOMELANDS MAP');
-        }
-    }
-
-    // --- Légende contextuelle en liste verticale en haut à gauche ---
-    function updateLegend() {
-        if (!$mapLegend.length) return;
-
-        if (currentView === 'hm') {
-            $mapLegend.empty();
-        } else if (currentView === 'hn') {
-            $mapLegend.html(`
-                <div class="legend-item"><span class="legend-dot" style="background: ${COLOR_SAME_TRIBE}"></span><span>Partisan</span></div>
-                <div class="legend-item"><span class="legend-dot" style="background: color-mix(in srgb, ${COLOR_SAME_TRIBE} 50%, ${COLOR_OTHER_TRIBE})"></span><span>Squire</span></div>
-                <div class="legend-item"><span class="legend-dot" style="background: ${COLOR_OTHER_TRIBE}"></span><span>Friend</span></div>
-            `);
-        } else if (currentView === 'pn') {
-            $mapLegend.html(`
-                <div class="legend-item"><span class="legend-dot" style="background: ${COLOR_SAME_TRIBE}"></span><span>Same homeland</span></div>
-                <div class="legend-item"><span class="legend-dot" style="background: ${COLOR_OTHER_TRIBE}"></span><span>Other homeland</span></div>
-                <div class="legend-item"><span class="legend-dot" style="background: ${COLOR_UNALIGNED}"></span><span>Unaligned</span></div>
-            `);
-        }
-    }
-
-    /* -------------------------------------------------------------------------
-       10.1 GRAPH DATA GENERATORS
-       ------------------------------------------------------------------------- */
+    // --- Graph Data Builders ---
     function buildGraphData(snapshot) {
-        const activeTribes = Object.keys(snapshot || {}).filter(
-            t => Array.isArray(snapshot[t]) && snapshot[t].length > 0
-        );
-        const nodes = [];
-        const links = [];
+        const nodes = [], links = [];
 
-        // --- VUE PN : PLAYER CIRCLE ---
         if (currentView === 'pn') {
-            const constellations = window.PLAYER_CONSTELLATIONS || { players: {} };
-            const allPlayersKeys = Object.keys(constellations.players || {});
-
-            if (allPlayersKeys.length === 0) {
+            const allKeys = Object.keys(constellations);
+            if (!allKeys.length) {
                 nodes.push({ id: 'placeholder', type: 'tribe', label: 'No player data', count: 0, radius: 40 });
                 return { nodes, links };
             }
+            const found = findPlayer(selectedPlayer || $searchInput.val()) || { name: allKeys[0], data: constellations[allKeys[0]] };
+            selectedPlayer = found.name;
 
-            const query = selectedPlayer || ($globalSearchInput.length ? $globalSearchInput.val().trim() : '');
-            let found = getPlayerConstellationData(query);
-
-            if (!found) {
-                selectedPlayer = allPlayersKeys[0];
-                found = { canonicalName: selectedPlayer, data: constellations.players[selectedPlayer] };
-            } else {
-                selectedPlayer = found.canonicalName;
-            }
-
-            const playerData = found.data;
-            const centerTribe = normalizeTribe(playerData.tribe);
-            const playerGames = playerData.games || 0;
-            const topPartners = [...(playerData.partners || [])].sort((a, b) => b[1] - a[1]);
-
-            const totalPartners = topPartners.length;
-            const maxWeight = totalPartners > 0 ? topPartners[0][1] : 1;
-            const minWeight = totalPartners > 0 ? topPartners[totalPartners - 1][1] : 1;
-            const maxPartnerRad = totalPartners > 0 ? partnerAbsoluteRadius(maxWeight) : 8;
-            const centerRad = centerPlayerRadius(playerGames, maxPartnerRad);
+            const centerTribe = normalizeTribe(found.data.tribe);
+            const games = found.data.games || 0;
+            const partners = [...(found.data.partners || [])].sort((a, b) => b[1] - a[1]);
+            const total = partners.length;
+            const maxW = total ? partners[0][1] : 1;
+            const minW = total ? partners[total - 1][1] : 1;
+            const maxPRad = total ? partnerRadius(maxW) : 8;
+            const cRad = centerRadius(games, maxPRad);
 
             nodes.push({
                 id: selectedPlayer,
                 type: 'ego-center',
                 name: selectedPlayer,
-                status: `${playerGames} ${playerGames === 1 ? 'game' : 'games'}`,
-                radius: centerRad,
-                color: getPlayerNetworkColor(centerTribe, centerTribe, true)
+                status: `${games} ${games === 1 ? 'game' : 'games'}`,
+                radius: cRad,
+                color: networkColor(centerTribe, centerTribe, true)
             });
 
-            const minDist = centerRad + maxPartnerRad + 16;
-            const maxDist = Math.min(198, Math.max(minDist + 40, 85 + totalPartners * 5.5));
-            const sqrtMax = Math.sqrt(maxWeight);
-            const sqrtMin = Math.sqrt(minWeight);
-            const GOLDEN_ANGLE = Math.PI * (3 - Math.sqrt(5));
+            const minDist = cRad + maxPRad + 16;
+            const maxDist = Math.min(198, Math.max(minDist + 40, 85 + total * 5.5));
+            const sMax = Math.sqrt(maxW), sMin = Math.sqrt(minW);
 
-            topPartners.forEach(([partnerName, weight], idx) => {
-                const partnerId = `partner_${partnerName}`;
-                const radius = partnerAbsoluteRadius(weight);
-
-                const wNorm = (sqrtMax > sqrtMin)
-                    ? (sqrtMax - Math.sqrt(weight)) / (sqrtMax - sqrtMin)
-                    : 0;
-                const rankNorm = totalPartners > 1 ? (idx / (totalPartners - 1)) : 0;
-                const t = (sqrtMax > sqrtMin) ? (0.6 * wNorm + 0.4 * rankNorm) : rankNorm;
-                const dist = minDist + t * (maxDist - minDist);
-                const angle = (idx * GOLDEN_ANGLE) - (Math.PI / 2);
-
-                const partnerTribe = getPlayerTribe(partnerName);
-                const color = getPlayerNetworkColor(centerTribe, partnerTribe, false);
+            partners.forEach(([pName, weight], idx) => {
+                const id = `partner_${pName}`;
+                const wNorm = sMax > sMin ? (sMax - Math.sqrt(weight)) / (sMax - sMin) : 0;
+                const rNorm = total > 1 ? idx / (total - 1) : 0;
+                const t = sMax > sMin ? (0.6 * wNorm + 0.4 * rNorm) : rNorm;
+                const color = networkColor(centerTribe, getPlayerTribe(pName), false);
 
                 nodes.push({
-                    id: partnerId,
+                    id,
                     type: 'ego-partner',
-                    name: partnerName,
-                    tribe: partnerTribe,
-                    weight: weight,
+                    name: pName,
                     status: `${weight} ${weight === 1 ? 'game' : 'games'}`,
-                    color: color,
-                    radius: radius,
-                    dist: dist,
-                    angle: angle
+                    color,
+                    radius: partnerRadius(weight),
+                    dist: minDist + t * (maxDist - minDist),
+                    angle: idx * GOLDEN_ANGLE - Math.PI / 2
                 });
-
-                links.push({
-                    source: selectedPlayer,
-                    target: partnerId,
-                    weight: weight,
-                    type: 'ego-link',
-                    color: color
-                });
+                links.push({ source: selectedPlayer, target: id, type: 'ego-link', color });
             });
-
             return { nodes, links };
         }
 
-        // --- VUE HM : HOMELANDS MAP ---
-        if (currentView === 'hm' || !activeTribeFilter) {
-            const totalTribes = activeTribes.length;
+        if (currentView === 'hm' || !activeTribe) {
+            const activeTribes = Object.keys(snapshot || {}).filter(t => snapshot[t]?.length > 0);
             activeTribes.forEach((t, idx) => {
-                const members = snapshot[t] || [];
-                const count = members.length;
-                const spawnAngle = (2 * Math.PI * idx / (totalTribes || 1)) - (Math.PI / 2);
+                const count = snapshot[t].length;
                 nodes.push({
                     id: t,
                     type: 'tribe',
                     label: t,
-                    count: count,
+                    count,
                     radius: tribeRadius(count),
-                    spawnAngle: spawnAngle
+                    spawnAngle: (2 * Math.PI * idx) / (activeTribes.length || 1) - Math.PI / 2
                 });
             });
-
             for (let i = 0; i < activeTribes.length; i++) {
                 for (let j = i + 1; j < activeTribes.length; j++) {
-                    links.push({ source: activeTribes[i], target: activeTribes[j], value: 15, type: 'inter-tribe' });
+                    links.push({ source: activeTribes[i], target: activeTribes[j], type: 'inter-tribe' });
                 }
             }
             return { nodes, links };
         }
 
-        // --- VUE HN : HOMELAND CLEARING ---
-        const tribe = activeTribeFilter;
-        const members = snapshot[tribe] || [];
+        const members = [...(snapshot[activeTribe] || [])].sort((a, b) => b[2] - a[2]);
         const count = members.length;
+        const maxWeight = count ? members[0][2] : 1;
 
-        nodes.push({
-            id: tribe,
-            type: 'tribe',
-            label: tribe,
-            count: count,
-            radius: tribeRadius(count)
-        });
+        nodes.push({ id: activeTribe, type: 'tribe', label: activeTribe, count, radius: tribeRadius(count) });
 
-        const sortedMembers = [...members].sort((a, b) => b[2] - a[2]);
-        const maxWeight = sortedMembers.length > 0 ? sortedMembers[0][2] : 1;
-        const TIER_PHASE = { core: 0, mid: 0.22, outer: 0.47 };
-
-        sortedMembers.forEach(([playerName, fidelity, weight], index) => {
-            const ratio = maxWeight > 0 ? (weight / maxWeight) : 0;
-            const radius = 8 + (ratio * 14);
-
-            let dist, ringKey;
-            if (index < Math.max(1, Math.floor(count * 0.25))) {
-                dist = 75;
-                ringKey = 'core';
-            } else if (index < Math.max(2, Math.floor(count * 0.65))) {
-                dist = 125;
-                ringKey = 'mid';
-            } else {
-                dist = 185;
-                ringKey = 'outer';
-            }
-
-            const color = getFidelityAttenuatedColor(fidelity);
-
-            const totalTier = count || 1;
-            const slot = (2 * Math.PI) / totalTier;
-            const phase = (TIER_PHASE[ringKey] || 0) * 2 * Math.PI;
-            const jitter = (nameJitter01(playerName) - 0.5) * slot * 0.6;
-            const angle = phase + (slot * index) + jitter - (Math.PI / 2);
-
-            const playerId = `player_${playerName}`;
+        members.forEach(([pName, fidelity, weight], idx) => {
+            const ringKey = idx < Math.max(1, Math.floor(count * 0.25)) ? 'core'
+                          : idx < Math.max(2, Math.floor(count * 0.65)) ? 'mid' : 'outer';
+            const slot = (2 * Math.PI) / (count || 1);
+            const angle = TIER_PHASE[ringKey] * 2 * Math.PI + slot * idx + (nameJitter(pName) - 0.5) * slot * 0.6 - Math.PI / 2;
+            const color = fidelityColor(fidelity);
+            const id = `player_${pName}`;
 
             nodes.push({
-                id: playerId,
+                id,
                 type: 'player',
-                name: playerName,
-                status: `${Math.round(fidelity)}%`, // Affichage unique du pourcentage
-                fidelity: fidelity,
-                weight: weight,
-                color: color,
-                radius: radius,
-                dist: dist,
-                angle: angle
+                name: pName,
+                status: `${Math.round(fidelity)}%`,
+                color,
+                radius: 8 + (maxWeight > 0 ? weight / maxWeight : 0) * 14,
+                dist: ringKey === 'core' ? 75 : ringKey === 'mid' ? 125 : 185,
+                angle
             });
-
-            links.push({
-                source: tribe,
-                target: playerId,
-                type: 'constellation-link',
-                color: color
-            });
+            links.push({ source: activeTribe, target: id, type: 'constellation-link', color });
         });
 
         return { nodes, links };
     }
 
-    /* -------------------------------------------------------------------------
-       10.2 D3 DYNAMIC RENDER ENGINE
-       ------------------------------------------------------------------------- */
+    // --- D3 Rendering & Force Simulation ---
     function renderGraph(snapshot) {
         if (typeof d3 === 'undefined') return;
 
-        const svg = d3.select("#tribeMapSvg");
+        const svg = d3.select('#tribeMapSvg');
         const container = document.getElementById('tribeMapContainer');
         const width = container?.clientWidth || 800;
         const height = container?.clientHeight || 450;
-        const duration = 450;
-        const easeFn = d3.easeCubicOut;
-
-        if (svg.select("g.links-layer").empty()) {
-            svg.append("g").attr("class", "links-layer");
-            svg.append("g").attr("class", "nodes-layer");
-        }
+        const originX = width / 2, originY = height / 2;
+        const duration = 450, easeFn = d3.easeCubicOut;
 
         const { nodes: newNodes, links: newLinks } = buildGraphData(snapshot);
-        renderAllegianceLedger();
-        updateHeaderTitle();
-        updateLegend();
+        updateChrome();
 
-        const prevNodesMap = new Map(simulation ? simulation.nodes().map(d => [d.id, d]) : []);
-        const originX = width / 2;
-        const originY = height / 2;
-
-        const topologyChanged =
-            lastRenderedView !== currentView ||
-            newNodes.length !== prevNodesMap.size ||
-            newNodes.some(n => !prevNodesMap.has(n.id));
+        const prevMap = new Map(simulation ? simulation.nodes().map(d => [d.id, d]) : []);
+        const topologyChanged = lastRenderedView !== currentView ||
+            newNodes.length !== prevMap.size ||
+            newNodes.some(n => !prevMap.has(n.id));
         lastRenderedView = currentView;
 
         const hmRingRadius = newNodes.length >= 3
@@ -1732,19 +1531,19 @@ $(document).ready(function () {
             : 80;
 
         newNodes.forEach(d => {
-            const prev = prevNodesMap.get(d.id);
+            const prev = prevMap.get(d.id);
             if (prev) {
-                d.x = prev.x;
-                d.y = prev.y;
-                d.vx = (prev.vx || 0) * 0.3;
-                d.vy = (prev.vy || 0) * 0.3;
-                d.currentRadius = prev.currentRadius ?? prev.radius;
+                Object.assign(d, {
+                    x: prev.x, y: prev.y,
+                    vx: (prev.vx || 0) * 0.3, vy: (prev.vy || 0) * 0.3,
+                    currentRadius: prev.currentRadius ?? prev.radius
+                });
             } else {
                 d.currentRadius = 0;
-                if ((d.type === 'player' || d.type === 'ego-partner') && d.dist != null) {
+                if (d.dist != null) {
                     d.x = originX + d.dist * Math.cos(d.angle || 0);
                     d.y = originY + d.dist * Math.sin(d.angle || 0);
-                } else if (d.type === 'tribe' && currentView === 'hm' && d.spawnAngle != null) {
+                } else if (d.spawnAngle != null && currentView === 'hm') {
                     d.x = originX + hmRingRadius * Math.cos(d.spawnAngle);
                     d.y = originY + hmRingRadius * Math.sin(d.spawnAngle);
                 } else {
@@ -1755,222 +1554,146 @@ $(document).ready(function () {
         });
 
         const drag = d3.drag()
-            .on("start", (e, d) => { if (!e.active) simulation.alphaTarget(0.3).restart(); d.fx = d.x; d.fy = d.y; })
-            .on("drag", (e, d) => { d.fx = e.x; d.fy = e.y; })
-            .on("end", (e, d) => { if (!e.active) simulation.alphaTarget(0); d.fx = null; d.fy = null; });
+            .on('start', (e, d) => { if (!e.active) simulation.alphaTarget(0.3).restart(); d.fx = d.x; d.fy = d.y; })
+            .on('drag', (e, d) => { d.fx = e.x; d.fy = e.y; })
+            .on('end', (e, d) => { if (!e.active) simulation.alphaTarget(0); d.fx = null; d.fy = null; });
 
-        // --- Liens ---
-        const linkSel = svg.select("g.links-layer").selectAll("line")
-            .data(newLinks, d => `${d.source.id || d.source}-${d.target.id || d.target}`);
+        const link = svg.select('g.links-layer').selectAll('line')
+            .data(newLinks, d => `${d.source.id || d.source}-${d.target.id || d.target}`)
+            .join(
+                enter => enter.append('line').style('opacity', 0),
+                update => update,
+                exit => exit.transition().duration(duration * 0.7).ease(easeFn).style('opacity', 0).remove()
+            )
+            .attr('class', d => `link ${d.type || 'constellation-link'}`)
+            .style('--node-color', d => d.color || null);
 
-        linkSel.exit()
-            .transition().duration(duration * 0.7).ease(easeFn)
-            .style("opacity", 0)
-            .remove();
+        link.transition().duration(duration).ease(easeFn).style('opacity', 1);
 
-        const linkEnter = linkSel.enter().append("line")
-            .style("opacity", 0);
+        const node = svg.select('g.nodes-layer').selectAll('g.node-group')
+            .data(newNodes, d => d.id)
+            .join(
+                enter => {
+                    const g = enter.append('g')
+                        .style('opacity', 0)
+                        .attr('transform', d => `translate(${d.x},${d.y})`)
+                        .call(drag);
 
-        const link = linkEnter.merge(linkSel);
-        link.attr("class", d => `link ${d.type || 'constellation-link'}`)
-            .style("--node-color", d => d.color || null)
-            .transition().duration(duration).ease(easeFn)
-            .style("opacity", 1);
+                    g.append('circle').attr('class', 'node-circle').attr('r', 0);
+                    g.append('image').attr('class', 'node-icon').attr('width', 0).attr('height', 0);
 
-        // --- Nœuds ---
-        const nodeSel = svg.select("g.nodes-layer").selectAll("g.node-group")
-            .data(newNodes, d => d.id);
+                    const countTxt = g.append('text').attr('class', 'count-text');
+                    countTxt.append('tspan').attr('class', 'num-span').attr('x', 0).attr('dy', '0');
+                    countTxt.append('tspan').attr('class', 'lbl-span').attr('x', 0).attr('dy', '1.05em');
 
-        const nodeExit = nodeSel.exit();
-        nodeExit.transition().duration(duration).ease(easeFn)
-            .style("opacity", 0)
-            .remove();
-        nodeExit.select(".node-circle")
-            .transition().duration(duration).ease(easeFn)
-            .attr("r", 0);
-        nodeExit.select(".node-icon")
-            .transition().duration(duration).ease(easeFn)
-            .attr("width", 0).attr("height", 0)
-            .attr("x", 0).attr("y", 0);
+                    const playerLbl = g.append('text').attr('class', 'player-label');
+                    playerLbl.append('tspan').attr('class', 'player-name-tspan').attr('x', 0);
+                    playerLbl.append('tspan').attr('class', 'player-status-tspan').attr('x', 0).attr('dy', '1.15em');
+                    return g;
+                },
+                update => update,
+                exit => {
+                    exit.select('.node-circle').transition().duration(duration).ease(easeFn).attr('r', 0);
+                    exit.select('.node-icon').transition().duration(duration).ease(easeFn).attr('width', 0).attr('height', 0).attr('x', 0).attr('y', 0);
+                    return exit.transition().duration(duration).ease(easeFn).style('opacity', 0).remove();
+                }
+            )
+            .attr('class', d => `node-group type-${d.type} ${activeTribe === d.id ? 'is-selected' : ''}`)
+            .style('--node-color', d => d.color || null);
 
-        const nodeEnter = nodeSel.enter().append("g")
-            .attr("class", d => `node-group type-${d.type}`)
-            .style("opacity", 0)
-            .attr("transform", d => `translate(${d.x},${d.y})`)
-            .call(drag);
-
-        nodeEnter.append("circle")
-            .attr("class", "node-circle")
-            .attr("r", 0);
-
-        nodeEnter.append("image")
-            .attr("class", "node-icon")
-            .attr("width", 0).attr("height", 0)
-            .attr("x", 0).attr("y", 0);
-
-        const textGroup = nodeEnter.append("text").attr("class", "count-text");
-        textGroup.append("tspan").attr("class", "num-span").attr("x", 0).attr("dy", "0");
-        textGroup.append("tspan").attr("class", "lbl-span").attr("x", 0).attr("dy", "1.05em");
-
-        nodeEnter.append("text").attr("class", "player-label");
-
-        const node = nodeEnter.merge(nodeSel);
-
-        node.attr("class", d => `node-group type-${d.type} ${activeTribeFilter === d.id ? 'is-selected' : ''}`)
-            .style("--node-color", d => d.color || null)
-            .transition().duration(duration).ease(easeFn)
-            .style("opacity", 1);
+        node.transition().duration(duration).ease(easeFn).style('opacity', 1);
 
         node.each(function (d) {
             const g = d3.select(this);
             const startR = d.currentRadius ?? 0;
-            const targetR = d.radius;
 
-            g.select(".node-circle")
-                .transition().duration(duration).ease(easeFn)
-                .attrTween("r", function () {
-                    const interp = d3.interpolateNumber(startR, targetR);
-                    return function (t) {
-                        d.currentRadius = interp(t);
-                        return d.currentRadius;
-                    };
+            g.select('.node-circle').transition().duration(duration).ease(easeFn)
+                .attrTween('r', () => {
+                    const interp = d3.interpolateNumber(startR, d.radius);
+                    return t => (d.currentRadius = interp(t));
                 });
 
             if (d.type === 'tribe') {
                 const iconPath = config.tribes?.[d.id]?.icon || '';
-                const iconSize = Math.max(22, d.radius * 0.65);
-                g.select(".node-icon")
-                    .attr("href", iconPath).attr("xlink:href", iconPath)
+                const size = Math.max(22, d.radius * 0.65);
+                g.select('.node-icon')
+                    .attr('href', iconPath)
                     .transition().duration(duration).ease(easeFn)
-                    .attr("width", iconSize).attr("height", iconSize)
-                    .attr("x", -iconSize / 2)
-                    .attr("y", -iconSize / 2 - 13);
-
-                g.select(".count-text")
+                    .attr('width', size).attr('height', size)
+                    .attr('x', -size / 2).attr('y', -size / 2 - 13);
+                g.select('.count-text')
                     .transition().duration(duration).ease(easeFn)
-                    .attr("transform", `translate(0, ${iconSize / 2 - 1})`);
-
-                g.select(".num-span").text(d.count);
-                g.select(".lbl-span").text(d.count === 1 ? " denizen" : " denizens");
-                g.select(".player-label").text("");
+                    .attr('transform', `translate(0, ${size / 2 - 1})`);
+                g.select('.num-span').text(d.count);
+                g.select('.lbl-span').text(d.count === 1 ? ' denizen' : ' denizens');
             } else {
-                g.select(".node-icon").attr("href", "").attr("xlink:href", "");
-                g.select(".num-span").text("");
-                g.select(".lbl-span").text("");
-
-                const labelSel = g.select(".player-label").attr("class", "player-label");
-                labelSel.text("");
-
-                const isEgoCenter = d.type === 'ego-center';
-
-                labelSel.append("tspan")
-                    .attr("class", "player-name-tspan")
-                    .attr("x", 0)
-                    .attr("dy", isEgoCenter ? "-0.2em" : "0.3em")
+                g.select('.player-name-tspan')
+                    .attr('dy', d.type === 'ego-center' ? '-0.2em' : '0.3em')
                     .text(d.name);
-
-                if (d.status) {
-                    labelSel.append("tspan")
-                        .attr("class", "player-status-tspan")
-                        .attr("x", 0)
-                        .attr("dy", "1.15em")
-                        .text(d.status);
-                }
+                g.select('.player-status-tspan').text(d.status || '');
             }
         });
 
-        // Clic simple : bascule HM <-> HN sur une clairière, ou change de joueur en mode PN
-        node.on("click", (event, d) => {
+        node.on('click', (event, d) => {
             if (event.defaultPrevented) return;
-
             if (d.type === 'tribe' && currentView !== 'pn') {
-                activeTribeFilter = (activeTribeFilter === d.id) ? null : d.id;
-                currentView = activeTribeFilter ? 'hn' : 'hm';
+                activeTribe = activeTribe === d.id ? null : d.id;
+                currentView = activeTribe ? 'hn' : 'hm';
                 updateView(dates[currentIndex]);
             } else if ((d.type === 'player' || d.type === 'ego-partner') && currentView === 'pn') {
                 selectedPlayer = d.name;
-                if ($globalSearchInput.length) {
-                    $globalSearchInput.val(selectedPlayer);
-                }
+                $searchInput.val(selectedPlayer);
                 updateView(dates[dates.length - 1]);
             }
+        }).on('dblclick', (event, d) => {
+            if (event.defaultPrevented || (d.type !== 'player' && d.type !== 'ego-partner')) return;
+            selectedPlayer = d.name;
+            currentView = 'pn';
+            $searchInput.val(selectedPlayer);
+            updateView(dates[dates.length - 1]);
         });
 
-        // Double-clic : ouvre le cercle personnel du joueur (Mode PN)
-        node.on("dblclick", (event, d) => {
-            if (event.defaultPrevented) return;
-
-            if (d.type === 'player' || d.type === 'ego-partner') {
-                selectedPlayer = d.name;
-                currentView = 'pn';
-                $dateControls.hide();
-
-                if ($globalSearchInput.length) {
-                    $globalSearchInput.val(selectedPlayer);
-                }
-
-                updateView(dates[dates.length - 1]);
-            }
-        });
-
-        // --- Simulation physique ---
         if (!simulation) {
             simulation = d3.forceSimulation().alphaDecay(0.045).velocityDecay(0.35);
         }
         const linkForce = d3.forceLink().id(d => d.id);
 
-        if (currentView === 'hm' && !activeTribeFilter) {
-            const nTribes = newNodes.length;
+        if (currentView === 'hm') {
+            const n = newNodes.length;
             simulation
-                .force("center", d3.forceCenter(width / 2, height / 2).strength(0.1))
-                .force("x", d3.forceX(width / 2).strength(0.04))
-                .force("y", d3.forceY(height / 2).strength(0.06))
-                .force("radial", nTribes >= 3
-                    ? d3.forceRadial(hmRingRadius, width / 2, height / 2).strength(0.55)
-                    : null
-                )
-                .force("link", linkForce
-                    .distance(d => (d.source.radius || 40) + (d.target.radius || 40) + 85)
-                    .strength(nTribes >= 4 ? 0.15 : 0.35)
-                )
-                .force("charge", d3.forceManyBody().strength(-420))
-                .force("collision", d3.forceCollide().radius(d => d.radius + 22).iterations(2));
+                .force('center', d3.forceCenter(originX, originY).strength(0.1))
+                .force('x', d3.forceX(originX).strength(0.04))
+                .force('y', d3.forceY(originY).strength(0.06))
+                .force('radial', n >= 3 ? d3.forceRadial(hmRingRadius, originX, originY).strength(0.55) : null)
+                .force('link', linkForce.distance(d => (d.source.radius || 40) + (d.target.radius || 40) + 85).strength(n >= 4 ? 0.15 : 0.35))
+                .force('charge', d3.forceManyBody().strength(-420))
+                .force('collision', d3.forceCollide().radius(d => d.radius + 22).iterations(2));
         } else {
+            const isHub = d => d.type === 'tribe' || d.type === 'ego-center';
             simulation
-                .force("center", null)
-                .force("link", linkForce.distance(0).strength(0))
-                .force("charge", d3.forceManyBody().strength(d => (d.type === 'tribe' || d.type === 'ego-center') ? 0 : -25))
-                .force("radial", null)
-                .force("x", d3.forceX(width / 2).strength(d => (d.type === 'tribe' || d.type === 'ego-center') ? 0.3 : 0))
-                .force("y", d3.forceY(height / 2).strength(d => (d.type === 'tribe' || d.type === 'ego-center') ? 0.3 : 0))
-                .force("collision", d3.forceCollide().radius(d => d.radius + 6));
+                .force('center', null)
+                .force('radial', null)
+                .force('link', linkForce.distance(0).strength(0))
+                .force('charge', d3.forceManyBody().strength(d => isHub(d) ? 0 : -25))
+                .force('x', d3.forceX(originX).strength(d => isHub(d) ? 0.3 : 0))
+                .force('y', d3.forceY(originY).strength(d => isHub(d) ? 0.3 : 0))
+                .force('collision', d3.forceCollide().radius(d => d.radius + 6));
         }
 
         simulation.nodes(newNodes);
-        simulation.force("link").links(newLinks);
+        simulation.force('link').links(newLinks);
         simulation.alpha(topologyChanged ? 0.45 : 0.18).restart();
 
-        simulation.on("tick", () => {
-            if (currentView === 'hn' && activeTribeFilter) {
-                const hub = newNodes.find(n => n.id === activeTribeFilter);
+        simulation.on('tick', () => {
+            if (currentView !== 'hm') {
+                const hub = newNodes.find(n => n.type === 'tribe' || n.type === 'ego-center');
+                const pull = currentView === 'pn' ? 0.15 : 0.12;
                 if (hub) {
                     newNodes.forEach(d => {
-                        if (d.type !== 'player' || d.dist == null || d.fx != null) return;
+                        if (d === hub || d.dist == null || d.fx != null) return;
                         const dx = d.x - hub.x, dy = d.y - hub.y;
-                        const r = Math.sqrt(dx * dx + dy * dy) || 1e-6;
-                        const k = (d.dist - r) / r * 0.12;
-                        d.x += dx * k;
-                        d.y += dy * k;
-                    });
-                }
-            } else if (currentView === 'pn' && selectedPlayer) {
-                const centerNode = newNodes.find(n => n.id === selectedPlayer);
-                if (centerNode) {
-                    newNodes.forEach(d => {
-                        if (d.type !== 'ego-partner' || d.dist == null || d.fx != null) return;
-                        const dx = d.x - centerNode.x, dy = d.y - centerNode.y;
-                        const r = Math.sqrt(dx * dx + dy * dy) || 1e-6;
-                        const k = (d.dist - r) / r * 0.15;
+                        const r = Math.hypot(dx, dy) || 1e-6;
+                        const k = ((d.dist - r) / r) * pull;
                         d.x += dx * k;
                         d.y += dy * k;
                     });
@@ -1983,207 +1706,126 @@ $(document).ready(function () {
                 d.y = Math.max(pad, Math.min(height - pad, d.y));
             });
 
-            link
-                .attr("x1", d => {
-                    const dx = d.target.x - d.source.x, dy = d.target.y - d.source.y;
-                    const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-                    const r = d.source.currentRadius ?? d.source.radius ?? 0;
-                    return d.source.x + (dx / dist) * r;
-                })
-                .attr("y1", d => {
-                    const dx = d.target.x - d.source.x, dy = d.target.y - d.source.y;
-                    const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-                    const r = d.source.currentRadius ?? d.source.radius ?? 0;
-                    return d.source.y + (dy / dist) * r;
-                })
-                .attr("x2", d => {
-                    const dx = d.target.x - d.source.x, dy = d.target.y - d.source.y;
-                    const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-                    const r = d.target.currentRadius ?? d.target.radius ?? 0;
-                    return d.target.x - (dx / dist) * r;
-                })
-                .attr("y2", d => {
-                    const dx = d.target.x - d.source.x, dy = d.target.y - d.source.y;
-                    const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-                    const r = d.target.currentRadius ?? d.target.radius ?? 0;
-                    return d.target.y - (dy / dist) * r;
-                })
-                .attr("stroke-opacity", d => {
-                    if (d.type !== 'inter-tribe' || newNodes.length < 3) return null;
-                    const obstructed = newNodes.some(other => {
-                        if (other.id === d.source.id || other.id === d.target.id) return false;
-                        const clearance = (other.currentRadius ?? other.radius ?? 32) + 10;
-                        const distSeg = distToSegment(other.x, other.y, d.source.x, d.source.y, d.target.x, d.target.y);
-                        return distSeg < clearance;
-                    });
-                    return obstructed ? 0 : null;
-                });
+            link.each(function (d) {
+                const dx = d.target.x - d.source.x, dy = d.target.y - d.source.y;
+                const dist = Math.hypot(dx, dy) || 1;
+                const rS = d.source.currentRadius ?? d.source.radius ?? 0;
+                const rT = d.target.currentRadius ?? d.target.radius ?? 0;
+                const obstructed = d.type === 'inter-tribe' && newNodes.length >= 3 && newNodes.some(o =>
+                    o.id !== d.source.id && o.id !== d.target.id &&
+                    distToSegment(o.x, o.y, d.source.x, d.source.y, d.target.x, d.target.y) < (o.currentRadius ?? o.radius ?? 32) + 10
+                );
 
-            node.attr("transform", d => `translate(${d.x},${d.y})`);
+                d3.select(this)
+                    .attr('x1', d.source.x + (dx / dist) * rS)
+                    .attr('y1', d.source.y + (dy / dist) * rS)
+                    .attr('x2', d.target.x - (dx / dist) * rT)
+                    .attr('y2', d.target.y - (dy / dist) * rT)
+                    .attr('stroke-opacity', obstructed ? 0 : null);
+            });
+
+            node.attr('transform', d => `translate(${d.x},${d.y})`);
         });
     }
 
-    /* -------------------------------------------------------------------------
-       10.3 TIMELINE & VIEW MANAGEMENT
-       ------------------------------------------------------------------------- */
+    // --- Timeline & Navigation Controls ---
     function updateView(selectedDate) {
+        let minIdx = 0, maxIdx = dates.length - 1;
+
         if (currentView === 'pn') {
-            selectedDate = dates[dates.length - 1];
-        } else if (currentView === 'hn' && activeTribeFilter) {
-            const lifespan = getHomelandLifespan(activeTribeFilter);
-            if (!lifespan) {
+            selectedDate = dates[maxIdx];
+        } else if (currentView === 'hn' && activeTribe) {
+            const life = getTribeLifespan(activeTribe);
+            if (!life) {
                 currentView = 'hm';
-                activeTribeFilter = null;
+                activeTribe = null;
             } else {
-                if (!lifespan.activeIndices.includes(currentIndex)) {
-                    const closestIdx = lifespan.activeIndices.reduce((prev, curr) =>
-                        Math.abs(curr - currentIndex) < Math.abs(prev - currentIndex) ? curr : prev
+                minIdx = life.firstIndex;
+                maxIdx = life.lastIndex;
+                if (!life.activeIndices.includes(currentIndex)) {
+                    currentIndex = life.activeIndices.reduce((a, b) =>
+                        Math.abs(b - currentIndex) < Math.abs(a - currentIndex) ? b : a
                     );
-                    currentIndex = closestIdx;
                     selectedDate = dates[currentIndex];
                 }
-
-                $datePicker.attr({ min: lifespan.firstDate, max: lifespan.lastDate });
-                $datePicker.val(selectedDate);
-                renderGraph(snapshots[selectedDate]);
-
-                $prevBtn.prop('disabled', currentIndex <= lifespan.firstIndex);
-                $earliestBtn.prop('disabled', currentIndex <= lifespan.firstIndex);
-                $nextBtn.prop('disabled', currentIndex >= lifespan.lastIndex);
-                $latestBtn.prop('disabled', currentIndex >= lifespan.lastIndex);
-                return;
             }
         }
 
-        $datePicker.attr({ min: dates[0], max: dates[dates.length - 1] });
-        $datePicker.val(selectedDate);
-        const snapshot = snapshots[selectedDate];
-        if (!snapshot) return;
+        $datePicker.attr({ min: dates[minIdx], max: dates[maxIdx] }).val(selectedDate);
+        if (snapshots[selectedDate]) renderGraph(snapshots[selectedDate]);
 
-        renderGraph(snapshot);
-
-        if (currentView === 'pn') {
-            $prevBtn.prop('disabled', true);
-            $nextBtn.prop('disabled', true);
-            $earliestBtn.prop('disabled', true);
-            $latestBtn.prop('disabled', true);
-        } else {
-            $prevBtn.prop('disabled', currentIndex <= 0);
-            $earliestBtn.prop('disabled', currentIndex <= 0);
-            $nextBtn.prop('disabled', currentIndex >= dates.length - 1);
-            $latestBtn.prop('disabled', currentIndex >= dates.length - 1);
-        }
+        const isPN = currentView === 'pn';
+        $prevBtn.add($earliestBtn).prop('disabled', isPN || currentIndex <= minIdx);
+        $nextBtn.add($latestBtn).prop('disabled', isPN || currentIndex >= maxIdx);
     }
 
-    function setDateByIndex(index) {
-        if (currentView === 'hn' && activeTribeFilter) {
-            const lifespan = getHomelandLifespan(activeTribeFilter);
-            if (lifespan) {
-                const clamped = Math.max(lifespan.firstIndex, Math.min(lifespan.lastIndex, index));
-                currentIndex = clamped;
-                updateView(dates[currentIndex]);
-                return;
+    function setDateByIndex(idx) {
+        const life = currentView === 'hn' ? getTribeLifespan(activeTribe) : null;
+        const min = life ? life.firstIndex : 0;
+        const max = life ? life.lastIndex : dates.length - 1;
+        currentIndex = Math.max(min, Math.min(max, idx));
+        updateView(dates[currentIndex]);
+    }
+
+    function stepDate(dir) {
+        const life = currentView === 'hn' ? getTribeLifespan(activeTribe) : null;
+        if (life) {
+            const pos = life.activeIndices.indexOf(currentIndex);
+            if (pos !== -1 && life.activeIndices[pos + dir] !== undefined) {
+                setDateByIndex(life.activeIndices[pos + dir]);
             }
+            return;
         }
-        if (index >= 0 && index < dates.length) {
-            currentIndex = index;
-            updateView(dates[currentIndex]);
-        }
+        setDateByIndex(currentIndex + dir);
     }
 
-    function stepDate(direction) {
-        if (currentView === 'hn' && activeTribeFilter) {
-            const lifespan = getHomelandLifespan(activeTribeFilter);
-            if (lifespan) {
-                const pos = lifespan.activeIndices.indexOf(currentIndex);
-                if (pos !== -1) {
-                    const nextPos = pos + direction;
-                    if (nextPos >= 0 && nextPos < lifespan.activeIndices.length) {
-                        setDateByIndex(lifespan.activeIndices[nextPos]);
-                    }
-                    return;
-                }
-            }
-        }
-        setDateByIndex(currentIndex + direction);
-    }
-
-    // --- Clic sur un badge contextuel ---
-    $playerLedger.on('click', '.allegiance-badge', function (e) {
+    // --- Event Listeners ---
+    $ledger.on('click', '.allegiance-badge', function (e) {
         e.stopPropagation();
         const tribe = $(this).data('tribe');
-        const dateIdx = parseInt($(this).data('date-index'), 10);
-
-        if (!tribe || isNaN(dateIdx)) return;
-
+        const idx = parseInt($(this).data('date-index'), 10);
+        if (!tribe || isNaN(idx)) return;
         currentView = 'hn';
-        activeTribeFilter = tribe;
-        $dateControls.show();
-        setDateByIndex(dateIdx);
+        activeTribe = tribe;
+        setDateByIndex(idx);
     });
 
-    // --- Barre de recherche globale ---
-    if ($globalSearchInput.length) {
-        $globalSearchInput.on('input change', function () {
-            const query = $(this).val().trim();
-            if (!query) {
-                currentView = 'hm';
-                activeTribeFilter = null;
-                selectedPlayer = null;
-                $dateControls.show();
-                updateView(dates[currentIndex]);
-            } else {
-                const found = getPlayerConstellationData(query);
-                if (found) {
-                    selectedPlayer = found.canonicalName;
-                    currentView = 'pn';
-                    $dateControls.hide();
-                    updateView(dates[dates.length - 1]);
-                }
+    $searchInput.on('input change', function () {
+        const q = $(this).val().trim();
+        if (!q) {
+            currentView = 'hm';
+            activeTribe = null;
+            selectedPlayer = null;
+            updateView(dates[currentIndex]);
+        } else {
+            const found = findPlayer(q);
+            if (found) {
+                selectedPlayer = found.name;
+                currentView = 'pn';
+                updateView(dates[dates.length - 1]);
             }
-        });
-    }
-
-    // --- Clic sur le titre / fil d'Ariane ---
-    $mapHeaderTitle.on('click', () => {
-        currentView = 'hm';
-        activeTribeFilter = null;
-        selectedPlayer = null;
-        if ($globalSearchInput.length) {
-            $globalSearchInput.val('').trigger('change');
         }
-        $dateControls.show();
-        updateView(dates[currentIndex]);
+    });
+
+    $headerTitle.on('click', () => {
+        currentView = 'hm';
+        activeTribe = null;
+        selectedPlayer = null;
+        if ($searchInput.val()) $searchInput.val('').trigger('change');
+        else updateView(dates[currentIndex]);
     });
 
     $prevBtn.on('click', () => stepDate(-1));
     $nextBtn.on('click', () => stepDate(1));
-    $earliestBtn.on('click', () => {
-        if (currentView === 'hn' && activeTribeFilter) {
-            const lifespan = getHomelandLifespan(activeTribeFilter);
-            if (lifespan) return setDateByIndex(lifespan.firstIndex);
-        }
-        setDateByIndex(0);
-    });
-    $latestBtn.on('click', () => {
-        if (currentView === 'hn' && activeTribeFilter) {
-            const lifespan = getHomelandLifespan(activeTribeFilter);
-            if (lifespan) return setDateByIndex(lifespan.lastIndex);
-        }
-        setDateByIndex(dates.length - 1);
-    });
+    $earliestBtn.on('click', () => setDateByIndex(0));
+    $latestBtn.on('click', () => setDateByIndex(dates.length - 1));
 
     $datePicker.on('change', function () {
-        const val = $(this).val();
-        const matchIdx = dates.findIndex(d => d >= val);
-        const targetIdx = matchIdx !== -1 ? matchIdx : dates.length - 1;
-        setDateByIndex(targetIdx);
+        const idx = dates.findIndex(d => d >= $(this).val());
+        setDateByIndex(idx !== -1 ? idx : dates.length - 1);
     });
 
-    $(window).on('resize', () => {
-        if (dates[currentIndex]) updateView(dates[currentIndex]);
-    });
+    $(window).on('resize', () => { if (dates[currentIndex]) updateView(dates[currentIndex]); });
 
-    // Lancement initial
     setDateByIndex(currentIndex);
 });
