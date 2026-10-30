@@ -1260,38 +1260,67 @@ $(document).ready(function () {
     }
 
 	// --- Historical Lifespan & Allegiance Queries ---
+    // --- Historical Lifespan & Chronicle Queries ---
     function getTribeLifespan(tribe) {
         if (!tribe) return null;
         const activeIndices = [];
         const segments = [];
+        let currentSeg = null;
         let peakIndex = -1, peakCount = 0;
 
         dates.forEach((d, idx) => {
-            const count = snapshots[d]?.[tribe]?.length || 0;
-            if (count > 0) {
+            const members = (snapshots[d]?.[tribe] || []).map(m => m[0]);
+            if (members.length > 0) {
                 activeIndices.push(idx);
-                if (count > peakCount) {
-                    peakCount = count;
+                if (members.length > peakCount) {
+                    peakCount = members.length;
                     peakIndex = idx;
                 }
-                const lastSeg = segments[segments.length - 1];
-                if (lastSeg && idx - lastSeg.endIndex <= 3) {
-                    lastSeg.endIndex = idx;
+                if (currentSeg) {
+                    currentSeg.endIndex = idx;
+                    members.forEach(p => currentSeg.allMembers.add(p));
                 } else {
-                    segments.push({ startIndex: idx, endIndex: idx });
+                    currentSeg = {
+                        startIndex: idx,
+                        endIndex: idx,
+                        startMembers: new Set(members),
+                        allMembers: new Set(members)
+                    };
+                    segments.push(currentSeg);
                 }
+            } else {
+                currentSeg = null;
             }
         });
 
         if (!activeIndices.length) return null;
 
         const milestones = [];
+        const historicalMembers = new Set();
+
         segments.forEach((seg, segIdx) => {
-            milestones.push({
-                idx: seg.startIndex,
-                label: `${segIdx === 0 ? 'Founded' : 'Revived'} ${formatShortDate(dates[seg.startIndex])}`,
-                title: segIdx === 0 ? 'Jump to founding date' : 'Jump to revival date'
-            });
+            if (segIdx === 0) {
+                milestones.push({
+                    idx: seg.startIndex,
+                    label: `Founded ${formatShortDate(dates[seg.startIndex])}`,
+                    title: 'Jump to founding date'
+                });
+            } else {
+                const overlap = [...seg.startMembers].filter(p => historicalMembers.has(p)).length;
+                const isRevival = overlap >= 3;
+                const actionLabel = isRevival ? 'Revived' : 'Reclaimed';
+                const actionTitle = isRevival
+                    ? `Jump to revival (${overlap} returning members)`
+                    : 'Jump to reclamation by a new fellowship';
+
+                milestones.push({
+                    idx: seg.startIndex,
+                    label: `${actionLabel} ${formatShortDate(dates[seg.startIndex])}`,
+                    title: actionTitle
+                });
+            }
+
+            seg.allMembers.forEach(p => historicalMembers.add(p));
 
             if (peakIndex > seg.startIndex && peakIndex < seg.endIndex) {
                 milestones.push({
