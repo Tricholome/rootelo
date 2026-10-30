@@ -1,24 +1,40 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="network-container">
+<div id="networkWrapper" class="network-container" data-view="hm">
 
-    <!-- Interactive Map Container -->
-    <div id="tribeMapContainer" class="tribe-map-container">
-        <div id="mapHeaderTitle" class="map-header-title" title="Click to reset to Homelands Map">
-            Homelands Map &bull; <span class="header-subtitle">Click a region or search a player</span>
-        </div>
-        <div id="playerLedger" class="allegiance-ledger"></div>
-        <svg id="tribeMapSvg" class="tribe-map-svg"></svg>
+    <div id="dateControls" class="date-controls">
+        <button id="earliestDateBtn" class="btn">Earliest Date</button>
+        <button id="prevDateBtn" class="btn">&laquo; Previous Day</button>
+        <input type="date" id="datePicker" class="date-picker">
+        <button id="nextDateBtn" class="btn">Next Day &raquo;</button>
+        <button id="latestDateBtn" class="btn">Latest Date</button>
     </div>
 
-    <!-- Date Selector Controls -->
-    <div id="dateControls" class="date-controls">
-        <button id="earliestDateBtn" class="btn">Start</button>
-        <button id="prevDateBtn" class="btn">&laquo; Prev</button>
-        <input type="date" id="datePicker" class="date-picker">
-        <button id="nextDateBtn" class="btn">Next &raquo;</button>
-        <button id="latestDateBtn" class="btn">End</button>
+    <div id="tribeMapContainer" class="tribe-map-container">
+        <div id="mapHeaderTitle" class="map-header-title" title="Click to reset to Homelands Map">
+            HOMELANDS MAP
+        </div>
+
+        <div id="mapLegend" class="map-legend">
+            <div class="legend-group" data-for="hn">
+                <div class="legend-item"><span class="legend-dot dot-same"></span><span>Partisan</span></div>
+                <div class="legend-item"><span class="legend-dot dot-mixed"></span><span>Squire</span></div>
+                <div class="legend-item"><span class="legend-dot dot-other"></span><span>Friend</span></div>
+            </div>
+            <div class="legend-group" data-for="pn">
+                <div class="legend-item"><span class="legend-dot dot-same"></span><span>Same homeland</span></div>
+                <div class="legend-item"><span class="legend-dot dot-other"></span><span>Other homeland</span></div>
+                <div class="legend-item"><span class="legend-dot dot-unaligned"></span><span>Unaligned</span></div>
+            </div>
+        </div>
+
+        <div id="playerLedger" class="allegiance-ledger"></div>
+
+        <svg id="tribeMapSvg" class="tribe-map-svg">
+            <g class="links-layer"></g>
+            <g class="nodes-layer"></g>
+        </svg>
     </div>
 
 </div>
