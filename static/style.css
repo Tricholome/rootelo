@@ -1725,13 +1725,20 @@ table.dataTable tbody tr.loser td {
    [COMPONENTS] 8. HOMELANDS & PLAYER NETWORK MAP
    ------------------------------------------------------------------------- */
 
-/* --- A. Container & Header --- */
+/* --- A. Container & View-State Visibility --- */
 .network-container {
     width: 100%;
     max-width: var(--window-max-width);
     margin: 0 auto;
 }
 
+.network-container[data-view="pn"] #dateControls,
+.network-container[data-view="hm"] #playerLedger,
+.network-container[data-view="hm"] #mapLegend {
+    display: none !important;
+}
+
+/* --- B. Map Container & Header Title --- */
 .tribe-map-container {
     position: relative;
     width: 100%;
@@ -1770,15 +1777,36 @@ table.dataTable tbody tr.loser td {
     color: var(--main-color);
 }
 
-.map-header-title .header-subtitle {
-    font-weight: var(--normal);
-    text-transform: none;
-    letter-spacing: normal;
-    color: var(--text-main);
-    opacity: 0.85;
+/* --- C. Contextual Legend (Top-Left) --- */
+.map-legend {
+    position: absolute;
+    top: 40px;
+    left: 18px;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    pointer-events: none;
 }
 
-/* --- B. Date Controls --- */
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: var(--size-xs);
+    color: var(--text-muted);
+    font-family: var(--font-ui);
+    user-select: none;
+}
+
+.legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+/* --- D. Date Controls --- */
 .date-controls {
     display: flex;
     align-items: center;
@@ -1806,13 +1834,13 @@ table.dataTable tbody tr.loser td {
     background-color: var(--bg-hover);
 }
 
-/* --- C. Allegiance Ledger (Top-Right in PN Mode) --- */
+/* --- E. Allegiance Ledger (Top-Right) --- */
 .allegiance-ledger {
     position: absolute;
     top: 14px;
     right: 18px;
     z-index: 10;
-    display: none;
+    display: flex;
     flex-direction: column;
     align-items: flex-end;
     gap: 6px;
@@ -1889,7 +1917,7 @@ table.dataTable tbody tr.loser td {
     pointer-events: none;
 }
 
-/* --- D. Interactive SVG Map Elements (D3.js) --- */
+/* --- F. Interactive SVG Map Elements (D3.js) --- */
 #tribeMapSvg .node-group {
     cursor: pointer;
     will-change: transform;
@@ -1909,7 +1937,13 @@ table.dataTable tbody tr.loser td {
     font-family: var(--font-ui);
 }
 
-/* 1. Links (HM, HN & PN) */
+#tribeMapSvg .node-group.type-tribe .player-label,
+#tribeMapSvg .node-group:not(.type-tribe) .node-icon,
+#tribeMapSvg .node-group:not(.type-tribe) .count-text {
+    display: none;
+}
+
+/* 1. Links */
 #tribeMapSvg line.inter-tribe {
     stroke: var(--text-muted);
     stroke-opacity: 0.45;
@@ -1921,7 +1955,7 @@ table.dataTable tbody tr.loser td {
 
 #tribeMapSvg line.constellation-link,
 #tribeMapSvg line.ego-link {
-    stroke: var(--node-color, var(--text-muted));
+    stroke: var(--node-color);
     stroke-opacity: 0.65;
     stroke-width: 1.5px;
     stroke-linecap: round;
@@ -1929,7 +1963,7 @@ table.dataTable tbody tr.loser td {
     transition: stroke-opacity 0.2s, stroke-width 0.2s;
 }
 
-/* 2. Homeland Nodes (HM & HN Center) */
+/* 2. Homeland Nodes */
 #tribeMapSvg .node-group.type-tribe .node-circle {
     fill: var(--bg-surface) !important;
     stroke: var(--text-muted);
@@ -1958,11 +1992,11 @@ table.dataTable tbody tr.loser td {
     fill: var(--text-muted);
 }
 
-/* 3. Player Nodes (HN & PN) */
+/* 3. Player Nodes */
 #tribeMapSvg .node-group.type-player .node-circle,
 #tribeMapSvg .node-group.type-ego-center .node-circle,
 #tribeMapSvg .node-group.type-ego-partner .node-circle {
-    fill: var(--node-color, var(--main-color)) !important;
+    fill: var(--node-color) !important;
     stroke: var(--border-soft);
     stroke-width: 1px;
     transition: transform 0.15s ease-out, fill 0.2s ease;
@@ -2020,37 +2054,6 @@ table.dataTable tbody tr.loser td {
 #tribeMapSvg .node-group.type-ego-center:hover .player-status-tspan {
     opacity: 1;
     visibility: visible;
-}
-
-/* --- Semantic Network Colors & View-State Visibility --- */
-.network-container {
-    --net-same: var(--main-color);
-    --net-other: var(--color-mouse);
-    --net-unaligned: #4a5568;
-}
-
-.network-container[data-view="pn"] #dateControls,
-.network-container[data-view="hm"] #playerLedger,
-.network-container .legend-group {
-    display: none !important;
-}
-
-.network-container[data-view="hn"] .legend-group[data-for="hn"],
-.network-container[data-view="pn"] .legend-group[data-for="pn"] {
-    display: contents;
-}
-
-/* --- Legend Dots --- */
-.legend-dot.dot-same      { background: var(--net-same); }
-.legend-dot.dot-mixed     { background: color-mix(in srgb, var(--net-same) 50%, var(--net-other)); }
-.legend-dot.dot-other     { background: var(--net-other); }
-.legend-dot.dot-unaligned { background: var(--net-unaligned); }
-
-/* --- SVG Node Sub-elements Visibility by Node Type --- */
-#tribeMapSvg .node-group.type-tribe .player-label,
-#tribeMapSvg .node-group:not(.type-tribe) .node-icon,
-#tribeMapSvg .node-group:not(.type-tribe) .count-text {
-    display: none;
 }
 
 /* =========================================================================
