@@ -1196,7 +1196,7 @@ $(document).ready(function () {
     const GOLDEN_ANGLE = Math.PI * (3 - Math.sqrt(5));
     const TIER_PHASE = { core: 0, mid: 0.22, outer: 0.47 };
 
-    // Déclaration unique de l'input de recherche
+    // --- Déclaration unique de l'input de recherche ---
     const $searchInput = $('#playerName');
 
     let currentView = 'hm';
@@ -1226,7 +1226,7 @@ $(document).ready(function () {
     const $latestBtn = $('#latestDateBtn');
     const $headerTitle = $('#mapHeaderTitle');
     const $legend = $('#mapLegend');
-    const $ledger = $('#playerLedger');
+    const $ledger = $('#playerLedger'); // Note: $searchInput n'est plus redéclaré ici
 
     // --- Helpers & Math Utilities ---
     const normalizeTribe = t => (!t || t === '-' || t === 'UNALIGNED') ? null : t;
@@ -1709,11 +1709,11 @@ $(document).ready(function () {
         node.on('click', (event, d) => {
             if (event.defaultPrevented) return;
             if (d.type === 'tribe' && currentView !== 'pn') {
-				activeTribe = activeTribe === d.id ? null : d.id;
-				currentView = activeTribe ? 'hn' : 'hm';
-				selectedPlayer = null;
-				$searchInput.val('').trigger('input');
-				updateView(dates[currentIndex]);
+                activeTribe = activeTribe === d.id ? null : d.id;
+                currentView = activeTribe ? 'hn' : 'hm';
+                selectedPlayer = null;
+                $searchInput.val('').trigger('input');
+                updateView(dates[currentIndex]);
             } else if ((d.type === 'player' || d.type === 'ego-partner') && currentView === 'pn') {
                 selectedPlayer = d.name;
                 $searchInput.val(selectedPlayer);
