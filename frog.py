@@ -7,17 +7,13 @@ import statistics
 
 import networkx as nx
 
-# ==============================================================================
-# CONFIGURATION & CONSTANTS
-# ==============================================================================
-
 UNALIGNED = None
 
 DEFAULT_CONFIG = {
     "MAX_TRIBES": 5,
     "MIN_TRIBE_CREATION_SIZE": 6,
     "MIN_TRIBE_SURVIVAL": 4,
-    "MIN_REUSE_OVERLAP": 4,
+    "MIN_REUSE_OVERLAP": 3,
     "MIN_GAMES_FLOOR": 3,
     "DYNAMIC_RATIO": 2.0,
     "STICKINESS": 1.5,
@@ -30,10 +26,6 @@ DEFAULT_CONFIG = {
     "RESOLUTION": 1.2,
 }
 
-
-# ==============================================================================
-# ALGORITHM HELPER FUNCTIONS
-# ==============================================================================
 
 def min_games_required(player_games: Counter, floor: int, ratio: float) -> int:
     median = statistics.median(player_games.values()) if player_games else 0
@@ -74,7 +66,8 @@ def compass(
     G: nx.Graph,
     roster: dict,
     eligible: list,
-    historical_members: dict,
+    last_tribe: dict,
+    ever_used_names: set,
     cfg: dict,
     tribe_names_pool: list,
 ) -> tuple[dict, set]:
@@ -108,9 +101,10 @@ def compass(
             name_of[i] = t
 
     available_slots = max(0, cfg["MAX_TRIBES"] - len(members))
-    unused_names = [n for n in tribe_names_pool if n not in historical_members and n not in members]
-    dissolved_names = [n for n in tribe_names_pool if n in historical_members and n not in members]
     min_reuse = cfg["MIN_REUSE_OVERLAP"]
+
+    unused_names = [n for n in tribe_names_pool if n not in ever_used_names and n not in members]
+    dissolved_names = [n for n in tribe_names_pool if n in ever_used_names and n not in members]
 
     founded = set()
     for i, c in enumerate(comms):
@@ -123,24 +117,28 @@ def compass(
         ):
             continue
 
-        chosen_name = None
-        reuse_candidates = sorted(
+        ex_counts = Counter(
+            last_tribe.get(p) for p in c if last_tribe.get(p) in dissolved_names
+        )
+        revive_candidates = sorted(
             [
-                (len(c & historical_members[t]), t)
-                for t in dissolved_names
-                if t not in name_of.values() and len(c & historical_members[t]) >= min_reuse
+                (count, t)
+                for t, count in ex_counts.items()
+                if t not in name_of.values() and count >= min_reuse
             ],
             key=lambda x: (-x[0], tribe_names_pool.index(x[1]) if x[1] in tribe_names_pool else 999),
         )
 
-        if reuse_candidates:
-            chosen_name = reuse_candidates[0][1]
+        chosen_name = None
+        if revive_candidates:
+            chosen_name = revive_candidates[0][1]
         elif unused_names:
             chosen_name = unused_names.pop(0)
 
         if chosen_name:
             name_of[i] = chosen_name
             founded.add(chosen_name)
+            ever_used_names.add(chosen_name)
 
     target = {p: name_of[i] for i, c in enumerate(comms) if i in name_of for p in c}
     return target, founded
@@ -239,10 +237,6 @@ def build_constellations(
     return {"date": latest_date, "players": players}
 
 
-# ==============================================================================
-# CORE SIMULATION FUNCTION
-# ==============================================================================
-
 def run_homelands_simulation(
     matches: list, custom_config: dict = None, season_id: str = "default"
 ) -> tuple[dict, dict]:
@@ -287,8 +281,9 @@ def run_homelands_simulation(
     player_games = Counter()
     last_active = {}
     roster = {}
+    last_tribe = {}
+    ever_used_names = set()
     snapshots = {}
-    historical_members = defaultdict(set)
     limit_days = cfg["INACTIVITY_LIMIT_DAYS"]
 
     for d in sorted_dates:
@@ -322,13 +317,15 @@ def run_homelands_simulation(
             if player_games[p] >= min_games and is_player_active(p, last_active, d, limit_days)
         ]
 
-        target, founded = compass(G, roster, eligible, historical_members, cfg, tribe_names_pool)
+        target, founded = compass(
+            G, roster, eligible, last_tribe, ever_used_names, cfg, tribe_names_pool
+        )
         apply_compass(G, roster, target, founded, cfg)
         dissolve_small_tribes(roster, cfg)
 
         for p, t in roster.items():
             if t is not UNALIGNED:
-                historical_members[t].add(p)
+                last_tribe[p] = t
 
         snapshots[d] = {
             t: member_metrics(G, roster, t)
