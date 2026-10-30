@@ -14,6 +14,7 @@ DEFAULT_CONFIG = {
     "MIN_TRIBE_CREATION_SIZE": 6,
     "MIN_TRIBE_SURVIVAL": 4,
     "MIN_REUSE_OVERLAP": 3,
+    "MIN_COOLDOWN_DAYS": 3,
     "MIN_GAMES_FLOOR": 3,
     "DYNAMIC_RATIO": 2.0,
     "STICKINESS": 1.5,
@@ -67,7 +68,9 @@ def compass(
     roster: dict,
     eligible: list,
     last_tribe: dict,
+    last_seen: dict,
     ever_used_names: set,
+    current_date: str,
     cfg: dict,
     tribe_names_pool: list,
 ) -> tuple[dict, set]:
@@ -102,6 +105,8 @@ def compass(
 
     available_slots = max(0, cfg["MAX_TRIBES"] - len(members))
     min_reuse = cfg["MIN_REUSE_OVERLAP"]
+    cooldown = cfg["MIN_COOLDOWN_DAYS"]
+    cur_dt = date.fromisoformat(current_date)
 
     unused_names = [n for n in tribe_names_pool if n not in ever_used_names and n not in members]
     dissolved_names = [n for n in tribe_names_pool if n in ever_used_names and n not in members]
@@ -117,15 +122,13 @@ def compass(
         ):
             continue
 
+        avail_dissolved = [t for t in dissolved_names if t not in name_of.values()]
+
         ex_counts = Counter(
-            last_tribe.get(p) for p in c if last_tribe.get(p) in dissolved_names
+            last_tribe.get(p) for p in c if last_tribe.get(p) in avail_dissolved
         )
         revive_candidates = sorted(
-            [
-                (count, t)
-                for t, count in ex_counts.items()
-                if t not in name_of.values() and count >= min_reuse
-            ],
+            [(count, t) for t, count in ex_counts.items() if count >= min_reuse],
             key=lambda x: (-x[0], tribe_names_pool.index(x[1]) if x[1] in tribe_names_pool else 999),
         )
 
@@ -134,6 +137,19 @@ def compass(
             chosen_name = revive_candidates[0][1]
         elif unused_names:
             chosen_name = unused_names.pop(0)
+        else:
+            recyclable = sorted(
+                [
+                    t for t in avail_dissolved
+                    if t in last_seen and (cur_dt - date.fromisoformat(last_seen[t])).days > cooldown
+                ],
+                key=lambda t: (last_seen[t], tribe_names_pool.index(t) if t in tribe_names_pool else 999),
+            )
+            if recyclable:
+                chosen_name = recyclable[0]
+                for p, prev_t in list(last_tribe.items()):
+                    if prev_t == chosen_name:
+                        del last_tribe[p]
 
         if chosen_name:
             name_of[i] = chosen_name
@@ -282,6 +298,7 @@ def run_homelands_simulation(
     last_active = {}
     roster = {}
     last_tribe = {}
+    last_seen = {}
     ever_used_names = set()
     snapshots = {}
     limit_days = cfg["INACTIVITY_LIMIT_DAYS"]
@@ -318,18 +335,23 @@ def run_homelands_simulation(
         ]
 
         target, founded = compass(
-            G, roster, eligible, last_tribe, ever_used_names, cfg, tribe_names_pool
+            G, roster, eligible, last_tribe, last_seen, ever_used_names, d, cfg, tribe_names_pool
         )
         apply_compass(G, roster, target, founded, cfg)
         dissolve_small_tribes(roster, cfg)
 
+        active_today = set()
         for p, t in roster.items():
             if t is not UNALIGNED:
                 last_tribe[p] = t
+                active_today.add(t)
+
+        for t in active_today:
+            last_seen[t] = d
 
         snapshots[d] = {
             t: member_metrics(G, roster, t)
-            for t in sorted({t for t in roster.values() if t is not UNALIGNED})
+            for t in sorted(active_today)
         }
 
     constellations = build_constellations(roster, player_games, shared, sorted_dates[-1], cfg)
