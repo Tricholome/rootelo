@@ -1192,10 +1192,7 @@ $(document).ready(function () {
 
     if (!dates?.length || !snapshots) return;
 
-    const palette = config.colors || {};
-    const COLOR_SAME = palette.same_tribe || 'var(--net-same)';
-    const COLOR_OTHER = palette.other_tribe || config.tiers?.Friend || 'var(--net-other)';
-    const COLOR_UNALIGNED = palette.unaligned || config.tiers?.Default || 'var(--net-unaligned)';
+    const { same_tribe, other_tribe, unaligned } = config.colors;
     const GOLDEN_ANGLE = Math.PI * (3 - Math.sqrt(5));
     const TIER_PHASE = { core: 0, mid: 0.22, outer: 0.47 };
 
@@ -1213,14 +1210,9 @@ $(document).ready(function () {
     const $earliestBtn = $('#earliestDateBtn');
     const $latestBtn = $('#latestDateBtn');
     const $headerTitle = $('#mapHeaderTitle');
+    const $legend = $('#mapLegend');
     const $searchInput = $('#playerName');
     const $ledger = $('#playerLedger');
-
-    $wrapper.css({
-        '--net-same': COLOR_SAME,
-        '--net-other': COLOR_OTHER,
-        '--net-unaligned': COLOR_UNALIGNED
-    });
 
     // --- Helpers & Math Utilities ---
     const normalizeTribe = t => (!t || t === '-' || t === 'UNALIGNED') ? null : t;
@@ -1231,13 +1223,13 @@ $(document).ready(function () {
 
     function fidelityColor(fidelity) {
         const pct = Math.round(Math.max(0, Math.min(1, ((Number(fidelity) || 0) - 35) / 60)) * 100);
-        return `color-mix(in srgb, ${COLOR_SAME} ${pct}%, ${COLOR_OTHER})`;
+        return `color-mix(in srgb, ${same_tribe} ${pct}%, ${other_tribe})`;
     }
 
     function networkColor(centerTribe, nodeTribe, isCenter) {
-        if (isCenter) return centerTribe ? COLOR_SAME : COLOR_UNALIGNED;
-        if (!nodeTribe) return COLOR_UNALIGNED;
-        return (centerTribe && nodeTribe === centerTribe) ? COLOR_SAME : COLOR_OTHER;
+        if (isCenter) return centerTribe ? same_tribe : unaligned;
+        if (!nodeTribe) return unaligned;
+        return (centerTribe && nodeTribe === centerTribe) ? same_tribe : other_tribe;
     }
 
     function nameJitter(name) {
@@ -1336,11 +1328,23 @@ $(document).ready(function () {
             </button>`;
     }
 
+    function renderLegend(items) {
+        $legend.html(items.map(([color, text]) =>
+            `<div class="legend-item"><span class="legend-dot" style="background: ${color}"></span><span>${text}</span></div>`
+        ).join(''));
+    }
+
     function updateChrome() {
         $wrapper.attr('data-view', currentView);
 
         if (currentView === 'pn' && selectedPlayer) {
             $headerTitle.html(`&lsaquo; ${selectedPlayer.toUpperCase()}'S CIRCLE`);
+            renderLegend([
+                [same_tribe, 'Same homeland'],
+                [other_tribe, 'Other homeland'],
+                [unaligned, 'Unaligned']
+            ]);
+
             const history = getPlayerHistory(selectedPlayer);
             const badges = !history.length
                 ? '<div class="allegiance-empty">Unaligned</div>'
@@ -1362,6 +1366,12 @@ $(document).ready(function () {
 
         if (currentView === 'hn' && activeTribe) {
             $headerTitle.html(`&lsaquo; ${activeTribe.toUpperCase()} CLEARING`);
+            renderLegend([
+                [same_tribe, 'Partisan'],
+                [`color-mix(in srgb, ${same_tribe} 50%, ${other_tribe})`, 'Squire'],
+                [other_tribe, 'Friend']
+            ]);
+
             const life = getTribeLifespan(activeTribe);
             if (!life) return $ledger.empty();
 
@@ -1395,6 +1405,7 @@ $(document).ready(function () {
         }
 
         $headerTitle.text('HOMELANDS MAP');
+        $legend.empty();
         $ledger.empty();
     }
 
