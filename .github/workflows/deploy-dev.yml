@@ -32,6 +32,7 @@ jobs:
 
       - name: Build RDL League
         env:
+          PYTHONHASHSEED: "0"
           API_TOKEN: ${{ secrets.API_TOKEN }}
         run: |
           python main.py --league rdl
