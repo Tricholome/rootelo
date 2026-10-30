@@ -1,5 +1,5 @@
 from collections import Counter, defaultdict
-from datetime import date
+from datetime import date, timedelta
 from itertools import combinations
 import math
 import random
@@ -109,7 +109,7 @@ def compass(
     for i, c in enumerate(comms):
         if (
             i not in name_of
-            and len(c) >= cfg["MIN_TRIBE_CREATION_SIZE"]
+            and sum(1 for p in c if roster.get(p) is UNALIGNED) >= cfg["MIN_TRIBE_CREATION_SIZE"]
             and free
             and is_clearly_apart(G, roster, c, cfg["STICKINESS"])
         ):
@@ -131,7 +131,8 @@ def apply_compass(G: nx.Graph, roster: dict, target: dict, founded: set, cfg: di
             continue
 
         if t in founded:
-            moves.append((p, t))
+            if current is UNALIGNED:   # une tribu fondée ne débauche personne
+                moves.append((p, t))
         elif current is UNALIGNED:
             w = weight_by_tribe(G, roster, p)
             if not w or w[t] == max(w.values()):
@@ -293,7 +294,12 @@ def run_homelands_simulation(
             player_games, cfg["MIN_GAMES_FLOOR"], cfg["DYNAMIC_RATIO"]
         )
 
-        eligible = [p for p in G.nodes() if player_games[p] >= min_games]
+        limit = cfg["INACTIVITY_LIMIT_DAYS"]
+        cutoff = None if limit is None else (date.fromisoformat(d) - timedelta(days=limit)).isoformat()
+        eligible = [
+            p for p in G.nodes()
+            if player_games[p] >= min_games and (cutoff is None or last_active[p] >= cutoff)
+        ]
         target, founded = compass(G, roster, eligible, ever_used_names, cfg, tribe_names_pool)
         apply_compass(G, roster, target, founded, cfg)
 
