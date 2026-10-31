@@ -2056,6 +2056,27 @@ table.dataTable tbody tr.loser td {
     visibility: visible;
 }
 
+/* FROG mode */
+
+/* Par défaut : les grenouilles restent tapies dans l'ombre */
+.frog-leader-icon {
+    display: none;
+}
+
+/* --- Quand le mode Grenouilles est actif --- */
+
+/* 1. On efface les animaux ordinaires sans casser la largeur de la colonne */
+#leaderboard.frogs-mode .standard-tier {
+    visibility: hidden;
+}
+
+/* 2. On révèle uniquement les têtes de grenouilles */
+#leaderboard.frogs-mode .frog-leader-icon {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+}
+
 /* =========================================================================
    --- V. SPECIAL EFFECTS & SECRET CONTENT ---
    ========================================================================= */
