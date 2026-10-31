@@ -1188,33 +1188,68 @@ $(document).ready(function () {
     const dates = window.NETWORK_DATES;
     const snapshots = window.NETWORK_SNAPSHOTS;
     const config = window.NETWORK_CONFIG || {};
-    const constellations = window.PLAYER_CONSTELLATIONS?.players || {};
+    const rawConstellations = window.PLAYER_CONSTELLATIONS || {};
+    const constellations = rawConstellations.players || rawConstellations;
 
     if (!dates?.length || !snapshots) return;
 
-    const { same_tribe, other_tribe, unaligned } = config.colors;
+    const { same_tribe, other_tribe, unaligned } = config.colors || {
+        same_tribe: 'var(--main-color)',
+        other_tribe: 'var(--color-mouse)',
+        unaligned: 'var(--color-default)'
+    };
     const GOLDEN_ANGLE = Math.PI * (3 - Math.sqrt(5));
     const TIER_PHASE = { core: 0, mid: 0.22, outer: 0.47 };
 
-    // --- Déclaration unique de l'input de recherche ---
     const $searchInput = $('#playerName');
 
     let currentView = 'hm';
     let activeTribe = null;
     let selectedPlayer = null;
     let currentIndex = dates.length - 1;
-	
-    // Vérification initiale pour ouvrir automatiquement le cercle si un joueur est déjà renseigné
-    const initialQuery = ($searchInput.val() || '').trim();
-    if (initialQuery) {
-        const q = initialQuery.toLowerCase();
-        const foundKey = Object.keys(constellations).find(k => k.toLowerCase() === q);
-        if (foundKey) {
-            selectedPlayer = foundKey;
-            currentView = 'pn';
+
+    // Helpers de synchronisation globale
+    function setSearchPlayer(name) {
+        $searchInput.val(name);
+        if (typeof window.applyGlobalSearch === 'function') {
+            window.applyGlobalSearch(name);
+        } else {
+            localStorage.setItem('selectedPlayer', name);
         }
     }
-	
+
+    function clearSearch() {
+        $searchInput.val('');
+        if (typeof window.applyGlobalSearch === 'function') {
+            window.applyGlobalSearch('');
+        } else {
+            localStorage.removeItem('selectedPlayer');
+        }
+    }
+
+    function findPlayer(query) {
+        const q = (query || '').trim();
+        if (!q) return null;
+        if (constellations[q]) return { name: q, data: constellations[q] };
+        const low = q.toLowerCase();
+        const key = Object.keys(constellations).find(k => k.toLowerCase() === low);
+        return key ? { name: key, data: constellations[key] } : null;
+    }
+
+    // Persistance inter-saisons : ouverture automatique en mode PN si un joueur est actif
+    const urlParam = new URLSearchParams(window.location.search).get('player');
+    const savedPlayer = localStorage.getItem('selectedPlayer');
+    const initialQuery = ($searchInput.val() || urlParam || savedPlayer || '').trim();
+
+    if (initialQuery) {
+        const found = findPlayer(initialQuery);
+        if (found) {
+            selectedPlayer = found.name;
+            currentView = 'pn';
+            $searchInput.val(selectedPlayer);
+        }
+    }
+
     let lastRenderedView = null;
     let simulation = null;
 
@@ -1226,7 +1261,7 @@ $(document).ready(function () {
     const $latestBtn = $('#latestDateBtn');
     const $headerTitle = $('#mapHeaderTitle');
     const $legend = $('#mapLegend');
-    const $ledger = $('#playerLedger'); // Note: $searchInput n'est plus redéclaré ici
+    const $ledger = $('#playerLedger');
 
     // --- Helpers & Math Utilities ---
     const normalizeTribe = t => (!t || t === '-' || t === 'UNALIGNED') ? null : t;
@@ -1264,16 +1299,7 @@ $(document).ready(function () {
         return Math.hypot(px - (x1 + t * dx), py - (y1 + t * dy));
     }
 
-    function findPlayer(query) {
-        const q = (query || '').trim();
-        if (!q) return null;
-        if (constellations[q]) return { name: q, data: constellations[q] };
-        const low = q.toLowerCase();
-        const key = Object.keys(constellations).find(k => k.toLowerCase() === low);
-        return key ? { name: key, data: constellations[key] } : null;
-    }
-
-	// --- Historical Lifespan & Allegiance Queries ---
+    // --- Historical Lifespan & Allegiance Queries ---
     function getTribeLifespan(tribe) {
         if (!tribe) return null;
         const activeIndices = [];
@@ -1415,6 +1441,7 @@ $(document).ready(function () {
 
     function updateChrome() {
         $wrapper.attr('data-view', currentView);
+        $('#dateControls').toggle(currentView !== 'pn');
 
         if (currentView === 'pn' && selectedPlayer) {
             $headerTitle.html(`&lsaquo; ${selectedPlayer.toUpperCase()}'S CIRCLE`);
@@ -1483,9 +1510,9 @@ $(document).ready(function () {
             const found = findPlayer(selectedPlayer || $searchInput.val()) || { name: allKeys[0], data: constellations[allKeys[0]] };
             selectedPlayer = found.name;
 
-            const centerTribe = normalizeTribe(found.data.tribe);
-            const games = found.data.games || 0;
-            const partners = [...(found.data.partners || [])].sort((a, b) => b[1] - a[1]);
+            const centerTribe = normalizeTribe(found.data?.tribe);
+            const games = found.data?.games || 0;
+            const partners = [...(found.data?.partners || [])].sort((a, b) => b[1] - a[1]);
             const total = partners.length;
             const maxW = total ? partners[0][1] : 1;
             const minW = total ? partners[total - 1][1] : 1;
@@ -1715,24 +1742,27 @@ $(document).ready(function () {
             }
         });
 
+        // Gestion des clics sur les bulles
         node.on('click', (event, d) => {
             if (event.defaultPrevented) return;
+
             if (d.type === 'tribe' && currentView !== 'pn') {
                 activeTribe = activeTribe === d.id ? null : d.id;
                 currentView = activeTribe ? 'hn' : 'hm';
                 selectedPlayer = null;
-                $searchInput.val('').trigger('input');
+                clearSearch();
                 updateView(dates[currentIndex]);
-            } else if ((d.type === 'player' || d.type === 'ego-partner') && currentView === 'pn') {
+            } else if (d.type === 'player' || d.type === 'ego-partner') {
                 selectedPlayer = d.name;
-                $searchInput.val(selectedPlayer);
+                currentView = 'pn';
+                setSearchPlayer(selectedPlayer);
                 updateView(dates[dates.length - 1]);
             }
         }).on('dblclick', (event, d) => {
             if (event.defaultPrevented || (d.type !== 'player' && d.type !== 'ego-partner')) return;
             selectedPlayer = d.name;
             currentView = 'pn';
-            $searchInput.val(selectedPlayer);
+            setSearchPlayer(selectedPlayer);
             updateView(dates[dates.length - 1]);
         });
 
@@ -1862,7 +1892,9 @@ $(document).ready(function () {
         setDateByIndex(currentIndex + dir);
     }
 
-    // --- Event Listeners ---
+    // --- Écouteurs d'événements ---
+
+    // Clic sur un badge dans le Ledger (retour vers une clairière HN)
     $ledger.on('click', '.allegiance-badge', function (e) {
         e.stopPropagation();
         const tribe = $(this).data('tribe');
@@ -1871,32 +1903,44 @@ $(document).ready(function () {
         currentView = 'hn';
         activeTribe = tribe;
         selectedPlayer = null;
-        $searchInput.val('').trigger('input');
+        clearSearch();
         setDateByIndex(idx);
     });
 
+    // Saisie directe dans la barre de recherche globale
     $searchInput.on('input change', function () {
         const q = $(this).val().trim();
         if (!q) {
             currentView = 'hm';
             activeTribe = null;
             selectedPlayer = null;
+            if (typeof window.applyGlobalSearch === 'function') {
+                window.applyGlobalSearch('');
+            } else {
+                localStorage.removeItem('selectedPlayer');
+            }
             updateView(dates[currentIndex]);
         } else {
             const found = findPlayer(q);
             if (found) {
                 selectedPlayer = found.name;
                 currentView = 'pn';
+                if (typeof window.applyGlobalSearch === 'function') {
+                    window.applyGlobalSearch(selectedPlayer);
+                } else {
+                    localStorage.setItem('selectedPlayer', selectedPlayer);
+                }
                 updateView(dates[dates.length - 1]);
             }
         }
     });
 
+    // Clic sur le titre (Retour à Homelands Map HM)
     $headerTitle.on('click', () => {
         currentView = 'hm';
         activeTribe = null;
         selectedPlayer = null;
-        $searchInput.val('').trigger('input');
+        clearSearch();
         updateView(dates[currentIndex]);
     });
 
