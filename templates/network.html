@@ -1,5 +1,43 @@
 {% extends "base.html" %}
 
+{% block banner %}
+<div class="banner-container">
+	<div class="banner-icons left">
+		<a href="javascript:void(0)" onclick="openTierModal('bird')" class="tooltip-link js-double-tap">
+			<img src="{{ path_prefix }}{{ config.assets.icons.bird }}" alt="Bird">
+			<span class="tooltip-text"><strong class="tier-bird">Bird (1500+)</strong> — The Grandmasters</span>
+		</a>
+		<a href="javascript:void(0)" onclick="openTierModal('fox')" class="tooltip-link js-double-tap">
+			<img src="{{ path_prefix }}{{ config.assets.icons.fox }}" alt="Fox">
+			<span class="tooltip-text"><strong class="tier-fox">Fox (1400+)</strong> — The Cunning Tacticians</span>
+		</a>
+	</div>
+	<div class="banner-center">
+		<h1 class="site-title">ROOTELO</h1>
+		<p class="site-subtitle">A Metric of Woodland&nbsp;Skill&nbsp;and&nbsp;Will</p>
+	</div>
+	<div class="banner-icons right">
+		<a href="javascript:void(0)" onclick="openTierModal('rabbit')" class="tooltip-link js-double-tap">
+			<img src="{{ path_prefix }}{{ config.assets.icons.rabbit }}" alt="Rabbit">
+			<span class="tooltip-text"><strong class="tier-rabbit">Rabbit (1300+)</strong> — The Agile Contenders</span>
+		</a>
+		<a href="javascript:void(0)" onclick="openTierModal('mouse')" class="tooltip-link js-double-tap">
+			<img src="{{ path_prefix }}{{ config.assets.icons.mouse }}" alt="Mouse">
+			<span class="tooltip-text"><strong class="tier-mouse">Mouse (1200+)</strong> — The Steady Foragers</span>
+		</a>
+	</div>
+</div>
+{% endblock %}
+
+{% block nav %}
+<nav id="homelandsNav">
+    <a href="#standings" class="homelands-tab-link" data-tab="standings">Standings</a>
+    <a href="#map" class="homelands-tab-link active" data-tab="map">Clearings Map</a>
+    <a href="#circle" class="homelands-tab-link" data-tab="circle">Player's Circle</a>
+    <a href="#laws" class="homelands-tab-link" data-tab="laws">Diaspora Laws</a>
+</nav>
+{% endblock %}
+
 {% block content %}
 	<div class="unranked-toggle-container">
 		<input type="checkbox" 
