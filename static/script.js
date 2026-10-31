@@ -1183,6 +1183,10 @@ function showVisitorRow(name, date) {
 /* =========================================================================
    --- 10. HOMELANDS MAP & PLAYER NETWORK ENGINE ---
    ========================================================================= */
+   
+$('#spotFrogsCheckbox').on('change', function () {
+    $('#leaderboard').toggleClass('frogs-mode', this.checked);
+});
 
 $(document).ready(function () {
     const dates = window.NETWORK_DATES;
