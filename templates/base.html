@@ -78,6 +78,7 @@
 	
         <header class="app-banner window-box">
 		
+			{% block banner %}
             <div class="banner-container">
                 <div class="banner-icons left">
                     <a href="javascript:void(0)" onclick="openTierModal('stag')" class="tooltip-link js-double-tap banner-icon-stag">
@@ -112,9 +113,11 @@
                     </a>
                 </div>
             </div>
+			{% endblock %}
             
             <div class="nav-separator"></div>
 
+			{% block nav %}
             <nav>
 				{% set nav_links = [('index', 'Leaderboard'), ('matches', 'Top Tables'), ('trends', "Player's Journey"), ('about', 'Codex')] %}
 
@@ -129,6 +132,7 @@
 				{% endfor %}
 				<a href="cache.html" class="nav-secret {{ 'active' if page_id == 'cache' or active_section == 'cache' else '' }}">Undergrowth</a>
 			</nav>
+			{% endblock %}
 			
         </header>
         
