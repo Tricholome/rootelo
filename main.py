@@ -607,6 +607,21 @@ def prepare_trends_data(history_dict, player_registry, league_config):
         "history_json": json.dumps(enriched_history),
         "player_names": player_names
     }
+    
+    
+def extract_latest_leaders(snapshots: dict) -> dict:
+    if not snapshots:
+        return {}
+    latest_date = max(snapshots.keys())
+    latest_snapshot = snapshots[latest_date]
+    
+    leaders = {}
+    for tribe_name, members in latest_snapshot.items():
+        if members:
+            # Le premier membre de la liste représente le pilier central
+            leader_name = members[0][0] if isinstance(members[0], list) else members[0]
+            leaders[leader_name] = tribe_name.lower()
+    return leaders
 
 
 # =========================================================================
@@ -1012,6 +1027,10 @@ def run_league_pipeline(league_config, all_leagues_list):
             "current_season_tag": current_season_tag,
             "cutoff_date": meta.get('cutoff_date', 'N/A'),
         }
+        
+        leaders_map = extract_latest_leaders(snapshots_data)
+        for player in lb_data:
+            player['homeland_leader'] = leaders_map.get(player['display_name'])
 
         render_page(
             "index.html", f"index{suffix}.html",
