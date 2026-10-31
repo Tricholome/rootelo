@@ -4,8 +4,11 @@
     <div class="unranked-toggle-container">
         <input type="checkbox" id="tierFilterCheckbox" {% if not is_archive %}checked{% endif %} autocomplete="off">
         <label for="tierFilterCheckbox">Show tierless players</label>
-		<input type="checkbox" id="spotFrogsCheckbox" autocomplete="off" onchange="if(this.checked) window.location.href='{{ path_prefix }}network.html';">
-        <label for="spotFrogsCheckbox">Spot the frogs</label>
+		<input type="checkbox" 
+			   id="spotFrogsCheckbox" 
+			   autocomplete="off" 
+			   onchange="if(this.checked) window.location.href='{{ path_prefix }}network{% if is_archive and season_tag %}_{{ season_tag }}{% endif %}.html';">
+		<label for="spotFrogsCheckbox">Spot the frogs</label>
     </div>
 
     <table id="leaderboard" class="display nowrap" style="width:100%">
