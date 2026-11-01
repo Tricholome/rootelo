@@ -1994,7 +1994,35 @@ table.dataTable tbody tr.loser td {
     display: flex;
     flex-direction: column;
     align-items: center;
+    gap: 4px;
+}
+
+.herald-link {
+    display: inline-flex;
+    align-items: center;
     gap: 6px;
+    background: none;
+    border: none;
+    padding: 0;
+    color: var(--color-frog);
+    font-family: var(--font-ui);
+    font-size: var(--size-xs);
+    font-weight: var(--medium);
+    cursor: pointer;
+    transition: opacity 0.2s ease, transform 0.15s ease;
+}
+
+.herald-link:hover {
+    opacity: 0.85;
+    transform: translateY(1px);
+}
+
+.herald-icon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.4));
 }
 
 .allegiance-ledger {
@@ -2008,7 +2036,7 @@ table.dataTable tbody tr.loser td {
     gap: 6px;
 }
 
-/* --- D. HUD Badges (Herald, Chronicle, Allegiances) --- */
+/* --- D. HUD Badges (Chronicle & Allegiances) --- */
 .allegiance-badge {
     display: inline-flex;
     align-items: center;
@@ -2030,19 +2058,10 @@ table.dataTable tbody tr.loser td {
     transition: transform 0.15s ease, border-color 0.2s ease, background-color 0.2s ease, opacity 0.2s ease, filter 0.2s ease;
 }
 
-.allegiance-badge.herald-badge {
-    width: auto;
-    justify-content: center;
-}
-
 .allegiance-badge:hover {
     border-color: var(--main-color);
     background: var(--bg-hover);
     transform: translateX(-4px);
-}
-
-.allegiance-badge.herald-badge:hover {
-    transform: translateY(2px);
 }
 
 .allegiance-badge.is-current {
@@ -2110,32 +2129,41 @@ table.dataTable tbody tr.loser td {
 @media (max-width: 768px) {
     .tribe-map-container {
         display: grid;
-        grid-template-columns: auto 1fr auto;
+        grid-template-columns: 1fr auto;
         grid-template-rows: auto 1fr;
         height: auto;
         align-items: start;
     }
 
     .network-container:not([data-view="hm"]) .map-legend,
-    .network-container:not([data-view="hm"]) .map-header-title,
     .network-container:not([data-view="hm"]) .allegiance-ledger {
         position: static;
-        transform: none;
-        padding: 12px 10px 8px 10px;
+        padding: 12px 14px 4px 14px;
     }
 
     .map-legend { grid-column: 1; grid-row: 1; }
-    .map-header-title { grid-column: 2; grid-row: 1; }
-    .allegiance-ledger { grid-column: 3; grid-row: 1; }
+    .allegiance-ledger { grid-column: 2; grid-row: 1; }
+
+    .network-container:not([data-view="hm"]) .map-header-title {
+        position: relative;
+        top: auto;
+        left: auto;
+        transform: none;
+        grid-column: 1;
+        grid-row: 2;
+        align-self: start;
+        justify-self: start;
+        padding: 8px 14px;
+    }
+
+    .map-header-title .hud-title {
+        display: none;
+    }
 
     .tribe-map-svg {
         grid-column: 1 / -1;
         grid-row: 2;
-        height: 360px;
-    }
-
-    .network-container:not([data-view="hm"]) .tribe-map-svg {
-        border-top: 1px solid var(--border-soft);
+        height: 420px;
     }
 
     .allegiance-badge {
@@ -2145,12 +2173,14 @@ table.dataTable tbody tr.loser td {
         font-size: var(--size-xxs);
     }
 
-    .allegiance-icon {
+    .allegiance-icon,
+    .herald-icon {
         width: 18px;
         height: 18px;
     }
 
-    .legend-item {
+    .legend-item,
+    .herald-link {
         font-size: var(--size-xxs);
         gap: 5px;
     }
