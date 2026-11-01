@@ -1559,20 +1559,6 @@ $(document).ready(function () {
             return;
         }
 
-            const life = getTribeLifespan(activeTribe);
-            if (!life) return $ledger.empty();
-
-            const badges = life.milestones.map(m => badgeButtonHtml({
-                tribe: activeTribe,
-                dateIndex: m.idx,
-                label: m.label,
-                isCurrent: currentIndex === m.idx,
-                title: m.title
-            })).join('');
-            $ledger.html(`<div class="hud-title">Chronicle</div>${badges}`);
-            return;
-        }
-
         $headerTitle.empty();
         $legend.empty();
         $ledger.empty();
