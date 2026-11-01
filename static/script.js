@@ -136,7 +136,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		const tierColors = CONFIG.colors;
 		const tierIcons = CONFIG.icons;
 
-	window.openTierModal = function(tier) {
+	window.openTierModal = function(tier, playerName, clearing) {
 		const text = TIER_DATA[tier];
 		const color = tierColors[tier] || tierColors['default'];
 		const icon = tierIcons[tier];
@@ -144,8 +144,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		if (!text) return;
 
 		const modalContent = modal.querySelector('.modal-content');
-    	modalContent.style.setProperty('--tier-color', color);
-		
+		modalContent.style.setProperty('--tier-color', color);
 		modalContent.classList.toggle('bear-shimmer', tier === 'bear');
 
 		const modalTitle = document.getElementById('modalTitle');
@@ -156,12 +155,24 @@ document.addEventListener('DOMContentLoaded', function() {
 
 		modalTitle.textContent = text.name;
 		
-		modalElo.textContent = text.elo;
+		modalElo.textContent = playerName || text.elo || '';
 		modalElo.style.color = color;
 		
 		modalIcon.src = icon;
 		
-		modalSubtitle.textContent = text.subtitle;
+		if (tier === 'frog' && clearing) {
+			const clearingClean = clearing.charAt(0).toUpperCase() + clearing.slice(1).toLowerCase();
+			const pageName = window.location.pathname.split('/').pop() || '';
+			let networkUrl = `${PATH_PREFIX}network.html`;
+			if (pageName.includes('_')) {
+				const seasonSuffix = pageName.substring(pageName.indexOf('_') + 1).replace(/\.html$/i, '');
+				networkUrl = `${PATH_PREFIX}network_${seasonSuffix}.html`;
+			}
+			const iconPath = `${PATH_PREFIX}assets/items/${clearing.toLowerCase()}.png`;
+			modalSubtitle.innerHTML = `Settler of <a href="${networkUrl}" class="cl"><img src="${iconPath}" alt="${clearingClean}" style="height: 18px; width: 18px; vertical-align: -2px; margin: 0 4px; object-fit: contain;">${clearingClean} Clearing</a>`;
+		} else {
+			modalSubtitle.textContent = text.subtitle || '';
+		}
 		
 		modalText.textContent = text.desc;
 		
@@ -170,7 +181,7 @@ document.addEventListener('DOMContentLoaded', function() {
 			modalFinal.innerHTML = text.final || '';
 		}
 		
-		if (modalCrown) {
+		if (typeof modalCrown !== 'undefined' && modalCrown) {
 			modalCrown.src = text.crown || '';
 			modalCrown.style.display = text.crown ? 'block' : 'none';
 		}
