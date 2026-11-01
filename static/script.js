@@ -1477,14 +1477,11 @@ $(document).ready(function () {
         }));
     }
 
-    function badgeButtonHtml({ tribe, dateIndex, label, isCurrent, title, icon, extraClass = '', player = '' }) {
-        const iconImg = icon ? `<img src="${icon}" alt="" class="allegiance-icon">` : '';
-        const dataAttrs = player
-            ? `data-player="${player}"`
-            : `data-tribe="${tribe}" data-date-index="${dateIndex}"`;
+    function badgeButtonHtml({ tribe, dateIndex, label, isCurrent, title, icon }) {
+        const iconImg = icon ? `<img src="${icon}" alt="${tribe}" class="allegiance-icon">` : '';
         return `
-            <button type="button" class="allegiance-badge ${isCurrent ? 'is-current' : 'is-past'} ${extraClass}"
-                    ${dataAttrs} title="${title}">
+            <button type="button" class="allegiance-badge ${isCurrent ? 'is-current' : 'is-past'}"
+                    data-tribe="${tribe}" data-date-index="${dateIndex}" title="${title}">
                 ${iconImg}<span class="allegiance-date">${label}</span>
             </button>`;
     }
@@ -1527,7 +1524,7 @@ $(document).ready(function () {
         }
 
         if (currentView === 'hn' && activeTribe) {
-            renderLegend('Fidelity (%)', [
+            renderLegend('Fidelity', [
                 [same_tribe, 'Partisan'],
                 [`color-mix(in srgb, ${same_tribe} 50%, ${other_tribe})`, 'Squire'],
                 [other_tribe, 'Friend']
@@ -1537,18 +1534,30 @@ $(document).ready(function () {
             const heraldName = members[0]?.[0] || null;
             if (heraldName) {
                 const frogIcon = (typeof CONFIG !== 'undefined' && CONFIG.icons?.frog) ? CONFIG.icons.frog : '';
-                const heraldBadge = badgeButtonHtml({
-                    label: heraldName,
-                    isCurrent: true,
-                    title: `View ${heraldName}'s Circle`,
-                    icon: frogIcon,
-                    extraClass: 'herald-badge',
-                    player: heraldName
-                });
-                $headerTitle.html(`<div class="hud-title">Herald</div>${heraldBadge}`);
+                const iconImg = frogIcon ? `<img src="${frogIcon}" alt="" class="herald-icon">` : '';
+                $headerTitle.html(`
+                    <div class="hud-title">Herald</div>
+                    <button type="button" class="herald-link" data-player="${heraldName}" title="View ${heraldName}'s Circle">
+                        ${iconImg}<span>${heraldName}</span>
+                    </button>
+                `);
             } else {
                 $headerTitle.empty();
             }
+
+            const life = getTribeLifespan(activeTribe);
+            if (!life) return $ledger.empty();
+
+            const badges = life.milestones.map(m => badgeButtonHtml({
+                tribe: activeTribe,
+                dateIndex: m.idx,
+                label: m.label,
+                isCurrent: currentIndex === m.idx,
+                title: m.title
+            })).join('');
+            $ledger.html(`<div class="hud-title">Chronicle</div>${badges}`);
+            return;
+        }
 
             const life = getTribeLifespan(activeTribe);
             if (!life) return $ledger.empty();
@@ -2004,7 +2013,7 @@ $(document).ready(function () {
         updateView();
     });
 
-    $headerTitle.on('click', '.herald-badge', function (e) {
+    $headerTitle.on('click', '.herald-link', function (e) {
         e.stopPropagation();
         const player = $(this).data('player');
         if (!player) return;
