@@ -39,15 +39,6 @@
 {% endblock %}
 
 {% block content %}
-	<div class="unranked-toggle-container">
-		<input type="checkbox" 
-			   id="spotFrogsCheckbox" 
-			   checked 
-			   autocomplete="off" 
-			   onchange="if(!this.checked) window.location.href='{{ path_prefix }}index{% if is_archive and season_tag %}_{{ season_tag }}{% endif %}.html';">
-		<label for="spotFrogsCheckbox">Spot the frogs</label>
-	</div>
-
 	<div id="networkWrapper" class="network-container" data-view="hm">
 
 		<div id="tribeMapContainer" class="tribe-map-container">
