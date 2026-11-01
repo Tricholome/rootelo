@@ -30,15 +30,17 @@
 {% endblock %}
 
 {% block nav %}
+{% block nav %}
 <nav id="homelandsNav">
     <a href="{{ path_prefix }}index{% if is_archive and season_tag %}_{{ season_tag }}{% endif %}.html" class="homelands-tab-link">Leaderboard</a>
-    <a href="#map" class="homelands-tab-link active" data-tab="map">Clearings Map</a>
-    <a href="#circle" class="homelands-tab-link" data-tab="circle">Player's Circle</a>
-    <a href="#laws" class="homelands-tab-link" data-tab="laws">Diaspora Laws</a>
+    <a href="#map" class="homelands-tab-link active" data-tab="map">Homelands Map</a>
+    <a href="#network" class="homelands-tab-link" data-tab="network">Player's Network</a>
+    <a href="#guide" class="homelands-tab-link" data-tab="guide">Guide</a>
 </nav>
 {% endblock %}
 
 {% block content %}
+	<!-- 1. VUES CARTOGRAPHIQUES (Homelands Map & Player's Network) -->
 	<div id="networkWrapper" class="network-container" data-view="hm">
 
 		<div id="tribeMapContainer" class="tribe-map-container">
@@ -61,6 +63,30 @@
 			<button id="latestDateBtn" class="btn">End</button>
 		</div>
 
+	</div>
+
+	<!-- 2. VUE GUIDE & RÈGLES -->
+	<div id="guideSection" class="codex-section" style="display: none; margin-top: 20px;">
+		<h2>The Homelands Ecosystem</h2>
+		<p>
+			Homelands represent dynamic seasonal clusters formed through recurring matches. Rather than fixed regional factions, they identify stable communities of competitors who consistently share tables and anchor the Woodland's competitive life.
+		</p>
+
+		<h2>The Frog Tier &bull; Homeland Heralds</h2>
+		<p>
+			Unlike competitive tiers defined strictly by Elo rating, the <strong>Frog</strong> tier identifies structural pillars within the player network. A <strong>Herald</strong> maintains the frequent table encounters and matchmaking volume around which a seasonal homeland naturally crystallizes.
+		</p>
+
+		<h2>Allegiance & Standing</h2>
+		<p>
+			Every match shifts a player's affinity within the network:
+		</p>
+		<ul style="text-align: left; line-height: 1.8; color: var(--text-muted); font-size: var(--size-base);">
+			<li><strong style="color: var(--main-color);">Partisan</strong> &mdash; Core competitors maintaining a primary affinity of 65% or higher with their homeland.</li>
+			<li><strong style="color: color-mix(in srgb, var(--main-color) 50%, var(--color-mouse));">Squire</strong> &mdash; Regular participants with an intermediate affinity between 50% and 64%.</li>
+			<li><strong style="color: var(--color-mouse);">Friend</strong> &mdash; Occasional table companions holding less than 50% affinity.</li>
+			<li><strong>Unaligned</strong> &mdash; Independent competitors not yet tied to a persistent seasonal homeland.</li>
+		</ul>
 	</div>
 {% endblock %}
 
