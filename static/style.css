@@ -2093,13 +2093,13 @@ table.dataTable tbody tr.loser td {
    FROG / SETTLER MODE (LEADERBOARD)
    ========================================================================= */
    
-/* --- Mode Standard (par défaut sur toutes les pages) --- */
+/* --- Mode Standard (par défaut) --- */
 .banner-homelands,
 .nav-homelands {
     display: none !important;
 }
 
-/* --- Mode Homelands (actif sur network.html ou quand on coche la case sur index.html) --- */
+/* --- Mode Homelands activé --- */
 body.homelands-mode {
     --main-color: var(--color-frog);
 }
@@ -2109,12 +2109,26 @@ body.homelands-mode .nav-standard {
     display: none !important;
 }
 
-body.homelands-mode .banner-homelands {
+body.homelands-mode .banner-homelands,
+body.homelands-mode .nav-homelands {
     display: flex !important;
 }
 
-body.homelands-mode .nav-homelands {
-    display: flex !important;
+/* --- Adoucissement simple (fondu à l'apparition) --- */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+.banner-homelands,
+.nav-homelands,
+.banner-standard,
+.nav-standard {
+    animation: fadeIn 0.25s ease;
+}
+
+body, .window-box {
+    transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 /* Lien conteneur d'icône : garantit un alignement vertical neutre */
