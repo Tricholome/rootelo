@@ -2056,25 +2056,56 @@ table.dataTable tbody tr.loser td {
     visibility: visible;
 }
 
-/* FROG mode */
+/* =========================================================================
+   FROG / SETTLER MODE (LEADERBOARD)
+   ========================================================================= */
 
-/* Par défaut : les grenouilles restent tapies dans l'ombre */
-.frog-leader-icon {
-    display: none;
-}
-
-/* --- Quand le mode Grenouilles est actif --- */
-
-/* 1. On efface les animaux ordinaires sans casser la largeur de la colonne */
-#leaderboard.frogs-mode .standard-tier {
-    visibility: hidden;
-}
-
-/* 2. On révèle uniquement les têtes de grenouilles */
-#leaderboard.frogs-mode .frog-leader-icon {
+/* Lien conteneur d'icône : garantit un alignement vertical neutre */
+.tier-anchor-link {
     display: inline-flex;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    line-height: 0;
+}
+
+/* Par défaut : les grenouilles sont invisibles */
+.frog-leader-icon {
+    display: none !important;
+}
+
+/* --- Quand le mode Grenouilles est activé (.frogs-mode) --- */
+
+/* 1. On retire complètement les animaux standards du flux (aucun décalage de hauteur) */
+#leaderboard.frogs-mode .standard-tier {
+    display: none !important;
+}
+
+/* 2. On affiche uniquement la grenouille centrée */
+#leaderboard.frogs-mode .frog-leader-icon {
+    display: inline-flex !important;
+}
+
+/* 3. Neutralisation de la couleur de tier de toutes les lignes */
+#leaderboard.frogs-mode tbody tr {
+    background-color: transparent !important;
+    border-left: 4px solid transparent !important;
+}
+
+#leaderboard.frogs-mode tbody tr td:nth-child(4) {
+    color: var(--text-main) !important;
+}
+
+/* 4. Coloration exclusive pour les lignes des Settlers */
+#leaderboard.frogs-mode tbody tr[data-settler="true"],
+#leaderboard.frogs-mode tbody tr.settler-row {
+    background-color: var(--color-frog-bg, rgba(88, 176, 92, 0.08)) !important;
+    border-left: 4px solid var(--color-frog, #58B05C) !important;
+}
+
+#leaderboard.frogs-mode tbody tr[data-settler="true"] td:nth-child(4),
+#leaderboard.frogs-mode tbody tr.settler-row td:nth-child(4) {
+    color: var(--color-frog, #58B05C) !important;
 }
 
 /* =========================================================================
