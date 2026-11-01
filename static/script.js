@@ -164,13 +164,36 @@ document.addEventListener('DOMContentLoaded', function() {
 		modalText.textContent = text.desc;
 
 		if (tier === 'frog' && clearing) {
+			const clearingClean = clearing.charAt(0).toUpperCase() + clearing.slice(1).toLowerCase();
 			const itemIconPath = `${PATH_PREFIX}assets/items/${clearing.toLowerCase()}.png`;
+
+			const pageName = window.location.pathname.split('/').pop() || '';
+			let networkUrl = `${PATH_PREFIX}network.html?clearing=${encodeURIComponent(clearing.toLowerCase())}`;
+			if (pageName.includes('_')) {
+				const seasonSuffix = pageName.substring(pageName.indexOf('_') + 1).replace(/\.html$/i, '');
+				networkUrl = `${PATH_PREFIX}network_${seasonSuffix}.html?clearing=${encodeURIComponent(clearing.toLowerCase())}`;
+			}
+
+			const tooltipTitle = `Explore ${clearingClean} Clearing on map`;
+
 			if (supporterLeft) {
-				supporterLeft.src = itemIconPath;
+				supporterLeft.href = networkUrl;
+				supporterLeft.title = tooltipTitle;
+				const img = supporterLeft.querySelector('img');
+				if (img) {
+					img.src = itemIconPath;
+					img.alt = clearingClean;
+				}
 				supporterLeft.style.display = 'block';
 			}
 			if (supporterRight) {
-				supporterRight.src = itemIconPath;
+				supporterRight.href = networkUrl;
+				supporterRight.title = tooltipTitle;
+				const img = supporterRight.querySelector('img');
+				if (img) {
+					img.src = itemIconPath;
+					img.alt = clearingClean;
+				}
 				supporterRight.style.display = 'block';
 			}
 		} else {
@@ -1272,17 +1295,42 @@ $(document).ready(function () {
         return key ? { name: key, data: constellations[key] } : null;
     }
 
-    // Persistance inter-saisons : ouverture automatique en mode PN si un joueur est actif
-    const urlParam = new URLSearchParams(window.location.search).get('player');
+    // --- Résolution de la vue initiale (Paramètres URL : clearing ou player) ---
+    const urlParams = new URLSearchParams(window.location.search);
+    const clearingParam = urlParams.get('clearing') || urlParams.get('tribe');
+    const playerParam = urlParams.get('player');
     const savedPlayer = localStorage.getItem('selectedPlayer');
-    const initialQuery = ($searchInput.val() || urlParam || savedPlayer || '').trim();
 
-    if (initialQuery) {
-        const found = findPlayer(initialQuery);
-        if (found) {
-            selectedPlayer = found.name;
-            currentView = 'pn';
-            $searchInput.val(selectedPlayer);
+    if (clearingParam) {
+        const qClearing = clearingParam.trim().toLowerCase();
+        let matchedTribe = null;
+
+        // Retrouve la casse exacte de la clairière dans les snapshots (ex: 'Sword' ou 'SWORD')
+        for (const snap of Object.values(snapshots)) {
+            const foundKey = Object.keys(snap).find(k => k.toLowerCase() === qClearing);
+            if (foundKey) {
+                matchedTribe = foundKey;
+                break;
+            }
+        }
+        if (!matchedTribe) {
+            matchedTribe = clearingParam.charAt(0).toUpperCase() + clearingParam.slice(1).toLowerCase();
+        }
+
+        // Active directement le mode HN (Homeland Network) centré sur cette clairière
+        currentView = 'hn';
+        activeTribe = matchedTribe;
+        selectedPlayer = null;
+        if ($searchInput.length) $searchInput.val('');
+    } else {
+        const initialQuery = ($searchInput.val() || playerParam || savedPlayer || '').trim();
+        if (initialQuery) {
+            const found = findPlayer(initialQuery);
+            if (found) {
+                selectedPlayer = found.name;
+                currentView = 'pn';
+                $searchInput.val(selectedPlayer);
+            }
         }
     }
 
