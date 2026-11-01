@@ -59,6 +59,20 @@ body::after {
     opacity: 1; 
 }
 
+/* Ambient Theme Transitions & Mode Overrides */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+body, .window-box {
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+body.homelands-mode {
+    --main-color: var(--color-frog);
+}
+
 /* --- 1.2 Typography & Link Utilities --- */
 .text-left    { text-align: left !important; }
 .text-center  { text-align: center !important; }
@@ -377,6 +391,20 @@ nav a.active {
     margin: 15px auto;
     border-top: 1px solid var(--border-dark);
     border-bottom: 1px solid var(--border-light);
+}
+
+/* Homelands Navigation Mode */
+.nav-homelands {
+    display: none !important;
+}
+
+body.homelands-mode .nav-standard {
+    display: none !important;
+}
+
+body.homelands-mode .nav-homelands {
+    display: flex !important;
+    animation: fadeIn 0.25s ease;
 }
 
 /* --- 3.2 Season Selector --- */
@@ -715,6 +743,88 @@ nav a.active {
     .tooltip-text strong { display: block; margin-bottom: 2px; }
 }
 
+/* Homelands Banner State & Slot Alignment */
+.banner-homelands {
+    display: none !important;
+}
+
+body.homelands-mode .banner-standard {
+    display: none !important;
+}
+
+body.homelands-mode .banner-homelands {
+    display: flex !important;
+    animation: fadeIn 0.25s ease;
+}
+
+.banner-homelands .homeland-slot {
+    position: relative;
+    width: clamp(55px, 7vw, 85px);
+    height: clamp(55px, 7vw, 85px);
+    margin: 0 -5px;
+    pointer-events: none;
+    user-select: none;
+}
+
+.banner-homelands .homeland-slot img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.6));
+    will-change: opacity, transform;
+}
+
+@media (max-width: 768px) and (orientation: portrait) {
+    .banner-homelands .homeland-slot {
+        margin: 0;
+    }
+}
+
+/* Homelands Banner Icon Cycle */
+.banner-homelands .base-icon {
+    animation: cycleBase 12s infinite ease-in-out;
+}
+
+.banner-homelands .frog-icon {
+    opacity: 0;
+    animation: cycleFrog 12s infinite ease-in-out;
+}
+
+.banner-homelands .slot-bird .base-icon,
+.banner-homelands .slot-bird .frog-icon {
+    animation-delay: 0s;
+}
+
+.banner-homelands .slot-fox .base-icon,
+.banner-homelands .slot-fox .frog-icon {
+    animation-delay: 3s;
+}
+
+.banner-homelands .slot-rabbit .base-icon,
+.banner-homelands .slot-rabbit .frog-icon {
+    animation-delay: 6s;
+}
+
+.banner-homelands .slot-mouse .base-icon,
+.banner-homelands .slot-mouse .frog-icon {
+    animation-delay: 9s;
+}
+
+@keyframes cycleFrog {
+    0%, 100% { opacity: 0; transform: scale(0.92); }
+    3%, 18%  { opacity: 1; transform: scale(1); }
+    22%      { opacity: 0; transform: scale(0.92); }
+}
+
+@keyframes cycleBase {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    3%, 18%  { opacity: 0; transform: scale(0.92); }
+    22%      { opacity: 1; transform: scale(1); }
+}
+
 /* -------------------------------------------------------------------------
    [COMPONENTS] 2. FORM CONTROLS (Inputs, Checkboxes, Buttons)
    ------------------------------------------------------------------------- */
@@ -976,6 +1086,47 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     vertical-align: middle;
     cursor: pointer;
     accent-color: var(--main-color); 
+}
+
+/* Leaderboard Tier Anchor Links & Homelands State */
+.tier-anchor-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    line-height: 0;
+}
+
+.frog-leader-icon {
+    display: none !important;
+}
+
+body.homelands-mode #leaderboard .standard-tier {
+    display: none !important;
+}
+
+body.homelands-mode #leaderboard .frog-leader-icon {
+    display: inline-flex !important;
+}
+
+body.homelands-mode #leaderboard tbody tr {
+    background-color: transparent !important;
+    border-left: 4px solid transparent !important;
+}
+
+body.homelands-mode #leaderboard tbody tr td:nth-child(4) {
+    color: var(--text-main) !important;
+}
+
+body.homelands-mode #leaderboard tbody tr[data-settler="true"],
+body.homelands-mode #leaderboard tbody tr.settler-row {
+    background-color: var(--color-frog-bg) !important;
+    border-left: 4px solid var(--color-frog) !important;
+}
+
+body.homelands-mode #leaderboard tbody tr[data-settler="true"] td:nth-child(4),
+body.homelands-mode #leaderboard tbody tr.settler-row td:nth-child(4) {
+    color: var(--color-frog) !important;
 }
 
 /* Matches Table Specifics */
@@ -2090,186 +2241,6 @@ table.dataTable tbody tr.loser td {
 }
 
 /* =========================================================================
-   FROG / SETTLER MODE (LEADERBOARD)
-   ========================================================================= */
-   
-/* --- Mode Standard (par défaut) --- */
-.banner-homelands,
-.nav-homelands {
-    display: none !important;
-}
-
-/* --- Mode Homelands activé --- */
-body.homelands-mode {
-    --main-color: var(--color-frog);
-}
-
-body.homelands-mode .banner-standard,
-body.homelands-mode .nav-standard {
-    display: none !important;
-}
-
-body.homelands-mode .banner-homelands,
-body.homelands-mode .nav-homelands {
-    display: flex !important;
-}
-
-/* --- Adoucissement simple (fondu à l'apparition) --- */
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to   { opacity: 1; }
-}
-
-.banner-homelands,
-.nav-homelands,
-.banner-standard,
-.nav-standard {
-    animation: fadeIn 0.25s ease;
-}
-
-body, .window-box {
-    transition: background-color 0.3s ease, border-color 0.3s ease;
-}
-
-/* --- BANNIÈRE HOMELANDS : SLOTS FIXES SANS INTERACTION --- */
-.banner-homelands .homeland-slot {
-    position: relative;
-    width: clamp(55px, 7vw, 85px);
-    height: clamp(55px, 7vw, 85px);
-    margin: 0 -5px; /* Écartement et chevauchement natifs de la bannière */
-    pointer-events: none;
-    user-select: none;
-}
-
-.banner-homelands .homeland-slot img {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.6));
-    will-change: opacity, transform;
-}
-
-@media (max-width: 768px) and (orientation: portrait) {
-    .banner-homelands .homeland-slot {
-        margin: 0;
-    }
-}
-
-/* --- ANIMATION EN CYCLE (12s total / 3s par animal) --- */
-.banner-homelands .base-icon {
-    animation: cycleBase 12s infinite ease-in-out;
-}
-
-.banner-homelands .frog-icon {
-    opacity: 0;
-    animation: cycleFrog 12s infinite ease-in-out;
-}
-
-/* Décalage temporel pour chaque animal */
-.banner-homelands .slot-bird .base-icon,
-.banner-homelands .slot-bird .frog-icon {
-    animation-delay: 0s;
-}
-
-.banner-homelands .slot-fox .base-icon,
-.banner-homelands .slot-fox .frog-icon {
-    animation-delay: 3s;
-}
-
-.banner-homelands .slot-rabbit .base-icon,
-.banner-homelands .slot-rabbit .frog-icon {
-    animation-delay: 6s;
-}
-
-.banner-homelands .slot-mouse .base-icon,
-.banner-homelands .slot-mouse .frog-icon {
-    animation-delay: 9s;
-}
-
-/* Keyframes : apparition discrète de la grenouille */
-@keyframes cycleFrog {
-    0%, 100% {
-        opacity: 0;
-        transform: scale(0.92);
-    }
-    3%, 18% {
-        opacity: 1;
-        transform: scale(1);
-    }
-    22% {
-        opacity: 0;
-        transform: scale(0.92);
-    }
-}
-
-/* Keyframes : estompement de l'animal d'origine */
-@keyframes cycleBase {
-    0%, 100% {
-        opacity: 1;
-        transform: scale(1);
-    }
-    3%, 18% {
-        opacity: 0;
-        transform: scale(0.92);
-    }
-    22% {
-        opacity: 1;
-        transform: scale(1);
-    }
-}
-
-/* Lien conteneur d'icône : garantit un alignement vertical neutre */
-.tier-anchor-link {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    text-decoration: none;
-    line-height: 0;
-}
-
-/* Par défaut : les grenouilles sont invisibles */
-.frog-leader-icon {
-    display: none !important;
-}
-
-/* --- Quand le mode Grenouilles est activé (.frogs-mode) --- */
-
-/* 1. Masquage des tiers standards en mode homelands */
-body.homelands-mode #leaderboard .standard-tier {
-    display: none !important;
-}
-
-/* 2. Affichage des grenouilles */
-body.homelands-mode #leaderboard .frog-leader-icon {
-    display: inline-flex !important;
-}
-
-/* 3. Lignes neutres */
-body.homelands-mode #leaderboard tbody tr {
-    background-color: transparent !important;
-    border-left: 4px solid transparent !important;
-}
-
-body.homelands-mode #leaderboard tbody tr td:nth-child(4) {
-    color: var(--text-main) !important;
-}
-
-/* 4. Surbrillance des Heralds */
-body.homelands-mode #leaderboard tbody tr[data-settler="true"],
-body.homelands-mode #leaderboard tbody tr.settler-row {
-    background-color: var(--color-frog-bg) !important;
-    border-left: 4px solid var(--color-frog) !important;
-}
-
-body.homelands-mode #leaderboard tbody tr[data-settler="true"] td:nth-child(4),
-body.homelands-mode #leaderboard tbody tr.settler-row td:nth-child(4) {
-    color: var(--color-frog) !important;
-}
-
-/* =========================================================================
    --- V. SPECIAL EFFECTS & SECRET CONTENT ---
    ========================================================================= */
 
@@ -2840,5 +2811,3 @@ body.hof-unlocked .hof-section {
 }
 
 .visitor-date { white-space: nowrap; }
-
-{% block extra_css %}{% endblock %}
