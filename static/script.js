@@ -204,6 +204,7 @@ $(document).ready(function() {
 	if ($('#leaderboard').length > 0) {
 		const pageName = window.location.pathname.split('/').pop() || '';
 		let showAllPlayers = !pageName.includes('_'); 
+		let savedClassicState = showAllPlayers;
 
 		$('#tierFilterCheckbox').prop('checked', showAllPlayers);
 
@@ -220,8 +221,10 @@ $(document).ready(function() {
 			const rowNode = settings.aoData[dataIndex].nTr;
 			if (!rowNode) return true;
 
-			if ($('#spotFrogsCheckbox').is(':checked')) {
-				return true;
+			const isFrogMode = $('#spotFrogsCheckbox').is(':checked');
+
+			if (isFrogMode) {
+				return showAllPlayers || rowNode.dataset.settler === 'true';
 			}
 
 			return showAllPlayers || rowNode.dataset.tier !== 'unassigned';
@@ -248,10 +251,8 @@ $(document).ready(function() {
 		leaderboardTable.draw();
 
 		$(document).on('change', '#tierFilterCheckbox', function() {
-			if (!$('#spotFrogsCheckbox').is(':checked')) {
-				showAllPlayers = $(this).is(':checked');
-				$('#leaderboard').DataTable().draw();
-			}
+			showAllPlayers = $(this).is(':checked');
+			$('#leaderboard').DataTable().draw();
 		});
 
 		$(document).on('change', '#spotFrogsCheckbox', function() {
@@ -259,9 +260,12 @@ $(document).ready(function() {
 			$('#leaderboard').toggleClass('frogs-mode', isFrogMode);
 
 			if (isFrogMode) {
+				savedClassicState = $('#tierFilterCheckbox').is(':checked');
+				showAllPlayers = false;
 				$('#tierFilterCheckbox').prop('checked', false);
 			} else {
-				$('#tierFilterCheckbox').prop('checked', showAllPlayers);
+				showAllPlayers = savedClassicState;
+				$('#tierFilterCheckbox').prop('checked', savedClassicState);
 			}
 
 			$('#leaderboard').DataTable().draw();
