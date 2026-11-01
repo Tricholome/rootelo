@@ -163,43 +163,17 @@ document.addEventListener('DOMContentLoaded', function() {
 		modalSubtitle.textContent = text.subtitle || '';
 		modalText.textContent = text.desc;
 
-		if (tier === 'frog' && clearing) {
-			const clearingClean = clearing.charAt(0).toUpperCase() + clearing.slice(1).toLowerCase();
-			const itemIconPath = `${PATH_PREFIX}assets/items/${clearing.toLowerCase()}.png`;
+		const isFrog = (tier === 'frog' && clearing);
+		const page = window.location.pathname.split('/').pop() || '';
+		const suffix = page.includes('_') ? '_' + page.split('_')[1].replace('.html', '') : '';
 
-			const pageName = window.location.pathname.split('/').pop() || '';
-			let networkUrl = `${PATH_PREFIX}network.html?clearing=${encodeURIComponent(clearing.toLowerCase())}`;
-			if (pageName.includes('_')) {
-				const seasonSuffix = pageName.substring(pageName.indexOf('_') + 1).replace(/\.html$/i, '');
-				networkUrl = `${PATH_PREFIX}network_${seasonSuffix}.html?clearing=${encodeURIComponent(clearing.toLowerCase())}`;
+		[supporterLeft, supporterRight].forEach(el => {
+			el.style.display = isFrog ? 'block' : 'none';
+			if (isFrog) {
+				el.href = `${PATH_PREFIX}network${suffix}.html?clearing=${clearing.toLowerCase()}`;
+				el.querySelector('img').src = `${PATH_PREFIX}assets/items/${clearing.toLowerCase()}.png`;
 			}
-
-			const tooltipTitle = `Explore ${clearingClean} Clearing on map`;
-
-			if (supporterLeft) {
-				supporterLeft.href = networkUrl;
-				supporterLeft.title = tooltipTitle;
-				const img = supporterLeft.querySelector('img');
-				if (img) {
-					img.src = itemIconPath;
-					img.alt = clearingClean;
-				}
-				supporterLeft.style.display = 'block';
-			}
-			if (supporterRight) {
-				supporterRight.href = networkUrl;
-				supporterRight.title = tooltipTitle;
-				const img = supporterRight.querySelector('img');
-				if (img) {
-					img.src = itemIconPath;
-					img.alt = clearingClean;
-				}
-				supporterRight.style.display = 'block';
-			}
-		} else {
-			if (supporterLeft) supporterLeft.style.display = 'none';
-			if (supporterRight) supporterRight.style.display = 'none';
-		}
+		});
 
 		if (modalFinal) {
 			modalFinal.innerHTML = text.final || '';
