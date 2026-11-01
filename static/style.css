@@ -2147,36 +2147,36 @@ body, .window-box {
 
 /* --- Quand le mode Grenouilles est activé (.frogs-mode) --- */
 
-/* 1. On retire complètement les animaux standards du flux (aucun décalage de hauteur) */
-#leaderboard.frogs-mode .standard-tier {
+/* 1. Masquage des tiers standards en mode homelands */
+body.homelands-mode #leaderboard .standard-tier {
     display: none !important;
 }
 
-/* 2. On affiche uniquement la grenouille centrée */
-#leaderboard.frogs-mode .frog-leader-icon {
+/* 2. Affichage des grenouilles */
+body.homelands-mode #leaderboard .frog-leader-icon {
     display: inline-flex !important;
 }
 
-/* 3. Neutralisation de la couleur de tier de toutes les lignes */
-#leaderboard.frogs-mode tbody tr {
+/* 3. Lignes neutres */
+body.homelands-mode #leaderboard tbody tr {
     background-color: transparent !important;
     border-left: 4px solid transparent !important;
 }
 
-#leaderboard.frogs-mode tbody tr td:nth-child(4) {
+body.homelands-mode #leaderboard tbody tr td:nth-child(4) {
     color: var(--text-main) !important;
 }
 
-/* 4. Coloration exclusive pour les lignes des Settlers */
-#leaderboard.frogs-mode tbody tr[data-settler="true"],
-#leaderboard.frogs-mode tbody tr.settler-row {
-    background-color: var(--color-frog-bg, rgba(88, 176, 92, 0.08)) !important;
-    border-left: 4px solid var(--color-frog, #58B05C) !important;
+/* 4. Surbrillance des Heralds */
+body.homelands-mode #leaderboard tbody tr[data-settler="true"],
+body.homelands-mode #leaderboard tbody tr.settler-row {
+    background-color: var(--color-frog-bg) !important;
+    border-left: 4px solid var(--color-frog) !important;
 }
 
-#leaderboard.frogs-mode tbody tr[data-settler="true"] td:nth-child(4),
-#leaderboard.frogs-mode tbody tr.settler-row td:nth-child(4) {
-    color: var(--color-frog, #58B05C) !important;
+body.homelands-mode #leaderboard tbody tr[data-settler="true"] td:nth-child(4),
+body.homelands-mode #leaderboard tbody tr.settler-row td:nth-child(4) {
+    color: var(--color-frog) !important;
 }
 
 /* =========================================================================
