@@ -83,7 +83,7 @@
 	
         <header class="app-banner window-box">
 		
-            <!-- 1. BANNIÈRE STANDARD (Canopée & Paliers Elo) -->
+            <!-- 1. STANDARD BANNER -->
             <div class="banner-container banner-standard">
                 <div class="banner-icons left">
                     <a href="javascript:void(0)" onclick="openTierModal('stag')" class="tooltip-link js-double-tap banner-icon-stag">
@@ -119,17 +119,39 @@
                 </div>
             </div>
 
-            <!-- 2. BANNIÈRE HOMELANDS (Univers des Marais) -->
+            <!-- 2. HOMELANDS BANNER -->
             <div class="banner-container banner-homelands">
+                <div class="banner-icons left">
+                    <div class="homeland-slot slot-bird">
+                        <img src="{{ path_prefix }}{{ config.assets.icons.bird }}" alt="Bird" class="base-icon">
+                        <img src="{{ path_prefix }}{{ config.assets.icons.frog }}" alt="Frog" class="frog-icon">
+                    </div>
+                    <div class="homeland-slot slot-fox">
+                        <img src="{{ path_prefix }}{{ config.assets.icons.fox }}" alt="Fox" class="base-icon">
+                        <img src="{{ path_prefix }}{{ config.assets.icons.frog }}" alt="Frog" class="frog-icon">
+                    </div>
+                </div>
+
                 <div class="banner-center">
                     <h1 class="site-title">ROOTELO</h1>
-                    <p class="site-subtitle">Homelands &bull; The Woodland Fellowships</p>
+                    <p class="site-subtitle">A Metric of Woodland&nbsp;Skill&nbsp;and&nbsp;Will</p>
+                </div>
+
+                <div class="banner-icons right">
+                    <div class="homeland-slot slot-rabbit">
+                        <img src="{{ path_prefix }}{{ config.assets.icons.rabbit }}" alt="Rabbit" class="base-icon">
+                        <img src="{{ path_prefix }}{{ config.assets.icons.frog }}" alt="Frog" class="frog-icon">
+                    </div>
+                    <div class="homeland-slot slot-mouse">
+                        <img src="{{ path_prefix }}{{ config.assets.icons.mouse }}" alt="Mouse" class="base-icon">
+                        <img src="{{ path_prefix }}{{ config.assets.icons.frog }}" alt="Frog" class="frog-icon">
+                    </div>
                 </div>
             </div>
             
             <div class="nav-separator"></div>
 
-            <!-- 1. NAVIGATION STANDARD DU SITE -->
+            <!-- 1. STANDARD NAVIGATION -->
             <nav class="nav-standard">
 				{% set nav_links = [('index', 'Leaderboard'), ('matches', 'Top Tables'), ('trends', "Player's Journey"), ('about', 'Codex')] %}
 
@@ -145,7 +167,7 @@
 				<a href="cache.html" class="nav-secret {{ 'active' if page_id == 'cache' or active_section == 'cache' else '' }}">Undergrowth</a>
 			</nav>
 
-            <!-- 2. NAVIGATION HOMELANDS -->
+            <!-- 2. HOMELANDS NAVIGATION -->
             <nav id="homelandsNav" class="nav-homelands">
 				<a href="{{ path_prefix }}index{% if is_archive and season_tag %}_{{ season_tag }}{% endif %}.html" class="homelands-tab-link {{ 'active' if page_id == 'index' else '' }}">Leaderboard</a>
 				<a href="{{ path_prefix }}network{% if is_archive and season_tag %}_{{ season_tag }}{% endif %}.html#map" class="homelands-tab-link {{ 'active' if page_id == 'network' else '' }}" data-tab="map">Homelands</a>
