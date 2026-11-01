@@ -1258,6 +1258,11 @@ $(document).ready(function () {
     const $legend = $('#mapLegend');
     const $ledger = $('#playerLedger');
 
+    $earliestBtn.html('&laquo;');
+    $prevBtn.html('&lsaquo;');
+    $nextBtn.html('&rsaquo;');
+    $latestBtn.html('&raquo;');
+
     let currentView = 'hm';
     let activeTribe = null;
     let selectedPlayer = null;
@@ -1472,27 +1477,31 @@ $(document).ready(function () {
         }));
     }
 
-    function badgeButtonHtml({ tribe, dateIndex, label, isCurrent, title, icon }) {
-        const iconImg = icon ? `<img src="${icon}" alt="${tribe}" class="allegiance-icon">` : '';
+    function badgeButtonHtml({ tribe, dateIndex, label, isCurrent, title, icon, extraClass = '', player = '' }) {
+        const iconImg = icon ? `<img src="${icon}" alt="" class="allegiance-icon">` : '';
+        const dataAttrs = player
+            ? `data-player="${player}"`
+            : `data-tribe="${tribe}" data-date-index="${dateIndex}"`;
         return `
-            <button type="button" class="allegiance-badge ${isCurrent ? 'is-current' : 'is-past'}"
-                    data-tribe="${tribe}" data-date-index="${dateIndex}" title="${title}">
+            <button type="button" class="allegiance-badge ${isCurrent ? 'is-current' : 'is-past'} ${extraClass}"
+                    ${dataAttrs} title="${title}">
                 ${iconImg}<span class="allegiance-date">${label}</span>
             </button>`;
     }
 
-    function renderLegend(items) {
-        $legend.html(items.map(([color, text]) =>
+    function renderLegend(title, items) {
+        const listHtml = items.map(([color, text]) =>
             `<div class="legend-item"><span class="legend-dot" style="background: ${color}"></span><span>${text}</span></div>`
-        ).join(''));
+        ).join('');
+        $legend.html(`<div class="hud-title">${title}</div>${listHtml}`);
     }
 
-    function updateChrome() {
+    function updateChrome(snapshot) {
         $wrapper.attr('data-view', currentView);
 
         if (currentView === 'pn' && selectedPlayer) {
-            $headerTitle.html(`&lsaquo; ${selectedPlayer.toUpperCase()}'S CIRCLE`);
-            renderLegend([
+            $headerTitle.empty();
+            renderLegend('Companions', [
                 [same_tribe, 'Same homeland'],
                 [other_tribe, 'Other homeland'],
                 [unaligned, 'Unaligned']
@@ -1513,17 +1522,33 @@ $(document).ready(function () {
                         icon: config.tribes?.[s.tribe]?.icon
                     });
                 }).join('');
-            $ledger.html(`<div class="allegiance-ledger-title">Allegiances</div>${badges}`);
+            $ledger.html(`<div class="hud-title">Allegiances</div>${badges}`);
             return;
         }
 
         if (currentView === 'hn' && activeTribe) {
-            $headerTitle.html(`&lsaquo; ${activeTribe.toUpperCase()} CLEARING`);
-            renderLegend([
+            renderLegend('Fidelity (%)', [
                 [same_tribe, 'Partisan'],
                 [`color-mix(in srgb, ${same_tribe} 50%, ${other_tribe})`, 'Squire'],
                 [other_tribe, 'Friend']
             ]);
+
+            const members = [...(snapshot?.[activeTribe] || [])].sort((a, b) => b[2] - a[2]);
+            const heraldName = members[0]?.[0] || null;
+            if (heraldName) {
+                const frogIcon = (typeof CONFIG !== 'undefined' && CONFIG.icons?.frog) ? CONFIG.icons.frog : '';
+                const heraldBadge = badgeButtonHtml({
+                    label: heraldName,
+                    isCurrent: true,
+                    title: `View ${heraldName}'s Circle`,
+                    icon: frogIcon,
+                    extraClass: 'herald-badge',
+                    player: heraldName
+                });
+                $headerTitle.html(`<div class="hud-title">Herald</div>${heraldBadge}`);
+            } else {
+                $headerTitle.empty();
+            }
 
             const life = getTribeLifespan(activeTribe);
             if (!life) return $ledger.empty();
@@ -1535,11 +1560,11 @@ $(document).ready(function () {
                 isCurrent: currentIndex === m.idx,
                 title: m.title
             })).join('');
-            $ledger.html(`<div class="allegiance-ledger-title">Chronicle</div>${badges}`);
+            $ledger.html(`<div class="hud-title">Chronicle</div>${badges}`);
             return;
         }
 
-        $headerTitle.text('HOMELANDS MAP');
+        $headerTitle.empty();
         $legend.empty();
         $ledger.empty();
     }
@@ -1570,7 +1595,7 @@ $(document).ready(function () {
             });
 
             const minDist = cRad + maxPRad + 16;
-            const maxDist = Math.min(198, Math.max(minDist + 40, 85 + total * 5.5));
+            const maxDist = Math.min(180, Math.max(minDist + 40, 80 + total * 5));
             const sMax = Math.sqrt(maxW), sMin = Math.sqrt(minW);
 
             partners.forEach(([pName, weight], idx) => {
@@ -1637,7 +1662,7 @@ $(document).ready(function () {
                 status: `${Math.round(fidelity)}%`,
                 color,
                 radius: 8 + (maxWeight > 0 ? weight / maxWeight : 0) * 14,
-                dist: ringKey === 'core' ? 75 : ringKey === 'mid' ? 125 : 185,
+                dist: ringKey === 'core' ? 75 : ringKey === 'mid' ? 120 : 170,
                 angle
             });
             links.push({ source: activeTribe, target: id, type: 'constellation-link', color });
@@ -1649,15 +1674,18 @@ $(document).ready(function () {
     function renderGraph(snapshot) {
         if (typeof d3 === 'undefined') return;
 
+        updateChrome(snapshot);
+
         const svg = d3.select('#tribeMapSvg');
-        const container = document.getElementById('tribeMapContainer');
-        const width = container?.clientWidth || 800;
-        const height = container?.clientHeight || 450;
-        const originX = width / 2, originY = height / 2;
+        const svgEl = document.getElementById('tribeMapSvg');
+        const width = svgEl?.clientWidth || 800;
+        const height = svgEl?.clientHeight || 450;
+        const isDesktop = window.innerWidth > 768;
+        const originX = width / 2;
+        const originY = height / 2 + (isDesktop && currentView === 'hn' ? 16 : 0);
         const duration = 450, easeFn = d3.easeCubicOut;
 
         const { nodes: newNodes, links: newLinks } = buildGraphData(snapshot);
-        updateChrome();
 
         const prevMap = new Map(simulation ? simulation.nodes().map(d => [d.id, d]) : []);
         const topologyChanged = lastRenderedView !== currentView ||
@@ -1767,16 +1795,17 @@ $(document).ready(function () {
                 g.select('.lbl-span').text(d.count === 1 ? ' denizen' : ' denizens');
             } else {
                 g.select('.player-name-tspan')
-                    .attr('dy', d.type === 'ego-center' ? '-0.2em' : null)
+                    .attr('dy', d.type === 'ego-center' ? '-0.25em' : '0.32em')
                     .text(d.name);
                 g.select('.player-status-tspan')
-                    .attr('dy', d.type === 'ego-center' ? '1.1em' : '1.15em')
+                    .attr('dy', d.type === 'ego-center' ? '1.15em' : '1.15em')
                     .text(d.status || '');
             }
         });
 
         node.on('click', (event, d) => {
             if (event.defaultPrevented) return;
+            event.stopPropagation();
 
             if (d.type === 'tribe' && currentView !== 'pn') {
                 activeTribe = activeTribe === d.id ? null : d.id;
@@ -1788,6 +1817,16 @@ $(document).ready(function () {
                 currentView = 'pn';
                 activeTribe = null;
                 setSearchPlayer(d.name);
+                updateView();
+            }
+        });
+
+        svg.on('click', () => {
+            if (currentView === 'hn') {
+                currentView = 'hm';
+                activeTribe = null;
+                selectedPlayer = null;
+                clearSearch();
                 updateView();
             }
         });
@@ -1840,9 +1879,16 @@ $(document).ready(function () {
             }
 
             newNodes.forEach(d => {
-                const pad = (d.currentRadius ?? d.radius) + 4;
+                const r = d.currentRadius ?? d.radius;
+                const pad = r + 6;
+                let topPad = pad;
+
+                if (isDesktop && currentView === 'hn' && Math.abs(d.x - originX) < 95) {
+                    topPad = Math.max(pad, 68);
+                }
+
                 d.x = Math.max(pad, Math.min(width - pad, d.x));
-                d.y = Math.max(pad, Math.min(height - pad, d.y));
+                d.y = Math.max(topPad, Math.min(height - pad, d.y));
             });
 
             link.each(function (d) {
@@ -1958,18 +2004,20 @@ $(document).ready(function () {
         updateView();
     });
 
+    $headerTitle.on('click', '.herald-badge', function (e) {
+        e.stopPropagation();
+        const player = $(this).data('player');
+        if (!player) return;
+        currentView = 'pn';
+        activeTribe = null;
+        setSearchPlayer(player);
+        updateView();
+    });
+
     $searchInput.on('input change', function () {
         if (isInternalSearch) return;
         currentView = 'pn';
         activeTribe = null;
-        updateView();
-    });
-
-    $headerTitle.on('click', () => {
-        currentView = 'hm';
-        activeTribe = null;
-        selectedPlayer = null;
-        clearSearch();
         updateView();
     });
 
