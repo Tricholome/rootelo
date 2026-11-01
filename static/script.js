@@ -2070,8 +2070,10 @@ $(document).ready(function () {
     }
 
     $(document).on('click', '.homelands-tab-link[data-tab]', function(e) {
-        e.preventDefault();
         const tab = $(this).data('tab');
+        if (tab === 'leaderboard') return;
+
+        e.preventDefault();
         setActiveTab(tab);
         if (history.replaceState) {
             history.replaceState(null, null, '#' + tab);
