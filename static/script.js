@@ -1247,84 +1247,8 @@ $(document).ready(function () {
     const GOLDEN_ANGLE = Math.PI * (3 - Math.sqrt(5));
     const TIER_PHASE = { core: 0, mid: 0.22, outer: 0.47 };
 
-    const $searchInput = $('#playerName');
-
-    let currentView = 'hm';
-    let activeTribe = null;
-    let selectedPlayer = null;
-    let currentIndex = dates.length - 1;
-
-    // Helpers de synchronisation globale
-    function setSearchPlayer(name) {
-        $searchInput.val(name);
-        if (typeof window.applyGlobalSearch === 'function') {
-            window.applyGlobalSearch(name);
-        } else {
-            localStorage.setItem('selectedPlayer', name);
-        }
-    }
-
-    function clearSearch() {
-        $searchInput.val('');
-        if (typeof window.applyGlobalSearch === 'function') {
-            window.applyGlobalSearch('');
-        } else {
-            localStorage.removeItem('selectedPlayer');
-        }
-    }
-
-    function findPlayer(query) {
-        const q = (query || '').trim();
-        if (!q) return null;
-        if (constellations[q]) return { name: q, data: constellations[q] };
-        const low = q.toLowerCase();
-        const key = Object.keys(constellations).find(k => k.toLowerCase() === low);
-        return key ? { name: key, data: constellations[key] } : null;
-    }
-
-    // --- Résolution de la vue initiale (Paramètres URL : clearing ou player) ---
-    const urlParams = new URLSearchParams(window.location.search);
-    const clearingParam = urlParams.get('clearing') || urlParams.get('tribe');
-    const playerParam = urlParams.get('player');
-    const savedPlayer = localStorage.getItem('selectedPlayer');
-
-    if (clearingParam) {
-        const qClearing = clearingParam.trim().toLowerCase();
-        let matchedTribe = null;
-
-        // Retrouve la casse exacte de la clairière dans les snapshots (ex: 'Sword' ou 'SWORD')
-        for (const snap of Object.values(snapshots)) {
-            const foundKey = Object.keys(snap).find(k => k.toLowerCase() === qClearing);
-            if (foundKey) {
-                matchedTribe = foundKey;
-                break;
-            }
-        }
-        if (!matchedTribe) {
-            matchedTribe = clearingParam.charAt(0).toUpperCase() + clearingParam.slice(1).toLowerCase();
-        }
-
-        // Active directement le mode HN (Homeland Network) centré sur cette clairière
-        currentView = 'hn';
-        activeTribe = matchedTribe;
-        selectedPlayer = null;
-        if ($searchInput.length) $searchInput.val('');
-    } else {
-        const initialQuery = ($searchInput.val() || playerParam || savedPlayer || '').trim();
-        if (initialQuery) {
-            const found = findPlayer(initialQuery);
-            if (found) {
-                selectedPlayer = found.name;
-                currentView = 'pn';
-                $searchInput.val(selectedPlayer);
-            }
-        }
-    }
-
-    let lastRenderedView = null;
-    let simulation = null;
-
     const $wrapper = $('#networkWrapper');
+    const $searchInput = $('#playerName');
     const $datePicker = $('#datePicker').attr({ min: dates[0], max: dates[dates.length - 1] });
     const $prevBtn = $('#prevDateBtn');
     const $nextBtn = $('#nextDateBtn');
@@ -1334,7 +1258,14 @@ $(document).ready(function () {
     const $legend = $('#mapLegend');
     const $ledger = $('#playerLedger');
 
-    // --- Helpers & Math Utilities ---
+    let currentView = 'hm';
+    let activeTribe = null;
+    let selectedPlayer = null;
+    let currentIndex = dates.length - 1;
+    let lastRenderedView = null;
+    let simulation = null;
+    let isInternalSearch = false;
+
     const normalizeTribe = t => (!t || t === '-' || t === 'UNALIGNED') ? null : t;
     const getPlayerTribe = name => normalizeTribe(constellations[name]?.tribe);
     const tribeRadius = count => Math.max(32, 24 + Math.sqrt(count || 0) * 10);
@@ -1370,7 +1301,57 @@ $(document).ready(function () {
         return Math.hypot(px - (x1 + t * dx), py - (y1 + t * dy));
     }
 
-    // --- Historical Lifespan & Allegiance Queries ---
+    function setSearchPlayer(name) {
+        isInternalSearch = true;
+        $searchInput.val(name).trigger('change');
+        isInternalSearch = false;
+    }
+
+    function clearSearch() {
+        isInternalSearch = true;
+        $searchInput.val('').trigger('change');
+        isInternalSearch = false;
+    }
+
+    function findPlayer(query) {
+        const q = (query || '').trim();
+        if (!q) return null;
+        if (constellations[q]) return { name: q, data: constellations[q] };
+        const low = q.toLowerCase();
+        const key = Object.keys(constellations).find(k => k.toLowerCase() === low);
+        return key ? { name: key, data: constellations[key] } : null;
+    }
+
+    function findTribe(query) {
+        const q = (query || '').trim().toLowerCase();
+        if (!q) return null;
+        for (const snap of Object.values(snapshots)) {
+            const match = Object.keys(snap).find(k => k.toLowerCase() === q);
+            if (match) return match;
+        }
+        return null;
+    }
+
+    function syncUrl() {
+        let suffix = '#map';
+        if (currentView === 'guide') {
+            suffix = '#guide';
+        } else if (currentView === 'pn') {
+            suffix = '#circle';
+        } else if (currentView === 'hn' && activeTribe) {
+            suffix = `?clearing=${encodeURIComponent(activeTribe.toLowerCase())}#map`;
+        }
+
+        if (history.replaceState) {
+            history.replaceState(null, null, window.location.pathname + suffix);
+        }
+
+        $('.season-btn').each(function () {
+            const baseHref = ($(this).attr('href') || '').split('?')[0].split('#')[0];
+            if (baseHref) $(this).attr('href', baseHref + suffix);
+        });
+    }
+
     function getTribeLifespan(tribe) {
         if (!tribe) return null;
         const activeIndices = [];
@@ -1418,15 +1399,10 @@ $(document).ready(function () {
             } else {
                 const overlap = [...seg.startMembers].filter(p => historicalMembers.has(p)).length;
                 const isRevival = overlap >= 3;
-                const actionLabel = isRevival ? 'Revived' : 'Reclaimed';
-                const actionTitle = isRevival
-                    ? `Jump to revival (${overlap} returning members)`
-                    : 'Jump to reclamation by a new fellowship';
-
                 milestones.push({
                     idx: seg.startIndex,
-                    label: `${actionLabel} ${formatShortDate(dates[seg.startIndex])}`,
-                    title: actionTitle
+                    label: `${isRevival ? 'Revived' : 'Reclaimed'} ${formatShortDate(dates[seg.startIndex])}`,
+                    title: isRevival ? `Jump to revival (${overlap} returning members)` : 'Jump to reclamation by a new fellowship'
                 });
             }
 
@@ -1494,7 +1470,6 @@ $(document).ready(function () {
         }));
     }
 
-    // --- UI Context Updaters ---
     function badgeButtonHtml({ tribe, dateIndex, label, isCurrent, title, icon }) {
         const iconImg = icon ? `<img src="${icon}" alt="${tribe}" class="allegiance-icon">` : '';
         return `
@@ -1512,19 +1487,9 @@ $(document).ready(function () {
 
     function updateChrome() {
         $wrapper.attr('data-view', currentView);
-        $('#dateControls').toggle(currentView !== 'pn');
-
-        if (!$('#guideSection').is(':visible')) {
-            $('.homelands-tab-link[data-tab]').removeClass('active');
-            if (currentView === 'pn') {
-                $('.homelands-tab-link[data-tab="circle"]').addClass('active');
-            } else {
-                $('.homelands-tab-link[data-tab="map"]').addClass('active');
-            }
-        }
 
         if (currentView === 'pn' && selectedPlayer) {
-            $headerTitle.html(`&lsaquo; ${selectedPlayer.toUpperCase()}'S NETWORK`);
+            $headerTitle.html(`&lsaquo; ${selectedPlayer.toUpperCase()}'S CIRCLE`);
             renderLegend([
                 [same_tribe, 'Same homeland'],
                 [other_tribe, 'Other homeland'],
@@ -1577,22 +1542,16 @@ $(document).ready(function () {
         $ledger.empty();
     }
 
-    // --- Graph Data Builders ---
     function buildGraphData(snapshot) {
         const nodes = [], links = [];
 
         if (currentView === 'pn') {
-            const allKeys = Object.keys(constellations);
-            if (!allKeys.length) {
-                nodes.push({ id: 'placeholder', type: 'tribe', label: 'No player data', count: 0, radius: 40 });
-                return { nodes, links };
-            }
-            const found = findPlayer(selectedPlayer || $searchInput.val()) || { name: allKeys[0], data: constellations[allKeys[0]] };
-            selectedPlayer = found.name;
+            const data = constellations[selectedPlayer];
+            if (!data) return { nodes, links };
 
-            const centerTribe = normalizeTribe(found.data?.tribe);
-            const games = found.data?.games || 0;
-            const partners = [...(found.data?.partners || [])].sort((a, b) => b[1] - a[1]);
+            const centerTribe = normalizeTribe(data.tribe);
+            const games = data.games || 0;
+            const partners = [...(data.partners || [])].sort((a, b) => b[1] - a[1]);
             const total = partners.length;
             const maxW = total ? partners[0][1] : 1;
             const minW = total ? partners[total - 1][1] : 1;
@@ -1685,7 +1644,6 @@ $(document).ready(function () {
         return { nodes, links };
     }
 
-    // --- D3 Rendering & Force Simulation ---
     function renderGraph(snapshot) {
         if (typeof d3 === 'undefined') return;
 
@@ -1805,24 +1763,16 @@ $(document).ready(function () {
                     .attr('transform', `translate(0, ${size / 2 - 1})`);
                 g.select('.num-span').text(d.count);
                 g.select('.lbl-span').text(d.count === 1 ? ' denizen' : ' denizens');
-            } 
-            else if (d.type === 'ego-center') {
+            } else {
                 g.select('.player-name-tspan')
-                    .attr('dy', '-0.2em')
+                    .attr('dy', d.type === 'ego-center' ? '-0.2em' : null)
                     .text(d.name);
                 g.select('.player-status-tspan')
-                    .attr('dy', '1.1em')
-                    .text(d.status || '');
-            } 
-            else {
-                g.select('.player-name-tspan')
-                    .text(d.name);
-                g.select('.player-status-tspan')
+                    .attr('dy', d.type === 'ego-center' ? '1.1em' : '1.15em')
                     .text(d.status || '');
             }
         });
 
-        // Gestion des clics sur les bulles
         node.on('click', (event, d) => {
             if (event.defaultPrevented) return;
 
@@ -1831,19 +1781,13 @@ $(document).ready(function () {
                 currentView = activeTribe ? 'hn' : 'hm';
                 selectedPlayer = null;
                 clearSearch();
-                updateView(dates[currentIndex]);
+                updateView();
             } else if (d.type === 'player' || d.type === 'ego-partner') {
-                selectedPlayer = d.name;
                 currentView = 'pn';
-                setSearchPlayer(selectedPlayer);
-                updateView(dates[dates.length - 1]);
+                activeTribe = null;
+                setSearchPlayer(d.name);
+                updateView();
             }
-        }).on('dblclick', (event, d) => {
-            if (event.defaultPrevented || (d.type !== 'player' && d.type !== 'ego-partner')) return;
-            selectedPlayer = d.name;
-            currentView = 'pn';
-            setSearchPlayer(selectedPlayer);
-            updateView(dates[dates.length - 1]);
         });
 
         if (!simulation) {
@@ -1921,13 +1865,44 @@ $(document).ready(function () {
         });
     }
 
-    // --- Timeline & Navigation Controls ---
-    function updateView(selectedDate) {
-        let minIdx = 0, maxIdx = dates.length - 1;
+    function updateView() {
+        const activeTab = currentView === 'guide' ? 'guide' : currentView === 'pn' ? 'circle' : 'map';
+        $('.homelands-tab-link[data-tab]').removeClass('active');
+        $(`.homelands-tab-link[data-tab="${activeTab}"]`).addClass('active');
+
+        if (currentView === 'guide') {
+            simulation?.stop();
+            $wrapper.hide();
+            $('.season-selector-group, .footer-table').hide();
+            $('#guideSection').fadeIn(200);
+            syncUrl();
+            return;
+        }
+
+        $('#guideSection').hide();
+        $('.season-selector-group, .footer-table').show();
 
         if (currentView === 'pn') {
-            selectedDate = dates[maxIdx];
-        } else if (currentView === 'hn' && activeTribe) {
+            const found = findPlayer($searchInput.val());
+            selectedPlayer = found ? found.name : null;
+
+            if (!selectedPlayer) {
+                simulation?.stop();
+                $wrapper.hide();
+                syncUrl();
+                return;
+            }
+
+            $wrapper.show();
+            renderGraph(snapshots[dates[dates.length - 1]]);
+            syncUrl();
+            return;
+        }
+
+        $wrapper.show();
+        let minIdx = 0, maxIdx = dates.length - 1;
+
+        if (currentView === 'hn' && activeTribe) {
             const life = getTribeLifespan(activeTribe);
             if (!life) {
                 currentView = 'hm';
@@ -1939,25 +1914,19 @@ $(document).ready(function () {
                     currentIndex = life.activeIndices.reduce((a, b) =>
                         Math.abs(b - currentIndex) < Math.abs(a - currentIndex) ? b : a
                     );
-                    selectedDate = dates[currentIndex];
                 }
             }
         }
 
+        currentIndex = Math.max(minIdx, Math.min(maxIdx, currentIndex));
+        const selectedDate = dates[currentIndex];
+
         $datePicker.attr({ min: dates[minIdx], max: dates[maxIdx] }).val(selectedDate);
+        $prevBtn.add($earliestBtn).prop('disabled', currentIndex <= minIdx);
+        $nextBtn.add($latestBtn).prop('disabled', currentIndex >= maxIdx);
+
         if (snapshots[selectedDate]) renderGraph(snapshots[selectedDate]);
-
-        const isPN = currentView === 'pn';
-        $prevBtn.add($earliestBtn).prop('disabled', isPN || currentIndex <= minIdx);
-        $nextBtn.add($latestBtn).prop('disabled', isPN || currentIndex >= maxIdx);
-    }
-
-    function setDateByIndex(idx) {
-        const life = currentView === 'hn' ? getTribeLifespan(activeTribe) : null;
-        const min = life ? life.firstIndex : 0;
-        const max = life ? life.lastIndex : dates.length - 1;
-        currentIndex = Math.max(min, Math.min(max, idx));
-        updateView(dates[currentIndex]);
+        syncUrl();
     }
 
     function stepDate(dir) {
@@ -1965,16 +1934,15 @@ $(document).ready(function () {
         if (life) {
             const pos = life.activeIndices.indexOf(currentIndex);
             if (pos !== -1 && life.activeIndices[pos + dir] !== undefined) {
-                setDateByIndex(life.activeIndices[pos + dir]);
+                currentIndex = life.activeIndices[pos + dir];
+                updateView();
             }
             return;
         }
-        setDateByIndex(currentIndex + dir);
+        currentIndex += dir;
+        updateView();
     }
 
-    // --- Écouteurs d'événements ---
-
-    // Clic sur un badge dans le Ledger (retour vers une clairière HN)
     $ledger.on('click', '.allegiance-badge', function (e) {
         e.stopPropagation();
         const tribe = $(this).data('tribe');
@@ -1983,110 +1951,81 @@ $(document).ready(function () {
         currentView = 'hn';
         activeTribe = tribe;
         selectedPlayer = null;
+        currentIndex = idx;
         clearSearch();
-        setDateByIndex(idx);
+        updateView();
     });
 
-    // Saisie directe dans la barre de recherche globale
     $searchInput.on('input change', function () {
-        const q = $(this).val().trim();
-        if (!q) {
-            currentView = 'hm';
-            activeTribe = null;
-            selectedPlayer = null;
-            if (typeof window.applyGlobalSearch === 'function') {
-                window.applyGlobalSearch('');
-            } else {
-                localStorage.removeItem('selectedPlayer');
-            }
-            updateView(dates[currentIndex]);
-        } else {
-            const found = findPlayer(q);
-            if (found) {
-                selectedPlayer = found.name;
-                currentView = 'pn';
-                if (typeof window.applyGlobalSearch === 'function') {
-                    window.applyGlobalSearch(selectedPlayer);
-                } else {
-                    localStorage.setItem('selectedPlayer', selectedPlayer);
-                }
-                updateView(dates[dates.length - 1]);
-            }
-        }
+        if (isInternalSearch) return;
+        currentView = 'pn';
+        activeTribe = null;
+        updateView();
     });
 
-    // Clic sur le titre (Retour à Homelands Map HM)
     $headerTitle.on('click', () => {
         currentView = 'hm';
         activeTribe = null;
         selectedPlayer = null;
         clearSearch();
-        updateView(dates[currentIndex]);
+        updateView();
     });
 
-    $prevBtn.on('click', () => stepDate(-1));
-    $nextBtn.on('click', () => stepDate(1));
-    $earliestBtn.on('click', () => setDateByIndex(0));
-    $latestBtn.on('click', () => setDateByIndex(dates.length - 1));
+    $(document).on('click', '.homelands-tab-link[data-tab]', function (e) {
+        const tab = $(this).data('tab');
+        if (tab === 'leaderboard') return;
+        e.preventDefault();
 
-    $datePicker.on('change', function () {
-        const idx = dates.findIndex(d => d >= $(this).val());
-        setDateByIndex(idx !== -1 ? idx : dates.length - 1);
-    });
-
-    $(window).on('resize', () => { if (dates[currentIndex]) updateView(dates[currentIndex]); });
-	
-	
-	// --- GESTIONNAIRE D'ONGLETS HOMELANDS ---
-    function setActiveTab(tabKey) {
-        $('.homelands-tab-link[data-tab]').removeClass('active');
-        $(`.homelands-tab-link[data-tab="${tabKey}"]`).addClass('active');
-
-        if (tabKey === 'guide') {
-            $('#networkWrapper').hide();
-            $('#guideSection').fadeIn(200);
-            return;
-        }
-
-        $('#guideSection').hide();
-        $('#networkWrapper').show();
-
-        if (tabKey === 'map') {
+        if (tab === 'guide') {
+            currentView = 'guide';
+        } else if (tab === 'circle') {
+            currentView = 'pn';
+            activeTribe = null;
+        } else {
             currentView = 'hm';
             activeTribe = null;
             selectedPlayer = null;
             clearSearch();
-            updateView(dates[currentIndex]);
-        } else if (tabKey === 'circle') {
-            currentView = 'pn';
-            const allKeys = Object.keys(constellations);
-            const targetPlayer = selectedPlayer || $searchInput.val() || localStorage.getItem('selectedPlayer') || allKeys[0] || null;
-            if (targetPlayer) {
-                selectedPlayer = targetPlayer;
-                setSearchPlayer(targetPlayer);
-            }
-            updateView(dates[dates.length - 1]);
         }
-    }
-
-    $(document).on('click', '.homelands-tab-link[data-tab]', function(e) {
-        const tab = $(this).data('tab');
-        if (tab === 'leaderboard') return;
-
-        e.preventDefault();
-        setActiveTab(tab);
-        if (history.replaceState) {
-            history.replaceState(null, null, '#' + tab);
-        }
+        updateView();
     });
 
-    // Prise en charge des ancres directes (#guide ou #circle) au chargement
+    $prevBtn.on('click', () => stepDate(-1));
+    $nextBtn.on('click', () => stepDate(1));
+    $earliestBtn.on('click', () => { currentIndex = 0; updateView(); });
+    $latestBtn.on('click', () => { currentIndex = dates.length - 1; updateView(); });
+
+    $datePicker.on('change', function () {
+        const idx = dates.findIndex(d => d >= $(this).val());
+        currentIndex = idx !== -1 ? idx : dates.length - 1;
+        updateView();
+    });
+
+    $(window).on('resize', () => {
+        if (currentView !== 'guide') updateView();
+    });
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const clearingParam = urlParams.get('clearing') || urlParams.get('tribe');
+    const playerParam = urlParams.get('player');
     const hash = window.location.hash.replace('#', '');
+
     if (hash === 'guide') {
-        setActiveTab('guide');
-    } else if (hash === 'circle') {
-        setActiveTab('circle');
+        currentView = 'guide';
+    } else if (clearingParam) {
+        const matched = findTribe(clearingParam);
+        currentView = matched ? 'hn' : 'hm';
+        activeTribe = matched;
+        clearSearch();
+    } else if (hash === 'circle' || playerParam) {
+        currentView = 'pn';
+        const initialPlayer = (playerParam || $searchInput.val() || localStorage.getItem('selectedPlayer') || '').trim();
+        if (initialPlayer) setSearchPlayer(initialPlayer);
+    } else {
+        currentView = 'hm';
+        clearSearch();
     }
 
-    setDateByIndex(currentIndex);
+    updateView();
+    setTimeout(() => { if (currentView !== 'pn') clearSearch(); }, 60);
 });
