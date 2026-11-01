@@ -39,7 +39,7 @@
 
                     {% if player.homeland_leader %}
                         <a href="{{ path_prefix }}network{% if is_archive and season_tag %}_{{ season_tag }}{% endif %}.html" 
-                           class="tier-anchor-link frog-leader-icon"
+                           class="tier-anchor-link standard-tier"
                            title="Leader of the {{ player.homeland_leader|capitalize }} Homeland (Click to view map)">
                             <div class="tier-icon-container">
                                 <img src="{{ path_prefix }}assets/icons/frog.webp" alt="Leader of {{ player.homeland_leader }}">
