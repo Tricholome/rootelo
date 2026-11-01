@@ -1504,7 +1504,7 @@ $(document).ready(function () {
         if (!$('#guideSection').is(':visible')) {
             $('.homelands-tab-link[data-tab]').removeClass('active');
             if (currentView === 'pn') {
-                $('.homelands-tab-link[data-tab="network"]').addClass('active');
+                $('.homelands-tab-link[data-tab="circle"]').addClass('active');
             } else {
                 $('.homelands-tab-link[data-tab="map"]').addClass('active');
             }
