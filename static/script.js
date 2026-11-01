@@ -1333,22 +1333,24 @@ $(document).ready(function () {
     }
 
     function syncUrl() {
-        let suffix = '#map';
+        let query = '';
         if (currentView === 'guide') {
-            suffix = '#guide';
+            query = '?tab=guide';
         } else if (currentView === 'pn') {
-            suffix = '#circle';
+            query = '?tab=circle';
         } else if (currentView === 'hn' && activeTribe) {
-            suffix = `?clearing=${encodeURIComponent(activeTribe.toLowerCase())}#map`;
+            query = `?clearing=${encodeURIComponent(activeTribe.toLowerCase())}`;
         }
 
+        const fullPath = window.location.pathname + query + '#view';
+
         if (history.replaceState) {
-            history.replaceState(null, null, window.location.pathname + suffix);
+            history.replaceState(null, null, fullPath);
         }
 
         $('.season-btn').each(function () {
             const baseHref = ($(this).attr('href') || '').split('?')[0].split('#')[0];
-            if (baseHref) $(this).attr('href', baseHref + suffix);
+            if (baseHref) $(this).attr('href', baseHref + query + '#view');
         });
     }
 
@@ -2008,16 +2010,17 @@ $(document).ready(function () {
     const urlParams = new URLSearchParams(window.location.search);
     const clearingParam = urlParams.get('clearing') || urlParams.get('tribe');
     const playerParam = urlParams.get('player');
+    const tabParam = urlParams.get('tab');
     const hash = window.location.hash.replace('#', '');
 
-    if (hash === 'guide') {
+    if (tabParam === 'guide' || hash === 'guide') {
         currentView = 'guide';
     } else if (clearingParam) {
         const matched = findTribe(clearingParam);
         currentView = matched ? 'hn' : 'hm';
         activeTribe = matched;
         clearSearch();
-    } else if (hash === 'circle' || playerParam) {
+    } else if (tabParam === 'circle' || hash === 'circle' || playerParam) {
         currentView = 'pn';
         const initialPlayer = (playerParam || $searchInput.val() || localStorage.getItem('selectedPlayer') || '').trim();
         if (initialPlayer) setSearchPlayer(initialPlayer);
