@@ -1917,12 +1917,14 @@ table.dataTable tbody tr.loser td {
 }
 
 .network-container[data-view="pn"] #dateControls,
+.network-container[data-view="pn"] #mapHeaderTitle,
+.network-container[data-view="hm"] #mapHeaderTitle,
 .network-container[data-view="hm"] #playerLedger,
 .network-container[data-view="hm"] #mapLegend {
     display: none !important;
 }
 
-/* --- B. Map Container & Header Title --- */
+/* --- B. Map Container & HUD Typography --- */
 .tribe-map-container {
     position: relative;
     width: 100%;
@@ -1941,34 +1943,27 @@ table.dataTable tbody tr.loser td {
     display: block;
 }
 
-.map-header-title {
+.hud-title {
+    font-family: var(--font-ui);
+    font-size: var(--size-xxs);
+    font-weight: var(--bold);
+    text-transform: uppercase;
+    letter-spacing: var(--track-wide);
+    color: var(--text-muted);
+    margin-bottom: 2px;
+    pointer-events: none;
+    user-select: none;
+}
+
+/* --- C. Three-Column HUD Layout (Left, Center, Right) --- */
+.map-legend {
     position: absolute;
     top: 14px;
     left: 18px;
     z-index: 10;
-    color: var(--text-muted);
-    font-family: var(--font-ui);
-    font-size: var(--size-xs);
-    font-weight: var(--bold);
-    text-transform: uppercase;
-    letter-spacing: var(--track-wide);
-    cursor: pointer;
-    user-select: none;
-    transition: color 0.2s ease;
-}
-
-.map-header-title:hover {
-    color: var(--main-color);
-}
-
-/* --- C. Contextual Legend (Top-Left) --- */
-.map-legend {
-    position: absolute;
-    top: 40px;
-    left: 18px;
-    z-index: 10;
     display: flex;
     flex-direction: column;
+    align-items: flex-start;
     gap: 4px;
     pointer-events: none;
 }
@@ -1990,35 +1985,18 @@ table.dataTable tbody tr.loser td {
     flex-shrink: 0;
 }
 
-/* --- D. Date Controls --- */
-.date-controls {
+.map-header-title {
+    position: absolute;
+    top: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin: 15px 0;
+    gap: 6px;
 }
 
-.date-picker {
-    padding: 6px 12px;
-    font-size: var(--size-sm);
-    background-color: var(--dt-input-bg);
-    color: var(--text-main);
-    border: 1px solid var(--border-soft);
-    border-radius: 4px;
-    font-family: var(--font-ui);
-    outline: none;
-    transition: border-color 0.2s, background-color 0.2s;
-}
-
-.date-picker:focus,
-.date-picker:hover {
-    border-color: var(--main-color);
-    background-color: var(--bg-hover);
-}
-
-/* --- E. Allegiance Ledger (Top-Right) --- */
 .allegiance-ledger {
     position: absolute;
     top: 14px;
@@ -2030,17 +2008,7 @@ table.dataTable tbody tr.loser td {
     gap: 6px;
 }
 
-.allegiance-ledger-title {
-    font-family: var(--font-ui);
-    font-size: var(--size-xxs);
-    font-weight: var(--bold);
-    text-transform: uppercase;
-    letter-spacing: var(--track-wide);
-    color: var(--text-muted);
-    margin-bottom: 2px;
-    pointer-events: none;
-}
-
+/* --- D. HUD Badges (Herald, Chronicle, Allegiances) --- */
 .allegiance-badge {
     display: inline-flex;
     align-items: center;
@@ -2062,10 +2030,19 @@ table.dataTable tbody tr.loser td {
     transition: transform 0.15s ease, border-color 0.2s ease, background-color 0.2s ease, opacity 0.2s ease, filter 0.2s ease;
 }
 
+.allegiance-badge.herald-badge {
+    width: auto;
+    justify-content: center;
+}
+
 .allegiance-badge:hover {
     border-color: var(--main-color);
     background: var(--bg-hover);
     transform: translateX(-4px);
+}
+
+.allegiance-badge.herald-badge:hover {
+    transform: translateY(2px);
 }
 
 .allegiance-badge.is-current {
@@ -2085,8 +2062,8 @@ table.dataTable tbody tr.loser td {
 }
 
 .allegiance-icon {
-    width: 28px;
-    height: 28px;
+    width: 24px;
+    height: 24px;
     flex-shrink: 0;
     object-fit: contain;
     filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.4));
@@ -2101,7 +2078,100 @@ table.dataTable tbody tr.loser td {
     pointer-events: none;
 }
 
-/* --- F. Interactive SVG Map Elements (D3.js) --- */
+/* --- E. Date Controls --- */
+.date-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: nowrap;
+    gap: 8px;
+    margin: 15px 0;
+}
+
+.date-picker {
+    padding: 6px 10px;
+    font-size: var(--size-sm);
+    background-color: var(--dt-input-bg);
+    color: var(--text-main);
+    border: 1px solid var(--border-soft);
+    border-radius: 4px;
+    font-family: var(--font-ui);
+    outline: none;
+    transition: border-color 0.2s, background-color 0.2s;
+}
+
+.date-picker:focus,
+.date-picker:hover {
+    border-color: var(--main-color);
+    background-color: var(--bg-hover);
+}
+
+/* --- F. Mobile HUD Separation & Compact Controls --- */
+@media (max-width: 768px) {
+    .tribe-map-container {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        grid-template-rows: auto 1fr;
+        height: auto;
+        align-items: start;
+    }
+
+    .network-container:not([data-view="hm"]) .map-legend,
+    .network-container:not([data-view="hm"]) .map-header-title,
+    .network-container:not([data-view="hm"]) .allegiance-ledger {
+        position: static;
+        transform: none;
+        padding: 12px 10px 8px 10px;
+    }
+
+    .map-legend { grid-column: 1; grid-row: 1; }
+    .map-header-title { grid-column: 2; grid-row: 1; }
+    .allegiance-ledger { grid-column: 3; grid-row: 1; }
+
+    .tribe-map-svg {
+        grid-column: 1 / -1;
+        grid-row: 2;
+        height: 360px;
+    }
+
+    .network-container:not([data-view="hm"]) .tribe-map-svg {
+        border-top: 1px solid var(--border-soft);
+    }
+
+    .allegiance-badge {
+        width: auto;
+        padding: 3px 8px;
+        gap: 5px;
+        font-size: var(--size-xxs);
+    }
+
+    .allegiance-icon {
+        width: 18px;
+        height: 18px;
+    }
+
+    .legend-item {
+        font-size: var(--size-xxs);
+        gap: 5px;
+    }
+
+    .date-controls {
+        gap: 6px;
+    }
+
+    .date-controls .btn {
+        padding: 6px 10px;
+        min-width: 0;
+    }
+
+    .date-picker {
+        padding: 5px 8px;
+        font-size: var(--size-xs);
+        max-width: 135px;
+    }
+}
+
+/* --- G. Interactive SVG Map Elements (D3.js) --- */
 #tribeMapSvg .node-group {
     cursor: pointer;
     will-change: transform;
@@ -2192,7 +2262,7 @@ table.dataTable tbody tr.loser td {
     transform: scale(1.15);
 }
 
-/* 4. Player Labels & Hover Subtitles */
+/* 4. Player Labels & Subtitles */
 #tribeMapSvg .player-label {
     transition: transform 0.2s ease;
 }
@@ -2220,9 +2290,13 @@ table.dataTable tbody tr.loser td {
     transition: opacity 0.2s ease, visibility 0.2s ease;
 }
 
+#tribeMapSvg .node-group.type-ego-center .player-status-tspan {
+    opacity: 0.9;
+    visibility: visible;
+}
+
 #tribeMapSvg .node-group.type-player:hover .player-label,
-#tribeMapSvg .node-group.type-ego-partner:hover .player-label,
-#tribeMapSvg .node-group.type-ego-center:hover .player-label {
+#tribeMapSvg .node-group.type-ego-partner:hover .player-label {
     transform: translateY(-0.35em);
 }
 
@@ -2234,8 +2308,7 @@ table.dataTable tbody tr.loser td {
 }
 
 #tribeMapSvg .node-group.type-player:hover .player-status-tspan,
-#tribeMapSvg .node-group.type-ego-partner:hover .player-status-tspan,
-#tribeMapSvg .node-group.type-ego-center:hover .player-status-tspan {
+#tribeMapSvg .node-group.type-ego-partner:hover .player-status-tspan {
     opacity: 1;
     visibility: visible;
 }
