@@ -1547,16 +1547,13 @@ table.dataTable tbody tr.loser td {
 
 .modal-supporter {
     position: absolute;
-    top: 35px;
-    width: clamp(36px, 5.5vw, 48px);
-    height: clamp(36px, 5.5vw, 48px);
+    top: 60px;
+    width: clamp(60px, 9vw, 120px);
+    height: clamp(60px, 9vw, 120px);
     display: none;
     z-index: 10;
-    opacity: 0.85;
-    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.6));
     cursor: pointer;
     text-decoration: none;
-    transition: transform 0.2s ease, opacity 0.2s ease, filter 0.2s ease;
 }
 
 .modal-supporter img {
@@ -1567,26 +1564,13 @@ table.dataTable tbody tr.loser td {
 }
 
 .modal-supporter.left {
-    left: clamp(10px, 3vw, 25px);
+    left: clamp(0px, 3vw, 50px);
     transform: translateY(-50%);
 }
 
 .modal-supporter.right {
-    right: clamp(10px, 3vw, 25px);
-    transform: translateY(-50%) scaleX(-1); /* Effet miroir */
-}
-
-.modal-supporter:hover {
-    opacity: 1;
-    filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.85));
-}
-
-.modal-supporter.left:hover {
-    transform: translateY(-50%) scale(1.12);
-}
-
-.modal-supporter.right:hover {
-    transform: translateY(-50%) scaleX(-1) scale(1.12);
+    right: clamp(0px, 3vw, 50px);
+    transform: translateY(-50%) scaleX(-1);
 }
 
 .modal-divider {
