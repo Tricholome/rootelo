@@ -170,7 +170,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		[supporterLeft, supporterRight].forEach(el => {
 			el.style.display = isFrog ? 'block' : 'none';
 			if (isFrog) {
-				el.href = `${PATH_PREFIX}network${suffix}.html?clearing=${clearing.toLowerCase()}`;
+				el.href = `${PATH_PREFIX}network${suffix}.html#view?clearing=${clearing.toLowerCase()}`;
 				el.querySelector('img').src = `${PATH_PREFIX}assets/items/${clearing.toLowerCase()}.png`;
 			}
 		});
