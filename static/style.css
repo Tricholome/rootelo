@@ -2136,7 +2136,7 @@ body, .window-box {
     position: relative;
     width: clamp(55px, 7vw, 85px);
     height: clamp(55px, 7vw, 85px);
-    margin: 0 4px;
+    margin: 0 -5px; /* Écartement et chevauchement natifs de la bannière */
     pointer-events: none;
     user-select: none;
 }
@@ -2150,6 +2150,12 @@ body, .window-box {
     object-fit: contain;
     filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.6));
     will-change: opacity, transform;
+}
+
+@media (max-width: 768px) and (orientation: portrait) {
+    .banner-homelands .homeland-slot {
+        margin: 0;
+    }
 }
 
 /* --- ANIMATION EN CYCLE (12s total / 3s par animal) --- */
