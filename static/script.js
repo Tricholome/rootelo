@@ -2044,7 +2044,7 @@ $(document).ready(function () {
             selectedPlayer = null;
             clearSearch();
             updateView(dates[currentIndex]);
-        } else if (tabKey === 'network') {
+        } else if (tabKey === 'circle') {
             currentView = 'pn';
             const allKeys = Object.keys(constellations);
             const targetPlayer = selectedPlayer || $searchInput.val() || localStorage.getItem('selectedPlayer') || allKeys[0] || null;
@@ -2065,12 +2065,12 @@ $(document).ready(function () {
         }
     });
 
-    // Prise en charge des ancres directes (#guide ou #network) au chargement
+    // Prise en charge des ancres directes (#guide ou #circle) au chargement
     const hash = window.location.hash.replace('#', '');
     if (hash === 'guide') {
         setActiveTab('guide');
-    } else if (hash === 'network') {
-        setActiveTab('network');
+    } else if (hash === 'circle') {
+        setActiveTab('circle');
     }
 
     setDateByIndex(currentIndex);
