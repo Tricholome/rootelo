@@ -1501,8 +1501,17 @@ $(document).ready(function () {
         $wrapper.attr('data-view', currentView);
         $('#dateControls').toggle(currentView !== 'pn');
 
+        if (!$('#guideSection').is(':visible')) {
+            $('.homelands-tab-link[data-tab]').removeClass('active');
+            if (currentView === 'pn') {
+                $('.homelands-tab-link[data-tab="network"]').addClass('active');
+            } else {
+                $('.homelands-tab-link[data-tab="map"]').addClass('active');
+            }
+        }
+
         if (currentView === 'pn' && selectedPlayer) {
-            $headerTitle.html(`&lsaquo; ${selectedPlayer.toUpperCase()}'S CIRCLE`);
+            $headerTitle.html(`&lsaquo; ${selectedPlayer.toUpperCase()}'S NETWORK`);
             renderLegend([
                 [same_tribe, 'Same homeland'],
                 [other_tribe, 'Other homeland'],
@@ -2013,6 +2022,56 @@ $(document).ready(function () {
     });
 
     $(window).on('resize', () => { if (dates[currentIndex]) updateView(dates[currentIndex]); });
+	
+	
+	// --- GESTIONNAIRE D'ONGLETS HOMELANDS ---
+    function setActiveTab(tabKey) {
+        $('.homelands-tab-link[data-tab]').removeClass('active');
+        $(`.homelands-tab-link[data-tab="${tabKey}"]`).addClass('active');
+
+        if (tabKey === 'guide') {
+            $('#networkWrapper').hide();
+            $('#guideSection').fadeIn(200);
+            return;
+        }
+
+        $('#guideSection').hide();
+        $('#networkWrapper').show();
+
+        if (tabKey === 'map') {
+            currentView = 'hm';
+            activeTribe = null;
+            selectedPlayer = null;
+            clearSearch();
+            updateView(dates[currentIndex]);
+        } else if (tabKey === 'network') {
+            currentView = 'pn';
+            const allKeys = Object.keys(constellations);
+            const targetPlayer = selectedPlayer || $searchInput.val() || localStorage.getItem('selectedPlayer') || allKeys[0] || null;
+            if (targetPlayer) {
+                selectedPlayer = targetPlayer;
+                setSearchPlayer(targetPlayer);
+            }
+            updateView(dates[dates.length - 1]);
+        }
+    }
+
+    $(document).on('click', '.homelands-tab-link[data-tab]', function(e) {
+        e.preventDefault();
+        const tab = $(this).data('tab');
+        setActiveTab(tab);
+        if (history.replaceState) {
+            history.replaceState(null, null, '#' + tab);
+        }
+    });
+
+    // Prise en charge des ancres directes (#guide ou #network) au chargement
+    const hash = window.location.hash.replace('#', '');
+    if (hash === 'guide') {
+        setActiveTab('guide');
+    } else if (hash === 'network') {
+        setActiveTab('network');
+    }
 
     setDateByIndex(currentIndex);
 });
