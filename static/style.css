@@ -2092,6 +2092,32 @@ table.dataTable tbody tr.loser td {
 /* =========================================================================
    FROG / SETTLER MODE (LEADERBOARD)
    ========================================================================= */
+   
+/* --- Mode Standard (par défaut sur toutes les pages) --- */
+.banner-homelands,
+.nav-homelands {
+    display: none !important;
+}
+
+/* --- Mode Homelands (actif sur network.html ou quand on coche la case sur index.html) --- */
+body.homelands-mode {
+    --main-color: var(--color-frog);
+    background-color: #0b140e;
+    transition: background-color 0.25s ease;
+}
+
+body.homelands-mode .banner-standard,
+body.homelands-mode .nav-standard {
+    display: none !important;
+}
+
+body.homelands-mode .banner-homelands {
+    display: flex !important;
+}
+
+body.homelands-mode .nav-homelands {
+    display: flex !important;
+}
 
 /* Lien conteneur d'icône : garantit un alignement vertical neutre */
 .tier-anchor-link {
