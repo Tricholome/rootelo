@@ -2135,7 +2135,6 @@ table.dataTable tbody tr.loser td {
         align-items: start;
     }
 
-    /* En mode carte globale (HM), le bandeau est masqué et la grille s'efface */
     .network-container[data-view="hm"] .tribe-map-container {
         display: block;
     }
@@ -2147,29 +2146,25 @@ table.dataTable tbody tr.loser td {
         transform: none;
     }
 
-    /* 1. Colonne de gauche (Haut) : Fidelity */
     .map-legend {
         grid-column: 1;
         grid-row: 1;
         padding: 12px 14px 6px 14px;
     }
 
-    /* 2. Colonne de gauche (Dessous Fidelity) : Herald (titre + icône et nom) */
     .network-container:not([data-view="hm"]) .map-header-title {
         grid-column: 1;
         grid-row: 2;
         align-items: flex-start;
-        padding: 2px 14px 12px 14px;
+        padding: 12px 14px 12px 14px;
     }
 
-    /* 3. Colonne de droite : Chronicle (occupe la hauteur des deux lignes) */
     .allegiance-ledger {
         grid-column: 2;
         grid-row: 1 / span 2;
         padding: 12px 14px 12px 14px;
     }
 
-    /* 4. Canevas des bulles : sous le bandeau d'en-tête */
     .tribe-map-svg {
         grid-column: 1 / -1;
         grid-row: 3;
