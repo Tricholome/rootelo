@@ -73,6 +73,11 @@
 </head>
 
 <body class="{% if is_archive %}archive-view{% endif %} {% if page_id == 'network' %}homelands-mode{% endif %}" data-page="{{ page_id }}" data-section="{{ active_section }}">
+	<script>
+        if (document.body.dataset.page === 'index' && localStorage.getItem('spotFrogs') === 'true') {
+            document.body.classList.add('homelands-mode');
+        }
+    </script>
     
     <div class="container">
 	
