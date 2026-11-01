@@ -258,6 +258,9 @@
 				</div>
 				
 				<div class="modal-text-side">
+					<img id="modalSupporterLeft" class="modal-supporter left" src="" alt="">
+					<img id="modalSupporterRight" class="modal-supporter right" src="" alt="">
+
 					<div class="title-row">
 						<h2 id="modalTitle"></h2>
 						<h3 id="modalElo"></h3>
@@ -334,16 +337,17 @@
 				subtitle: 'The Legend',
 				desc: 'Has anyone truly seen this mythical beast, or is it only an echo of the wild? What happens to the predator when the woods turn hollow and every path leads back to a mirror of its own perfection? With nothing left to be claimed, is the true crown the silence that follows the chase?'
 			},
+			'frog': {
+				name: 'Frog',
+				subtitle: 'Pillar of the Diaspora',
+				desc: 'Emerging from the misty waterways of the diaspora, these steadfast pioneers claim ground where others merely wander. By rallying a loyal fellowship and holding firm against the shifting tides of battle, they anchor the clearing with quiet authority. Where a Settler stands, a woodland community takes root.'
+			},
 			'bear': {
 				name: 'Bear',
 				elo: CONFIG.champMatch ? CONFIG.champMatch.champion : '',
 				subtitle: CONFIG.champMatch ? `Season ${CONFIG.champMatch.season} Champion` : '',
 				final: CONFIG.champMatch ? `An epic <a href="${CONFIG.champMatch.match_link}" target="_blank" class="cl">final battle</a> pitted the top four titans of the league against each other. On ${CONFIG.champMatch.date}, <strong>${CONFIG.champMatch.champion}</strong> secured the seasonal crown by shutting out the ambitions of <strong>${CONFIG.champMatch.player2}</strong>, <strong>${CONFIG.champMatch.player3}</strong> and <strong>${CONFIG.champMatch.player4}</strong>. Surely, the woodland floor shook from the sheer force of their clash.` : '',
 				crown: '{{ path_prefix }}assets/images/crown.webp'
-			},
-			'frog': {
-				name: 'Frog',
-				desc: 'Emerging from the misty waterways of the diaspora, these steadfast pioneers claim ground where others merely wander. By rallying a loyal fellowship and holding firm against the shifting tides of battle, they anchor the clearing with quiet authority. Where a Settler stands, a woodland community takes root.'
 			}
 		};
 	</script>
