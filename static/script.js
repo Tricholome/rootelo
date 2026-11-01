@@ -152,31 +152,32 @@ document.addEventListener('DOMContentLoaded', function() {
 		const modalIcon = document.getElementById('modalIcon');
 		const modalSubtitle = document.getElementById('modalSubtitle');
 		const modalText = document.getElementById('modalText');
+		const modalFinal = document.getElementById('modalFinal');
+		const supporterLeft = document.getElementById('modalSupporterLeft');
+		const supporterRight = document.getElementById('modalSupporterRight');
 
 		modalTitle.textContent = text.name;
-		
 		modalElo.textContent = playerName || text.elo || '';
 		modalElo.style.color = color;
-		
 		modalIcon.src = icon;
-		
-		if (tier === 'frog' && clearing) {
-			const clearingClean = clearing.charAt(0).toUpperCase() + clearing.slice(1).toLowerCase();
-			const pageName = window.location.pathname.split('/').pop() || '';
-			let networkUrl = `${PATH_PREFIX}network.html`;
-			if (pageName.includes('_')) {
-				const seasonSuffix = pageName.substring(pageName.indexOf('_') + 1).replace(/\.html$/i, '');
-				networkUrl = `${PATH_PREFIX}network_${seasonSuffix}.html`;
-			}
-			const iconPath = `${PATH_PREFIX}assets/items/${clearing.toLowerCase()}.png`;
-			modalSubtitle.innerHTML = `Settler of <a href="${networkUrl}" class="cl"><img src="${iconPath}" alt="${clearingClean}" style="height: 18px; width: 18px; vertical-align: -2px; margin: 0 4px; object-fit: contain;">${clearingClean} Clearing</a>`;
-		} else {
-			modalSubtitle.textContent = text.subtitle || '';
-		}
-		
+		modalSubtitle.textContent = text.subtitle || '';
 		modalText.textContent = text.desc;
-		
-		const modalFinal = document.getElementById('modalFinal');
+
+		if (tier === 'frog' && clearing) {
+			const itemIconPath = `${PATH_PREFIX}assets/items/${clearing.toLowerCase()}.png`;
+			if (supporterLeft) {
+				supporterLeft.src = itemIconPath;
+				supporterLeft.style.display = 'block';
+			}
+			if (supporterRight) {
+				supporterRight.src = itemIconPath;
+				supporterRight.style.display = 'block';
+			}
+		} else {
+			if (supporterLeft) supporterLeft.style.display = 'none';
+			if (supporterRight) supporterRight.style.display = 'none';
+		}
+
 		if (modalFinal) {
 			modalFinal.innerHTML = text.final || '';
 		}
