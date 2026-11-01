@@ -2102,8 +2102,6 @@ table.dataTable tbody tr.loser td {
 /* --- Mode Homelands (actif sur network.html ou quand on coche la case sur index.html) --- */
 body.homelands-mode {
     --main-color: var(--color-frog);
-    background-color: #0b140e;
-    transition: background-color 0.25s ease;
 }
 
 body.homelands-mode .banner-standard,
