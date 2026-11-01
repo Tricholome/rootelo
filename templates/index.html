@@ -40,14 +40,14 @@
                     {% endif %}
 
                     {% if player.homeland_leader %}
-                        <a href="{{ path_prefix }}network{% if is_archive and season_tag %}_{{ season_tag }}{% endif %}.html" 
-                           class="tier-anchor-link frog-leader-icon"
-                           title="Settler of {{ player.homeland_leader|capitalize }} (Click to view map)">
-                            <div class="tier-icon-container">
-                                <img src="{{ path_prefix }}assets/icons/frog.webp" alt="Settler of {{ player.homeland_leader }}">
-                            </div>
-                        </a>
-                    {% endif %}
+						<a href="javascript:void(0)" 
+						   onclick="openTierModal('frog', '{{ player.display_name }}', '{{ player.homeland_leader }}')" 
+						   class="tier-anchor-link frog-leader-icon">
+							<div class="tier-icon-container">
+								<img src="{{ path_prefix }}{{ config.assets.icons.frog }}" alt="frog">
+							</div>
+						</a>
+					{% endif %}
                 </td>
                 <td>{{ player.display_name }}</td>
                 <td>{{ player.ELO }}</td>
