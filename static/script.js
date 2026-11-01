@@ -220,19 +220,11 @@ $(document).ready(function() {
 			const rowNode = settings.aoData[dataIndex].nTr;
 			if (!rowNode) return true;
 
-			const isFrogMode = $('#spotFrogsCheckbox').is(':checked');
-
-			if (isFrogMode) {
-				if (!showAllPlayers) {
-					return rowNode.dataset.settler === 'true';
-				}
+			if ($('#spotFrogsCheckbox').is(':checked')) {
 				return true;
 			}
 
-			if (!showAllPlayers) {
-				return rowNode.dataset.tier !== 'unassigned';
-			}
-			return true;
+			return showAllPlayers || rowNode.dataset.tier !== 'unassigned';
 		});
 
 		const leaderboardTable = $('#leaderboard').DataTable({
@@ -256,19 +248,20 @@ $(document).ready(function() {
 		leaderboardTable.draw();
 
 		$(document).on('change', '#tierFilterCheckbox', function() {
-			showAllPlayers = $(this).is(':checked');
-			$('#leaderboard').DataTable().draw();
+			if (!$('#spotFrogsCheckbox').is(':checked')) {
+				showAllPlayers = $(this).is(':checked');
+				$('#leaderboard').DataTable().draw();
+			}
 		});
 
 		$(document).on('change', '#spotFrogsCheckbox', function() {
 			const isFrogMode = $(this).is(':checked');
 			$('#leaderboard').toggleClass('frogs-mode', isFrogMode);
 
-			const $tierLabel = $('label[for="tierFilterCheckbox"]');
 			if (isFrogMode) {
-				$tierLabel.text('Show all players');
+				$('#tierFilterCheckbox').prop('checked', false);
 			} else {
-				$tierLabel.text('Show tierless players');
+				$('#tierFilterCheckbox').prop('checked', showAllPlayers);
 			}
 
 			$('#leaderboard').DataTable().draw();
