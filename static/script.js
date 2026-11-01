@@ -217,9 +217,22 @@ $(document).ready(function() {
 
 		$.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
 			if (settings.nTable.id !== 'leaderboard') return true;
-			if (showAllPlayers) return true; 
 			const rowNode = settings.aoData[dataIndex].nTr;
-			return rowNode && rowNode.dataset.tier !== 'unassigned';
+			if (!rowNode) return true;
+
+			const isFrogMode = $('#spotFrogsCheckbox').is(':checked');
+
+			if (isFrogMode) {
+				if (!showAllPlayers) {
+					return rowNode.dataset.settler === 'true';
+				}
+				return true;
+			}
+
+			if (!showAllPlayers) {
+				return rowNode.dataset.tier !== 'unassigned';
+			}
+			return true;
 		});
 
 		const leaderboardTable = $('#leaderboard').DataTable({
@@ -244,6 +257,20 @@ $(document).ready(function() {
 
 		$(document).on('change', '#tierFilterCheckbox', function() {
 			showAllPlayers = $(this).is(':checked');
+			$('#leaderboard').DataTable().draw();
+		});
+
+		$(document).on('change', '#spotFrogsCheckbox', function() {
+			const isFrogMode = $(this).is(':checked');
+			$('#leaderboard').toggleClass('frogs-mode', isFrogMode);
+
+			const $tierLabel = $('label[for="tierFilterCheckbox"]');
+			if (isFrogMode) {
+				$tierLabel.text('Show all players');
+			} else {
+				$tierLabel.text('Show tierless players');
+			}
+
 			$('#leaderboard').DataTable().draw();
 		});
 	}
@@ -1183,10 +1210,6 @@ function showVisitorRow(name, date) {
 /* =========================================================================
    --- 10. HOMELANDS MAP & PLAYER NETWORK ENGINE ---
    ========================================================================= */
-   
-$('#spotFrogsCheckbox').on('change', function () {
-    $('#leaderboard').toggleClass('frogs-mode', this.checked);
-});
 
 $(document).ready(function () {
     const dates = window.NETWORK_DATES;
