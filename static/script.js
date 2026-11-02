@@ -1919,7 +1919,7 @@ $(document).ready(function () {
     function renderGuideGraphs() {
         const tribeKeys = Object.keys(config.tribes || {});
         const t1 = tribeKeys[6];
-        const t2 = tribeKeys[1];
+        const t2 = tribeKeys[3];
 
         // 1. Homelands Map
         const hmData = buildGraphData({ [t1]: Array(9), [t2]: Array(6) }, 'hm', null);
@@ -1939,13 +1939,11 @@ $(document).ready(function () {
         const pnData = buildGraphData(null, 'pn', null, {
             name: 'Player',
             tribe: t1,
-            games: 24,
+            games: 12,
             partners: [
                 ['Same', 6, t1],
-				['Other homeland', 17, t2],
-				['Unaligned', 7, null],
-                ['Other', 4, t2],
-                ['Unaligned', 3, null]
+                ['Other', 3, t2],
+                ['Unaligned', 7, null]
             ]
         });
         guideSims.pn = mountSvgGraph(document.getElementById('guideMapPn'), 'pn', pnData.nodes, pnData.links, guideSims.pn, null, false);
