@@ -1918,8 +1918,8 @@ $(document).ready(function () {
 
     function renderGuideGraphs() {
         const tribeKeys = Object.keys(config.tribes || {});
-        const t1 = tribeKeys[0] || 'Sword';
-        const t2 = tribeKeys[1] || 'Tea';
+        const t1 = tribeKeys[6] || 'Sword';
+        const t2 = tribeKeys[1];
 
         // 1. Homelands Map
         const hmData = buildGraphData({ [t1]: Array(9), [t2]: Array(6) }, 'hm', null);
@@ -1927,7 +1927,7 @@ $(document).ready(function () {
 
         // 2. Clearing View
         const hnMembers = [
-            ['Partisan', 95, 3],
+            ['Partisan', 95, 5],
             ['Squire', 65, 8],
             ['Friend', 35, 12]
         ];
