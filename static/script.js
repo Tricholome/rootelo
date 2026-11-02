@@ -1239,11 +1239,7 @@ $(document).ready(function () {
 
     if (!dates?.length || !snapshots) return;
 
-    const { same_tribe, other_tribe, unaligned } = config.colors || {
-        same_tribe: 'var(--main-color)',
-        other_tribe: 'var(--color-mouse)',
-        unaligned: 'var(--color-default)'
-    };
+    const { same_tribe, other_tribe, unaligned } = config.colors;
     const GOLDEN_ANGLE = Math.PI * (3 - Math.sqrt(5));
     const TIER_PHASE = { core: 0, mid: 0.22, outer: 0.47 };
 
@@ -1925,29 +1921,29 @@ $(document).ready(function () {
         const t1 = tribeKeys[0] || 'Sword';
         const t2 = tribeKeys[1] || 'Tea';
 
-        // 1. Homelands Map (2 linked clearings)
+        // 1. Homelands Map
         const hmData = buildGraphData({ [t1]: Array(9), [t2]: Array(6) }, 'hm', null);
         guideSims.hm = mountSvgGraph(document.getElementById('guideMapHm'), 'hm', hmData.nodes, hmData.links, guideSims.hm, null, false);
 
-        // 2. Clearing View (Partisan, Squire, Friend + thresholds)
+        // 2. Clearing View
         const hnMembers = [
-            ['Partisan', 95, 14, '≥ 65%'],
-            ['Squire', 65, 8, '50–64%'],
-            ['Friend', 35, 3, '< 50%']
+            ['Partisan', 95, 9],
+            ['Squire', 65, 8],
+            ['Friend', 35, 7]
         ];
         hnMembers.displayCount = 9;
         const hnData = buildGraphData({ [t1]: hnMembers }, 'hn', t1);
         guideSims.hn = mountSvgGraph(document.getElementById('guideMapHn'), 'hn', hnData.nodes, hnData.links, guideSims.hn, t1, false);
 
-        // 3. Player's Circle (Same homeland, Other homeland, Unaligned + game counts)
+        // 3. Player's Circle
         const pnData = buildGraphData(null, 'pn', null, {
             name: 'Wanderer',
             tribe: t1,
             games: 24,
             partners: [
-                ['Same homeland', 12, t1],
-                ['Other homeland', 6, t2],
-                ['Unaligned', 2, null]
+                ['Same homeland', 6, t1],
+                ['Other homeland', 4, t2],
+                ['Unaligned', 3, null]
             ]
         });
         guideSims.pn = mountSvgGraph(document.getElementById('guideMapPn'), 'pn', pnData.nodes, pnData.links, guideSims.pn, null, false);
