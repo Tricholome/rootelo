@@ -1927,7 +1927,7 @@ $(document).ready(function () {
 
         // 2. Clearing View
         const hnMembers = [
-            ['Partisan', 95, 9],
+            ['Partisan', 95, 3],
             ['Squire', 65, 8],
             ['Friend', 35, 12]
         ];
@@ -1942,6 +1942,7 @@ $(document).ready(function () {
             games: 24,
             partners: [
                 ['Same homeland', 6, t1],
+				['Other homeland', 17, t2],
 				['Unaligned', 7, null],
                 ['Other homeland', 4, t2],
                 ['Unaligned', 3, null]
