@@ -1918,7 +1918,7 @@ $(document).ready(function () {
 
     function renderGuideGraphs() {
         const tribeKeys = Object.keys(config.tribes || {});
-        const t1 = tribeKeys[6] || 'Sword';
+        const t1 = tribeKeys[6];
         const t2 = tribeKeys[1];
 
         // 1. Homelands Map
@@ -1937,14 +1937,14 @@ $(document).ready(function () {
 
         // 3. Player's Circle
         const pnData = buildGraphData(null, 'pn', null, {
-            name: 'Wanderer',
+            name: 'Player',
             tribe: t1,
             games: 24,
             partners: [
-                ['Same homeland', 6, t1],
+                ['Same', 6, t1],
 				['Other homeland', 17, t2],
 				['Unaligned', 7, null],
-                ['Other homeland', 4, t2],
+                ['Other', 4, t2],
                 ['Unaligned', 3, null]
             ]
         });
