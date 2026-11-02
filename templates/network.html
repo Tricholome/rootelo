@@ -27,180 +27,173 @@
 	</div>
 
 	<!-- 2. VUE GUIDE & RÈGLES -->
+	{% set c_same = config.network.colors.same_tribe if config.network and config.network.colors and config.network.colors.same_tribe else 'var(--main-color)' %}
+	{% set c_other = config.network.colors.other_tribe if config.network and config.network.colors and config.network.colors.other_tribe else 'var(--color-mouse)' %}
+	{% set c_unaligned = config.network.colors.unaligned if config.network and config.network.colors and config.network.colors.unaligned else 'var(--color-default)' %}
+
 	<div id="guideSection" class="codex-section" style="display: none; margin-top: 20px;">
-		<h2>The Woodland Cartography</h2>
+		<style>
+			.guide-map-preview {
+				height: 210px;
+				margin: 20px 0 25px 0;
+			}
+			.guide-svg text {
+				text-anchor: middle;
+				font-family: var(--font-ui);
+				pointer-events: none;
+			}
+			.guide-svg line.inter-tribe {
+				stroke: var(--text-muted);
+				stroke-opacity: 0.45;
+				stroke-dasharray: 6, 6;
+				stroke-linecap: round;
+				stroke-width: 2.5px;
+			}
+			.guide-svg line.constellation-link,
+			.guide-svg line.ego-link {
+				stroke: var(--node-color);
+				stroke-opacity: 0.65;
+				stroke-width: 1.5px;
+				stroke-linecap: round;
+			}
+			.guide-svg .node-group.type-tribe .node-circle {
+				fill: var(--bg-surface) !important;
+				stroke: var(--text-muted);
+				stroke-width: 2px;
+				stroke-dasharray: 6, 4;
+				stroke-linecap: round;
+			}
+			.guide-svg .node-group.type-tribe.is-selected .node-circle {
+				stroke: var(--main-color);
+				stroke-width: 2.5px;
+				stroke-dasharray: none;
+			}
+			.guide-svg .num-span {
+				font-size: var(--size-base);
+				font-weight: var(--bold);
+				fill: var(--text-bright);
+			}
+			.guide-svg .lbl-span {
+				font-size: var(--size-xs);
+				font-weight: var(--normal);
+				fill: var(--text-muted);
+			}
+			.guide-svg .node-group.type-player .node-circle,
+			.guide-svg .node-group.type-ego-center .node-circle,
+			.guide-svg .node-group.type-ego-partner .node-circle {
+				fill: var(--node-color) !important;
+				stroke: var(--border-soft);
+				stroke-width: 1px;
+			}
+		</style>
+
+		<h2>The Homelands Map &bull; Woodland Clearings</h2>
 		<p>
-			While the Leaderboard tracks competitive mastery through Elo ratings, <strong>Homelands</strong> maps the social fabric of the Woodland. Rather than asking <em>who defeats whom</em>, this cartography reveals <em>who shares the table with whom</em>—uncovering the natural playgroups and recurring fellowships that bring each season to life.
+			While the Leaderboard tracks individual skill through Elo ratings, <strong>Homelands</strong> maps the social fabric of the league. Rather than asking <em>who defeats whom</em>, this cartography reveals <em>who shares the table with whom</em>. Recurring playgroups naturally crystallize into <strong>Clearings</strong> rallied around an iconic woodland item, sized by their population of active denizens and linked by dashed trails. Use the bottom date controls to navigate day by day through the season and watch clearings emerge, grow, or fade away.
 		</p>
 
-		<h2>The Homelands View &bull; Clearings &amp; Chronicles</h2>
-		<p>
-			On the macro map, each emergent community appears as a <strong>Clearing</strong> rallied around an iconic woodland item. Use the bottom date controls to travel day by day through the season and watch domains rise, expand, or fade away. Clicking any clearing opens its internal constellation:
-		</p>
-
-		<!-- SCHÉMA 1 : HOMELAND CLEARING CONSTELLATION -->
-		<div class="guide-schematic" style="margin: 22px 0; padding: 16px; border-radius: 10px; background: rgba(0, 0, 0, 0.22); border: 1px solid rgba(255, 255, 255, 0.08); text-align: center;">
-			<svg viewBox="0 0 680 250" style="width: 100%; max-width: 680px; height: auto; font-family: inherit; overflow: visible;">
-				<!-- Orbites schématiques -->
-				<circle cx="230" cy="130" r="62" fill="none" stroke="rgba(255,255,255,0.08)" stroke-dasharray="4 4" />
-				<circle cx="230" cy="130" r="105" fill="none" stroke="rgba(255,255,255,0.06)" stroke-dasharray="4 4" />
-
-				<!-- Liens vers la clairière -->
-				<line x1="230" y1="130" x2="178" y2="96" stroke="var(--main-color)" stroke-width="2" stroke-opacity="0.7" />
-				<line x1="230" y1="130" x2="288" y2="108" stroke="var(--main-color)" stroke-width="1.5" stroke-opacity="0.6" />
-				<line x1="230" y1="130" x2="195" y2="212" stroke="color-mix(in srgb, var(--main-color) 55%, var(--color-mouse))" stroke-width="1.5" stroke-opacity="0.5" />
-				<line x1="230" y1="130" x2="328" y2="168" stroke="var(--color-mouse)" stroke-width="1.2" stroke-opacity="0.45" />
-
-				<!-- Noyau central : La Clairière -->
-				<circle cx="230" cy="130" r="34" fill="rgba(20, 24, 30, 0.9)" stroke="var(--main-color)" stroke-width="2" />
-				<text x="230" y="125" text-anchor="middle" fill="#fff" font-size="11" font-weight="700" letter-spacing="0.5">CLEARING</text>
-				<text x="230" y="141" text-anchor="middle" fill="var(--text-muted)" font-size="9">12 members</text>
-
-				<!-- Joueur 1 : Herald (Orbite proche, grosse bulle) -->
-				<circle cx="178" cy="96" r="16" fill="var(--main-color)" fill-opacity="0.25" stroke="#58B05C" stroke-width="2.2" />
-				<text x="178" y="94" text-anchor="middle" fill="#fff" font-size="9" font-weight="700">Herald</text>
-				<text x="178" y="104" text-anchor="middle" fill="#58B05C" font-size="8" font-weight="700">92%</text>
-
-				<!-- Joueur 2 : Partisan (Orbite proche) -->
-				<circle cx="288" cy="108" r="13" fill="var(--main-color)" fill-opacity="0.22" stroke="var(--main-color)" stroke-width="1.8" />
-				<text x="288" y="106" text-anchor="middle" fill="#fff" font-size="8.5" font-weight="600">Partisan</text>
-				<text x="288" y="115" text-anchor="middle" fill="var(--text-muted)" font-size="7.5">78%</text>
-
-				<!-- Joueur 3 : Squire (Orbite médiane) -->
-				<circle cx="195" cy="212" r="11" fill="var(--main-color)" fill-opacity="0.15" stroke="color-mix(in srgb, var(--main-color) 55%, var(--color-mouse))" stroke-width="1.6" />
-				<text x="195" y="210" text-anchor="middle" fill="#fff" font-size="8">Squire</text>
-				<text x="195" y="219" text-anchor="middle" fill="var(--text-muted)" font-size="7">58%</text>
-
-				<!-- Joueur 4 : Friend (Orbite externe, petite bulle) -->
-				<circle cx="328" cy="168" r="9.5" fill="rgba(255,255,255,0.05)" stroke="var(--color-mouse)" stroke-width="1.5" />
-				<text x="328" y="166" text-anchor="middle" fill="#fff" font-size="7.5">Friend</text>
-				<text x="328" y="175" text-anchor="middle" fill="var(--text-muted)" font-size="6.5">41%</text>
-
-				<!-- Encart Chronicle (Haut Droite) -->
-				<text x="430" y="42" fill="var(--text-muted)" font-size="9" font-weight="700" letter-spacing="1">CHRONICLE MILESTONES</text>
-				<rect x="430" y="52" width="210" height="24" rx="5" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.12)" />
-				<text x="442" y="68" fill="var(--text-muted)" font-size="9.5">Founded Oct 12 &bull; <tspan fill="#fff">Jump to birth</tspan></text>
-
-				<rect x="430" y="82" width="210" height="24" rx="5" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.12)" />
-				<text x="442" y="98" fill="var(--text-muted)" font-size="9.5">Culminated Nov 04 &bull; <tspan fill="#fff">Peak size</tspan></text>
-
-				<rect x="430" y="112" width="210" height="24" rx="5" fill="rgba(255,255,255,0.08)" stroke="var(--main-color)" />
-				<text x="442" y="128" fill="#fff" font-size="9.5" font-weight="600">Status: Active (or Dissolved)</text>
-
-				<!-- Légende analytique (Bas Droite) -->
-				<text x="430" y="168" fill="#fff" font-size="9.5" font-weight="700">Reading the Constellation:</text>
-				<text x="430" y="186" fill="var(--text-muted)" font-size="9">&bull; <tspan fill="#fff">Bubble Size &amp; Orbit:</tspan> Internal match weight</text>
-				<text x="430" y="202" fill="var(--text-muted)" font-size="9">&bull; <tspan fill="#fff">Bubble Color:</tspan> Fidelity % to this clearing</text>
-				<text x="430" y="218" fill="var(--text-muted)" font-size="9">&bull; <tspan fill="#58B05C">Herald:</tspan> #1 anchor with highest internal weight</text>
+		<!-- SCHÉMA 1 : HOMELANDS MAP (2 CLAIRIÈRES RELIÉES) -->
+		<div class="tribe-map-container guide-map-preview">
+			<svg class="tribe-map-svg guide-svg" viewBox="0 0 600 200">
+				<g class="links-layer">
+					<line class="link inter-tribe" x1="252.9" y1="101.6" x2="365.1" y2="94.9"></line>
+				</g>
+				<g class="nodes-layer">
+					<g class="node-group type-tribe" transform="translate(195, 105)">
+						<circle class="node-circle" r="58"></circle>
+						<image class="node-icon" href="{{ path_prefix }}assets/items/sword.png" width="38" height="38" x="-19" y="-32"></image>
+						<text class="count-text" transform="translate(0, 18)">
+							<tspan class="num-span" x="0" dy="0">12</tspan>
+							<tspan class="lbl-span" x="0" dy="1.05em"> denizens</tspan>
+						</text>
+					</g>
+					<g class="node-group type-tribe" transform="translate(415, 92)">
+						<circle class="node-circle" r="50"></circle>
+						<image class="node-icon" href="{{ path_prefix }}assets/items/tea.png" width="32" height="32" x="-16" y="-29"></image>
+						<text class="count-text" transform="translate(0, 15)">
+							<tspan class="num-span" x="0" dy="0">7</tspan>
+							<tspan class="lbl-span" x="0" dy="1.05em"> denizens</tspan>
+						</text>
+					</g>
+				</g>
 			</svg>
 		</div>
 
+		<h2>The Clearing View &bull; Fidelity, Herald &amp; Chronicles</h2>
 		<p>
-			Inside a clearing, a player's <strong>Weight</strong> (volume of recent matches played with fellow members) dictates their bubble size and pulls them onto closer inner orbits. Their <strong>Fidelity</strong> (the share of their matches played inside this clearing versus other homelands) shapes their color and standing:
+			Clicking a clearing isolates its internal constellation. Each member's <strong>Weight</strong> (volume of recent matches played with fellow members) determines their bubble size and pulls them onto closer inner orbits, crowning the top contributor as the clearing's <strong>Herald</strong> (<strong>Frog</strong> tier). Meanwhile, a player's <strong>Fidelity</strong> (the share of their games played inside this clearing versus other homelands) colors their bubble from <strong style="color: {{ c_same }};">Partisan</strong> (&ge; 65%), through <strong style="color: color-mix(in srgb, {{ c_same }} 50%, {{ c_other }});">Squire</strong> (50%&ndash;64%), to <strong style="color: {{ c_other }};">Friend</strong> (&lt; 50%). In the top-right corner, the <strong>Chronicle</strong> badges let you jump directly to key historical milestones (<em>Founded</em>, <em>Culminated</em>, <em>Dissolved</em>, or <em>Revived</em>).
 		</p>
 
-		<table class="k-table">
-			<tr>
-				<td><strong style="color: #58B05C;">Herald</strong></td>
-				<td>Top Weight</td>
-				<td class="k-val">Frog Tier</td>
-				<td>The central pillar holding the highest internal match weight within the clearing.</td>
-			</tr>
-			<tr>
-				<td><strong style="color: var(--main-color);">Partisan</strong></td>
-				<td>Core Denizen</td>
-				<td class="k-val">Fidelity &ge; 65%</td>
-				<td>Dedicated members whose matches take place primarily within their homeland.</td>
-			</tr>
-			<tr>
-				<td><strong style="color: color-mix(in srgb, var(--main-color) 50%, var(--color-mouse));">Squire</strong></td>
-				<td>Regular</td>
-				<td class="k-val">50% &ndash; 64%</td>
-				<td>Active contributors who split a notable portion of their tables with outside clearings.</td>
-			</tr>
-			<tr>
-				<td><strong style="color: var(--color-mouse);">Friend</strong></td>
-				<td>Free Roamer</td>
-				<td class="k-val">Fidelity &lt; 50%</td>
-				<td>Borderlanders attached to the clearing while playing frequently across the wider forest.</td>
-			</tr>
-			<tr>
-				<td><strong>Unaligned</strong></td>
-				<td>Vagabond</td>
-				<td class="k-val">No Clearing</td>
-				<td>Independent competitors not currently anchored to any persistent seasonal homeland.</td>
-			</tr>
-		</table>
-
-		<p>
-			In the top corner of a selected clearing, the <strong>Chronicle</strong> records its historical milestones: when it was <em>Founded</em>, when it <em>Culminated</em> at peak membership, and whether it was <em>Dissolved</em> or later <em>Revived</em>. Clicking any milestone rewinds the map directly to that day.
-		</p>
-
-		<h2>The Player’s Circle &bull; Personal Networks</h2>
-		<p>
-			Double-clicking any player bubble—or typing a name into the search bar—switches the map to that competitor's <strong>Player’s Circle</strong>. This view sets aside global politics to focus on an individual's personal table companions across the entire season:
-		</p>
-
-		<!-- SCHÉMA 2 : PLAYER'S CIRCLE & ALLEGIANCES -->
-		<div class="guide-schematic" style="margin: 22px 0; padding: 16px; border-radius: 10px; background: rgba(0, 0, 0, 0.22); border: 1px solid rgba(255, 255, 255, 0.08); text-align: center;">
-			<svg viewBox="0 0 680 240" style="width: 100%; max-width: 680px; height: auto; font-family: inherit; overflow: visible;">
-				<!-- Liens ego-network -->
-				<line x1="230" y1="125" x2="155" y2="85" stroke="var(--main-color)" stroke-width="2.2" stroke-opacity="0.75" />
-				<line x1="230" y1="125" x2="310" y2="95" stroke="var(--color-mouse)" stroke-width="1.6" stroke-opacity="0.6" />
-				<line x1="230" y1="125" x2="175" y2="195" stroke="var(--main-color)" stroke-width="1.5" stroke-opacity="0.6" />
-				<line x1="230" y1="125" x2="325" y2="175" stroke="rgba(160, 174, 192, 0.6)" stroke-width="1.2" stroke-dasharray="3 3" />
-
-				<!-- Joueur Central -->
-				<circle cx="230" cy="125" r="28" fill="rgba(20, 24, 30, 0.92)" stroke="var(--main-color)" stroke-width="2.2" />
-				<text x="230" y="122" text-anchor="middle" fill="#fff" font-size="10" font-weight="700">Wanderer</text>
-				<text x="230" y="135" text-anchor="middle" fill="var(--text-muted)" font-size="8.5">34 games</text>
-
-				<!-- Partenaire 1 : Même Homeland (Proche & Gros) -->
-				<circle cx="155" cy="85" r="16" fill="var(--main-color)" fill-opacity="0.22" stroke="var(--main-color)" stroke-width="1.8" />
-				<text x="155" y="83" text-anchor="middle" fill="#fff" font-size="8.5" font-weight="600">Kin Ally</text>
-				<text x="155" y="93" text-anchor="middle" fill="var(--text-muted)" font-size="7.5">14 games</text>
-
-				<!-- Partenaire 2 : Autre Homeland (Moyen) -->
-				<circle cx="310" cy="95" r="13" fill="rgba(255,255,255,0.05)" stroke="var(--color-mouse)" stroke-width="1.8" />
-				<text x="310" y="93" text-anchor="middle" fill="#fff" font-size="8">Rival</text>
-				<text x="310" y="102" text-anchor="middle" fill="var(--text-muted)" font-size="7">8 games</text>
-
-				<!-- Partenaire 3 : Même Homeland (Moyen) -->
-				<circle cx="175" cy="195" r="11.5" fill="var(--main-color)" fill-opacity="0.18" stroke="var(--main-color)" stroke-width="1.5" />
-				<text x="175" y="193" text-anchor="middle" fill="#fff" font-size="7.5">Fellow</text>
-				<text x="175" y="202" text-anchor="middle" fill="var(--text-muted)" font-size="6.5">6 games</text>
-
-				<!-- Partenaire 4 : Unaligned (Éloigné & Petit) -->
-				<circle cx="325" cy="175" r="9.5" fill="rgba(255,255,255,0.03)" stroke="#718096" stroke-width="1.4" />
-				<text x="325" y="173" text-anchor="middle" fill="#fff" font-size="7.5">Nomad</text>
-				<text x="325" y="182" text-anchor="middle" fill="var(--text-muted)" font-size="6.5">3 games</text>
-
-				<!-- Encart Allegiances (Haut Droite) -->
-				<text x="430" y="42" fill="var(--text-muted)" font-size="9" font-weight="700" letter-spacing="1">ALLEGIANCE LEDGER</text>
-				<rect x="430" y="52" width="210" height="24" rx="5" fill="rgba(255,255,255,0.08)" stroke="var(--main-color)" />
-				<text x="442" y="68" fill="#fff" font-size="9.5" font-weight="600">Sword Clearing &bull; <tspan font-weight="400">since Nov 02</tspan></text>
-
-				<rect x="430" y="82" width="210" height="24" rx="5" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.12)" />
-				<text x="442" y="98" fill="var(--text-muted)" font-size="9.5">Boot Clearing &bull; Oct 14 &ndash; Nov 01</text>
-
-				<!-- Légende couleurs (Bas Droite) -->
-				<text x="430" y="138" fill="#fff" font-size="9.5" font-weight="700">Partner Alignment Colors:</text>
-				<circle cx="436" cy="155" r="4" fill="var(--main-color)" />
-				<text x="448" y="158" fill="var(--text-muted)" font-size="9"><tspan fill="#fff">Same Homeland:</tspan> Fellow clearing member</text>
-				<circle cx="436" cy="173" r="4" fill="var(--color-mouse)" />
-				<text x="448" y="176" fill="var(--text-muted)" font-size="9"><tspan fill="#fff">Other Homeland:</tspan> Foreign clearing member</text>
-				<circle cx="436" cy="191" r="4" fill="#718096" />
-				<text x="448" y="194" fill="var(--text-muted)" font-size="9"><tspan fill="#fff">Unaligned:</tspan> Independent opponent</text>
+		<!-- SCHÉMA 2 : CLEARING CONSTELLATION (1 CLAIRIÈRE + 3 BULLES FIDELITY/WEIGHT) -->
+		<div class="tribe-map-container guide-map-preview">
+			<svg class="tribe-map-svg guide-svg" viewBox="0 0 600 220">
+				<g class="links-layer">
+					<line class="link constellation-link" style="--node-color: {{ c_same }};" x1="244.8" y1="81.0" x2="241.3" y2="79.0"></line>
+					<line class="link constellation-link" style="--node-color: color-mix(in srgb, {{ c_same }} 50%, {{ c_other }});" x1="349.1" y1="131.0" x2="390.0" y2="146.9"></line>
+					<line class="link constellation-link" style="--node-color: {{ c_other }};" x1="241.7" y1="132.8" x2="165.3" y2="165.5"></line>
+				</g>
+				<g class="nodes-layer">
+					<g class="node-group type-tribe is-selected" transform="translate(295, 110)">
+						<circle class="node-circle" r="58"></circle>
+						<image class="node-icon" href="{{ path_prefix }}assets/items/sword.png" width="38" height="38" x="-19" y="-32"></image>
+						<text class="count-text" transform="translate(0, 18)">
+							<tspan class="num-span" x="0" dy="0">12</tspan>
+							<tspan class="lbl-span" x="0" dy="1.05em"> denizens</tspan>
+						</text>
+					</g>
+					<!-- Partisan (Grosse bulle, orbite proche) -->
+					<g class="node-group type-player" style="--node-color: {{ c_same }};" transform="translate(224, 69)">
+						<circle class="node-circle" r="20"></circle>
+					</g>
+					<!-- Squire (Bulle moyenne, orbite intermédiaire) -->
+					<g class="node-group type-player" style="--node-color: color-mix(in srgb, {{ c_same }} 50%, {{ c_other }});" transform="translate(403, 152)">
+						<circle class="node-circle" r="14"></circle>
+					</g>
+					<!-- Friend (Petite bulle, orbite externe) -->
+					<g class="node-group type-player" style="--node-color: {{ c_other }};" transform="translate(157, 169)">
+						<circle class="node-circle" r="9"></circle>
+					</g>
+				</g>
 			</svg>
 		</div>
 
+		<h2>The Player’s Circle &bull; Companions &amp; Allegiances</h2>
 		<p>
-			The more games you share with a companion, the larger their bubble grows and the closer they orbit around your center. Alongside the graph, the <strong>Allegiances</strong> ledger tracks every clearing you have belonged to during the season. Clicking any allegiance badge transports you back to that clearing on the exact day you joined its ranks.
+			Clicking any player bubble—or searching a name in the top bar—switches the map to their personal <strong>Player’s Circle</strong> across the entire season. The more matches shared with a companion, the larger their bubble grows and the closer they orbit around the center. Bubble colors distinguish partners belonging to the <strong style="color: {{ c_same }};">same homeland</strong>, <strong style="color: {{ c_other }};">another homeland</strong>, or <strong style="color: {{ c_unaligned }};">unaligned</strong> wanderers, while the <strong>Allegiances</strong> ledger on the right lets you jump back to every clearing the player has belonged to during the season.
 		</p>
+
+		<!-- SCHÉMA 3 : PLAYER'S CIRCLE (1 JOUEUR CENTRAL + 3 COMPAGNONS) -->
+		<div class="tribe-map-container guide-map-preview">
+			<svg class="tribe-map-svg guide-svg" viewBox="0 0 600 210">
+				<g class="links-layer">
+					<line class="link ego-link" style="--node-color: {{ c_same }};" x1="318.2" y1="91.1" x2="338.7" y2="78.8"></line>
+					<line class="link ego-link" style="--node-color: {{ c_other }};" x1="270.0" y1="94.8" x2="209.5" y2="70.1"></line>
+					<line class="link ego-link" style="--node-color: {{ c_unaligned }};" x1="319.3" y1="116.8" x2="412.9" y2="162.1"></line>
+				</g>
+				<g class="nodes-layer">
+					<!-- Joueur central -->
+					<g class="node-group type-ego-center" style="--node-color: {{ c_same }};" transform="translate(295, 105)">
+						<circle class="node-circle" r="27"></circle>
+					</g>
+					<!-- Compagnon 1 : Même Homeland (Grosse bulle, proche) -->
+					<g class="node-group type-ego-partner" style="--node-color: {{ c_same }};" transform="translate(355, 69)">
+						<circle class="node-circle" r="19"></circle>
+					</g>
+					<!-- Compagnon 2 : Autre Homeland (Bulle moyenne, distance intermédiaire) -->
+					<g class="node-group type-ego-partner" style="--node-color: {{ c_other }};" transform="translate(197, 65)">
+						<circle class="node-circle" r="13.5"></circle>
+					</g>
+					<!-- Compagnon 3 : Unaligned (Petite bulle, éloignée) -->
+					<g class="node-group type-ego-partner" style="--node-color: {{ c_unaligned }};" transform="translate(421, 166)">
+						<circle class="node-circle" r="9"></circle>
+					</g>
+				</g>
+			</svg>
+		</div>
 
 		<h2>The Louvain Compass &bull; Community Detection</h2>
 		<p>
-			Under the hood, the Woodland is modeled as a dynamic mathematical graph where players are nodes and shared matches form weighted trails between them. Every day, the engine charts communities using the <a class="cl" href="https://en.wikipedia.org/wiki/Louvain_method" target="_blank" rel="noopener">Louvain method</a>—a modularity optimization algorithm designed to uncover natural clusters inside complex networks.
+			Under the hood, the Woodland is modeled as a dynamic mathematical graph where players are nodes and shared matches form weighted trails between them. Every active day, the engine charts communities using the <a class="cl" href="https://en.wikipedia.org/wiki/Louvain_method" target="_blank" rel="noopener">Louvain method</a>—a modularity optimization algorithm designed to uncover natural clusters inside complex networks.
 		</p>
 		<p>
 			Rather than forcing fixed factions, the algorithm compares the density of games played <em>inside</em> a group against the games expected by pure chance across the league. When a circle of active competitors shares significantly more tables together than with the rest of the forest, a Homeland naturally crystallizes.
@@ -208,7 +201,7 @@
 
 		<h2>The Laws of Emergence &bull; Gravity &amp; Decay</h2>
 		<p>
-			To prevent the map from flickering erratically after every match while still reflecting shifting seasonal habits, the simulation enforces a set of organic physical rules:
+			To prevent the map from flickering erratically after every match while still reflecting shifting seasonal habits, the simulation enforces four physical rules:
 		</p>
 
 		<table class="k-table">
@@ -222,13 +215,13 @@
 				<td><strong>Foundation</strong></td>
 				<td>Birth &amp; Cap</td>
 				<td class="k-val">6+ Players</td>
-				<td>Up to 5 clearings can coexist. A new clearing requires at least 6 eligible active players with dense internal ties to claim a woodland totem.</td>
+				<td>Up to 5 clearings can coexist. A new clearing requires at least 6 eligible active players with dense internal ties to claim a woodland item.</td>
 			</tr>
 			<tr>
 				<td><strong>Stickiness</strong></td>
 				<td>Inertia</td>
 				<td class="k-val">&times;1.5 Pull</td>
-				<td>A player only defects to a rival clearing if their pull toward the new group exceeds their current homeland bond by at least 50% (capped at 3 transfers/day).</td>
+				<td>A player only transfers to a rival clearing if their pull toward the new group exceeds their current homeland bond by at least 50% (max 3 transfers/day).</td>
 			</tr>
 			<tr>
 				<td><strong>Dissolution</strong></td>
