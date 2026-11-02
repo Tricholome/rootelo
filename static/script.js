@@ -1939,11 +1939,11 @@ $(document).ready(function () {
         const pnData = buildGraphData(null, 'pn', null, {
             name: 'Denizen',
             tribe: t1,
-            games: 37,
+            games: 17,
             partners: [
-                ['Same', 16, t1],
-                ['Other', 8, t2],
-                ['Unaligned', 11, null]
+                ['Same', 12, t1],
+                ['Other', 5, t2],
+                ['Unaligned', 9, null]
             ]
         });
         guideSims.pn = mountSvgGraph(document.getElementById('guideMapPn'), 'pn', pnData.nodes, pnData.links, guideSims.pn, null, false);
