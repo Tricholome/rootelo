@@ -1937,9 +1937,9 @@ $(document).ready(function () {
 
         // 3. Player's Circle
         const pnData = buildGraphData(null, 'pn', null, {
-            name: 'Player',
+            name: 'Denizen',
             tribe: t1,
-            games: 12,
+            games: 7,
             partners: [
                 ['Same', 6, t1],
                 ['Other', 3, t2],
