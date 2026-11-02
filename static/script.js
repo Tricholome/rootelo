@@ -1929,7 +1929,7 @@ $(document).ready(function () {
         const hnMembers = [
             ['Partisan', 95, 9],
             ['Squire', 65, 8],
-            ['Friend', 35, 7]
+            ['Friend', 35, 12]
         ];
         hnMembers.displayCount = 9;
         const hnData = buildGraphData({ [t1]: hnMembers }, 'hn', t1);
@@ -1942,6 +1942,7 @@ $(document).ready(function () {
             games: 24,
             partners: [
                 ['Same homeland', 6, t1],
+				['Unaligned', 7, null],
                 ['Other homeland', 4, t2],
                 ['Unaligned', 3, null]
             ]
