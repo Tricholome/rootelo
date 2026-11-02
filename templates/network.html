@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-	<!-- 1. VUES CARTOGRAPHIQUES (Homelands Map & Player's Network) -->
+	<!-- 1. MAPS VIEW -->
 	<div id="networkWrapper" class="network-container" data-view="hm">
 
 		<div id="tribeMapContainer" class="tribe-map-container">
@@ -26,11 +26,11 @@
 
 	</div>
 
-	<!-- 2. VUE GUIDE & RÈGLES -->
+	<!-- 2. GUIDE VIEW -->
 	<div id="guideSection" class="codex-section" style="display: none; margin-top: 20px;">
 		<h2>The Woodland Cartography</h2>
 		<p>
-			While the Leaderboard tracks individual skill through Elo ratings, <strong>Homelands</strong> maps the social fabric of the league. Rather than asking <em>who defeats whom</em>, this cartography reveals <em>who shares the table with whom</em>. Recurring playgroups naturally crystallize into <strong>Clearings</strong> rallied around an iconic woodland item, sized by their population of active denizens and linked by dashed trails. Use the bottom date controls to navigate day by day through the season and watch clearings emerge, grow, or fade away.
+			While the Leaderboard tracks individual skill through Elo ratings, <strong>Homelands</strong> maps the social fabric of the league. Recurring playgroups naturally crystallize into clearings rallied around an iconic woodland item, sized by their population of active denizens and linked by dashed paths. Use the bottom date controls to navigate day by day through the season and watch homelands emerge, grow, or fade away.
 		</p>
 
 		<div class="tribe-map-container guide-map">
@@ -40,9 +40,9 @@
 			</svg>
 		</div>
 
-		<h2>The Clearing View &bull; Fidelity, Herald &amp; Chronicles</h2>
+		<h2>The Internal Constellation</h2>
 		<p>
-			Clicking a clearing isolates its internal constellation. Each member's <strong>Weight</strong> (volume of recent matches played with fellow members) determines their bubble size and pulls them onto closer inner orbits, crowning the top contributor as the clearing's <strong>Herald</strong> (<strong>Frog</strong> tier). Meanwhile, a player's <strong>Fidelity</strong> (the share of their games played inside this clearing versus other homelands) colors their bubble from Partisan (&ge; 65%), through Squire (50%&ndash;64%), to Friend (&lt; 50%). In the top-right corner, the <strong>Chronicle</strong> badges let you jump directly to key historical milestones (<em>Founded</em>, <em>Culminated</em>, <em>Dissolved</em>, or <em>Revived</em>).
+			Each Homeland's denizen is defined by two metrics. The <strong>Weight</strong> is the volume of recent matches played with fellow denizens and determines their bubble size and proximity to the homeland's core. The <strong>Fidelity</strong> is the share of their games played inside this homeland versus other homelands and colors their bubble from <em>Friend</em> (&lt; 50%), through <em>Squire</em> (50%&ndash;80%), up to <em>Partisan</em> (&gt; 80%). The two metrics are not  necessarily corelated and a denizen can have an important weight but a fluctuating fidelity, and vice-versa.
 		</p>
 
 		<div class="tribe-map-container guide-map">
@@ -52,9 +52,9 @@
 			</svg>
 		</div>
 
-		<h2>The Player’s Circle &bull; Companions &amp; Allegiances</h2>
+		<h2>The Player’s Circle</h2>
 		<p>
-			Clicking any player bubble—or searching a name in the top bar—switches the map to their personal <strong>Player’s Circle</strong> across the entire season. The more matches shared with a companion, the larger their bubble grows and the closer they orbit around the center. Bubble colors distinguish partners belonging to the same homeland, another homeland, or unaligned wanderers, while the <strong>Allegiances</strong> ledger on the right lets you jump back to every clearing the player has belonged to during the season.
+			Clicking any denizen bubble switches the map to their personal network across the entire season. The more matches shared with a companion, the larger their bubble grows and the closer they orbit around the center. Bubble colors distinguish partners belonging to the same homeland, another homeland, or unaligned to any homelands. The <strong>Allegiances</strong> ledger on the right lets you jump back to every homeland the player has belonged to during the season.
 		</p>
 
 		<div class="tribe-map-container guide-map">
@@ -64,7 +64,7 @@
 			</svg>
 		</div>
 
-		<h2>The Louvain Compass &bull; Community Detection</h2>
+		<h2>The Louvain Compass</h2>
 		<p>
 			Under the hood, the Woodland is modeled as a dynamic mathematical graph where players are nodes and shared matches form weighted trails between them. Every active day, the engine charts communities using the <a class="cl" href="https://en.wikipedia.org/wiki/Louvain_method" target="_blank" rel="noopener">Louvain method</a>—a modularity optimization algorithm designed to uncover natural clusters inside complex networks.
 		</p>
@@ -72,7 +72,7 @@
 			Rather than forcing fixed factions, the algorithm compares the density of games played <em>inside</em> a group against the games expected by pure chance across the league. When a circle of active competitors shares significantly more tables together than with the rest of the forest, a Homeland naturally crystallizes.
 		</p>
 
-		<h2>The Laws of Emergence &bull; Gravity &amp; Decay</h2>
+		<h2>The Laws of Emergence</h2>
 		<p>
 			To prevent the map from flickering erratically after every match while still reflecting shifting seasonal habits, the simulation enforces four physical rules:
 		</p>
