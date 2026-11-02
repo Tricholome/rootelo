@@ -1564,11 +1564,14 @@ $(document).ready(function () {
         $ledger.empty();
     }
 
-    function buildGraphData(snapshot) {
+    let guideSims = {};
+
+    function buildGraphData(snapshot, view = currentView, tribe = activeTribe, pnOverride = null) {
         const nodes = [], links = [];
 
-        if (currentView === 'pn') {
-            const data = constellations[selectedPlayer];
+        if (view === 'pn') {
+            const pNameCenter = pnOverride ? pnOverride.name : selectedPlayer;
+            const data = pnOverride || constellations[selectedPlayer];
             if (!data) return { nodes, links };
 
             const centerTribe = normalizeTribe(data.tribe);
@@ -1581,9 +1584,9 @@ $(document).ready(function () {
             const cRad = centerRadius(games, maxPRad);
 
             nodes.push({
-                id: selectedPlayer,
+                id: pNameCenter,
                 type: 'ego-center',
-                name: selectedPlayer,
+                name: pNameCenter,
                 status: `${games} ${games === 1 ? 'game' : 'games'}`,
                 radius: cRad,
                 color: networkColor(centerTribe, centerTribe, true)
@@ -1593,12 +1596,13 @@ $(document).ready(function () {
             const maxDist = Math.min(180, Math.max(minDist + 40, 80 + total * 5));
             const sMax = Math.sqrt(maxW), sMin = Math.sqrt(minW);
 
-            partners.forEach(([pName, weight], idx) => {
+            partners.forEach(([pName, weight, pTribeOverride], idx) => {
                 const id = `partner_${pName}`;
                 const wNorm = sMax > sMin ? (sMax - Math.sqrt(weight)) / (sMax - sMin) : 0;
                 const rNorm = total > 1 ? idx / (total - 1) : 0;
                 const t = sMax > sMin ? (0.6 * wNorm + 0.4 * rNorm) : rNorm;
-                const color = networkColor(centerTribe, getPlayerTribe(pName), false);
+                const partnerTribe = pTribeOverride !== undefined ? pTribeOverride : getPlayerTribe(pName);
+                const color = networkColor(centerTribe, partnerTribe, false);
 
                 nodes.push({
                     id,
@@ -1610,12 +1614,12 @@ $(document).ready(function () {
                     dist: minDist + t * (maxDist - minDist),
                     angle: idx * GOLDEN_ANGLE - Math.PI / 2
                 });
-                links.push({ source: selectedPlayer, target: id, type: 'ego-link', color });
+                links.push({ source: pNameCenter, target: id, type: 'ego-link', color });
             });
             return { nodes, links };
         }
 
-        if (currentView === 'hm' || !activeTribe) {
+        if (view === 'hm' || !tribe) {
             const activeTribes = Object.keys(snapshot || {}).filter(t => snapshot[t]?.length > 0);
             activeTribes.forEach((t, idx) => {
                 const count = snapshot[t].length;
@@ -1636,16 +1640,17 @@ $(document).ready(function () {
             return { nodes, links };
         }
 
-        const members = [...(snapshot[activeTribe] || [])].sort((a, b) => b[2] - a[2]);
-        const count = members.length;
-        const maxWeight = count ? members[0][2] : 1;
+        const members = [...(snapshot[tribe] || [])].sort((a, b) => b[2] - a[2]);
+        const count = snapshot[tribe].displayCount || members.length;
+        const maxWeight = members.length ? members[0][2] : 1;
 
-        nodes.push({ id: activeTribe, type: 'tribe', label: activeTribe, count, radius: tribeRadius(count) });
+        nodes.push({ id: tribe, type: 'tribe', label: tribe, count, radius: tribeRadius(count) });
 
-        members.forEach(([pName, fidelity, weight], idx) => {
-            const ringKey = idx < Math.max(1, Math.floor(count * 0.25)) ? 'core'
-                          : idx < Math.max(2, Math.floor(count * 0.65)) ? 'mid' : 'outer';
-            const slot = (2 * Math.PI) / (count || 1);
+        members.forEach(([pName, fidelity, weight, statusOverride], idx) => {
+            const mLen = members.length;
+            const ringKey = idx < Math.max(1, Math.floor(mLen * 0.25)) ? 'core'
+                          : idx < Math.max(2, Math.floor(mLen * 0.65)) ? 'mid' : 'outer';
+            const slot = (2 * Math.PI) / (mLen || 1);
             const angle = TIER_PHASE[ringKey] * 2 * Math.PI + slot * idx + (nameJitter(pName) - 0.5) * slot * 0.6 - Math.PI / 2;
             const color = fidelityColor(fidelity);
             const id = `player_${pName}`;
@@ -1654,39 +1659,34 @@ $(document).ready(function () {
                 id,
                 type: 'player',
                 name: pName,
-                status: `${Math.round(fidelity)}%`,
+                status: statusOverride || `${Math.round(fidelity)}%`,
                 color,
                 radius: 8 + (maxWeight > 0 ? weight / maxWeight : 0) * 14,
                 dist: ringKey === 'core' ? 75 : ringKey === 'mid' ? 120 : 170,
                 angle
             });
-            links.push({ source: activeTribe, target: id, type: 'constellation-link', color });
+            links.push({ source: tribe, target: id, type: 'constellation-link', color });
         });
 
         return { nodes, links };
     }
 
-    function renderGraph(snapshot) {
-        if (typeof d3 === 'undefined') return;
+    function mountSvgGraph(svgEl, view, newNodes, newLinks, simInstance, selectedTribeId, isInteractive = true) {
+        if (typeof d3 === 'undefined' || !svgEl) return null;
 
-        updateChrome(snapshot);
-
-        const svg = d3.select('#tribeMapSvg');
-        const svgEl = document.getElementById('tribeMapSvg');
-        const width = svgEl?.clientWidth || 800;
-        const height = svgEl?.clientHeight || 450;
+        const svg = d3.select(svgEl);
+        const width = svgEl.clientWidth || 480;
+        const height = svgEl.clientHeight || 290;
         const isDesktop = window.innerWidth > 768;
         const originX = width / 2;
-        const originY = height / 2 + (isDesktop && currentView === 'hn' ? 16 : 0);
+        const originY = height / 2 + (isInteractive && isDesktop && view === 'hn' ? 16 : 0);
         const duration = 450, easeFn = d3.easeCubicOut;
 
-        const { nodes: newNodes, links: newLinks } = buildGraphData(snapshot);
-
-        const prevMap = new Map(simulation ? simulation.nodes().map(d => [d.id, d]) : []);
-        const topologyChanged = lastRenderedView !== currentView ||
+        const prevMap = new Map(simInstance ? simInstance.nodes().map(d => [d.id, d]) : []);
+        const topologyChanged = !simInstance ||
+            simInstance._lastView !== view ||
             newNodes.length !== prevMap.size ||
             newNodes.some(n => !prevMap.has(n.id));
-        lastRenderedView = currentView;
 
         const hmRingRadius = newNodes.length >= 3
             ? Math.min(width, height) * (newNodes.length >= 5 ? 0.35 : 0.30)
@@ -1705,7 +1705,7 @@ $(document).ready(function () {
                 if (d.dist != null) {
                     d.x = originX + d.dist * Math.cos(d.angle || 0);
                     d.y = originY + d.dist * Math.sin(d.angle || 0);
-                } else if (d.spawnAngle != null && currentView === 'hm') {
+                } else if (d.spawnAngle != null && view === 'hm') {
                     d.x = originX + hmRingRadius * Math.cos(d.spawnAngle);
                     d.y = originY + hmRingRadius * Math.sin(d.spawnAngle);
                 } else {
@@ -1715,10 +1715,15 @@ $(document).ready(function () {
             }
         });
 
+        if (!simInstance) {
+            simInstance = d3.forceSimulation().alphaDecay(0.045).velocityDecay(0.35);
+        }
+        simInstance._lastView = view;
+
         const drag = d3.drag()
-            .on('start', (e, d) => { if (!e.active) simulation.alphaTarget(0.3).restart(); d.fx = d.x; d.fy = d.y; })
+            .on('start', (e, d) => { if (!e.active) simInstance.alphaTarget(0.3).restart(); d.fx = d.x; d.fy = d.y; })
             .on('drag', (e, d) => { d.fx = e.x; d.fy = e.y; })
-            .on('end', (e, d) => { if (!e.active) simulation.alphaTarget(0); d.fx = null; d.fy = null; });
+            .on('end', (e, d) => { if (!e.active) simInstance.alphaTarget(0); d.fx = null; d.fy = null; });
 
         const link = svg.select('g.links-layer').selectAll('line')
             .data(newLinks, d => `${d.source.id || d.source}-${d.target.id || d.target}`)
@@ -1760,7 +1765,7 @@ $(document).ready(function () {
                     return exit.transition().duration(duration).ease(easeFn).style('opacity', 0).remove();
                 }
             )
-            .attr('class', d => `node-group type-${d.type} ${activeTribe === d.id ? 'is-selected' : ''}`)
+            .attr('class', d => `node-group type-${d.type} ${selectedTribeId === d.id ? 'is-selected' : ''}`)
             .style('--node-color', d => d.color || null);
 
         node.transition().duration(duration).ease(easeFn).style('opacity', 1);
@@ -1793,47 +1798,46 @@ $(document).ready(function () {
                     .attr('dy', d.type === 'ego-center' ? '-0.25em' : '0.32em')
                     .text(d.name);
                 g.select('.player-status-tspan')
-                    .attr('dy', d.type === 'ego-center' ? '1.15em' : '1.15em')
+                    .attr('dy', '1.15em')
                     .text(d.status || '');
             }
         });
 
-        node.on('click', (event, d) => {
-            if (event.defaultPrevented) return;
-            event.stopPropagation();
+        if (isInteractive) {
+            node.on('click', (event, d) => {
+                if (event.defaultPrevented) return;
+                event.stopPropagation();
 
-            if (d.type === 'tribe' && currentView !== 'pn') {
-                activeTribe = activeTribe === d.id ? null : d.id;
-                currentView = activeTribe ? 'hn' : 'hm';
-                selectedPlayer = null;
-                clearSearch();
-                updateView();
-            } else if (d.type === 'player' || d.type === 'ego-partner') {
-                currentView = 'pn';
-                activeTribe = null;
-                setSearchPlayer(d.name);
-                updateView();
-            }
-        });
+                if (d.type === 'tribe' && currentView !== 'pn') {
+                    activeTribe = activeTribe === d.id ? null : d.id;
+                    currentView = activeTribe ? 'hn' : 'hm';
+                    selectedPlayer = null;
+                    clearSearch();
+                    updateView();
+                } else if (d.type === 'player' || d.type === 'ego-partner') {
+                    currentView = 'pn';
+                    activeTribe = null;
+                    setSearchPlayer(d.name);
+                    updateView();
+                }
+            });
 
-        svg.on('click', () => {
-            if (currentView === 'hn') {
-                currentView = 'hm';
-                activeTribe = null;
-                selectedPlayer = null;
-                clearSearch();
-                updateView();
-            }
-        });
-
-        if (!simulation) {
-            simulation = d3.forceSimulation().alphaDecay(0.045).velocityDecay(0.35);
+            svg.on('click', () => {
+                if (currentView === 'hn') {
+                    currentView = 'hm';
+                    activeTribe = null;
+                    selectedPlayer = null;
+                    clearSearch();
+                    updateView();
+                }
+            });
         }
+
         const linkForce = d3.forceLink().id(d => d.id);
 
-        if (currentView === 'hm') {
+        if (view === 'hm') {
             const n = newNodes.length;
-            simulation
+            simInstance
                 .force('center', d3.forceCenter(originX, originY).strength(0.1))
                 .force('x', d3.forceX(originX).strength(0.04))
                 .force('y', d3.forceY(originY).strength(0.06))
@@ -1843,7 +1847,7 @@ $(document).ready(function () {
                 .force('collision', d3.forceCollide().radius(d => d.radius + 22).iterations(2));
         } else {
             const isHub = d => d.type === 'tribe' || d.type === 'ego-center';
-            simulation
+            simInstance
                 .force('center', null)
                 .force('radial', null)
                 .force('link', linkForce.distance(0).strength(0))
@@ -1853,14 +1857,14 @@ $(document).ready(function () {
                 .force('collision', d3.forceCollide().radius(d => d.radius + 6));
         }
 
-        simulation.nodes(newNodes);
-        simulation.force('link').links(newLinks);
-        simulation.alpha(topologyChanged ? 0.45 : 0.18).restart();
+        simInstance.nodes(newNodes);
+        simInstance.force('link').links(newLinks);
+        simInstance.alpha(topologyChanged ? 0.45 : 0.18).restart();
 
-        simulation.on('tick', () => {
-            if (currentView !== 'hm') {
+        simInstance.on('tick', () => {
+            if (view !== 'hm') {
                 const hub = newNodes.find(n => n.type === 'tribe' || n.type === 'ego-center');
-                const pull = currentView === 'pn' ? 0.15 : 0.12;
+                const pull = view === 'pn' ? 0.15 : 0.12;
                 if (hub) {
                     newNodes.forEach(d => {
                         if (d === hub || d.dist == null || d.fx != null) return;
@@ -1878,7 +1882,7 @@ $(document).ready(function () {
                 const pad = r + 6;
                 let topPad = pad;
 
-                if (isDesktop && currentView === 'hn' && Math.abs(d.x - originX) < 95) {
+                if (isInteractive && isDesktop && view === 'hn' && Math.abs(d.x - originX) < 95) {
                     topPad = Math.max(pad, 68);
                 }
 
@@ -1906,6 +1910,47 @@ $(document).ready(function () {
 
             node.attr('transform', d => `translate(${d.x},${d.y})`);
         });
+
+        return simInstance;
+    }
+
+    function renderGraph(snapshot) {
+        updateChrome(snapshot);
+        const { nodes, links } = buildGraphData(snapshot);
+        simulation = mountSvgGraph(document.getElementById('tribeMapSvg'), currentView, nodes, links, simulation, activeTribe, true);
+    }
+
+    function renderGuideGraphs() {
+        const tribeKeys = Object.keys(config.tribes || {});
+        const t1 = tribeKeys[0] || 'Sword';
+        const t2 = tribeKeys[1] || 'Tea';
+
+        // 1. Homelands Map (2 linked clearings)
+        const hmData = buildGraphData({ [t1]: Array(9), [t2]: Array(6) }, 'hm', null);
+        guideSims.hm = mountSvgGraph(document.getElementById('guideMapHm'), 'hm', hmData.nodes, hmData.links, guideSims.hm, null, false);
+
+        // 2. Clearing View (Partisan, Squire, Friend + thresholds)
+        const hnMembers = [
+            ['Partisan', 95, 14, '≥ 65%'],
+            ['Squire', 65, 8, '50–64%'],
+            ['Friend', 35, 3, '< 50%']
+        ];
+        hnMembers.displayCount = 9;
+        const hnData = buildGraphData({ [t1]: hnMembers }, 'hn', t1);
+        guideSims.hn = mountSvgGraph(document.getElementById('guideMapHn'), 'hn', hnData.nodes, hnData.links, guideSims.hn, t1, false);
+
+        // 3. Player's Circle (Same homeland, Other homeland, Unaligned + game counts)
+        const pnData = buildGraphData(null, 'pn', null, {
+            name: 'Wanderer',
+            tribe: t1,
+            games: 24,
+            partners: [
+                ['Same homeland', 12, t1],
+                ['Other homeland', 6, t2],
+                ['Unaligned', 2, null]
+            ]
+        });
+        guideSims.pn = mountSvgGraph(document.getElementById('guideMapPn'), 'pn', pnData.nodes, pnData.links, guideSims.pn, null, false);
     }
 
     function updateView() {
@@ -1918,10 +1963,12 @@ $(document).ready(function () {
             $wrapper.hide();
             $('.season-selector-group, .footer-table').hide();
             $('#guideSection').fadeIn(200);
+            renderGuideGraphs();
             syncUrl();
             return;
         }
 
+        Object.values(guideSims).forEach(s => s?.stop());
         $('#guideSection').hide();
         $('.season-selector-group, .footer-table').show();
 
@@ -2046,9 +2093,7 @@ $(document).ready(function () {
         updateView();
     });
 
-    $(window).on('resize', () => {
-        if (currentView !== 'guide') updateView();
-    });
+    $(window).on('resize', () => updateView());
 
     const urlParams = new URLSearchParams(window.location.search);
     const clearingParam = urlParams.get('clearing') || urlParams.get('tribe');
