@@ -730,7 +730,7 @@ window.goToPlayerCircle = function(element) {
         networkPage = `network_${seasonSuffix}.html`;
     }
 
-    window.location.href = `${networkPage}?player=${encodeURIComponent(playerName)}#circle`;
+    window.location.href = `${networkPage}?player=${encodeURIComponent(playerName)}#view`;
 };
 
 /* =========================================================================
@@ -1509,9 +1509,8 @@ $(document).ready(function () {
                     playerLbl.append('tspan').attr('class', 'player-status-tspan').attr('x', 0).attr('dy', '1.15em');
 
                     const overlayLbl = g.append('text').attr('class', 'ego-overlay-label');
-                    overlayLbl.append('tspan').attr('class', 'ego-overlay-title').attr('x', 0).attr('dy', '-0.2em').text("Player's");
-                    overlayLbl.append('tspan').attr('class', 'ego-overlay-action').attr('x', 0).attr('dy', '1.2em').text('Journey');
-
+					overlayLbl.append('tspan').attr('class', 'ego-overlay-action').attr('x', 0).attr('dy', '-0.2em').text('Click to see');
+					overlayLbl.append('tspan').attr('class', 'ego-overlay-action').attr('x', 0).attr('dy', '1.2em').text('the Journey');
                     return g;
                 },
                 update => update,
