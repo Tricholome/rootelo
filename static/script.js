@@ -1332,7 +1332,7 @@ $(document).ready(function () {
             const maxW = total ? partners[0][1] : 1;
             const minW = total ? partners[total - 1][1] : 1;
             const maxPRad = total ? partnerRadius(maxW) : 8;
-            const cRad = 38; // Rayon généreux et fixe pour loger les noms sans déborder
+            const cRad = 34;
 
             nodes.push({
                 id: pNameCenter,
@@ -1497,35 +1497,31 @@ $(document).ready(function () {
                         .attr('transform', d => `translate(${d.x},${d.y})`)
                         .call(drag);
 
-                    // 1. Anneau extérieur boussole (nœud central PN)
-                    g.append('circle').attr('class', 'node-ring-outer');
-
-                    // 2. Cercle principal (clairière, partenaire ou centre évidé)
                     g.append('circle').attr('class', 'node-circle').attr('r', 0);
-
-                    // 3. Icône pour les clairières
                     g.append('image').attr('class', 'node-icon').attr('width', 0).attr('height', 0);
 
-                    // 4. Textes des clairières
                     const countTxt = g.append('text').attr('class', 'count-text');
                     countTxt.append('tspan').attr('class', 'num-span').attr('x', 0).attr('dy', '0');
                     countTxt.append('tspan').attr('class', 'lbl-span').attr('x', 0).attr('dy', '1.05em');
 
-                    // 5. Textes des joueurs
                     const playerLbl = g.append('text').attr('class', 'player-label');
                     playerLbl.append('tspan').attr('class', 'player-name-tspan').attr('x', 0);
                     playerLbl.append('tspan').attr('class', 'player-status-tspan').attr('x', 0).attr('dy', '1.15em');
+
+                    const overlayLbl = g.append('text').attr('class', 'ego-overlay-label');
+                    overlayLbl.append('tspan').attr('class', 'ego-overlay-title').attr('x', 0).attr('dy', '-0.2em').text("Player's");
+                    overlayLbl.append('tspan').attr('class', 'ego-overlay-action').attr('x', 0).attr('dy', '1.2em').text('Journey');
+
                     return g;
                 },
                 update => update,
                 exit => {
                     exit.select('.node-circle').transition().duration(duration).ease(easeFn).attr('r', 0);
-                    exit.select('.node-ring-outer').transition().duration(duration).ease(easeFn).attr('r', 0);
                     exit.select('.node-icon').transition().duration(duration).ease(easeFn).attr('width', 0).attr('height', 0).attr('x', 0).attr('y', 0);
                     return exit.transition().duration(duration).ease(easeFn).style('opacity', 0).remove();
                 }
             )
-            .attr('class', d => `node-group type-${d.type} ${selectedTribeId === d.id ? 'is-selected' : ''}`)
+            .attr('class', d => `node-group type-${d.type} ${isInteractive && d.type !== 'tribe' ? 'js-double-tap' : ''} ${selectedTribeId === d.id ? 'is-selected' : ''}`)
             .style('--node-color', d => d.color || null);
 
         node.transition().duration(duration).ease(easeFn).style('opacity', 1);
@@ -1533,20 +1529,12 @@ $(document).ready(function () {
         node.each(function (d) {
             const g = d3.select(this);
             const startR = d.currentRadius ?? 0;
-            const isCenter = (d.type === 'ego-center');
 
-            // Cercle principal
             g.select('.node-circle').transition().duration(duration).ease(easeFn)
                 .attrTween('r', () => {
                     const interp = d3.interpolateNumber(startR, d.radius);
                     return t => (d.currentRadius = interp(t));
                 });
-
-            // Anneau boussole extérieur (uniquement visible sur le centre évidé)
-            g.select('.node-ring-outer')
-                .style('display', isCenter ? 'block' : 'none')
-                .transition().duration(duration).ease(easeFn)
-                .attr('r', isCenter ? d.radius + 4 : 0);
 
             if (d.type === 'tribe') {
                 const iconPath = config.tribes?.[d.id]?.icon || '';
@@ -1563,10 +1551,10 @@ $(document).ready(function () {
                 g.select('.lbl-span').text(d.count === 1 ? ' denizen' : ' denizens');
             } else {
                 g.select('.player-name-tspan')
-                    .attr('dy', isCenter ? '-0.2em' : '0.32em')
+                    .attr('dy', d.type === 'ego-center' ? '-0.2em' : '0.32em')
                     .text(d.name);
                 g.select('.player-status-tspan')
-                    .attr('dy', '1.2em')
+                    .attr('dy', '1.15em')
                     .text(d.status || '');
             }
         });
@@ -1951,12 +1939,7 @@ $(document).ready(function () {
         $wrapper.attr('data-view', currentView);
 
         if (currentView === 'pn' && selectedPlayer) {
-            $headerTitle.html(`
-                <div class="hud-title">Journey</div>
-                <button type="button" class="herald-link journey-link" title="View ${selectedPlayer}'s Journey">
-                    <span>&lsaquo; Player's Journey</span>
-                </button>
-            `);
+            $headerTitle.empty();
             renderLegend('Companions', [
                 [same_tribe, 'Same homeland'],
                 [other_tribe, 'Other homeland'],
