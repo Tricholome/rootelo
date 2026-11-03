@@ -1274,21 +1274,20 @@ $(document).ready(function () {
     const getPlayerTribe = name => normalizeTribe(constellations[name]?.tribe);
     const tribeRadius = count => Math.max(32, 24 + Math.sqrt(count || 0) * 10);
     const partnerRadius = games => Math.min(24, 6 + Math.sqrt(Math.max(1, games)) * 3);
-    const centerRadius = (games, maxPRad) => Math.max(18, Math.min(30, 12 + Math.sqrt(Math.max(1, games)) * 2.2), (maxPRad || 10) + 3);
-	
-	function goToPlayerJourney(playerName) {
-		if (!playerName) return;
-		localStorage.setItem('selectedPlayer', playerName);
 
-		let trendsPage = 'trends.html';
-		const pageName = window.location.pathname.split('/').pop() || '';
-		if (pageName.includes('_')) {
-			const seasonSuffix = pageName.substring(pageName.indexOf('_') + 1).replace(/\.html$/i, '');
-			trendsPage = `trends_${seasonSuffix}.html`;
-		}
+    function goToPlayerJourney(playerName) {
+        if (!playerName) return;
+        localStorage.setItem('selectedPlayer', playerName);
 
-		window.location.href = `${trendsPage}?player=${encodeURIComponent(playerName)}#view`;
-	}
+        let trendsPage = 'trends.html';
+        const pageName = window.location.pathname.split('/').pop() || '';
+        if (pageName.includes('_')) {
+            const seasonSuffix = pageName.substring(pageName.indexOf('_') + 1).replace(/\.html$/i, '');
+            trendsPage = `trends_${seasonSuffix}.html`;
+        }
+
+        window.location.href = `${trendsPage}?player=${encodeURIComponent(playerName)}#view`;
+    }
 
     function fidelityColor(fidelity) {
         const pct = Math.round(Math.max(0, Math.min(1, ((Number(fidelity) || 0) - 35) / 60)) * 100);
@@ -1333,7 +1332,7 @@ $(document).ready(function () {
             const maxW = total ? partners[0][1] : 1;
             const minW = total ? partners[total - 1][1] : 1;
             const maxPRad = total ? partnerRadius(maxW) : 8;
-            const cRad = centerRadius(games, maxPRad);
+            const cRad = 38; // Rayon généreux et fixe pour loger les noms sans déborder
 
             nodes.push({
                 id: pNameCenter,
@@ -1344,8 +1343,8 @@ $(document).ready(function () {
                 color: networkColor(centerTribe, centerTribe, true)
             });
 
-            const minDist = cRad + maxPRad + 16;
-            const maxDist = Math.min(180, Math.max(minDist + 40, 80 + total * 5));
+            const minDist = cRad + maxPRad + 18;
+            const maxDist = Math.min(180, Math.max(minDist + 40, 85 + total * 5));
             const sMax = Math.sqrt(maxW), sMin = Math.sqrt(minW);
 
             partners.forEach(([pName, weight, pTribeOverride], idx) => {
@@ -1498,13 +1497,21 @@ $(document).ready(function () {
                         .attr('transform', d => `translate(${d.x},${d.y})`)
                         .call(drag);
 
+                    // 1. Anneau extérieur boussole (nœud central PN)
+                    g.append('circle').attr('class', 'node-ring-outer');
+
+                    // 2. Cercle principal (clairière, partenaire ou centre évidé)
                     g.append('circle').attr('class', 'node-circle').attr('r', 0);
+
+                    // 3. Icône pour les clairières
                     g.append('image').attr('class', 'node-icon').attr('width', 0).attr('height', 0);
 
+                    // 4. Textes des clairières
                     const countTxt = g.append('text').attr('class', 'count-text');
                     countTxt.append('tspan').attr('class', 'num-span').attr('x', 0).attr('dy', '0');
                     countTxt.append('tspan').attr('class', 'lbl-span').attr('x', 0).attr('dy', '1.05em');
 
+                    // 5. Textes des joueurs
                     const playerLbl = g.append('text').attr('class', 'player-label');
                     playerLbl.append('tspan').attr('class', 'player-name-tspan').attr('x', 0);
                     playerLbl.append('tspan').attr('class', 'player-status-tspan').attr('x', 0).attr('dy', '1.15em');
@@ -1513,6 +1520,7 @@ $(document).ready(function () {
                 update => update,
                 exit => {
                     exit.select('.node-circle').transition().duration(duration).ease(easeFn).attr('r', 0);
+                    exit.select('.node-ring-outer').transition().duration(duration).ease(easeFn).attr('r', 0);
                     exit.select('.node-icon').transition().duration(duration).ease(easeFn).attr('width', 0).attr('height', 0).attr('x', 0).attr('y', 0);
                     return exit.transition().duration(duration).ease(easeFn).style('opacity', 0).remove();
                 }
@@ -1525,12 +1533,20 @@ $(document).ready(function () {
         node.each(function (d) {
             const g = d3.select(this);
             const startR = d.currentRadius ?? 0;
+            const isCenter = (d.type === 'ego-center');
 
+            // Cercle principal
             g.select('.node-circle').transition().duration(duration).ease(easeFn)
                 .attrTween('r', () => {
                     const interp = d3.interpolateNumber(startR, d.radius);
                     return t => (d.currentRadius = interp(t));
                 });
+
+            // Anneau boussole extérieur (uniquement visible sur le centre évidé)
+            g.select('.node-ring-outer')
+                .style('display', isCenter ? 'block' : 'none')
+                .transition().duration(duration).ease(easeFn)
+                .attr('r', isCenter ? d.radius + 4 : 0);
 
             if (d.type === 'tribe') {
                 const iconPath = config.tribes?.[d.id]?.icon || '';
@@ -1547,10 +1563,10 @@ $(document).ready(function () {
                 g.select('.lbl-span').text(d.count === 1 ? ' denizen' : ' denizens');
             } else {
                 g.select('.player-name-tspan')
-                    .attr('dy', d.type === 'ego-center' ? '-0.25em' : '0.32em')
+                    .attr('dy', isCenter ? '-0.2em' : '0.32em')
                     .text(d.name);
                 g.select('.player-status-tspan')
-                    .attr('dy', '1.15em')
+                    .attr('dy', '1.2em')
                     .text(d.status || '');
             }
         });
@@ -1572,8 +1588,8 @@ $(document).ready(function () {
                     setSearchPlayer(d.name);
                     updateView();
                 } else if (d.type === 'ego-center') {
-					goToPlayerJourney(d.name);
-				}
+                    goToPlayerJourney(d.name);
+                }
             });
 
             svg.on('click', () => {
@@ -1938,7 +1954,7 @@ $(document).ready(function () {
             $headerTitle.html(`
                 <div class="hud-title">Journey</div>
                 <button type="button" class="herald-link journey-link" title="View ${selectedPlayer}'s Journey">
-                    <span>Player's Journey &rsaquo;</span>
+                    <span>&lsaquo; Player's Journey</span>
                 </button>
             `);
             renderLegend('Companions', [
@@ -2105,7 +2121,7 @@ $(document).ready(function () {
         updateView();
     });
 	
-	$headerTitle.on('click', '.journey-link', function (e) {
+    $headerTitle.on('click', '.journey-link', function (e) {
         e.stopPropagation();
         goToPlayerJourney(selectedPlayer);
     });
@@ -2119,7 +2135,6 @@ $(document).ready(function () {
 
     // Navigation par onglets Homelands
     $(document).on('click', '.homelands-tab-link[data-tab]', function (e) {
-        // Si on est sur une autre page (ex: homelands.html), on laisse le navigateur charger network.html
         if ($('#networkWrapper').length === 0) return;
 
         const tab = $(this).data('tab');
