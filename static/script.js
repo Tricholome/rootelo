@@ -584,6 +584,12 @@ window.updateRelationsTree = function(playerName) {
         if (introEl) introEl.innerHTML = "";
         if (metaEl) metaEl.innerHTML = "";
     }
+	
+	// Synchronise le data-player du nœud central
+    const nodeCenter = document.getElementById('nodeCenter');
+    if (nodeCenter) {
+        nodeCenter.setAttribute('data-player', playerName || '');
+    }
     
     // Logique du nœud Trophy (cible uniquement .node-content)
     const nodeTrophy = document.getElementById('nodeTrophy');
@@ -705,6 +711,26 @@ window.updatePlayerView = function() {
             nodeBane.setAttribute('data-player', '');
         }
     }
+};
+
+window.goToPlayerCircle = function(element) {
+    const input = document.getElementById('playerName');
+    const playerName = (element && element.getAttribute('data-player')) || 
+                       (input ? input.value.trim() : '') || 
+                       localStorage.getItem('selectedPlayer');
+
+    if (!playerName) return;
+
+    localStorage.setItem('selectedPlayer', playerName);
+
+    let networkPage = 'network.html';
+    const pageName = window.location.pathname.split('/').pop() || '';
+    if (pageName.includes('_')) {
+        const seasonSuffix = pageName.substring(pageName.indexOf('_') + 1).replace(/\.html$/i, '');
+        networkPage = `network_${seasonSuffix}.html`;
+    }
+
+    window.location.href = `${networkPage}?player=${encodeURIComponent(playerName)}#circle`;
 };
 
 /* =========================================================================
@@ -1249,6 +1275,20 @@ $(document).ready(function () {
     const tribeRadius = count => Math.max(32, 24 + Math.sqrt(count || 0) * 10);
     const partnerRadius = games => Math.min(24, 6 + Math.sqrt(Math.max(1, games)) * 3);
     const centerRadius = (games, maxPRad) => Math.max(18, Math.min(30, 12 + Math.sqrt(Math.max(1, games)) * 2.2), (maxPRad || 10) + 3);
+	
+	function goToPlayerJourney(playerName) {
+		if (!playerName) return;
+		localStorage.setItem('selectedPlayer', playerName);
+
+		let trendsPage = 'trends.html';
+		const pageName = window.location.pathname.split('/').pop() || '';
+		if (pageName.includes('_')) {
+			const seasonSuffix = pageName.substring(pageName.indexOf('_') + 1).replace(/\.html$/i, '');
+			trendsPage = `trends_${seasonSuffix}.html`;
+		}
+
+		window.location.href = `${trendsPage}?player=${encodeURIComponent(playerName)}#view`;
+	}
 
     function fidelityColor(fidelity) {
         const pct = Math.round(Math.max(0, Math.min(1, ((Number(fidelity) || 0) - 35) / 60)) * 100);
@@ -1531,7 +1571,9 @@ $(document).ready(function () {
                     activeTribe = null;
                     setSearchPlayer(d.name);
                     updateView();
-                }
+                } else if (d.type === 'ego-center') {
+					goToPlayerJourney(d.name);
+				}
             });
 
             svg.on('click', () => {
@@ -1893,7 +1935,12 @@ $(document).ready(function () {
         $wrapper.attr('data-view', currentView);
 
         if (currentView === 'pn' && selectedPlayer) {
-            $headerTitle.empty();
+            $headerTitle.html(`
+                <div class="hud-title">Journey</div>
+                <button type="button" class="herald-link journey-link" title="View ${selectedPlayer}'s Journey">
+                    <span>Player's Journey &rsaquo;</span>
+                </button>
+            `);
             renderLegend('Companions', [
                 [same_tribe, 'Same homeland'],
                 [other_tribe, 'Other homeland'],
@@ -2056,6 +2103,11 @@ $(document).ready(function () {
         activeTribe = null;
         setSearchPlayer(player);
         updateView();
+    });
+	
+	$headerTitle.on('click', '.journey-link', function (e) {
+        e.stopPropagation();
+        goToPlayerJourney(selectedPlayer);
     });
 
     $searchInput.on('input change', function () {
