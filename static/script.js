@@ -1700,11 +1700,11 @@ $(document).ready(function () {
             const pnData = buildGraphData(null, 'pn', null, {
                 name: 'Denizen',
                 tribe: t1,
-                games: 17,
+                games: 13,
                 partners: [
-                    ['Same', 12, t1],
-                    ['Other', 5, t2],
-                    ['Unaligned', 9, null]
+                    ['Same', 7, t1],
+                    ['Other', 2, t2],
+                    ['Unaligned', 4, null]
                 ]
             });
             guideSims.pn = mountSvgGraph(document.getElementById('guideMapPn'), 'pn', pnData.nodes, pnData.links, guideSims.pn, null, false);
