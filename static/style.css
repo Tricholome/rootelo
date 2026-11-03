@@ -1380,6 +1380,12 @@ table.dataTable tbody tr.loser td {
 
 .node.central-node { border-color: var(--main-color); }
 
+@media (hover: hover) {
+    .node.central-node:hover { border-color: var(--color-frog); }
+}
+.node.central-node.expanded { border-color: var(--color-frog); }
+.node.central-node .overlay-action { color: var(--color-frog); }
+
 .narrative-text {
     font-size: var(--size-base);
     font-style: italic;
@@ -1927,6 +1933,7 @@ table.dataTable tbody tr.loser td {
 }
 
 .network-container[data-view="pn"] #dateControls,
+.network-container[data-view="pn"] #mapHeaderTitle,
 .network-container[data-view="hm"] #mapHeaderTitle,
 .network-container[data-view="hm"] #playerLedger,
 .network-container[data-view="hm"] #mapLegend {
@@ -2303,7 +2310,6 @@ table.dataTable tbody tr.loser td {
 
 /* 3. Player Nodes */
 .tribe-map-svg .node-group.type-player .node-circle,
-.tribe-map-svg .node-group.type-ego-center .node-circle,
 .tribe-map-svg .node-group.type-ego-partner .node-circle {
     fill: var(--node-color) !important;
     stroke: var(--border-soft);
@@ -2311,15 +2317,40 @@ table.dataTable tbody tr.loser td {
     transition: transform 0.15s ease-out, fill 0.2s ease;
 }
 
-.tribe-map-svg .node-group.type-player:hover .node-circle,
-.tribe-map-svg .node-group.type-ego-partner:hover .node-circle,
-.tribe-map-svg .node-group.type-ego-center:hover .node-circle {
+.tribe-map-svg .node-group.type-ego-center .node-circle {
+    fill: var(--bg-surface) !important;
+    stroke: var(--node-color);
+    stroke-width: 2px;
+    transition: transform 0.15s ease-out, fill 0.25s ease, stroke 0.25s ease;
+}
+
+@media (hover: hover) {
+    .tribe-map-svg .node-group.type-player:hover .node-circle,
+    .tribe-map-svg .node-group.type-ego-partner:hover .node-circle {
+        transform: scale(1.15);
+    }
+    #tribeMapSvg .node-group.type-ego-center:hover .node-circle {
+        fill: var(--bg-overlay-bottom) !important;
+        stroke: var(--color-rabbit) !important;
+        transform: scale(1.08);
+    }
+}
+
+.tribe-map-svg .node-group.type-player.expanded .node-circle,
+.tribe-map-svg .node-group.type-ego-partner.expanded .node-circle {
     transform: scale(1.15);
 }
 
-/* 4. Player Labels & Subtitles */
-.tribe-map-svg .player-label {
-    transition: transform 0.2s ease;
+#tribeMapSvg .node-group.type-ego-center.expanded .node-circle {
+    fill: var(--bg-overlay-bottom) !important;
+    stroke: var(--color-rabbit) !important;
+    transform: scale(1.08);
+}
+
+/* 4. Player Labels, Subtitles & Center Overlay */
+.tribe-map-svg .player-label,
+.tribe-map-svg .ego-overlay-label {
+    transition: transform 0.2s ease, opacity 0.2s ease, visibility 0.2s ease;
 }
 
 .tribe-map-svg .player-name-tspan {
@@ -2346,84 +2377,78 @@ table.dataTable tbody tr.loser td {
 }
 
 .tribe-map-svg .node-group.type-ego-center .player-status-tspan {
+    fill: var(--text-muted);
     opacity: 0.9;
     visibility: visible;
 }
 
-.tribe-map-svg .node-group.type-player:hover .player-label,
-.tribe-map-svg .node-group.type-ego-partner:hover .player-label {
+.tribe-map-svg .ego-overlay-label {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.tribe-map-svg .ego-overlay-title {
+    font-size: var(--size-xxs);
+    font-weight: var(--medium);
+    fill: var(--text-main);
+}
+
+.tribe-map-svg .ego-overlay-action {
+    font-size: var(--size-xxs);
+    font-style: italic;
+    fill: var(--color-rabbit);
+}
+
+@media (hover: hover) {
+    .tribe-map-svg .node-group.type-player:hover .player-label,
+    .tribe-map-svg .node-group.type-ego-partner:hover .player-label {
+        transform: translateY(-0.35em);
+    }
+    .tribe-map-svg .node-group.type-player:hover .player-name-tspan,
+    .tribe-map-svg .node-group.type-ego-partner:hover .player-name-tspan {
+        font-weight: var(--bold);
+        fill: var(--text-bright);
+    }
+    .tribe-map-svg .node-group.type-player:hover .player-status-tspan,
+    .tribe-map-svg .node-group.type-ego-partner:hover .player-status-tspan {
+        opacity: 1;
+        visibility: visible;
+    }
+    #tribeMapSvg .node-group.type-ego-center:hover .player-label {
+        opacity: 0;
+        visibility: hidden;
+    }
+    #tribeMapSvg .node-group.type-ego-center:hover .ego-overlay-label {
+        opacity: 1;
+        visibility: visible;
+    }
+}
+
+.tribe-map-svg .node-group.type-player.expanded .player-label,
+.tribe-map-svg .node-group.type-ego-partner.expanded .player-label {
     transform: translateY(-0.35em);
 }
 
-.tribe-map-svg .node-group.type-player:hover .player-name-tspan,
-.tribe-map-svg .node-group.type-ego-partner:hover .player-name-tspan,
-.tribe-map-svg .node-group.type-ego-center:hover .player-name-tspan {
+.tribe-map-svg .node-group.type-player.expanded .player-name-tspan,
+.tribe-map-svg .node-group.type-ego-partner.expanded .player-name-tspan {
     font-weight: var(--bold);
     fill: var(--text-bright);
 }
 
-.tribe-map-svg .node-group.type-player:hover .player-status-tspan,
-.tribe-map-svg .node-group.type-ego-partner:hover .player-status-tspan {
+.tribe-map-svg .node-group.type-player.expanded .player-status-tspan,
+.tribe-map-svg .node-group.type-ego-partner.expanded .player-status-tspan {
     opacity: 1;
     visibility: visible;
 }
 
-/* --- Inversion Graphique : Centre Astro-Boussole --- */
-
-/* Anneau extérieur fin */
-#tribeMapSvg .node-group.type-ego-center .node-ring-outer {
-    fill: none;
-    stroke: var(--node-color, var(--main-color));
-    stroke-width: 1px;
-    stroke-dasharray: 4, 3;
-    opacity: 0.4;
-    transition: stroke-dasharray 0.3s ease, opacity 0.3s ease;
+#tribeMapSvg .node-group.type-ego-center.expanded .player-label {
+    opacity: 0;
+    visibility: hidden;
 }
 
-/* Anneau intérieur principal */
-#tribeMapSvg .node-group.type-ego-center .node-circle {
-    fill: rgba(18, 22, 18, 0.82) !important; /* Fond sombre translucide */
-    stroke: var(--node-color, var(--main-color));
-    stroke-width: 1.5px;
-    backdrop-filter: blur(4px);
-    transition: stroke-width 0.2s ease, stroke 0.2s ease, transform 0.2s ease;
-}
-
-/* Typographie centrale dégagée */
-#tribeMapSvg .node-group.type-ego-center .player-name-tspan {
-    font-size: 13px;
-    font-weight: var(--bold);
-    letter-spacing: var(--track-wide);
-    fill: var(--text-bright);
-    transform: translateY(-2px);
-}
-
-#tribeMapSvg .node-group.type-ego-center .player-status-tspan {
-    font-size: 10px;
-    font-weight: var(--normal);
-    font-style: normal;
-    letter-spacing: normal;
-    fill: var(--text-muted);
+#tribeMapSvg .node-group.type-ego-center.expanded .ego-overlay-label {
     opacity: 1;
     visibility: visible;
-}
-
-/* Réaction au survol (Feedback vers Player's Journey) */
-#tribeMapSvg .node-group.type-ego-center:hover .node-circle {
-    stroke-width: 2.2px;
-    stroke: var(--color-frog, #58B05C);
-    transform: scale(1.04);
-}
-
-#tribeMapSvg .node-group.type-ego-center:hover .node-ring-outer {
-    stroke: var(--color-frog, #58B05C);
-    stroke-dasharray: none;
-    opacity: 0.8;
-}
-
-#tribeMapSvg .node-group.type-ego-center:hover .player-status-tspan {
-    fill: var(--color-frog, #58B05C);
-    font-weight: var(--medium);
 }
 
 /* =========================================================================
