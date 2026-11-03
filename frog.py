@@ -19,7 +19,7 @@ DEFAULT_CONFIG = {
     "STICKINESS": 1.5,
     "MAX_DAILY_TRANSFERS": 3,
     "INACTIVITY_LIMIT_DAYS": 21,
-    "MIN_TARGET_PARTNERS": 15,
+    "PARTNERS_SCALE_FACTOR": 2.5,
     "DECAY_RATE": 0.95,
     "NEW_MATCH_WEIGHT": 1.0,
     "MIN_EDGE_WEIGHT": 0.1,
@@ -213,12 +213,24 @@ def member_metrics(G: nx.Graph, roster: dict, tribe: str) -> list:
 def build_constellations(
     roster: dict, player_games: Counter, shared: dict, latest_date: str, cfg: dict
 ) -> dict:
-    min_target = cfg.get("MIN_TARGET_PARTNERS", 15)
+    alpha = cfg.get("PARTNERS_SCALE_FACTOR", 2.5)
     players = {}
 
     for p in sorted(player_games):
         all_partners = sorted(shared[p].items(), key=lambda x: (-x[1], str(x[0])))
+        total_partners = len(all_partners)
         
+        if total_partners == 0:
+            players[p] = {
+                "tribe": roster.get(p, UNALIGNED),
+                "games": player_games[p],
+                "partners": [],
+            }
+            continue
+
+        min_target = max(10, math.floor(alpha * math.sqrt(total_partners)))
+        min_target = min(total_partners, min_target) # Ne peut pas dépasser le total
+
         selected_min_games = 1
         for mg in range(1, 10):
             filtered = [partner for partner, games in all_partners if games >= mg]
