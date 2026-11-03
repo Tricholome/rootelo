@@ -1111,6 +1111,7 @@ def run_league_pipeline(league_config, all_leagues_list):
         ("about", "about.html", "codex"),
         ("league", "league.html", "codex"),
         ("simulator", "simulator.html", "codex"),
+        ("homelands", "homelands.html", "network"),
         ("cache", "cache.html", "cache")
     ]
     for page_id, tmpl, section_id in static_pages:
@@ -1127,6 +1128,7 @@ def run_league_pipeline(league_config, all_leagues_list):
             title=p_info.get("title", ""),
             page_heading=p_info.get("page_heading", ""),
             description=p_info.get("description", ""),
+            is_law=(page_id in ["about", "league", "simulator", "homelands"]),
             **extra
         )
 
