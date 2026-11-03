@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-	<!-- 1. MAPS VIEW -->
+	<!-- MAPS VIEW -->
 	<div id="networkWrapper" class="network-container" data-view="hm">
 
 		<div id="tribeMapContainer" class="tribe-map-container">
@@ -24,85 +24,6 @@
 			<button id="latestDateBtn" class="btn" title="Latest Date">&raquo;</button>
 		</div>
 
-	</div>
-
-	<!-- 2. GUIDE VIEW -->
-	<div id="guideSection" class="codex-section" style="display: none; margin-top: 20px;">
-		<h2>The Woodland Cartography</h2>
-		<p>
-			While the Leaderboard tracks individual skill through Elo ratings, <strong>Homelands</strong> maps the social fabric of the league. Recurring playgroups naturally crystallize into clearings rallied around an iconic woodland item, sized by their population of active denizens and linked by dashed paths. Use the bottom date controls to navigate day by day through the season and watch homelands emerge, grow, or fade away.
-		</p>
-
-		<div class="tribe-map-container guide-map">
-			<svg id="guideMapHm" class="tribe-map-svg">
-				<g class="links-layer"></g>
-				<g class="nodes-layer"></g>
-			</svg>
-		</div>
-
-		<h2>The Internal Constellation</h2>
-		<p>
-			Within each homeland, denizens are shaped by two distinct metrics. <strong>Weight</strong> reflects the volume of recent matches played with fellow denizens, dictating bubble size and proximity to the homeland's core. <strong>Fidelity</strong> measures the share of games played inside this homeland versus others, shading bubbles from <em>Friend</em> (&lt; 50%) to <em>Squire</em> (50%&ndash;80%) and <em>Partisan</em> (&gt; 80%). These metrics operate independently: a denizen may hold substantial weight despite fluctuating fidelity, and vice versa.
-		</p>
-		
-		<div class="tribe-map-container guide-map">
-			<svg id="guideMapHn" class="tribe-map-svg">
-				<g class="links-layer"></g>
-				<g class="nodes-layer"></g>
-			</svg>
-		</div>
-
-		<h2>The Player’s Circle</h2>
-		<p>
-			Clicking any denizen bubble reveals their personal network across the entire season. The more matches shared with a companion, the larger their bubble grows and the closer they orbit the center. Bubble colors distinguish partners belonging to the same homeland, another homeland, or wandering unaligned. On the right, the <strong>Allegiances</strong> ledger lets you revisit every homeland the player has belonged to during the season.
-		</p>
-
-		<div class="tribe-map-container guide-map">
-			<svg id="guideMapPn" class="tribe-map-svg">
-				<g class="links-layer"></g>
-				<g class="nodes-layer"></g>
-			</svg>
-		</div>
-
-		<h2>The Louvain Compass</h2>
-		<p>
-			Under the hood, the Woodland is modeled as a dynamic mathematical graph where players are nodes and shared matches form weighted trails between them. Every active day, the engine charts communities using the <a class="cl" href="https://en.wikipedia.org/wiki/Louvain_method" target="_blank" rel="noopener">Louvain method</a>—a modularity optimization algorithm designed to uncover natural clusters inside complex networks.
-		</p>
-		<p>
-			Rather than forcing fixed factions, the algorithm compares the density of games played <em>inside</em> a group against the games expected by pure chance across the league. When a circle of active competitors shares significantly more tables together than with the rest of the forest, a Homeland naturally crystallizes.
-		</p>
-
-		<h2>The Laws of Emergence</h2>
-		<p>
-			To prevent the map from flickering erratically after every match while still reflecting shifting seasonal habits, the simulation enforces four physical rules:
-		</p>
-
-		<table class="k-table">
-			<tr>
-				<td><strong>Trail Decay</strong></td>
-				<td>&minus;5% / day</td>
-				<td class="k-val">&gamma; = 0.95</td>
-				<td>Every match adds 1.0 weight to a pair's bond, while existing bonds decay by 5% each active match day so recent fellowships outweigh old history.</td>
-			</tr>
-			<tr>
-				<td><strong>Foundation</strong></td>
-				<td>Birth &amp; Cap</td>
-				<td class="k-val">6+ Players</td>
-				<td>Up to 5 clearings can coexist. A new clearing requires at least 6 eligible active players with dense internal ties to claim a woodland item.</td>
-			</tr>
-			<tr>
-				<td><strong>Stickiness</strong></td>
-				<td>Inertia</td>
-				<td class="k-val">&times;1.5 Pull</td>
-				<td>A player only transfers to a rival clearing if their pull toward the new group exceeds their current homeland bond by at least 50% (max 3 transfers/day).</td>
-			</tr>
-			<tr>
-				<td><strong>Dissolution</strong></td>
-				<td>Survival Floor</td>
-				<td class="k-val">&lt; 4 Players</td>
-				<td>Players inactive for 21 days return to the unaligned wilds. If a clearing drops below 4 active denizens, it dissolves—though it can be <em>Revived</em> if 3 former members reunite.</td>
-			</tr>
-		</table>
 	</div>
 {% endblock %}
 
