@@ -2368,6 +2368,64 @@ table.dataTable tbody tr.loser td {
     visibility: visible;
 }
 
+/* --- Inversion Graphique : Centre Astro-Boussole --- */
+
+/* Anneau extérieur fin */
+#tribeMapSvg .node-group.type-ego-center .node-ring-outer {
+    fill: none;
+    stroke: var(--node-color, var(--main-color));
+    stroke-width: 1px;
+    stroke-dasharray: 4, 3;
+    opacity: 0.4;
+    transition: stroke-dasharray 0.3s ease, opacity 0.3s ease;
+}
+
+/* Anneau intérieur principal */
+#tribeMapSvg .node-group.type-ego-center .node-circle {
+    fill: rgba(18, 22, 18, 0.82) !important; /* Fond sombre translucide */
+    stroke: var(--node-color, var(--main-color));
+    stroke-width: 1.5px;
+    backdrop-filter: blur(4px);
+    transition: stroke-width 0.2s ease, stroke 0.2s ease, transform 0.2s ease;
+}
+
+/* Typographie centrale dégagée */
+#tribeMapSvg .node-group.type-ego-center .player-name-tspan {
+    font-size: 13px;
+    font-weight: var(--bold);
+    letter-spacing: var(--track-wide);
+    fill: var(--text-bright);
+    transform: translateY(-2px);
+}
+
+#tribeMapSvg .node-group.type-ego-center .player-status-tspan {
+    font-size: 10px;
+    font-weight: var(--normal);
+    font-style: normal;
+    letter-spacing: normal;
+    fill: var(--text-muted);
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Réaction au survol (Feedback vers Player's Journey) */
+#tribeMapSvg .node-group.type-ego-center:hover .node-circle {
+    stroke-width: 2.2px;
+    stroke: var(--color-frog, #58B05C);
+    transform: scale(1.04);
+}
+
+#tribeMapSvg .node-group.type-ego-center:hover .node-ring-outer {
+    stroke: var(--color-frog, #58B05C);
+    stroke-dasharray: none;
+    opacity: 0.8;
+}
+
+#tribeMapSvg .node-group.type-ego-center:hover .player-status-tspan {
+    fill: var(--color-frog, #58B05C);
+    font-weight: var(--medium);
+}
+
 /* =========================================================================
    --- V. SPECIAL EFFECTS & SECRET CONTENT ---
    ========================================================================= */
