@@ -432,7 +432,7 @@ body.homelands-mode .nav-homelands {
     justify-content: center; 
     gap: 6px; 
     width: 100%;
-    max-width: 420px;
+    max-width: 400px;
     margin: 4px 0;
 }
 
@@ -463,7 +463,7 @@ body.homelands-mode .nav-homelands {
 }
 
 @media (max-width: 380px) {
-    .season-selector {
+    .season-selector, .codex-selector {
         gap: 4px;
     }
     .season-btn {
