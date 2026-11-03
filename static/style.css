@@ -467,7 +467,7 @@ body.homelands-mode .nav-homelands {
         gap: 4px;
     }
     .season-btn {
-        padding: 5px 4px;
+        padding: 5px 0px;
         font-size: var(--size-xs);
         letter-spacing: normal;
     }
