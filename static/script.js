@@ -1231,42 +1231,19 @@ function showVisitorRow(name, date) {
    ========================================================================= */
 
 $(document).ready(function () {
-    const dates = window.NETWORK_DATES;
-    const snapshots = window.NETWORK_SNAPSHOTS;
     const config = window.NETWORK_CONFIG || {};
     const rawConstellations = window.PLAYER_CONSTELLATIONS || {};
     const constellations = rawConstellations.players || rawConstellations;
 
-    if (!dates?.length || !snapshots) return;
+    const colors = config.colors || {};
+    const same_tribe = colors.same_tribe || '#58B05C';
+    const other_tribe = colors.other_tribe || '#7A7347';
+    const unaligned = colors.unaligned || '#555555';
 
-    const { same_tribe, other_tribe, unaligned } = config.colors;
     const GOLDEN_ANGLE = Math.PI * (3 - Math.sqrt(5));
     const TIER_PHASE = { core: 0, mid: 0.22, outer: 0.47 };
 
-    const $wrapper = $('#networkWrapper');
-    const $searchInput = $('#playerName');
-    const $datePicker = $('#datePicker').attr({ min: dates[0], max: dates[dates.length - 1] });
-    const $prevBtn = $('#prevDateBtn');
-    const $nextBtn = $('#nextDateBtn');
-    const $earliestBtn = $('#earliestDateBtn');
-    const $latestBtn = $('#latestDateBtn');
-    const $headerTitle = $('#mapHeaderTitle');
-    const $legend = $('#mapLegend');
-    const $ledger = $('#playerLedger');
-
-    $earliestBtn.html('&laquo;');
-    $prevBtn.html('&lsaquo;');
-    $nextBtn.html('&rsaquo;');
-    $latestBtn.html('&raquo;');
-
-    let currentView = 'hm';
-    let activeTribe = null;
-    let selectedPlayer = null;
-    let currentIndex = dates.length - 1;
-    let lastRenderedView = null;
-    let simulation = null;
-    let isInternalSearch = false;
-
+    // --- Fonctions géométriques et visuelles partagées ---
     const normalizeTribe = t => (!t || t === '-' || t === 'UNALIGNED') ? null : t;
     const getPlayerTribe = name => normalizeTribe(constellations[name]?.tribe);
     const tribeRadius = count => Math.max(32, 24 + Math.sqrt(count || 0) * 10);
@@ -1290,11 +1267,6 @@ $(document).ready(function () {
         return (h % 10000) / 10000;
     }
 
-    function formatShortDate(dateStr) {
-        const d = new Date(`${dateStr}T00:00:00`);
-        return isNaN(d) ? dateStr : d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-    }
-
     function distToSegment(px, py, x1, y1, x2, y2) {
         const dx = x2 - x1, dy = y2 - y1, lenSq = dx * dx + dy * dy;
         if (!lenSq) return Math.hypot(px - x1, py - y1);
@@ -1302,265 +1274,9 @@ $(document).ready(function () {
         return Math.hypot(px - (x1 + t * dx), py - (y1 + t * dy));
     }
 
-    function setSearchPlayer(name) {
-        isInternalSearch = true;
-        $searchInput.val(name).trigger('change');
-        isInternalSearch = false;
-    }
-
-    function clearSearch() {
-        isInternalSearch = true;
-        $searchInput.val('').trigger('change');
-        isInternalSearch = false;
-    }
-
-    function findPlayer(query) {
-        const q = (query || '').trim();
-        if (!q) return null;
-        if (constellations[q]) return { name: q, data: constellations[q] };
-        const low = q.toLowerCase();
-        const key = Object.keys(constellations).find(k => k.toLowerCase() === low);
-        return key ? { name: key, data: constellations[key] } : null;
-    }
-
-    function findTribe(query) {
-        const q = (query || '').trim().toLowerCase();
-        if (!q) return null;
-        for (const snap of Object.values(snapshots)) {
-            const match = Object.keys(snap).find(k => k.toLowerCase() === q);
-            if (match) return match;
-        }
-        return null;
-    }
-
-    function syncUrl() {
-        let query = '';
-        if (currentView === 'guide') {
-            query = '?tab=guide';
-        } else if (currentView === 'pn') {
-            query = '?tab=circle';
-        } else if (currentView === 'hn' && activeTribe) {
-            query = `?clearing=${encodeURIComponent(activeTribe.toLowerCase())}`;
-        }
-
-        const fullPath = window.location.pathname + query + '#view';
-
-        if (history.replaceState) {
-            history.replaceState(null, null, fullPath);
-        }
-
-        $('.season-btn').each(function () {
-            const baseHref = ($(this).attr('href') || '').split('?')[0].split('#')[0];
-            if (baseHref) $(this).attr('href', baseHref + query + '#view');
-        });
-    }
-
-    function getTribeLifespan(tribe) {
-        if (!tribe) return null;
-        const activeIndices = [];
-        const segments = [];
-        let currentSeg = null;
-        let peakIndex = -1, peakCount = 0;
-
-        dates.forEach((d, idx) => {
-            const members = (snapshots[d]?.[tribe] || []).map(m => m[0]);
-            if (members.length > 0) {
-                activeIndices.push(idx);
-                if (members.length > peakCount) {
-                    peakCount = members.length;
-                    peakIndex = idx;
-                }
-                if (currentSeg) {
-                    currentSeg.endIndex = idx;
-                    members.forEach(p => currentSeg.allMembers.add(p));
-                } else {
-                    currentSeg = {
-                        startIndex: idx,
-                        endIndex: idx,
-                        startMembers: new Set(members),
-                        allMembers: new Set(members)
-                    };
-                    segments.push(currentSeg);
-                }
-            } else {
-                currentSeg = null;
-            }
-        });
-
-        if (!activeIndices.length) return null;
-
-        const milestones = [];
-        const historicalMembers = new Set();
-
-        segments.forEach((seg, segIdx) => {
-            if (segIdx === 0) {
-                milestones.push({
-                    idx: seg.startIndex,
-                    label: `Founded ${formatShortDate(dates[seg.startIndex])}`,
-                    title: 'Jump to founding date'
-                });
-            } else {
-                const overlap = [...seg.startMembers].filter(p => historicalMembers.has(p)).length;
-                const isRevival = overlap >= 3;
-                milestones.push({
-                    idx: seg.startIndex,
-                    label: `${isRevival ? 'Revived' : 'Reclaimed'} ${formatShortDate(dates[seg.startIndex])}`,
-                    title: isRevival ? `Jump to revival (${overlap} returning members)` : 'Jump to reclamation by a new fellowship'
-                });
-            }
-
-            seg.allMembers.forEach(p => historicalMembers.add(p));
-
-            if (peakIndex > seg.startIndex && peakIndex < seg.endIndex) {
-                milestones.push({
-                    idx: peakIndex,
-                    label: `Culminated ${formatShortDate(dates[peakIndex])}`,
-                    title: `Jump to peak membership: ${peakCount} denizens`
-                });
-            }
-
-            if (seg.endIndex < dates.length - 1) {
-                const dissolvedDate = dates[seg.endIndex + 1] || dates[seg.endIndex];
-                milestones.push({
-                    idx: seg.endIndex,
-                    label: `Dissolved ${formatShortDate(dissolvedDate)}`,
-                    title: 'Jump to final active day'
-                });
-            }
-        });
-
-        return {
-            activeIndices,
-            firstIndex: activeIndices[0],
-            lastIndex: activeIndices[activeIndices.length - 1],
-            milestones
-        };
-    }
-
-    function getPlayerHistory(playerName) {
-        const segments = [];
-        let active = null;
-
-        dates.forEach((dateStr, idx) => {
-            const snap = snapshots[dateStr] || {};
-            const rawTribe = Object.keys(snap).find(t => snap[t]?.some(m => m[0] === playerName));
-            const tribe = normalizeTribe(rawTribe);
-
-            if (tribe) {
-                const prev = segments[segments.length - 1];
-                if (active?.tribe === tribe) {
-                    active.endDate = dateStr;
-                    active.endIndex = idx;
-                } else if (!active && prev?.tribe === tribe && idx - prev.endIndex <= 3) {
-                    active = segments.pop();
-                    active.endDate = dateStr;
-                    active.endIndex = idx;
-                } else {
-                    if (active) segments.push(active);
-                    active = { tribe, startDate: dateStr, startIndex: idx, endDate: dateStr, endIndex: idx };
-                }
-            } else if (active) {
-                segments.push(active);
-                active = null;
-            }
-        });
-        if (active) segments.push(active);
-
-        const currentTribe = getPlayerTribe(playerName);
-        return segments.reverse().map((seg, i) => ({
-            ...seg,
-            isCurrent: i === 0 && seg.endIndex === dates.length - 1 && seg.tribe === currentTribe
-        }));
-    }
-
-    function badgeButtonHtml({ tribe, dateIndex, label, isCurrent, title, icon }) {
-        const iconImg = icon ? `<img src="${icon}" alt="${tribe}" class="allegiance-icon">` : '';
-        return `
-            <button type="button" class="allegiance-badge ${isCurrent ? 'is-current' : 'is-past'}"
-                    data-tribe="${tribe}" data-date-index="${dateIndex}" title="${title}">
-                ${iconImg}<span class="allegiance-date">${label}</span>
-            </button>`;
-    }
-
-    function renderLegend(title, items) {
-        const listHtml = items.map(([color, text]) =>
-            `<div class="legend-item"><span class="legend-dot" style="background: ${color}"></span><span>${text}</span></div>`
-        ).join('');
-        $legend.html(`<div class="hud-title">${title}</div>${listHtml}`);
-    }
-
-    function updateChrome(snapshot) {
-        $wrapper.attr('data-view', currentView);
-
-        if (currentView === 'pn' && selectedPlayer) {
-            $headerTitle.empty();
-            renderLegend('Companions', [
-                [same_tribe, 'Same homeland'],
-                [other_tribe, 'Other homeland'],
-                [unaligned, 'Unaligned']
-            ]);
-
-            const history = getPlayerHistory(selectedPlayer);
-            const badges = !history.length
-                ? '<div class="allegiance-empty">Unaligned</div>'
-                : history.map(s => {
-                    const start = formatShortDate(s.startDate), end = formatShortDate(s.endDate);
-                    const label = s.isCurrent ? `since ${start}` : (s.startDate === s.endDate ? start : `${start} &ndash; ${end}`);
-                    return badgeButtonHtml({
-                        tribe: s.tribe,
-                        dateIndex: s.startIndex,
-                        label,
-                        isCurrent: s.isCurrent,
-                        title: `View ${s.tribe} Clearing ${start}`,
-                        icon: config.tribes?.[s.tribe]?.icon
-                    });
-                }).join('');
-            $ledger.html(`<div class="hud-title">Allegiances</div>${badges}`);
-            return;
-        }
-
-        if (currentView === 'hn' && activeTribe) {
-            renderLegend('Fidelity', [
-                [same_tribe, 'Partisan'],
-                [`color-mix(in srgb, ${same_tribe} 50%, ${other_tribe})`, 'Squire'],
-                [other_tribe, 'Friend']
-            ]);
-
-            const members = [...(snapshot?.[activeTribe] || [])].sort((a, b) => b[2] - a[2]);
-            const heraldName = members[0]?.[0] || null;
-            if (heraldName) {
-                const frogIcon = (typeof CONFIG !== 'undefined' && CONFIG.icons?.frog) ? CONFIG.icons.frog : '';
-                const iconImg = frogIcon ? `<img src="${frogIcon}" alt="" class="herald-icon">` : '';
-                $headerTitle.html(`
-                    <div class="hud-title">Herald</div>
-                    <button type="button" class="herald-link" data-player="${heraldName}" title="View ${heraldName}'s Circle">
-                        ${iconImg}<span>${heraldName}</span>
-                    </button>
-                `);
-            } else {
-                $headerTitle.empty();
-            }
-
-            const life = getTribeLifespan(activeTribe);
-            if (!life) return $ledger.empty();
-
-            const badges = life.milestones.map(m => badgeButtonHtml({
-                tribe: activeTribe,
-                dateIndex: m.idx,
-                label: m.label,
-                isCurrent: currentIndex === m.idx,
-                title: m.title
-            })).join('');
-            $ledger.html(`<div class="hud-title">Chronicle</div>${badges}`);
-            return;
-        }
-
-        $headerTitle.empty();
-        $legend.empty();
-        $ledger.empty();
-    }
-
-    let guideSims = {};
+    let currentView = 'hm';
+    let activeTribe = null;
+    let selectedPlayer = null;
 
     function buildGraphData(snapshot, view = currentView, tribe = activeTribe, pnOverride = null) {
         const nodes = [], links = [];
@@ -1672,7 +1388,7 @@ $(document).ready(function () {
 
         const svg = d3.select(svgEl);
         const width = svgEl.clientWidth || 480;
-        const height = svgEl.clientHeight || 290;
+        const height = svgEl.clientHeight || 220;
         const isDesktop = window.innerWidth > 768;
         const originX = width / 2;
         const originY = height / 2 + (isInteractive && isDesktop && view === 'hn' ? 16 : 0);
@@ -1910,62 +1626,352 @@ $(document).ready(function () {
         return simInstance;
     }
 
+    // --- Rendu des diagrammes de Homelands.html ---
+    let guideSims = {};
+
+    function renderGuideGraphs() {
+        if (typeof d3 === 'undefined') return;
+        const tribeKeys = Object.keys(config.tribes || {});
+        const t1 = tribeKeys[6] || tribeKeys[0] || 'sword';
+        const t2 = tribeKeys[3] || tribeKeys[1] || 'tea';
+
+        if (document.getElementById('guideMapHm')) {
+            const hmData = buildGraphData({ [t1]: Array(9), [t2]: Array(6) }, 'hm', null);
+            guideSims.hm = mountSvgGraph(document.getElementById('guideMapHm'), 'hm', hmData.nodes, hmData.links, guideSims.hm, null, false);
+        }
+
+        if (document.getElementById('guideMapHn')) {
+            const hnMembers = [
+                ['Partisan', 95, 5],
+                ['Squire', 65, 8],
+                ['Friend', 35, 12]
+            ];
+            hnMembers.displayCount = 9;
+            const hnData = buildGraphData({ [t1]: hnMembers }, 'hn', t1);
+            guideSims.hn = mountSvgGraph(document.getElementById('guideMapHn'), 'hn', hnData.nodes, hnData.links, guideSims.hn, t1, false);
+        }
+
+        if (document.getElementById('guideMapPn')) {
+            const pnData = buildGraphData(null, 'pn', null, {
+                name: 'Denizen',
+                tribe: t1,
+                games: 17,
+                partners: [
+                    ['Same', 12, t1],
+                    ['Other', 5, t2],
+                    ['Unaligned', 9, null]
+                ]
+            });
+            guideSims.pn = mountSvgGraph(document.getElementById('guideMapPn'), 'pn', pnData.nodes, pnData.links, guideSims.pn, null, false);
+        }
+    }
+
+    // Activation automatique sur homelands.html
+    if ($('#guideMapHm').length > 0) {
+        renderGuideGraphs();
+        $(window).on('resize', () => renderGuideGraphs());
+    }
+
+    // =========================================================================
+    // MOTEUR DE CARTE INTERACTIVE (network.html uniquement)
+    // =========================================================================
+    const dates = window.NETWORK_DATES;
+    const snapshots = window.NETWORK_SNAPSHOTS;
+    if (!dates?.length || !snapshots || $('#networkWrapper').length === 0) return;
+
+    const $wrapper = $('#networkWrapper');
+    const $searchInput = $('#playerName');
+    const $datePicker = $('#datePicker').attr({ min: dates[0], max: dates[dates.length - 1] });
+    const $prevBtn = $('#prevDateBtn');
+    const $nextBtn = $('#nextDateBtn');
+    const $earliestBtn = $('#earliestDateBtn');
+    const $latestBtn = $('#latestDateBtn');
+    const $headerTitle = $('#mapHeaderTitle');
+    const $legend = $('#mapLegend');
+    const $ledger = $('#playerLedger');
+
+    $earliestBtn.html('&laquo;');
+    $prevBtn.html('&lsaquo;');
+    $nextBtn.html('&rsaquo;');
+    $latestBtn.html('&raquo;');
+
+    let currentIndex = dates.length - 1;
+    let simulation = null;
+    let isInternalSearch = false;
+
+    function formatShortDate(dateStr) {
+        const d = new Date(`${dateStr}T00:00:00`);
+        return isNaN(d) ? dateStr : d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    }
+
+    function setSearchPlayer(name) {
+        isInternalSearch = true;
+        $searchInput.val(name).trigger('change');
+        isInternalSearch = false;
+    }
+
+    function clearSearch() {
+        isInternalSearch = true;
+        $searchInput.val('').trigger('change');
+        isInternalSearch = false;
+    }
+
+    function findPlayer(query) {
+        const q = (query || '').trim();
+        if (!q) return null;
+        if (constellations[q]) return { name: q, data: constellations[q] };
+        const low = q.toLowerCase();
+        const key = Object.keys(constellations).find(k => k.toLowerCase() === low);
+        return key ? { name: key, data: constellations[key] } : null;
+    }
+
+    function findTribe(query) {
+        const q = (query || '').trim().toLowerCase();
+        if (!q) return null;
+        for (const snap of Object.values(snapshots)) {
+            const match = Object.keys(snap).find(k => k.toLowerCase() === q);
+            if (match) return match;
+        }
+        return null;
+    }
+
+    function syncUrl() {
+        let query = '';
+        if (currentView === 'pn') {
+            query = '?tab=circle';
+        } else if (currentView === 'hn' && activeTribe) {
+            query = `?clearing=${encodeURIComponent(activeTribe.toLowerCase())}`;
+        }
+
+        const fullPath = window.location.pathname + query + '#view';
+
+        if (history.replaceState) {
+            history.replaceState(null, null, fullPath);
+        }
+
+        $('.season-btn').each(function () {
+            const baseHref = ($(this).attr('href') || '').split('?')[0].split('#')[0];
+            if (baseHref) $(this).attr('href', baseHref + query + '#view');
+        });
+    }
+
+    function getTribeLifespan(tribe) {
+        if (!tribe) return null;
+        const activeIndices = [];
+        const segments = [];
+        let currentSeg = null;
+        let peakIndex = -1, peakCount = 0;
+
+        dates.forEach((d, idx) => {
+            const members = (snapshots[d]?.[tribe] || []).map(m => m[0]);
+            if (members.length > 0) {
+                activeIndices.push(idx);
+                if (members.length > peakCount) {
+                    peakCount = members.length;
+                    peakIndex = idx;
+                }
+                if (currentSeg) {
+                    currentSeg.endIndex = idx;
+                    members.forEach(p => currentSeg.allMembers.add(p));
+                } else {
+                    currentSeg = {
+                        startIndex: idx,
+                        endIndex: idx,
+                        startMembers: new Set(members),
+                        allMembers: new Set(members)
+                    };
+                    segments.push(currentSeg);
+                }
+            } else {
+                currentSeg = null;
+            }
+        });
+
+        if (!activeIndices.length) return null;
+
+        const milestones = [];
+        const historicalMembers = new Set();
+
+        segments.forEach((seg, segIdx) => {
+            if (segIdx === 0) {
+                milestones.push({
+                    idx: seg.startIndex,
+                    label: `Founded ${formatShortDate(dates[seg.startIndex])}`,
+                    title: 'Jump to founding date'
+                });
+            } else {
+                const overlap = [...seg.startMembers].filter(p => historicalMembers.has(p)).length;
+                const isRevival = overlap >= 3;
+                milestones.push({
+                    idx: seg.startIndex,
+                    label: `${isRevival ? 'Revived' : 'Reclaimed'} ${formatShortDate(dates[seg.startIndex])}`,
+                    title: isRevival ? `Jump to revival (${overlap} returning members)` : 'Jump to reclamation by a new fellowship'
+                });
+            }
+
+            seg.allMembers.forEach(p => historicalMembers.add(p));
+
+            if (peakIndex > seg.startIndex && peakIndex < seg.endIndex) {
+                milestones.push({
+                    idx: peakIndex,
+                    label: `Culminated ${formatShortDate(dates[peakIndex])}`,
+                    title: `Jump to peak membership: ${peakCount} denizens`
+                });
+            }
+
+            if (seg.endIndex < dates.length - 1) {
+                const dissolvedDate = dates[seg.endIndex + 1] || dates[seg.endIndex];
+                milestones.push({
+                    idx: seg.endIndex,
+                    label: `Dissolved ${formatShortDate(dissolvedDate)}`,
+                    title: 'Jump to final active day'
+                });
+            }
+        });
+
+        return {
+            activeIndices,
+            firstIndex: activeIndices[0],
+            lastIndex: activeIndices[activeIndices.length - 1],
+            milestones
+        };
+    }
+
+    function getPlayerHistory(playerName) {
+        const segments = [];
+        let active = null;
+
+        dates.forEach((dateStr, idx) => {
+            const snap = snapshots[dateStr] || {};
+            const rawTribe = Object.keys(snap).find(t => snap[t]?.some(m => m[0] === playerName));
+            const tribe = normalizeTribe(rawTribe);
+
+            if (tribe) {
+                const prev = segments[segments.length - 1];
+                if (active?.tribe === tribe) {
+                    active.endDate = dateStr;
+                    active.endIndex = idx;
+                } else if (!active && prev?.tribe === tribe && idx - prev.endIndex <= 3) {
+                    active = segments.pop();
+                    active.endDate = dateStr;
+                    active.endIndex = idx;
+                } else {
+                    if (active) segments.push(active);
+                    active = { tribe, startDate: dateStr, startIndex: idx, endDate: dateStr, endIndex: idx };
+                }
+            } else if (active) {
+                segments.push(active);
+                active = null;
+            }
+        });
+        if (active) segments.push(active);
+
+        const currentTribe = getPlayerTribe(playerName);
+        return segments.reverse().map((seg, i) => ({
+            ...seg,
+            isCurrent: i === 0 && seg.endIndex === dates.length - 1 && seg.tribe === currentTribe
+        }));
+    }
+
+    function badgeButtonHtml({ tribe, dateIndex, label, isCurrent, title, icon }) {
+        const iconImg = icon ? `<img src="${icon}" alt="${tribe}" class="allegiance-icon">` : '';
+        return `
+            <button type="button" class="allegiance-badge ${isCurrent ? 'is-current' : 'is-past'}"
+                    data-tribe="${tribe}" data-date-index="${dateIndex}" title="${title}">
+                ${iconImg}<span class="allegiance-date">${label}</span>
+            </button>`;
+    }
+
+    function renderLegend(title, items) {
+        const listHtml = items.map(([color, text]) =>
+            `<div class="legend-item"><span class="legend-dot" style="background: ${color}"></span><span>${text}</span></div>`
+        ).join('');
+        $legend.html(`<div class="hud-title">${title}</div>${listHtml}`);
+    }
+
+    function updateChrome(snapshot) {
+        $wrapper.attr('data-view', currentView);
+
+        if (currentView === 'pn' && selectedPlayer) {
+            $headerTitle.empty();
+            renderLegend('Companions', [
+                [same_tribe, 'Same homeland'],
+                [other_tribe, 'Other homeland'],
+                [unaligned, 'Unaligned']
+            ]);
+
+            const history = getPlayerHistory(selectedPlayer);
+            const badges = !history.length
+                ? '<div class="allegiance-empty">Unaligned</div>'
+                : history.map(s => {
+                    const start = formatShortDate(s.startDate), end = formatShortDate(s.endDate);
+                    const label = s.isCurrent ? `since ${start}` : (s.startDate === s.endDate ? start : `${start} &ndash; ${end}`);
+                    return badgeButtonHtml({
+                        tribe: s.tribe,
+                        dateIndex: s.startIndex,
+                        label,
+                        isCurrent: s.isCurrent,
+                        title: `View ${s.tribe} Clearing ${start}`,
+                        icon: config.tribes?.[s.tribe]?.icon
+                    });
+                }).join('');
+            $ledger.html(`<div class="hud-title">Allegiances</div>${badges}`);
+            return;
+        }
+
+        if (currentView === 'hn' && activeTribe) {
+            renderLegend('Fidelity', [
+                [same_tribe, 'Partisan'],
+                [`color-mix(in srgb, ${same_tribe} 50%, ${other_tribe})`, 'Squire'],
+                [other_tribe, 'Friend']
+            ]);
+
+            const members = [...(snapshot?.[activeTribe] || [])].sort((a, b) => b[2] - a[2]);
+            const heraldName = members[0]?.[0] || null;
+            if (heraldName) {
+                const frogIcon = (typeof CONFIG !== 'undefined' && CONFIG.icons?.frog) ? CONFIG.icons.frog : '';
+                const iconImg = frogIcon ? `<img src="${frogIcon}" alt="" class="herald-icon">` : '';
+                $headerTitle.html(`
+                    <div class="hud-title">Herald</div>
+                    <button type="button" class="herald-link" data-player="${heraldName}" title="View ${heraldName}'s Circle">
+                        ${iconImg}<span>${heraldName}</span>
+                    </button>
+                `);
+            } else {
+                $headerTitle.empty();
+            }
+
+            const life = getTribeLifespan(activeTribe);
+            if (!life) return $ledger.empty();
+
+            const badges = life.milestones.map(m => badgeButtonHtml({
+                tribe: activeTribe,
+                dateIndex: m.idx,
+                label: m.label,
+                isCurrent: currentIndex === m.idx,
+                title: m.title
+            })).join('');
+            $ledger.html(`<div class="hud-title">Chronicle</div>${badges}`);
+            return;
+        }
+
+        $headerTitle.empty();
+        $legend.empty();
+        $ledger.empty();
+    }
+
     function renderGraph(snapshot) {
         updateChrome(snapshot);
         const { nodes, links } = buildGraphData(snapshot);
         simulation = mountSvgGraph(document.getElementById('tribeMapSvg'), currentView, nodes, links, simulation, activeTribe, true);
     }
 
-    function renderGuideGraphs() {
-        const tribeKeys = Object.keys(config.tribes || {});
-        const t1 = tribeKeys[6];
-        const t2 = tribeKeys[3];
-
-        // 1. Homelands Map
-        const hmData = buildGraphData({ [t1]: Array(9), [t2]: Array(6) }, 'hm', null);
-        guideSims.hm = mountSvgGraph(document.getElementById('guideMapHm'), 'hm', hmData.nodes, hmData.links, guideSims.hm, null, false);
-
-        // 2. Clearing View
-        const hnMembers = [
-            ['Partisan', 95, 5],
-            ['Squire', 65, 8],
-            ['Friend', 35, 12]
-        ];
-        hnMembers.displayCount = 9;
-        const hnData = buildGraphData({ [t1]: hnMembers }, 'hn', t1);
-        guideSims.hn = mountSvgGraph(document.getElementById('guideMapHn'), 'hn', hnData.nodes, hnData.links, guideSims.hn, t1, false);
-
-        // 3. Player's Circle
-        const pnData = buildGraphData(null, 'pn', null, {
-            name: 'Denizen',
-            tribe: t1,
-            games: 17,
-            partners: [
-                ['Same', 12, t1],
-                ['Other', 5, t2],
-                ['Unaligned', 9, null]
-            ]
-        });
-        guideSims.pn = mountSvgGraph(document.getElementById('guideMapPn'), 'pn', pnData.nodes, pnData.links, guideSims.pn, null, false);
-    }
-
     function updateView() {
-        const activeTab = currentView === 'guide' ? 'guide' : currentView === 'pn' ? 'circle' : 'map';
+        const activeTab = currentView === 'pn' ? 'circle' : 'map';
         $('.homelands-tab-link[data-tab]').removeClass('active');
         $(`.homelands-tab-link[data-tab="${activeTab}"]`).addClass('active');
 
-        if (currentView === 'guide') {
-            simulation?.stop();
-            $wrapper.hide();
-            $('.season-selector-group, .footer-table').hide();
-            $('#guideSection').fadeIn(200);
-            renderGuideGraphs();
-            syncUrl();
-            return;
-        }
-
-        Object.values(guideSims).forEach(s => s?.stop());
-        $('#guideSection').hide();
+        $wrapper.show();
         $('.season-selector-group, .footer-table').show();
 
         if (currentView === 'pn') {
@@ -2059,14 +2065,16 @@ $(document).ready(function () {
         updateView();
     });
 
+    // Navigation par onglets Homelands
     $(document).on('click', '.homelands-tab-link[data-tab]', function (e) {
+        // Si on est sur une autre page (ex: homelands.html), on laisse le navigateur charger network.html
+        if ($('#networkWrapper').length === 0) return;
+
         const tab = $(this).data('tab');
         if (tab === 'leaderboard') return;
         e.preventDefault();
 
-        if (tab === 'guide') {
-            currentView = 'guide';
-        } else if (tab === 'circle') {
+        if (tab === 'circle') {
             currentView = 'pn';
             activeTribe = null;
         } else {
@@ -2089,17 +2097,18 @@ $(document).ready(function () {
         updateView();
     });
 
-    $(window).on('resize', () => updateView());
+    $(window).on('resize', () => {
+        if ($('#networkWrapper').length > 0) updateView();
+    });
 
+    // Détection de l'état initial au chargement
     const urlParams = new URLSearchParams(window.location.search);
     const clearingParam = urlParams.get('clearing') || urlParams.get('tribe');
     const playerParam = urlParams.get('player');
     const tabParam = urlParams.get('tab');
     const hash = window.location.hash.replace('#', '');
 
-    if (tabParam === 'guide' || hash === 'guide') {
-        currentView = 'guide';
-    } else if (clearingParam) {
+    if (clearingParam) {
         const matched = findTribe(clearingParam);
         currentView = matched ? 'hn' : 'hm';
         activeTribe = matched;
