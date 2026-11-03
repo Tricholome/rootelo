@@ -422,7 +422,17 @@ body.homelands-mode .nav-homelands {
     justify-content: center; 
     gap: 6px; 
     width: 100%;
-    max-width: 380px;
+    max-width: 340px;
+    margin: 4px 0;
+}
+
+.codex-selector { 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    gap: 6px; 
+    width: 100%;
+    max-width: 400px;
     margin: 4px 0;
 }
 
@@ -441,7 +451,7 @@ body.homelands-mode .nav-homelands {
     font-size: var(--size-sm); 
     font-weight: var(--medium); 
     color: var(--text-muted); 
-    padding: 6px; 
+    padding: 6px 8px; 
     border-radius: 4px; 
     background: var(--bg-surface); 
     border: 1px solid var(--border-soft); 
