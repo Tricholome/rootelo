@@ -742,9 +742,9 @@ def run_league_pipeline(league_config, all_leagues_list):
             closed_date_mapping.index = closed_date_mapping.index.astype(int)
             mask_closed = df['GameID'].isin(closed_date_mapping.index)
             if mask_closed.any():
-                df.loc[mask_closed, 'Date_Closed'] = pd.to_datetime(
-                    df.loc[mask_closed, 'GameID'].map(closed_date_mapping), utc=True
-                )
+                original_times = df.loc[mask_closed, 'Date_Closed'].dt.strftime('%H:%M:%S.%f')
+                new_dates = pd.to_datetime(df.loc[mask_closed, 'GameID'].map(closed_date_mapping)).dt.strftime('%Y-%m-%d')
+                df.loc[mask_closed, 'Date_Closed'] = pd.to_datetime(new_dates + ' ' + original_times, utc=True)
 
         if not created_date_mapping.empty:
             created_date_mapping.index = created_date_mapping.index.astype(int)
@@ -755,7 +755,7 @@ def run_league_pipeline(league_config, all_leagues_list):
                 )
 
         df = df[df['Date_Closed'].dt.date <= cutoff_date].copy()
-        df = df.sort_values(by='Date_Closed').reset_index(drop=True)
+        df = df.sort_values(by=['Date_Closed', 'GameID', 'PlayerID'], kind='mergesort').reset_index(drop=True)
 
     all_player_ids = set(archived_player_ids)
     if not df.empty:
@@ -965,7 +965,7 @@ def run_league_pipeline(league_config, all_leagues_list):
             raw_snapshots, raw_constellations = run_homelands_simulation(
                 match_history_data,
                 custom_config=homelands_cfg,
-                season_id=slug
+                season_id=current_season_tag
             )
             homelands_snapshots = format_homelands_snapshots(raw_snapshots, player_registry)
             homelands_constellations = format_constellations(raw_constellations, player_registry)
