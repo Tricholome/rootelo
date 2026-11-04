@@ -1,3 +1,4 @@
+import sys
 import argparse
 import json
 import math
@@ -255,7 +256,7 @@ def main():
                 print(f"  > Note: Corrections skipped or failed ({e}).")
 
         df = df[df['Date_Closed'].dt.date <= cutoff_date].copy()
-        df = df.sort_values(by='Date_Closed').reset_index(drop=True)
+        df = df.sort_values(by=['Date_Closed', 'GameID', 'PlayerID'], kind='mergesort').reset_index(drop=True)
 
     print("\n=== CALCULATING ELO & STATS ===")
     elo_ratings = {**{pid: 1200.0 for pid in df['PlayerID'].unique()}, **inherited_elo} if not df.empty else inherited_elo.copy()
@@ -432,13 +433,14 @@ def main():
         from frog import run_homelands_simulation
         print("\n=== GENERATING HOMELANDS SNAPSHOTS (NETWORK) ===")
         global_config_path = os.path.join("data", "config", "config.json")
-        tribe_names = []
+        homelands_cfg = league_config.get("network", {}).copy()
+        homelands_cfg["enabled"] = True
         if os.path.exists(global_config_path):
-            tribe_names = load_json(global_config_path).get("network", {}).get("tribe_names", [])
+            homelands_cfg["tribe_names"] = load_json(global_config_path).get("network", {}).get("tribe_names", [])
 
         homelands_snapshots, homelands_constellations = run_homelands_simulation(
             archive_matches_list,
-            custom_config={"enabled": True, "tribe_names": tribe_names},
+            custom_config=homelands_cfg,
             season_id=season_tag
         )
         print(f"  > Homelands simulation finished successfully ({len(homelands_snapshots)} daily snapshots).")
