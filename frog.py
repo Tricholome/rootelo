@@ -52,7 +52,7 @@ def weight_by_tribe(G: nx.Graph, roster: dict, p: str) -> Counter:
 
 def is_clearly_apart(G: nx.Graph, roster: dict, comm: set, stickiness: float) -> bool:
     inside = outside = 0.0
-    for p in comm:
+    for p in sorted(comm):
         for n in G.neighbors(p):
             w = G[p][n]["weight"]
             if n in comm:
@@ -140,7 +140,7 @@ def compass(
             founded.add(chosen_name)
             ever_used_names.add(chosen_name)
 
-    target = {p: name_of[i] for i, c in enumerate(comms) if i in name_of for p in c}
+    target = {p: name_of[i] for i, c in enumerate(comms) if i in name_of for p in sorted(c)}
     return target, founded
 
 
@@ -316,7 +316,7 @@ def run_homelands_simulation(
         dissolve_small_tribes(roster, cfg)
 
         G = nx.Graph()
-        for (p1, p2), w in edge_weights.items():
+        for (p1, p2), w in sorted(edge_weights.items()):
             if w >= cfg["MIN_EDGE_WEIGHT"]:
                 G.add_edge(p1, p2, weight=w)
 
@@ -324,10 +324,10 @@ def run_homelands_simulation(
             player_games, cfg["MIN_GAMES_FLOOR"], cfg["DYNAMIC_RATIO"]
         )
 
-        eligible = [
+        eligible = sorted(
             p for p in G.nodes()
             if player_games[p] >= min_games and is_player_active(p, last_active, d, limit_days)
-        ]
+        )
 
         target, founded = compass(
             G, roster, eligible, last_tribe, ever_used_names, cfg, tribe_names_pool
