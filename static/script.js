@@ -2046,6 +2046,7 @@ $(document).ready(function () {
             icon: ev.icon
         })).join('');
         $ledger.html(`<div class="hud-title">Chronicle</div>${badges}`);
+	}
 
     function renderGraph(snapshot) {
         updateChrome(snapshot);
