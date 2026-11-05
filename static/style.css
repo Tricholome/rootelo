@@ -1935,7 +1935,6 @@ table.dataTable tbody tr.loser td {
 .network-container[data-view="pn"] #dateControls,
 .network-container[data-view="pn"] #mapHeaderTitle,
 .network-container[data-view="hm"] #mapHeaderTitle,
-.network-container[data-view="hm"] #playerLedger,
 .network-container[data-view="hm"] #mapLegend {
     display: none !important;
 }
