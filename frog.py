@@ -13,10 +13,7 @@ DEFAULT_CONFIG = {
     "MAX_TRIBES": 5,
     "MIN_TRIBE_CREATION_SIZE": 6,
     "MIN_TRIBE_SURVIVAL": 4,
-    "MIN_REUSE_OVERLAP": 3,
-    "REUSE_OVERLAP_RATIO": 0.5,
-    "MAX_RECYCLES_PER_SEASON": 1,
-    "MIN_RECYCLE_OVERLAP": 3,
+    "MAX_RECYCLES_PER_SEASON": 1,  # None = illimité
     "SPLIT_BIG_SHARE": 0.35,
     "SPLIT_RESOLUTION": 2.0,
     "MIN_GAMES_FLOOR": 3,
@@ -29,7 +26,7 @@ DEFAULT_CONFIG = {
     "DECAY_RATE": 0.95,
     "NEW_MATCH_WEIGHT": 1.0,
     "MIN_EDGE_WEIGHT": 0.1,
-    "RESOLUTION": 1.8,
+    "RESOLUTION": 1.2,
 }
 
 
@@ -74,56 +71,37 @@ def is_clearly_apart(G: nx.Graph, roster: dict, comm: set, split_ratio: float) -
 
 
 class NameBook:
-    """Mémoire des noms de tribus : qui les a portés, quand, et combien de recyclages ont eu lieu."""
+    """Mémoire des noms de tribus : quels noms sont déjà sortis cette saison, et combien de réutilisations."""
 
     def __init__(self, pool: list, cfg: dict):
         self.pool = pool
         self.cfg = cfg
-        self.last_roster = {}          # nom -> derniers membres connus
-        self.ever = defaultdict(set)   # nom -> tous les joueurs qui l'ont porté cette saison
-        self.last_seen = {}            # nom -> dernier jour d'existence
+        self.last_seen = {}   # nom -> dernier jour d'existence (absent = jamais utilisé)
         self.recycles = 0
 
-    def _continuity(self, comm: set, name: str) -> int:
-        old = self.last_roster.get(name, set())
-        ov = len(comm & old)
-        ok = ov >= self.cfg["MIN_REUSE_OVERLAP"] and ov >= self.cfg["REUSE_OVERLAP_RATIO"] * min(len(comm), len(old))
-        return ov if ok else 0
-
-    def pick(self, comm: set, taken: set, today: str):
-        """Nom d'une nouvelle tribu, ou None si aucun nom n'est permis. Par ordre de priorité :
-        1. résurrection : un nom dont le dernier effectif recouvre nettement la communauté
-        2. un nom jamais utilisé
-        3. recyclage, limité à MAX_RECYCLES_PER_SEASON, et seulement si au moins
-           MIN_RECYCLE_OVERLAP joueurs de la communauté ont déjà porté ce nom
+    def pick(self, taken: set, today: str):
+        """Nom d'une nouvelle tribu, ou None si aucun n'est permis :
+        1. un nom jamais utilisé cette saison
+        2. sinon un nom déjà sorti (recyclage), le plus ancien d'abord, dans la limite de
+           MAX_RECYCLES_PER_SEASON
         """
         free = [n for n in self.pool if n not in taken]
-        order = {n: i for i, n in enumerate(self.pool)}
-
-        name = None
-        revivable = [n for n in free if self._continuity(comm, n)]
-        if revivable:
-            name = max(revivable, key=lambda n: (self._continuity(comm, n), -order[n]))
+        unused = [n for n in free if n not in self.last_seen]
+        cap = self.cfg["MAX_RECYCLES_PER_SEASON"]
+        if unused:
+            name = unused[0]
+        elif free and (cap is None or self.recycles < cap):
+            order = {n: i for i, n in enumerate(self.pool)}
+            name = min(free, key=lambda n: (self.last_seen[n], order[n]))
+            self.recycles += 1
         else:
-            unused = [n for n in free if n not in self.last_seen]
-            if unused:
-                name = unused[0]
-            elif self.recycles < self.cfg["MAX_RECYCLES_PER_SEASON"]:
-                cands = [(len(comm & self.ever[n]), n) for n in free]
-                cands = [(ov, n) for ov, n in cands if ov >= self.cfg["MIN_RECYCLE_OVERLAP"]]
-                if cands:
-                    name = min(cands, key=lambda x: (-x[0], self.last_seen[x[1]], order[x[1]]))[1]
-                    self.recycles += 1
-
-        if name is not None:
-            self.last_seen[name] = today  # un nom fondé puis dissous le jour même n'est pas "jamais utilisé"
+            return None
+        self.last_seen[name] = today  # un nom fondé puis dissous le jour même compte comme utilisé
         return name
 
-    def update(self, today: str, tribes: dict) -> None:
-        for t, members in tribes.items():
+    def update(self, today: str, active: set) -> None:
+        for t in active:
             self.last_seen[t] = today
-            self.last_roster[t] = set(members)
-            self.ever[t] |= members
 
 
 def louvain(G: nx.Graph, nodes, resolution: float) -> list:
@@ -196,7 +174,7 @@ def compass(
             or not is_clearly_apart(G, roster, c, split_ratio)
         ):
             continue
-        name = names.pick(c, set(members) | set(name_of.values()), current_date)
+        name = names.pick(set(members) | set(name_of.values()), current_date)
         if name is None:
             continue
         name_of[i] = name
@@ -416,7 +394,7 @@ def run_homelands_simulation(
         for p, t in roster.items():
             if t is not UNALIGNED:
                 today[t].add(p)
-        names.update(d, today)
+        names.update(d, set(today))
         active_today = set(today)
 
         snapshots[d] = {
