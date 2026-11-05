@@ -1881,6 +1881,35 @@ $(document).ready(function () {
             milestones
         };
     }
+	
+	function getSeasonChronicle() {
+        const allTribes = new Set();
+        dates.forEach(d => {
+            Object.keys(snapshots[d] || {}).forEach(t => {
+                if (snapshots[d][t]?.length > 0) allTribes.add(t);
+            });
+        });
+
+        const events = [];
+        allTribes.forEach(tribe => {
+            const life = getTribeLifespan(tribe);
+            if (!life) return;
+            const isAliveAtCurrent = (snapshots[dates[currentIndex]]?.[tribe]?.length || 0) > 0;
+            life.milestones.forEach(m => {
+                if (m.label.startsWith('Culminated')) return;
+                events.push({
+                    tribe,
+                    idx: m.idx,
+                    label: m.label,
+                    title: `${tribe.toUpperCase()} • ${m.title}`,
+                    isCurrent: isAliveAtCurrent && !m.label.startsWith('Dissolved'),
+                    icon: config.tribes?.[tribe]?.icon
+                });
+            });
+        });
+
+        return events.sort((a, b) => b.idx - a.idx || a.tribe.localeCompare(b.tribe));
+    }
 
     function getPlayerHistory(playerName) {
         const segments = [];
@@ -2002,8 +2031,21 @@ $(document).ready(function () {
 
         $headerTitle.empty();
         $legend.empty();
-        $ledger.empty();
-    }
+
+        const seasonEvents = getSeasonChronicle();
+        if (!seasonEvents.length) {
+            $ledger.empty();
+            return;
+        }
+        const badges = seasonEvents.map(ev => badgeButtonHtml({
+            tribe: ev.tribe,
+            dateIndex: ev.idx,
+            label: ev.label,
+            isCurrent: ev.isCurrent,
+            title: ev.title,
+            icon: ev.icon
+        })).join('');
+        $ledger.html(`<div class="hud-title">Chronicle</div>${badges}`);
 
     function renderGraph(snapshot) {
         updateChrome(snapshot);
