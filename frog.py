@@ -25,7 +25,7 @@ DEFAULT_CONFIG = {
     "DECAY_RATE": 0.95,
     "NEW_MATCH_WEIGHT": 1.0,
     "MIN_EDGE_WEIGHT": 0.1,
-    "RESOLUTION": 1.2,
+    "RESOLUTION": 1.4,
     "MAX_TRIBE_SHARE": 0.35,       # a tribe may hold at most this share of the aligned players...
     "MAX_TRIBE_SIZE_FLOOR": 12,    # ...but never less than this many members
 }
