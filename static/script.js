@@ -1893,18 +1893,21 @@ $(document).ready(function () {
         const events = [];
         allTribes.forEach(tribe => {
             const life = getTribeLifespan(tribe);
-            if (!life) return;
+            if (!life || !life.milestones.length) return;
+
+            const validMilestones = life.milestones.filter(m => !m.label.startsWith('Culminated'));
+            if (!validMilestones.length) return;
+
+            const latestMilestone = validMilestones[validMilestones.length - 1];
             const isAliveAtCurrent = (snapshots[dates[currentIndex]]?.[tribe]?.length || 0) > 0;
-            life.milestones.forEach(m => {
-                if (m.label.startsWith('Culminated')) return;
-                events.push({
-                    tribe,
-                    idx: m.idx,
-                    label: m.label,
-                    title: `${tribe.toUpperCase()} • ${m.title}`,
-                    isCurrent: isAliveAtCurrent && !m.label.startsWith('Dissolved'),
-                    icon: config.tribes?.[tribe]?.icon
-                });
+
+            events.push({
+                tribe,
+                idx: latestMilestone.idx,
+                label: latestMilestone.label,
+                title: `${tribe.toUpperCase()} • ${latestMilestone.title}`,
+                isCurrent: isAliveAtCurrent && !latestMilestone.label.startsWith('Dissolved'),
+                icon: config.tribes?.[tribe]?.icon
             });
         });
 
