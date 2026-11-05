@@ -1895,7 +1895,7 @@ $(document).ready(function () {
             const life = getTribeLifespan(tribe);
             if (!life || !life.milestones.length) return;
 
-            const validMilestones = life.milestones.filter(m => !m.label.startsWith('Culminated'));
+            const validMilestones = life.milestones.filter(m => m.idx <= currentIndex && !m.label.startsWith('Culminated'));
             if (!validMilestones.length) return;
 
             const latestMilestone = validMilestones[validMilestones.length - 1];
