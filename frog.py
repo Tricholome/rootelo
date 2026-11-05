@@ -13,8 +13,8 @@ DEFAULT_CONFIG = {
     "MAX_TRIBES": 5,
     "MIN_TRIBE_CREATION_SIZE": 6,
     "MIN_TRIBE_SURVIVAL": 4,
-    "MAX_RECYCLES_PER_SEASON": 1,  # None = illimité
-    "SPLIT_BIG_SHARE": 0.35,
+    "MAX_RECYCLES_PER_SEASON": 1,  # réutilisations de noms déjà sortis ; None = illimité
+    "SPLIT_BIG_SHARE": None,       # ex. 0.35 : redécoupe les communautés > 35 % des éligibles
     "SPLIT_RESOLUTION": 2.0,
     "MIN_GAMES_FLOOR": 3,
     "DYNAMIC_RATIO": 2.0,
@@ -70,74 +70,41 @@ def is_clearly_apart(G: nx.Graph, roster: dict, comm: set, split_ratio: float) -
     return (inside / 2.0) > split_ratio * outside
 
 
-class NameBook:
-    """Mémoire des noms de tribus : quels noms sont déjà sortis cette saison, et combien de réutilisations."""
-
-    def __init__(self, pool: list, cfg: dict):
-        self.pool = pool
-        self.cfg = cfg
-        self.last_seen = {}   # nom -> dernier jour d'existence (absent = jamais utilisé)
-        self.recycles = 0
-
-    def pick(self, taken: set, today: str):
-        """Nom d'une nouvelle tribu, ou None si aucun n'est permis :
-        1. un nom jamais utilisé cette saison
-        2. sinon un nom déjà sorti (recyclage), le plus ancien d'abord, dans la limite de
-           MAX_RECYCLES_PER_SEASON
-        """
-        free = [n for n in self.pool if n not in taken]
-        unused = [n for n in free if n not in self.last_seen]
-        cap = self.cfg["MAX_RECYCLES_PER_SEASON"]
-        if unused:
-            name = unused[0]
-        elif free and (cap is None or self.recycles < cap):
-            order = {n: i for i, n in enumerate(self.pool)}
-            name = min(free, key=lambda n: (self.last_seen[n], order[n]))
-            self.recycles += 1
-        else:
-            return None
-        self.last_seen[name] = today  # un nom fondé puis dissous le jour même compte comme utilisé
-        return name
-
-    def update(self, today: str, active: set) -> None:
-        for t in active:
-            self.last_seen[t] = today
-
-
-def louvain(G: nx.Graph, nodes, resolution: float) -> list:
-    return nx.community.louvain_communities(
-        G.subgraph(nodes), weight="weight", resolution=resolution, seed=42
-    )
-
-
-def split_big_communities(G: nx.Graph, comms: list, n_eligible: int, cfg: dict) -> list:
-    """Repasse dans Louvain (résolution plus fine) toute communauté qui dépasse SPLIT_BIG_SHARE des joueurs éligibles."""
-    share = cfg.get("SPLIT_BIG_SHARE")
-    if not share:
-        return comms
-    out = []
-    for c in comms:
-        if len(c) > share * n_eligible and len(c) >= 2 * cfg["MIN_TRIBE_CREATION_SIZE"]:
-            parts = louvain(G, sorted(c), cfg["SPLIT_RESOLUTION"])
-            out.extend(parts if len(parts) > 1 else [c])
-        else:
-            out.append(c)
-    return out
-
-
 def compass(
     G: nx.Graph,
     roster: dict,
     eligible: list,
-    names: NameBook,
+    last_seen: dict,
+    recycles: list,
     current_date: str,
     cfg: dict,
+    tribe_names_pool: list,
 ) -> tuple[dict, set]:
     if not eligible:
         return {}, set()
 
-    comms = louvain(G, eligible, cfg["RESOLUTION"])
-    comms = split_big_communities(G, comms, len(eligible), cfg)
+    comms = nx.community.louvain_communities(
+        G.subgraph(eligible),
+        weight="weight",
+        resolution=cfg["RESOLUTION"],
+        seed=42,
+    )
+    share = cfg.get("SPLIT_BIG_SHARE")
+    if share:  # redécoupage des communautés trop grosses
+        comms = [
+            part
+            for c in comms
+            for part in (
+                nx.community.louvain_communities(
+                    G.subgraph(sorted(c)),
+                    weight="weight",
+                    resolution=cfg["SPLIT_RESOLUTION"],
+                    seed=42,
+                )
+                if len(c) > share * len(eligible) and len(c) >= 2 * cfg["MIN_TRIBE_CREATION_SIZE"]
+                else [c]
+            )
+        ]
     comms.sort(key=lambda c: (-len(c), sorted(c)))
 
     members = {}
@@ -145,7 +112,6 @@ def compass(
         if t is not UNALIGNED:
             members.setdefault(t, set()).add(p)
 
-    # Les communautés qui prolongent une tribu existante gardent son nom
     overlaps = sorted(
         [
             (len(c & m), i, t)
@@ -156,14 +122,13 @@ def compass(
     )
     name_of = {}
     for overlap, i, t in overlaps:
-        # Au moins 2 joueurs en commun pour qu'un seul membre ne s'approprie pas le nom
+        # Require at least 2 shared players to prevent a lone member from hijacking a tribe name
         if overlap >= min(2, len(members[t])) and i not in name_of and t not in name_of.values():
             name_of[i] = t
 
     available_slots = max(0, cfg["MAX_TRIBES"] - len(members))
     split_ratio = cfg.get("SPLIT_RATIO", cfg["STICKINESS"] / 2.0)
 
-    # Les autres, assez grosses et nettement séparées, fondent une tribu
     founded = set()
     for i, c in enumerate(comms):
         if len(founded) >= available_slots:
@@ -174,9 +139,20 @@ def compass(
             or not is_clearly_apart(G, roster, c, split_ratio)
         ):
             continue
-        name = names.pick(set(members) | set(name_of.values()), current_date)
-        if name is None:
+
+        # Un nom jamais utilisé cette saison, sinon on recycle le plus ancien (dans la limite du plafond)
+        free = [n for n in tribe_names_pool if n not in members and n not in name_of.values()]
+        unused = [n for n in free if n not in last_seen]
+        cap = cfg["MAX_RECYCLES_PER_SEASON"]
+        if unused:
+            name = unused[0]
+        elif free and (cap is None or len(recycles) < cap):
+            name = min(free, key=lambda n: (last_seen[n], tribe_names_pool.index(n)))
+            recycles.append(name)
+        else:
             continue
+
+        last_seen[name] = current_date
         name_of[i] = name
         founded.add(name)
 
@@ -343,7 +319,8 @@ def run_homelands_simulation(
     player_games = Counter()
     last_active = {}
     roster = {}
-    names = NameBook(tribe_names_pool, cfg)
+    last_seen = {}
+    recycles = []
     snapshots = {}
     limit_days = cfg["INACTIVITY_LIMIT_DAYS"]
 
@@ -382,20 +359,23 @@ def run_homelands_simulation(
             G,
             roster,
             eligible,
-            names,
+            last_seen,
+            recycles,
             d,
             cfg,
+            tribe_names_pool,
         )
         apply_compass(G, roster, target, founded, cfg)
         prune_inactive_or_detached(G, roster, last_active, d, cfg)
         dissolve_small_tribes(roster, cfg)
 
-        today = defaultdict(set)
+        active_today = set()
         for p, t in roster.items():
             if t is not UNALIGNED:
-                today[t].add(p)
-        names.update(d, set(today))
-        active_today = set(today)
+                active_today.add(t)
+
+        for t in active_today:
+            last_seen[t] = d
 
         snapshots[d] = {
             t: member_metrics(G, roster, t)
