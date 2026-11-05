@@ -15,6 +15,7 @@ DEFAULT_CONFIG = {
     "MIN_TRIBE_SURVIVAL": 4,
     "MIN_REUSE_OVERLAP": 3,
     "REUSE_OVERLAP_RATIO": 0.5,
+    "NAME_COOLDOWN_DAYS": 7,
     "MIN_GAMES_FLOOR": 3,
     "DYNAMIC_RATIO": 2.0,
     "STICKINESS": 1.5,
@@ -69,20 +70,30 @@ def is_clearly_apart(G: nx.Graph, roster: dict, comm: set, split_ratio: float) -
     return (inside / 2.0) > split_ratio * outside
 
 
-def pick_name(comm: set, free: list, last_roster: dict, last_seen: dict, pool: list, cfg: dict) -> str:
+def pick_name(comm: set, free: list, last_roster: dict, last_seen: dict, pool: list, cfg: dict, today: str) -> str:
     """Choisit le nom d'une nouvelle tribu parmi les noms libres, par ordre de priorité :
     1. résurrection : un ancien nom dont le dernier effectif recouvre nettement la communauté
-    2. un nom jamais utilisé
-    3. le nom libre absent depuis le plus longtemps
-    """
+    2. réutilisation : le nom déjà utilisé, libre depuis au moins NAME_COOLDOWN_DAYS, le plus ancien
+    3. un nom jamais utilisé
+    4. en dernier recours seulement, un nom disparu depuis moins longtemps que le délai
+    Les noms restent ainsi peu nombreux, sans qu'un nom change de groupe du jour au lendemain."""
+    cur = date.fromisoformat(today)
+
     def reuse(n):
         old = last_roster.get(n, set())
         ov = len(comm & old)
         ok = ov >= cfg["MIN_REUSE_OVERLAP"] and ov >= cfg["REUSE_OVERLAP_RATIO"] * min(len(comm), len(old))
         return ov if ok else 0
 
-    # jamais utilisé => last_seen absent => "" => trié avant tout nom déjà vu
-    return min(free, key=lambda n: (-reuse(n), last_seen.get(n, ""), pool.index(n)))
+    def tier(n):
+        if reuse(n):
+            return 0
+        if n not in last_seen:
+            return 2
+        cooled = (cur - date.fromisoformat(last_seen[n])).days >= cfg["NAME_COOLDOWN_DAYS"]
+        return 1 if cooled else 3
+
+    return min(free, key=lambda n: (tier(n), -reuse(n), last_seen.get(n, ""), pool.index(n)))
 
 
 def compass(
@@ -146,7 +157,7 @@ def compass(
         if not free:
             break
 
-        name = pick_name(c, free, last_roster, last_seen, tribe_names_pool, cfg)
+        name = pick_name(c, free, last_roster, last_seen, tribe_names_pool, cfg, current_date)
         name_of[i] = name
         founded.add(name)
         last_seen[name] = current_date  # évite qu'un nom fondé puis dissous le jour même soit "perdu"
