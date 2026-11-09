@@ -1890,28 +1890,54 @@ $(document).ready(function () {
             });
         });
 
-        const events = [];
+        const list = [];
         allTribes.forEach(tribe => {
             const life = getTribeLifespan(tribe);
             if (!life || !life.milestones.length) return;
 
-            const validMilestones = life.milestones.filter(m => m.idx <= currentIndex && !m.label.startsWith('Culminated'));
-            if (!validMilestones.length) return;
+            const foundingIdx = life.firstIndex;
+            const foundingDateStr = dates[foundingIdx];
+            const foundingShortDate = formatShortDate(foundingDateStr);
 
-            const latestMilestone = validMilestones[validMilestones.length - 1];
-            const isAliveAtCurrent = (snapshots[dates[currentIndex]]?.[tribe]?.length || 0) > 0;
+            // N'affiche que les homelands créées jusqu'à la date actuelle
+            if (foundingIdx > currentIndex) return;
 
-            events.push({
+            const membersAtCurrent = snapshots[dates[currentIndex]]?.[tribe] || [];
+            const isAliveAtCurrent = membersAtCurrent.length > 0;
+
+            // Détection du statut de dissolution à la date actuelle
+            const dissolvedMilestone = life.milestones.find(m => m.label.startsWith('Dissolved') && m.idx <= currentIndex);
+            const isDissolvedAtCurrent = !isAliveAtCurrent;
+
+            let dissolvedShortDate = '';
+            if (dissolvedMilestone) {
+                dissolvedShortDate = dissolvedMilestone.label.replace('Dissolved ', '');
+            } else if (isDissolvedAtCurrent) {
+                const nextDate = dates[life.lastIndex + 1] || dates[life.lastIndex];
+                dissolvedShortDate = formatShortDate(nextDate);
+            }
+
+            // Statut complet réservé pour l'infobulle au survol
+            let fullStatus = '';
+            if (isDissolvedAtCurrent) {
+                fullStatus = `${tribe.toUpperCase()} • Dissolved ${dissolvedShortDate}`;
+            } else {
+                fullStatus = `${tribe.toUpperCase()} • Active (${membersAtCurrent.length} denizens)`;
+            }
+
+            list.push({
                 tribe,
-                idx: latestMilestone.idx,
-                label: latestMilestone.label,
-                title: `${tribe.toUpperCase()} • ${latestMilestone.title}`,
-                isCurrent: isAliveAtCurrent && !latestMilestone.label.startsWith('Dissolved'),
+                foundingIdx,
+                foundingShortDate,
+                isAliveAtCurrent,
+                isDissolvedAtCurrent,
+                fullStatus,
                 icon: config.tribes?.[tribe]?.icon
             });
         });
 
-        return events.sort((a, b) => b.idx - a.idx || a.tribe.localeCompare(b.tribe));
+        // Tri chronologique par date de fondation (de la plus ancienne à la plus récente)
+        return list.sort((a, b) => a.foundingIdx - b.foundingIdx || a.tribe.localeCompare(b.tribe));
     }
 
     function getPlayerHistory(playerName) {
@@ -2034,30 +2060,44 @@ $(document).ready(function () {
 
         $headerTitle.empty();
         $legend.empty();
+        $ledger.empty();
 
-        const seasonEvents = getSeasonChronicle();
-        if (!seasonEvents.length) {
-            $ledger.empty();
+        let $chronicle = $('#chronicleToolbar');
+        if (!$chronicle.length) {
+            $chronicle = $('<div id="chronicleToolbar" class="chronicle-toolbar"></div>').insertAfter('#tribeMapContainer');
+        }
+
+        if (currentView === 'pn') {
+            $chronicle.hide();
             return;
         }
 
-        const iconButtonsHtml = seasonEvents.map(ev => {
-            const isDissolved = ev.label.startsWith('Dissolved');
-            const isActiveDate = ev.idx === currentIndex;
+        const seasonEvents = getSeasonChronicle();
+        if (!seasonEvents.length) {
+            $chronicle.empty().hide();
+            return;
+        }
+
+        const buttonsHtml = seasonEvents.map(ev => {
             const iconUrl = ev.icon || config.tribes?.[ev.tribe]?.icon || '';
-            const tooltipText = `${ev.tribe.toUpperCase()} • ${ev.label}`;
+            const isSelected = activeTribe === ev.tribe;
+            const isFoundingDay = ev.foundingIdx === currentIndex;
 
             return `
                 <button type="button" 
-                        class="chronicle-icon-btn ${isDissolved ? 'is-dissolved' : ''} ${isActiveDate ? 'is-active-date' : ''}"
+                        class="chronicle-btn ${ev.isDissolvedAtCurrent ? 'is-dissolved' : ''} ${isSelected ? 'is-active-clearing' : ''} ${isFoundingDay ? 'is-active-date' : ''}"
                         data-tribe="${ev.tribe}" 
-                        data-date-index="${ev.idx}" 
-                        title="${tooltipText}">
-                    <img src="${iconUrl}" alt="${ev.tribe}">
+                        data-founding-index="${ev.foundingIdx}">
+                    <img src="${iconUrl}" alt="${ev.tribe}" class="chronicle-btn-icon">
+                    <span class="chronicle-btn-text">
+                        <span class="chronicle-btn-name">${ev.tribe}</span>
+                        <span class="chronicle-btn-date">${ev.foundingShortDate}</span>
+                    </span>
+                    <span class="tooltip-text">${ev.fullStatus}</span>
                 </button>`;
         }).join('');
 
-        $ledger.html(`<div class="chronicle-toolbar">${iconButtonsHtml}</div>`);
+        $chronicle.html(buttonsHtml).show();
     }
 
     function renderGraph(snapshot) {
@@ -2161,6 +2201,31 @@ $(document).ready(function () {
     $headerTitle.on('click', '.journey-link', function (e) {
         e.stopPropagation();
         goToPlayerJourney(selectedPlayer);
+    });
+	
+	$(document).on('click', '.chronicle-btn', function (e) {
+        e.stopPropagation();
+        const tribe = $(this).data('tribe');
+        const foundingIdx = parseInt($(this).data('founding-index'), 10);
+        if (!tribe) return;
+
+        if (currentView === 'hn' && activeTribe === tribe) {
+            // Un second clic sur la même tribu dézoome vers la carte macro
+            currentView = 'hm';
+            activeTribe = null;
+        } else {
+            // Ouvre la clairière et saute à sa fondation si elle est dissoute à la date actuelle
+            currentView = 'hn';
+            activeTribe = tribe;
+            selectedPlayer = null;
+
+            const isAlive = (snapshots[dates[currentIndex]]?.[tribe]?.length || 0) > 0;
+            if (!isAlive && !isNaN(foundingIdx)) {
+                currentIndex = foundingIdx;
+            }
+        }
+        clearSearch();
+        updateView();
     });
 
     $searchInput.on('input change', function () {
