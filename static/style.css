@@ -2450,58 +2450,97 @@ table.dataTable tbody tr.loser td {
     visibility: visible;
 }
 
-/* --- Barre d'icônes d'événements sous la carte --- */
+/* --- Barre de chronique sous la carte interactive --- */
 .chronicle-toolbar {
     display: flex;
     align-items: center;
     justify-content: center;
     flex-wrap: wrap;
-    gap: 8px;
-    margin: 12px 0;
+    gap: 10px;
+    margin: 14px auto 8px auto;
+    width: 100%;
 }
 
-.chronicle-icon-btn {
+.chronicle-btn {
+    position: relative;
     display: inline-flex;
     align-items: center;
-    justify-content: center;
-    width: 34px;
-    height: 34px;
-    padding: 4px;
+    gap: 8px;
+    padding: 5px 12px;
     background: var(--bg-surface);
     border: 1px solid var(--border-soft);
-    border-radius: 6px;
+    border-radius: 8px;
+    color: var(--text-main);
+    font-family: var(--font-ui);
     cursor: pointer;
     box-shadow: var(--glass-shadow);
-    transition: transform 0.15s ease, border-color 0.2s ease, background-color 0.2s ease, filter 0.2s ease, opacity 0.2s ease;
+    transition: transform 0.15s ease, border-color 0.2s ease, background-color 0.2s ease, opacity 0.2s ease, filter 0.2s ease;
 }
 
-.chronicle-icon-btn:hover {
+.chronicle-btn:hover {
     border-color: var(--main-color);
     background: var(--bg-hover);
     transform: translateY(-2px);
 }
 
-.chronicle-icon-btn img {
+.chronicle-btn-icon {
     width: 22px;
     height: 22px;
     object-fit: contain;
     filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.4));
 }
 
-.chronicle-icon-btn.is-dissolved {
-    filter: grayscale(1);
-    opacity: 0.4;
+.chronicle-btn-text {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    line-height: 1.15;
 }
 
-.chronicle-icon-btn.is-dissolved:hover {
-    filter: grayscale(0.3);
-    opacity: 0.85;
+.chronicle-btn-name {
+    font-size: var(--size-xs);
+    font-weight: var(--bold);
+    text-transform: capitalize;
+    color: var(--text-bright);
 }
 
-.chronicle-icon-btn.is-active-date {
+.chronicle-btn-date {
+    font-size: var(--size-xxs);
+    color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
+}
+
+/* État dissous : atténué et en niveaux de gris au repos */
+.chronicle-btn.is-dissolved {
+    filter: grayscale(0.85);
+    opacity: 0.5;
+}
+
+.chronicle-btn.is-dissolved:hover {
+    filter: grayscale(0.2);
+    opacity: 0.95;
+}
+
+/* État actif / sélectionné */
+.chronicle-btn.is-active-clearing,
+.chronicle-btn.is-active-date {
     border-color: var(--main-color);
-    background: color-mix(in srgb, var(--main-color) 15%, var(--bg-surface));
-    box-shadow: 0 0 8px color-mix(in srgb, var(--main-color) 40%, transparent);
+    background: color-mix(in srgb, var(--main-color) 12%, var(--bg-surface));
+    box-shadow: 0 0 8px color-mix(in srgb, var(--main-color) 30%, transparent);
+}
+
+/* Infobulle au survol (révèle le statut Dissolved / Active) */
+.chronicle-btn .tooltip-text {
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%) translateY(4px);
+    pointer-events: none;
+    z-index: 100;
+}
+
+.chronicle-btn:hover .tooltip-text {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
 }
 
 /* =========================================================================
