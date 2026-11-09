@@ -14,7 +14,7 @@ DEFAULT_CONFIG = {
     "MIN_TRIBE_CREATION_SIZE": 6,
     "MIN_TRIBE_SURVIVAL": 4,
     "MIN_REUSE_OVERLAP": 3,
-    "MIN_COOLDOWN_DAYS": 7,
+    "MIN_COOLDOWN_DAYS": 3,
     "MIN_GAMES_FLOOR": 3,
     "DYNAMIC_RATIO": 2.0,
     "STICKINESS": 1.5,
@@ -25,9 +25,7 @@ DEFAULT_CONFIG = {
     "DECAY_RATE": 0.95,
     "NEW_MATCH_WEIGHT": 1.0,
     "MIN_EDGE_WEIGHT": 0.1,
-    "RESOLUTION": 1.4,
-    "MAX_TRIBE_SHARE": 0.35,       # a tribe may hold at most this share of the aligned players...
-    "MAX_TRIBE_SIZE_FLOOR": 12,    # ...but never less than this many members
+    "RESOLUTION": 1.2,
 }
 
 
@@ -67,7 +65,6 @@ def is_clearly_apart(G: nx.Graph, roster: dict, comm: set, split_ratio: float) -
                 inside += w
             elif roster.get(p) is not UNALIGNED and roster.get(n) == roster.get(p):
                 outside += w
-    # Correct double-counting of internal edges while keeping the 0.75 effective ratio
     return (inside / 2.0) > split_ratio * outside
 
 
@@ -84,8 +81,6 @@ def compass(
     if not eligible:
         return {}, set()
 
-    # Build the subgraph with an explicit, sorted order: G.subgraph() iterates over a set of
-    # strings, whose order changes with PYTHONHASHSEED and would make Louvain non-deterministic.
     eligible_set = set(eligible)
     H = nx.Graph()
     H.add_nodes_from(eligible)
@@ -116,7 +111,6 @@ def compass(
     )
     name_of = {}
     for overlap, i, t in overlaps:
-        # Require at least 2 shared players to prevent a lone member from hijacking a tribe name
         if overlap >= min(2, len(members[t])) and i not in name_of and t not in name_of.values():
             name_of[i] = t
 
@@ -126,8 +120,6 @@ def compass(
     split_ratio = cfg.get("SPLIT_RATIO", cfg["STICKINESS"] / 2.0)
     cur_dt = date.fromisoformat(current_date)
 
-    # Names fall in two groups: "fresh" (never carried by an active tribe) and "dissolved"
-    # (carried by a tribe that has since disappeared; last_seen tells us when).
     fresh_names = [n for n in tribe_names_pool if n not in members and n not in last_seen]
     dissolved_names = [n for n in tribe_names_pool if n not in members and n in last_seen]
 
@@ -145,33 +137,31 @@ def compass(
         taken = set(name_of.values())
         avail_dissolved = [t for t in dissolved_names if t not in taken]
 
-        # 1) Revive: the community overlaps enough with a dissolved tribe's past members
         revive = sorted(
             [
                 (len(c & historical_members.get(t, set())), t)
                 for t in avail_dissolved
                 if len(c & historical_members.get(t, set())) >= min_reuse
             ],
-            key=lambda x: (-x[0], tribe_names_pool.index(x[1])),
-        )
-        # 2) Reclaim: a name abandoned for more than `cooldown` days, longest abandoned first
-        reclaim = sorted(
-            [
-                t for t in avail_dissolved
-                if (cur_dt - date.fromisoformat(last_seen[t])).days > cooldown
-            ],
-            key=lambda t: (last_seen[t], tribe_names_pool.index(t)),
+            key=lambda x: (-x[0], tribe_names_pool.index(x[1]) if x[1] in tribe_names_pool else 999),
         )
 
         chosen_name = None
         if revive:
             chosen_name = revive[0][1]
-        elif reclaim:
-            chosen_name = reclaim[0]
-            historical_members[chosen_name].clear()  # new identity: forget the old members
         elif fresh_names:
-            # 3) New: a name that was never used
             chosen_name = fresh_names.pop(0)
+        else:
+            reclaim = sorted(
+                [
+                    t for t in avail_dissolved
+                    if (cur_dt - date.fromisoformat(last_seen[t])).days > cooldown
+                ],
+                key=lambda t: (last_seen[t], tribe_names_pool.index(t) if t in tribe_names_pool else 999),
+            )
+            if reclaim:
+                chosen_name = reclaim[0]
+                historical_members[chosen_name].clear()
 
         if chosen_name:
             name_of[i] = chosen_name
@@ -181,59 +171,39 @@ def compass(
     return target, founded
 
 
-def tribe_size_cap(n_players: int, cfg: dict) -> int:
-    return max(cfg["MAX_TRIBE_SIZE_FLOOR"], math.ceil(cfg["MAX_TRIBE_SHARE"] * n_players))
-
-
 def apply_compass(G: nx.Graph, roster: dict, target: dict, founded: set, cfg: dict) -> None:
-    cap = tribe_size_cap(len(target), cfg)
-    counts = Counter(t for t in roster.values() if t is not UNALIGNED)
-    founding, joins, switches = [], [], []
+    moves, switches = [], []
 
     for p, t in target.items():
         current = roster.get(p, UNALIGNED)
         if current == t:
             continue
 
-        w = weight_by_tribe(G, roster, p)
         if t in founded:
-            founding.append((-w[t], p, t))
+            moves.append((p, t))
         elif current is UNALIGNED:
-            # Require an actual connection (w[t] > 0) to join an existing tribe
-            if w[t] > 0 and w[t] == max(w.values()):
-                joins.append((-w[t], p, t))
-        elif w[t] > cfg["STICKINESS"] * w[current]:
-            switches.append((-(w[t] - w[current]), p, t))
+            w = weight_by_tribe(G, roster, p)
+            if not w or w[t] == max(w.values()):
+                moves.append((p, t))
+        else:
+            w = weight_by_tribe(G, roster, p)
+            if w[t] > cfg["STICKINESS"] * w[current]:
+                switches.append((w[t] - w[current], p, t))
 
-    switches.sort()
-    switches = switches[: cfg["MAX_DAILY_TRANSFERS"]]
+    switches.sort(reverse=True)
+    moves += [(p, t) for _, p, t in switches[: cfg["MAX_DAILY_TRANSFERS"]]]
 
-    # Strongest ties first, so that when a tribe is full the best-connected candidates get in.
-    # A tribe at the cap simply stops growing; the others stay where they are.
-    for _, p, t in sorted(founding) + sorted(joins) + switches:
-        if counts[t] >= cap:
-            continue
-        current = roster.get(p, UNALIGNED)
-        if current is not UNALIGNED:
-            counts[current] -= 1
-        counts[t] += 1
+    for p, t in moves:
         roster[p] = t
 
 
-def prune_inactive_or_detached(
-    G: nx.Graph, roster: dict, last_active: dict, current_date: str, cfg: dict
-) -> None:
+def prune_inactive(roster: dict, last_active: dict, current_date: str, cfg: dict) -> None:
     limit_days = cfg["INACTIVITY_LIMIT_DAYS"]
+    if limit_days is None:
+        return
 
     for p, t in list(roster.items()):
-        if t is UNALIGNED:
-            continue
-        if limit_days is not None and not is_player_active(p, last_active, current_date, limit_days):
-            roster[p] = UNALIGNED
-            continue
-        # Release fossilized members whose active edges with their own tribe have completely decayed
-        w = weight_by_tribe(G, roster, p)
-        if w[t] <= 0:
+        if t is not UNALIGNED and not is_player_active(p, last_active, current_date, limit_days):
             roster[p] = UNALIGNED
 
 
@@ -371,13 +341,13 @@ def run_homelands_simulation(
                 shared[p1][p2] += 1
                 shared[p2][p1] += 1
 
+        prune_inactive(roster, last_active, d, cfg)
+        dissolve_small_tribes(roster, cfg)
+
         G = nx.Graph()
         for (p1, p2), w in sorted(edge_weights.items()):
             if w >= cfg["MIN_EDGE_WEIGHT"]:
                 G.add_edge(p1, p2, weight=w)
-
-        prune_inactive_or_detached(G, roster, last_active, d, cfg)
-        dissolve_small_tribes(roster, cfg)
 
         min_games = min_games_required(
             player_games, cfg["MIN_GAMES_FLOOR"], cfg["DYNAMIC_RATIO"]
@@ -399,7 +369,6 @@ def run_homelands_simulation(
             tribe_names_pool,
         )
         apply_compass(G, roster, target, founded, cfg)
-        prune_inactive_or_detached(G, roster, last_active, d, cfg)
         dissolve_small_tribes(roster, cfg)
 
         active_today = set()
