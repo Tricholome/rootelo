@@ -14,7 +14,7 @@ DEFAULT_CONFIG = {
     "MIN_TRIBE_CREATION_SIZE": 6,
     "MIN_TRIBE_SURVIVAL": 4,
     "MIN_REUSE_OVERLAP": 3,
-    "MIN_COOLDOWN_DAYS": 3,
+    "MIN_COOLDOWN_DAYS": 7,
     "MIN_GAMES_FLOOR": 3,
     "DYNAMIC_RATIO": 2.0,
     "STICKINESS": 1.5,
@@ -25,7 +25,7 @@ DEFAULT_CONFIG = {
     "DECAY_RATE": 0.95,
     "NEW_MATCH_WEIGHT": 1.0,
     "MIN_EDGE_WEIGHT": 0.1,
-    "RESOLUTION": 1.2,
+    "RESOLUTION": 1.25,
 }
 
 
@@ -54,18 +54,80 @@ def weight_by_tribe(G: nx.Graph, roster: dict, p: str) -> Counter:
     return weights
 
 
-def is_clearly_apart(G: nx.Graph, roster: dict, comm: set, split_ratio: float) -> bool:
-    inside = outside = 0.0
+def viable_founders(G: nx.Graph, roster: dict, comm: set, split_ratio: float) -> list:
+    """Return members of `comm` whose ties inside `comm` outweigh their ties to outside tribes."""
+    founders = []
     for p in sorted(comm):
         if p not in G:
             continue
+        w_in = 0.0
+        w_out = Counter()
         for n in G.neighbors(p):
             w = G[p][n]["weight"]
             if n in comm:
-                inside += w
-            elif roster.get(p) is not UNALIGNED and roster.get(n) == roster.get(p):
-                outside += w
-    return (inside / 2.0) > split_ratio * outside
+                w_in += w
+            else:
+                t_n = roster.get(n, UNALIGNED)
+                if t_n is not UNALIGNED:
+                    w_out[t_n] += w
+
+        if w_in <= 0:
+            continue
+
+        current = roster.get(p, UNALIGNED)
+        if current is not UNALIGNED:
+            # Member splitting from an existing tribe: internal pull must beat remaining parent pull
+            if w_in > split_ratio * w_out[current]:
+                founders.append(p)
+        else:
+            # Unaligned player: must be more connected to this new group than to any existing tribe
+            best_outside = max(w_out.values(), default=0.0)
+            if w_in >= best_outside:
+                founders.append(p)
+
+    return founders
+
+
+def pick_tribe_name(
+    comm: set,
+    available_names: list,
+    historical_members: dict,
+    last_seen: dict,
+    current_date: str,
+    cfg: dict,
+) -> str | None:
+    """
+    1. Revive a dissolved name (past cooldown) if >= MIN_REUSE_OVERLAP former members are in `comm`.
+    2. Otherwise Reclaim the longest-abandoned dissolved name (past cooldown).
+    3. Otherwise pick a Fresh (never-used) name.
+    """
+    cur_dt = date.fromisoformat(current_date)
+    cooldown = cfg["MIN_COOLDOWN_DAYS"]
+    min_reuse = cfg["MIN_REUSE_OVERLAP"]
+
+    recyclable = [
+        t for t in available_names
+        if t in last_seen and (cur_dt - date.fromisoformat(last_seen[t])).days > cooldown
+    ]
+
+    # 1. Revive: former members reforming their homeland
+    revivable = [
+        t for t in recyclable
+        if len(comm & historical_members.get(t, set())) >= min_reuse
+    ]
+    if revivable:
+        return max(revivable, key=lambda t: len(comm & historical_members[t]))
+
+    # 2. Reclaim: recycle the oldest dissolved name before touching fresh names
+    if recyclable:
+        return min(recyclable, key=lambda t: last_seen[t])
+
+    # 3. Fresh: first name never used in the season
+    for t in available_names:
+        if t not in last_seen:
+            return t
+
+    return None
 
 
 def compass(
@@ -115,59 +177,41 @@ def compass(
             name_of[i] = t
 
     available_slots = max(0, cfg["MAX_TRIBES"] - len(members))
-    min_reuse = cfg["MIN_REUSE_OVERLAP"]
-    cooldown = cfg.get("MIN_COOLDOWN_DAYS", 3)
     split_ratio = cfg.get("SPLIT_RATIO", cfg["STICKINESS"] / 2.0)
-    cur_dt = date.fromisoformat(current_date)
-
-    fresh_names = [n for n in tribe_names_pool if n not in members and n not in last_seen]
-    dissolved_names = [n for n in tribe_names_pool if n not in members and n in last_seen]
 
     founded = set()
+    founders_of = {}
+
     for i, c in enumerate(comms):
         if len(founded) >= available_slots:
             break
-        if (
-            i in name_of
-            or len(c) < cfg["MIN_TRIBE_CREATION_SIZE"]
-            or not is_clearly_apart(G, roster, c, split_ratio)
-        ):
+        if i in name_of or len(c) < cfg["MIN_TRIBE_CREATION_SIZE"]:
             continue
 
-        taken = set(name_of.values())
-        avail_dissolved = [t for t in dissolved_names if t not in taken]
+        core = viable_founders(G, roster, c, split_ratio)
+        if len(core) < cfg["MIN_TRIBE_CREATION_SIZE"]:
+            continue
 
-        revive = sorted(
-            [
-                (len(c & historical_members.get(t, set())), t)
-                for t in avail_dissolved
-                if len(c & historical_members.get(t, set())) >= min_reuse
-            ],
-            key=lambda x: (-x[0], tribe_names_pool.index(x[1]) if x[1] in tribe_names_pool else 999),
+        taken = set(members.keys()) | set(name_of.values())
+        available_names = [t for t in tribe_names_pool if t not in taken]
+
+        chosen_name = pick_tribe_name(
+            set(core), available_names, historical_members, last_seen, current_date, cfg
         )
-
-        chosen_name = None
-        if revive:
-            chosen_name = revive[0][1]
-        elif fresh_names:
-            chosen_name = fresh_names.pop(0)
-        else:
-            reclaim = sorted(
-                [
-                    t for t in avail_dissolved
-                    if (cur_dt - date.fromisoformat(last_seen[t])).days > cooldown
-                ],
-                key=lambda t: (last_seen[t], tribe_names_pool.index(t) if t in tribe_names_pool else 999),
-            )
-            if reclaim:
-                chosen_name = reclaim[0]
-                historical_members[chosen_name].clear()
-
         if chosen_name:
             name_of[i] = chosen_name
             founded.add(chosen_name)
+            founders_of[i] = core
 
-    target = {p: name_of[i] for i, c in enumerate(comms) if i in name_of for p in sorted(c)}
+    target = {}
+    for i, c in enumerate(comms):
+        if i not in name_of:
+            continue
+        t = name_of[i]
+        group = founders_of[i] if t in founded else sorted(c)
+        for p in group:
+            target[p] = t
+
     return target, founded
 
 
@@ -183,7 +227,7 @@ def apply_compass(G: nx.Graph, roster: dict, target: dict, founded: set, cfg: di
             moves.append((p, t))
         elif current is UNALIGNED:
             w = weight_by_tribe(G, roster, p)
-            if not w or w[t] == max(w.values()):
+            if w[t] > 0 and w[t] == max(w.values()):
                 moves.append((p, t))
         else:
             w = weight_by_tribe(G, roster, p)
