@@ -17,6 +17,7 @@ DEFAULT_CONFIG = {
     "MIN_COOLDOWN_DAYS": 7,
     "MIN_GAMES_FLOOR": 3,
     "DYNAMIC_RATIO": 2.0,
+    "SURVIVAL_RATIO": 1.0,
     "STICKINESS": 1.5,
     "MAX_DAILY_TRANSFERS": 3,
     "INACTIVITY_LIMIT_DAYS": 21,
@@ -42,7 +43,7 @@ def is_player_active(p: str, last_active: dict, current_date: str, limit_days: i
     return (date.fromisoformat(current_date) - date.fromisoformat(last)).days <= limit_days
 
 
-def weight_by_tribe(G: nx.Graph, roster: dict, p: str) -> Counter:
+def weight_by_tribe(G: nx.Graph, roster: dict, p: str, tribe_sizes: Counter = None) -> Counter:
     weights = Counter()
     if p not in G:
         return weights
@@ -50,20 +51,31 @@ def weight_by_tribe(G: nx.Graph, roster: dict, p: str) -> Counter:
         tribe = roster.get(n, UNALIGNED)
         if tribe is not UNALIGNED:
             weights[tribe] += G[p][n]["weight"]
+    if tribe_sizes:
+        for t in list(weights):
+            size = max(1, tribe_sizes[t])
+            weights[t] /= math.sqrt(size)
     return weights
 
 
-def is_clearly_apart(G: nx.Graph, roster: dict, comm: set, stickiness: float) -> bool:
+def is_clearly_apart(
+    G: nx.Graph, roster: dict, comm: set, stickiness: float, tribe_sizes: Counter
+) -> bool:
     inside = outside = 0.0
+    k = len(comm)
     for p in sorted(comm):
         if p not in G:
             continue
+        t_p = roster.get(p, UNALIGNED)
+        rem_size = max(1, tribe_sizes[t_p] - k) if t_p is not UNALIGNED else 1
+        scale = min(1.0, (k - 1) / rem_size) if k > 1 else 1.0
+
         for n in G.neighbors(p):
             w = G[p][n]["weight"]
             if n in comm:
                 inside += w
-            elif roster.get(n, UNALIGNED) is not UNALIGNED:
-                outside += w
+            elif t_p is not UNALIGNED and roster.get(n) == t_p:
+                outside += w * scale
     return inside > stickiness * outside
 
 
@@ -145,6 +157,8 @@ def compass(
         if t is not UNALIGNED:
             members.setdefault(t, set()).add(p)
 
+    tribe_sizes = Counter({t: len(m) for t, m in members.items()})
+
     overlaps = sorted(
         [
             (len(c & m), i, t)
@@ -167,7 +181,7 @@ def compass(
         if (
             i in name_of
             or len(c) < cfg["MIN_TRIBE_CREATION_SIZE"]
-            or not is_clearly_apart(G, roster, c, cfg["STICKINESS"])
+            or not is_clearly_apart(G, roster, c, cfg["STICKINESS"], tribe_sizes)
         ):
             continue
 
@@ -188,6 +202,7 @@ def compass(
 
 def apply_compass(G: nx.Graph, roster: dict, target: dict, founded: set, cfg: dict) -> None:
     moves, switches = [], []
+    tribe_sizes = Counter(t for t in roster.values() if t is not UNALIGNED)
 
     for p, t in target.items():
         current = roster.get(p, UNALIGNED)
@@ -197,11 +212,11 @@ def apply_compass(G: nx.Graph, roster: dict, target: dict, founded: set, cfg: di
         if t in founded:
             moves.append((p, t))
         elif current is UNALIGNED:
-            w = weight_by_tribe(G, roster, p)
+            w = weight_by_tribe(G, roster, p, tribe_sizes)
             if not w or w[t] == max(w.values()):
                 moves.append((p, t))
         else:
-            w = weight_by_tribe(G, roster, p)
+            w = weight_by_tribe(G, roster, p, tribe_sizes)
             if w[t] > cfg["STICKINESS"] * w[current]:
                 switches.append((w[t] - w[current], p, t))
 
@@ -212,13 +227,22 @@ def apply_compass(G: nx.Graph, roster: dict, target: dict, founded: set, cfg: di
         roster[p] = t
 
 
-def prune_inactive(roster: dict, last_active: dict, current_date: str, cfg: dict) -> None:
+def prune_inactive(
+    roster: dict,
+    player_games: Counter,
+    min_survival_games: int,
+    last_active: dict,
+    current_date: str,
+    cfg: dict,
+) -> None:
     limit_days = cfg["INACTIVITY_LIMIT_DAYS"]
-    if limit_days is None:
-        return
 
     for p, t in list(roster.items()):
-        if t is not UNALIGNED and not is_player_active(p, last_active, current_date, limit_days):
+        if t is UNALIGNED:
+            continue
+        if not is_player_active(p, last_active, current_date, limit_days):
+            roster[p] = UNALIGNED
+        elif player_games[p] < min_survival_games:
             roster[p] = UNALIGNED
 
 
@@ -357,17 +381,20 @@ def run_homelands_simulation(
                 shared[p1][p2] += 1
                 shared[p2][p1] += 1
 
-        prune_inactive(roster, last_active, d, cfg)
+        min_games = min_games_required(
+            player_games, cfg["MIN_GAMES_FLOOR"], cfg["DYNAMIC_RATIO"]
+        )
+        min_survival_games = min_games_required(
+            player_games, cfg["MIN_GAMES_FLOOR"], cfg.get("SURVIVAL_RATIO", 1.0)
+        )
+
+        prune_inactive(roster, player_games, min_survival_games, last_active, d, cfg)
         dissolve_small_tribes(roster, cfg)
 
         G = nx.Graph()
         for (p1, p2), w in sorted(edge_weights.items()):
             if w >= cfg["MIN_EDGE_WEIGHT"]:
                 G.add_edge(p1, p2, weight=w)
-
-        min_games = min_games_required(
-            player_games, cfg["MIN_GAMES_FLOOR"], cfg["DYNAMIC_RATIO"]
-        )
 
         eligible = sorted(
             p for p in G.nodes()
