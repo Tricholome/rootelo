@@ -2040,16 +2040,25 @@ $(document).ready(function () {
             $ledger.empty();
             return;
         }
-        const badges = seasonEvents.map(ev => badgeButtonHtml({
-            tribe: ev.tribe,
-            dateIndex: ev.idx,
-            label: ev.label,
-            isCurrent: ev.isCurrent,
-            title: ev.title,
-            icon: ev.icon
-        })).join('');
-        $ledger.html(`<div class="hud-title">Chronicle</div>${badges}`);
-	}
+
+        const iconButtonsHtml = seasonEvents.map(ev => {
+            const isDissolved = ev.label.startsWith('Dissolved');
+            const isActiveDate = ev.idx === currentIndex;
+            const iconUrl = ev.icon || config.tribes?.[ev.tribe]?.icon || '';
+            const tooltipText = `${ev.tribe.toUpperCase()} • ${ev.label}`;
+
+            return `
+                <button type="button" 
+                        class="chronicle-icon-btn ${isDissolved ? 'is-dissolved' : ''} ${isActiveDate ? 'is-active-date' : ''}"
+                        data-tribe="${ev.tribe}" 
+                        data-date-index="${ev.idx}" 
+                        title="${tooltipText}">
+                    <img src="${iconUrl}" alt="${ev.tribe}">
+                </button>`;
+        }).join('');
+
+        $ledger.html(`<div class="chronicle-toolbar">${iconButtonsHtml}</div>`);
+    }
 
     function renderGraph(snapshot) {
         updateChrome(snapshot);
