@@ -11,10 +11,8 @@ UNALIGNED = None
 
 DEFAULT_CONFIG = {
     "MAX_TRIBES": 9,
-    "MIN_TRIBE_CREATION_SIZE": 5,
-    "CREATION_STEP": 2,
-    "MIN_TRIBE_SURVIVAL": 3,
-    "SURVIVAL_STEP": 2,
+    "MIN_TRIBE_CREATION_SIZE": 6,
+    "TRIBE_STEP": 2.0,
     "MIN_REUSE_OVERLAP": 3,
     "REVIVE_RATIO": 0.5,
     "MIN_COOLDOWN_DAYS": 7,
@@ -37,16 +35,14 @@ def min_games_required(player_games: Counter, floor: int, ratio: float) -> int:
     return max(floor, math.ceil(median * ratio))
 
 
-def creation_size_required(n_active_tribes: int, cfg: dict) -> int:
+def creation_size_required(n_tribes: int, cfg: dict) -> int:
     base = cfg["MIN_TRIBE_CREATION_SIZE"]
-    step = cfg.get("CREATION_STEP", 0.75)
-    return math.ceil(base + max(0, n_active_tribes - 1) * step)
+    step = cfg.get("TRIBE_STEP", 2.0)
+    return math.ceil(base + max(0, n_tribes - 1) * step)
 
 
-def survival_size_required(n_active_tribes: int, cfg: dict) -> int:
-    base = cfg["MIN_TRIBE_SURVIVAL"]
-    step = cfg.get("SURVIVAL_STEP", 0.75)
-    return math.floor(base + max(0, n_active_tribes - 1) * step)
+def survival_size_required(n_tribes: int, cfg: dict) -> int:
+    return max(3, creation_size_required(n_tribes, cfg) // 2)
 
 
 def is_player_active(p: str, last_active: dict, current_date: str, limit_days: int) -> bool:
@@ -198,8 +194,8 @@ def compass(
         if len(founded) >= available_slots:
             break
 
-        n_active = len(members) + len(founded)
-        req_creation_size = creation_size_required(n_active, cfg)
+        target_tribe_count = len(members) + len(founded) + 1
+        req_creation_size = creation_size_required(target_tribe_count, cfg)
 
         if (
             i in name_of
