@@ -14,6 +14,7 @@ DEFAULT_CONFIG = {
     "MIN_TRIBE_CREATION_SIZE": 6,
     "MIN_TRIBE_SURVIVAL": 4,
     "MIN_REUSE_OVERLAP": 3,
+    "REVIVE_RATIO": 0.5,
     "MIN_COOLDOWN_DAYS": 7,
     "MIN_GAMES_FLOOR": 3,
     "DYNAMIC_RATIO": 2.0,
@@ -82,44 +83,48 @@ def is_clearly_apart(
 def pick_tribe_name(
     comm: set,
     available_names: list,
-    historical_members: dict,
+    last_members: dict,
     last_seen: dict,
     times_used: Counter,
     current_date: str,
     cfg: dict,
 ) -> str | None:
     """
-    Each tribe name can be founded once (times_used == 0) and revived/reclaimed at most once (times_used == 1).
-    Priority: 1. Revive -> 2. Reclaim -> 3. Fresh name.
+    Priority: 1. Revive (the community prolongs a dissolved tribe) -> 2. Reclaim -> 3. Fresh name.
+    Fresh and reclaim consume times_used (a name is founded once and reclaimed at most once);
+    a revive does not: it is the same group coming back.
     """
     cur_dt = date.fromisoformat(current_date)
-    cooldown = cfg["MIN_COOLDOWN_DAYS"]
     min_reuse = cfg["MIN_REUSE_OVERLAP"]
+    ratio = cfg["REVIVE_RATIO"]
 
+    def continuity(t):
+        old = last_members.get(t, set())
+        shared = len(comm & old)
+        return shared if shared >= min_reuse and shared >= ratio * min(len(comm), len(old)) else 0
+
+    # 1. Revive: no cooldown, the group is the same
+    revivable = [t for t in available_names if t in last_seen and continuity(t)]
+    if revivable:
+        return max(revivable, key=continuity)
+
+    # 2. Reclaim: the longest-abandoned name, only after the cooldown and if used once so far
     recyclable = [
         t for t in available_names
         if times_used[t] == 1
         and t in last_seen
-        and (cur_dt - date.fromisoformat(last_seen[t])).days > cooldown
+        and (cur_dt - date.fromisoformat(last_seen[t])).days > cfg["MIN_COOLDOWN_DAYS"]
     ]
-
-    # 1. Revive: former members reforming their dissolved homeland
-    revivable = [
-        t for t in recyclable
-        if len(comm & historical_members.get(t, set())) >= min_reuse
-    ]
-    if revivable:
-        return max(revivable, key=lambda t: len(comm & historical_members[t]))
-
-    # 2. Reclaim: recycle the longest-abandoned dissolved name (only if used once so far)
     if recyclable:
-        return min(recyclable, key=lambda t: last_seen[t])
+        name = min(recyclable, key=lambda t: last_seen[t])
+        times_used[name] += 1
+        return name
 
     # 3. Fresh: first name never used in the season
     for t in available_names:
         if times_used[t] == 0:
+            times_used[t] += 1
             return t
-
     return None
 
 
@@ -127,7 +132,7 @@ def compass(
     G: nx.Graph,
     roster: dict,
     eligible: list,
-    historical_members: dict,
+    last_members: dict,
     last_seen: dict,
     times_used: Counter,
     current_date: str,
@@ -189,12 +194,11 @@ def compass(
         available_names = [t for t in tribe_names_pool if t not in taken]
 
         chosen_name = pick_tribe_name(
-            c, available_names, historical_members, last_seen, times_used, current_date, cfg
+            c, available_names, last_members, last_seen, times_used, current_date, cfg
         )
         if chosen_name:
             name_of[i] = chosen_name
             founded.add(chosen_name)
-            times_used[chosen_name] += 1
 
     target = {p: name_of[i] for i, c in enumerate(comms) if i in name_of for p in sorted(c)}
     return target, founded
@@ -361,7 +365,7 @@ def run_homelands_simulation(
     player_games = Counter()
     last_active = {}
     roster = {}
-    historical_members = defaultdict(set)
+    last_members = defaultdict(set)
     last_seen = {}
     times_used = Counter()
     snapshots = {}
@@ -389,7 +393,6 @@ def run_homelands_simulation(
         )
 
         prune_inactive(roster, player_games, min_survival_games, last_active, d, cfg)
-        dissolve_small_tribes(roster, cfg)
 
         G = nx.Graph()
         for (p1, p2), w in sorted(edge_weights.items()):
@@ -405,7 +408,7 @@ def run_homelands_simulation(
             G,
             roster,
             eligible,
-            historical_members,
+            last_members,
             last_seen,
             times_used,
             d,
@@ -415,11 +418,12 @@ def run_homelands_simulation(
         apply_compass(G, roster, target, founded, cfg)
         dissolve_small_tribes(roster, cfg)
 
-        active_today = set()
+        today = defaultdict(set)
         for p, t in roster.items():
             if t is not UNALIGNED:
-                historical_members[t].add(p)
-                active_today.add(t)
+                today[t].add(p)
+        last_members.update(today)
+        active_today = set(today)
 
         for t in active_today:
             last_seen[t] = d
