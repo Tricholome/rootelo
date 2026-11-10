@@ -2151,7 +2151,94 @@ table.dataTable tbody tr.loser td {
     background-color: var(--bg-hover);
 }
 
-/* --- F. Mobile HUD Separation & Compact Controls --- */
+/* --- F. Chronicle Toolbar --- */
+.network-container[data-view="pn"] #chronicleToolbar {
+    display: none !important;
+}
+
+.chronicle-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 14px 0 8px 0;
+}
+
+.chronicle-icon-btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    padding: 6px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.15s ease, border-color 0.2s ease, background-color 0.2s ease, filter 0.2s ease, opacity 0.2s ease, box-shadow 0.2s ease;
+}
+
+.chronicle-icon-btn img {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+    pointer-events: none;
+}
+
+.chronicle-icon-btn.is-active {
+    background: var(--dt-input-bg);
+    border: 1px solid var(--border-soft);
+}
+
+.chronicle-icon-btn.is-active:hover {
+    border-color: var(--main-color);
+    background: color-mix(in srgb, var(--main-color) 28%, var(--bg-surface));
+}
+
+.chronicle-icon-btn.is-active img {
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+}
+
+.chronicle-icon-btn.is-dissolved {
+    background: transparent;
+    border: 1px solid var(--border-soft);
+    opacity: 0.35;
+    filter: grayscale(1) brightness(0.75);
+}
+
+.chronicle-icon-btn.is-dissolved:hover {
+    opacity: 0.9;
+    filter: grayscale(0.2) brightness(1);
+    border-color: var(--text-muted);
+    background: var(--bg-hover);
+}
+
+.chronicle-icon-btn:hover {
+    transform: translateY(-2px);
+}
+
+.chronicle-icon-btn.is-selected {
+    opacity: 1;
+    filter: none;
+    border: 1px solid var(--main-color);
+    background: color-mix(in srgb, var(--main-color) 28%, var(--bg-surface));
+    transform: translateY(-2px);
+}
+
+.chronicle-icon-btn .tooltip-text {
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%) translateY(4px);
+    pointer-events: none;
+    z-index: 100;
+}
+
+.chronicle-icon-btn:hover .tooltip-text {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+/* --- G. Mobile HUD Separation & Compact Controls --- */
 @media (max-width: 768px) {
     .tribe-map-container {
         display: grid;
@@ -2230,97 +2317,24 @@ table.dataTable tbody tr.loser td {
         font-size: var(--size-xs);
         max-width: 135px;
     }
-}
+	
+	.chronicle-toolbar {
+        flex-wrap: nowrap;
+        gap: 5px;
+        margin: 10px auto 6px auto;
+    }
 
-/* --- G. Chronicle Toolbar --- */
-.network-container[data-view="pn"] #chronicleToolbar {
-    display: none !important;
-}
+    .chronicle-icon-btn {
+        width: 32px;
+        height: 32px;
+        padding: 4px;
+        flex-shrink: 0;
+    }
 
-.chronicle-toolbar {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin: 14px 0 8px 0;
-}
-
-.chronicle-icon-btn {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 38px;
-    height: 38px;
-    padding: 6px;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: transform 0.15s ease, border-color 0.2s ease, background-color 0.2s ease, filter 0.2s ease, opacity 0.2s ease, box-shadow 0.2s ease;
-}
-
-.chronicle-icon-btn img {
-    width: 24px;
-    height: 24px;
-    object-fit: contain;
-    pointer-events: none;
-}
-
-/* Homeland ACTIVE */
-.chronicle-icon-btn.is-active {
-    background: var(--dt-input-bg);
-    border: 1px solid var(--border-soft);
-}
-
-.chronicle-icon-btn.is-active:hover {
-    border-color: var(--main-color);
-    background: color-mix(in srgb, var(--main-color) 28%, var(--bg-surface));
-}
-
-.chronicle-icon-btn.is-active img {
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
-}
-
-/* Homeland DISSOUTE */
-.chronicle-icon-btn.is-dissolved {
-    background: transparent;
-    border: 1px solid var(--text-muted);
-    opacity: 0.35;
-    filter: grayscale(1) brightness(0.75);
-}
-
-.chronicle-icon-btn.is-dissolved:hover {
-    opacity: 0.9;
-    filter: grayscale(0.2) brightness(1);
-    border-color: var(--text-muted);
-    background: var(--bg-hover);
-}
-
-/* Survol & Homeland actuellement sélectionnée en vue HN */
-.chronicle-icon-btn:hover {
-    transform: translateY(-2px);
-}
-
-.chronicle-icon-btn.is-selected {
-    opacity: 1;
-    filter: none;
-    border: 1px solid var(--main-color);
-    background: color-mix(in srgb, var(--main-color) 28%, var(--bg-surface));
-    transform: translateY(-2px);
-}
-
-/* Tooltip au survol (Founded / Revived / Reclaimed / Dissolved) */
-.chronicle-icon-btn .tooltip-text {
-    bottom: calc(100% + 8px);
-    left: 50%;
-    transform: translateX(-50%) translateY(4px);
-    pointer-events: none;
-    z-index: 100;
-}
-
-.chronicle-icon-btn:hover .tooltip-text {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
+    .chronicle-icon-btn img {
+        width: 20px;
+        height: 20px;
+    }
 }
 
 /* --- H. Interactive SVG Map Elements (D3.js) --- */
