@@ -10,7 +10,7 @@ import networkx as nx
 UNALIGNED = None
 
 DEFAULT_CONFIG = {
-    "MAX_TRIBES": 5,
+    "MAX_TRIBES": 9,
     "MIN_TRIBE_CREATION_SIZE": 6,
     "MIN_TRIBE_SURVIVAL": 4,
     "MIN_REUSE_OVERLAP": 3,
