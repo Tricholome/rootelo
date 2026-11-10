@@ -10,11 +10,9 @@ import networkx as nx
 UNALIGNED = None
 
 DEFAULT_CONFIG = {
-    "MAX_TRIBES": 9,
+    "MAX_TRIBES": 5,
     "MIN_TRIBE_CREATION_SIZE": 6,
     "TRIBE_STEP": 2.0,
-    "MIN_REUSE_OVERLAP": 3,
-    "REVIVE_RATIO": 0.5,
     "MIN_COOLDOWN_DAYS": 7,
     "MIN_GAMES_FLOOR": 3,
     "DYNAMIC_RATIO": 2.0,
@@ -91,50 +89,35 @@ def is_clearly_apart(
 
 
 def pick_tribe_name(
-    comm: set,
     available_names: list,
-    last_members: dict,
     last_seen: dict,
     times_used: Counter,
     current_date: str,
     cfg: dict,
 ) -> str | None:
     """
-    Priority: 1. Revive (the community prolongs a dissolved tribe) -> 2. Reclaim -> 3. Fresh name.
-    Fresh and reclaim consume times_used (a name is founded once and reclaimed at most once);
-    a revive does not: it is the same group coming back.
+    1. Revive: recycle the longest-abandoned dissolved name (after cooldown, at most once).
+    2. Fresh: pick the first name never used in the season.
     """
     cur_dt = date.fromisoformat(current_date)
-    min_reuse = cfg["MIN_REUSE_OVERLAP"]
-    ratio = cfg["REVIVE_RATIO"]
+    cooldown = cfg["MIN_COOLDOWN_DAYS"]
 
-    def continuity(t):
-        old = last_members.get(t, set())
-        shared = len(comm & old)
-        return shared if shared >= min_reuse and shared >= ratio * min(len(comm), len(old)) else 0
-
-    # 1. Revive: no cooldown, the group is the same
-    revivable = [t for t in available_names if t in last_seen and continuity(t)]
-    if revivable:
-        return max(revivable, key=continuity)
-
-    # 2. Reclaim: the longest-abandoned name, only after the cooldown and if used once so far
     recyclable = [
         t for t in available_names
         if times_used[t] == 1
         and t in last_seen
-        and (cur_dt - date.fromisoformat(last_seen[t])).days > cfg["MIN_COOLDOWN_DAYS"]
+        and (cur_dt - date.fromisoformat(last_seen[t])).days > cooldown
     ]
     if recyclable:
         name = min(recyclable, key=lambda t: last_seen[t])
         times_used[name] += 1
         return name
 
-    # 3. Fresh: first name never used in the season
     for t in available_names:
         if times_used[t] == 0:
             times_used[t] += 1
             return t
+
     return None
 
 
@@ -142,7 +125,6 @@ def compass(
     G: nx.Graph,
     roster: dict,
     eligible: list,
-    last_members: dict,
     last_seen: dict,
     times_used: Counter,
     current_date: str,
@@ -208,7 +190,7 @@ def compass(
         available_names = [t for t in tribe_names_pool if t not in taken]
 
         chosen_name = pick_tribe_name(
-            c, available_names, last_members, last_seen, times_used, current_date, cfg
+            available_names, last_seen, times_used, current_date, cfg
         )
         if chosen_name:
             name_of[i] = chosen_name
@@ -265,10 +247,6 @@ def prune_inactive(
 
 
 def dissolve_small_tribes(roster: dict, cfg: dict) -> None:
-    """
-    Sequentially dissolve the smallest tribe if it falls below the dynamic survival threshold.
-    Each dissolution reduces the active tribe count by 1, relieving pressure on remaining tribes.
-    """
     while True:
         counts = Counter(t for t in roster.values() if t is not UNALIGNED)
         if not counts:
@@ -394,7 +372,6 @@ def run_homelands_simulation(
     player_games = Counter()
     last_active = {}
     roster = {}
-    last_members = defaultdict(set)
     last_seen = {}
     times_used = Counter()
     snapshots = {}
@@ -438,7 +415,6 @@ def run_homelands_simulation(
             G,
             roster,
             eligible,
-            last_members,
             last_seen,
             times_used,
             d,
@@ -448,13 +424,7 @@ def run_homelands_simulation(
         apply_compass(G, roster, target, founded, cfg)
         dissolve_small_tribes(roster, cfg)
 
-        today = defaultdict(set)
-        for p, t in roster.items():
-            if t is not UNALIGNED:
-                today[t].add(p)
-        last_members.update(today)
-        active_today = set(today)
-
+        active_today = {t for t in roster.values() if t is not UNALIGNED}
         for t in active_today:
             last_seen[t] = d
 
