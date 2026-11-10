@@ -1741,6 +1741,7 @@ $(document).ready(function () {
     $latestBtn.html('&raquo;');
 
     let currentIndex = dates.length - 1;
+    let savedHmIndex = dates.length - 1;
     let simulation = null;
     let isInternalSearch = false;
 
@@ -1757,7 +1758,14 @@ $(document).ready(function () {
 
     function clearSearch() {
         isInternalSearch = true;
-        $searchInput.val('').trigger('change');
+        $searchInput.val('');
+        const dbBtn = document.getElementById('root-db-btn');
+        if (dbBtn) {
+            dbBtn.href = '#';
+            dbBtn.classList.add('disabled');
+            dbBtn.style.opacity = '0.4';
+            dbBtn.style.pointerEvents = 'none';
+        }
         isInternalSearch = false;
     }
 
@@ -1881,8 +1889,8 @@ $(document).ready(function () {
             milestones
         };
     }
-	
-	function getSeasonChronicle() {
+
+    function getSeasonChronicle(refIndex = currentIndex) {
         const allTribes = new Set();
         dates.forEach(d => {
             Object.keys(snapshots[d] || {}).forEach(t => {
@@ -1890,54 +1898,34 @@ $(document).ready(function () {
             });
         });
 
-        const list = [];
+        const events = [];
         allTribes.forEach(tribe => {
             const life = getTribeLifespan(tribe);
             if (!life || !life.milestones.length) return;
 
-            const foundingIdx = life.firstIndex;
-            const foundingDateStr = dates[foundingIdx];
-            const foundingShortDate = formatShortDate(foundingDateStr);
+            // Un jalon Dissolved (idx = dernier jour actif) ne prend effet qu'au jour suivant (refIndex > m.idx)
+            const validMilestones = life.milestones.filter(m => {
+                if (m.label.startsWith('Culminated')) return false;
+                if (m.label.startsWith('Dissolved')) return refIndex > m.idx;
+                return m.idx <= refIndex;
+            });
+            if (!validMilestones.length) return;
 
-            // N'affiche que les homelands créées jusqu'à la date actuelle
-            if (foundingIdx > currentIndex) return;
+            const latestMilestone = validMilestones[validMilestones.length - 1];
+            const isAliveAtRef = (snapshots[dates[refIndex]]?.[tribe]?.length || 0) > 0;
 
-            const membersAtCurrent = snapshots[dates[currentIndex]]?.[tribe] || [];
-            const isAliveAtCurrent = membersAtCurrent.length > 0;
-
-            // Détection du statut de dissolution à la date actuelle
-            const dissolvedMilestone = life.milestones.find(m => m.label.startsWith('Dissolved') && m.idx <= currentIndex);
-            const isDissolvedAtCurrent = !isAliveAtCurrent;
-
-            let dissolvedShortDate = '';
-            if (dissolvedMilestone) {
-                dissolvedShortDate = dissolvedMilestone.label.replace('Dissolved ', '');
-            } else if (isDissolvedAtCurrent) {
-                const nextDate = dates[life.lastIndex + 1] || dates[life.lastIndex];
-                dissolvedShortDate = formatShortDate(nextDate);
-            }
-
-            // Statut complet réservé pour l'infobulle au survol
-            let fullStatus = '';
-            if (isDissolvedAtCurrent) {
-                fullStatus = `${tribe.toUpperCase()} • Dissolved ${dissolvedShortDate}`;
-            } else {
-                fullStatus = `${tribe.toUpperCase()} • Active (${membersAtCurrent.length} denizens)`;
-            }
-
-            list.push({
+            events.push({
                 tribe,
-                foundingIdx,
-                foundingShortDate,
-                isAliveAtCurrent,
-                isDissolvedAtCurrent,
-                fullStatus,
+                foundingIdx: life.firstIndex,
+                idx: latestMilestone.idx,
+                label: latestMilestone.label, // ex: "Founded Oct 12", "Revived Nov 4", "Dissolved Jan 27"
+                isDissolved: !isAliveAtRef,
                 icon: config.tribes?.[tribe]?.icon
             });
         });
 
-        // Tri chronologique par date de fondation (de la plus ancienne à la plus récente)
-        return list.sort((a, b) => a.foundingIdx - b.foundingIdx || a.tribe.localeCompare(b.tribe));
+        // Ordre d'apparition dans la saison
+        return events.sort((a, b) => a.foundingIdx - b.foundingIdx || a.tribe.localeCompare(b.tribe));
     }
 
     function getPlayerHistory(playerName) {
@@ -1992,8 +1980,49 @@ $(document).ready(function () {
         $legend.html(`<div class="hud-title">${title}</div>${listHtml}`);
     }
 
+    function renderChronicleToolbar() {
+        let $chronicle = $('#chronicleToolbar');
+        if (!$chronicle.length) {
+            $chronicle = $('<div id="chronicleToolbar" class="chronicle-toolbar"></div>').insertAfter('#tribeMapContainer');
+        }
+
+        if (currentView === 'pn') {
+            $chronicle.hide();
+            return;
+        }
+
+        // En vue HN, on garde la référence temporelle de la carte HM pour ne pas faire disparaître les autres boutons
+        const refIdx = currentView === 'hn' ? (savedHmIndex ?? currentIndex) : currentIndex;
+        const seasonEvents = getSeasonChronicle(refIdx);
+
+        if (!seasonEvents.length) {
+            $chronicle.empty().hide();
+            return;
+        }
+
+        const iconButtonsHtml = seasonEvents.map(ev => {
+            const iconUrl = ev.icon || config.tribes?.[ev.tribe]?.icon || '';
+            const isSelected = currentView === 'hn' && activeTribe === ev.tribe;
+            const stateClass = ev.isDissolved ? 'is-dissolved' : 'is-active';
+
+            return `
+                <button type="button" 
+                        class="chronicle-icon-btn ${stateClass} ${isSelected ? 'is-selected' : ''}"
+                        data-tribe="${ev.tribe}" 
+                        data-date-index="${ev.idx}">
+                    <img src="${iconUrl}" alt="${ev.tribe}">
+                    <span class="tooltip-text">${ev.label}</span>
+                </button>`;
+        }).join('');
+
+        $chronicle.html(iconButtonsHtml).show();
+    }
+
     function updateChrome(snapshot) {
         $wrapper.attr('data-view', currentView);
+
+        // Toujours mettre à jour la barre d'icônes avant les returns de PN et HN
+        renderChronicleToolbar();
 
         if (currentView === 'pn' && selectedPlayer) {
             $headerTitle.empty();
@@ -2061,43 +2090,6 @@ $(document).ready(function () {
         $headerTitle.empty();
         $legend.empty();
         $ledger.empty();
-
-        let $chronicle = $('#chronicleToolbar');
-        if (!$chronicle.length) {
-            $chronicle = $('<div id="chronicleToolbar" class="chronicle-toolbar"></div>').insertAfter('#tribeMapContainer');
-        }
-
-        if (currentView === 'pn') {
-            $chronicle.hide();
-            return;
-        }
-
-        const seasonEvents = getSeasonChronicle();
-        if (!seasonEvents.length) {
-            $chronicle.empty().hide();
-            return;
-        }
-
-        const buttonsHtml = seasonEvents.map(ev => {
-            const iconUrl = ev.icon || config.tribes?.[ev.tribe]?.icon || '';
-            const isSelected = activeTribe === ev.tribe;
-            const isFoundingDay = ev.foundingIdx === currentIndex;
-
-            return `
-                <button type="button" 
-                        class="chronicle-btn ${ev.isDissolvedAtCurrent ? 'is-dissolved' : ''} ${isSelected ? 'is-active-clearing' : ''} ${isFoundingDay ? 'is-active-date' : ''}"
-                        data-tribe="${ev.tribe}" 
-                        data-founding-index="${ev.foundingIdx}">
-                    <img src="${iconUrl}" alt="${ev.tribe}" class="chronicle-btn-icon">
-                    <span class="chronicle-btn-text">
-                        <span class="chronicle-btn-name">${ev.tribe}</span>
-                        <span class="chronicle-btn-date">${ev.foundingShortDate}</span>
-                    </span>
-                    <span class="tooltip-text">${ev.fullStatus}</span>
-                </button>`;
-        }).join('');
-
-        $chronicle.html(buttonsHtml).show();
     }
 
     function renderGraph(snapshot) {
@@ -2151,6 +2143,10 @@ $(document).ready(function () {
         }
 
         currentIndex = Math.max(minIdx, Math.min(maxIdx, currentIndex));
+        if (currentView === 'hm') {
+            savedHmIndex = currentIndex;
+        }
+
         const selectedDate = dates[currentIndex];
 
         $datePicker.attr({ min: dates[minIdx], max: dates[maxIdx] }).val(selectedDate);
@@ -2175,6 +2171,30 @@ $(document).ready(function () {
         updateView();
     }
 
+    // Clic sur les boutons icônes de la chronique sous la carte (HM <-> HN)
+    $(document).on('click', '.chronicle-icon-btn', function (e) {
+        e.stopPropagation();
+        const tribe = $(this).data('tribe');
+        const idx = parseInt($(this).data('date-index'), 10);
+        if (!tribe) return;
+
+        if (currentView === 'hn' && activeTribe === tribe) {
+            // Re-cliquer sur la tribu active ramène en vue HM à la date de départ
+            currentView = 'hm';
+            activeTribe = null;
+            currentIndex = savedHmIndex;
+        } else {
+            if (currentView === 'hm') savedHmIndex = currentIndex;
+            currentView = 'hn';
+            activeTribe = tribe;
+            selectedPlayer = null;
+            if (!isNaN(idx)) currentIndex = idx;
+        }
+        clearSearch();
+        updateView();
+    });
+
+    // Clic sur les badges dans le HUD (PN -> HN ou jalons HN)
     $ledger.on('click', '.allegiance-badge', function (e) {
         e.stopPropagation();
         const tribe = $(this).data('tribe');
@@ -2188,6 +2208,7 @@ $(document).ready(function () {
         updateView();
     });
 
+    // Clic sur le Herald dans le HUD (HN -> PN)
     $headerTitle.on('click', '.herald-link', function (e) {
         e.stopPropagation();
         const player = $(this).data('player');
@@ -2197,41 +2218,20 @@ $(document).ready(function () {
         setSearchPlayer(player);
         updateView();
     });
-	
-    $headerTitle.on('click', '.journey-link', function (e) {
-        e.stopPropagation();
-        goToPlayerJourney(selectedPlayer);
-    });
-	
-	$(document).on('click', '.chronicle-btn', function (e) {
-        e.stopPropagation();
-        const tribe = $(this).data('tribe');
-        const foundingIdx = parseInt($(this).data('founding-index'), 10);
-        if (!tribe) return;
 
-        if (currentView === 'hn' && activeTribe === tribe) {
-            // Un second clic sur la même tribu dézoome vers la carte macro
-            currentView = 'hm';
-            activeTribe = null;
-        } else {
-            // Ouvre la clairière et saute à sa fondation si elle est dissoute à la date actuelle
-            currentView = 'hn';
-            activeTribe = tribe;
-            selectedPlayer = null;
-
-            const isAlive = (snapshots[dates[currentIndex]]?.[tribe]?.length || 0) > 0;
-            if (!isAlive && !isNaN(foundingIdx)) {
-                currentIndex = foundingIdx;
-            }
-        }
-        clearSearch();
-        updateView();
-    });
-
+    // Barre de recherche (saisie -> PN, vidage -> retour HM)
     $searchInput.on('input change', function () {
         if (isInternalSearch) return;
-        currentView = 'pn';
-        activeTribe = null;
+        const val = $(this).val().trim();
+        if (!val) {
+            currentView = 'hm';
+            activeTribe = null;
+            selectedPlayer = null;
+            currentIndex = savedHmIndex;
+        } else {
+            currentView = 'pn';
+            activeTribe = null;
+        }
         updateView();
     });
 
@@ -2246,10 +2246,13 @@ $(document).ready(function () {
         if (tab === 'circle') {
             currentView = 'pn';
             activeTribe = null;
+            const targetPlayer = selectedPlayer || $searchInput.val().trim() || localStorage.getItem('selectedPlayer') || '';
+            if (targetPlayer) setSearchPlayer(targetPlayer);
         } else {
             currentView = 'hm';
             activeTribe = null;
             selectedPlayer = null;
+            currentIndex = savedHmIndex;
             clearSearch();
         }
         updateView();
@@ -2257,8 +2260,16 @@ $(document).ready(function () {
 
     $prevBtn.on('click', () => stepDate(-1));
     $nextBtn.on('click', () => stepDate(1));
-    $earliestBtn.on('click', () => { currentIndex = 0; updateView(); });
-    $latestBtn.on('click', () => { currentIndex = dates.length - 1; updateView(); });
+    $earliestBtn.on('click', () => {
+        const life = currentView === 'hn' ? getTribeLifespan(activeTribe) : null;
+        currentIndex = life ? life.firstIndex : 0;
+        updateView();
+    });
+    $latestBtn.on('click', () => {
+        const life = currentView === 'hn' ? getTribeLifespan(activeTribe) : null;
+        currentIndex = life ? life.lastIndex : dates.length - 1;
+        updateView();
+    });
 
     $datePicker.on('change', function () {
         const idx = dates.findIndex(d => d >= $(this).val());
