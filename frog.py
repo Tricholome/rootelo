@@ -11,8 +11,10 @@ UNALIGNED = None
 
 DEFAULT_CONFIG = {
     "MAX_TRIBES": 9,
-    "MIN_TRIBE_CREATION_SIZE": 15,
-    "MIN_TRIBE_SURVIVAL": 8,
+    "MIN_TRIBE_CREATION_SIZE": 5,
+    "CREATION_STEP": 0.75,
+    "MIN_TRIBE_SURVIVAL": 3,
+    "SURVIVAL_STEP": 0.75,
     "MIN_REUSE_OVERLAP": 3,
     "REVIVE_RATIO": 0.5,
     "MIN_COOLDOWN_DAYS": 7,
@@ -33,6 +35,18 @@ DEFAULT_CONFIG = {
 def min_games_required(player_games: Counter, floor: int, ratio: float) -> int:
     median = statistics.median(player_games.values()) if player_games else 0
     return max(floor, math.ceil(median * ratio))
+
+
+def creation_size_required(n_active_tribes: int, cfg: dict) -> int:
+    base = cfg["MIN_TRIBE_CREATION_SIZE"]
+    step = cfg.get("CREATION_STEP", 0.75)
+    return math.ceil(base + max(0, n_active_tribes - 1) * step)
+
+
+def survival_size_required(n_active_tribes: int, cfg: dict) -> int:
+    base = cfg["MIN_TRIBE_SURVIVAL"]
+    step = cfg.get("SURVIVAL_STEP", 0.75)
+    return math.floor(base + max(0, n_active_tribes - 1) * step)
 
 
 def is_player_active(p: str, last_active: dict, current_date: str, limit_days: int) -> bool:
@@ -183,9 +197,13 @@ def compass(
     for i, c in enumerate(comms):
         if len(founded) >= available_slots:
             break
+
+        n_active = len(members) + len(founded)
+        req_creation_size = creation_size_required(n_active, cfg)
+
         if (
             i in name_of
-            or len(c) < cfg["MIN_TRIBE_CREATION_SIZE"]
+            or len(c) < req_creation_size
             or not is_clearly_apart(G, roster, c, cfg["STICKINESS"], tribe_sizes)
         ):
             continue
@@ -251,12 +269,27 @@ def prune_inactive(
 
 
 def dissolve_small_tribes(roster: dict, cfg: dict) -> None:
-    counts = Counter(t for t in roster.values() if t is not UNALIGNED)
-    for tribe, n in counts.items():
-        if n < cfg["MIN_TRIBE_SURVIVAL"]:
-            for p, t in list(roster.items()):
-                if t == tribe:
-                    roster[p] = UNALIGNED
+    """
+    Sequentially dissolve the smallest tribe if it falls below the dynamic survival threshold.
+    Each dissolution reduces the active tribe count by 1, relieving pressure on remaining tribes.
+    """
+    while True:
+        counts = Counter(t for t in roster.values() if t is not UNALIGNED)
+        if not counts:
+            break
+
+        req_survival = survival_size_required(len(counts), cfg)
+        failing = sorted(
+            [(n, tribe) for tribe, n in counts.items() if n < req_survival],
+            key=lambda x: (x[0], x[1]),
+        )
+        if not failing:
+            break
+
+        _, weakest_tribe = failing[0]
+        for p, t in list(roster.items()):
+            if t == weakest_tribe:
+                roster[p] = UNALIGNED
 
 
 def member_metrics(G: nx.Graph, roster: dict, tribe: str) -> list:
@@ -393,6 +426,7 @@ def run_homelands_simulation(
         )
 
         prune_inactive(roster, player_games, min_survival_games, last_active, d, cfg)
+        dissolve_small_tribes(roster, cfg)
 
         G = nx.Graph()
         for (p1, p2), w in sorted(edge_weights.items()):
