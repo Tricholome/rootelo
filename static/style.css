@@ -2232,7 +2232,98 @@ table.dataTable tbody tr.loser td {
     }
 }
 
-/* --- G. Interactive SVG Map Elements (D3.js) --- */
+/* --- G. Chronicle Toolbar --- */
+.network-container[data-view="pn"] #chronicleToolbar {
+    display: none !important;
+}
+
+.chronicle-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 14px 0 8px 0;
+}
+
+.chronicle-icon-btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    padding: 6px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.15s ease, border-color 0.2s ease, background-color 0.2s ease, filter 0.2s ease, opacity 0.2s ease, box-shadow 0.2s ease;
+}
+
+.chronicle-icon-btn img {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+    pointer-events: none;
+}
+
+/* Homeland ACTIVE */
+.chronicle-icon-btn.is-active {
+    background: var(--dt-input-bg);
+    border: 1px solid var(--border-soft);
+}
+
+.chronicle-icon-btn.is-active:hover {
+    border-color: var(--main-color);
+    background: color-mix(in srgb, var(--main-color) 28%, var(--bg-surface));
+}
+
+.chronicle-icon-btn.is-active img {
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+}
+
+/* Homeland DISSOUTE */
+.chronicle-icon-btn.is-dissolved {
+    background: transparent;
+    border: 1px solid var(--text-muted);
+    opacity: 0.35;
+    filter: grayscale(1) brightness(0.75);
+}
+
+.chronicle-icon-btn.is-dissolved:hover {
+    opacity: 0.9;
+    filter: grayscale(0.2) brightness(1);
+    border-color: var(--text-muted);
+    background: var(--bg-hover);
+}
+
+/* Survol & Homeland actuellement sélectionnée en vue HN */
+.chronicle-icon-btn:hover {
+    transform: translateY(-2px);
+}
+
+.chronicle-icon-btn.is-selected {
+    opacity: 1;
+    filter: none;
+    border: 1px solid var(--main-color);
+    background: color-mix(in srgb, var(--main-color) 28%, var(--bg-surface));
+    transform: translateY(-2px);
+}
+
+/* Tooltip au survol (Founded / Revived / Reclaimed / Dissolved) */
+.chronicle-icon-btn .tooltip-text {
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%) translateY(4px);
+    pointer-events: none;
+    z-index: 100;
+}
+
+.chronicle-icon-btn:hover .tooltip-text {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+/* --- H. Interactive SVG Map Elements (D3.js) --- */
 .tribe-map-svg .node-group {
     cursor: pointer;
     will-change: transform;
@@ -2448,96 +2539,6 @@ table.dataTable tbody tr.loser td {
 #tribeMapSvg .node-group.type-ego-center.expanded .ego-overlay-label {
     opacity: 1;
     visibility: visible;
-}
-
-/* --- Barre d'icônes de la chronique sous la carte --- */
-.network-container[data-view="pn"] #chronicleToolbar {
-    display: none !important;
-}
-
-.chronicle-toolbar {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin: 14px 0 8px 0;
-}
-
-.chronicle-icon-btn {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 38px;
-    height: 38px;
-    padding: 6px;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: transform 0.15s ease, border-color 0.2s ease, background-color 0.2s ease, filter 0.2s ease, opacity 0.2s ease, box-shadow 0.2s ease;
-}
-
-.chronicle-icon-btn img {
-    width: 24px;
-    height: 24px;
-    object-fit: contain;
-    pointer-events: none;
-}
-
-/* Homeland ACTIVE : fond teinté vert, bordure franche, icône nette */
-.chronicle-icon-btn.is-active {
-    background: color-mix(in srgb, var(--main-color) 16%, var(--bg-surface));
-    border: 1px solid var(--main-color);
-    box-shadow: inset 0 1px 0 0 color-mix(in srgb, var(--main-color) 35%, transparent), var(--glass-shadow);
-}
-
-.chronicle-icon-btn.is-active img {
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
-}
-
-/* Homeland DISSOUTE : fond neutre, bordure pointillée, icône grisée et très estompée */
-.chronicle-icon-btn.is-dissolved {
-    background: transparent;
-    border: 1px dashed var(--border-soft);
-    box-shadow: none;
-    opacity: 0.35;
-    filter: grayscale(1) brightness(0.75);
-}
-
-.chronicle-icon-btn.is-dissolved:hover {
-    opacity: 0.9;
-    filter: grayscale(0.2) brightness(1);
-    border-style: solid;
-    border-color: var(--text-muted);
-    background: var(--bg-hover);
-}
-
-/* Survol & Homeland actuellement sélectionnée en vue HN */
-.chronicle-icon-btn:hover {
-    transform: translateY(-2px);
-}
-
-.chronicle-icon-btn.is-selected {
-    opacity: 1;
-    filter: none;
-    border: 1px solid var(--text-bright);
-    background: color-mix(in srgb, var(--main-color) 28%, var(--bg-surface));
-    box-shadow: 0 0 10px color-mix(in srgb, var(--main-color) 45%, transparent);
-    transform: translateY(-2px);
-}
-
-/* Tooltip au survol (Founded / Revived / Reclaimed / Dissolved) */
-.chronicle-icon-btn .tooltip-text {
-    bottom: calc(100% + 8px);
-    left: 50%;
-    transform: translateX(-50%) translateY(4px);
-    pointer-events: none;
-    z-index: 100;
-}
-
-.chronicle-icon-btn:hover .tooltip-text {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
 }
 
 /* =========================================================================
