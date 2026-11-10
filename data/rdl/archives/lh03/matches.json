@@ -15438,37 +15438,6 @@
         "Rank": 498
     },
     {
-        "MatchID": 48719,
-        "Date": "2026-09-30",
-        "Date_Closed": "2026-09-30T23:35:32.957703+00:00",
-        "Date_Created": "2026-09-25T20:43:04.321000+00:00",
-        "Turn_Timing": "async",
-        "players": [
-            {
-                "id": "2285",
-                "delta": -16,
-                "is_winner": false
-            },
-            {
-                "id": "2606",
-                "delta": 18,
-                "is_winner": true
-            },
-            {
-                "id": "715",
-                "delta": -6,
-                "is_winner": false
-            },
-            {
-                "id": "828",
-                "delta": -8,
-                "is_winner": false
-            }
-        ],
-        "ELO_Sum": 4920,
-        "Rank": 499
-    },
-    {
         "MatchID": 47487,
         "Date": "2026-07-04",
         "Date_Closed": "2026-07-04T17:05:15.480142+00:00",
@@ -15497,7 +15466,7 @@
             }
         ],
         "ELO_Sum": 4919,
-        "Rank": 500
+        "Rank": 499
     },
     {
         "MatchID": 48285,
@@ -15528,7 +15497,7 @@
             }
         ],
         "ELO_Sum": 4919,
-        "Rank": 501
+        "Rank": 500
     },
     {
         "MatchID": 48269,
@@ -15559,7 +15528,7 @@
             }
         ],
         "ELO_Sum": 4919,
-        "Rank": 502
+        "Rank": 501
     },
     {
         "MatchID": 48666,
@@ -15590,7 +15559,7 @@
             }
         ],
         "ELO_Sum": 4918,
-        "Rank": 503
+        "Rank": 502
     },
     {
         "MatchID": 47495,
@@ -15621,7 +15590,7 @@
             }
         ],
         "ELO_Sum": 4917,
-        "Rank": 504
+        "Rank": 503
     },
     {
         "MatchID": 47867,
@@ -15652,7 +15621,7 @@
             }
         ],
         "ELO_Sum": 4917,
-        "Rank": 505
+        "Rank": 504
     },
     {
         "MatchID": 47651,
@@ -15683,7 +15652,7 @@
             }
         ],
         "ELO_Sum": 4916,
-        "Rank": 506
+        "Rank": 505
     },
     {
         "MatchID": 48247,
@@ -15714,7 +15683,7 @@
             }
         ],
         "ELO_Sum": 4916,
-        "Rank": 507
+        "Rank": 506
     },
     {
         "MatchID": 48553,
@@ -15745,7 +15714,7 @@
             }
         ],
         "ELO_Sum": 4916,
-        "Rank": 508
+        "Rank": 507
     },
     {
         "MatchID": 47466,
@@ -15776,7 +15745,7 @@
             }
         ],
         "ELO_Sum": 4915,
-        "Rank": 509
+        "Rank": 508
     },
     {
         "MatchID": 47560,
@@ -15807,7 +15776,7 @@
             }
         ],
         "ELO_Sum": 4915,
-        "Rank": 510
+        "Rank": 509
     },
     {
         "MatchID": 47698,
@@ -15838,7 +15807,7 @@
             }
         ],
         "ELO_Sum": 4914,
-        "Rank": 511
+        "Rank": 510
     },
     {
         "MatchID": 48002,
@@ -15869,7 +15838,7 @@
             }
         ],
         "ELO_Sum": 4914,
-        "Rank": 512
+        "Rank": 511
     },
     {
         "MatchID": 48565,
@@ -15896,6 +15865,37 @@
             {
                 "id": "2635",
                 "delta": -2,
+                "is_winner": false
+            }
+        ],
+        "ELO_Sum": 4914,
+        "Rank": 512
+    },
+    {
+        "MatchID": 48719,
+        "Date": "2026-09-30",
+        "Date_Closed": "2026-09-30T23:35:32.957703+00:00",
+        "Date_Created": "2026-09-25T20:43:04.321000+00:00",
+        "Turn_Timing": "async",
+        "players": [
+            {
+                "id": "2285",
+                "delta": -16,
+                "is_winner": false
+            },
+            {
+                "id": "2606",
+                "delta": 18,
+                "is_winner": true
+            },
+            {
+                "id": "715",
+                "delta": -6,
+                "is_winner": false
+            },
+            {
+                "id": "828",
+                "delta": -8,
                 "is_winner": false
             }
         ],
@@ -28117,37 +28117,6 @@
         "Rank": 907
     },
     {
-        "MatchID": 48703,
-        "Date": "2026-09-30",
-        "Date_Closed": "2026-09-30T22:41:23.292317+00:00",
-        "Date_Created": "2026-09-24T00:05:37.597000+00:00",
-        "Turn_Timing": "async",
-        "players": [
-            {
-                "id": "1039",
-                "delta": -10,
-                "is_winner": false
-            },
-            {
-                "id": "2611",
-                "delta": -3,
-                "is_winner": false
-            },
-            {
-                "id": "2635",
-                "delta": -2,
-                "is_winner": false
-            },
-            {
-                "id": "715",
-                "delta": 13,
-                "is_winner": true
-            }
-        ],
-        "ELO_Sum": 4647,
-        "Rank": 908
-    },
-    {
         "MatchID": 47958,
         "Date": "2026-08-11",
         "Date_Closed": "2026-08-11T16:09:33.589651+00:00",
@@ -28176,7 +28145,7 @@
             }
         ],
         "ELO_Sum": 4646,
-        "Rank": 909
+        "Rank": 908
     },
     {
         "MatchID": 48426,
@@ -28207,7 +28176,7 @@
             }
         ],
         "ELO_Sum": 4646,
-        "Rank": 910
+        "Rank": 909
     },
     {
         "MatchID": 48678,
@@ -28238,6 +28207,37 @@
             }
         ],
         "ELO_Sum": 4646,
+        "Rank": 910
+    },
+    {
+        "MatchID": 48703,
+        "Date": "2026-09-30",
+        "Date_Closed": "2026-09-30T22:41:23.292317+00:00",
+        "Date_Created": "2026-09-24T00:05:37.597000+00:00",
+        "Turn_Timing": "async",
+        "players": [
+            {
+                "id": "1039",
+                "delta": -10,
+                "is_winner": false
+            },
+            {
+                "id": "2611",
+                "delta": -3,
+                "is_winner": false
+            },
+            {
+                "id": "2635",
+                "delta": -2,
+                "is_winner": false
+            },
+            {
+                "id": "715",
+                "delta": 13,
+                "is_winner": true
+            }
+        ],
+        "ELO_Sum": 4644,
         "Rank": 911
     },
     {
@@ -29884,37 +29884,6 @@
         "Rank": 964
     },
     {
-        "MatchID": 48779,
-        "Date": "2026-09-30",
-        "Date_Closed": "2026-09-30T22:30:47.122183+00:00",
-        "Date_Created": "2026-09-22T19:46:15.084000+00:00",
-        "Turn_Timing": "async",
-        "players": [
-            {
-                "id": "2606",
-                "delta": -3,
-                "is_winner": false
-            },
-            {
-                "id": "2635",
-                "delta": 19,
-                "is_winner": true
-            },
-            {
-                "id": "780",
-                "delta": -6,
-                "is_winner": false
-            },
-            {
-                "id": "828",
-                "delta": -12,
-                "is_winner": false
-            }
-        ],
-        "ELO_Sum": 4602,
-        "Rank": 965
-    },
-    {
         "MatchID": 48499,
         "Date": "2026-09-26",
         "Date_Closed": "2026-09-26T00:06:02.084833+00:00",
@@ -29943,7 +29912,7 @@
             }
         ],
         "ELO_Sum": 4601,
-        "Rank": 966
+        "Rank": 965
     },
     {
         "MatchID": 47593,
@@ -29974,7 +29943,7 @@
             }
         ],
         "ELO_Sum": 4600,
-        "Rank": 967
+        "Rank": 966
     },
     {
         "MatchID": 48588,
@@ -30005,7 +29974,7 @@
             }
         ],
         "ELO_Sum": 4599,
-        "Rank": 968
+        "Rank": 967
     },
     {
         "MatchID": 47804,
@@ -30036,38 +30005,7 @@
             }
         ],
         "ELO_Sum": 4598,
-        "Rank": 969
-    },
-    {
-        "MatchID": 48679,
-        "Date": "2026-09-30",
-        "Date_Closed": "2026-09-30T06:28:54.778160+00:00",
-        "Date_Created": "2026-09-22T19:46:13.508000+00:00",
-        "Turn_Timing": "async",
-        "players": [
-            {
-                "id": "2606",
-                "delta": -3,
-                "is_winner": false
-            },
-            {
-                "id": "2635",
-                "delta": -1,
-                "is_winner": false
-            },
-            {
-                "id": "780",
-                "delta": 20,
-                "is_winner": true
-            },
-            {
-                "id": "828",
-                "delta": -13,
-                "is_winner": false
-            }
-        ],
-        "ELO_Sum": 4598,
-        "Rank": 970
+        "Rank": 968
     },
     {
         "MatchID": 48274,
@@ -30098,7 +30036,7 @@
             }
         ],
         "ELO_Sum": 4596,
-        "Rank": 971
+        "Rank": 969
     },
     {
         "MatchID": 48557,
@@ -30129,7 +30067,7 @@
             }
         ],
         "ELO_Sum": 4594,
-        "Rank": 972
+        "Rank": 970
     },
     {
         "MatchID": 48559,
@@ -30160,7 +30098,38 @@
             }
         ],
         "ELO_Sum": 4594,
-        "Rank": 973
+        "Rank": 971
+    },
+    {
+        "MatchID": 48779,
+        "Date": "2026-09-30",
+        "Date_Closed": "2026-09-30T22:30:47.122183+00:00",
+        "Date_Created": "2026-09-22T19:46:15.084000+00:00",
+        "Turn_Timing": "async",
+        "players": [
+            {
+                "id": "2606",
+                "delta": -3,
+                "is_winner": false
+            },
+            {
+                "id": "2635",
+                "delta": 19,
+                "is_winner": true
+            },
+            {
+                "id": "780",
+                "delta": -6,
+                "is_winner": false
+            },
+            {
+                "id": "828",
+                "delta": -12,
+                "is_winner": false
+            }
+        ],
+        "ELO_Sum": 4593,
+        "Rank": 972
     },
     {
         "MatchID": 47607,
@@ -30191,7 +30160,7 @@
             }
         ],
         "ELO_Sum": 4592,
-        "Rank": 974
+        "Rank": 973
     },
     {
         "MatchID": 48432,
@@ -30222,7 +30191,7 @@
             }
         ],
         "ELO_Sum": 4591,
-        "Rank": 975
+        "Rank": 974
     },
     {
         "MatchID": 48654,
@@ -30253,7 +30222,7 @@
             }
         ],
         "ELO_Sum": 4591,
-        "Rank": 976
+        "Rank": 975
     },
     {
         "MatchID": 48655,
@@ -30284,7 +30253,7 @@
             }
         ],
         "ELO_Sum": 4591,
-        "Rank": 977
+        "Rank": 976
     },
     {
         "MatchID": 47527,
@@ -30315,7 +30284,7 @@
             }
         ],
         "ELO_Sum": 4589,
-        "Rank": 978
+        "Rank": 977
     },
     {
         "MatchID": 48134,
@@ -30346,7 +30315,7 @@
             }
         ],
         "ELO_Sum": 4589,
-        "Rank": 979
+        "Rank": 978
     },
     {
         "MatchID": 48554,
@@ -30373,6 +30342,37 @@
             {
                 "id": "780",
                 "delta": -10,
+                "is_winner": false
+            }
+        ],
+        "ELO_Sum": 4589,
+        "Rank": 979
+    },
+    {
+        "MatchID": 48679,
+        "Date": "2026-09-30",
+        "Date_Closed": "2026-09-30T06:28:54.778160+00:00",
+        "Date_Created": "2026-09-22T19:46:13.508000+00:00",
+        "Turn_Timing": "async",
+        "players": [
+            {
+                "id": "2606",
+                "delta": -3,
+                "is_winner": false
+            },
+            {
+                "id": "2635",
+                "delta": -1,
+                "is_winner": false
+            },
+            {
+                "id": "780",
+                "delta": 20,
+                "is_winner": true
+            },
+            {
+                "id": "828",
+                "delta": -13,
                 "is_winner": false
             }
         ],
@@ -33914,6 +33914,37 @@
         "Rank": 1094
     },
     {
+        "MatchID": 48781,
+        "Date": "2026-09-30",
+        "Date_Closed": "2026-09-30T00:51:30.567471+00:00",
+        "Date_Created": "2026-09-21T21:02:55.037000+00:00",
+        "Turn_Timing": "async",
+        "players": [
+            {
+                "id": "1095",
+                "delta": 18,
+                "is_winner": true
+            },
+            {
+                "id": "2594",
+                "delta": -33,
+                "is_winner": false
+            },
+            {
+                "id": "2606",
+                "delta": -6,
+                "is_winner": false
+            },
+            {
+                "id": "2635",
+                "delta": -3,
+                "is_winner": false
+            }
+        ],
+        "ELO_Sum": 4180,
+        "Rank": 1095
+    },
+    {
         "MatchID": 47546,
         "Date": "2026-07-09",
         "Date_Closed": "2026-07-09T08:14:58.310990+00:00",
@@ -33942,7 +33973,7 @@
             }
         ],
         "ELO_Sum": 4148,
-        "Rank": 1095
+        "Rank": 1096
     },
     {
         "MatchID": 48278,
@@ -33973,6 +34004,6 @@
             }
         ],
         "ELO_Sum": 4143,
-        "Rank": 1096
+        "Rank": 1097
     }
 ]
