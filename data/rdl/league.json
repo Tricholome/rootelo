@@ -12,7 +12,7 @@
     "auth_prefix": "Token",
     "token_env_var": "API_TOKEN",
     "base_url": "https://rootleague.pliskin.dev",
-    "tournament_id": 24
+    "tournament_id": 27
   },
   "k_factor": {
     "k_floor": 20.0,
