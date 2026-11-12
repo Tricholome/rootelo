@@ -1,432 +1,2288 @@
-{% set active_section = section_id if section_id is defined else page_id %}
-{% set current_tier = config.page_tiers[active_section] if active_section in config.page_tiers else 'default' %}
-{% set theme_color = config.colors.tiers[current_tier] if current_tier in config.colors.tiers else config.colors.tiers.default %}
-{% set current_deco = config.assets.decorations[active_section] if active_section in config.assets.decorations else none %}
+/* =========================================================================
+   ROOTELO - JAVASCRIPT
+   Table of Contents:
+   1.  Dynamic Scroll
+   2.  Double-tap
+   3.  Tier Modal
+   4.  Data Tables
+   5.  Chart
+   6.  Dynamic Trends
+   7.  Narrative Journey
+   8.  Global Player Search
+   9.  Match Simulator Engine
+   10. Homelands Map & Player Network Engines
+   
+   --- EASTER EGGS ---
+   11. Secrets Engine
+   12. Nut & Berry
+   13. Visitor Recognition
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>{{ title }}</title>
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..900;1,9..144,400..900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
+   ========================================================================= */
+   
+/* =========================================================================
+   --- 1. DYNAMIC SCROLL ---
+   ========================================================================= */
 
-    <link rel="stylesheet" href="{{ path_prefix }}static/style.css">
-    
-    <style>
-        :root {
-			/* --- 1. LAYOUT CONFIG (Automatic loop) --- */
-			{% for name, value in config.layout.items() %}
-			--{{ name }}: {{ value }};
-			{% endfor %}
+// Dynamic Scroll & Gesture Management
+// Variables to track touch positions and scroll direction
+let touchStartY = 0;
+let lastScrollY = window.scrollY;
 
-			/* --- 2. TYPOGRAPHY (Automatic loop) --- */
-			{% for name, value in config.typography.items() %}
-			--{{ name }}: {{ value }};
-			{% endfor %}
+// 1. Capture the initial touch position on the physical screen (clientY)
+// Using clientY instead of pageY makes it immune to overscroll/bounce effects
+window.addEventListener('touchstart', (e) => {
+    touchStartY = e.touches[0].clientY; 
+}, { passive: true });
 
-			/* --- 3. GLOBAL UI (Automatic loop) --- */
-			{% for name, value in config.colors.ui.items() %}
-			--{{ name }}: {{ value }};
-			{% endfor %}
+// 2. Handle specific swipe gestures for the bottom image reveal
+window.addEventListener('touchmove', (e) => {
+    const isMobile = window.innerWidth < 1100;
+    if (!isMobile) return;
 
-			/* --- 4. TIER DYNAMICS (Loop with logic) --- */
-			{% for tier, hex in config.colors.tiers.items() %}
-			--color-{{ tier }}: {{ hex }};
-			--color-{{ tier }}-bg: {{ hex }}14;
-			{% endfor %}
+    const currentY = e.touches[0].clientY;
+    const hasClass = document.body.classList.contains('is-at-bottom');
 
-			/* --- 5. PAGE THEME --- */
-			--main-color: {{ theme_color }};
-		}
-    </style>
-	
-	{% if page_id != 'index' or is_archive %}
-	<meta name="robots" content="noindex, follow">
-	{% endif %}
-	
-	<meta name="google-site-verification" content="xNfE9mY0Df8BsQAl4g5S0I_C4MvFC8nnJVNVWJJpqAg" />
+    if (hasClass && (currentY - touchStartY) > 40) {
+        document.body.classList.remove('is-at-bottom');
+        return; // Exit early
+    }
 
-	{% if seo_description %}
-	<meta name="description" content="{{ seo_description }}">
-	{% elif description %}
-	<meta name="description" content="{{ description }}">
-	{% endif %}
+    const windowHeight = window.innerHeight;
+    const docHeight = document.documentElement.scrollHeight;
+    // 15px margin to ensure it triggers even with minor calculation rounding
+    const isAtBottom = Math.ceil(windowHeight + window.scrollY) >= (docHeight - 15);
 
-	<meta property="og:type" content="website">
-	<meta property="og:url" content="https://tricholome.github.io/rootelo">
-	<meta property="og:title" content="ROOTELO">
-	<meta property="og:description" content="A Metric of Woodland Skill and Will">
-	<meta property="og:image" content="https://tricholome.github.io/rootelo/assets/meta/rootelo-preview.webp">
-	
-	<link rel="icon" type="image/png" sizes="192x192" href="https://tricholome.github.io/rootelo/assets/meta/favicon.png">
-	<link rel="icon" type="image/svg+xml" href="{{ path_prefix }}assets/meta/favicon.svg">
-	<link rel="apple-touch-icon" href="https://tricholome.github.io/rootelo/assets/meta/favicon.png">
+    // If at the bottom AND swiping UP intentionally (finger moves up by more than 70px)
+    if (isAtBottom && !hasClass && (touchStartY - currentY) > 70) {
+        document.body.classList.add('is-at-bottom');
+    }
+}, { passive: true });
 
-    {% block extra_head %}{% endblock %}
-	{% block extra_css %}{% endblock %}
-</head>
+// 3. Handle standard scrolling (Header logic + Fallback reset)
+window.addEventListener('scroll', () => {
+    const currentScrollY = window.scrollY;
+    const isMobile = window.innerWidth < 1100;
 
-<body class="{% if is_archive %}archive-view{% endif %} {% if active_section == 'network' or page_id in ['network', 'homelands'] %}homelands-mode{% endif %}" data-page="{{ page_id }}" data-section="{{ active_section }}">
-	<script>
-        if (document.body.dataset.page === 'index' && localStorage.getItem('spotFrogs') === 'true') {
-            document.body.classList.add('homelands-mode');
+    // Set CSS variable for dynamic scroll effects
+    document.body.style.setProperty('--scroll', currentScrollY);
+
+    // Header logic: toggle class when scrolling past 30px
+    if (currentScrollY > 30) {
+        document.body.classList.add('is-scrolled');
+    } else {
+        document.body.classList.remove('is-scrolled');
+    }
+
+    if (isMobile && document.body.classList.contains('is-at-bottom')) {
+        // If the current scroll position is higher than the previous one (scrolling up)
+        if (currentScrollY < lastScrollY - 10) {
+            document.body.classList.remove('is-at-bottom');
         }
-    </script>
+    }
     
-    <div class="container">
-	
-        <header class="app-banner window-box">
+    // Update last scroll position for the next event check
+    lastScrollY = currentScrollY;
+}, { passive: true });
+
+/* =========================================================================
+   --- 2. DOUBLE-TAP ---
+   ========================================================================= */
+   
+document.addEventListener("DOMContentLoaded", function() {
+    const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (window.matchMedia("(hover: none)").matches);
+
+    if (isTouchDevice) {
+        // On écoute sur le body pour capter même les icônes créées par DataTables
+        document.body.addEventListener('click', function(e) {
+            // On cherche si on a cliqué sur un lien double-tap
+            const link = e.target.closest('.js-double-tap');
+
+            // 1. Si on clique ailleurs : on ferme tout
+            if (!link) {
+                document.querySelectorAll('.js-double-tap.expanded').forEach(l => l.classList.remove('expanded'));
+                return;
+            }
+
+            // 2. Si on clique sur une icône
+            if (!link.classList.contains('expanded')) {
+                // PREMIER TAP
+                e.preventDefault();
+                e.stopPropagation();
+
+                // On ferme les autres
+                document.querySelectorAll('.js-double-tap.expanded').forEach(l => l.classList.remove('expanded'));
+                
+                // On ouvre celle-ci
+                link.classList.add('expanded');
+            } else {
+                // DEUXIÈME TAP
+                // On laisse le comportement naturel (onclick du HTML ou href)
+                link.classList.remove('expanded');
+            }
+        }, true); // Le "true" ici permet d'intercepter avant DataTables
+    }
+});
+
+/* =========================================================================
+   --- 3. TIER MODAL ---
+   ========================================================================= */
 		
-            <!-- 1. STANDARD BANNER -->
-            <div class="banner-container banner-standard">
-                <div class="banner-icons left">
-                    <a href="javascript:void(0)" onclick="openTierModal('stag')" class="tooltip-link js-double-tap banner-icon-stag">
-                        <img src="{{ path_prefix }}{{ config.assets.icons.stag }}" alt="Stag">
-                        <span class="tooltip-text"><strong class="tier-stag">Stag (1600+)</strong> — The Legend</span>
-                    </a>
-					<a href="javascript:void(0)" onclick="openTierModal('bird')" class="tooltip-link js-double-tap">
-                        <img src="{{ path_prefix }}{{ config.assets.icons.bird }}" alt="Bird">
-                        <span class="tooltip-text"><strong class="tier-bird">Bird (1500+)</strong> — The Grandmasters</span>
-                    </a>
-                    <a href="javascript:void(0)" onclick="openTierModal('fox')" class="tooltip-link js-double-tap">
-                        <img src="{{ path_prefix }}{{ config.assets.icons.fox }}" alt="Fox">
-                        <span class="tooltip-text"><strong class="tier-fox">Fox (1400+)</strong> — The Cunning Tacticians</span>
-                    </a>
-                </div>
-                <div class="banner-center">
-                    <h1 class="site-title">ROOTELO</h1>
-                    <p class="site-subtitle">A Metric of Woodland&nbsp;Skill&nbsp;and&nbsp;Will</p>
-                </div>
-                <div class="banner-icons right">
-                    <a href="javascript:void(0)" onclick="openTierModal('rabbit')" class="tooltip-link js-double-tap">
-                        <img src="{{ path_prefix }}{{ config.assets.icons.rabbit }}" alt="Rabbit">
-                        <span class="tooltip-text"><strong class="tier-rabbit">Rabbit (1300+)</strong> — The Agile Contenders</span>
-                    </a>
-                    <a href="javascript:void(0)" onclick="openTierModal('mouse')" class="tooltip-link js-double-tap">
-                        <img src="{{ path_prefix }}{{ config.assets.icons.mouse }}" alt="Mouse">
-                        <span class="tooltip-text"><strong class="tier-mouse">Mouse (1200+)</strong> — The Steady Foragers</span>
-                    </a>
-					<a href="javascript:void(0)" onclick="openTierModal('squirrel')" class="tooltip-link js-double-tap banner-icon-squirrel">
-                        <img src="{{ path_prefix }}{{ config.assets.icons.squirrel }}" alt="Squirrel">
-                        <span class="tooltip-text"><strong class="tier-squirrel">Squirrel (&lt; 1200)</strong> — The Hapless Stragglers</span>
-                    </a>
-                </div>
-            </div>
+// Tier Modal		
+document.addEventListener('DOMContentLoaded', function() {
+	const modal = document.getElementById('tierModal');
+	const modalBody = document.getElementById('modalBody');
+	const closeBtn = document.querySelector('.modal-close');
 
-            <!-- 2. HOMELANDS BANNER -->
-            <div class="banner-container banner-homelands">
-                <div class="banner-icons left">
-                    <a href="javascript:void(0)" onclick="openTierModal('frog')" class="tooltip-link js-double-tap slot-bird">
-                        <img src="{{ path_prefix }}{{ config.assets.icons.bird }}" alt="Bird" class="base-icon">
-                        <img src="{{ path_prefix }}{{ config.assets.icons.frog }}" alt="Frog" class="frog-icon">
-                        <span class="tooltip-text"><strong class="tier-frog">Frog</strong> — Homeland Herald</span>
-                    </a>
-                    <a href="javascript:void(0)" onclick="openTierModal('frog')" class="tooltip-link js-double-tap slot-fox">
-                        <img src="{{ path_prefix }}{{ config.assets.icons.fox }}" alt="Fox" class="base-icon">
-                        <img src="{{ path_prefix }}{{ config.assets.icons.frog }}" alt="Frog" class="frog-icon">
-                        <span class="tooltip-text"><strong class="tier-frog">Frog</strong> — Homeland Herald</span>
-                    </a>
-                </div>
+		const tierColors = CONFIG.colors;
+		const tierIcons = CONFIG.icons;
 
-                <div class="banner-center">
-                    <h1 class="site-title">ROOTELO</h1>
-                    <p class="site-subtitle">A Metric of Woodland&nbsp;Skill&nbsp;and&nbsp;Will</p>
-                </div>
+	window.openTierModal = function(tier, playerName, clearing) {
+		const text = TIER_DATA[tier];
+		const color = tierColors[tier] || tierColors['default'];
+		const icon = tierIcons[tier];
 
-                <div class="banner-icons right">
-                    <a href="javascript:void(0)" onclick="openTierModal('frog')" class="tooltip-link js-double-tap slot-rabbit">
-                        <img src="{{ path_prefix }}{{ config.assets.icons.rabbit }}" alt="Rabbit" class="base-icon">
-                        <img src="{{ path_prefix }}{{ config.assets.icons.frog }}" alt="Frog" class="frog-icon">
-                        <span class="tooltip-text"><strong class="tier-frog">Frog</strong> — Homeland Herald</span>
-                    </a>
-                    <a href="javascript:void(0)" onclick="openTierModal('frog')" class="tooltip-link js-double-tap slot-mouse">
-                        <img src="{{ path_prefix }}{{ config.assets.icons.mouse }}" alt="Mouse" class="base-icon">
-                        <img src="{{ path_prefix }}{{ config.assets.icons.frog }}" alt="Frog" class="frog-icon">
-                        <span class="tooltip-text"><strong class="tier-frog">Frog</strong> — Homeland Herald</span>
-                    </a>
-                </div>
-            </div>
-			
-            <div class="nav-separator"></div>
+		if (!text) return;
 
-            <!-- 1. STANDARD NAVIGATION -->
-            <nav class="nav-standard">
-				{% set nav_links = [('index', 'Leaderboard'), ('matches', 'Top Tables'), ('trends', "Player's Journey"), ('about', 'Codex')] %}
+		const modalContent = modal.querySelector('.modal-content');
+		modalContent.style.setProperty('--tier-color', color);
+		modalContent.classList.toggle('bear-shimmer', tier === 'bear');
 
-				{% for base, label in nav_links %}
-					{% if is_archive and base in ['index', 'matches', 'trends'] %}
-						{% set target = base ~ '_' ~ season_tag ~ '.html' %}
-					{% else %}
-						{% set target = base ~ '.html' %}
-					{% endif %}
-					{% set is_active = (page_id == base) or (active_section == base) or (base == 'about' and active_section == 'codex') %}
-					<a href="{{ target }}" class="{{ 'active' if is_active else '' }}">{{ label }}</a>
-				{% endfor %}
-				<a href="cache.html" class="nav-secret {{ 'active' if page_id == 'cache' or active_section == 'cache' else '' }}">Undergrowth</a>
-			</nav>
+		const modalTitle = document.getElementById('modalTitle');
+		const modalElo = document.getElementById('modalElo');
+		const modalIcon = document.getElementById('modalIcon');
+		const modalSubtitle = document.getElementById('modalSubtitle');
+		const modalText = document.getElementById('modalText');
+		const modalFinal = document.getElementById('modalFinal');
+		const supporterLeft = document.getElementById('modalSupporterLeft');
+		const supporterRight = document.getElementById('modalSupporterRight');
 
-            <!-- 2. HOMELANDS NAVIGATION -->
-			<nav id="homelandsNav" class="nav-homelands">
-				<a href="{{ path_prefix }}index{% if is_archive and season_tag %}_{{ season_tag }}{% endif %}.html" class="homelands-tab-link {{ 'active' if page_id == 'index' else '' }}">Leaderboard</a>
-				<a href="{{ path_prefix }}network{% if is_archive and season_tag %}_{{ season_tag }}{% endif %}.html#map" class="homelands-tab-link {{ 'active' if page_id == 'network' else '' }}" data-tab="map">Homelands</a>
-				<a href="{{ path_prefix }}network{% if is_archive and season_tag %}_{{ season_tag }}{% endif %}.html#circle" class="homelands-tab-link" data-tab="circle">Player's Circle</a>
-				<a href="{{ path_prefix }}homelands.html" class="homelands-tab-link {{ 'active' if page_id == 'homelands' else '' }}">Codex</a>
-			</nav>
-			
-        </header>
-        
-        <div class="screen-deco right-deco">
-			{% if current_deco and current_deco.right %}
-				<img src="{{ path_prefix }}{{ current_deco.right }}" alt="Decoration Right">
-			{% endif %}
-		</div>
+		modalTitle.textContent = text.name;
+		modalElo.textContent = playerName || text.elo || '';
+		modalElo.style.color = color;
+		modalIcon.src = icon;
+		modalSubtitle.textContent = text.subtitle || '';
+		modalText.textContent = text.desc;
 
-        <div id="view" class="app-viewport window-box">
-            <header class="page-intro">
-				<h2>{{ page_heading }}</h2>
-				{% if description %}<p>{{ description }}</p>{% endif %}
+		const isFrog = (tier === 'frog' && clearing);
+		const page = window.location.pathname.split('/').pop() || '';
+		const suffix = page.includes('_') ? '_' + page.split('_')[1].replace('.html', '') : '';
 
-				{% block subnav %}
-				{% if is_law %}
-				<div class="season-selector-group codex-subnav-group">
-					<div class="codex-selector">
-						<a href="about.html#view" class="season-btn {{ 'active' if page_id == 'about' else '' }}">Overview</a>
-						<a href="league.html#view" class="season-btn {{ 'active' if page_id == 'league' else '' }}">League</a>
-						<a href="simulator.html#view" class="season-btn {{ 'active' if page_id == 'simulator' else '' }}">Simulator</a>
-						<a href="homelands.html#view" class="season-btn {{ 'active' if page_id == 'homelands' else '' }}">Homelands</a>
-					</div>
-				</div>
-				{% endif %}
-				{% endblock %}
-
-				<div class="season-selector-group">
-				
-					{% if all_leagues and not is_static %}
-					<div class="season-selector">
-						<span class="season-label">League</span>
-						<select onchange="if (this.value) window.location.href=this.value;">
-							{% for l in all_leagues %}
-								<option value="{{ path_prefix }}{{ l.output_dir }}/{{ page_id }}.html" {% if l.slug == league_config.slug %}selected{% endif %}>
-									{{ l.name|upper }}
-								</option>
-							{% endfor %}
-						</select>	
-					</div>
-					{% endif %}
-				
-					{% if has_seasons %}
-					<div class="season-selector">
-						<span class="season-label">Season</span>
-						{% if archive_seasons %}
-							{% for s_tag in archive_seasons %}
-								<a href="{{ page_id }}_{{ s_tag }}.html#view" class="season-btn {{ 'active' if is_archive and season_tag == s_tag else '' }}">
-									{{ s_tag|upper }}
-								</a>
-							{% endfor %}
-						{% endif %}
-						<a href="{{ page_id }}.html#view" class="season-btn {{ 'active' if not is_archive else '' }}">
-							{{ current_season_tag|upper if current_season_tag else 'LIVE' }}
-						</a>
-					</div>
-					{% endif %}
-
-					{% if not is_static %}
-					<div class="season-selector">
-						<span class="season-label">Player</span>
-						<div class="search-box">
-							<input type="search" id="playerName" list="playerAutocompleteList" value="" placeholder="Search..." autocomplete="off">
-							<datalist id="playerAutocompleteList">
-								{% if global_players %}
-									{% for player in global_players %}
-										<option value="{{ player }}"></option>
-									{% endfor %}
-								{% endif %}
-							</datalist>
-							<a id="root-db-btn" 
-							   href="#" 
-							   target="_blank" 
-							   rel="noopener noreferrer" 
-							   class="db-btn js-double-tap disabled" 
-							   aria-label="View profile on The Root Database">
-							   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-								 <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
-								 <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
-							   </svg>
-							   <span class="tooltip-text">View profile on The Root Database</span>
-							</a>
-						</div>
-					</div>
-					{% endif %}
-				</div>
-			</header>
-			
-            <main>
-                {% block content %}{% endblock %}
-            </main>
-			
-			<div class="footer-table">
-				{% if match_count %}
-				<div class="footer-date">Includes {{ match_count }} matches up to {{ cutoff_date }}</div>
-				{% endif %}
-			</div>
-			
-        </div>
-        
-        <div class="screen-deco left-deco">
-			{% if current_deco and current_deco.left %}
-				<img src="{{ path_prefix }}{{ current_deco.left }}" alt="Decoration Left">
-			{% endif %}
-		</div>
-
-        <footer class="app-footer window-box">
-			<div class="footer-content">
-				<div class="footer-credits">
-					<span>Powered by <strong>Tʀɪᴄʜᴏʟᴏᴍᴇ</strong></span>
-					<span>Woodland visions by
-						<a class="cl" href="{{ path_prefix }}cache.html">𝕩𝕝𝕦𝕖𝕧𝕚</a>
-						<a class="insta" href="https://www.instagram.com/xluevi.art/" target="_blank" aria-label="Instagram de xluevi">
-							<svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
-								<rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
-								<path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-								<line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
-							</svg>
-						</a>
-					</span>
-				</div>
-				<div class="footer-date">Updated on {{ generation_date }}</div>
-			</div>
-		</footer>
-    </div>
-    
-    <div id="tierModal" class="modal-overlay">
-		<div class="modal-content window-box">
-			<button class="modal-close" aria-label="Close">&times;</button>
-			<div id="modalBody">
-				<div class="modal-image-side">
-					<img id="modalIcon" src="" alt="Tier Icon">
-					<img id="modalCrown" src="" alt="Crown">
-				</div>
-				
-				<div class="modal-text-side">
-					<a id="modalSupporterLeft" class="modal-supporter left" href="#" title="">
-						<img src="" alt="">
-					</a>
-					<a id="modalSupporterRight" class="modal-supporter right" href="#" title="">
-						<img src="" alt="">
-					</a>
-
-					<div class="title-row">
-						<h2 id="modalTitle"></h2>
-						<h3 id="modalElo"></h3>
-					</div>
-					<div id="modalSubtitle"></div>
-					<div class="modal-divider"></div>
-					<div id="modalText"></div>
-					<div id="modalFinal"></div>
-				</div>
-			</div>
-		</div>
-	</div>
-	
-	<div id="mystic-gate"></div>
-
-    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-	<script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
-    
-    <script>
-		window.PLAYER_PROFILE_MAP = {{ player_profile_map_json | safe if player_profile_map_json is defined else '{}' }};
-		window.PLAYER_DATA_MAP = {{ player_data_map_json | safe if player_data_map_json is defined else '{}' }};
-		window.PROFILE_BASE_URL = {{ profile_base_url | tojson if profile_base_url is defined else 'null' }};
-		window.K_CONFIG = {{ (league_config.k_factor if league_config is defined and league_config.k_factor is defined else {}) | tojson }};
-
-		const PATH_PREFIX = "{{ path_prefix }}";
-
-		const CONFIG = {
-			colors: {{ config.colors.tiers|tojson }},
-			icons: {
-				{% for tier_key, icon_path in config.assets.icons.items() %}
-					"{{ tier_key }}": "{{ path_prefix }}" + "{{ icon_path }}",
-				{% endfor %}
-			},
-			currentTier: "{{ current_tier }}",
-			chartData: {{ history_json | safe if history_json is defined else '{}' }},
-			champMatch: {{ champ_match | tojson | safe if champ_match else 'null' }}
-		};
-		
-		const TIER_DATA = {
-			'bird': {
-				name: 'Bird',
-				elo: '1500+',
-				subtitle: 'The Grandmasters',
-				desc: 'These elite sovereigns sit at the absolute pinnacle of the Woodland canopy. Remaining on this prestigious throne is a dizzying battle against shifting winds and ambitious rivals. They rule the skies by maintaining flawless execution and unerring control under pressure.'
-			},
-			'fox': {
-				name: 'Fox',
-				elo: '1400+',
-				subtitle: 'The Cunning Tacticians',
-				desc: 'These keen strategists dominate the ladder by thriving on sharp wit over brute force. The hunt presses close from all sides, and a single moment of hesitation can prove fatal. They prevail by measuring every step with care and exploiting weakness with signature flair.'
-			},
-			'rabbit': {
-				name: 'Rabbit',
-				elo: '1300+',
-				subtitle: 'The Agile Contenders',
-				desc: 'These nimble wanderers gracefully weave through the crowded paths of the rankings. Routine strategies falter here, threatening to trap anyone who cannot adapt to sudden chaos. They leap ahead where others see only barriers, turning dead ends into daring escapes.'
-			},
-			'mouse': {
-				name: 'Mouse',
-				elo: '1200+',
-				subtitle: 'The Steady Foragers',
-				desc: 'These resilient souls rise above the casual fray to mark a milestone of mastery. The wild now demands pure stamina, where early momentum easily fades into exhaustion. They hold their ground through quiet consistency, proving that patience outlasts blind luck.'
-			},
-			'squirrel': {
-				name: 'Squirrel',
-				elo: '< 1200',
-				subtitle: 'The Hapless Stragglers',
-				desc: 'These frantic collectors dwell in the tangled undergrowth of the ranking system. Clumsy errors and brutal defeats often force them to fall back while fiercer beasts surge ahead. Yet, they bravely endure by turning every painful lesson into a seed for next season’s harvest.'
-			},
-			'stag': {
-				name: 'Stag',
-				elo: '1600+',
-				subtitle: 'The Legend',
-				desc: 'Has anyone truly seen this mythical beast, or is it only an echo of the wild? What happens to the predator when the woods turn hollow and every path leads back to a mirror of its own perfection? With nothing left to be claimed, is the true crown the silence that follows the chase?'
-			},
-			'frog': {
-				name: 'Frog',
-				elo: 'This is a test',
-				subtitle: 'Homeland Herald',
-				desc: 'This tier identifies key connectors across the league. Rather than measuring competitive rating, it recognizes players whose consistent table presence brings regular competitors together, forming the stable core of a seasonal homeland.'
-			},
-			'bear': {
-				name: 'Bear',
-				elo: CONFIG.champMatch ? CONFIG.champMatch.champion : '',
-				subtitle: CONFIG.champMatch ? `Season ${CONFIG.champMatch.season} Champion` : '',
-				final: CONFIG.champMatch ? `An epic <a href="${CONFIG.champMatch.match_link}" target="_blank" class="cl">final battle</a> pitted the top four titans of the league against each other. On ${CONFIG.champMatch.date}, <strong>${CONFIG.champMatch.champion}</strong> secured the seasonal crown by shutting out the ambitions of <strong>${CONFIG.champMatch.player2}</strong>, <strong>${CONFIG.champMatch.player3}</strong> and <strong>${CONFIG.champMatch.player4}</strong>. Surely, the woodland floor shook from the sheer force of their clash.` : '',
-				crown: '{{ path_prefix }}assets/images/crown.webp'
+		[supporterLeft, supporterRight].forEach(el => {
+			el.style.display = isFrog ? 'block' : 'none';
+			if (isFrog) {
+				el.href = `${PATH_PREFIX}network${suffix}.html?clearing=${clearing.toLowerCase()}#view`;
+				el.querySelector('img').src = `${PATH_PREFIX}assets/items/${clearing.toLowerCase()}.png`;
 			}
-		};
-	</script>
-	
-    <script src="{{ path_prefix }}static/script.js"></script>
-    {% block custom_js %}{% endblock %}
+		});
 
-	<script>
-		if (
-			window.location.hostname === 'localhost' ||
-			window.location.hostname === '127.0.0.1' ||
-			window.location.href.includes('rootelo-dev') ||
-			window.location.pathname.includes('/dev/')
-		) {
-			window.goatcounter = { no_onload: true };
+		if (modalFinal) {
+			modalFinal.innerHTML = text.final || '';
 		}
-	</script>
-	<script data-goatcounter="https://tricholome.goatcounter.com/count"
-            async src="//gc.zgo.at/count.js"></script>
-</body>
-</html>
+		
+		if (typeof modalCrown !== 'undefined' && modalCrown) {
+			modalCrown.src = text.crown || '';
+			modalCrown.style.display = text.crown ? 'block' : 'none';
+		}
+		
+		modal.style.display = 'flex';
+		document.body.style.overflow = 'hidden';
+	};
+
+	const closeModal = () => {
+		modal.style.display = 'none';
+		document.body.style.overflowY = 'auto';
+		document.body.style.overflowX = 'hidden';
+		if (window.innerWidth < 1100) {
+			window.scrollTo(window.scrollX, window.scrollY);
+		}
+	};
+	if (closeBtn) closeBtn.onclick = closeModal;
+
+	window.onclick = (event) => { 
+		if (event.target == modal) closeModal(); 
+	};
+});
+
+/* =========================================================================
+   --- 4. DATA TABLES ---
+   ========================================================================= */
+
+$(document).ready(function() {
+
+	// --- 1. LEADERBOARD ---
+	if ($('#leaderboard').length > 0) {
+		const pageName = window.location.pathname.split('/').pop() || '';
+		let showAllPlayers = !pageName.includes('_'); 
+		let savedClassicState = showAllPlayers;
+
+		$('#tierFilterCheckbox').prop('checked', showAllPlayers);
+
+		const isFrogActive = localStorage.getItem('spotFrogs') === 'true';
+		if (isFrogActive) {
+			$('#spotFrogsCheckbox').prop('checked', true);
+			$('body').addClass('homelands-mode');
+			$('#leaderboard').addClass('frogs-mode');
+			showAllPlayers = false;
+			$('#tierFilterCheckbox').prop('checked', false);
+		}
+
+		$.extend($.fn.dataTable.ext.type.order, { 
+			"rank-pre": function (d) { 
+				if (d === "♔") return 0; 
+				if (d === "-" || d === "–" || d === "—") return 9999;
+				return parseInt(d); 
+			} 
+		});
+
+		$.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
+			if (settings.nTable.id !== 'leaderboard') return true;
+			const rowNode = settings.aoData[dataIndex].nTr;
+			if (!rowNode) return true;
+
+			const isFrogMode = $('#spotFrogsCheckbox').is(':checked');
+
+			if (isFrogMode) {
+				return showAllPlayers || rowNode.dataset.settler === 'true';
+			}
+
+			return showAllPlayers || rowNode.dataset.tier !== 'unassigned';
+		});
+
+		const leaderboardTable = $('#leaderboard').DataTable({
+			"order": [],
+			"responsive": true, 
+			"pageLength": 50,
+			"dom": 'rt<"bottom"p><"clear">',
+			"columnDefs": [ 
+				{ "targets": 0, "type": "rank" },
+				{ "targets": 2, "className": "player-name-cell" },
+				{ "targets": 3, "className": "elo-cell" },
+				{ "className": "numeric-cell", "targets": [0, 3, 4, 5, 6, 7, 8] },
+				{ "responsivePriority": 1, "targets": [2, 3] },
+				{ "responsivePriority": 2, "targets": 0 },
+				{ "responsivePriority": 3, "targets": 1 },
+				{ "responsivePriority": 8, "targets": 6 },
+				{ "responsivePriority": 10, "targets": [4, 5, 7, 8] }
+			]
+		});
+
+		leaderboardTable.draw();
+
+		$(document).on('change', '#tierFilterCheckbox', function() {
+			showAllPlayers = $(this).is(':checked');
+			$('#leaderboard').DataTable().draw();
+		});
+
+		$(document).on('change', '#spotFrogsCheckbox', function() {
+			const isFrogMode = $(this).is(':checked');
+			localStorage.setItem('spotFrogs', isFrogMode ? 'true' : 'false');
+
+			$('body').toggleClass('homelands-mode', isFrogMode);
+
+			$('#leaderboard').toggleClass('frogs-mode', isFrogMode);
+
+			if (isFrogMode) {
+				savedClassicState = $('#tierFilterCheckbox').is(':checked');
+				showAllPlayers = false;
+				$('#tierFilterCheckbox').prop('checked', false);
+			} else {
+				showAllPlayers = savedClassicState;
+				$('#tierFilterCheckbox').prop('checked', savedClassicState);
+			}
+
+			$('#leaderboard').DataTable().draw();
+		});
+	}
+
+	// --- 2. MATCHES ---
+	if ($('#matchesTable').length > 0) {
+		$('#matchesTable').DataTable({
+			"order": [[1, "desc"]], 
+			"responsive": true,
+			"pageLength": 50,
+			"dom": 'rt<"bottom"p><"clear">',
+			"columnDefs": [
+				{ "className": "rank-cell", "targets": 0 },
+				{ "className": "elo-sum-cell", "targets": 1 },
+				{ "className": "date-cell", "targets": 2 },
+				{ "className": "numeric-cell", "targets": [0, 1, 2, 5] },
+				{ "responsivePriority": 1, "targets": [1, 4] },
+				{ "responsivePriority": 2, "targets": [0, 2] },
+				{ "responsivePriority": 3, "targets": [3, 5] }
+			]
+		});
+	}
+	
+	// --- 3. SIMULATOR RESULT TABLE ---
+	if ($('#simResultTable').length > 0) {
+		$('#simResultTable').DataTable({
+			"paging": false,
+			"searching": false,
+			"info": false,
+			"ordering": false,
+			"responsive": true,
+			"dom": 'rt',
+			"createdRow": function(row, data) {
+            var val = parseFloat($('<div>' + data[4] + '</div>').text());
+            
+            if (!isNaN(val) && val < 0) {
+                $(row).addClass('loser');
+            }
+        },
+			"columnDefs": [
+				{ "targets": 0, "className": "player-name-cell" },
+				{ "className": "numeric-cell", "targets": [1, 2, 3, 4, 5] },
+				{ "responsivePriority": 1, "targets": [0, 5] },
+				{ "responsivePriority": 2, "targets": [4] },
+				{ "responsivePriority": 3, "targets": [3] },
+				{ "responsivePriority": 4, "targets": [1, 2] }
+			]
+		});
+	}
+
+    // --- 4. HALL OF FAME ---
+	if ($('#hall_of_fame').length > 0) {
+		$('#hall_of_fame').DataTable({
+			"responsive": true,
+			"ordering": false,
+			"paging": false,
+			"searching": false,
+			"info": false,
+			"dom": 'rt',
+			"columnDefs": [
+				{ "targets": 0, "className": "rank-cell" },
+				{ "targets": 1, "className": "player-name-cell" },
+				{ "targets": 2, "className": "streak-cell" },
+				{ "targets": 3, "className": "elo-cell" },
+				{ "targets": 4, "className": "date-cell" },
+				{ "className": "numeric-cell", "targets": [2, 3, 4] },
+				{ "responsivePriority": 1, "targets": [0, 1] },
+				{ "responsivePriority": 2, "targets": [2, 3] },
+				{ "responsivePriority": 3, "targets": 4 },
+			]
+		});
+	}
+	
+	// --- 5. VISITOR TABLE ---
+	if ($('#visitor_table').length > 0) {
+		$('#visitor_table').DataTable({
+			"responsive": true,
+			"ordering": false,
+			"paging": false,
+			"searching": false,
+			"info": false,
+			"dom": 'rt',
+			"columnDefs": [
+				{ "targets": 0, "className": "rank-cell" },
+			]
+		});
+	}
+	
+	// --- 6. GLOBAL FIX FOR ORIENTATION & RESIZE ---
+    window.addEventListener('resize', () => {
+        $('.dataTable').each(function() {
+            if ($.fn.dataTable.isDataTable(this)) {
+                $(this).DataTable()
+                    .columns.adjust()
+                    .responsive.recalc();
+            }
+        });
+    });
+
+});
+
+/* =========================================================================
+   --- 5. CHART (TRENDS) ---
+   ========================================================================= */
+
+let myChart;
+
+function updateChart() {
+    const input = document.getElementById('playerName');
+    const canvas = document.getElementById('progressionChart');
+    if (!input || !canvas) return;
+
+    const name = input.value;
+    const allData = CONFIG.chartData;
+
+    if (name === "" || !allData[name]) {
+        if (myChart) myChart.destroy();
+        return;
+    }
+
+    const ctx = canvas.getContext('2d');
+    const rabbitColor = getComputedStyle(document.documentElement).getPropertyValue('--color-rabbit').trim() || '#E0B634';
+    
+    if (typeof allData !== 'undefined' && allData[name]) {
+        localStorage.setItem('selectedPlayer', name);
+
+        const rawData = allData[name];
+        const labels = rawData.map(d => {
+            const dateObj = new Date(d[0]);
+            return !isNaN(dateObj.getTime()) 
+                ? dateObj.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) 
+                : d[0];
+        });
+        const eloScores = rawData.map(d => d[1]);
+
+        if (myChart) myChart.destroy();
+        
+        let lastClickTime = 0;
+		let lastClickedIndex = -1;
+
+		myChart = new Chart(ctx, {
+			type: 'line',
+			data: {
+				labels: labels,
+				datasets: [{
+					data: eloScores,
+					borderColor: rabbitColor,
+					backgroundColor: rabbitColor + '22',
+					borderWidth: 3,
+					fill: true,
+					tension: 0.3,
+					pointRadius: 3,
+					pointBackgroundColor: rabbitColor,
+					pointHitRadius: 20
+				}]
+			},
+			options: {
+				responsive: true,
+				maintainAspectRatio: false,
+				onClick: (e, elements) => {
+					if (elements.length > 0) {
+						const index = elements[0].index;
+						const matchUrl = rawData[index][3];
+						
+						if (matchUrl) {
+							if (e.native.pointerType === 'touch') {
+								const currentTime = Date.now();
+								const timeDiff = currentTime - lastClickTime;
+								
+								if (index === lastClickedIndex && timeDiff < 400) {
+									window.open(matchUrl, '_blank');
+									lastClickedIndex = -1;
+								} else {
+									lastClickedIndex = index;
+								}
+								lastClickTime = currentTime;
+							} else {
+								window.open(matchUrl, '_blank');
+							}
+						}
+					}
+				},
+				onHover: (e, elements) => {
+					e.native.target.style.cursor = elements.length > 0 ? 'pointer' : 'default';
+				},
+				plugins: {
+					legend: { display: false },
+					tooltip: { 
+						enabled: true, 
+						backgroundColor: '#222', 
+						titleColor: rabbitColor,
+						callbacks: {
+							footer: (tooltipItems) => {
+								const index = tooltipItems[0].dataIndex;
+								const matchUrl = rawData[index][3];
+								
+								if (matchUrl) {
+									const isTouch = window.matchMedia('(pointer: coarse)').matches;
+									return isTouch ? 'Double-tap for game details' : 'Click for game details';
+								}
+								return '';
+							}
+						},
+						footerColor: '#aaa',
+						footerFont: { size: 11, weight: 'normal' },
+						footerSpacing: 4,
+						marginSpacing: 6
+					}
+				},
+				scales: {
+					y: { grid: { color: '#252525' }, ticks: { color: '#888' } },
+					x: { grid: { display: false }, ticks: { color: '#888', maxTicksLimit: 6 } }
+				}
+			}
+		});
+    }
+}
+
+
+/* =========================================================================
+   --- 6. DYNAMIC TRENDS REDIRECTION ---
+   ========================================================================= */
+
+// Double-clic sur une cellule de nom de joueur
+$(document).on('dblclick', '.player-name-cell', function() {
+    const playerName = $(this).text().trim();
+    
+    if (playerName) {
+        // 1. On stocke le joueur uniquement pour la page Trends
+        localStorage.setItem('selectedPlayer', playerName);
+        
+        // 2. Routage dynamique universel selon la saison (ex: index_lh01.html -> trends_lh01.html)
+        let trendsPage = 'trends.html';
+        const pageName = window.location.pathname.split('/').pop() || '';
+        
+        if (pageName.includes('_')) {
+            const seasonSuffix = pageName.substring(pageName.indexOf('_') + 1).replace(/\.html$/i, '');
+            trendsPage = `trends_${seasonSuffix}.html`;
+        }
+        
+        // 3. Redirection directe vers le graphique de tendances
+        window.location.href = `${trendsPage}#view`;
+    }
+});
+
+/* =========================================================================
+   --- 7. NARRATIVE JOURNEY RELATIONS TREE ---
+   ========================================================================= */
+
+function getRelationsIconHtml(tier) {
+    if (!tier || tier === 'unranked' || typeof CONFIG === 'undefined' || !CONFIG.icons || !CONFIG.icons[tier]) return '';
+    const iconUrl = CONFIG.icons[tier];
+    return `<img src="${iconUrl}" class="tier-icon" alt="${tier}">`;
+}
+
+function getRandomVariation(array) {
+    if (!array || array.length === 0) return "";
+    return array[Math.floor(Math.random() * array.length)];
+}
+
+window.updateRelationsTree = function(playerName) {
+    const relationsWrapper = document.querySelector('.relations-wrapper');
+    
+    if (!window.relationsData) {
+        if (relationsWrapper) relationsWrapper.style.display = 'none';
+        return;
+    }
+    
+    const data = window.relationsData[playerName];
+    const vars = window.NARRATIVE_VARIATIONS;
+    
+    if (!data || !data.unique_opponents || data.unique_opponents === 0) {
+        if (relationsWrapper) relationsWrapper.style.display = 'none';
+        return; 
+    }
+    
+    if (relationsWrapper) relationsWrapper.style.display = 'block';
+    
+    document.getElementById('centerPlayerName').innerText = playerName;
+    
+    const introEl = document.getElementById('centerPlayerIntro');
+    const metaEl = document.getElementById('centerPlayerMeta');
+    const formattedCount = `<span class="opponents-count">${data.unique_opponents}</span>`;
+    
+    if (vars && vars.center && vars.opponents) {
+        const centerIntro = getRandomVariation(vars.center);
+        const opponentPhrase = getRandomVariation(vars.opponents).replace('{count}', formattedCount);
+        
+        if (introEl) introEl.innerHTML = centerIntro ? `<div class="narrative-text">${centerIntro}</div>` : '';
+        if (metaEl) metaEl.innerHTML = opponentPhrase ? `<div class="narrative-text">${opponentPhrase}</div>` : '';
+    } else {
+        if (introEl) introEl.innerHTML = "";
+        if (metaEl) metaEl.innerHTML = "";
+    }
+	
+	// Synchronise le data-player du nœud central
+    const nodeCenter = document.getElementById('nodeCenter');
+    if (nodeCenter) {
+        nodeCenter.setAttribute('data-player', playerName || '');
+    }
+    
+    // Logique du nœud Trophy (cible uniquement .node-content)
+    const nodeTrophy = document.getElementById('nodeTrophy');
+    if (nodeTrophy) {
+        const target = nodeTrophy.querySelector('.node-content') || nodeTrophy;
+        
+        if (data.trophy && data.trophy.name) {
+            const trophyIcon = data.trophy.tier ? getRelationsIconHtml(data.trophy.tier) : "";
+            const eloColor = data.trophy.tier ? `var(--color-${data.trophy.tier})` : 'var(--text-main)';
+            const trophyText = (vars && vars.trophy) ? getRandomVariation(vars.trophy) : "";
+            
+            target.innerHTML = `
+                ${trophyText ? `<div class="narrative-text">${trophyText}</div>` : ''}
+                <div id="textTrophy" class="node-content-flex">
+                    ${trophyIcon ? `<div class="node-icon-side">${trophyIcon}</div>` : ''}
+                    <div class="node-text-side">
+                        <div class="player-name">${data.trophy.name}</div>
+                        <div class="player-meta" style="color: ${eloColor};">Elo ${data.trophy.elo}</div>
+                    </div>
+                </div>
+            `;
+            nodeTrophy.setAttribute('data-player', data.trophy.name);
+        } else {
+            const trophyEmptyText = (vars && vars.trophy_empty) ? getRandomVariation(vars.trophy_empty) : "";
+            target.innerHTML = `
+                <div id="textTrophy">
+                    ${trophyEmptyText ? `<div class="narrative-text">${trophyEmptyText}</div>` : ''}
+                </div>
+            `;
+            nodeTrophy.setAttribute('data-player', '');
+        }
+    }
+    
+    // Logique du nœud Bane (cible uniquement .node-content)
+    const nodeBane = document.getElementById('nodeBane');
+    if (nodeBane) {
+        const target = nodeBane.querySelector('.node-content') || nodeBane;
+        
+        if (data.bane && data.bane.name) {
+            const baneIcon = data.bane.tier ? getRelationsIconHtml(data.bane.tier) : "";
+            const eloColor = data.bane.tier ? `var(--color-${data.bane.tier})` : 'var(--text-main)';
+            const baneText = (vars && vars.bane) ? getRandomVariation(vars.bane) : "";
+            
+            target.innerHTML = `
+                ${baneText ? `<div class="narrative-text">${baneText}</div>` : ''}
+                <div id="textBane" class="node-content-flex">
+                    ${baneIcon ? `<div class="node-icon-side">${baneIcon}</div>` : ''}
+                    <div class="node-text-side">
+                        <div class="player-name">${data.bane.name}</div>
+                        <div class="player-meta" style="color: ${eloColor};">Elo ${data.bane.elo}</div>
+                    </div>
+                </div>
+            `;
+            nodeBane.setAttribute('data-player', data.bane.name);
+        } else {
+            const baneEmptyText = (vars && vars.bane_empty) ? getRandomVariation(vars.bane_empty) : "";
+            target.innerHTML = `
+                <div id="textBane">
+                    ${baneEmptyText ? `<div class="narrative-text">${baneEmptyText}</div>` : ''}
+                </div>
+            `;
+            nodeBane.setAttribute('data-player', '');
+        }
+    }
+};
+
+window.selectPlayerFromTree = function(element) {
+    const clickedName = element.getAttribute('data-player');
+    if (clickedName) {
+        const input = document.getElementById('playerName');
+        input.value = clickedName;
+        window.updateRelationsTree(clickedName);
+        input.dispatchEvent(new Event('input')); 
+    }
+};
+
+window.updatePlayerView = function() {
+    const input = document.getElementById('playerName');
+    const currentPlayer = input ? input.value.trim() : "";
+    
+    const chartWrapper = document.querySelector('.chart-wrapper');
+    const relationsWrapper = document.querySelector('.relations-wrapper');
+
+    if (currentPlayer) {
+        if (chartWrapper) chartWrapper.style.display = 'block';
+        if (relationsWrapper) relationsWrapper.style.display = 'block';
+        window.updateRelationsTree(currentPlayer);
+    } else {
+        if (chartWrapper) chartWrapper.style.display = 'none';
+        if (relationsWrapper) relationsWrapper.style.display = 'none';
+        
+        const centerName = document.getElementById('centerPlayerName');
+        const centerIntro = document.getElementById('centerPlayerIntro');
+        const centerMeta = document.getElementById('centerPlayerMeta');
+        
+        if (centerName) centerName.innerText = 'Select a player';
+        if (centerIntro) centerIntro.innerHTML = '';
+        if (centerMeta) centerMeta.innerHTML = '';
+
+        const nodeTrophy = document.getElementById('nodeTrophy');
+        if (nodeTrophy) {
+            const target = nodeTrophy.querySelector('.node-content') || nodeTrophy;
+            target.innerHTML = `
+                <div id="textTrophy">
+                    <div class="player-name">...</div>
+                </div>
+            `;
+            nodeTrophy.setAttribute('data-player', '');
+        }
+
+        const nodeBane = document.getElementById('nodeBane');
+        if (nodeBane) {
+            const target = nodeBane.querySelector('.node-content') || nodeBane;
+            target.innerHTML = `
+                <div id="textBane">
+                    <div class="player-name">...</div>
+                </div>
+            `;
+            nodeBane.setAttribute('data-player', '');
+        }
+    }
+};
+
+window.goToPlayerCircle = function(element) {
+    const input = document.getElementById('playerName');
+    const playerName = (element && element.getAttribute('data-player')) || 
+                       (input ? input.value.trim() : '') || 
+                       localStorage.getItem('selectedPlayer');
+
+    if (!playerName) return;
+
+    localStorage.setItem('selectedPlayer', playerName);
+
+    let networkPage = 'network.html';
+    const pageName = window.location.pathname.split('/').pop() || '';
+    if (pageName.includes('_')) {
+        const seasonSuffix = pageName.substring(pageName.indexOf('_') + 1).replace(/\.html$/i, '');
+        networkPage = `network_${seasonSuffix}.html`;
+    }
+
+    window.location.href = `${networkPage}?player=${encodeURIComponent(playerName)}#view`;
+};
+
+/* =========================================================================
+   --- 8. GLOBAL PLAYER SEARCH & PERSISTENCE SYNC ---
+   ========================================================================= */
+
+$(document).ready(function() {
+    const input = document.getElementById('playerName');
+    if (!input) return;
+
+    const profileMap = window.PLAYER_PROFILE_MAP || {};
+
+    function getCanonicalName(query) {
+        if (!query) return "";
+        const q = query.trim().toLowerCase();
+
+        for (const [name, slug] of Object.entries(profileMap)) {
+            if (name.toLowerCase() === q || (slug && String(slug).toLowerCase() === q)) {
+                return name;
+            }
+        }
+        return query;
+    }
+
+    function applyGlobalSearch(val) {
+        const query = (val || "").trim();
+        const cleanName = getCanonicalName(query);
+        const slug = profileMap[cleanName];
+
+        const dbBtn = document.getElementById('root-db-btn');
+        if (dbBtn) {
+            if (slug) {
+                const baseUrl = (window.PROFILE_BASE_URL || '').replace(/\/+$/, '');
+                dbBtn.href = `${baseUrl}/${slug}`;
+                dbBtn.classList.remove('disabled');
+                dbBtn.style.opacity = '1';
+                dbBtn.style.pointerEvents = 'auto';
+            } else {
+                dbBtn.href = '#';
+                dbBtn.classList.add('disabled');
+                dbBtn.style.opacity = '0.4';
+                dbBtn.style.pointerEvents = 'none';
+            }
+        }
+
+        if (cleanName) {
+            localStorage.setItem('selectedPlayer', cleanName);
+            const tierCheckbox = $('#tierFilterCheckbox');
+            if (tierCheckbox.length > 0 && !tierCheckbox.is(':checked')) {
+                tierCheckbox.prop('checked', true).trigger('change');
+            }
+        } else {
+            localStorage.removeItem('selectedPlayer');
+        }
+
+        $('.dataTable').each(function() {
+            if ($.fn.dataTable.isDataTable(this)) {
+                $(this).DataTable().search(cleanName).draw();
+            }
+        });
+
+        if (typeof window.updatePlayerView === 'function') window.updatePlayerView();
+        if (typeof window.updateChart === 'function' && document.getElementById('progressionChart')) window.updateChart();
+    }
+
+    $(input).on('input change', function() {
+        applyGlobalSearch(this.value);
+    });
+
+    const urlParam = new URLSearchParams(window.location.search).get('player');
+    const savedPlayer = localStorage.getItem('selectedPlayer');
+    const initialQuery = urlParam || savedPlayer || "";
+
+    if (initialQuery) {
+        const cleanName = getCanonicalName(initialQuery);
+        input.value = cleanName;
+        setTimeout(() => applyGlobalSearch(cleanName), 50);
+    } else {
+        applyGlobalSearch("");
+    }
+});
+
+/* =========================================================================
+   --- 9. MATCH SIMULATOR ENGINE ---
+   ========================================================================= */
+
+$(document).ready(function() {
+    if ($('#simTable').length === 0 || $('#simResultTable').length === 0) return;
+
+    const REQUIRED_K_KEYS = ['k_floor', 'k_start', 'exp_decay', 'k_cap_ranked', 'k_cap_new'];
+    const kConfig = window.K_CONFIG || {};
+
+    const isConfigValid = REQUIRED_K_KEYS.every(
+        key => key in kConfig && kConfig[key] !== null && kConfig[key] !== undefined && kConfig[key] !== ''
+    );
+
+    if (!isConfigValid) {
+        console.warn("Simulator disabled: Missing K_CONFIG keys in league.json", kConfig);
+        $('#simTable, #simResultTable').hide();
+        return;
+    }
+
+    const playerData = window.PLAYER_DATA_MAP || {};
+
+    function calculateKFactor(gamesCount, isRanked) {
+        const kFloor = parseFloat(kConfig.k_floor);
+        const kStart = parseFloat(kConfig.k_start);
+        const expDecay = parseFloat(kConfig.exp_decay);
+        const kCap = parseFloat(kConfig[isRanked ? 'k_cap_ranked' : 'k_cap_new']);
+
+        const kBase = kFloor + (kStart - kFloor) * Math.exp(-gamesCount / expDecay);
+        return Math.min(kCap, kBase);
+    }
+
+    function getTierFromElo(elo, gamesCount) {
+        if (gamesCount < 10) return 'unassigned';
+        if (elo >= 1600) return 'stag';
+        if (elo >= 1500) return 'bird';
+        if (elo >= 1400) return 'fox';
+        if (elo >= 1300) return 'rabbit';
+        if (elo >= 1200) return 'mouse';
+        return 'squirrel';
+    }
+
+    function renderTierCell(elo, gamesCount) {
+        const tier = getTierFromElo(elo, gamesCount);
+        
+        if (tier === 'unassigned' || typeof CONFIG === 'undefined' || !CONFIG.icons || !CONFIG.icons[tier]) {
+            return elo.toString();
+        }
+
+        const templateEl = document.getElementById('simTierTemplate');
+        if (!templateEl) return elo.toString();
+
+        return templateEl.innerHTML
+            .replaceAll('{TIER}', tier)
+            .replace('{ICON_URL}', CONFIG.icons[tier])
+            .replace('{ELO}', elo);
+    }
+
+    $(document).on('change', '.sim-winner-toggle', function() {
+        const checkedToggles = $('.sim-winner-toggle:checked');
+        
+        if (checkedToggles.length > 2) {
+            $(this).prop('checked', false);
+            return;
+        }
+        
+        runSimulation();
+    });
+
+    $(document).on('input change', '.sim-p-name', function() {
+        const row = $(this).closest('tr');
+        const typedName = $(this).val().trim();
+        
+        const matchedKey = Object.keys(playerData).find(
+            key => key.toLowerCase() === typedName.toLowerCase()
+        );
+
+        if (matchedKey) {
+            const info = playerData[matchedKey];
+            row.find('.sim-p-elo').val(info.elo);
+            row.find('.sim-p-games').val(info.games);
+            row.data('is_ranked', info.is_ranked || false);
+        } else {
+            row.data('is_ranked', false);
+        }
+        runSimulation();
+    });
+
+    function runSimulation() {
+        const rows = $('#simTable tbody tr');
+        const players = [];
+
+        const winnerCount = $('.sim-winner-toggle:checked').length;
+        const scorePerWinner = winnerCount > 0 ? (1.0 / winnerCount) : 0.0;
+
+        rows.each(function(index) {
+            const row = $(this);
+            const isWinner = row.find('.sim-winner-toggle').is(':checked');
+            const name = row.find('.sim-p-name').val().trim() || `Player ${index + 1}`;
+            const elo = parseFloat(row.find('.sim-p-elo').val()) || 1200;
+            const games = parseInt(row.find('.sim-p-games').val(), 10) || 0;
+            const isRanked = row.data('is_ranked') || false;
+
+            players.push({
+                name: name,
+                elo: elo,
+                games: games,
+                isRanked: isRanked,
+                actualScore: isWinner ? scorePerWinner : 0.0
+            });
+        });
+
+        if (players.length === 0) return;
+
+        const qScores = players.map(p => Math.pow(10, p.elo / 400));
+        const totalQ = qScores.reduce((sum, q) => sum + q, 0);
+
+		const formattedData = players.map((p, i) => {
+			const expected = totalQ > 0 ? (qScores[i] / totalQ) : (1 / players.length);
+			const k = calculateKFactor(p.games, p.isRanked);
+			const change = k * (p.actualScore - expected);
+			
+			const roundDelta = Math.round(change);
+			const currentEloRounded = Math.round(p.elo);
+			const newEloRounded = Math.round(p.elo + change);
+			
+			const winProbStr = (expected * 100).toFixed(1) + '%';
+
+			const deltaSign = roundDelta >= 0 ? '+' : '';
+			const deltaHtml = `${deltaSign}${roundDelta}`;
+
+			return [
+				p.name,
+				renderTierCell(currentEloRounded, p.games),
+				Math.round(k * 10) / 10,
+				winProbStr,
+				deltaHtml,
+				renderTierCell(newEloRounded, p.games + 1)
+			];
+		});
+
+        const simResultTable = $('#simResultTable').DataTable();
+        simResultTable.clear();
+        simResultTable.rows.add(formattedData);
+        simResultTable.draw();
+    }
+
+    $(document).on('input change', '.sim-p-elo, .sim-p-games', runSimulation);
+
+    runSimulation();
+});
+
+/* =========================================================================
+   --- 11. SECRETS ENGINE ---
+   ========================================================================= */
+
+document.addEventListener('DOMContentLoaded', () => {
+    const body = document.body;
+	
+    // --- 0. FINAL COMPLETION ---
+    function checkFinalCompletion() {
+        const required = ['watcher-found', 'nut-found', 'berry-found', 'ciphers-found', 'warden-found'];
+        const allFound = required.every(key => localStorage.getItem(key) === 'true');
+
+        if (allFound) {
+            body.classList.add('secrets-ended');
+            localStorage.setItem('secrets-ended', 'true');
+        }
+    }
+	
+	// --- 1. MYSTIC TRANSITION ---
+	function triggerMysticTransition(callback) {
+		const gate = document.getElementById('mystic-gate');
+		$(gate).fadeIn(600, function() {
+			if (callback) callback();
+			$(gate).fadeOut(1000);
+		});
+	}
+
+    // --- 2. PERSISTENCE CHECK ---
+    const isEnded = localStorage.getItem('secrets-ended') === 'true';
+    const isWatcherFound = localStorage.getItem('watcher-found') === 'true';
+    const isNutFound = localStorage.getItem('nut-found') === 'true';
+    const isBerryFound = localStorage.getItem('berry-found') === 'true';
+    const isCiphersFound = localStorage.getItem('ciphers-found') === 'true';
+	const isWardenFound = localStorage.getItem('warden-found') === 'true';
+    const isHofUnlocked = localStorage.getItem('hof-unlocked') === 'true';
+
+    // Specific states
+    if (isWatcherFound) body.classList.add('watcher-found');
+    if (isNutFound) body.classList.add('nut-found');
+    if (isBerryFound) body.classList.add('berry-found');
+    if (isCiphersFound) {
+        body.classList.add('ciphers-found');
+        updateMysticUI();
+    }
+	if (isWardenFound) body.classList.add('warden-found');
+    
+    // Final state
+    if (isEnded) body.classList.add('secrets-ended');
+    if (isHofUnlocked) body.classList.add('hof-unlocked');
+
+    // --- 3. UI TRANSFORMATION FUNCTION ---
+    function updateMysticUI() {
+        if (body.getAttribute('data-page') === 'cache') {
+            const intro = document.querySelector('.page-intro');
+            if (intro) {
+                const titleEl = intro.querySelector('h2');
+                const descEl = intro.querySelector('p');
+                if (titleEl) titleEl.textContent = "Glade of Fame";
+                if (descEl) descEl.textContent = "Silent roots remember every crown.";
+            }
+            document.title = "Rootelo • Glade of Fame";
+        }
+
+        const navSecretLink = document.querySelector('.nav-secret');
+        if (navSecretLink) {
+            navSecretLink.textContent = 'Glade of Fame';
+        }
+    }
+	
+    // --- 4. THE WATCHER SECRET ---
+    const watcherBtn = document.getElementById('watcher-secret');
+    if (watcherBtn) {
+        watcherBtn.addEventListener('click', () => {
+            body.classList.add('watcher-found');
+            localStorage.setItem('watcher-found', 'true');
+            checkFinalCompletion();
+            window.dispatchEvent(new Event('scroll'));
+        });
+    }
+
+    // --- 5. THE NUT SECRET ---
+    if (window.location.hash === '#nut-section') {
+        const nutSection = document.getElementById('nut-section');
+        if (nutSection) nutSection.style.display = 'block';
+    }
+
+    const nutBtn = document.getElementById('nut-secret');
+    if (nutBtn) {
+        nutBtn.addEventListener('click', () => {
+            body.classList.add('nut-found');
+            localStorage.setItem('nut-found', 'true');
+			nutBtn.removeAttribute('onclick');
+            checkFinalCompletion();
+        });
+    }
+	
+    // --- 6. THE BERRY SECRET ---
+    if (window.location.hash === '#berry-section') {
+        const berrySection = document.getElementById('berry-section');
+        if (berrySection) berrySection.style.display = 'block';
+    }
+
+    const berryBtn = document.getElementById('berry-secret');
+    if (berryBtn) {
+        berryBtn.addEventListener('click', () => {
+            body.classList.add('berry-found');
+            localStorage.setItem('berry-found', 'true');
+			berryBtn.removeAttribute('onclick');
+            checkFinalCompletion();
+        });
+    }
+
+    // --- 7. THE CIPHER SEQUENCE ---
+    const secretSequence = ['silent', 'roots', 'remember', 'every', 'crown'];
+    let userProgress = [];
+    let isResetting = false;
+
+    document.querySelectorAll('.cipher').forEach(el => {
+        el.addEventListener('click', () => {
+            const isAlreadySolved = body.classList.contains('ciphers-found');
+            
+            if (isAlreadySolved || isResetting) return;
+
+            el.classList.add('active-cipher');
+            const word = el.getAttribute('data-word');
+            
+            if (word === secretSequence[userProgress.length]) {
+                userProgress.push(word);
+
+                if (userProgress.length === secretSequence.length) {
+                    triggerMysticTransition(() => {
+                        body.classList.add('ciphers-found');
+                        localStorage.setItem('ciphers-found', 'true');
+                        updateMysticUI();
+                        checkFinalCompletion();
+                    });
+                }
+            } else {
+                isResetting = true; 
+
+                setTimeout(() => {
+                    document.querySelectorAll('.cipher').forEach(c => {
+                        if (c.classList.contains('active-cipher')) c.classList.add('cipher-blink');
+                    });
+                    
+                    setTimeout(() => {
+                        userProgress = [];
+                        document.querySelectorAll('.cipher').forEach(c => {
+                            c.classList.remove('active-cipher', 'cipher-blink');
+                        });
+                        isResetting = false; 
+                    }, 500);
+                }, 800);
+            }
+        });
+    });
+	
+	// --- 8. THE WARDEN SECRET ---
+    const wardenBtn = document.getElementById('warden-secret');
+    if (wardenBtn) {
+        wardenBtn.addEventListener('click', () => {
+            body.classList.add('warden-found');
+            localStorage.setItem('warden-found', 'true');
+            checkFinalCompletion();
+            requestAnimationFrame(() => {
+                window.scrollTo({
+                    top: document.body.scrollHeight,
+                    behavior: 'smooth'
+                });
+            });
+        });
+    }
+	
+    // --- 9. HALL OF FAME FINAL UNLOCK ---
+    const hofBtn = document.getElementById('hof-access');
+	if (hofBtn) {
+		hofBtn.addEventListener('click', () => {
+			if (localStorage.getItem('secrets-ended') !== 'true') return;
+
+			body.classList.add('hof-unlocked');
+			localStorage.setItem('hof-unlocked', 'true');
+
+			setTimeout(() => {
+				if ($.fn.dataTable.isDataTable('#hall_of_fame')) {
+					$('#hall_of_fame').DataTable()
+						.columns.adjust()
+						.responsive.recalc();
+				}
+			}, 50);
+		});
+	}
+
+    // --- 10. THE EXIT DOOR ---
+	const leaveBtn = document.querySelector('#leave-secrets');
+	if (leaveBtn) {
+		leaveBtn.addEventListener('click', (e) => {
+			e.preventDefault(); 
+			
+			triggerMysticTransition(() => {
+				localStorage.clear();
+				document.body.className = ''; 
+				window.location.href = 'index.html'; 
+			});
+		});
+	}
+});
+
+/* =========================================================================
+   --- 12. NUT & BERRY ---
+   ========================================================================= */
+
+function handleTierClick(event, tier) {
+    const isNutFound = localStorage.getItem('nut-found') === 'true';
+    const isBerryFound = localStorage.getItem('berry-found') === 'true';
+
+    if (tier === 'squirrel' && !isNutFound) {
+        window.location.href = 'cache.html#nut-section';
+    } 
+    else if (tier === 'stag' && !isBerryFound) {
+        window.location.href = 'cache.html#berry-section';
+    } 
+    else {
+        if (typeof openTierModal === "function") {
+            openTierModal(tier);
+        }
+    }
+}
+
+/* =========================================================================
+   --- 13. VISITOR RECOGNITION ---
+   ========================================================================= */
+
+const btnEngrave = document.getElementById('btn-engrave');
+const inputZone = document.getElementById('input-zone');
+const btnConfirm = document.getElementById('btn-confirm');
+
+window.addEventListener('DOMContentLoaded', () => {
+    const savedName = localStorage.getItem('visitor_name');
+    const savedDate = localStorage.getItem('discovery_date');
+    if (savedName && savedDate) {
+        showVisitorRow(savedName, savedDate);
+    }
+});
+
+// 1. Bouton Engrave
+if (btnEngrave && inputZone) {
+    btnEngrave.addEventListener('click', () => {
+        btnEngrave.style.display = 'none';
+        inputZone.style.display = 'block';
+    });
+}
+
+// 2. Confirmation
+if (btnConfirm) {
+    btnConfirm.addEventListener('click', () => {
+        const nameInput = document.getElementById('visitor-name');
+        const name = nameInput ? nameInput.value.trim() : ""; 
+
+        if (name === "") return;
+
+        const date = new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
+        
+        showVisitorRow(name, date);
+
+        localStorage.setItem('visitor_name', name);
+        localStorage.setItem('discovery_date', date);
+    });
+}
+
+function showVisitorRow(name, date) {
+    const visitorTable = document.getElementById('visitor_table');
+    if (visitorTable) {
+        visitorTable.querySelector('.visitor-name').textContent = name;
+        visitorTable.querySelector('.visitor-date').textContent = date;
+        visitorTable.style.setProperty('display', 'table', 'important');
+        
+        setTimeout(() => {
+            if ($.fn.dataTable.isDataTable('#visitor_table')) {
+                $('#visitor_table').DataTable().columns.adjust();
+            }
+        }, 10);
+    }
+
+    const recognitionZone = document.getElementById('visitor-recognition');
+    if (recognitionZone) recognitionZone.style.display = 'none';
+}
+
+/* =========================================================================
+   --- 10. HOMELANDS MAP & PLAYER NETWORK ENGINE ---
+   ========================================================================= */
+
+$(document).ready(function () {
+    const config = window.NETWORK_CONFIG || {};
+    const rawConstellations = window.PLAYER_CONSTELLATIONS || {};
+    const constellations = rawConstellations.players || rawConstellations;
+
+    const colors = config.colors || {};
+    const same_tribe = colors.same_tribe || '#58B05C';
+    const other_tribe = colors.other_tribe || '#7A7347';
+    const unaligned = colors.unaligned || '#555555';
+
+    const GOLDEN_ANGLE = Math.PI * (3 - Math.sqrt(5));
+    const TIER_PHASE = { core: 0, mid: 0.22, outer: 0.47 };
+
+    // --- Fonctions géométriques et visuelles partagées ---
+    const normalizeTribe = t => (!t || t === '-' || t === 'UNALIGNED') ? null : t;
+    const getPlayerTribe = name => normalizeTribe(constellations[name]?.tribe);
+    const tribeRadius = count => Math.max(32, 24 + Math.sqrt(count || 0) * 10);
+    const partnerRadius = games => Math.min(24, 6 + Math.sqrt(Math.max(1, games)) * 3);
+
+    function goToPlayerJourney(playerName) {
+        if (!playerName) return;
+        localStorage.setItem('selectedPlayer', playerName);
+
+        let trendsPage = 'trends.html';
+        const pageName = window.location.pathname.split('/').pop() || '';
+        if (pageName.includes('_')) {
+            const seasonSuffix = pageName.substring(pageName.indexOf('_') + 1).replace(/\.html$/i, '');
+            trendsPage = `trends_${seasonSuffix}.html`;
+        }
+
+        window.location.href = `${trendsPage}?player=${encodeURIComponent(playerName)}#view`;
+    }
+
+    function fidelityColor(fidelity) {
+        const pct = Math.round(Math.max(0, Math.min(1, ((Number(fidelity) || 0) - 35) / 60)) * 100);
+        return `color-mix(in srgb, ${same_tribe} ${pct}%, ${other_tribe})`;
+    }
+
+    function networkColor(centerTribe, nodeTribe, isCenter) {
+        if (isCenter) return centerTribe ? same_tribe : unaligned;
+        if (!nodeTribe) return unaligned;
+        return (centerTribe && nodeTribe === centerTribe) ? same_tribe : other_tribe;
+    }
+
+    function nameJitter(name) {
+        let h = 0;
+        for (let i = 0; i < name.length; i++) h = (Math.imul(h, 31) + name.charCodeAt(i)) >>> 0;
+        return (h % 10000) / 10000;
+    }
+
+    function distToSegment(px, py, x1, y1, x2, y2) {
+        const dx = x2 - x1, dy = y2 - y1, lenSq = dx * dx + dy * dy;
+        if (!lenSq) return Math.hypot(px - x1, py - y1);
+        const t = Math.max(0.05, Math.min(0.95, ((px - x1) * dx + (py - y1) * dy) / lenSq));
+        return Math.hypot(px - (x1 + t * dx), py - (y1 + t * dy));
+    }
+
+    let currentView = 'hm';
+    let activeTribe = null;
+    let selectedPlayer = null;
+
+    function buildGraphData(snapshot, view = currentView, tribe = activeTribe, pnOverride = null) {
+        const nodes = [], links = [];
+
+        if (view === 'pn') {
+            const pNameCenter = pnOverride ? pnOverride.name : selectedPlayer;
+            const data = pnOverride || constellations[selectedPlayer];
+            if (!data) return { nodes, links };
+
+            const centerTribe = normalizeTribe(data.tribe);
+            const games = data.games || 0;
+            const partners = [...(data.partners || [])].sort((a, b) => b[1] - a[1]);
+            const total = partners.length;
+            const maxW = total ? partners[0][1] : 1;
+            const minW = total ? partners[total - 1][1] : 1;
+            const maxPRad = total ? partnerRadius(maxW) : 8;
+            const cRad = 34;
+
+            nodes.push({
+                id: pNameCenter,
+                type: 'ego-center',
+                name: pNameCenter,
+                status: `${games} ${games === 1 ? 'game' : 'games'}`,
+                radius: cRad,
+                color: networkColor(centerTribe, centerTribe, true)
+            });
+
+            const minDist = cRad + maxPRad + 18;
+            const maxDist = Math.min(180, Math.max(minDist + 40, 85 + total * 5));
+            const sMax = Math.sqrt(maxW), sMin = Math.sqrt(minW);
+
+            partners.forEach(([pName, weight, pTribeOverride], idx) => {
+                const id = `partner_${pName}`;
+                const wNorm = sMax > sMin ? (sMax - Math.sqrt(weight)) / (sMax - sMin) : 0;
+                const rNorm = total > 1 ? idx / (total - 1) : 0;
+                const t = sMax > sMin ? (0.6 * wNorm + 0.4 * rNorm) : rNorm;
+                const partnerTribe = pTribeOverride !== undefined ? pTribeOverride : getPlayerTribe(pName);
+                const color = networkColor(centerTribe, partnerTribe, false);
+
+                nodes.push({
+                    id,
+                    type: 'ego-partner',
+                    name: pName,
+                    status: `${weight} ${weight === 1 ? 'game' : 'games'}`,
+                    color,
+                    radius: partnerRadius(weight),
+                    dist: minDist + t * (maxDist - minDist),
+                    angle: idx * GOLDEN_ANGLE - Math.PI / 2
+                });
+                links.push({ source: pNameCenter, target: id, type: 'ego-link', color });
+            });
+            return { nodes, links };
+        }
+
+        if (view === 'hm' || !tribe) {
+            const activeTribes = Object.keys(snapshot || {}).filter(t => snapshot[t]?.length > 0);
+            activeTribes.forEach((t, idx) => {
+                const count = snapshot[t].length;
+                nodes.push({
+                    id: t,
+                    type: 'tribe',
+                    label: t,
+                    count,
+                    radius: tribeRadius(count),
+                    spawnAngle: (2 * Math.PI * idx) / (activeTribes.length || 1) - Math.PI / 2
+                });
+            });
+            for (let i = 0; i < activeTribes.length; i++) {
+                for (let j = i + 1; j < activeTribes.length; j++) {
+                    links.push({ source: activeTribes[i], target: activeTribes[j], type: 'inter-tribe' });
+                }
+            }
+            return { nodes, links };
+        }
+
+        const members = [...(snapshot[tribe] || [])].sort((a, b) => b[2] - a[2]);
+        const count = snapshot[tribe].displayCount || members.length;
+        const maxWeight = members.length ? members[0][2] : 1;
+
+        nodes.push({ id: tribe, type: 'tribe', label: tribe, count, radius: tribeRadius(count) });
+
+        members.forEach(([pName, fidelity, weight, statusOverride], idx) => {
+            const mLen = members.length;
+            const ringKey = idx < Math.max(1, Math.floor(mLen * 0.25)) ? 'core'
+                          : idx < Math.max(2, Math.floor(mLen * 0.65)) ? 'mid' : 'outer';
+            const slot = (2 * Math.PI) / (mLen || 1);
+            const angle = TIER_PHASE[ringKey] * 2 * Math.PI + slot * idx + (nameJitter(pName) - 0.5) * slot * 0.6 - Math.PI / 2;
+            const color = fidelityColor(fidelity);
+            const id = `player_${pName}`;
+
+            nodes.push({
+                id,
+                type: 'player',
+                name: pName,
+                status: statusOverride || `${Math.round(fidelity)}%`,
+                color,
+                radius: 8 + (maxWeight > 0 ? weight / maxWeight : 0) * 14,
+                dist: ringKey === 'core' ? 75 : ringKey === 'mid' ? 120 : 170,
+                angle
+            });
+            links.push({ source: tribe, target: id, type: 'constellation-link', color });
+        });
+
+        return { nodes, links };
+    }
+
+    function mountSvgGraph(svgEl, view, newNodes, newLinks, simInstance, selectedTribeId, isInteractive = true) {
+        if (typeof d3 === 'undefined' || !svgEl) return null;
+
+        const svg = d3.select(svgEl);
+        const width = svgEl.clientWidth || 480;
+        const height = svgEl.clientHeight || 220;
+        const isDesktop = window.innerWidth > 768;
+        const originX = width / 2;
+        const originY = height / 2 + (isInteractive && isDesktop && view === 'hn' ? 16 : 0);
+        const duration = 450, easeFn = d3.easeCubicOut;
+
+        const prevMap = new Map(simInstance ? simInstance.nodes().map(d => [d.id, d]) : []);
+        const topologyChanged = !simInstance ||
+            simInstance._lastView !== view ||
+            newNodes.length !== prevMap.size ||
+            newNodes.some(n => !prevMap.has(n.id));
+
+        const hmRingRadius = newNodes.length >= 3
+            ? Math.min(width, height) * (newNodes.length >= 5 ? 0.35 : 0.30)
+            : 80;
+
+        newNodes.forEach(d => {
+            const prev = prevMap.get(d.id);
+            if (prev) {
+                Object.assign(d, {
+                    x: prev.x, y: prev.y,
+                    vx: (prev.vx || 0) * 0.3, vy: (prev.vy || 0) * 0.3,
+                    currentRadius: prev.currentRadius ?? prev.radius
+                });
+            } else {
+                d.currentRadius = 0;
+                if (d.dist != null) {
+                    d.x = originX + d.dist * Math.cos(d.angle || 0);
+                    d.y = originY + d.dist * Math.sin(d.angle || 0);
+                } else if (d.spawnAngle != null && view === 'hm') {
+                    d.x = originX + hmRingRadius * Math.cos(d.spawnAngle);
+                    d.y = originY + hmRingRadius * Math.sin(d.spawnAngle);
+                } else {
+                    d.x = originX + (Math.random() - 0.5) * 10;
+                    d.y = originY + (Math.random() - 0.5) * 10;
+                }
+            }
+        });
+
+        if (!simInstance) {
+            simInstance = d3.forceSimulation().alphaDecay(0.045).velocityDecay(0.35);
+        }
+        simInstance._lastView = view;
+
+        const drag = d3.drag()
+            .on('start', (e, d) => { if (!e.active) simInstance.alphaTarget(0.3).restart(); d.fx = d.x; d.fy = d.y; })
+            .on('drag', (e, d) => { d.fx = e.x; d.fy = e.y; })
+            .on('end', (e, d) => { if (!e.active) simInstance.alphaTarget(0); d.fx = null; d.fy = null; });
+
+        const link = svg.select('g.links-layer').selectAll('line')
+            .data(newLinks, d => `${d.source.id || d.source}-${d.target.id || d.target}`)
+            .join(
+                enter => enter.append('line').style('opacity', 0),
+                update => update,
+                exit => exit.transition().duration(duration * 0.7).ease(easeFn).style('opacity', 0).remove()
+            )
+            .attr('class', d => `link ${d.type || 'constellation-link'}`)
+            .style('--node-color', d => d.color || null);
+
+        link.transition().duration(duration).ease(easeFn).style('opacity', 1);
+
+        const node = svg.select('g.nodes-layer').selectAll('g.node-group')
+            .data(newNodes, d => d.id)
+            .join(
+                enter => {
+                    const g = enter.append('g')
+                        .style('opacity', 0)
+                        .attr('transform', d => `translate(${d.x},${d.y})`)
+                        .call(drag);
+
+                    g.append('circle').attr('class', 'node-circle').attr('r', 0);
+                    g.append('image').attr('class', 'node-icon').attr('width', 0).attr('height', 0);
+
+                    const countTxt = g.append('text').attr('class', 'count-text');
+                    countTxt.append('tspan').attr('class', 'num-span').attr('x', 0).attr('dy', '0');
+                    countTxt.append('tspan').attr('class', 'lbl-span').attr('x', 0).attr('dy', '1.05em');
+
+                    const playerLbl = g.append('text').attr('class', 'player-label');
+                    playerLbl.append('tspan').attr('class', 'player-name-tspan').attr('x', 0);
+                    playerLbl.append('tspan').attr('class', 'player-status-tspan').attr('x', 0).attr('dy', '1.15em');
+
+                    const overlayLbl = g.append('text').attr('class', 'ego-overlay-label');
+					overlayLbl.append('tspan').attr('class', 'ego-overlay-action').attr('x', 0).attr('dy', '-0.2em').text('Click to see');
+					overlayLbl.append('tspan').attr('class', 'ego-overlay-action').attr('x', 0).attr('dy', '1.2em').text('the Journey');
+                    return g;
+                },
+                update => update,
+                exit => {
+                    exit.select('.node-circle').transition().duration(duration).ease(easeFn).attr('r', 0);
+                    exit.select('.node-icon').transition().duration(duration).ease(easeFn).attr('width', 0).attr('height', 0).attr('x', 0).attr('y', 0);
+                    return exit.transition().duration(duration).ease(easeFn).style('opacity', 0).remove();
+                }
+            )
+            .attr('class', d => `node-group type-${d.type} ${isInteractive && d.type !== 'tribe' ? 'js-double-tap' : ''} ${selectedTribeId === d.id ? 'is-selected' : ''}`)
+            .style('--node-color', d => d.color || null);
+
+        node.transition().duration(duration).ease(easeFn).style('opacity', 1);
+
+        node.each(function (d) {
+            const g = d3.select(this);
+            const startR = d.currentRadius ?? 0;
+
+            g.select('.node-circle').transition().duration(duration).ease(easeFn)
+                .attrTween('r', () => {
+                    const interp = d3.interpolateNumber(startR, d.radius);
+                    return t => (d.currentRadius = interp(t));
+                });
+
+            if (d.type === 'tribe') {
+                const iconPath = config.tribes?.[d.id]?.icon || '';
+                const size = Math.max(22, d.radius * 0.65);
+                g.select('.node-icon')
+                    .attr('href', iconPath)
+                    .transition().duration(duration).ease(easeFn)
+                    .attr('width', size).attr('height', size)
+                    .attr('x', -size / 2).attr('y', -size / 2 - 13);
+                g.select('.count-text')
+                    .transition().duration(duration).ease(easeFn)
+                    .attr('transform', `translate(0, ${size / 2 - 1})`);
+                g.select('.num-span').text(d.count);
+                g.select('.lbl-span').text(d.count === 1 ? ' denizen' : ' denizens');
+            } else {
+                g.select('.player-name-tspan')
+                    .attr('dy', d.type === 'ego-center' ? '-0.2em' : '0.32em')
+                    .text(d.name);
+                g.select('.player-status-tspan')
+                    .attr('dy', '1.15em')
+                    .text(d.status || '');
+            }
+        });
+
+        if (isInteractive) {
+            node.on('click', (event, d) => {
+                if (event.defaultPrevented) return;
+                event.stopPropagation();
+
+                if (d.type === 'tribe' && currentView !== 'pn') {
+                    activeTribe = activeTribe === d.id ? null : d.id;
+                    currentView = activeTribe ? 'hn' : 'hm';
+                    selectedPlayer = null;
+                    clearSearch();
+                    updateView();
+                } else if (d.type === 'player' || d.type === 'ego-partner') {
+                    currentView = 'pn';
+                    activeTribe = null;
+                    setSearchPlayer(d.name);
+                    updateView();
+                } else if (d.type === 'ego-center') {
+                    goToPlayerJourney(d.name);
+                }
+            });
+
+            svg.on('click', () => {
+                if (currentView === 'hn') {
+                    currentView = 'hm';
+                    activeTribe = null;
+                    selectedPlayer = null;
+                    clearSearch();
+                    updateView();
+                }
+            });
+        }
+
+        const linkForce = d3.forceLink().id(d => d.id);
+
+        if (view === 'hm') {
+            const n = newNodes.length;
+            simInstance
+                .force('center', d3.forceCenter(originX, originY).strength(0.1))
+                .force('x', d3.forceX(originX).strength(0.04))
+                .force('y', d3.forceY(originY).strength(0.06))
+                .force('radial', n >= 3 ? d3.forceRadial(hmRingRadius, originX, originY).strength(0.55) : null)
+                .force('link', linkForce.distance(d => (d.source.radius || 40) + (d.target.radius || 40) + 85).strength(n >= 4 ? 0.15 : 0.35))
+                .force('charge', d3.forceManyBody().strength(-420))
+                .force('collision', d3.forceCollide().radius(d => d.radius + 22).iterations(2));
+        } else {
+            const isHub = d => d.type === 'tribe' || d.type === 'ego-center';
+            simInstance
+                .force('center', null)
+                .force('radial', null)
+                .force('link', linkForce.distance(0).strength(0))
+                .force('charge', d3.forceManyBody().strength(d => isHub(d) ? 0 : -25))
+                .force('x', d3.forceX(originX).strength(d => isHub(d) ? 0.3 : 0))
+                .force('y', d3.forceY(originY).strength(d => isHub(d) ? 0.3 : 0))
+                .force('collision', d3.forceCollide().radius(d => d.radius + 6));
+        }
+
+        simInstance.nodes(newNodes);
+        simInstance.force('link').links(newLinks);
+        simInstance.alpha(topologyChanged ? 0.45 : 0.18).restart();
+
+        simInstance.on('tick', () => {
+            if (view !== 'hm') {
+                const hub = newNodes.find(n => n.type === 'tribe' || n.type === 'ego-center');
+                const pull = view === 'pn' ? 0.15 : 0.12;
+                if (hub) {
+                    newNodes.forEach(d => {
+                        if (d === hub || d.dist == null || d.fx != null) return;
+                        const dx = d.x - hub.x, dy = d.y - hub.y;
+                        const r = Math.hypot(dx, dy) || 1e-6;
+                        const k = ((d.dist - r) / r) * pull;
+                        d.x += dx * k;
+                        d.y += dy * k;
+                    });
+                }
+            }
+
+            newNodes.forEach(d => {
+                const r = d.currentRadius ?? d.radius;
+                const pad = r + 6;
+                let topPad = pad;
+
+                if (isInteractive && isDesktop && view === 'hn' && Math.abs(d.x - originX) < 95) {
+                    topPad = Math.max(pad, 68);
+                }
+
+                d.x = Math.max(pad, Math.min(width - pad, d.x));
+                d.y = Math.max(topPad, Math.min(height - pad, d.y));
+            });
+
+            link.each(function (d) {
+                const dx = d.target.x - d.source.x, dy = d.target.y - d.source.y;
+                const dist = Math.hypot(dx, dy) || 1;
+                const rS = d.source.currentRadius ?? d.source.radius ?? 0;
+                const rT = d.target.currentRadius ?? d.target.radius ?? 0;
+                const obstructed = d.type === 'inter-tribe' && newNodes.length >= 3 && newNodes.some(o =>
+                    o.id !== d.source.id && o.id !== d.target.id &&
+                    distToSegment(o.x, o.y, d.source.x, d.source.y, d.target.x, d.target.y) < (o.currentRadius ?? o.radius ?? 32) + 10
+                );
+
+                d3.select(this)
+                    .attr('x1', d.source.x + (dx / dist) * rS)
+                    .attr('y1', d.source.y + (dy / dist) * rS)
+                    .attr('x2', d.target.x - (dx / dist) * rT)
+                    .attr('y2', d.target.y - (dy / dist) * rT)
+                    .attr('stroke-opacity', obstructed ? 0 : null);
+            });
+
+            node.attr('transform', d => `translate(${d.x},${d.y})`);
+        });
+
+        return simInstance;
+    }
+
+    // --- Rendu des diagrammes de Homelands.html ---
+    let guideSims = {};
+
+    function renderGuideGraphs() {
+        if (typeof d3 === 'undefined') return;
+        const tribeKeys = Object.keys(config.tribes || {});
+        const t1 = tribeKeys[6] || tribeKeys[0] || 'sword';
+        const t2 = tribeKeys[3] || tribeKeys[1] || 'tea';
+
+        if (document.getElementById('guideMapHm')) {
+            const hmData = buildGraphData({ [t1]: Array(9), [t2]: Array(6) }, 'hm', null);
+            guideSims.hm = mountSvgGraph(document.getElementById('guideMapHm'), 'hm', hmData.nodes, hmData.links, guideSims.hm, null, false);
+        }
+
+        if (document.getElementById('guideMapHn')) {
+            const hnMembers = [
+                ['Partisan', 95, 5],
+                ['Squire', 65, 8],
+                ['Friend', 35, 12]
+            ];
+            hnMembers.displayCount = 9;
+            const hnData = buildGraphData({ [t1]: hnMembers }, 'hn', t1);
+            guideSims.hn = mountSvgGraph(document.getElementById('guideMapHn'), 'hn', hnData.nodes, hnData.links, guideSims.hn, t1, false);
+        }
+
+        if (document.getElementById('guideMapPn')) {
+            const pnData = buildGraphData(null, 'pn', null, {
+                name: 'Denizen',
+                tribe: t1,
+                games: 13,
+                partners: [
+                    ['Same', 7, t1],
+                    ['Other', 2, t2],
+                    ['Unaligned', 4, null]
+                ]
+            });
+            guideSims.pn = mountSvgGraph(document.getElementById('guideMapPn'), 'pn', pnData.nodes, pnData.links, guideSims.pn, null, false);
+        }
+    }
+
+    // Activation automatique sur homelands.html
+    if ($('#guideMapHm').length > 0) {
+        renderGuideGraphs();
+        $(window).on('resize', () => renderGuideGraphs());
+    }
+
+    // =========================================================================
+    // MOTEUR DE CARTE INTERACTIVE (network.html uniquement)
+    // =========================================================================
+    const dates = window.NETWORK_DATES;
+    const snapshots = window.NETWORK_SNAPSHOTS;
+    if (!dates?.length || !snapshots || $('#networkWrapper').length === 0) return;
+
+    const $wrapper = $('#networkWrapper');
+    const $searchInput = $('#playerName');
+    const $datePicker = $('#datePicker').attr({ min: dates[0], max: dates[dates.length - 1] });
+    const $prevBtn = $('#prevDateBtn');
+    const $nextBtn = $('#nextDateBtn');
+    const $earliestBtn = $('#earliestDateBtn');
+    const $latestBtn = $('#latestDateBtn');
+    const $headerTitle = $('#mapHeaderTitle');
+    const $legend = $('#mapLegend');
+    const $ledger = $('#playerLedger');
+
+    $earliestBtn.html('&laquo;');
+    $prevBtn.html('&lsaquo;');
+    $nextBtn.html('&rsaquo;');
+    $latestBtn.html('&raquo;');
+
+    let currentIndex = dates.length - 1;
+    let savedHmIndex = dates.length - 1;
+    let simulation = null;
+    let isInternalSearch = false;
+
+    function formatShortDate(dateStr) {
+        const d = new Date(`${dateStr}T00:00:00`);
+        return isNaN(d) ? dateStr : d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    }
+
+    function setSearchPlayer(name) {
+        isInternalSearch = true;
+        $searchInput.val(name).trigger('change');
+        isInternalSearch = false;
+    }
+
+    function clearSearch() {
+        isInternalSearch = true;
+        $searchInput.val('');
+        const dbBtn = document.getElementById('root-db-btn');
+        if (dbBtn) {
+            dbBtn.href = '#';
+            dbBtn.classList.add('disabled');
+            dbBtn.style.opacity = '0.4';
+            dbBtn.style.pointerEvents = 'none';
+        }
+        isInternalSearch = false;
+    }
+
+    function findPlayer(query) {
+        const q = (query || '').trim();
+        if (!q) return null;
+        if (constellations[q]) return { name: q, data: constellations[q] };
+        const low = q.toLowerCase();
+        const key = Object.keys(constellations).find(k => k.toLowerCase() === low);
+        return key ? { name: key, data: constellations[key] } : null;
+    }
+
+    function findTribe(query) {
+        const q = (query || '').trim().toLowerCase();
+        if (!q) return null;
+        for (const snap of Object.values(snapshots)) {
+            const match = Object.keys(snap).find(k => k.toLowerCase() === q);
+            if (match) return match;
+        }
+        return null;
+    }
+
+    function syncUrl() {
+        let query = '';
+        if (currentView === 'pn') {
+            query = '?tab=circle';
+        } else if (currentView === 'hn' && activeTribe) {
+            query = `?clearing=${encodeURIComponent(activeTribe.toLowerCase())}`;
+        }
+
+        const fullPath = window.location.pathname + query + '#view';
+
+        if (history.replaceState) {
+            history.replaceState(null, null, fullPath);
+        }
+
+        $('.season-btn').each(function () {
+            const baseHref = ($(this).attr('href') || '').split('?')[0].split('#')[0];
+            if (baseHref) $(this).attr('href', baseHref + query + '#view');
+        });
+    }
+
+    function getTribeLifespan(tribe) {
+        if (!tribe) return null;
+        const activeIndices = [];
+        const segments = [];
+        let currentSeg = null;
+        let peakIndex = -1, peakCount = 0;
+
+        dates.forEach((d, idx) => {
+            const count = snapshots[d]?.[tribe]?.length || 0;
+            if (count > 0) {
+                activeIndices.push(idx);
+                if (count > peakCount) {
+                    peakCount = count;
+                    peakIndex = idx;
+                }
+                if (currentSeg) {
+                    currentSeg.endIndex = idx;
+                } else {
+                    currentSeg = { startIndex: idx, endIndex: idx };
+                    segments.push(currentSeg);
+                }
+            } else {
+                currentSeg = null;
+            }
+        });
+
+        if (!activeIndices.length) return null;
+
+        const milestones = [];
+
+        segments.forEach((seg, segIdx) => {
+            milestones.push({
+                idx: seg.startIndex,
+                label: `${segIdx === 0 ? 'Founded' : 'Revived'} ${formatShortDate(dates[seg.startIndex])}`,
+                title: segIdx === 0 ? 'Jump to founding date' : 'Jump to revival date'
+            });
+
+            if (peakIndex > seg.startIndex && peakIndex < seg.endIndex) {
+                milestones.push({
+                    idx: peakIndex,
+                    label: `Culminated ${formatShortDate(dates[peakIndex])}`,
+                    title: `Jump to peak membership: ${peakCount} denizens`
+                });
+            }
+
+            if (seg.endIndex < dates.length - 1) {
+                const dissolvedDate = dates[seg.endIndex + 1] || dates[seg.endIndex];
+                milestones.push({
+                    idx: seg.endIndex,
+                    label: `Dissolved ${formatShortDate(dissolvedDate)}`,
+                    title: 'Jump to final active day'
+                });
+            }
+        });
+
+        return {
+            activeIndices,
+            firstIndex: activeIndices[0],
+            lastIndex: activeIndices[activeIndices.length - 1],
+            milestones
+        };
+    }
+
+    function getSeasonChronicle(refIndex = currentIndex) {
+        const allTribes = new Set();
+        dates.forEach(d => {
+            Object.keys(snapshots[d] || {}).forEach(t => {
+                if (snapshots[d][t]?.length > 0) allTribes.add(t);
+            });
+        });
+
+        const events = [];
+        allTribes.forEach(tribe => {
+            const life = getTribeLifespan(tribe);
+            if (!life || !life.milestones.length) return;
+
+            // Un jalon Dissolved (idx = dernier jour actif) ne prend effet qu'au jour suivant (refIndex > m.idx)
+            const validMilestones = life.milestones.filter(m => {
+                if (m.label.startsWith('Culminated')) return false;
+                if (m.label.startsWith('Dissolved')) return refIndex > m.idx;
+                return m.idx <= refIndex;
+            });
+            if (!validMilestones.length) return;
+
+            const latestMilestone = validMilestones[validMilestones.length - 1];
+            const isAliveAtRef = (snapshots[dates[refIndex]]?.[tribe]?.length || 0) > 0;
+
+            events.push({
+                tribe,
+                foundingIdx: life.firstIndex,
+                idx: latestMilestone.idx,
+                label: latestMilestone.label, // ex: "Founded Oct 12", "Revived Nov 4", "Dissolved Jan 27"
+                isDissolved: !isAliveAtRef,
+                icon: config.tribes?.[tribe]?.icon
+            });
+        });
+
+        // Ordre d'apparition dans la saison
+        return events.sort((a, b) => a.foundingIdx - b.foundingIdx || a.tribe.localeCompare(b.tribe));
+    }
+
+    function getPlayerHistory(playerName) {
+        const segments = [];
+        let active = null;
+
+        dates.forEach((dateStr, idx) => {
+            const snap = snapshots[dateStr] || {};
+            const rawTribe = Object.keys(snap).find(t => snap[t]?.some(m => m[0] === playerName));
+            const tribe = normalizeTribe(rawTribe);
+
+            if (tribe) {
+                const prev = segments[segments.length - 1];
+                if (active?.tribe === tribe) {
+                    active.endDate = dateStr;
+                    active.endIndex = idx;
+                } else if (!active && prev?.tribe === tribe && idx - prev.endIndex <= 3) {
+                    active = segments.pop();
+                    active.endDate = dateStr;
+                    active.endIndex = idx;
+                } else {
+                    if (active) segments.push(active);
+                    active = { tribe, startDate: dateStr, startIndex: idx, endDate: dateStr, endIndex: idx };
+                }
+            } else if (active) {
+                segments.push(active);
+                active = null;
+            }
+        });
+        if (active) segments.push(active);
+
+        const currentTribe = getPlayerTribe(playerName);
+        return segments.reverse().map((seg, i) => ({
+            ...seg,
+            isCurrent: i === 0 && seg.endIndex === dates.length - 1 && seg.tribe === currentTribe
+        }));
+    }
+
+    function badgeButtonHtml({ tribe, dateIndex, label, isCurrent, title, icon }) {
+        const iconImg = icon ? `<img src="${icon}" alt="${tribe}" class="allegiance-icon">` : '';
+        return `
+            <button type="button" class="allegiance-badge ${isCurrent ? 'is-current' : 'is-past'}"
+                    data-tribe="${tribe}" data-date-index="${dateIndex}" title="${title}">
+                ${iconImg}<span class="allegiance-date">${label}</span>
+            </button>`;
+    }
+
+    function renderLegend(title, items) {
+        const listHtml = items.map(([color, text]) =>
+            `<div class="legend-item"><span class="legend-dot" style="background: ${color}"></span><span>${text}</span></div>`
+        ).join('');
+        $legend.html(`<div class="hud-title">${title}</div>${listHtml}`);
+    }
+
+    function renderChronicleToolbar() {
+        let $chronicle = $('#chronicleToolbar');
+        if (!$chronicle.length) {
+            $chronicle = $('<div id="chronicleToolbar" class="chronicle-toolbar"></div>').insertAfter('#tribeMapContainer');
+        }
+
+        if (currentView === 'pn') {
+            $chronicle.hide();
+            return;
+        }
+
+        // En vue HN, on garde la référence temporelle de la carte HM pour ne pas faire disparaître les autres boutons
+        const refIdx = currentView === 'hn' ? (savedHmIndex ?? currentIndex) : currentIndex;
+        const seasonEvents = getSeasonChronicle(refIdx);
+
+        if (!seasonEvents.length) {
+            $chronicle.empty().hide();
+            return;
+        }
+
+        const iconButtonsHtml = seasonEvents.map(ev => {
+            const iconUrl = ev.icon || config.tribes?.[ev.tribe]?.icon || '';
+            const isSelected = currentView === 'hn' && activeTribe === ev.tribe;
+            const stateClass = ev.isDissolved ? 'is-dissolved' : 'is-active';
+
+            return `
+                <button type="button" 
+                        class="chronicle-icon-btn ${stateClass} ${isSelected ? 'is-selected' : ''}"
+                        data-tribe="${ev.tribe}" 
+                        data-date-index="${ev.idx}">
+                    <img src="${iconUrl}" alt="${ev.tribe}">
+                    <span class="tooltip-text">${ev.label}</span>
+                </button>`;
+        }).join('');
+
+        $chronicle.html(iconButtonsHtml).show();
+    }
+
+    function updateChrome(snapshot) {
+        $wrapper.attr('data-view', currentView);
+
+        // Toujours mettre à jour la barre d'icônes avant les returns de PN et HN
+        renderChronicleToolbar();
+
+        if (currentView === 'pn' && selectedPlayer) {
+            $headerTitle.empty();
+            renderLegend('Companions', [
+                [same_tribe, 'Same homeland'],
+                [other_tribe, 'Other homeland'],
+                [unaligned, 'Unaligned']
+            ]);
+
+            const history = getPlayerHistory(selectedPlayer);
+            const badges = !history.length
+                ? '<div class="allegiance-empty">Unaligned</div>'
+                : history.map(s => {
+                    const start = formatShortDate(s.startDate), end = formatShortDate(s.endDate);
+                    const label = s.isCurrent ? `since ${start}` : (s.startDate === s.endDate ? start : `${start} &ndash; ${end}`);
+                    return badgeButtonHtml({
+                        tribe: s.tribe,
+                        dateIndex: s.startIndex,
+                        label,
+                        isCurrent: s.isCurrent,
+                        title: `View ${s.tribe} Clearing ${start}`,
+                        icon: config.tribes?.[s.tribe]?.icon
+                    });
+                }).join('');
+            $ledger.html(`<div class="hud-title">Allegiances</div>${badges}`);
+            return;
+        }
+
+        if (currentView === 'hn' && activeTribe) {
+            renderLegend('Fidelity', [
+                [same_tribe, 'Partisan'],
+                [`color-mix(in srgb, ${same_tribe} 50%, ${other_tribe})`, 'Squire'],
+                [other_tribe, 'Friend']
+            ]);
+
+            const members = [...(snapshot?.[activeTribe] || [])].sort((a, b) => b[2] - a[2]);
+            const heraldName = members[0]?.[0] || null;
+            if (heraldName) {
+                const frogIcon = (typeof CONFIG !== 'undefined' && CONFIG.icons?.frog) ? CONFIG.icons.frog : '';
+                const iconImg = frogIcon ? `<img src="${frogIcon}" alt="" class="herald-icon">` : '';
+                $headerTitle.html(`
+                    <div class="hud-title">Herald</div>
+                    <button type="button" class="herald-link" data-player="${heraldName}" title="View ${heraldName}'s Circle">
+                        ${iconImg}<span>${heraldName}</span>
+                    </button>
+                `);
+            } else {
+                $headerTitle.empty();
+            }
+
+            const life = getTribeLifespan(activeTribe);
+            if (!life) return $ledger.empty();
+
+            const badges = life.milestones.map(m => badgeButtonHtml({
+                tribe: activeTribe,
+                dateIndex: m.idx,
+                label: m.label,
+                isCurrent: currentIndex === m.idx,
+                title: m.title
+            })).join('');
+            $ledger.html(`<div class="hud-title">Chronicle</div>${badges}`);
+            return;
+        }
+
+        $headerTitle.empty();
+        $legend.empty();
+        $ledger.empty();
+    }
+
+    function renderGraph(snapshot) {
+        updateChrome(snapshot);
+        const { nodes, links } = buildGraphData(snapshot);
+        simulation = mountSvgGraph(document.getElementById('tribeMapSvg'), currentView, nodes, links, simulation, activeTribe, true);
+    }
+
+    function updateView() {
+        const activeTab = currentView === 'pn' ? 'circle' : 'map';
+        $('.homelands-tab-link[data-tab]').removeClass('active');
+        $(`.homelands-tab-link[data-tab="${activeTab}"]`).addClass('active');
+
+        $wrapper.show();
+        $('.season-selector-group, .footer-table').show();
+
+        if (currentView === 'pn') {
+            const found = findPlayer($searchInput.val());
+            selectedPlayer = found ? found.name : null;
+
+            if (!selectedPlayer) {
+                simulation?.stop();
+                $wrapper.hide();
+                syncUrl();
+                return;
+            }
+
+            $wrapper.show();
+            renderGraph(snapshots[dates[dates.length - 1]]);
+            syncUrl();
+            return;
+        }
+
+        $wrapper.show();
+        let minIdx = 0, maxIdx = dates.length - 1;
+
+        if (currentView === 'hn' && activeTribe) {
+            const life = getTribeLifespan(activeTribe);
+            if (!life) {
+                currentView = 'hm';
+                activeTribe = null;
+            } else {
+                minIdx = life.firstIndex;
+                maxIdx = life.lastIndex;
+                if (!life.activeIndices.includes(currentIndex)) {
+                    currentIndex = life.activeIndices.reduce((a, b) =>
+                        Math.abs(b - currentIndex) < Math.abs(a - currentIndex) ? b : a
+                    );
+                }
+            }
+        }
+
+        currentIndex = Math.max(minIdx, Math.min(maxIdx, currentIndex));
+        if (currentView === 'hm') {
+            savedHmIndex = currentIndex;
+        }
+
+        const selectedDate = dates[currentIndex];
+
+        $datePicker.attr({ min: dates[minIdx], max: dates[maxIdx] }).val(selectedDate);
+        $prevBtn.add($earliestBtn).prop('disabled', currentIndex <= minIdx);
+        $nextBtn.add($latestBtn).prop('disabled', currentIndex >= maxIdx);
+
+        if (snapshots[selectedDate]) renderGraph(snapshots[selectedDate]);
+        syncUrl();
+    }
+
+    function stepDate(dir) {
+        const life = currentView === 'hn' ? getTribeLifespan(activeTribe) : null;
+        if (life) {
+            const pos = life.activeIndices.indexOf(currentIndex);
+            if (pos !== -1 && life.activeIndices[pos + dir] !== undefined) {
+                currentIndex = life.activeIndices[pos + dir];
+                updateView();
+            }
+            return;
+        }
+        currentIndex += dir;
+        updateView();
+    }
+
+    // Clic sur les boutons icônes de la chronique sous la carte (HM <-> HN)
+    $(document).on('click', '.chronicle-icon-btn', function (e) {
+        e.stopPropagation();
+        const tribe = $(this).data('tribe');
+        const idx = parseInt($(this).data('date-index'), 10);
+        if (!tribe) return;
+
+        if (currentView === 'hn' && activeTribe === tribe) {
+            // Re-cliquer sur la tribu active ramène en vue HM à la date de départ
+            currentView = 'hm';
+            activeTribe = null;
+            currentIndex = savedHmIndex;
+        } else {
+            if (currentView === 'hm') savedHmIndex = currentIndex;
+            currentView = 'hn';
+            activeTribe = tribe;
+            selectedPlayer = null;
+            if (!isNaN(idx)) currentIndex = idx;
+        }
+        clearSearch();
+        updateView();
+    });
+
+    // Clic sur les badges dans le HUD (PN -> HN ou jalons HN)
+    $ledger.on('click', '.allegiance-badge', function (e) {
+        e.stopPropagation();
+        const tribe = $(this).data('tribe');
+        const idx = parseInt($(this).data('date-index'), 10);
+        if (!tribe || isNaN(idx)) return;
+        currentView = 'hn';
+        activeTribe = tribe;
+        selectedPlayer = null;
+        currentIndex = idx;
+        clearSearch();
+        updateView();
+    });
+
+    // Clic sur le Herald dans le HUD (HN -> PN)
+    $headerTitle.on('click', '.herald-link', function (e) {
+        e.stopPropagation();
+        const player = $(this).data('player');
+        if (!player) return;
+        currentView = 'pn';
+        activeTribe = null;
+        setSearchPlayer(player);
+        updateView();
+    });
+
+    // Barre de recherche (saisie -> PN, vidage -> retour HM)
+    $searchInput.on('input change', function () {
+        if (isInternalSearch) return;
+        const val = $(this).val().trim();
+        if (!val) {
+            currentView = 'hm';
+            activeTribe = null;
+            selectedPlayer = null;
+            currentIndex = savedHmIndex;
+        } else {
+            currentView = 'pn';
+            activeTribe = null;
+        }
+        updateView();
+    });
+
+    // Navigation par onglets Homelands
+    $(document).on('click', '.homelands-tab-link[data-tab]', function (e) {
+        if ($('#networkWrapper').length === 0) return;
+
+        const tab = $(this).data('tab');
+        if (tab === 'leaderboard') return;
+        e.preventDefault();
+
+        if (tab === 'circle') {
+            currentView = 'pn';
+            activeTribe = null;
+            const targetPlayer = selectedPlayer || $searchInput.val().trim() || localStorage.getItem('selectedPlayer') || '';
+            if (targetPlayer) setSearchPlayer(targetPlayer);
+        } else {
+            currentView = 'hm';
+            activeTribe = null;
+            selectedPlayer = null;
+            currentIndex = savedHmIndex;
+            clearSearch();
+        }
+        updateView();
+    });
+
+    $prevBtn.on('click', () => stepDate(-1));
+    $nextBtn.on('click', () => stepDate(1));
+    $earliestBtn.on('click', () => {
+        const life = currentView === 'hn' ? getTribeLifespan(activeTribe) : null;
+        currentIndex = life ? life.firstIndex : 0;
+        updateView();
+    });
+    $latestBtn.on('click', () => {
+        const life = currentView === 'hn' ? getTribeLifespan(activeTribe) : null;
+        currentIndex = life ? life.lastIndex : dates.length - 1;
+        updateView();
+    });
+
+    $datePicker.on('change', function () {
+        const idx = dates.findIndex(d => d >= $(this).val());
+        currentIndex = idx !== -1 ? idx : dates.length - 1;
+        updateView();
+    });
+
+    $(window).on('resize', () => {
+        if ($('#networkWrapper').length > 0) updateView();
+    });
+
+    // Détection de l'état initial au chargement
+    const urlParams = new URLSearchParams(window.location.search);
+    const clearingParam = urlParams.get('clearing') || urlParams.get('tribe');
+    const playerParam = urlParams.get('player');
+    const tabParam = urlParams.get('tab');
+    const hash = window.location.hash.replace('#', '');
+
+    if (clearingParam) {
+        const matched = findTribe(clearingParam);
+        currentView = matched ? 'hn' : 'hm';
+        activeTribe = matched;
+        clearSearch();
+    } else if (tabParam === 'circle' || hash === 'circle' || playerParam) {
+        currentView = 'pn';
+        const initialPlayer = (playerParam || $searchInput.val() || localStorage.getItem('selectedPlayer') || '').trim();
+        if (initialPlayer) setSearchPlayer(initialPlayer);
+    } else {
+        currentView = 'hm';
+        clearSearch();
+    }
+
+    updateView();
+    setTimeout(() => { if (currentView !== 'pn') clearSearch(); }, 60);
+});
