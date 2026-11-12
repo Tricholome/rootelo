@@ -786,11 +786,11 @@ body.homelands-mode .banner-homelands {
 .banner-homelands .slot-mouse img  { animation-delay: 9s; }
 
 @media (hover: hover) {
-    .banner-homelands a.tooltip-link:hover .base-icon { animation: none; opacity: 0; }
-    .banner-homelands a.tooltip-link:hover .frog-icon { animation: none; opacity: 1; }
+    .banner-homelands a.tooltip-link:hover .base-icon { opacity: 0 !important; }
+    .banner-homelands a.tooltip-link:hover .frog-icon { opacity: 1 !important; }
 }
-.banner-homelands a.tooltip-link.expanded .base-icon { animation: none; opacity: 0; }
-.banner-homelands a.tooltip-link.expanded .frog-icon { animation: none; opacity: 1; }
+.banner-homelands a.tooltip-link.expanded .base-icon { opacity: 0 !important; }
+.banner-homelands a.tooltip-link.expanded .frog-icon { opacity: 1 !important; }
 
 @keyframes cycleFrog {
     0%, 100% { opacity: 0; }
