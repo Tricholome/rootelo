@@ -2020,19 +2020,18 @@ table.dataTable tbody tr.loser td {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 4px;
 }
 
 .herald-link {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: 4px;
     background: none;
     border: none;
     padding: 0;
     color: var(--color-frog);
     font-family: var(--font-ui);
-    font-size: var(--size-xs);
+    font-size: var(--size-sm);
     font-weight: var(--medium);
     cursor: pointer;
     transition: opacity 0.2s ease, transform 0.15s ease;
@@ -2044,11 +2043,10 @@ table.dataTable tbody tr.loser td {
 }
 
 .herald-icon {
-    width: 20px;
-    height: 20px;
+    width: 30px;
+    height: 30px;
     flex-shrink: 0;
     object-fit: contain;
-    filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.4));
 }
 
 .allegiance-ledger {
