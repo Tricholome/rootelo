@@ -103,7 +103,7 @@
       "CLUB":     { "icon": "assets/items/club.png" }
     },
     "colors": {
-      "same_tribe":  "var(--main-color)",
+      "same_tribe":  "#918F08",
       "other_tribe": "#B8681A",
       "unaligned":   "#4a5568"
     }
