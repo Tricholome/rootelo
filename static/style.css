@@ -754,6 +754,10 @@ body.homelands-mode .nav-homelands {
 }
 
 /* Homelands Banner State & Slot Alignment */
+.tier-frog {
+    color: var(--color-frog) !important;
+}
+
 .banner-homelands {
     display: none !important;
 }
@@ -768,71 +772,69 @@ body.homelands-mode .banner-homelands {
 }
 
 .banner-homelands .homeland-slot {
-    position: relative;
-    width: clamp(55px, 7vw, 85px);
-    height: clamp(55px, 7vw, 85px);
-    margin: 0 -5px;
     pointer-events: none;
-    user-select: none;
-}
-
-.banner-homelands .homeland-slot img {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.6));
-    will-change: opacity, transform;
-}
-
-@media (max-width: 768px) and (orientation: portrait) {
-    .banner-homelands .homeland-slot {
-        margin: 0;
-    }
-}
-
-/* Homelands Banner Icon Cycle */
-.banner-homelands .base-icon {
-    animation: cycleBase 12s infinite ease-in-out;
+    animation: cycleSlot 12s infinite;
 }
 
 .banner-homelands .frog-icon {
+    position: absolute;
+    top: 0;
+    left: 0;
     opacity: 0;
     animation: cycleFrog 12s infinite ease-in-out;
 }
 
-.banner-homelands .slot-bird .base-icon,
-.banner-homelands .slot-bird .frog-icon {
+.banner-homelands .base-icon {
+    animation: cycleBase 12s infinite ease-in-out;
+}
+
+@media (hover: hover) {
+    .banner-homelands .homeland-slot:hover,
+    .banner-homelands .homeland-slot:hover img {
+        animation-play-state: paused;
+    }
+}
+.banner-homelands .homeland-slot.expanded,
+.banner-homelands .homeland-slot.expanded img {
+    animation-play-state: paused;
+}
+
+.banner-homelands .slot-bird,
+.banner-homelands .slot-bird img {
     animation-delay: 0s;
 }
 
-.banner-homelands .slot-fox .base-icon,
-.banner-homelands .slot-fox .frog-icon {
+.banner-homelands .slot-fox,
+.banner-homelands .slot-fox img {
     animation-delay: 3s;
 }
 
-.banner-homelands .slot-rabbit .base-icon,
-.banner-homelands .slot-rabbit .frog-icon {
+.banner-homelands .slot-rabbit,
+.banner-homelands .slot-rabbit img {
     animation-delay: 6s;
 }
 
-.banner-homelands .slot-mouse .base-icon,
-.banner-homelands .slot-mouse .frog-icon {
+.banner-homelands .slot-mouse,
+.banner-homelands .slot-mouse img {
     animation-delay: 9s;
 }
 
+@keyframes cycleSlot {
+    0%, 2.9%    { pointer-events: none; }
+    3%, 18%     { pointer-events: auto; }
+    22%, 100%   { pointer-events: none; }
+}
+
 @keyframes cycleFrog {
-    0%, 100% { opacity: 0; transform: scale(0.92); }
-    3%, 18%  { opacity: 1; transform: scale(1); }
-    22%      { opacity: 0; transform: scale(0.92); }
+    0%, 100% { opacity: 0; }
+    3%, 18%  { opacity: 1; }
+    22%      { opacity: 0; }
 }
 
 @keyframes cycleBase {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    3%, 18%  { opacity: 0; transform: scale(0.92); }
-    22%      { opacity: 1; transform: scale(1); }
+    0%, 100% { opacity: 1; }
+    3%, 18%  { opacity: 0; }
+    22%      { opacity: 1; }
 }
 
 /* -------------------------------------------------------------------------
