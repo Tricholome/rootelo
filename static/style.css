@@ -1683,9 +1683,9 @@ table.dataTable tbody tr.loser td {
 
 .modal-supporter {
     position: absolute;
-    top: 60px;
-    width: clamp(60px, 9vw, 120px);
-    height: clamp(60px, 9vw, 120px);
+    top: 80px;
+    width: clamp(60px, 7vw, 80px);
+    height: clamp(60px, 7vw, 80px);
     display: none;
     z-index: 10;
     cursor: pointer;
@@ -1700,12 +1700,12 @@ table.dataTable tbody tr.loser td {
 }
 
 .modal-supporter.left {
-    left: clamp(0px, 3vw, 50px);
+    left: clamp(0px, 6vw, 100px);
     transform: translateY(-50%);
 }
 
 .modal-supporter.right {
-    right: clamp(0px, 3vw, 50px);
+    right: clamp(0px, 6vw, 100px);
     transform: translateY(-50%) scaleX(-1);
 }
 
