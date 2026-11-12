@@ -160,7 +160,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		modalElo.textContent = playerName || text.elo || '';
 		modalElo.style.color = color;
 		modalIcon.src = icon;
-		modalSubtitle.textContent = text.subtitle || '';
+		modalSubtitle.textContent = (tier === 'frog' && playerName) ? 'Homeland Herald' : (text.subtitle || '');
 		modalText.textContent = text.desc;
 
 		const isFrog = (tier === 'frog' && clearing);
