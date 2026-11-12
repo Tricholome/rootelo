@@ -124,6 +124,7 @@ a.insta:hover {
 .tier-squirrel { color: var(--color-squirrel) !important; }
 .tier-stag     { color: var(--color-stag) !important; }
 .tier-bear     { color: var(--color-bear) !important; }
+.tier-frog     { color: var(--color-frog) !important; }
 
 table.dataTable tbody tr[data-tier="bird"]     { background-color: var(--color-bird-bg) !important; border-left: 4px solid var(--color-bird) !important; }
 table.dataTable tbody tr[data-tier="fox"]      { background-color: var(--color-fox-bg) !important; border-left: 4px solid var(--color-fox) !important; }
@@ -753,11 +754,7 @@ body.homelands-mode .nav-homelands {
     .tooltip-text strong { display: block; margin-bottom: 2px; }
 }
 
-/* Homelands Banner State & Slot Alignment */
-.tier-frog {
-    color: var(--color-frog) !important;
-}
-
+/* Homelands Banner State & Icon Cycle */
 .banner-homelands {
     display: none !important;
 }
@@ -771,68 +768,40 @@ body.homelands-mode .banner-homelands {
     animation: fadeIn 0.25s ease;
 }
 
-.banner-homelands .homeland-slot {
-    position: relative;
-    width: clamp(55px, 7vw, 85px);
-    height: clamp(55px, 7vw, 85px);
-    margin: 0 -5px;
-    user-select: none;
-    pointer-events: none;
-}
-
-.banner-homelands .homeland-slot img {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.6));
-    will-change: opacity;
-}
-
 .banner-homelands .base-icon {
-    pointer-events: none;
     animation: cycleBase 12s infinite ease-in-out;
 }
 
 .banner-homelands .frog-icon {
+    position: absolute !important;
+    top: 0;
+    left: 0;
     opacity: 0;
-    visibility: hidden;
-    pointer-events: auto;
-    cursor: pointer;
     animation: cycleFrog 12s infinite ease-in-out;
 }
 
-.banner-homelands .slot-bird .base-icon,
-.banner-homelands .slot-bird .frog-icon   { animation-delay: 0s; }
+.banner-homelands .slot-bird img   { animation-delay: 0s; }
+.banner-homelands .slot-fox img    { animation-delay: 3s; }
+.banner-homelands .slot-rabbit img { animation-delay: 6s; }
+.banner-homelands .slot-mouse img  { animation-delay: 9s; }
 
-.banner-homelands .slot-fox .base-icon,
-.banner-homelands .slot-fox .frog-icon    { animation-delay: 3s; }
-
-.banner-homelands .slot-rabbit .base-icon,
-.banner-homelands .slot-rabbit .frog-icon { animation-delay: 6s; }
-
-.banner-homelands .slot-mouse .base-icon,
-.banner-homelands .slot-mouse .frog-icon  { animation-delay: 9s; }
-
-.banner-homelands .homeland-slot:hover,
-.banner-homelands .homeland-slot:hover *,
-.banner-homelands .homeland-slot.expanded,
-.banner-homelands .homeland-slot.expanded * {
-    animation-play-state: paused !important;
+@media (hover: hover) {
+    .banner-homelands a.tooltip-link:hover .base-icon { animation: none; opacity: 0; }
+    .banner-homelands a.tooltip-link:hover .frog-icon { animation: none; opacity: 1; }
 }
+.banner-homelands a.tooltip-link.expanded .base-icon { animation: none; opacity: 0; }
+.banner-homelands a.tooltip-link.expanded .frog-icon { animation: none; opacity: 1; }
 
 @keyframes cycleFrog {
-    0%, 2.9%    { opacity: 0; visibility: hidden; }
-    3%, 18%     { opacity: 1; visibility: visible; }
-    22%, 100%   { opacity: 0; visibility: hidden; }
+    0%, 100% { opacity: 0; }
+    3%, 18%  { opacity: 1; }
+    22%      { opacity: 0; }
 }
 
 @keyframes cycleBase {
-    0%, 2.9%    { opacity: 1; }
-    3%, 18%     { opacity: 0; }
-    22%, 100%   { opacity: 1; }
+    0%, 100% { opacity: 1; }
+    3%, 18%  { opacity: 0; }
+    22%      { opacity: 1; }
 }
 
 /* -------------------------------------------------------------------------
