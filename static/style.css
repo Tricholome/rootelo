@@ -2076,6 +2076,23 @@ table.dataTable tbody tr.loser td {
     transition: border-color 0.2s, background-color 0.2s;
 }
 
+.date-controls .btn {
+    position: relative;
+}
+
+.date-controls .btn .tooltip-text {
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%) translateY(4px);
+    pointer-events: none;
+    z-index: 100;
+}
+
+.date-controls .btn:not(:disabled):hover .tooltip-text {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
 .date-picker:is(:focus, :hover) {
     border-color: var(--main-color);
     background-color: var(--bg-hover);
