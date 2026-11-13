@@ -1315,10 +1315,10 @@ $(document).ready(function () {
     const $wrapper = $('#networkWrapper');
     const $searchInput = $('#playerName');
     const $datePicker = $('#datePicker').attr({ min: dates[0], max: dates[dates.length - 1] });
-    const $prevBtn = $('#prevDateBtn').html('&lsaquo;');
-    const $nextBtn = $('#nextDateBtn').html('&rsaquo;');
-    const $earliestBtn = $('#earliestDateBtn').html('&laquo;');
-    const $latestBtn = $('#latestDateBtn').html('&raquo;');
+    const $prevBtn = $('#prevDateBtn');
+	const $nextBtn = $('#nextDateBtn');
+	const $earliestBtn = $('#earliestDateBtn');
+	const $latestBtn = $('#latestDateBtn');
     const $headerTitle = $('#mapHeaderTitle');
     const $legend = $('#mapLegend');
     const $ledger = $('#playerLedger');
@@ -1428,15 +1428,13 @@ $(document).ready(function () {
         segments.forEach((seg, segIdx) => {
             milestones.push({
                 idx: seg.startIndex,
-                label: `${segIdx === 0 ? 'Founded' : 'Revived'} ${formatShortDate(dates[seg.startIndex])}`,
-                title: `Jump to ${segIdx === 0 ? 'founding' : 'revival'} date`
+                label: `${segIdx === 0 ? 'Founded' : 'Revived'} ${formatShortDate(dates[seg.startIndex])}`
             });
 
             if (peakIndex > seg.startIndex && peakIndex < seg.endIndex) {
                 milestones.push({
                     idx: peakIndex,
-                    label: `Culminated ${formatShortDate(dates[peakIndex])}`,
-                    title: `Jump to peak membership: ${peakCount} denizens`
+                    label: `Culminated ${formatShortDate(dates[peakIndex])}`
                 });
             }
 
@@ -1444,8 +1442,7 @@ $(document).ready(function () {
                 const dissolvedDate = dates[seg.endIndex + 1] || dates[seg.endIndex];
                 milestones.push({
                     idx: seg.endIndex,
-                    label: `Dissolved ${formatShortDate(dissolvedDate)}`,
-                    title: 'Jump to final active day'
+                    label: `Dissolved ${formatShortDate(dissolvedDate)}`
                 });
             }
         });
@@ -1526,12 +1523,12 @@ $(document).ready(function () {
         }));
     }
 
-    const badgeButtonHtml = ({ tribe, dateIndex, label, isCurrent, title, icon }) => `
-        <button type="button" class="allegiance-badge ${isCurrent ? 'is-current' : 'is-past'}"
-                data-tribe="${tribe}" data-date-index="${dateIndex}" title="${title}">
-            ${icon ? `<img src="${icon}" alt="${tribe}" class="allegiance-icon">` : ''}
-            <span class="allegiance-date">${label}</span>
-        </button>`;
+    const badgeButtonHtml = ({ tribe, dateIndex, label, isCurrent, icon }) => `
+		<button type="button" class="allegiance-badge ${isCurrent ? 'is-current' : 'is-past'}"
+				data-tribe="${tribe}" data-date-index="${dateIndex}">
+			${icon ? `<img src="${icon}" alt="${tribe}" class="allegiance-icon">` : ''}
+			<span class="allegiance-date">${label}</span>
+		</button>`;
 
     const renderLegend = (title, items) => {
         const listHtml = items.map(([color, text]) =>
@@ -1582,7 +1579,6 @@ $(document).ready(function () {
                         dateIndex: s.startIndex,
                         label,
                         isCurrent: s.isCurrent,
-                        title: `View ${s.tribe} Clearing ${start}`,
                         icon: config.tribes?.[s.tribe]?.icon
                     });
                 }).join('');
@@ -1603,7 +1599,7 @@ $(document).ready(function () {
 
             $headerTitle.html(heraldName ? `
                 <div class="hud-title">Herald</div>
-                <button type="button" class="herald-link" data-player="${heraldName}" data-tribe="${activeTribe}" title="${heraldName} — Homeland Herald">
+                <button type="button" class="herald-link" data-player="${heraldName}" data-tribe="${activeTribe}">
                     ${frogIcon ? `<img src="${frogIcon}" alt="" class="herald-icon">` : ''}
                     <span>${heraldName}</span>
                 </button>` : '');
@@ -1613,8 +1609,7 @@ $(document).ready(function () {
                 tribe: activeTribe,
                 dateIndex: m.idx,
                 label: m.label,
-                isCurrent: currentIndex === m.idx,
-                title: m.title
+                isCurrent: currentIndex === m.idx
             })).join('') : '';
             $ledger.html(badges ? `<div class="hud-title">Chronicle</div>${badges}` : '');
         }
