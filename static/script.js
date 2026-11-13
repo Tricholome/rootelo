@@ -1086,16 +1086,21 @@ $(document).ready(function () {
             : 80;
 
         newNodes.forEach(d => {
-			d.currentRadius += (d.radius - (d.currentRadius ?? d.radius)) * 0.2;
-			const pad = d.currentRadius + 6;
-			const inTitleZone = Math.abs(d.x - originX) < 140;
-			const topPad = (isInteractive && isDesktop && (view === 'hn' || view === 'pn') && inTitleZone)
-				? Math.max(pad, 65 + d.currentRadius)
-				: pad;
-
-			d.x = Math.max(pad, Math.min(width - pad, d.x));
-			d.y = Math.max(topPad, Math.min(height - pad, d.y));
-		});
+            const prev = prevMap.get(d.id);
+            if (prev) {
+                Object.assign(d, {
+                    x: prev.x, y: prev.y,
+                    vx: (prev.vx || 0) * 0.3, vy: (prev.vy || 0) * 0.3,
+                    currentRadius: prev.currentRadius ?? prev.radius
+                });
+            } else {
+                d.currentRadius = 0;
+                const angle = d.dist != null ? (d.angle || 0) : (d.spawnAngle != null && view === 'hm' ? d.spawnAngle : null);
+                const dist = d.dist ?? (angle != null ? hmRingRadius : 0);
+                d.x = originX + (angle != null ? dist * Math.cos(angle) : (Math.random() - 0.5) * 10);
+                d.y = originY + (angle != null ? dist * Math.sin(angle) : (Math.random() - 0.5) * 10);
+            }
+        });
 
         if (!simInstance) {
             simInstance = d3.forceSimulation().alphaDecay(0.045).velocityDecay(0.35);
@@ -1219,13 +1224,16 @@ $(document).ready(function () {
                 const pull = view === 'pn' ? 0.15 : 0.12;
                 if (hub) {
                     newNodes.forEach(d => {
-                        if (d === hub || d.dist == null || d.fx != null) return;
-                        const dx = d.x - hub.x, dy = d.y - hub.y;
-                        const r = Math.hypot(dx, dy) || 1e-6;
-                        const k = ((d.dist - r) / r) * pull;
-                        d.x += dx * k;
-                        d.y += dy * k;
-                    });
+						d.currentRadius += (d.radius - (d.currentRadius ?? d.radius)) * 0.2;
+						const pad = d.currentRadius + 6;
+						const inTitleZone = Math.abs(d.x - originX) < 140;
+						const topPad = (isInteractive && isDesktop && (view === 'hn' || view === 'pn') && inTitleZone)
+							? Math.max(pad, 65 + d.currentRadius)
+							: pad;
+
+						d.x = Math.max(pad, Math.min(width - pad, d.x));
+						d.y = Math.max(topPad, Math.min(height - pad, d.y));
+					});
                 }
             }
 
