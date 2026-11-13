@@ -717,7 +717,7 @@ nav a.active {
     color: var(--text-muted);
     padding: 6px 12px;
     border-radius: 6px;
-    font-size: var(--size-xs);
+    font-size: var(--size-xs) !important;
     white-space: nowrap;
     opacity: 0;
     pointer-events: none;
@@ -2081,9 +2081,10 @@ table.dataTable tbody tr.loser td {
 }
 
 .date-controls .btn .tooltip-text {
-    bottom: calc(100% + 8px);
+    top: calc(100% + 8px);
+    bottom: auto;
     left: 50%;
-    transform: translateX(-50%) translateY(4px);
+    transform: translateX(-50%) translateY(-4px);
     pointer-events: none;
     z-index: 100;
 }
