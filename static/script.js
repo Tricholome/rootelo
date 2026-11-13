@@ -1237,8 +1237,7 @@ $(document).ready(function () {
             newNodes.forEach(d => {
                 d.currentRadius += (d.radius - (d.currentRadius ?? d.radius)) * 0.2;
                 const pad = d.currentRadius + 6;
-                const inTitleZone = Math.abs(d.x - originX) < 140;
-                const topPad = (isInteractive && isDesktop && (view === 'hn' || view === 'pn') && inTitleZone)
+                const topPad = (isInteractive && isDesktop && view !== 'hm')
                     ? Math.max(pad, 65 + d.currentRadius)
                     : pad;
 
