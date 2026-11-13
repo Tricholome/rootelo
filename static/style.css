@@ -59,7 +59,7 @@ body::after {
     opacity: 1; 
 }
 
-/* Ambient Theme Transitions & Mode Overrides */
+/* Ambient Theme Transitions */
 @keyframes fadeIn {
     from { opacity: 0; }
     to   { opacity: 1; }
@@ -67,10 +67,6 @@ body::after {
 
 body, .window-box {
     transition: background-color 0.3s ease, border-color 0.3s ease;
-}
-
-body.homelands-mode {
-    --main-color: var(--color-frog);
 }
 
 /* --- 1.2 Typography & Link Utilities --- */
@@ -141,6 +137,31 @@ tr[data-tier="mouse"] td:nth-child(4)    { color: var(--color-mouse) !important;
 tr[data-tier="squirrel"] td:nth-child(4) { color: var(--color-squirrel) !important; }
 tr[data-tier="stag"] td:nth-child(4)     { color: var(--color-stag) !important; }
 tr[data-tier="bear"] td:nth-child(4)     { color: var(--color-bear) !important; }
+
+/* --- 1.4 Homelands Mode Overrides --- */
+body.homelands-mode {
+    --main-color: var(--color-frog);
+}
+
+.nav-homelands,
+.banner-homelands,
+.frog-leader-icon {
+    display: none !important;
+}
+
+body.homelands-mode :is(.nav-standard, .banner-standard, #leaderboard .standard-tier) {
+    display: none !important;
+}
+
+body.homelands-mode :is(.nav-homelands, .banner-homelands) {
+    display: flex !important;
+    animation: fadeIn 0.25s ease;
+}
+
+body.homelands-mode #leaderboard .frog-leader-icon {
+    display: inline-flex !important;
+}
+
 
 /* =========================================================================
    --- II. LAYOUT & STRUCTURAL FRAMEWORK ---
@@ -392,20 +413,6 @@ nav a.active {
     margin: 15px auto;
     border-top: 1px solid var(--border-dark);
     border-bottom: 1px solid var(--border-light);
-}
-
-/* Homelands Navigation Mode */
-.nav-homelands {
-    display: none !important;
-}
-
-body.homelands-mode .nav-standard {
-    display: none !important;
-}
-
-body.homelands-mode .nav-homelands {
-    display: flex !important;
-    animation: fadeIn 0.25s ease;
 }
 
 /* --- 3.2 Season Selector --- */
@@ -755,19 +762,6 @@ body.homelands-mode .nav-homelands {
 }
 
 /* Homelands Banner State & Icon Cycle */
-.banner-homelands {
-    display: none !important;
-}
-
-body.homelands-mode .banner-standard {
-    display: none !important;
-}
-
-body.homelands-mode .banner-homelands {
-    display: flex !important;
-    animation: fadeIn 0.25s ease;
-}
-
 .banner-homelands .base-icon {
     animation: cycleBase 12s infinite ease-in-out;
 }
@@ -1067,27 +1061,7 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     accent-color: var(--main-color); 
 }
 
-/* Leaderboard Tier Anchor Links & Homelands State */
-.tier-anchor-link {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    text-decoration: none;
-    line-height: 0;
-}
-
-.frog-leader-icon {
-    display: none !important;
-}
-
-body.homelands-mode #leaderboard .standard-tier {
-    display: none !important;
-}
-
-body.homelands-mode #leaderboard .frog-leader-icon {
-    display: inline-flex !important;
-}
-
+/* Leaderboard Homelands State */
 body.homelands-mode #leaderboard tbody tr {
     background-color: transparent !important;
     border-left: 4px solid transparent !important;
@@ -1097,14 +1071,12 @@ body.homelands-mode #leaderboard tbody tr td:nth-child(4) {
     color: var(--text-main) !important;
 }
 
-body.homelands-mode #leaderboard tbody tr[data-settler="true"],
-body.homelands-mode #leaderboard tbody tr.settler-row {
+body.homelands-mode #leaderboard tbody tr:is([data-settler="true"], .settler-row) {
     background-color: var(--color-frog-bg) !important;
     border-left: 4px solid var(--color-frog) !important;
 }
 
-body.homelands-mode #leaderboard tbody tr[data-settler="true"] td:nth-child(4),
-body.homelands-mode #leaderboard tbody tr.settler-row td:nth-child(4) {
+body.homelands-mode #leaderboard tbody tr:is([data-settler="true"], .settler-row) td:nth-child(4) {
     color: var(--color-frog) !important;
 }
 
@@ -1692,6 +1664,10 @@ table.dataTable tbody tr.loser td {
     text-decoration: none;
 }
 
+.modal-supporter.is-visible {
+    display: block;
+}
+
 .modal-supporter img {
     width: 100%;
     height: 100%;
@@ -1901,19 +1877,18 @@ table.dataTable tbody tr.loser td {
     margin: 0 auto;
 }
 
-.network-container[data-view="pn"] #dateControls,
-.network-container[data-view="pn"] #mapHeaderTitle,
-.network-container[data-view="hm"] #mapHeaderTitle,
-.network-container[data-view="hm"] #mapLegend {
+.network-container[data-view="pn"] :is(#dateControls, #mapHeaderTitle, #chronicleToolbar),
+.network-container[data-view="hm"] :is(#mapHeaderTitle, #mapLegend, #playerLedger),
+.chronicle-toolbar:empty {
     display: none !important;
 }
 
-/* --- B. Map Container & HUD Typography --- */
+/* --- B. Map Container --- */
 .tribe-map-container {
     position: relative;
     width: 100%;
     height: 450px;
-    margin: 10px 0 20px 0;
+    margin: 10px 0 20px;
     background: var(--dt-table-bg);
     border: 1px solid var(--glass-border);
     border-radius: 12px;
@@ -1922,14 +1897,9 @@ table.dataTable tbody tr.loser td {
 }
 
 .tribe-map-container.guide-map {
-    display: block;
     max-width: 480px;
     height: 290px;
-    margin: 20px auto 25px auto;
-}
-
-.tribe-map-container.guide-map .tribe-map-svg {
-    height: 100%;
+    margin: 20px auto 25px;
 }
 
 .tribe-map-svg {
@@ -1938,6 +1908,7 @@ table.dataTable tbody tr.loser td {
     display: block;
 }
 
+/* --- C. Three-Column HUD Layout --- */
 .hud-title {
     font-family: var(--font-ui);
     font-size: var(--size-xxs);
@@ -1950,17 +1921,33 @@ table.dataTable tbody tr.loser td {
     user-select: none;
 }
 
-/* --- C. Three-Column HUD Layout (Left, Center, Right) --- */
-.map-legend {
+.map-legend,
+.map-header-title,
+.allegiance-ledger {
     position: absolute;
     top: 14px;
-    left: 18px;
     z-index: 10;
     display: flex;
     flex-direction: column;
+}
+
+.map-legend {
+    left: 18px;
     align-items: flex-start;
     gap: 4px;
     pointer-events: none;
+}
+
+.map-header-title {
+    left: 50%;
+    transform: translateX(-50%);
+    align-items: center;
+}
+
+.allegiance-ledger {
+    right: 18px;
+    align-items: flex-end;
+    gap: 6px;
 }
 
 .legend-item {
@@ -1969,7 +1956,6 @@ table.dataTable tbody tr.loser td {
     gap: 8px;
     font-size: var(--size-xs);
     color: var(--text-muted);
-    font-family: var(--font-ui);
     user-select: none;
 }
 
@@ -1978,17 +1964,6 @@ table.dataTable tbody tr.loser td {
     height: 8px;
     border-radius: 50%;
     flex-shrink: 0;
-}
-
-.map-header-title {
-    position: absolute;
-    top: 14px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 10;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
 }
 
 .herald-link {
@@ -2018,22 +1993,9 @@ table.dataTable tbody tr.loser td {
     object-fit: contain;
 }
 
-.allegiance-ledger {
-    position: absolute;
-    top: 14px;
-    right: 18px;
-    z-index: 10;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 6px;
-}
-
-/* --- D. HUD Badges (Chronicle & Allegiances) --- */
 .allegiance-badge {
     display: inline-flex;
     align-items: center;
-    justify-content: flex-start;
     width: 145px;
     box-sizing: border-box;
     gap: 8px;
@@ -2082,7 +2044,6 @@ table.dataTable tbody tr.loser td {
 }
 
 .allegiance-empty {
-    font-family: var(--font-ui);
     font-size: var(--size-xs);
     font-style: italic;
     color: var(--text-muted);
@@ -2090,12 +2051,15 @@ table.dataTable tbody tr.loser td {
     pointer-events: none;
 }
 
-/* --- E. Date Controls --- */
-.date-controls {
+/* --- D. Date Controls & Chronicle Toolbar --- */
+.date-controls,
+.chronicle-toolbar {
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-wrap: nowrap;
+}
+
+.date-controls {
     gap: 8px;
     margin: 15px 0;
 }
@@ -2112,24 +2076,15 @@ table.dataTable tbody tr.loser td {
     transition: border-color 0.2s, background-color 0.2s;
 }
 
-.date-picker:focus,
-.date-picker:hover {
+.date-picker:is(:focus, :hover) {
     border-color: var(--main-color);
     background-color: var(--bg-hover);
 }
 
-/* --- F. Chronicle Toolbar --- */
-.network-container[data-view="pn"] #chronicleToolbar {
-    display: none !important;
-}
-
 .chronicle-toolbar {
-    display: flex;
-    align-items: center;
-    justify-content: center;
     flex-wrap: wrap;
     gap: 10px;
-    margin: 14px 0 8px 0;
+    margin: 14px 0 8px;
 }
 
 .chronicle-icon-btn {
@@ -2141,8 +2096,10 @@ table.dataTable tbody tr.loser td {
     height: 38px;
     padding: 6px;
     border-radius: 8px;
+    border: 1px solid var(--border-soft);
+    background: var(--dt-input-bg);
     cursor: pointer;
-    transition: transform 0.15s ease, border-color 0.2s ease, background-color 0.2s ease, filter 0.2s ease, opacity 0.2s ease, box-shadow 0.2s ease;
+    transition: transform 0.15s ease, border-color 0.2s ease, background-color 0.2s ease, filter 0.2s ease, opacity 0.2s ease;
 }
 
 .chronicle-icon-btn img {
@@ -2150,27 +2107,19 @@ table.dataTable tbody tr.loser td {
     height: 24px;
     object-fit: contain;
     pointer-events: none;
-}
-
-.chronicle-icon-btn.is-active {
-    background: var(--dt-input-bg);
-    border: 1px solid var(--border-soft);
-}
-
-.chronicle-icon-btn.is-active:hover {
-    border-color: var(--main-color);
-    background: color-mix(in srgb, var(--main-color) 28%, var(--bg-surface));
-}
-
-.chronicle-icon-btn.is-active img {
     filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
 }
 
 .chronicle-icon-btn.is-dissolved {
     background: transparent;
-    border: 1px solid var(--border-soft);
     opacity: 0.35;
     filter: grayscale(1) brightness(0.75);
+}
+
+.chronicle-icon-btn:hover {
+    transform: translateY(-2px);
+    border-color: var(--main-color);
+    background: color-mix(in srgb, var(--main-color) 28%, var(--bg-surface));
 }
 
 .chronicle-icon-btn.is-dissolved:hover {
@@ -2180,14 +2129,10 @@ table.dataTable tbody tr.loser td {
     background: var(--bg-hover);
 }
 
-.chronicle-icon-btn:hover {
-    transform: translateY(-2px);
-}
-
 .chronicle-icon-btn.is-selected {
     opacity: 1;
     filter: none;
-    border: 1px solid var(--main-color);
+    border-color: var(--main-color);
     background: color-mix(in srgb, var(--main-color) 28%, var(--bg-surface));
     transform: translateY(-2px);
 }
@@ -2205,9 +2150,9 @@ table.dataTable tbody tr.loser td {
     transform: translateX(-50%) translateY(0);
 }
 
-/* --- G. Mobile HUD Separation & Compact Controls --- */
+/* --- E. Mobile Responsive HUD --- */
 @media (max-width: 768px) {
-    .tribe-map-container {
+    .tribe-map-container:not(.guide-map) {
         display: grid;
         grid-template-columns: 1fr auto;
         grid-template-rows: auto auto 1fr;
@@ -2219,103 +2164,42 @@ table.dataTable tbody tr.loser td {
         display: block;
     }
 
-    .network-container:not([data-view="hm"]) .map-legend,
-    .network-container:not([data-view="hm"]) .map-header-title,
-    .network-container:not([data-view="hm"]) .allegiance-ledger {
+    .network-container:not([data-view="hm"]) :is(.map-legend, .map-header-title, .allegiance-ledger) {
         position: static;
         transform: none;
+        padding: 12px 14px;
     }
 
-    .map-legend {
-        grid-column: 1;
-        grid-row: 1;
-        padding: 12px 14px 6px 14px;
-    }
+    .map-legend { grid-column: 1; grid-row: 1; padding-bottom: 6px !important; }
+    .network-container:not([data-view="hm"]) .map-header-title { grid-column: 1; grid-row: 2; align-items: flex-start; }
+    .allegiance-ledger { grid-column: 2; grid-row: 1 / span 2; }
+    .tribe-map-container:not(.guide-map) .tribe-map-svg { grid-column: 1 / -1; grid-row: 3; height: 420px; }
 
-    .network-container:not([data-view="hm"]) .map-header-title {
-        grid-column: 1;
-        grid-row: 2;
-        align-items: flex-start;
-        padding: 12px 14px 12px 14px;
-    }
-
-    .allegiance-ledger {
-        grid-column: 2;
-        grid-row: 1 / span 2;
-        padding: 12px 14px 12px 14px;
-    }
-
-    .tribe-map-svg {
-        grid-column: 1 / -1;
-        grid-row: 3;
-        height: 420px;
-    }
-
-    .allegiance-badge {
-        width: auto;
-        padding: 3px 8px;
-        gap: 5px;
-        font-size: var(--size-xxs);
-    }
-
-    .allegiance-icon,
-    .herald-icon {
-        width: 18px;
-        height: 18px;
-    }
-
-    .legend-item,
-    .herald-link {
-        font-size: var(--size-xxs);
-        gap: 5px;
-    }
-
-    .date-controls {
-        gap: 6px;
-    }
-
-    .date-controls .btn {
-        padding: 6px 10px;
-        min-width: 0;
-    }
-
-    .date-picker {
-        padding: 5px 8px;
-        font-size: var(--size-xs);
-        max-width: 135px;
-    }
-	
-	.chronicle-toolbar {
-        flex-wrap: nowrap;
-        gap: 5px;
-        margin: 10px auto 6px auto;
-    }
-
-    .chronicle-icon-btn {
-        width: 32px;
-        height: 32px;
-        padding: 4px;
-        flex-shrink: 0;
-    }
-
-    .chronicle-icon-btn img {
-        width: 20px;
-        height: 20px;
-    }
+    .allegiance-badge { width: auto; padding: 3px 8px; gap: 5px; font-size: var(--size-xxs); }
+    .allegiance-icon, .herald-icon { width: 18px; height: 18px; }
+    .legend-item, .herald-link { font-size: var(--size-xxs); gap: 5px; }
+    .date-controls { gap: 6px; }
+    .date-controls .btn { padding: 6px 10px; min-width: 0; }
+    .date-picker { padding: 5px 8px; font-size: var(--size-xs); max-width: 135px; }
+    .chronicle-toolbar { flex-wrap: nowrap; gap: 5px; margin: 10px auto 6px; }
+    .chronicle-icon-btn { width: 32px; height: 32px; padding: 4px; flex-shrink: 0; }
+    .chronicle-icon-btn img { width: 20px; height: 20px; }
 }
 
-/* --- H. Interactive SVG Map Elements (D3.js) --- */
+/* --- F. Interactive SVG Map Elements (D3.js) --- */
 .tribe-map-svg .node-group {
+    --r: 0px;
+    --icon-size: calc(var(--r) * 0.65);
     cursor: pointer;
     will-change: transform;
+    transition: opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .tribe-map-svg .node-group:active {
     cursor: grabbing;
 }
 
-.tribe-map-svg text,
-.tribe-map-svg image {
+.tribe-map-svg :is(text, image, line) {
     pointer-events: none;
 }
 
@@ -2324,104 +2208,86 @@ table.dataTable tbody tr.loser td {
     font-family: var(--font-ui);
 }
 
-.tribe-map-svg .node-group.type-tribe .player-label,
-.tribe-map-svg .node-group:not(.type-tribe) .node-icon,
-.tribe-map-svg .node-group:not(.type-tribe) .count-text {
+.tribe-map-svg .node-group.type-tribe :is(.player-label, .ego-overlay-label),
+.tribe-map-svg .node-group:not(.type-tribe) :is(.node-icon, .count-text),
+.tribe-map-svg .node-group:not(.type-ego-center) .ego-overlay-label {
     display: none;
 }
 
 /* 1. Links */
+.tribe-map-svg line {
+    stroke-linecap: round;
+    transition: opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1), stroke-opacity 0.2s, stroke-width 0.2s;
+}
+
 .tribe-map-svg line.inter-tribe {
     stroke: var(--text-muted);
     stroke-opacity: 0.45;
     stroke-dasharray: 6, 6;
-    stroke-linecap: round;
     stroke-width: 2.5px;
-    pointer-events: none;
 }
 
-.tribe-map-svg line.constellation-link,
-.tribe-map-svg line.ego-link {
+.tribe-map-svg line:is(.constellation-link, .ego-link) {
     stroke: var(--node-color);
     stroke-opacity: 0.65;
     stroke-width: 1.5px;
-    stroke-linecap: round;
-    pointer-events: none;
-    transition: stroke-opacity 0.2s, stroke-width 0.2s;
 }
 
-/* 2. Homeland Nodes */
+/* 2. Circles & Offloaded Icon/Label Geometry */
+.tribe-map-svg .node-circle {
+    r: var(--r);
+    transition: r 0.45s cubic-bezier(0.22, 1, 0.36, 1), transform 0.15s ease-out, fill 0.25s ease, stroke 0.25s ease, stroke-width 0.25s ease;
+}
+
+.tribe-map-svg .node-icon {
+    width: var(--icon-size);
+    height: var(--icon-size);
+    x: calc(var(--icon-size) / -2);
+    y: calc(var(--icon-size) / -2 - 13px);
+    transition: width 0.45s cubic-bezier(0.22, 1, 0.36, 1), height 0.45s cubic-bezier(0.22, 1, 0.36, 1), x 0.45s cubic-bezier(0.22, 1, 0.36, 1), y 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.tribe-map-svg .count-text {
+    transform: translateY(calc(var(--icon-size) / 2 - 1px));
+    transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
 .tribe-map-svg .node-group.type-tribe .node-circle {
     fill: var(--bg-surface) !important;
     stroke: var(--text-muted);
     stroke-width: 2px;
     stroke-dasharray: 6, 4;
     stroke-linecap: round;
-    transition: stroke 0.25s, stroke-width 0.25s, stroke-dasharray 0.25s;
 }
 
-.tribe-map-svg .node-group.type-tribe:not(.is-selected):hover .node-circle,
-.tribe-map-svg .node-group.type-tribe.is-selected .node-circle {
+.tribe-map-svg .node-group.type-tribe:is(:hover, .is-selected) .node-circle {
     stroke: var(--main-color);
     stroke-width: 2.5px;
     stroke-dasharray: none;
 }
 
-.tribe-map-svg .num-span {
-    font-size: var(--size-base);
-    font-weight: var(--bold);
-    fill: var(--text-bright);
-}
+.tribe-map-svg .num-span { font-size: var(--size-base); font-weight: var(--bold); fill: var(--text-bright); }
+.tribe-map-svg .lbl-span { font-size: var(--size-xs); font-weight: var(--normal); fill: var(--text-muted); }
 
-.tribe-map-svg .lbl-span {
-    font-size: var(--size-xs);
-    font-weight: var(--normal);
-    fill: var(--text-muted);
-}
-
-/* 3. Player Nodes */
-.tribe-map-svg .node-group.type-player .node-circle,
-.tribe-map-svg .node-group.type-ego-partner .node-circle {
+/* 3. Player & Ego Nodes */
+.tribe-map-svg .node-group:is(.type-player, .type-ego-partner) .node-circle {
     fill: var(--node-color) !important;
     stroke: var(--border-soft);
     stroke-width: 1px;
-    transition: transform 0.15s ease-out, fill 0.2s ease;
 }
 
 .tribe-map-svg .node-group.type-ego-center .node-circle {
     fill: var(--bg-surface) !important;
     stroke: var(--node-color);
     stroke-width: 2px;
-    transition: transform 0.15s ease-out, fill 0.25s ease, stroke 0.25s ease;
 }
 
-@media (hover: hover) {
-    .tribe-map-svg .node-group.type-player:hover .node-circle,
-    .tribe-map-svg .node-group.type-ego-partner:hover .node-circle {
-        transform: scale(1.15);
-    }
-    #tribeMapSvg .node-group.type-ego-center:hover .node-circle {
-        fill: var(--bg-overlay-bottom) !important;
-        stroke: var(--color-rabbit) !important;
-        transform: scale(1.08);
-    }
-}
-
-.tribe-map-svg .node-group.type-player.expanded .node-circle,
-.tribe-map-svg .node-group.type-ego-partner.expanded .node-circle {
-    transform: scale(1.15);
-}
-
-#tribeMapSvg .node-group.type-ego-center.expanded .node-circle {
-    fill: var(--bg-overlay-bottom) !important;
-    stroke: var(--color-rabbit) !important;
-    transform: scale(1.08);
-}
-
-/* 4. Player Labels, Subtitles & Center Overlay */
-.tribe-map-svg .player-label,
-.tribe-map-svg .ego-overlay-label {
+.tribe-map-svg :is(.player-label, .ego-overlay-label) {
     transition: transform 0.2s ease, opacity 0.2s ease, visibility 0.2s ease;
+}
+
+.tribe-map-svg .node-group.type-ego-center .player-label {
+    transform: translateY(-0.52em);
 }
 
 .tribe-map-svg .player-name-tspan {
@@ -2458,69 +2324,33 @@ table.dataTable tbody tr.loser td {
     visibility: hidden;
 }
 
-.tribe-map-svg .ego-overlay-title {
-    font-size: var(--size-xxs);
-    font-weight: var(--medium);
-    fill: var(--text-main);
-}
-
 .tribe-map-svg .ego-overlay-action {
     font-size: var(--size-xxs);
     font-style: italic;
     fill: var(--color-rabbit);
 }
 
+/* 4. Hover & Touch-Expanded States */
 @media (hover: hover) {
-    .tribe-map-svg .node-group.type-player:hover .player-label,
-    .tribe-map-svg .node-group.type-ego-partner:hover .player-label {
-        transform: translateY(-0.35em);
-    }
-    .tribe-map-svg .node-group.type-player:hover .player-name-tspan,
-    .tribe-map-svg .node-group.type-ego-partner:hover .player-name-tspan {
-        font-weight: var(--bold);
-        fill: var(--text-bright);
-    }
-    .tribe-map-svg .node-group.type-player:hover .player-status-tspan,
-    .tribe-map-svg .node-group.type-ego-partner:hover .player-status-tspan {
-        opacity: 1;
-        visibility: visible;
-    }
-    #tribeMapSvg .node-group.type-ego-center:hover .player-label {
-        opacity: 0;
-        visibility: hidden;
-    }
-    #tribeMapSvg .node-group.type-ego-center:hover .ego-overlay-label {
-        opacity: 1;
-        visibility: visible;
-    }
+    .tribe-map-svg .node-group:is(.type-player, .type-ego-partner):hover .node-circle { transform: scale(1.15); }
+    .tribe-map-svg .node-group:is(.type-player, .type-ego-partner):hover .player-label { transform: translateY(-0.35em); }
+    .tribe-map-svg .node-group:is(.type-player, .type-ego-partner):hover .player-name-tspan { font-weight: var(--bold); fill: var(--text-bright); }
+    .tribe-map-svg .node-group:is(.type-player, .type-ego-partner):hover .player-status-tspan { opacity: 1; visibility: visible; }
+
+    #tribeMapSvg .node-group.type-ego-center:hover .node-circle { fill: var(--bg-overlay-bottom) !important; stroke: var(--color-rabbit) !important; transform: scale(1.08); }
+    #tribeMapSvg .node-group.type-ego-center:hover .player-label { opacity: 0; visibility: hidden; }
+    #tribeMapSvg .node-group.type-ego-center:hover .ego-overlay-label { opacity: 1; visibility: visible; }
 }
 
-.tribe-map-svg .node-group.type-player.expanded .player-label,
-.tribe-map-svg .node-group.type-ego-partner.expanded .player-label {
-    transform: translateY(-0.35em);
-}
+.tribe-map-svg .node-group:is(.type-player, .type-ego-partner).expanded .node-circle { transform: scale(1.15); }
+.tribe-map-svg .node-group:is(.type-player, .type-ego-partner).expanded .player-label { transform: translateY(-0.35em); }
+.tribe-map-svg .node-group:is(.type-player, .type-ego-partner).expanded .player-name-tspan { font-weight: var(--bold); fill: var(--text-bright); }
+.tribe-map-svg .node-group:is(.type-player, .type-ego-partner).expanded .player-status-tspan { opacity: 1; visibility: visible; }
 
-.tribe-map-svg .node-group.type-player.expanded .player-name-tspan,
-.tribe-map-svg .node-group.type-ego-partner.expanded .player-name-tspan {
-    font-weight: var(--bold);
-    fill: var(--text-bright);
-}
+#tribeMapSvg .node-group.type-ego-center.expanded .node-circle { fill: var(--bg-overlay-bottom) !important; stroke: var(--color-rabbit) !important; transform: scale(1.08); }
+#tribeMapSvg .node-group.type-ego-center.expanded .player-label { opacity: 0; visibility: hidden; }
+#tribeMapSvg .node-group.type-ego-center.expanded .ego-overlay-label { opacity: 1; visibility: visible; }
 
-.tribe-map-svg .node-group.type-player.expanded .player-status-tspan,
-.tribe-map-svg .node-group.type-ego-partner.expanded .player-status-tspan {
-    opacity: 1;
-    visibility: visible;
-}
-
-#tribeMapSvg .node-group.type-ego-center.expanded .player-label {
-    opacity: 0;
-    visibility: hidden;
-}
-
-#tribeMapSvg .node-group.type-ego-center.expanded .ego-overlay-label {
-    opacity: 1;
-    visibility: visible;
-}
 
 /* =========================================================================
    --- V. SPECIAL EFFECTS & SECRET CONTENT ---
