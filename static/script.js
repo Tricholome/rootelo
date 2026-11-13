@@ -1922,12 +1922,16 @@ $(document).ready(function () {
                 [other_tribe, 'Friend']
             ]);
 
-            const heraldName = [...(snapshot?.[activeTribe] || [])].sort((a, b) => b[2] - a[2])[0]?.[0];
-            const frogIcon = window.CONFIG?.icons?.frog || '';
+            const members = [...(snapshot?.[activeTribe] || [])].sort((a, b) => b[2] - a[2]);
+            const heraldName = members[0]?.[0] || null;
+            const frogIcon = (typeof CONFIG !== 'undefined' && CONFIG.icons?.frog)
+                ? CONFIG.icons.frog
+                : `${typeof PATH_PREFIX !== 'undefined' ? PATH_PREFIX : ''}assets/icons/frog.webp`;
+
             $headerTitle.html(heraldName ? `
                 <div class="hud-title">Herald</div>
-                <button type="button" class="herald-link" data-player="${heraldName}" title="View ${heraldName}'s Circle">
-                    ${frogIcon ? `<img src="${frogIcon}" alt="" class="herald-icon">` : ''}
+                <button type="button" class="herald-link" data-player="${heraldName}" data-tribe="${activeTribe}" title="${heraldName} — Homeland Herald">
+                    <img src="${frogIcon}" alt="" class="herald-icon">
                     <span>${heraldName}</span>
                 </button>` : '');
 
@@ -2036,7 +2040,10 @@ $(document).ready(function () {
     $headerTitle.on('click', '.herald-link', function (e) {
         e.stopPropagation();
         const player = $(this).data('player');
-        if (player) setView('pn', { player });
+        const tribe = $(this).data('tribe') || activeTribe;
+        if (player && typeof window.openTierModal === 'function') {
+            window.openTierModal('frog', player, tribe);
+        }
     });
 
     $searchInput.on('input change', function () {
