@@ -2213,6 +2213,7 @@ table.dataTable tbody tr.loser td {
     }
 
     .allegiance-badge {
+		width: 120px;
 		padding: 3px 8px;
         gap: 5px;
         font-size: var(--size-xxs);
