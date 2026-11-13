@@ -1883,7 +1883,7 @@ table.dataTable tbody tr.loser td {
 }
 
 .network-container[data-view="pn"] :is(#dateControls, #chronicleToolbar),
-.network-container[data-view="hm"] :is(#tribeMapTitle, #tribeMapLegend, #tribeMapLedger),
+.network-container[data-view="hm"] :is(.tribe-map-hud-meta, #tribeMapTitle, #tribeMapLegend, #tribeMapLedger),
 .chronicle-toolbar:empty {
     display: none !important;
 }
@@ -1927,6 +1927,12 @@ table.dataTable tbody tr.loser td {
     font-size: var(--size-xs);
     color: var(--text-muted);
     user-select: none;
+}
+
+@media (min-width: 769px) {
+    .tribe-map-hud-meta {
+        display: contents;
+    }
 }
 
 .tribe-map-legend {
@@ -2159,19 +2165,28 @@ table.dataTable tbody tr.loser td {
     transform: translateX(-50%) translateY(0);
 }
 
-/* --- E. Mobile Responsive HUD --- */
 @media (max-width: 768px) {
     .tribe-map-container:not(.guide-map) {
         display: grid;
         grid-template-columns: 1fr auto;
-        grid-template-rows: max-content auto 1fr;
+        grid-template-rows: auto 1fr;
         height: auto;
         align-items: start;
-        row-gap: 8px;
     }
 
     .network-container[data-view="hm"] .tribe-map-container {
         display: block;
+        height: 450px;
+    }
+
+    .tribe-map-hud-meta {
+        grid-column: 1;
+        grid-row: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        padding: 12px 14px 4px 14px;
+        min-width: 0;
     }
 
     .network-container:not([data-view="hm"]) :is(.tribe-map-title, .tribe-map-legend, .tribe-map-ledger) {
@@ -2181,10 +2196,8 @@ table.dataTable tbody tr.loser td {
     }
 
     .tribe-map-title {
-        grid-column: 1;
-        grid-row: 1;
         align-items: flex-start;
-        padding: 12px 14px 4px 14px;
+        padding: 0;
         min-width: 0;
     }
 
@@ -2193,28 +2206,26 @@ table.dataTable tbody tr.loser td {
     }
 
     .tribe-map-legend {
-        grid-column: 1;
-        grid-row: 2;
-        padding: 0 14px 12px 14px;
+        padding: 0;
         gap: 3px;
     }
 
     .tribe-map-ledger {
         grid-column: 2;
-        grid-row: 1 / span 2;
+        grid-row: 1;
         padding: 12px 14px;
         gap: 5px;
     }
 
     .tribe-map-container:not(.guide-map) .tribe-map-svg {
         grid-column: 1 / -1;
-        grid-row: 3;
-        height: 360px;
+        grid-row: 2;
+        height: 380px;
     }
 
     .allegiance-badge {
-		width: 120px;
-		padding: 3px 8px;
+        width: 120px;
+        padding: 3px 8px;
         gap: 5px;
         font-size: var(--size-xxs);
     }
@@ -2227,6 +2238,39 @@ table.dataTable tbody tr.loser td {
     .legend-item,
     .hud-herald-btn {
         font-size: var(--size-xxs);
+    }
+
+    .date-controls {
+        gap: 6px;
+    }
+
+    .date-controls .btn {
+        padding: 6px 10px;
+        min-width: 0;
+    }
+
+    .date-picker {
+        padding: 5px 8px;
+        font-size: var(--size-xs);
+        max-width: 135px;
+    }
+
+    .chronicle-toolbar {
+        flex-wrap: nowrap;
+        gap: 5px;
+        margin: 10px auto 6px;
+    }
+
+    .chronicle-icon-btn {
+        width: 32px;
+        height: 32px;
+        padding: 4px;
+        flex-shrink: 0;
+    }
+
+    .chronicle-icon-btn img {
+        width: 20px;
+        height: 20px;
     }
 }
 
