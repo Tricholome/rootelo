@@ -1208,9 +1208,9 @@ $(document).ready(function () {
                 .force('center', null)
                 .force('radial', null)
                 .force('link', linkForce.distance(0).strength(0))
-                .force('charge', d3.forceManyBody().strength(d => isHub(d) ? 0 : -22))
-                .force('x', d3.forceX(originX).strength(d => isHub(d) ? 0.7 : 0))
-                .force('y', d3.forceY(originY).strength(d => isHub(d) ? 0.7 : 0))
+                .force('charge', d3.forceManyBody().strength(d => isHub(d) ? 0 : -25))
+                .force('x', d3.forceX(originX).strength(d => isHub(d) ? 0.3 : 0))
+                .force('y', d3.forceY(originY).strength(d => isHub(d) ? 0.3 : 0))
                 .force('collision', d3.forceCollide().radius(d => d.radius + 6));
         }
 
@@ -1238,7 +1238,7 @@ $(document).ready(function () {
                 d.currentRadius += (d.radius - (d.currentRadius ?? d.radius)) * 0.2;
                 const pad = d.currentRadius + 6;
                 const topPad = (isInteractive && isDesktop && view !== 'hm')
-                    ? Math.max(pad, 48 + d.currentRadius)
+                    ? Math.max(pad, 55 + d.currentRadius)
                     : pad;
 
                 d.x = Math.max(pad, Math.min(width - pad, d.x));
