@@ -2165,6 +2165,7 @@ table.dataTable tbody tr.loser td {
     transform: translateX(-50%) translateY(0);
 }
 
+/* --- E. Mobile Responsive HUD --- */
 @media (max-width: 768px) {
     .tribe-map-container:not(.guide-map) {
         display: grid;
@@ -2172,11 +2173,22 @@ table.dataTable tbody tr.loser td {
         grid-template-rows: auto 1fr;
         height: auto;
         align-items: start;
+		margin-bottom: 12px;
     }
 
     .network-container[data-view="hm"] .tribe-map-container {
         display: block;
-        height: 450px;
+        height: 420px;
+    }
+	
+	.network-container[data-view="hm"] .tribe-map-svg {
+        height: 100% !important;
+    }
+	
+	.network-container:not([data-view="hm"]) .tribe-map-svg {
+        grid-column: 1 / -1;
+        grid-row: 2;
+        height: 320px;
     }
 
     .tribe-map-hud-meta {
@@ -2220,7 +2232,7 @@ table.dataTable tbody tr.loser td {
     .tribe-map-container:not(.guide-map) .tribe-map-svg {
         grid-column: 1 / -1;
         grid-row: 2;
-        height: 380px;
+        height: 400px;
     }
 
     .allegiance-badge {
@@ -2242,6 +2254,7 @@ table.dataTable tbody tr.loser td {
 
     .date-controls {
         gap: 6px;
+		margin-top: 6px;
     }
 
     .date-controls .btn {
