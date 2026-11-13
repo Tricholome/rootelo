@@ -1883,7 +1883,7 @@ table.dataTable tbody tr.loser td {
     margin: 0 auto;
 }
 
-.network-container[data-view="pn"] :is(#dateControls, #mapHeaderTitle, #chronicleToolbar),
+.network-container[data-view="pn"] :is(#dateControls, #chronicleToolbar),
 .network-container[data-view="hm"] :is(#mapHeaderTitle, #mapLegend, #playerLedger),
 .chronicle-toolbar:empty {
     display: none !important;
@@ -1925,6 +1925,18 @@ table.dataTable tbody tr.loser td {
     margin-bottom: 2px;
     pointer-events: none;
     user-select: none;
+}
+
+.pn-title {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.pn-title-icon {
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
 }
 
 .map-legend,
