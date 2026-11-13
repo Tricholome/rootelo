@@ -1582,6 +1582,29 @@ $(document).ready(function () {
                 [other_tribe, 'Other homeland'],
                 [unaligned, 'Unaligned']
             ]);
+			
+			const currentTribe = getPlayerTribe(selectedPlayer);
+            if (currentTribe) {
+                const members = snapshot?.[currentTribe] || [];
+                const member = members.find(m => m[0] === selectedPlayer);
+                const fidelity = member ? Number(member[1]) : 0;
+
+                const rank = fidelity > 80 ? 'Partisan'
+                           : (fidelity >= 50 ? 'Squire' : 'Friend');
+
+                const iconUrl = config.tribes?.[currentTribe]?.icon || '';
+
+                $headerTitle.html(`
+                    <div class="hud-title pn-title">
+                        <span>${rank} of</span>
+                        ${iconUrl ? `<img src="${iconUrl}" alt="${currentTribe}" class="pn-title-icon">` : ''}
+                    </div>
+                `);
+            } else {
+                $headerTitle.html(`
+                    <div class="hud-title">Wanderer</div>
+                `);
+            }
 
             const history = getPlayerHistory(selectedPlayer);
             const badges = !history.length
