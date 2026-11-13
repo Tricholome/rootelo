@@ -1224,24 +1224,22 @@ $(document).ready(function () {
                 const pull = view === 'pn' ? 0.15 : 0.12;
                 if (hub) {
                     newNodes.forEach(d => {
-						d.currentRadius += (d.radius - (d.currentRadius ?? d.radius)) * 0.2;
-						const pad = d.currentRadius + 6;
-						const inTitleZone = Math.abs(d.x - originX) < 140;
-						const topPad = (isInteractive && isDesktop && (view === 'hn' || view === 'pn') && inTitleZone)
-							? Math.max(pad, 65 + d.currentRadius)
-							: pad;
-
-						d.x = Math.max(pad, Math.min(width - pad, d.x));
-						d.y = Math.max(topPad, Math.min(height - pad, d.y));
-					});
+                        if (d === hub || d.dist == null || d.fx != null) return;
+                        const dx = d.x - hub.x, dy = d.y - hub.y;
+                        const r = Math.hypot(dx, dy) || 1e-6;
+                        const k = ((d.dist - r) / r) * pull;
+                        d.x += dx * k;
+                        d.y += dy * k;
+                    });
                 }
             }
 
             newNodes.forEach(d => {
                 d.currentRadius += (d.radius - (d.currentRadius ?? d.radius)) * 0.2;
                 const pad = d.currentRadius + 6;
-                const topPad = isInteractive && isDesktop && view === 'hn' && Math.abs(d.x - originX) < 95
-                    ? Math.max(pad, 68)
+                const inTitleZone = Math.abs(d.x - originX) < 140;
+                const topPad = (isInteractive && isDesktop && (view === 'hn' || view === 'pn') && inTitleZone)
+                    ? Math.max(pad, 65 + d.currentRadius)
                     : pad;
 
                 d.x = Math.max(pad, Math.min(width - pad, d.x));
