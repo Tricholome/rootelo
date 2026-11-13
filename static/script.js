@@ -1073,7 +1073,7 @@ $(document).ready(function () {
         const height = svgEl.clientHeight || 220;
         const isDesktop = window.innerWidth > 768;
         const originX = width / 2;
-        const originY = height / 2 + (isInteractive && isDesktop && view === 'hn' ? 16 : 0);
+        const originY = height / 2 + (isInteractive && isDesktop && (view === 'hn' || view === 'pn') ? 18 : 0);
 
         const prevMap = new Map(simInstance ? simInstance.nodes().map(d => [d.id, d]) : []);
         const topologyChanged = !simInstance ||
@@ -1086,21 +1086,16 @@ $(document).ready(function () {
             : 80;
 
         newNodes.forEach(d => {
-            const prev = prevMap.get(d.id);
-            if (prev) {
-                Object.assign(d, {
-                    x: prev.x, y: prev.y,
-                    vx: (prev.vx || 0) * 0.3, vy: (prev.vy || 0) * 0.3,
-                    currentRadius: prev.currentRadius ?? prev.radius
-                });
-            } else {
-                d.currentRadius = 0;
-                const angle = d.dist != null ? (d.angle || 0) : (d.spawnAngle != null && view === 'hm' ? d.spawnAngle : null);
-                const dist = d.dist ?? (angle != null ? hmRingRadius : 0);
-                d.x = originX + (angle != null ? dist * Math.cos(angle) : (Math.random() - 0.5) * 10);
-                d.y = originY + (angle != null ? dist * Math.sin(angle) : (Math.random() - 0.5) * 10);
-            }
-        });
+			d.currentRadius += (d.radius - (d.currentRadius ?? d.radius)) * 0.2;
+			const pad = d.currentRadius + 6;
+			const inTitleZone = Math.abs(d.x - originX) < 140;
+			const topPad = (isInteractive && isDesktop && (view === 'hn' || view === 'pn') && inTitleZone)
+				? Math.max(pad, 65 + d.currentRadius)
+				: pad;
+
+			d.x = Math.max(pad, Math.min(width - pad, d.x));
+			d.y = Math.max(topPad, Math.min(height - pad, d.y));
+		});
 
         if (!simInstance) {
             simInstance = d3.forceSimulation().alphaDecay(0.045).velocityDecay(0.35);
