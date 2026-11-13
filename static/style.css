@@ -1994,7 +1994,7 @@ table.dataTable tbody tr.loser td {
     width: 140px;
     box-sizing: border-box;
     gap: 8px;
-    padding: 2px 6px;
+    padding: 4px 10px;
     background: var(--bg-surface);
     border: 1px solid var(--border-soft);
     border-radius: 6px;
@@ -2213,6 +2213,7 @@ table.dataTable tbody tr.loser td {
     }
 
     .allegiance-badge {
+		padding: 3px 8px;
         gap: 5px;
         font-size: var(--size-xxs);
     }
