@@ -1324,7 +1324,6 @@ $(document).ready(function () {
     const $ledger = $('#playerLedger');
 
     let currentIndex = dates.length - 1;
-    let savedHmIndex = dates.length - 1;
     let simulation = null;
     let isInternalSearch = false;
 
@@ -1364,25 +1363,24 @@ $(document).ready(function () {
     }
 
     function setView(view, { tribe = null, player = null, dateIdx = null } = {}) {
-        if (currentView === 'hm' && view === 'hn') savedHmIndex = currentIndex;
-        currentView = view;
+		currentView = view;
 
-        if (view === 'hm') {
-            activeTribe = null;
-            selectedPlayer = null;
-            currentIndex = dateIdx ?? savedHmIndex;
-            clearSearch();
-        } else if (view === 'hn') {
-            activeTribe = tribe;
-            selectedPlayer = null;
-            if (dateIdx != null && !isNaN(dateIdx)) currentIndex = dateIdx;
-            clearSearch();
-        } else if (view === 'pn') {
-            activeTribe = null;
-            if (player) setSearchPlayer(player);
-        }
-        updateView();
-    }
+		if (view === 'hm') {
+			activeTribe = null;
+			selectedPlayer = null;
+			if (dateIdx != null && !isNaN(dateIdx)) currentIndex = dateIdx;
+			clearSearch();
+		} else if (view === 'hn') {
+			activeTribe = tribe;
+			selectedPlayer = null;
+			if (dateIdx != null && !isNaN(dateIdx)) currentIndex = dateIdx;
+			clearSearch();
+		} else if (view === 'pn') {
+			activeTribe = null;
+			if (player) setSearchPlayer(player);
+		}
+		updateView();
+	}
 
     function syncUrl() {
         const query = currentView === 'pn' ? '?tab=circle'
@@ -1473,6 +1471,8 @@ $(document).ready(function () {
             const life = getTribeLifespan(tribe);
             if (!life?.milestones.length) return;
 
+            if (refIndex < life.firstIndex) return;
+
             const validMilestones = life.milestones.filter(m => {
                 if (m.label.startsWith('Culminated') || m.label.startsWith('Persisted')) return false;
                 return m.label.startsWith('Dissolved') ? refIndex > m.idx : m.idx <= refIndex;
@@ -1480,12 +1480,14 @@ $(document).ready(function () {
             if (!validMilestones.length) return;
 
             const latest = validMilestones[validMilestones.length - 1];
+            const isAlive = (snapshots[dates[refIndex]]?.[tribe]?.length > 0);
+
             events.push({
                 tribe,
                 foundingIdx: life.firstIndex,
                 idx: latest.idx,
                 label: latest.label,
-                isDissolved: !(snapshots[dates[refIndex]]?.[tribe]?.length > 0),
+                isDissolved: !isAlive,
                 icon: config.tribes?.[tribe]?.icon || ''
             });
         });
@@ -1547,10 +1549,18 @@ $(document).ready(function () {
         if (!$chronicle.length) {
             $chronicle = $('<div id="chronicleToolbar" class="chronicle-toolbar"></div>').insertAfter('#tribeMapContainer');
         }
-        if (currentView === 'pn') return;
+        if (currentView === 'pn') {
+            $chronicle.empty();
+            return;
+        }
 
-        const refIdx = currentView === 'hn' ? (savedHmIndex ?? currentIndex) : currentIndex;
-        const html = getSeasonChronicle(refIdx).map(ev => `
+        const events = getSeasonChronicle(currentIndex);
+        if (!events.length) {
+            $chronicle.empty();
+            return;
+        }
+
+        const html = events.map(ev => `
             <button type="button"
                     class="chronicle-icon-btn ${ev.isDissolved ? 'is-dissolved' : 'is-active'} ${currentView === 'hn' && activeTribe === ev.tribe ? 'is-selected' : ''}"
                     data-tribe="${ev.tribe}"
@@ -1665,7 +1675,6 @@ $(document).ready(function () {
         }
 
         currentIndex = Math.max(minIdx, Math.min(maxIdx, currentIndex));
-        if (currentView === 'hm') savedHmIndex = currentIndex;
 
         const selectedDate = dates[currentIndex];
         $datePicker.attr({ min: dates[minIdx], max: dates[maxIdx] }).val(selectedDate);
