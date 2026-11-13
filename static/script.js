@@ -201,7 +201,7 @@ $(document).ready(function() {
 
 		$('#tierFilterCheckbox').prop('checked', showAllPlayers);
 
-		const isFrogActive = localStorage.getItem('spotFrogs') === 'true';
+		const isFrogActive = sessionStorage.getItem('spotFrogs') === 'true';
 		if (isFrogActive) {
 			$('#spotFrogsCheckbox').prop('checked', true);
 			$('body').addClass('homelands-mode');
@@ -209,7 +209,7 @@ $(document).ready(function() {
 			showAllPlayers = false;
 			$('#tierFilterCheckbox').prop('checked', false);
 		}
-
+		
 		$.extend($.fn.dataTable.ext.type.order, { 
 			"rank-pre": function (d) { 
 				if (d === "♔") return 0; 
@@ -259,7 +259,7 @@ $(document).ready(function() {
 
 		$(document).on('change', '#spotFrogsCheckbox', function() {
 			const isFrogMode = $(this).is(':checked');
-			localStorage.setItem('spotFrogs', isFrogMode ? 'true' : 'false');
+			sessionStorage.setItem('spotFrogs', isFrogMode ? 'true' : 'false');
 
 			$('body').toggleClass('homelands-mode', isFrogMode);
 			$('#leaderboard').toggleClass('frogs-mode', isFrogMode);
