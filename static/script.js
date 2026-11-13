@@ -1073,7 +1073,7 @@ $(document).ready(function () {
         const height = svgEl.clientHeight || 220;
         const isDesktop = window.innerWidth > 768;
         const originX = width / 2;
-        const originY = height / 2 + (isInteractive && isDesktop && (view === 'hn' || view === 'pn') ? 18 : 0);
+        const originY = height / 2 + (isInteractive && isDesktop && (view === 'hn' || view === 'pn') ? 16 : 0);
 
         const prevMap = new Map(simInstance ? simInstance.nodes().map(d => [d.id, d]) : []);
         const topologyChanged = !simInstance ||
