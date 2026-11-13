@@ -1755,11 +1755,14 @@ $(document).ready(function () {
     $prevBtn.on('click', () => stepDate(-1));
     $nextBtn.on('click', () => stepDate(1));
     $earliestBtn.on('click', () => {
-        currentIndex = (currentView === 'hn' && getTribeLifespan(activeTribe)?.firstIndex) || 0;
+        const life = currentView === 'hn' ? getTribeLifespan(activeTribe) : null;
+        currentIndex = life ? life.firstIndex : 0;
         updateView();
     });
+
     $latestBtn.on('click', () => {
-        currentIndex = (currentView === 'hn' && getTribeLifespan(activeTribe)?.lastIndex) ?? (dates.length - 1);
+        const life = currentView === 'hn' ? getTribeLifespan(activeTribe) : null;
+        currentIndex = life ? life.lastIndex : dates.length - 1;
         updateView();
     });
 
