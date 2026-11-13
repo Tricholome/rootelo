@@ -1582,27 +1582,32 @@ $(document).ready(function () {
                 [other_tribe, 'Other homeland'],
                 [unaligned, 'Unaligned']
             ]);
-			
-			const currentTribe = getPlayerTribe(selectedPlayer);
+
+            const rawTribe = getPlayerTribe(selectedPlayer);
+            const currentTribe = rawTribe 
+                ? (Object.keys(snapshot || {}).find(k => k.toLowerCase() === rawTribe.toLowerCase()) || rawTribe) 
+                : null;
+
             if (currentTribe) {
-                const members = snapshot?.[currentTribe] || [];
+                const members = [...(snapshot?.[currentTribe] || [])].sort((a, b) => b[2] - a[2]);
+                const isHerald = members.length > 0 && members[0][0] === selectedPlayer;
                 const member = members.find(m => m[0] === selectedPlayer);
                 const fidelity = member ? Number(member[1]) : 0;
 
-                const rank = fidelity > 80 ? 'Partisan'
-                           : (fidelity >= 50 ? 'Squire' : 'Friend');
+                const rank = isHerald ? 'Herald'
+                           : (fidelity > 80 ? 'Partisan'
+                           : (fidelity >= 50 ? 'Squire' : 'Friend'));
 
-                const iconUrl = config.tribes?.[currentTribe]?.icon || '';
+                const tribeName = currentTribe.charAt(0).toUpperCase() + currentTribe.slice(1).toLowerCase();
 
                 $headerTitle.html(`
-                    <div class="hud-title pn-title">
-                        <span>${rank} of</span>
-                        ${iconUrl ? `<img src="${iconUrl}" alt="${currentTribe}" class="pn-title-icon">` : ''}
-                    </div>
+                    <div class="hud-title">Alignment</div>
+                    <div class="alignment-val ${isHerald ? 'is-herald' : ''}">${tribeName} ${rank}</div>
                 `);
             } else {
                 $headerTitle.html(`
-                    <div class="hud-title">Wanderer</div>
+                    <div class="hud-title">Alignment</div>
+                    <div class="alignment-val is-wanderer">Lone Wanderer</div>
                 `);
             }
 
