@@ -1319,9 +1319,9 @@ $(document).ready(function () {
 	const $nextBtn = $('#nextDateBtn');
 	const $earliestBtn = $('#earliestDateBtn');
 	const $latestBtn = $('#latestDateBtn');
-    const $headerTitle = $('#mapHeaderTitle');
-    const $legend = $('#mapLegend');
-    const $ledger = $('#playerLedger');
+    const $headerTitle = $('#tribeMapTitle');
+    const $legend = $('#tribeMapLegend');
+    const $ledger = $('#tribeMapLedger');
 
     let currentIndex = dates.length - 1;
     let simulation = null;
@@ -1584,8 +1584,8 @@ $(document).ready(function () {
             ]);
 
             const rawTribe = getPlayerTribe(selectedPlayer);
-            const currentTribe = rawTribe 
-                ? (Object.keys(snapshot || {}).find(k => k.toLowerCase() === rawTribe.toLowerCase()) || rawTribe) 
+            const currentTribe = rawTribe
+                ? (Object.keys(snapshot || {}).find(k => k.toLowerCase() === rawTribe.toLowerCase()) || rawTribe)
                 : null;
 
             if (currentTribe) {
@@ -1593,22 +1593,14 @@ $(document).ready(function () {
                 const isHerald = members.length > 0 && members[0][0] === selectedPlayer;
                 const member = members.find(m => m[0] === selectedPlayer);
                 const fidelity = member ? Number(member[1]) : 0;
-
-                const rank = isHerald ? 'Herald'
-                           : (fidelity > 80 ? 'Partisan'
-                           : (fidelity >= 50 ? 'Squire' : 'Friend'));
-
-                const tribeName = currentTribe.charAt(0).toUpperCase() + currentTribe.slice(1).toLowerCase();
+                const rank = fidelity > 80 ? 'Partisan' : (fidelity >= 50 ? 'Squire' : 'Friend');
 
                 $headerTitle.html(`
-                    <div class="hud-title">Alignment</div>
-                    <div class="alignment-val ${isHerald ? 'is-herald' : ''}">${tribeName} ${rank}</div>
+                    <div class="hud-title">${currentTribe} ${rank}</div>
+                    ${isHerald ? `<button type="button" class="hud-herald-btn" data-player="${selectedPlayer}" data-tribe="${currentTribe}">Homeland Herald</button>` : ''}
                 `);
             } else {
-                $headerTitle.html(`
-                    <div class="hud-title">Alignment</div>
-                    <div class="alignment-val is-wanderer">Lone Wanderer</div>
-                `);
+                $headerTitle.html('<div class="hud-title">Lone Wanderer</div>');
             }
 
             const history = getPlayerHistory(selectedPlayer);
@@ -1638,14 +1630,11 @@ $(document).ready(function () {
 
             const members = [...(snapshot?.[activeTribe] || [])].sort((a, b) => b[2] - a[2]);
             const heraldName = members[0]?.[0] || null;
-            const frogIcon = (typeof CONFIG !== 'undefined' && CONFIG.icons?.frog) || '';
 
-            $headerTitle.html(heraldName ? `
-                <div class="hud-title">Herald</div>
-                <button type="button" class="herald-link" data-player="${heraldName}" data-tribe="${activeTribe}">
-                    ${frogIcon ? `<img src="${frogIcon}" alt="" class="herald-icon">` : ''}
-                    <span>${heraldName}</span>
-                </button>` : '');
+            $headerTitle.html(`
+                <div class="hud-title">${activeTribe} Homeland</div>
+                ${heraldName ? `<button type="button" class="hud-herald-btn" data-player="${heraldName}" data-tribe="${activeTribe}">${heraldName}</button>` : ''}
+            `);
 
             const life = getTribeLifespan(activeTribe);
             const badges = life ? life.milestones.map(m => badgeButtonHtml({
@@ -1751,7 +1740,7 @@ $(document).ready(function () {
         if (tribe && !isNaN(dateIdx)) setView('hn', { tribe, dateIdx });
     });
 
-    $headerTitle.on('click', '.herald-link', function (e) {
+    $headerTitle.on('click', '.hud-herald-btn', function (e) {
         e.stopPropagation();
         const player = $(this).data('player');
         const tribe = $(this).data('tribe') || activeTribe;
