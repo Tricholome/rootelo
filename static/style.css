@@ -1924,13 +1924,13 @@ table.dataTable tbody tr.loser td {
     flex-direction: column;
     gap: 4px;
     font-family: var(--font-ui);
-    font-size: var(--size-xxs);
+    font-size: var(--size-xs);
     color: var(--text-muted);
     user-select: none;
 }
 
 .tribe-map-legend {
-    left: 16px;
+    left: 18px;
     align-items: flex-start;
     pointer-events: none;
 }
@@ -1939,20 +1939,26 @@ table.dataTable tbody tr.loser td {
     left: 50%;
     transform: translateX(-50%);
     align-items: center;
+    white-space: nowrap;
 }
 
 .tribe-map-ledger {
-    right: 16px;
+    right: 18px;
     align-items: flex-end;
 }
 
 .hud-title {
     font-weight: var(--bold);
     text-transform: uppercase;
-    letter-spacing: var(--track-wide);
+    letter-spacing: var(--track-slight);
     color: var(--text-muted);
     margin-bottom: 2px;
     pointer-events: none;
+    white-space: nowrap;
+}
+
+.tribe-map-title .hud-title {
+    color: var(--text-main);
 }
 
 .hud-herald-btn {
@@ -1960,21 +1966,24 @@ table.dataTable tbody tr.loser td {
     border: none;
     padding: 0;
     font-family: inherit;
-    font-size: var(--size-xxs);
+    font-size: var(--size-xs);
     font-weight: var(--medium);
     color: var(--color-frog);
     cursor: pointer;
+    white-space: nowrap;
+    transition: opacity 0.2s ease;
 }
 
 .legend-item {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 7px;
+    font-size: var(--size-xs);
 }
 
 .legend-dot {
-    width: 7px;
-    height: 7px;
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
     flex-shrink: 0;
 }
@@ -1982,40 +1991,56 @@ table.dataTable tbody tr.loser td {
 .allegiance-badge {
     display: inline-flex;
     align-items: center;
-    width: 125px;
+    width: 140px;
     box-sizing: border-box;
-    gap: 6px;
-    padding: 3px 8px;
+    gap: 8px;
+    padding: 2px 6px;
     background: var(--bg-surface);
     border: 1px solid var(--border-soft);
-    border-radius: 4px;
-    color: var(--text-muted);
+    border-radius: 6px;
+    color: var(--text-main);
     font-family: inherit;
-    font-size: var(--size-xxs);
+    font-size: var(--size-xs);
     white-space: nowrap;
     cursor: pointer;
+    box-shadow: var(--glass-shadow);
+    transition: transform 0.15s ease, border-color 0.2s ease, background-color 0.2s ease, opacity 0.2s ease, filter 0.2s ease;
+}
+
+.allegiance-badge:hover {
+    border-color: var(--main-color);
+    background: var(--bg-hover);
+    transform: translateX(-4px);
 }
 
 .allegiance-badge.is-current {
+    background: color-mix(in srgb, var(--main-color) 12%, var(--bg-surface));
     border-color: var(--main-color);
-    color: var(--text-main);
+    color: var(--text-bright);
 }
 
 .allegiance-badge.is-past {
     filter: grayscale(1);
-    opacity: 0.5;
+    opacity: 0.55;
+}
+
+.allegiance-badge.is-past:hover {
+    filter: grayscale(0.2);
+    opacity: 0.95;
 }
 
 .allegiance-icon {
-    width: 16px;
-    height: 16px;
+    width: 24px;
+    height: 24px;
     flex-shrink: 0;
     object-fit: contain;
+    filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.4));
 }
 
 .allegiance-empty {
     font-style: italic;
     pointer-events: none;
+    font-size: var(--size-xs);
 }
 
 /* --- D. Date Controls & Chronicle Toolbar --- */
@@ -2142,6 +2167,7 @@ table.dataTable tbody tr.loser td {
         grid-template-rows: auto auto 1fr;
         height: auto;
         align-items: start;
+        row-gap: 8px;
     }
 
     .network-container[data-view="hm"] .tribe-map-container {
@@ -2151,25 +2177,33 @@ table.dataTable tbody tr.loser td {
     .network-container:not([data-view="hm"]) :is(.tribe-map-title, .tribe-map-legend, .tribe-map-ledger) {
         position: static;
         transform: none;
+        font-size: var(--size-xxs);
     }
 
     .tribe-map-title {
         grid-column: 1;
         grid-row: 1;
         align-items: flex-start;
-        padding: 12px 14px 4px;
+        padding: 12px 14px 4px 14px;
+        min-width: 0;
+    }
+
+    .tribe-map-title .hud-title {
+        font-size: var(--size-xxs);
     }
 
     .tribe-map-legend {
         grid-column: 1;
         grid-row: 2;
-        padding: 4px 14px 12px;
+        padding: 6px 14px 12px 14px;
+        gap: 3px;
     }
 
     .tribe-map-ledger {
         grid-column: 2;
         grid-row: 1 / span 2;
         padding: 12px 14px;
+        gap: 5px;
     }
 
     .tribe-map-container:not(.guide-map) .tribe-map-svg {
@@ -2179,40 +2213,18 @@ table.dataTable tbody tr.loser td {
     }
 
     .allegiance-badge {
-        width: auto;
-    }
-
-    .date-controls {
-        gap: 6px;
-    }
-
-    .date-controls .btn {
-        padding: 6px 10px;
-        min-width: 0;
-    }
-
-    .date-picker {
-        padding: 5px 8px;
-        font-size: var(--size-xs);
-        max-width: 135px;
-    }
-
-    .chronicle-toolbar {
-        flex-wrap: nowrap;
         gap: 5px;
-        margin: 10px auto 6px;
+        font-size: var(--size-xxs);
     }
 
-    .chronicle-icon-btn {
-        width: 32px;
-        height: 32px;
-        padding: 4px;
-        flex-shrink: 0;
+    .allegiance-icon {
+        width: 18px;
+        height: 18px;
     }
 
-    .chronicle-icon-btn img {
-        width: 20px;
-        height: 20px;
+    .legend-item,
+    .hud-herald-btn {
+        font-size: var(--size-xxs);
     }
 }
 
