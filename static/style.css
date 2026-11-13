@@ -2254,7 +2254,7 @@ table.dataTable tbody tr.loser td {
 
     .date-controls {
         gap: 6px;
-		margin-top: 6px;
+		margin-top: 12px;
     }
 
     .date-controls .btn {
