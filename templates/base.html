@@ -74,11 +74,17 @@
 
 <body class="{% if is_archive %}archive-view{% endif %} {% if active_section == 'network' or page_id in ['network', 'homelands'] %}homelands-mode{% endif %}" data-page="{{ page_id }}" data-section="{{ active_section }}">
 	<script>
-        if (document.body.dataset.page === 'index' && localStorage.getItem('spotFrogs') === 'true') {
-            document.body.classList.add('homelands-mode');
-        }
-    </script>
-    
+		(function() {
+			const page = document.body.dataset.page;
+			if (page !== 'index' && page !== 'network' && page !== 'homelands') {
+				sessionStorage.removeItem('spotFrogs');
+			}
+			else if (page === 'index' && sessionStorage.getItem('spotFrogs') === 'true') {
+				document.body.classList.add('homelands-mode');
+			}
+		})();
+	</script>
+		
     <div class="container">
 	
         <header class="app-banner window-box">
