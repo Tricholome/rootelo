@@ -1428,7 +1428,7 @@ $(document).ready(function () {
         segments.forEach((seg, segIdx) => {
             milestones.push({
                 idx: seg.startIndex,
-                label: `${segIdx === 0 ? 'Founded' : 'Revived'} ${formatShortDate(dates[seg.startIndex])}`
+                label: `${segIdx === 0 ? 'Settled' : 'Revived'} ${formatShortDate(dates[seg.startIndex])}`
             });
 
             if (peakIndex > seg.startIndex && peakIndex < seg.endIndex) {
@@ -1443,6 +1443,11 @@ $(document).ready(function () {
                 milestones.push({
                     idx: seg.endIndex,
                     label: `Dissolved ${formatShortDate(dissolvedDate)}`
+                });
+            } else {
+                milestones.push({
+                    idx: seg.endIndex,
+                    label: `Persisted ${formatShortDate(dates[seg.endIndex])}`
                 });
             }
         });
@@ -1469,7 +1474,7 @@ $(document).ready(function () {
             if (!life?.milestones.length) return;
 
             const validMilestones = life.milestones.filter(m => {
-                if (m.label.startsWith('Culminated')) return false;
+                if (m.label.startsWith('Culminated') || m.label.startsWith('Persisted')) return false;
                 return m.label.startsWith('Dissolved') ? refIndex > m.idx : m.idx <= refIndex;
             });
             if (!validMilestones.length) return;
@@ -1688,13 +1693,17 @@ $(document).ready(function () {
     $(document).on('click', '.chronicle-icon-btn', function (e) {
         e.stopPropagation();
         const tribe = $(this).data('tribe');
+        const isDissolved = $(this).hasClass('is-dissolved');
         const dateIdx = parseInt($(this).data('date-index'), 10);
         if (!tribe) return;
 
         if (currentView === 'hn' && activeTribe === tribe) {
             setView('hm');
         } else {
-            setView('hn', { tribe, dateIdx });
+            setView('hn', {
+                tribe,
+                dateIdx: isDissolved && !isNaN(dateIdx) ? dateIdx : null
+            });
         }
     });
 
