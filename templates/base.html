@@ -126,7 +126,6 @@
             </div>
 
             <!-- 2. HOMELANDS BANNER -->
-			{% if homelands_enabled %}
             <div class="banner-container banner-homelands">
                 <div class="banner-icons left">
                     <a href="javascript:void(0)" onclick="openTierModal('frog')" class="tooltip-link js-double-tap slot-bird">
@@ -159,7 +158,6 @@
                     </a>
                 </div>
             </div>
-			{% endif %}
 			
             <div class="nav-separator"></div>
 
@@ -180,14 +178,12 @@
 			</nav>
 
             <!-- 2. HOMELANDS NAVIGATION -->
-			{% if homelands_enabled %}
 			<nav id="homelandsNav" class="nav-homelands">
 				<a href="index{% if is_archive and season_tag %}_{{ season_tag }}{% endif %}.html" class="homelands-tab-link {{ 'active' if page_id == 'index' else '' }}">Leaderboard</a>
 				<a href="network{% if is_archive and season_tag %}_{{ season_tag }}{% endif %}.html#map" class="homelands-tab-link {{ 'active' if page_id == 'network' else '' }}" data-tab="map">Homelands</a>
 				<a href="network{% if is_archive and season_tag %}_{{ season_tag }}{% endif %}.html#circle" class="homelands-tab-link" data-tab="circle">Player's Circle</a>
 				<a href="homelands.html" class="homelands-tab-link {{ 'active' if page_id == 'homelands' else '' }}">Codex</a>
 			</nav>
-			{% endif %}
 			
         </header>
         
@@ -224,7 +220,11 @@
 						<span class="season-label">League</span>
 						<select onchange="if (this.value) window.location.href=this.value;">
 							{% for l in all_leagues %}
-								<option value="{{ path_prefix }}{{ l.output_dir }}/{{ page_id }}.html" {% if l.slug == league_config.slug %}selected{% endif %}>
+								{% set l_homelands = l.network and l.network.enabled %}
+								<option value="{{ path_prefix }}{{ l.output_dir }}/{{ page_id }}.html"
+										{% if not l_homelands %}data-no-homelands{% endif %}
+										{% if l.slug == league_config.slug %}selected{% endif %}
+										{% if page_id == 'network' and not l_homelands %}disabled{% endif %}>
 									{{ l.name|upper }}
 								</option>
 							{% endfor %}
