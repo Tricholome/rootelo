@@ -16,7 +16,7 @@
 
     <h2>The Internal Constellation</h2>
 	<p>
-		Within each homeland, denizens are shaped by two distinct metrics. <strong>Weight</strong> reflects the volume of recent matches played with fellow denizens, dictating bubble size and proximity to the homeland's core. <strong>Fidelity</strong> measures the share of games played inside this homeland versus others, shading bubbles from <em>Friend</em> (&lt; 50%) to <em>Squire</em> (50%&ndash;80%) and <em>Partisan</em> (&gt; 80%). These metrics operate independently: a denizen may hold substantial weight despite fluctuating fidelity, and vice versa.
+		Within each homeland, denizens are shaped by two distinct metrics. <strong>Weight</strong> reflects the volume of recent matches played with fellow denizens, dictating bubble size and proximity to the homeland's core. <strong>Fidelity</strong> measures the share of games played inside this homeland versus others, shading bubbles from <em>Friend</em> to <em>Squire</em> and <em>Partisan</em> (&gt; 80%). These metrics operate independently: a denizen may hold substantial weight despite fluctuating fidelity, and vice versa.
 	</p>
 
     <div class="tribe-map-container guide-map">
@@ -45,113 +45,32 @@
 	<p>
 		Rather than forcing fixed factions, the algorithm compares the density of games played <em>inside</em> a group against the games expected by pure chance across the league. When a circle of active competitors shares significantly more tables together than with the rest of the forest, a Homeland naturally crystallizes.
 	</p>
-
-	<h2>The Laws of Emergence</h2>
-	<p>
-		To prevent the map from flickering erratically after every match while still reflecting shifting seasonal habits, the simulation enforces four physical rules:
-	</p>
-
-	<table class="k-table">
-		<tr>
-			<td><strong>Trail Decay</strong></td>
-			<td>&minus;5% / day</td>
-			<td class="k-val">&gamma; = 0.95</td>
-			<td>Every match adds 1.0 weight to a pair's bond, while existing bonds decay by 5% each active match day so recent fellowships outweigh old history.</td>
-		</tr>
-		<tr>
-			<td><strong>Foundation</strong></td>
-			<td>Birth &amp; Cap</td>
-			<td class="k-val">6+ Players</td>
-			<td>Up to 5 clearings can coexist. A new clearing requires at least 6 eligible active players with dense internal ties to claim a woodland item.</td>
-		</tr>
-		<tr>
-			<td><strong>Stickiness</strong></td>
-			<td>Inertia</td>
-			<td class="k-val">&times;1.5 Pull</td>
-			<td>A player only transfers to a rival clearing if their pull toward the new group exceeds their current homeland bond by at least 50% (max 3 transfers/day).</td>
-		</tr>
-		<tr>
-			<td><strong>Dissolution</strong></td>
-			<td>Survival Floor</td>
-			<td class="k-val">&lt; 4 Players</td>
-			<td>Players inactive for 21 days return to the unaligned wilds. If a clearing drops below 4 active denizens, it dissolves—though it can be <em>Revived</em> if 3 former members reunite.</td>
-		</tr>
-	</table>
 	
-	<h2>The Louvain Compass</h2>
 	<p>
 		Under the hood, the Woodland is modeled as a living graph where denizens are nodes and shared matches form weighted trails between them. Every active day, the engine charts this network using the <a class="cl" href="https://en.wikipedia.org/wiki/Louvain_method" target="_blank" rel="noopener">Louvain method</a>—a community detection algorithm that compares the density of games played <em>inside</em> a group against what would occur by pure chance. Rather than enforcing fixed factions, this compass lets homelands crystallize organically whenever a circle of active competitors shares significantly more tables together than with the rest of the forest.
 	</p>
 
-	<h2>The Forces of the Woodland</h2>
-	<p>
-		Left unchecked, a pure mathematical compass would flicker after every match or merge the entire league into a single giant clearing. To give the map a natural rhythm, four counterbalancing forces shape the lifecycle of homelands:
-	</p>
-
-	<table class="k-table">
-		<tr>
-			<td><strong>Overgrowth</strong></td>
-			<td class="k-val">Fading Trails</td>
-			<td>Every shared match carves a deeper trail between companions, while neglected paths slowly fade back into the brush. Denizens who rest for too long or fall behind the seasonal pace eventually drift back into the unaligned wilds.</td>
-		</tr>
-		<tr>
-			<td><strong>Cohesion</strong></td>
-			<td class="k-val">Critical Mass</td>
-			<td>A clearing only takes root—or reclaims a long-abandoned woodland item—when enough seasoned denizens form a tight circle clearly distinct from existing groups. If a homeland's active core thins out too much, it dissolves back into the forest.</td>
-		</tr>
-		<tr>
-			<td><strong>Stickiness</strong></td>
-			<td class="k-val">Allegiance Inertia</td>
-			<td>Once settled, denizens remain rooted in their clearing rather than drifting at the slightest whim. Defecting to a rival homeland requires a decisively stronger pull, and daily migrations are throttled so allegiances shift gradually.</td>
-		</tr>
-		<tr>
-			<td><strong>Crowding</strong></td>
-			<td class="k-val">Canopy Balance</td>
-			<td>Space in the Woodland is finite. Each active homeland raises the bar required to found or sustain another, while oversized clearings have their gravitational pull dampened so they cannot effortlessly swallow smaller neighbors.</td>
-		</tr>
-	</table>
-	
-	<h2>The Louvain Compass</h2>
 	<p>
 		Under the hood, the league is modeled as a dynamic graph where denizens are nodes and shared matches form weighted trails between them. Every active day, the engine charts this network using the <a class="cl" href="https://en.wikipedia.org/wiki/Louvain_method" target="_blank" rel="noopener">Louvain method</a>—an algorithm that compares the density of games played <em>inside</em> a group against what would occur by pure chance. Whenever a circle of regular competitors shares significantly more tables together than with the rest of the forest, a homeland naturally crystallizes.
 	</p>
 
-	<h2>The Laws of Emergence</h2>
+	<h2>The Laws of Equilibrium</h2>
 	<p>
-		Left to pure math, a memoryless graph would flicker after every match or collapse into a single giant cluster. To give the map a natural seasonal rhythm, four physical forces govern how clearings form, hold together, and fade:
+		Left to pure math, a memoryless graph would flicker after every match or collapse into a single giant cluster. To give the map a natural seasonal rhythm, four physical forces govern how homelands form, hold together, and fade:
 	</p>
-
-	<table class="k-table">
-		<tr>
-			<td class="k-val">Erosion</td>
-			<td>Recent games outweigh old history: match trails decay every active day, and inactive denizens eventually return to the unaligned wilds.</td>
-		</tr>
-		<tr>
-			<td class="k-val">Gravity</td>
-			<td>A clearing only forms—or revives a fallen item—when enough active denizens cluster tightly, and dissolves if its core thins out.</td>
-		</tr>
-		<tr>
-			<td class="k-val">Stickiness</td>
-			<td>Denizens stay rooted in their homeland unless a rival clearing exerts a much stronger pull, with daily migrations strictly capped.</td>
-		</tr>
-		<tr>
-			<td class="k-val">Pressure</td>
-			<td>Space is finite: each active homeland raises the threshold for new ones to emerge, while giant clearings have their pull dampened.</td>
-		</tr>
-	</table>
 	
 	<table class="k-table">
 		<tr>
 			<td class="k-val">Gravity</td>
-			<td colspan="3">Clearings require a dense core of regulars to form or revive, and dissolve if they shrink too far.</td>
+			<td colspan="3">Homelands require a dense core of regulars to form or revive, and dissolve if they shrink too far.</td>
 		</tr>
 		<tr>
 			<td class="k-val">Stickiness</td>
-			<td colspan="3">Switching homelands requires a decisively stronger pull, and daily transfers are strictly capped.</td>
+			<td colspan="3">Switching allegiances requires a decisively stronger pull, and daily transfers are capped.</td>
 		</tr>
 		<tr>
 			<td class="k-val">Pressure</td>
-			<td colspan="3">Each active clearing raises the bar for new ones, while giant clearings have their pull dampened.</td>
+			<td colspan="3">Each active homeland raises the bar for new ones, while giant homelands have their pull dampened.</td>
 		</tr>
 		<tr>
 			<td class="k-val">Erosion</td>
