@@ -264,6 +264,7 @@ $(document).ready(function() {
 
 			$('body').toggleClass('homelands-mode', isFrogMode);
 			$('#leaderboard').toggleClass('frogs-mode', isFrogMode);
+			$('option[data-no-homelands]').prop('disabled', isFrogMode);
 
 			if (isFrogMode) {
 				savedClassicState = $('#tierFilterCheckbox').is(':checked');
