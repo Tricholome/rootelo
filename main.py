@@ -955,6 +955,7 @@ def run_league_pipeline(league_config, all_leagues_list):
     homelands_constellations = {}
 
     homelands_cfg = league_config.get("network", {}).copy()
+    homelands_enabled = bool(homelands_cfg.get("enabled", False))
 
     if not homelands_cfg.get("enabled", False):
         Logger.info(f"Homelands simulation disabled for league '{slug}'. Skipping.")
@@ -1001,6 +1002,7 @@ def run_league_pipeline(league_config, all_leagues_list):
             "profile_base_url": profile_base_url,
             "current_league": slug,
             "league_config": league_config,
+            "homelands_enabled": homelands_enabled,
             "all_leagues": all_leagues_list,
             "path_prefix": prefix,
             "is_static": False,
@@ -1111,9 +1113,11 @@ def run_league_pipeline(league_config, all_leagues_list):
         ("about", "about.html", "codex"),
         ("league", "league.html", "codex"),
         ("simulator", "simulator.html", "codex"),
-        ("homelands", "homelands.html", "network"),
         ("cache", "cache.html", "cache")
     ]
+    if homelands_enabled:
+        static_pages.insert(3, ("homelands", "homelands.html", "network"))
+        
     for page_id, tmpl, section_id in static_pages:
         p_info = pages_content.get(section_id, {})
         extra = {"hall_of_fame": hall_of_fame_data} if page_id == "cache" else {}
