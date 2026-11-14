@@ -616,6 +616,11 @@ nav a.active {
     color: var(--text-dark) !important;
 }
 
+.season-selector select option:disabled {
+    color: var(--text-muted) !important;
+    opacity: 0.4;
+}
+
 /* --- 3.5 Table Filters & Switches --- */
 .unranked-toggle-container {
     display: flex;
@@ -1327,10 +1332,15 @@ table.dataTable tbody tr.loser td {
 
 .node.central-node { border-color: var(--main-color); }
 
-@media (hover: hover) {
-    .node.central-node:hover { border-color: var(--color-frog); }
+.node.central-node:not(.interactive-node) {
+    cursor: default;
+    pointer-events: none;
 }
-.node.central-node.expanded { border-color: var(--color-frog); }
+
+@media (hover: hover) {
+    .node.central-node.interactive-node:hover { border-color: var(--color-frog); }
+}
+.node.central-node.interactive-node.expanded { border-color: var(--color-frog); }
 .node.central-node .overlay-action { color: var(--color-frog); }
 
 .narrative-text {
