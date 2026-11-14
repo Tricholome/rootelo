@@ -77,6 +77,39 @@
 			<td>Players inactive for 21 days return to the unaligned wilds. If a clearing drops below 4 active denizens, it dissolves—though it can be <em>Revived</em> if 3 former members reunite.</td>
 		</tr>
 	</table>
+	
+	<h2>The Louvain Compass</h2>
+	<p>
+		Under the hood, the Woodland is modeled as a living graph where denizens are nodes and shared matches form weighted trails between them. Every active day, the engine charts this network using the <a class="cl" href="https://en.wikipedia.org/wiki/Louvain_method" target="_blank" rel="noopener">Louvain method</a>—a community detection algorithm that compares the density of games played <em>inside</em> a group against what would occur by pure chance. Rather than enforcing fixed factions, this compass lets homelands crystallize organically whenever a circle of active competitors shares significantly more tables together than with the rest of the forest.
+	</p>
+
+	<h2>The Forces of the Woodland</h2>
+	<p>
+		Left unchecked, a pure mathematical compass would flicker after every match or merge the entire league into a single giant clearing. To give the map a natural rhythm, four counterbalancing forces shape the lifecycle of homelands:
+	</p>
+
+	<table class="k-table">
+		<tr>
+			<td><strong>Overgrowth</strong></td>
+			<td class="k-val">Fading Trails</td>
+			<td>Every shared match carves a deeper trail between companions, while neglected paths slowly fade back into the brush. Denizens who rest for too long or fall behind the seasonal pace eventually drift back into the unaligned wilds.</td>
+		</tr>
+		<tr>
+			<td><strong>Cohesion</strong></td>
+			<td class="k-val">Critical Mass</td>
+			<td>A clearing only takes root—or reclaims a long-abandoned woodland item—when enough seasoned denizens form a tight circle clearly distinct from existing groups. If a homeland's active core thins out too much, it dissolves back into the forest.</td>
+		</tr>
+		<tr>
+			<td><strong>Stickiness</strong></td>
+			<td class="k-val">Allegiance Inertia</td>
+			<td>Once settled, denizens remain rooted in their clearing rather than drifting at the slightest whim. Defecting to a rival homeland requires a decisively stronger pull, and daily migrations are throttled so allegiances shift gradually.</td>
+		</tr>
+		<tr>
+			<td><strong>Crowding</strong></td>
+			<td class="k-val">Canopy Balance</td>
+			<td>Space in the Woodland is finite. Each active homeland raises the bar required to found or sustain another, while oversized clearings have their gravitational pull dampened so they cannot effortlessly swallow smaller neighbors.</td>
+		</tr>
+	</table>
 </div>
 {% endblock %}
 
