@@ -110,6 +110,55 @@
 			<td>Space in the Woodland is finite. Each active homeland raises the bar required to found or sustain another, while oversized clearings have their gravitational pull dampened so they cannot effortlessly swallow smaller neighbors.</td>
 		</tr>
 	</table>
+	
+	<h2>The Louvain Compass</h2>
+	<p>
+		Under the hood, the league is modeled as a dynamic graph where denizens are nodes and shared matches form weighted trails between them. Every active day, the engine charts this network using the <a class="cl" href="https://en.wikipedia.org/wiki/Louvain_method" target="_blank" rel="noopener">Louvain method</a>—an algorithm that compares the density of games played <em>inside</em> a group against what would occur by pure chance. Whenever a circle of regular competitors shares significantly more tables together than with the rest of the forest, a homeland naturally crystallizes.
+	</p>
+
+	<h2>The Laws of Emergence</h2>
+	<p>
+		Left to pure math, a memoryless graph would flicker after every match or collapse into a single giant cluster. To give the map a natural seasonal rhythm, four physical forces govern how clearings form, hold together, and fade:
+	</p>
+
+	<table class="k-table">
+		<tr>
+			<td class="k-val">Erosion</td>
+			<td>Recent games outweigh old history: match trails decay every active day, and inactive denizens eventually return to the unaligned wilds.</td>
+		</tr>
+		<tr>
+			<td class="k-val">Gravity</td>
+			<td>A clearing only forms—or revives a fallen item—when enough active denizens cluster tightly, and dissolves if its core thins out.</td>
+		</tr>
+		<tr>
+			<td class="k-val">Stickiness</td>
+			<td>Denizens stay rooted in their homeland unless a rival clearing exerts a much stronger pull, with daily migrations strictly capped.</td>
+		</tr>
+		<tr>
+			<td class="k-val">Pressure</td>
+			<td>Space is finite: each active homeland raises the threshold for new ones to emerge, while giant clearings have their pull dampened.</td>
+		</tr>
+	</table>
+	
+	<table class="k-table">
+		<tr>
+			<td class="k-val">Erosion</td>
+			<td>Old trails fade each active day, while inactive denizens drift back to the wilds.</td>
+		</tr>
+		<tr>
+			<td class="k-val">Gravity</td>
+			<td>Clearings require a dense core of regulars to form or revive, and dissolve if they shrink too far.</td>
+		</tr>
+		<tr>
+			<td class="k-val">Stickiness</td>
+			<td>Switching homelands requires a decisively stronger pull, and daily transfers are capped.</td>
+		</tr>
+		<tr>
+			<td class="k-val">Pressure</td>
+			<td>Each active clearing raises the bar for new ones, while oversized groups have their pull dampened.</td>
+		</tr>
+	</table>
+	
 </div>
 {% endblock %}
 
