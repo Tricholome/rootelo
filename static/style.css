@@ -1530,6 +1530,12 @@ table.dataTable tbody tr.loser td {
     transition: background-color 0.2s ease;
 }
 
+.k-table td[colspan="3"] {
+    width: auto !important;
+    white-space: normal !important;
+    text-align: left !important;
+}
+
 .k-table tr:hover td { background-color: var(--dt-row-hover); }
 .k-table tr:last-child td { border-bottom: none; }
 
