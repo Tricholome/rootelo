@@ -15,7 +15,10 @@
         <div class="relations-container">
             
             <div class="left-column">
-				<div class="node central-node interactive-node js-double-tap" id="nodeCenter" {% if homelands_enabled %}onclick="goToPlayerCircle(this)"{% endif %} data-player="">
+				<div class="node central-node{% if homelands_enabled %} interactive-node js-double-tap{% endif %}" 
+					 id="nodeCenter" 
+					 {% if homelands_enabled %}onclick="goToPlayerCircle(this)"{% endif %} 
+					 data-player="">
 					<div class="node-content">
 						<div id="centerPlayerIntro"></div>
 						<div class="player-name" id="centerPlayerName">Select a player</div>
