@@ -1682,12 +1682,12 @@ table.dataTable tbody tr.loser td {
 }
 
 .modal-supporter.left {
-    left: clamp(20px, 5.5vw, 55px);
+    left: clamp(10px, 4vw, 55px);
     transform: translateY(-50%);
 }
 
 .modal-supporter.right {
-    right: clamp(20px, 5.5vw, 55px);
+    right: clamp(10px, 4vw, 55px);
     transform: translateY(-50%) scaleX(-1);
 }
 
