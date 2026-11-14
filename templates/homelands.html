@@ -14,7 +14,7 @@
         </svg>
     </div>
 
-    <h2>The Internal Constellation</h2>
+    <h2>The ???</h2>
 	<p>
 		Within each homeland, denizens are shaped by two distinct metrics. <strong>Weight</strong> reflects the volume of recent matches played with fellow denizens, dictating bubble size and proximity to the homeland's core. <strong>Fidelity</strong> measures the share of games played inside this homeland versus others, shading bubbles from <em>Friend</em> to <em>Squire</em> and <em>Partisan</em> (&gt; 80%). These metrics operate independently: a denizen may hold substantial weight despite fluctuating fidelity, and vice versa.
 	</p>
@@ -40,18 +40,7 @@
 
 	<h2>The Louvain Compass</h2>
 	<p>
-		Under the hood, the Woodland is modeled as a dynamic mathematical graph where players are nodes and shared matches form weighted trails between them. Every active day, the engine charts communities using the <a class="cl" href="https://en.wikipedia.org/wiki/Louvain_method" target="_blank" rel="noopener">Louvain method</a>—a modularity optimization algorithm designed to uncover natural clusters inside complex networks.
-	</p>
-	<p>
-		Rather than forcing fixed factions, the algorithm compares the density of games played <em>inside</em> a group against the games expected by pure chance across the league. When a circle of active competitors shares significantly more tables together than with the rest of the forest, a Homeland naturally crystallizes.
-	</p>
-	
-	<p>
-		Under the hood, the Woodland is modeled as a living graph where denizens are nodes and shared matches form weighted trails between them. Every active day, the engine charts this network using the <a class="cl" href="https://en.wikipedia.org/wiki/Louvain_method" target="_blank" rel="noopener">Louvain method</a>—a community detection algorithm that compares the density of games played <em>inside</em> a group against what would occur by pure chance. Rather than enforcing fixed factions, this compass lets homelands crystallize organically whenever a circle of active competitors shares significantly more tables together than with the rest of the forest.
-	</p>
-
-	<p>
-		Under the hood, the league is modeled as a dynamic graph where denizens are nodes and shared matches form weighted trails between them. Every active day, the engine charts this network using the <a class="cl" href="https://en.wikipedia.org/wiki/Louvain_method" target="_blank" rel="noopener">Louvain method</a>—an algorithm that compares the density of games played <em>inside</em> a group against what would occur by pure chance. Whenever a circle of regular competitors shares significantly more tables together than with the rest of the forest, a homeland naturally crystallizes.
+		Under the hood, the Woodland is modeled as a living graph where denizens are nodes and shared matches form weighted trails between them. Every day, the engine charts this network using the <a class="cl" href="https://en.wikipedia.org/wiki/Louvain_method" target="_blank" rel="noopener">Louvain method</a>. This community detection algorithm compares the density of games played inside a group against what would occur by pure chance, and allows homelands to crystallize organically.
 	</p>
 
 	<h2>The Laws of Equilibrium</h2>
