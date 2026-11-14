@@ -208,6 +208,7 @@ $(document).ready(function() {
 			$('#leaderboard').addClass('frogs-mode');
 			showAllPlayers = false;
 			$('#tierFilterCheckbox').prop('checked', false);
+			$('option[data-no-homelands]').prop('disabled', true);
 		}
 		
 		$.extend($.fn.dataTable.ext.type.order, { 
