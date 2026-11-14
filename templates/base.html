@@ -126,6 +126,7 @@
             </div>
 
             <!-- 2. HOMELANDS BANNER -->
+			{% if homelands_enabled %}
             <div class="banner-container banner-homelands">
                 <div class="banner-icons left">
                     <a href="javascript:void(0)" onclick="openTierModal('frog')" class="tooltip-link js-double-tap slot-bird">
@@ -158,6 +159,7 @@
                     </a>
                 </div>
             </div>
+			{% endif %}
 			
             <div class="nav-separator"></div>
 
@@ -178,12 +180,14 @@
 			</nav>
 
             <!-- 2. HOMELANDS NAVIGATION -->
+			{% if homelands_enabled %}
 			<nav id="homelandsNav" class="nav-homelands">
-				<a href="{{ path_prefix }}index{% if is_archive and season_tag %}_{{ season_tag }}{% endif %}.html" class="homelands-tab-link {{ 'active' if page_id == 'index' else '' }}">Leaderboard</a>
-				<a href="{{ path_prefix }}network{% if is_archive and season_tag %}_{{ season_tag }}{% endif %}.html#map" class="homelands-tab-link {{ 'active' if page_id == 'network' else '' }}" data-tab="map">Homelands</a>
-				<a href="{{ path_prefix }}network{% if is_archive and season_tag %}_{{ season_tag }}{% endif %}.html#circle" class="homelands-tab-link" data-tab="circle">Player's Circle</a>
-				<a href="{{ path_prefix }}homelands.html" class="homelands-tab-link {{ 'active' if page_id == 'homelands' else '' }}">Codex</a>
+				<a href="index{% if is_archive and season_tag %}_{{ season_tag }}{% endif %}.html" class="homelands-tab-link {{ 'active' if page_id == 'index' else '' }}">Leaderboard</a>
+				<a href="network{% if is_archive and season_tag %}_{{ season_tag }}{% endif %}.html#map" class="homelands-tab-link {{ 'active' if page_id == 'network' else '' }}" data-tab="map">Homelands</a>
+				<a href="network{% if is_archive and season_tag %}_{{ season_tag }}{% endif %}.html#circle" class="homelands-tab-link" data-tab="circle">Player's Circle</a>
+				<a href="homelands.html" class="homelands-tab-link {{ 'active' if page_id == 'homelands' else '' }}">Codex</a>
 			</nav>
+			{% endif %}
 			
         </header>
         
@@ -205,7 +209,9 @@
 						<a href="about.html#view" class="season-btn {{ 'active' if page_id == 'about' else '' }}">Overview</a>
 						<a href="league.html#view" class="season-btn {{ 'active' if page_id == 'league' else '' }}">League</a>
 						<a href="simulator.html#view" class="season-btn {{ 'active' if page_id == 'simulator' else '' }}">Simulator</a>
+						{% if homelands_enabled %}
 						<a href="homelands.html#view" class="season-btn {{ 'active' if page_id == 'homelands' else '' }}">Homelands</a>
+						{% endif %}
 					</div>
 				</div>
 				{% endif %}
