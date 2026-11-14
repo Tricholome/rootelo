@@ -1661,9 +1661,9 @@ table.dataTable tbody tr.loser td {
 
 .modal-supporter {
     position: absolute;
-    top: 80px;
-    width: clamp(60px, 7vw, 80px);
-    height: clamp(60px, 7vw, 80px);
+    top: 65px;
+    width: clamp(50px, 9vw, 90px);
+    height: clamp(50px, 9vw, 90px);
     display: none;
     z-index: 10;
     cursor: pointer;
@@ -1682,12 +1682,12 @@ table.dataTable tbody tr.loser td {
 }
 
 .modal-supporter.left {
-    left: clamp(0px, 6vw, 100px);
+    left: clamp(20px, 5.5vw, 55px);
     transform: translateY(-50%);
 }
 
 .modal-supporter.right {
-    right: clamp(0px, 6vw, 100px);
+    right: clamp(20px, 5.5vw, 55px);
     transform: translateY(-50%) scaleX(-1);
 }
 
@@ -1733,7 +1733,21 @@ table.dataTable tbody tr.loser td {
 
     .modal-divider { display: none; }
     #modalText, #modalFinal { font-size: var(--size-sm); line-height: 1.4; margin-top: 20px; text-align: left; }
+	
+	.modal-supporter.right {
+        display: none !important;
+    }
+	
+	.modal-supporter.left {
+        left: auto;
+        right: 60px;
+        top: 0;
+        transform: none;
+        width: 65px;
+        height: 65px;
+    }
 }
+
 
 /* -------------------------------------------------------------------------
    [COMPONENTS] 7. SIMULATOR INTERFACE
