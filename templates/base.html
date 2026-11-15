@@ -433,7 +433,7 @@
 			window.location.hostname === 'localhost' ||
 			window.location.hostname === '127.0.0.1' ||
 			window.location.href.includes('rootelo-dev') ||
-			window.location.pathname.includes('/dev/')
+			window.location.href.includes('rootelo-test')
 		) {
 			window.goatcounter = { no_onload: true };
 		}
