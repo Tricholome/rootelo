@@ -5,6 +5,15 @@ on:
     branches:
       - future
   workflow_dispatch:
+    inputs:
+      target:
+        description: 'Target repository for deployment'
+        required: true
+        type: choice
+        default: 'dev'
+        options:
+          - dev
+          - test
 
 jobs:
   build:
@@ -50,10 +59,10 @@ jobs:
           cp -r hoot build_site/
           cp -r api build_site/
 
-      - name: Deploy to rootelo-dev repository
+      - name: Deploy to GitHub Pages mirror
         uses: peaceiris/actions-gh-pages@v3
         with:
           personal_token: ${{ secrets.DEV_REPO_PAT }}
-          external_repository: tricholome/rootelo-dev
+          external_repository: ${{ inputs.target == 'test' && 'tricholome/rootelo-test' || 'tricholome/rootelo-dev' }}
           publish_dir: ./build_site
           publish_branch: gh-pages
