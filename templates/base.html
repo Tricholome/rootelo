@@ -217,8 +217,8 @@
 				
 					{% if all_leagues and not is_static %}
 					<div class="season-selector">
-						<span class="season-label">League</span>
-						<select onchange="if (this.value) window.location.href=this.value;">
+						<label class="season-label" for="leagueSelect">League</label>
+						<select id="leagueSelect" name="league" onchange="if (this.value) window.location.href=this.value;">
 							{% for l in all_leagues %}
 								{% set l_homelands = l.network and l.network.enabled %}
 								<option value="{{ path_prefix }}{{ l.output_dir }}/{{ page_id }}.html"
