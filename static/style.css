@@ -1091,6 +1091,19 @@ body.homelands-mode #leaderboard tbody tr:is([data-settler="true"], .settler-row
     color: var(--color-frog) !important;
 }
 
+body.homelands-mode #leaderboard tbody tr:not([data-settler="true"]):not(.settler-row) {
+    opacity: 0.38;
+    transition: opacity 0.2s ease;
+}
+
+body.homelands-mode #leaderboard tbody tr:not([data-settler="true"]):not(.settler-row) td {
+    color: var(--text-muted) !important;
+}
+
+body.homelands-mode #leaderboard tbody tr:not([data-settler="true"]):not(.settler-row):hover {
+    opacity: 0.85;
+}
+
 /* Matches Table Specifics */
 .lineup-cell { 
     text-align: left !important; 
