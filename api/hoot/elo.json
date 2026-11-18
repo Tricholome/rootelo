@@ -1,15 +1,15 @@
 {
-  "updated_at": "2026-11-17 00:27 UTC",
+  "updated_at": "2026-11-18 00:27 UTC",
   "players": {
     "bw": {
-      "elo": 1394,
+      "elo": 1383,
       "rank": 1,
       "tier": "rabbit",
       "bg_color": "#F2C14E",
       "icon_url": "https://tricholome.github.io/rootelo/assets/icons/rabbit.webp",
-      "games": 51,
+      "games": 52,
       "wins": 26.0,
-      "win_rate": "51.0%"
+      "win_rate": "50.0%"
     },
     "uwtron": {
       "elo": 1367,
@@ -61,9 +61,19 @@
       "wins": 5.0,
       "win_rate": "62.5%"
     },
+    "talleyrand19": {
+      "elo": 1317,
+      "rank": 5,
+      "tier": "rabbit",
+      "bg_color": "#F2C14E",
+      "icon_url": "https://tricholome.github.io/rootelo/assets/icons/rabbit.webp",
+      "games": 13,
+      "wins": 6.0,
+      "win_rate": "46.2%"
+    },
     "lylethebrick-1438": {
       "elo": 1308,
-      "rank": 5,
+      "rank": 6,
       "tier": "rabbit",
       "bg_color": "#F2C14E",
       "icon_url": "https://tricholome.github.io/rootelo/assets/icons/rabbit.webp",
@@ -73,7 +83,7 @@
     },
     "chicken_x": {
       "elo": 1300,
-      "rank": 6,
+      "rank": 7,
       "tier": "rabbit",
       "bg_color": "#F2C14E",
       "icon_url": "https://tricholome.github.io/rootelo/assets/icons/rabbit.webp",
@@ -83,23 +93,13 @@
     },
     "meryn": {
       "elo": 1297,
-      "rank": 7,
+      "rank": 8,
       "tier": "mouse",
       "bg_color": "#F49E52",
       "icon_url": "https://tricholome.github.io/rootelo/assets/icons/mouse.webp",
       "games": 13,
       "wins": 6.0,
       "win_rate": "46.2%"
-    },
-    "talleyrand19": {
-      "elo": 1289,
-      "rank": 8,
-      "tier": "mouse",
-      "bg_color": "#F49E52",
-      "icon_url": "https://tricholome.github.io/rootelo/assets/icons/mouse.webp",
-      "games": 12,
-      "wins": 5.0,
-      "win_rate": "41.7%"
     },
     "xinoehp512": {
       "elo": 1282,
@@ -361,16 +361,6 @@
       "wins": 1.0,
       "win_rate": "50.0%"
     },
-    "glisteninggeetus": {
-      "elo": 1223,
-      "rank": "-",
-      "tier": "unassigned",
-      "bg_color": null,
-      "icon_url": null,
-      "games": 2,
-      "wins": 1.0,
-      "win_rate": "50.0%"
-    },
     "jermcurry": {
       "elo": 1221,
       "rank": 22,
@@ -381,8 +371,8 @@
       "wins": 6.0,
       "win_rate": "25.0%"
     },
-    "enzothebenzo": {
-      "elo": 1219,
+    "glisteninggeetus": {
+      "elo": 1214,
       "rank": "-",
       "tier": "unassigned",
       "bg_color": null,
@@ -430,6 +420,16 @@
       "games": 15,
       "wins": 4.0,
       "win_rate": "26.7%"
+    },
+    "enzothebenzo": {
+      "elo": 1211,
+      "rank": "-",
+      "tier": "unassigned",
+      "bg_color": null,
+      "icon_url": null,
+      "games": 4,
+      "wins": 1.0,
+      "win_rate": "25.0%"
     },
     "abbreviatedman": {
       "elo": 1207,
@@ -592,7 +592,7 @@
       "win_rate": "20.0%"
     },
     "nattykash": {
-      "elo": 1191,
+      "elo": 1190,
       "rank": "-",
       "tier": "squirrel",
       "bg_color": "#94C160",
@@ -1412,7 +1412,7 @@
       "win_rate": "0.0%"
     },
     "mentalmendel": {
-      "elo": 1097,
+      "elo": 1096,
       "rank": "-",
       "tier": "squirrel",
       "bg_color": "#94C160",
