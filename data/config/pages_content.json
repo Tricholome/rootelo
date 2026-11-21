@@ -1,16 +1,16 @@
 {
   "index": {
-    "title": "Rootelo • Root Digital League Elo Leaderboard",
+    "title": "Rootelo • Leaderboard",
     "page_heading": "Leaderboard",
     "description": "Only players with a Tier are ranked. Double-click&nbsp;to&nbsp;see&nbsp;individual&nbsp;journeys.",
-	"seo_description": "An Elo ranking system for the digital Root game. See player standings in the Root Digital League and follow individual progress over each season.",
+	"seo_description": "An Elo ranking system for the digital Root game. See player standings across competitive leagues and follow individual progress over each season.",
 	"og_image": "assets/meta/leaderboard-preview.webp"
   },
   "matches": {
     "title": "Rootelo • Top Tables",
     "page_heading": "Top Tables",
     "description": "Season games ranked by total Elo. Click&nbsp;a&nbsp;Game&nbsp;ID&nbsp;for&nbsp;match&nbsp;details.",
-	"seo_description": "Season games ranked by total Elo.",
+	"seo_description": "Exploring the season’s highest-rated clashes.",
 	"og_image": "assets/meta/matches-preview.webp"
   },
   "trends": {
