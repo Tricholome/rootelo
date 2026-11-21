@@ -305,6 +305,11 @@ body.homelands-mode #leaderboard .frog-leader-icon {
         transform: translateY(-50%) translateX(0);
         top: max(50%, calc(550px - (var(--scroll, 0) * 1px)));
     }
+	
+	body.homelands-mode .screen-deco img {
+        height: clamp(340px, 55vh, 1025px);
+		transform: translateY(-55%) translateX(0);
+    }
 }
 
 @media (min-width: 1300px) and (max-width: 2499px) {
@@ -325,26 +330,6 @@ body.homelands-mode #leaderboard .frog-leader-icon {
     .right-deco img { 
         right: auto;
         left: calc(50vw + (var(--window-max-width) / 2) - 50px); 
-    }
-}
-
-/* =========================================================================
-   HOMELANDS DECORATIONS (LIGNE DE SOL COMMUNE & PIEDS ALIGNÉS)
-   ========================================================================= */
-
-/* --- Grand écran (>= 1300px) --- */
-@media (min-width: 1300px) {
-    /* Base commune : même hauteur et pieds ancrés sur la même ligne de sol */
-    body.homelands-mode .screen-deco img {
-        height: clamp(340px, 55vh, 1025px);
-    }
-}
-
-/* --- Écrans moyens & tablettes (< 1300px) --- */
-@media (max-width: 1299px) {
-    body.homelands-mode .screen-deco img {
-        height: 330px;
-        top: -10px;
     }
 }
 
