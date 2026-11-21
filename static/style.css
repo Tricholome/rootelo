@@ -328,6 +328,26 @@ body.homelands-mode #leaderboard .frog-leader-icon {
     }
 }
 
+/* =========================================================================
+   HOMELANDS DECORATIONS (LIGNE DE SOL COMMUNE & PIEDS ALIGNÉS)
+   ========================================================================= */
+
+/* --- Grand écran (>= 1300px) --- */
+@media (min-width: 1300px) {
+    /* Base commune : même hauteur et pieds ancrés sur la même ligne de sol */
+    body.homelands-mode .screen-deco img {
+        height: clamp(340px, 55vh, 1025px);
+    }
+}
+
+/* --- Écrans moyens & tablettes (< 1300px) --- */
+@media (max-width: 1299px) {
+    body.homelands-mode .screen-deco img {
+        height: 330px;
+        top: -10px;
+    }
+}
+
 /* --- 2.4 Footer & Credits --- */
 .footer-credits {
     display: flex;
