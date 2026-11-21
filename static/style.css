@@ -306,7 +306,7 @@ body.homelands-mode #leaderboard .frog-leader-icon {
         top: max(50%, calc(550px - (var(--scroll, 0) * 1px)));
     }
 	
-	body.homelands-mode .screen-deco img {
+	body:is([data-page="network"], [data-page="homelands"]) .screen-deco img {
         height: clamp(340px, 55vh, 1025px);
 		transform: translateY(-55%) translateX(0);
     }
