@@ -3,31 +3,37 @@
     "title": "Rootelo • Root Digital League Elo Leaderboard",
     "page_heading": "Leaderboard",
     "description": "Only players with a Tier are ranked. Double-click&nbsp;to&nbsp;see&nbsp;individual&nbsp;journeys.",
-	"seo_description": "An Elo ranking system for the digital Root game. See player standings in the Root Digital League and follow individual progress over each season."
+	"seo_description": "An Elo ranking system for the digital Root game. See player standings in the Root Digital League and follow individual progress over each season.",
+	"og_image": "assets/meta/leaderboard-preview.webp"
   },
   "matches": {
     "title": "Rootelo • Top Tables",
     "page_heading": "Top Tables",
-    "description": "Season games ranked by total Elo. Click&nbsp;a&nbsp;Game&nbsp;ID&nbsp;for&nbsp;match&nbsp;details."
+    "description": "Season games ranked by total Elo. Click&nbsp;a&nbsp;Game&nbsp;ID&nbsp;for&nbsp;match&nbsp;details.",
+	"og_image": "assets/meta/matches-preview.webp"
   },
   "trends": {
     "title": "Rootelo • Player's Journey",
     "page_heading": "Player's Journey",
-    "description": "Search for a player to see their Elo&nbsp;evolution&nbsp;over&nbsp;the&nbsp;season."
+    "description": "Search for a player to see their Elo&nbsp;evolution&nbsp;over&nbsp;the&nbsp;season.",
+	"og_image": "assets/meta/trends-preview.webp"
   },
   "codex": {
     "title": "Rootelo • Codex",
     "page_heading": "Codex",
-    "description": "Understanding the fundamental rules and&nbsp;mechanics&nbsp;of&nbsp;Rootelo."
+    "description": "Understanding the fundamental rules and&nbsp;mechanics&nbsp;of&nbsp;Rootelo.",
+	"og_image": "assets/meta/about-preview.webp"
   },
   "cache": {
     "title": "Rootelo • Undergrowth",
     "page_heading": "Undergrowth",
-    "description": "A sanctuary for the critters who&nbsp;never&nbsp;sought&nbsp;a&nbsp;<span class='cipher' data-word='crown'>crown</span>."
+    "description": "A sanctuary for the critters who&nbsp;never&nbsp;sought&nbsp;a&nbsp;<span class='cipher' data-word='crown'>crown</span>.",
+	"og_image": "assets/meta/cache-preview.webp"
   },
   "network": {
     "title": "Rootelo • Homelands",
     "page_heading": "Homelands",
-    "description": "Unveiling player allegiances and&nbsp;the&nbsp;Woodland’s&nbsp;social&nbsp;fabric."
+    "description": "Unveiling player allegiances and&nbsp;the&nbsp;Woodland’s&nbsp;social&nbsp;fabric.",
+	"og_image": "assets/meta/network-preview.webp"
   }
 }
