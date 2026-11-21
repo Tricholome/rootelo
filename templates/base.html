@@ -61,8 +61,9 @@
 	<meta property="og:type" content="website">
 	<meta property="og:url" content="https://tricholome.github.io/rootelo">
 	<meta property="og:title" content="ROOTELO">
+	<meta property="og:site_name " content="ROOTELO">
 	<meta property="og:description" content="A Metric of Woodland Skill and Will">
-	<meta property="og:image" content="https://tricholome.github.io/rootelo/assets/meta/rootelo-preview.webp">
+	<meta property="og:image" content="{{ config.site_base_url }}/{{ og_image if og_image is defined and og_image else config.assets.preview }}">
 	
 	<link rel="icon" type="image/png" sizes="192x192" href="https://tricholome.github.io/rootelo/assets/meta/favicon.png">
 	<link rel="icon" type="image/svg+xml" href="{{ path_prefix }}assets/meta/favicon.svg">
