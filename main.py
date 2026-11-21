@@ -1129,10 +1129,8 @@ def run_league_pipeline(league_config, all_leagues_list):
             is_archive=False,
             has_seasons=False,
             is_static=True,
-            title=p_info.get("title", ""),
-            page_heading=p_info.get("page_heading", ""),
-            description=p_info.get("description", ""),
             is_law=(page_id in ["about", "league", "simulator", "homelands"]),
+            **p_info,
             **extra
         )
 
