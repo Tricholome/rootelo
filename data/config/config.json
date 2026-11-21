@@ -1,6 +1,5 @@
 {
   "site_base_url": "https://tricholome.github.io/rootelo",
-  "preview": "assets/meta/rootelo-preview.webp",
   "page_tiers": {
     "index": "bird",
     "matches": "fox",
@@ -71,6 +70,7 @@
     "window-gap":       "20px"
   },
   "assets": {
+	"preview": "assets/meta/rootelo-preview.webp",
     "icons": {
       "bird":     "assets/icons/bird.webp",
       "fox":      "assets/icons/fox.webp",
