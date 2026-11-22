@@ -5,7 +5,8 @@
     "matches": "fox",
     "trends": "rabbit",
     "codex": "mouse",
-    "cache": "squirrel"
+    "cache": "squirrel",
+	"network": "frog"
   },
   "colors": {
     "ui": {
@@ -38,7 +39,8 @@
       "squirrel": "#94C160",
       "stag":     "#C686FF",
       "bear":     "#ffffff",
-      "default":  "#7A7347"
+	  "frog":     "#7B7D10",
+      "default":  "#ffffff"
     }
   },
   "typography": {
@@ -49,6 +51,7 @@
     "bold":          "900",
     "medium":        "600",
     "normal":        "400",
+	"size-xxs":       "0.65rem",
     "size-xs":       "0.75rem",
     "size-sm":       "0.85rem",
     "size-modal":    "0.90rem",
@@ -67,6 +70,7 @@
     "window-gap":       "20px"
   },
   "assets": {
+	"preview": "assets/meta/rootelo-preview.webp",
     "icons": {
       "bird":     "assets/icons/bird.webp",
       "fox":      "assets/icons/fox.webp",
@@ -74,14 +78,35 @@
       "mouse":    "assets/icons/mouse.webp",
       "squirrel": "assets/icons/squirrel.webp",
       "stag":     "assets/icons/stag.webp",
-      "bear":     "assets/icons/bear.webp"
+      "bear":     "assets/icons/bear.webp",
+	  "frog":     "assets/icons/frog.webp"
     },
     "decorations": {
       "index":   {"left": "assets/images/leaderboard_img_left.webp", "right": "assets/images/leaderboard_img_right.webp"},
       "matches": {"left": "assets/images/matches_img_left.webp",     "right": "assets/images/matches_img_right.webp"},
       "trends":  {"left": "assets/images/trends_img_left.webp",      "right": "assets/images/trends_img_right.webp"},
       "codex":   {"left": "assets/images/about_img_left.webp",       "right": "assets/images/about_img_right.webp"},
-      "cache":   {"left": "assets/images/cache_img_left.webp",       "right": "assets/images/cache_img_right.webp"}
+      "cache":   {"left": "assets/images/cache_img_left.webp",       "right": "assets/images/cache_img_right.webp"},
+	  "network":   {"left": "assets/images/homelands_img_left.webp",       "right": "assets/images/homelands_img_right.webp"}
+    }
+  },
+  "network": {
+    "tribe_names": ["TEA", "BAG", "SWORD", "COINS", "HAMMER", "CROSSBOW", "BOOT", "TORCH", "CLUB"],
+    "tribes": {
+      "TEA":      { "icon": "assets/items/tea.png" },
+      "BAG":      { "icon": "assets/items/bag.png" },
+      "SWORD":    { "icon": "assets/items/sword.png" },
+      "COINS":    { "icon": "assets/items/coins.png" },
+      "HAMMER":   { "icon": "assets/items/hammer.png" },
+      "CROSSBOW": { "icon": "assets/items/crossbow.png" },
+      "BOOT":     { "icon": "assets/items/boot.png" },
+      "TORCH":    { "icon": "assets/items/torch.png" },
+      "CLUB":     { "icon": "assets/items/club.png" }
+    },
+    "colors": {
+      "same_tribe":  "#7B7D10",
+      "other_tribe": "#B8681A",
+      "unaligned":   "#4a5568"
     }
   }
 }

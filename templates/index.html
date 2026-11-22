@@ -4,6 +4,10 @@
     <div class="unranked-toggle-container">
         <input type="checkbox" id="tierFilterCheckbox" {% if not is_archive %}checked{% endif %} autocomplete="off">
         <label for="tierFilterCheckbox">Show tierless players</label>
+		{% if homelands_enabled %}
+		<input type="checkbox" id="spotFrogsCheckbox" autocomplete="off">
+        <label for="spotFrogsCheckbox">Spot the frogs</label>
+		{% endif %}
     </div>
 
     <table id="leaderboard" class="display nowrap" style="width:100%">
@@ -22,18 +26,30 @@
         </thead>
         <tbody>
             {% for player in players %}
-            <tr data-tier="{{ player.tier }}" class="{% if player.tier == 'unassigned' %}unassigned{% endif %}">
+            <tr data-tier="{{ player.tier }}" 
+                {% if player.homeland_leader %}data-settler="true"{% endif %} 
+                class="{% if player.tier == 'unassigned' %}unassigned{% endif %}{% if player.homeland_leader %} settler-row{% endif %}">
                 <td>{{ player.Rank }}</td>
                 <td>
                     {% if player.tier and player.tier != 'unassigned' %}
                         <a href="javascript:void(0)" 
                            onclick="handleTierClick(event, '{{ player.tier }}')" 
-                           class="tier-anchor-link">
+                           class="tier-anchor-link standard-tier">
                             <div class="tier-icon-container">
                                 <img src="{{ path_prefix }}{{ config.assets.icons[player.tier] }}" alt="{{ player.tier }}">
                             </div>
                         </a>
                     {% endif %}
+
+                    {% if player.homeland_leader %}
+						<a href="javascript:void(0)" 
+						   onclick="openTierModal('frog', '{{ player.display_name }}', '{{ player.homeland_leader }}')" 
+						   class="tier-anchor-link frog-leader-icon">
+							<div class="tier-icon-container">
+								<img src="{{ path_prefix }}{{ config.assets.icons.frog }}" alt="frog">
+							</div>
+						</a>
+					{% endif %}
                 </td>
                 <td>{{ player.display_name }}</td>
                 <td>{{ player.ELO }}</td>
