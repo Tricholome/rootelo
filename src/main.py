@@ -187,7 +187,9 @@ def run_league_pipeline(league_config, all_leagues_list):
             )
             homelands_snapshots = format_homelands_snapshots(raw_snapshots, player_registry)
             homelands_constellations = format_constellations(raw_constellations, player_registry)
-            Logger.success(f"Homelands simulation completed ({len(homelands_snapshots)} daily snapshots)")
+            active = sorted(t for t, m in homelands_snapshots[max(homelands_snapshots)].items() if m) if homelands_snapshots else []
+            active_str = f"{len(active)} active ({', '.join(active)})" if active else "0 active"
+            Logger.success(f"Homelands simulation complete: {len(homelands_snapshots)} days — {active_str}")
         except Exception as e:
             Logger.warn(f"Failed to run homelands simulation: {e}")
 
