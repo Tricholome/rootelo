@@ -51,6 +51,9 @@ def run_league_pipeline(league_config, all_leagues_list):
     player_registry = PlayerRegistry(os.path.join(data_dir, "players.json"))
 
     config = load_json(os.path.join("data", "config", "config.json"))
+    if "SITE_BASE_URL" in os.environ:
+        config["site_base_url"] = os.environ["SITE_BASE_URL"].rstrip("/")
+
     pages_content = load_json(os.path.join("data", "config", "pages_content.json"))
     champions_data = load_json(os.path.join(data_dir, "champions.json"))
     corrections_file = os.path.join(data_dir, "corrections.csv")
