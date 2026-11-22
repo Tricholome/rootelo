@@ -1,5 +1,4 @@
-name: Run Analytics
-
+name: 04. Data • Analytics
 on:
   workflow_dispatch: # Permet de déclencher le script manuellement avec un bouton
 

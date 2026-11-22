@@ -58,27 +58,41 @@
 	<meta name="description" content="{{ description }}">
 	{% endif %}
 
+	<!-- Open Graph Metadata -->
 	<meta property="og:type" content="website">
-	<meta property="og:url" content="https://tricholome.github.io/rootelo">
-	<meta property="og:title" content="ROOTELO">
-	<meta property="og:description" content="A Metric of Woodland Skill and Will">
-	<meta property="og:image" content="https://tricholome.github.io/rootelo/assets/meta/rootelo-preview.webp">
+	<meta property="og:url" content="{{ config.site_base_url }}/{{ page_id }}.html">
+	<meta property="og:site_name" content="ROOTELO • A Metric of Woodland Skill and Will">
+	<meta property="og:title" content="{{ page_heading }}">
+	<meta property="og:description" content="{{ (seo_description if seo_description else description) | striptags }}">
+	<meta property="og:image" content="{{ config.site_base_url }}/{{ og_image if og_image is defined and og_image else config.assets.preview }}">
 	
-	<link rel="icon" type="image/png" sizes="192x192" href="https://tricholome.github.io/rootelo/assets/meta/favicon.png">
+	<link rel="icon" type="image/png" sizes="192x192" href="{{ config.site_base_url }}/assets/meta/favicon.png">
 	<link rel="icon" type="image/svg+xml" href="{{ path_prefix }}assets/meta/favicon.svg">
-	<link rel="apple-touch-icon" href="https://tricholome.github.io/rootelo/assets/meta/favicon.png">
+	<link rel="apple-touch-icon" href="{{ config.site_base_url }}/assets/meta/favicon.png">
 
     {% block extra_head %}{% endblock %}
 	{% block extra_css %}{% endblock %}
 </head>
 
-<body class="{% if is_archive %}archive-view{% endif %}" data-page="{{ page_id }}" data-section="{{ active_section }}">
-    
+<body class="{% if is_archive %}archive-view{% endif %} {% if active_section == 'network' or page_id in ['network', 'homelands'] %}homelands-mode{% endif %}" data-page="{{ page_id }}" data-section="{{ active_section }}">
+	<script>
+		(function() {
+			const page = document.body.dataset.page;
+			if (page !== 'index' && page !== 'network' && page !== 'homelands') {
+				sessionStorage.removeItem('spotFrogs');
+			}
+			else if (page === 'index' && sessionStorage.getItem('spotFrogs') === 'true') {
+				document.body.classList.add('homelands-mode');
+			}
+		})();
+	</script>
+		
     <div class="container">
 	
         <header class="app-banner window-box">
 		
-            <div class="banner-container">
+            <!-- 1. STANDARD BANNER -->
+            <div class="banner-container banner-standard">
                 <div class="banner-icons left">
                     <a href="javascript:void(0)" onclick="openTierModal('stag')" class="tooltip-link js-double-tap banner-icon-stag">
                         <img src="{{ path_prefix }}{{ config.assets.icons.stag }}" alt="Stag">
@@ -112,10 +126,45 @@
                     </a>
                 </div>
             </div>
-            
+
+            <!-- 2. HOMELANDS BANNER -->
+            <div class="banner-container banner-homelands">
+                <div class="banner-icons left">
+                    <a href="javascript:void(0)" onclick="openTierModal('frog')" class="tooltip-link js-double-tap slot-bird">
+                        <img src="{{ path_prefix }}{{ config.assets.icons.bird }}" alt="Bird" class="base-icon">
+                        <img src="{{ path_prefix }}{{ config.assets.icons.frog }}" alt="Frog" class="frog-icon">
+                        <span class="tooltip-text"><strong class="tier-frog">Frog</strong> — The Homeland Heralds</span>
+                    </a>
+                    <a href="javascript:void(0)" onclick="openTierModal('frog')" class="tooltip-link js-double-tap slot-fox">
+                        <img src="{{ path_prefix }}{{ config.assets.icons.fox }}" alt="Fox" class="base-icon">
+                        <img src="{{ path_prefix }}{{ config.assets.icons.frog }}" alt="Frog" class="frog-icon">
+                        <span class="tooltip-text"><strong class="tier-frog">Frog</strong> — The Homeland Heralds</span>
+                    </a>
+                </div>
+
+                <div class="banner-center">
+                    <h1 class="site-title">ROOTELO</h1>
+                    <p class="site-subtitle">A Metric of Woodland&nbsp;Skill&nbsp;and&nbsp;Will</p>
+                </div>
+
+                <div class="banner-icons right">
+                    <a href="javascript:void(0)" onclick="openTierModal('frog')" class="tooltip-link js-double-tap slot-rabbit">
+                        <img src="{{ path_prefix }}{{ config.assets.icons.rabbit }}" alt="Rabbit" class="base-icon">
+                        <img src="{{ path_prefix }}{{ config.assets.icons.frog }}" alt="Frog" class="frog-icon">
+                        <span class="tooltip-text"><strong class="tier-frog">Frog</strong> — The Homeland Heralds</span>
+                    </a>
+                    <a href="javascript:void(0)" onclick="openTierModal('frog')" class="tooltip-link js-double-tap slot-mouse">
+                        <img src="{{ path_prefix }}{{ config.assets.icons.mouse }}" alt="Mouse" class="base-icon">
+                        <img src="{{ path_prefix }}{{ config.assets.icons.frog }}" alt="Frog" class="frog-icon">
+                        <span class="tooltip-text"><strong class="tier-frog">Frog</strong> — The Homeland Heralds</span>
+                    </a>
+                </div>
+            </div>
+			
             <div class="nav-separator"></div>
 
-            <nav>
+            <!-- 1. STANDARD NAVIGATION -->
+            <nav class="nav-standard">
 				{% set nav_links = [('index', 'Leaderboard'), ('matches', 'Top Tables'), ('trends', "Player's Journey"), ('about', 'Codex')] %}
 
 				{% for base, label in nav_links %}
@@ -128,6 +177,14 @@
 					<a href="{{ target }}" class="{{ 'active' if is_active else '' }}">{{ label }}</a>
 				{% endfor %}
 				<a href="cache.html" class="nav-secret {{ 'active' if page_id == 'cache' or active_section == 'cache' else '' }}">Undergrowth</a>
+			</nav>
+
+            <!-- 2. HOMELANDS NAVIGATION -->
+			<nav id="homelandsNav" class="nav-homelands">
+				<a href="index{% if is_archive and season_tag %}_{{ season_tag }}{% endif %}.html" class="homelands-tab-link {{ 'active' if page_id == 'index' else '' }}">Leaderboard</a>
+				<a href="network{% if is_archive and season_tag %}_{{ season_tag }}{% endif %}.html#map" class="homelands-tab-link {{ 'active' if page_id == 'network' else '' }}" data-tab="map">Homelands</a>
+				<a href="network{% if is_archive and season_tag %}_{{ season_tag }}{% endif %}.html#circle" class="homelands-tab-link" data-tab="circle">Player's Circle</a>
+				<a href="homelands.html" class="homelands-tab-link {{ 'active' if page_id == 'homelands' else '' }}">Codex</a>
 			</nav>
 			
         </header>
@@ -143,16 +200,33 @@
 				<h2>{{ page_heading }}</h2>
 				{% if description %}<p>{{ description }}</p>{% endif %}
 
-				{% block subnav %}{% endblock %}
+				{% block subnav %}
+				{% if is_law %}
+				<div class="season-selector-group codex-subnav-group">
+					<div class="codex-selector">
+						<a href="about.html#view" class="season-btn {{ 'active' if page_id == 'about' else '' }}">Overview</a>
+						<a href="league.html#view" class="season-btn {{ 'active' if page_id == 'league' else '' }}">League</a>
+						<a href="simulator.html#view" class="season-btn {{ 'active' if page_id == 'simulator' else '' }}">Simulator</a>
+						{% if homelands_enabled %}
+						<a href="homelands.html#view" class="season-btn {{ 'active' if page_id == 'homelands' else '' }}">Homelands</a>
+						{% endif %}
+					</div>
+				</div>
+				{% endif %}
+				{% endblock %}
 
 				<div class="season-selector-group">
 				
 					{% if all_leagues and not is_static %}
 					<div class="season-selector">
-						<span class="season-label">League</span>
-						<select onchange="if (this.value) window.location.href=this.value;">
+						<label class="season-label" for="leagueSelect">League</label>
+						<select id="leagueSelect" name="league" onchange="if (this.value) window.location.href=this.value;">
 							{% for l in all_leagues %}
-								<option value="{{ path_prefix }}{{ l.output_dir }}/{{ page_id }}.html" {% if l.slug == league_config.slug %}selected{% endif %}>
+								{% set l_homelands = l.network and l.network.enabled %}
+								<option value="{{ path_prefix }}{{ l.output_dir }}/{{ page_id }}.html"
+										{% if not l_homelands %}data-no-homelands{% endif %}
+										{% if l.slug == league_config.slug %}selected{% endif %}
+										{% if page_id == 'network' and not l_homelands %}disabled{% endif %}>
 									{{ l.name|upper }}
 								</option>
 							{% endfor %}
@@ -254,6 +328,13 @@
 				</div>
 				
 				<div class="modal-text-side">
+					<a id="modalSupporterLeft" class="modal-supporter left" href="#" title="">
+						<img src="" alt="">
+					</a>
+					<a id="modalSupporterRight" class="modal-supporter right" href="#" title="">
+						<img src="" alt="">
+					</a>
+
 					<div class="title-row">
 						<h2 id="modalTitle"></h2>
 						<h3 id="modalElo"></h3>
@@ -330,6 +411,12 @@
 				subtitle: 'The Legend',
 				desc: 'Has anyone truly seen this mythical beast, or is it only an echo of the wild? What happens to the predator when the woods turn hollow and every path leads back to a mirror of its own perfection? With nothing left to be claimed, is the true crown the silence that follows the chase?'
 			},
+			'frog': {
+				name: 'Frog',
+				elo: 'Beyond Elo',
+				subtitle: 'The Homeland Heralds',
+				desc: 'These dedicated settlers represent the social core of the league. Valued not for feats but for fidelity, they give fellow denizens a clearing to take root. New homelands emerge around these anchors, while shifting allegiances constantly redraw the seasonal map.'
+			},
 			'bear': {
 				name: 'Bear',
 				elo: CONFIG.champMatch ? CONFIG.champMatch.champion : '',
@@ -348,7 +435,7 @@
 			window.location.hostname === 'localhost' ||
 			window.location.hostname === '127.0.0.1' ||
 			window.location.href.includes('rootelo-dev') ||
-			window.location.pathname.includes('/dev/')
+			window.location.href.includes('rootelo-test')
 		) {
 			window.goatcounter = { no_onload: true };
 		}

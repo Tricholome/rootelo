@@ -1,4 +1,4 @@
-name: Update Rootelo Website
+name: 01. Deploy • Production
 
 on:
   workflow_dispatch: 
@@ -27,15 +27,17 @@ jobs:
 
       - name: Run ELO calculation and site generation
         env:
+          PYTHONHASHSEED: "0"
           API_TOKEN: ${{ secrets.API_TOKEN }}
           ROOTDB_TOKEN: ${{ secrets.ROOTDB_TOKEN }}
         run: |
-          python main.py --all
+          python src/main.py --all
 
       - name: Prepare site structure
         run: |
           mkdir -p rootelo_site
           cp *.html rootelo_site/
+          cp robots.txt rootelo_site/
           cp -r hoot rootelo_site/
           cp -r static rootelo_site/
           cp -r assets rootelo_site/

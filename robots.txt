@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+User-agent: Googlebot-Image
+Disallow: */assets/icons/stag.webp
+Disallow: */assets/icons/squirrel.webp
+Disallow: */assets/icons/bear.webp

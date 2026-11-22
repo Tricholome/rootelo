@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block content %}
+	<div id="networkWrapper" class="network-container" data-view="hm">
+
+		<div id="tribeMapContainer" class="tribe-map-container">
+			<div class="tribe-map-hud-meta">
+				<div id="tribeMapTitle" class="tribe-map-title"></div>
+				<div id="tribeMapLegend" class="tribe-map-legend"></div>
+			</div>
+			<div id="tribeMapLedger" class="tribe-map-ledger"></div>
+			<svg id="tribeMapSvg" class="tribe-map-svg">
+				<g class="links-layer"></g>
+				<g class="nodes-layer"></g>
+			</svg>
+		</div>
+		
+		<div id="dateControls" class="date-controls">
+			<button id="earliestDateBtn" class="btn">&laquo;<span class="tooltip-text">Earliest Date</span></button>
+			<button id="prevDateBtn" class="btn">&lsaquo;<span class="tooltip-text">Previous Day</span></button>
+			<input type="date" id="datePicker" class="date-picker">
+			<button id="nextDateBtn" class="btn">&rsaquo;<span class="tooltip-text">Next Day</span></button>
+			<button id="latestDateBtn" class="btn">&raquo;<span class="tooltip-text">Latest Date</span></button>
+		</div>
+
+	</div>
+{% endblock %}
+
+{% block custom_js %}
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<script>
+    window.NETWORK_DATES = {{ dates_json | safe }};
+    window.NETWORK_SNAPSHOTS = {{ snapshots_json | safe }};
+    window.PLAYER_CONSTELLATIONS = {{ constellations_json | safe }};
+    window.NETWORK_CONFIG = {{ config.network | tojson | safe }};
+</script>
+{% endblock %}

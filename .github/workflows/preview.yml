@@ -1,10 +1,23 @@
-name: Update Rootelo DEV Mirror
+name: 02. Deploy • Preview
 
 on:
   push:
     branches:
       - dev
   workflow_dispatch:
+    inputs:
+      target:
+        description: 'Target repository for deployment'
+        required: true
+        type: choice
+        default: 'dev'
+        options:
+          - dev
+          - test
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
@@ -12,8 +25,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          ref: dev
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -34,9 +45,11 @@ jobs:
 
       - name: Build RDL League
         env:
+          PYTHONHASHSEED: "0"
           API_TOKEN: ${{ secrets.API_TOKEN }}
+          SITE_BASE_URL: ${{ inputs.target == 'test' && 'https://tricholome.github.io/rootelo-test' || 'https://tricholome.github.io/rootelo-dev' }}
         run: |
-          python main.py --league rdl
+          python src/main.py --league rdl
           mkdir -p build_site
           cp *.html build_site/
           cp -r static build_site/
@@ -46,15 +59,16 @@ jobs:
       - name: Build HOOT League
         env:
           ROOTDB_TOKEN: ${{ secrets.ROOTDB_TOKEN }}
+          SITE_BASE_URL: ${{ inputs.target == 'test' && 'https://tricholome.github.io/rootelo-test' || 'https://tricholome.github.io/rootelo-dev' }}
         run: |
-          python main.py --league hoot
+          python src/main.py --league hoot
           cp -r hoot build_site/
           cp -r api build_site/
 
-      - name: Deploy to rootelo-dev repository
+      - name: Deploy to GitHub Pages mirror
         uses: peaceiris/actions-gh-pages@v3
         with:
           personal_token: ${{ secrets.DEV_REPO_PAT }}
-          external_repository: tricholome/rootelo-dev
+          external_repository: ${{ inputs.target == 'test' && 'tricholome/rootelo-test' || 'tricholome/rootelo-dev' }}
           publish_dir: ./build_site
           publish_branch: gh-pages
