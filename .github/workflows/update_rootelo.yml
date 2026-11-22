@@ -37,6 +37,7 @@ jobs:
         run: |
           mkdir -p rootelo_site
           cp *.html rootelo_site/
+          cp robots.txt rootelo_site/
           cp -r hoot rootelo_site/
           cp -r static rootelo_site/
           cp -r assets rootelo_site/
