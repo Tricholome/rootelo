@@ -44,7 +44,7 @@ jobs:
           PYTHONHASHSEED: "0"
           API_TOKEN: ${{ secrets.API_TOKEN }}
         run: |
-          python main.py --league rdl
+          python src/main.py --league rdl
           mkdir -p build_site
           cp *.html build_site/
           cp -r static build_site/
@@ -55,7 +55,7 @@ jobs:
         env:
           ROOTDB_TOKEN: ${{ secrets.ROOTDB_TOKEN }}
         run: |
-          python main.py --league hoot
+          python src/main.py --league hoot
           cp -r hoot build_site/
           cp -r api build_site/
 
