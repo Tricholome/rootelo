@@ -125,7 +125,7 @@ def main():
     homelands_constellations = {}
     try:
         from frog import run_homelands_simulation
-        Logger.section("GENERATING HOMELANDS SNAPSHOTS (NETWORK)")
+        Logger.section("GENERATING HOMELANDS SNAPSHOTS")
         global_config_path = os.path.join("data", "config", "config.json")
         homelands_cfg = league_config.get("network", {}).copy()
         homelands_cfg["enabled"] = True
