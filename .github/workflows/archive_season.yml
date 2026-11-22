@@ -50,7 +50,7 @@ jobs:
           API_TOKEN: ${{ secrets.API_TOKEN }}
           ROOTDB_API_KEY: ${{ secrets.ROOTDB_API_KEY }}
         run: |
-          CMD="python archive_season.py --league ${{ inputs.league }} --season ${{ inputs.season_tag }} --cutoff ${{ inputs.cutoff_date }} --tournament-id ${{ inputs.tournament_id }}"
+          CMD="python src/archive.py --league ${{ inputs.league }} --season ${{ inputs.season_tag }} --cutoff ${{ inputs.cutoff_date }} --tournament-id ${{ inputs.tournament_id }}"
           
           if [ -n "${{ inputs.previous_season_tag }}" ]; then
             CMD="$CMD --prev-season ${{ inputs.previous_season_tag }}"
