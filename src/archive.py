@@ -137,7 +137,9 @@ def main():
             custom_config=homelands_cfg,
             season_id=season_tag
         )
-        Logger.success(f"Homelands simulation finished ({len(homelands_snapshots)} daily snapshots).")
+        active = sorted(t for t, m in homelands_snapshots[max(homelands_snapshots)].items() if m) if homelands_snapshots else []
+        active_str = f"{len(active)} active ({', '.join(active)})" if active else "0 active"
+        Logger.success(f"Homelands simulation complete: {len(homelands_snapshots)} days — {active_str}")
     except ImportError:
         Logger.info("Skipping Homelands snapshots (frog.py not found).")
     except Exception as e:
