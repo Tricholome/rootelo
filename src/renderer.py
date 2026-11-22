@@ -333,9 +333,10 @@ class SiteRenderer:
             "cutoff_date": meta.get('cutoff_date', 'N/A'),
         }
 
-        leaders_map = extract_latest_leaders(snapshots_data)
-        for player in lb_data:
-            player['homeland_leader'] = leaders_map.get(player['display_name'])
+        if self.homelands_enabled:
+            leaders_map = extract_latest_leaders(snapshots_data)
+            for player in lb_data:
+                player['homeland_leader'] = leaders_map.get(player['display_name'])
 
         self.render_page(
             "index.html", f"index{suffix}.html",
@@ -366,7 +367,7 @@ class SiteRenderer:
             **season_context
         )
 
-        if snapshots_data:
+        if self.homelands_enabled and snapshots_data:
             self.render_page(
                 "network.html", f"network{suffix}.html",
                 page_id="network",
