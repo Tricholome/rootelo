@@ -8,7 +8,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Rootelo • Root Digital League Elo Leaderboard</title>
+    <title>Rootelo • Leaderboard</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -44,6 +44,8 @@
 			--medium: 600;
 			
 			--normal: 400;
+			
+			--size-xxs: 0.65rem;
 			
 			--size-xs: 0.75rem;
 			
@@ -134,8 +136,11 @@
 			--color-bear: #ffffff;
 			--color-bear-bg: #ffffff14;
 			
-			--color-default: #7A7347;
-			--color-default-bg: #7A734714;
+			--color-frog: #7B7D10;
+			--color-frog-bg: #7B7D1014;
+			
+			--color-default: #ffffff;
+			--color-default-bg: #ffffff14;
 			
 
 			/* --- 5. PAGE THEME --- */
@@ -148,14 +153,16 @@
 	<meta name="google-site-verification" content="xNfE9mY0Df8BsQAl4g5S0I_C4MvFC8nnJVNVWJJpqAg" />
 
 	
-	<meta name="description" content="An Elo ranking system for the digital Root game. See player standings in the Root Digital League and follow individual progress over each season.">
+	<meta name="description" content="An Elo ranking system for competitive digital Root. Track player standings and follow individual progress across each season.">
 	
 
+	<!-- Open Graph Metadata -->
 	<meta property="og:type" content="website">
-	<meta property="og:url" content="https://tricholome.github.io/rootelo">
-	<meta property="og:title" content="ROOTELO">
-	<meta property="og:description" content="A Metric of Woodland Skill and Will">
-	<meta property="og:image" content="https://tricholome.github.io/rootelo/assets/meta/rootelo-preview.webp">
+	<meta property="og:url" content="https://tricholome.github.io/rootelo/index.html">
+	<meta property="og:site_name" content="ROOTELO • A Metric of Woodland Skill and Will">
+	<meta property="og:title" content="Leaderboard">
+	<meta property="og:description" content="An Elo ranking system for competitive digital Root. Track player standings and follow individual progress across each season.">
+	<meta property="og:image" content="https://tricholome.github.io/rootelo/assets/meta/leaderboard-preview.webp">
 	
 	<link rel="icon" type="image/png" sizes="192x192" href="https://tricholome.github.io/rootelo/assets/meta/favicon.png">
 	<link rel="icon" type="image/svg+xml" href="../assets/meta/favicon.svg">
@@ -165,13 +172,25 @@
 	
 </head>
 
-<body class="" data-page="index" data-section="index">
-    
+<body class=" " data-page="index" data-section="index">
+	<script>
+		(function() {
+			const page = document.body.dataset.page;
+			if (page !== 'index' && page !== 'network' && page !== 'homelands') {
+				sessionStorage.removeItem('spotFrogs');
+			}
+			else if (page === 'index' && sessionStorage.getItem('spotFrogs') === 'true') {
+				document.body.classList.add('homelands-mode');
+			}
+		})();
+	</script>
+		
     <div class="container">
 	
         <header class="app-banner window-box">
 		
-            <div class="banner-container">
+            <!-- 1. STANDARD BANNER -->
+            <div class="banner-container banner-standard">
                 <div class="banner-icons left">
                     <a href="javascript:void(0)" onclick="openTierModal('stag')" class="tooltip-link js-double-tap banner-icon-stag">
                         <img src="../assets/icons/stag.webp" alt="Stag">
@@ -205,10 +224,45 @@
                     </a>
                 </div>
             </div>
-            
+
+            <!-- 2. HOMELANDS BANNER -->
+            <div class="banner-container banner-homelands">
+                <div class="banner-icons left">
+                    <a href="javascript:void(0)" onclick="openTierModal('frog')" class="tooltip-link js-double-tap slot-bird">
+                        <img src="../assets/icons/bird.webp" alt="Bird" class="base-icon">
+                        <img src="../assets/icons/frog.webp" alt="Frog" class="frog-icon">
+                        <span class="tooltip-text"><strong class="tier-frog">Frog</strong> — The Homeland Heralds</span>
+                    </a>
+                    <a href="javascript:void(0)" onclick="openTierModal('frog')" class="tooltip-link js-double-tap slot-fox">
+                        <img src="../assets/icons/fox.webp" alt="Fox" class="base-icon">
+                        <img src="../assets/icons/frog.webp" alt="Frog" class="frog-icon">
+                        <span class="tooltip-text"><strong class="tier-frog">Frog</strong> — The Homeland Heralds</span>
+                    </a>
+                </div>
+
+                <div class="banner-center">
+                    <h1 class="site-title">ROOTELO</h1>
+                    <p class="site-subtitle">A Metric of Woodland&nbsp;Skill&nbsp;and&nbsp;Will</p>
+                </div>
+
+                <div class="banner-icons right">
+                    <a href="javascript:void(0)" onclick="openTierModal('frog')" class="tooltip-link js-double-tap slot-rabbit">
+                        <img src="../assets/icons/rabbit.webp" alt="Rabbit" class="base-icon">
+                        <img src="../assets/icons/frog.webp" alt="Frog" class="frog-icon">
+                        <span class="tooltip-text"><strong class="tier-frog">Frog</strong> — The Homeland Heralds</span>
+                    </a>
+                    <a href="javascript:void(0)" onclick="openTierModal('frog')" class="tooltip-link js-double-tap slot-mouse">
+                        <img src="../assets/icons/mouse.webp" alt="Mouse" class="base-icon">
+                        <img src="../assets/icons/frog.webp" alt="Frog" class="frog-icon">
+                        <span class="tooltip-text"><strong class="tier-frog">Frog</strong> — The Homeland Heralds</span>
+                    </a>
+                </div>
+            </div>
+			
             <div class="nav-separator"></div>
 
-            <nav>
+            <!-- 1. STANDARD NAVIGATION -->
+            <nav class="nav-standard">
 				
 
 				
@@ -238,6 +292,14 @@
 				
 				<a href="cache.html" class="nav-secret ">Undergrowth</a>
 			</nav>
+
+            <!-- 2. HOMELANDS NAVIGATION -->
+			<nav id="homelandsNav" class="nav-homelands">
+				<a href="index.html" class="homelands-tab-link active">Leaderboard</a>
+				<a href="network.html#map" class="homelands-tab-link " data-tab="map">Homelands</a>
+				<a href="network.html#circle" class="homelands-tab-link" data-tab="circle">Player's Circle</a>
+				<a href="homelands.html" class="homelands-tab-link ">Codex</a>
+			</nav>
 			
         </header>
         
@@ -253,19 +315,29 @@
 				<p>Only players with a Tier are ranked. Double-click&nbsp;to&nbsp;see&nbsp;individual&nbsp;journeys.</p>
 
 				
+				
+				
 
 				<div class="season-selector-group">
 				
 					
 					<div class="season-selector">
-						<span class="season-label">League</span>
-						<select onchange="if (this.value) window.location.href=this.value;">
+						<label class="season-label" for="leagueSelect">League</label>
+						<select id="leagueSelect" name="league" onchange="if (this.value) window.location.href=this.value;">
 							
-								<option value="../hoot/index.html" selected>
+								
+								<option value="../hoot/index.html"
+										data-no-homelands
+										selected
+										>
 									HOOT RANKINGS
 								</option>
 							
-								<option value=".././index.html" >
+								
+								<option value=".././index.html"
+										data-no-homelands
+										
+										>
 									ROOT DIGITAL LEAGUE
 								</option>
 							
@@ -285,6 +357,10 @@
 									
 										<option value=".doe"></option>
 									
+										<option value="aaron_dangerman"></option>
+									
+										<option value="abbreviatedman (he/him)"></option>
+									
 										<option value="Aedalus"></option>
 									
 										<option value="Aeliott"></option>
@@ -293,15 +369,23 @@
 									
 										<option value="AnOkayPotato"></option>
 									
-										<option value="BW"></option>
+										<option value="batmaster"></option>
+									
+										<option value="bendn"></option>
+									
+										<option value="benssoon"></option>
 									
 										<option value="BlazeBoy"></option>
 									
 										<option value="Briony"></option>
 									
+										<option value="bunniesandcandy"></option>
+									
 										<option value="Bustin"></option>
 									
-										<option value="CUA"></option>
+										<option value="BW"></option>
+									
+										<option value="calvinfunfun"></option>
 									
 										<option value="Canyon"></option>
 									
@@ -313,13 +397,23 @@
 									
 										<option value="ChopieTheCat"></option>
 									
+										<option value="clinicalindication"></option>
+									
 										<option value="Cookies"></option>
 									
 										<option value="Coola101"></option>
 									
 										<option value="Cosmic Cant"></option>
 									
+										<option value="countthemsheep"></option>
+									
+										<option value="coyote"></option>
+									
+										<option value="CUA"></option>
+									
 										<option value="Dark Owl"></option>
+									
+										<option value="darkcat9000"></option>
 									
 										<option value="Darkwonderer"></option>
 									
@@ -341,7 +435,13 @@
 									
 										<option value="EnzotheBenzo"></option>
 									
+										<option value="euler's fool"></option>
+									
 										<option value="Extortionator (AUS)"></option>
+									
+										<option value="fajfar"></option>
+									
+										<option value="fraaab"></option>
 									
 										<option value="Geetus"></option>
 									
@@ -359,11 +459,23 @@
 									
 										<option value="IceeCream"></option>
 									
+										<option value="idyll"></option>
+									
 										<option value="Itay Chang"></option>
+									
+										<option value="jakattak14"></option>
 									
 										<option value="Jalapeno"></option>
 									
+										<option value="jazmorow"></option>
+									
 										<option value="Jed"></option>
+									
+										<option value="jermcurry"></option>
+									
+										<option value="jonismiff"></option>
+									
+										<option value="kaiser"></option>
 									
 										<option value="Kernel_"></option>
 									
@@ -377,15 +489,21 @@
 									
 										<option value="KyloBot"></option>
 									
+										<option value="lazarus210"></option>
+									
 										<option value="Lilac Teddy Bear"></option>
 									
 										<option value="Litch Queen of Hyena Necrocracy"></option>
 									
 										<option value="Lobster (GMT-4)(Indiana)"></option>
 									
+										<option value="lumpyprol"></option>
+									
 										<option value="Lylethebrick"></option>
 									
 										<option value="MagicDream"></option>
+									
+										<option value="magiczamboni"></option>
 									
 										<option value="Malleable Frog"></option>
 									
@@ -393,15 +511,21 @@
 									
 										<option value="Matthijs"></option>
 									
+										<option value="mcauthor"></option>
+									
 										<option value="MentalMendel"></option>
 									
 										<option value="Meryn"></option>
+									
+										<option value="militech2078"></option>
 									
 										<option value="Moss"></option>
 									
 										<option value="MrDrouf"></option>
 									
-										<option value="MrKent (UTC+7)"></option>
+										<option value="MrKent (UTC"></option>
+									
+										<option value="mwalt92"></option>
 									
 										<option value="Nadav253"></option>
 									
@@ -411,17 +535,31 @@
 									
 										<option value="North Abbot (he/him/his)"></option>
 									
+										<option value="nvt2508"></option>
+									
+										<option value="pheobii"></option>
+									
 										<option value="Piechu"></option>
 									
 										<option value="Plasma"></option>
 									
+										<option value="plegbot"></option>
+									
 										<option value="PokerFace126"></option>
 									
+										<option value="pooge"></option>
+									
+										<option value="punkstarman"></option>
+									
 										<option value="Purplefrowns"></option>
+									
+										<option value="pwarren8590"></option>
 									
 										<option value="Quents"></option>
 									
 										<option value="RabbitWarlord"></option>
+									
+										<option value="radiantchaos"></option>
 									
 										<option value="Requiem"></option>
 									
@@ -433,15 +571,17 @@
 									
 										<option value="RondamGemas"></option>
 									
-										<option value="SEironed"></option>
-									
-										<option value="SNCuller"></option>
-									
-										<option value="SSSS"></option>
+										<option value="salo_solomon"></option>
 									
 										<option value="Schkitz"></option>
 									
 										<option value="Schnaga"></option>
+									
+										<option value="scotchbonnet"></option>
+									
+										<option value="sda1611"></option>
+									
+										<option value="SEironed"></option>
 									
 										<option value="Sharkat"></option>
 									
@@ -451,7 +591,17 @@
 									
 										<option value="Slaith"></option>
 									
+										<option value="smeichel"></option>
+									
+										<option value="SNCuller"></option>
+									
+										<option value="SSSS"></option>
+									
 										<option value="Starhard_Fishrinse"></option>
+									
+										<option value="stephkuriboh"></option>
+									
+										<option value="stockbot"></option>
 									
 										<option value="SugieCube"></option>
 									
@@ -459,113 +609,35 @@
 									
 										<option value="Sweenss"></option>
 									
-										<option value="Thewy"></option>
-									
-										<option value="Thungon"></option>
-									
-										<option value="True American Patriot"></option>
-									
-										<option value="Tungsten"></option>
-									
-										<option value="WillRevolt"></option>
-									
-										<option value="WyvernElement"></option>
-									
-										<option value="XpertAcorn"></option>
-									
-										<option value="Zaandaa"></option>
-									
-										<option value="aaron_dangerman"></option>
-									
-										<option value="abbreviatedman (he/him)"></option>
-									
-										<option value="batmaster"></option>
-									
-										<option value="bendn"></option>
-									
-										<option value="benssoon"></option>
-									
-										<option value="bunniesandcandy"></option>
-									
-										<option value="calvinfunfun"></option>
-									
-										<option value="clinicalindication"></option>
-									
-										<option value="countthemsheep"></option>
-									
-										<option value="coyote"></option>
-									
-										<option value="darkcat9000"></option>
-									
-										<option value="euler's fool"></option>
-									
-										<option value="fajfar"></option>
-									
-										<option value="fraaab"></option>
-									
-										<option value="idyll"></option>
-									
-										<option value="jakattak14"></option>
-									
-										<option value="jazmorow"></option>
-									
-										<option value="jermcurry"></option>
-									
-										<option value="jonismiff"></option>
-									
-										<option value="kaiser"></option>
-									
-										<option value="lazarus210"></option>
-									
-										<option value="lumpyprol"></option>
-									
-										<option value="magiczamboni"></option>
-									
-										<option value="mcauthor"></option>
-									
-										<option value="militech2078"></option>
-									
-										<option value="mwalt92"></option>
-									
-										<option value="nvt2508"></option>
-									
-										<option value="pheobii"></option>
-									
-										<option value="plegbot"></option>
-									
-										<option value="pooge"></option>
-									
-										<option value="punkstarman"></option>
-									
-										<option value="pwarren8590"></option>
-									
-										<option value="radiantchaos"></option>
-									
-										<option value="salo_solomon"></option>
-									
-										<option value="scotchbonnet"></option>
-									
-										<option value="sda1611"></option>
-									
-										<option value="smeichel"></option>
-									
-										<option value="stephkuriboh"></option>
-									
-										<option value="stockbot"></option>
-									
 										<option value="talleyrand19"></option>
 									
 										<option value="tentacultist_"></option>
 									
 										<option value="theSOFLY"></option>
 									
+										<option value="Thewy"></option>
+									
+										<option value="Thungon"></option>
+									
 										<option value="trippingrannys"></option>
+									
+										<option value="True American Patriot"></option>
+									
+										<option value="Tungsten"></option>
 									
 										<option value="turmoilbyrd"></option>
 									
 										<option value="uwtron"></option>
 									
+										<option value="WillRevolt"></option>
+									
+										<option value="WyvernElement"></option>
+									
 										<option value="xinoehp512"></option>
+									
+										<option value="XpertAcorn"></option>
+									
+										<option value="Zaandaa"></option>
 									
 								
 							</datalist>
@@ -592,6 +664,7 @@
     <div class="unranked-toggle-container">
         <input type="checkbox" id="tierFilterCheckbox" checked autocomplete="off">
         <label for="tierFilterCheckbox">Show tierless players</label>
+		
     </div>
 
     <table id="leaderboard" class="display nowrap" style="width:100%">
@@ -610,17 +683,21 @@
         </thead>
         <tbody>
             
-            <tr data-tier="rabbit" class="">
+            <tr data-tier="rabbit" 
+                 
+                class="">
                 <td>1</td>
                 <td>
                     
                         <a href="javascript:void(0)" 
                            onclick="handleTierClick(event, 'rabbit')" 
-                           class="tier-anchor-link">
+                           class="tier-anchor-link standard-tier">
                             <div class="tier-icon-container">
                                 <img src="../assets/icons/rabbit.webp" alt="rabbit">
                             </div>
                         </a>
+                    
+
                     
                 </td>
                 <td>uwtron</td>
@@ -632,17 +709,21 @@
                 <td>+17</td>
             </tr>
             
-            <tr data-tier="rabbit" class="">
+            <tr data-tier="rabbit" 
+                 
+                class="">
                 <td>2</td>
                 <td>
                     
                         <a href="javascript:void(0)" 
                            onclick="handleTierClick(event, 'rabbit')" 
-                           class="tier-anchor-link">
+                           class="tier-anchor-link standard-tier">
                             <div class="tier-icon-container">
                                 <img src="../assets/icons/rabbit.webp" alt="rabbit">
                             </div>
                         </a>
+                    
+
                     
                 </td>
                 <td>WyvernElement</td>
@@ -654,17 +735,21 @@
                 <td>+25</td>
             </tr>
             
-            <tr data-tier="rabbit" class="">
+            <tr data-tier="rabbit" 
+                 
+                class="">
                 <td>3</td>
                 <td>
                     
                         <a href="javascript:void(0)" 
                            onclick="handleTierClick(event, 'rabbit')" 
-                           class="tier-anchor-link">
+                           class="tier-anchor-link standard-tier">
                             <div class="tier-icon-container">
                                 <img src="../assets/icons/rabbit.webp" alt="rabbit">
                             </div>
                         </a>
+                    
+
                     
                 </td>
                 <td>BW</td>
@@ -676,9 +761,13 @@
                 <td>-11</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>jazmorow</td>
@@ -690,17 +779,21 @@
                 <td>+33</td>
             </tr>
             
-            <tr data-tier="rabbit" class="">
+            <tr data-tier="rabbit" 
+                 
+                class="">
                 <td>4</td>
                 <td>
                     
                         <a href="javascript:void(0)" 
                            onclick="handleTierClick(event, 'rabbit')" 
-                           class="tier-anchor-link">
+                           class="tier-anchor-link standard-tier">
                             <div class="tier-icon-container">
                                 <img src="../assets/icons/rabbit.webp" alt="rabbit">
                             </div>
                         </a>
+                    
+
                     
                 </td>
                 <td>Slaith</td>
@@ -712,9 +805,13 @@
                 <td>+20</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>Schkitz</td>
@@ -726,17 +823,21 @@
                 <td>+23</td>
             </tr>
             
-            <tr data-tier="rabbit" class="">
+            <tr data-tier="rabbit" 
+                 
+                class="">
                 <td>5</td>
                 <td>
                     
                         <a href="javascript:void(0)" 
                            onclick="handleTierClick(event, 'rabbit')" 
-                           class="tier-anchor-link">
+                           class="tier-anchor-link standard-tier">
                             <div class="tier-icon-container">
                                 <img src="../assets/icons/rabbit.webp" alt="rabbit">
                             </div>
                         </a>
+                    
+
                     
                 </td>
                 <td>talleyrand19</td>
@@ -748,17 +849,21 @@
                 <td>+28</td>
             </tr>
             
-            <tr data-tier="rabbit" class="">
+            <tr data-tier="rabbit" 
+                 
+                class="">
                 <td>6</td>
                 <td>
                     
                         <a href="javascript:void(0)" 
                            onclick="handleTierClick(event, 'rabbit')" 
-                           class="tier-anchor-link">
+                           class="tier-anchor-link standard-tier">
                             <div class="tier-icon-container">
                                 <img src="../assets/icons/rabbit.webp" alt="rabbit">
                             </div>
                         </a>
+                    
+
                     
                 </td>
                 <td>Lylethebrick</td>
@@ -770,17 +875,21 @@
                 <td>+27</td>
             </tr>
             
-            <tr data-tier="rabbit" class="">
+            <tr data-tier="rabbit" 
+                 
+                class="">
                 <td>7</td>
                 <td>
                     
                         <a href="javascript:void(0)" 
                            onclick="handleTierClick(event, 'rabbit')" 
-                           class="tier-anchor-link">
+                           class="tier-anchor-link standard-tier">
                             <div class="tier-icon-container">
                                 <img src="../assets/icons/rabbit.webp" alt="rabbit">
                             </div>
                         </a>
+                    
+
                     
                 </td>
                 <td>Chicken_X</td>
@@ -792,17 +901,21 @@
                 <td>-10</td>
             </tr>
             
-            <tr data-tier="mouse" class="">
+            <tr data-tier="mouse" 
+                 
+                class="">
                 <td>8</td>
                 <td>
                     
                         <a href="javascript:void(0)" 
                            onclick="handleTierClick(event, 'mouse')" 
-                           class="tier-anchor-link">
+                           class="tier-anchor-link standard-tier">
                             <div class="tier-icon-container">
                                 <img src="../assets/icons/mouse.webp" alt="mouse">
                             </div>
                         </a>
+                    
+
                     
                 </td>
                 <td>Meryn</td>
@@ -814,9 +927,13 @@
                 <td>-9</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>xinoehp512</td>
@@ -828,9 +945,13 @@
                 <td>-11</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>sda1611</td>
@@ -842,17 +963,21 @@
                 <td>-13</td>
             </tr>
             
-            <tr data-tier="mouse" class="">
+            <tr data-tier="mouse" 
+                 
+                class="">
                 <td>9</td>
                 <td>
                     
                         <a href="javascript:void(0)" 
                            onclick="handleTierClick(event, 'mouse')" 
-                           class="tier-anchor-link">
+                           class="tier-anchor-link standard-tier">
                             <div class="tier-icon-container">
                                 <img src="../assets/icons/mouse.webp" alt="mouse">
                             </div>
                         </a>
+                    
+
                     
                 </td>
                 <td>True American Patriot</td>
@@ -864,17 +989,21 @@
                 <td>-10</td>
             </tr>
             
-            <tr data-tier="mouse" class="">
+            <tr data-tier="mouse" 
+                 
+                class="">
                 <td>10</td>
                 <td>
                     
                         <a href="javascript:void(0)" 
                            onclick="handleTierClick(event, 'mouse')" 
-                           class="tier-anchor-link">
+                           class="tier-anchor-link standard-tier">
                             <div class="tier-icon-container">
                                 <img src="../assets/icons/mouse.webp" alt="mouse">
                             </div>
                         </a>
+                    
+
                     
                 </td>
                 <td>Nadav253</td>
@@ -886,9 +1015,13 @@
                 <td>+24</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>coyote</td>
@@ -900,9 +1033,13 @@
                 <td>-11</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>Extortionator (AUS)</td>
@@ -914,17 +1051,21 @@
                 <td>-14</td>
             </tr>
             
-            <tr data-tier="mouse" class="">
+            <tr data-tier="mouse" 
+                 
+                class="">
                 <td>11</td>
                 <td>
                     
                         <a href="javascript:void(0)" 
                            onclick="handleTierClick(event, 'mouse')" 
-                           class="tier-anchor-link">
+                           class="tier-anchor-link standard-tier">
                             <div class="tier-icon-container">
                                 <img src="../assets/icons/mouse.webp" alt="mouse">
                             </div>
                         </a>
+                    
+
                     
                 </td>
                 <td>Eletto21</td>
@@ -936,17 +1077,21 @@
                 <td>-7</td>
             </tr>
             
-            <tr data-tier="mouse" class="">
+            <tr data-tier="mouse" 
+                 
+                class="">
                 <td>12</td>
                 <td>
                     
                         <a href="javascript:void(0)" 
                            onclick="handleTierClick(event, 'mouse')" 
-                           class="tier-anchor-link">
+                           class="tier-anchor-link standard-tier">
                             <div class="tier-icon-container">
                                 <img src="../assets/icons/mouse.webp" alt="mouse">
                             </div>
                         </a>
+                    
+
                     
                 </td>
                 <td>jermcurry</td>
@@ -958,17 +1103,21 @@
                 <td>+22</td>
             </tr>
             
-            <tr data-tier="mouse" class="">
+            <tr data-tier="mouse" 
+                 
+                class="">
                 <td>13</td>
                 <td>
                     
                         <a href="javascript:void(0)" 
                            onclick="handleTierClick(event, 'mouse')" 
-                           class="tier-anchor-link">
+                           class="tier-anchor-link standard-tier">
                             <div class="tier-icon-container">
                                 <img src="../assets/icons/mouse.webp" alt="mouse">
                             </div>
                         </a>
+                    
+
                     
                 </td>
                 <td>SNCuller</td>
@@ -980,17 +1129,21 @@
                 <td>-9</td>
             </tr>
             
-            <tr data-tier="mouse" class="">
+            <tr data-tier="mouse" 
+                 
+                class="">
                 <td>14</td>
                 <td>
                     
                         <a href="javascript:void(0)" 
                            onclick="handleTierClick(event, 'mouse')" 
-                           class="tier-anchor-link">
+                           class="tier-anchor-link standard-tier">
                             <div class="tier-icon-container">
                                 <img src="../assets/icons/mouse.webp" alt="mouse">
                             </div>
                         </a>
+                    
+
                     
                 </td>
                 <td>Simber</td>
@@ -1002,9 +1155,13 @@
                 <td>-9</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>SSSS</td>
@@ -1016,17 +1173,21 @@
                 <td>-17</td>
             </tr>
             
-            <tr data-tier="mouse" class="">
+            <tr data-tier="mouse" 
+                 
+                class="">
                 <td>15</td>
                 <td>
                     
                         <a href="javascript:void(0)" 
                            onclick="handleTierClick(event, 'mouse')" 
-                           class="tier-anchor-link">
+                           class="tier-anchor-link standard-tier">
                             <div class="tier-icon-container">
                                 <img src="../assets/icons/mouse.webp" alt="mouse">
                             </div>
                         </a>
+                    
+
                     
                 </td>
                 <td>trippingrannys</td>
@@ -1038,17 +1199,21 @@
                 <td>-9</td>
             </tr>
             
-            <tr data-tier="mouse" class="">
+            <tr data-tier="mouse" 
+                 
+                class="">
                 <td>16</td>
                 <td>
                     
                         <a href="javascript:void(0)" 
                            onclick="handleTierClick(event, 'mouse')" 
-                           class="tier-anchor-link">
+                           class="tier-anchor-link standard-tier">
                             <div class="tier-icon-container">
                                 <img src="../assets/icons/mouse.webp" alt="mouse">
                             </div>
                         </a>
+                    
+
                     
                 </td>
                 <td>Gregoola</td>
@@ -1060,9 +1225,13 @@
                 <td>-10</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>Kethem</td>
@@ -1074,17 +1243,21 @@
                 <td>-12</td>
             </tr>
             
-            <tr data-tier="mouse" class="">
+            <tr data-tier="mouse" 
+                 
+                class="">
                 <td>17</td>
                 <td>
                     
                         <a href="javascript:void(0)" 
                            onclick="handleTierClick(event, 'mouse')" 
-                           class="tier-anchor-link">
+                           class="tier-anchor-link standard-tier">
                             <div class="tier-icon-container">
                                 <img src="../assets/icons/mouse.webp" alt="mouse">
                             </div>
                         </a>
+                    
+
                     
                 </td>
                 <td>Cosmic Cant</td>
@@ -1096,17 +1269,21 @@
                 <td>+29</td>
             </tr>
             
-            <tr data-tier="mouse" class="">
+            <tr data-tier="mouse" 
+                 
+                class="">
                 <td>18</td>
                 <td>
                     
                         <a href="javascript:void(0)" 
                            onclick="handleTierClick(event, 'mouse')" 
-                           class="tier-anchor-link">
+                           class="tier-anchor-link standard-tier">
                             <div class="tier-icon-container">
                                 <img src="../assets/icons/mouse.webp" alt="mouse">
                             </div>
                         </a>
+                    
+
                     
                 </td>
                 <td>PokerFace126</td>
@@ -1118,9 +1295,13 @@
                 <td>+21</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>lazarus210</td>
@@ -1132,17 +1313,21 @@
                 <td>-13</td>
             </tr>
             
-            <tr data-tier="mouse" class="">
+            <tr data-tier="mouse" 
+                 
+                class="">
                 <td>19</td>
                 <td>
                     
                         <a href="javascript:void(0)" 
                            onclick="handleTierClick(event, 'mouse')" 
-                           class="tier-anchor-link">
+                           class="tier-anchor-link standard-tier">
                             <div class="tier-icon-container">
                                 <img src="../assets/icons/mouse.webp" alt="mouse">
                             </div>
                         </a>
+                    
+
                     
                 </td>
                 <td>kaiser</td>
@@ -1154,9 +1339,13 @@
                 <td>-5</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>IcarusPanda (cringelordirl)</td>
@@ -1168,17 +1357,21 @@
                 <td>+39</td>
             </tr>
             
-            <tr data-tier="mouse" class="">
+            <tr data-tier="mouse" 
+                 
+                class="">
                 <td>20</td>
                 <td>
                     
                         <a href="javascript:void(0)" 
                            onclick="handleTierClick(event, 'mouse')" 
-                           class="tier-anchor-link">
+                           class="tier-anchor-link standard-tier">
                             <div class="tier-icon-container">
                                 <img src="../assets/icons/mouse.webp" alt="mouse">
                             </div>
                         </a>
+                    
+
                     
                 </td>
                 <td>scotchbonnet</td>
@@ -1190,17 +1383,21 @@
                 <td>-9</td>
             </tr>
             
-            <tr data-tier="mouse" class="">
+            <tr data-tier="mouse" 
+                 
+                class="">
                 <td>21</td>
                 <td>
                     
                         <a href="javascript:void(0)" 
                            onclick="handleTierClick(event, 'mouse')" 
-                           class="tier-anchor-link">
+                           class="tier-anchor-link standard-tier">
                             <div class="tier-icon-container">
                                 <img src="../assets/icons/mouse.webp" alt="mouse">
                             </div>
                         </a>
+                    
+
                     
                 </td>
                 <td>MrDrouf</td>
@@ -1212,17 +1409,21 @@
                 <td>-5</td>
             </tr>
             
-            <tr data-tier="mouse" class="">
+            <tr data-tier="mouse" 
+                 
+                class="">
                 <td>22</td>
                 <td>
                     
                         <a href="javascript:void(0)" 
                            onclick="handleTierClick(event, 'mouse')" 
-                           class="tier-anchor-link">
+                           class="tier-anchor-link standard-tier">
                             <div class="tier-icon-container">
                                 <img src="../assets/icons/mouse.webp" alt="mouse">
                             </div>
                         </a>
+                    
+
                     
                 </td>
                 <td>Zaandaa</td>
@@ -1234,9 +1435,13 @@
                 <td>-8</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>bendn</td>
@@ -1248,9 +1453,13 @@
                 <td>-14</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>Dekiru</td>
@@ -1262,9 +1471,13 @@
                 <td>-9</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>jakattak14</td>
@@ -1276,9 +1489,13 @@
                 <td>-9</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>SugieCube</td>
@@ -1290,9 +1507,13 @@
                 <td>-8</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>Aeliott</td>
@@ -1304,9 +1525,13 @@
                 <td>+38</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>Geetus</td>
@@ -1318,9 +1543,13 @@
                 <td>-8</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>NadtyLite</td>
@@ -1332,17 +1561,21 @@
                 <td>-15</td>
             </tr>
             
-            <tr data-tier="mouse" class="">
+            <tr data-tier="mouse" 
+                 
+                class="">
                 <td>23</td>
                 <td>
                     
                         <a href="javascript:void(0)" 
                            onclick="handleTierClick(event, 'mouse')" 
-                           class="tier-anchor-link">
+                           class="tier-anchor-link standard-tier">
                             <div class="tier-icon-container">
                                 <img src="../assets/icons/mouse.webp" alt="mouse">
                             </div>
                         </a>
+                    
+
                     
                 </td>
                 <td>lumpyprol</td>
@@ -1354,9 +1587,13 @@
                 <td>-8</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>Davee_39</td>
@@ -1368,17 +1605,21 @@
                 <td>-13</td>
             </tr>
             
-            <tr data-tier="mouse" class="">
+            <tr data-tier="mouse" 
+                 
+                class="">
                 <td>24</td>
                 <td>
                     
                         <a href="javascript:void(0)" 
                            onclick="handleTierClick(event, 'mouse')" 
-                           class="tier-anchor-link">
+                           class="tier-anchor-link standard-tier">
                             <div class="tier-icon-container">
                                 <img src="../assets/icons/mouse.webp" alt="mouse">
                             </div>
                         </a>
+                    
+
                     
                 </td>
                 <td>DarthPuniceus (MonteCristo24601)</td>
@@ -1390,9 +1631,13 @@
                 <td>-8</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>EnzotheBenzo</td>
@@ -1404,17 +1649,21 @@
                 <td>-8</td>
             </tr>
             
-            <tr data-tier="mouse" class="">
+            <tr data-tier="mouse" 
+                 
+                class="">
                 <td>25</td>
                 <td>
                     
                         <a href="javascript:void(0)" 
                            onclick="handleTierClick(event, 'mouse')" 
-                           class="tier-anchor-link">
+                           class="tier-anchor-link standard-tier">
                             <div class="tier-icon-container">
                                 <img src="../assets/icons/mouse.webp" alt="mouse">
                             </div>
                         </a>
+                    
+
                     
                 </td>
                 <td>abbreviatedman (he/him)</td>
@@ -1426,17 +1675,21 @@
                 <td>-11</td>
             </tr>
             
-            <tr data-tier="mouse" class="">
+            <tr data-tier="mouse" 
+                 
+                class="">
                 <td>26</td>
                 <td>
                     
                         <a href="javascript:void(0)" 
                            onclick="handleTierClick(event, 'mouse')" 
-                           class="tier-anchor-link">
+                           class="tier-anchor-link standard-tier">
                             <div class="tier-icon-container">
                                 <img src="../assets/icons/mouse.webp" alt="mouse">
                             </div>
                         </a>
+                    
+
                     
                 </td>
                 <td>Aedalus</td>
@@ -1448,9 +1701,13 @@
                 <td>-7</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>Purplefrowns</td>
@@ -1462,9 +1719,13 @@
                 <td>-11</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>Darkwonderer</td>
@@ -1476,9 +1737,13 @@
                 <td>-9</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>Tungsten</td>
@@ -1490,9 +1755,13 @@
                 <td>-14</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>WillRevolt</td>
@@ -1504,9 +1773,13 @@
                 <td>-12</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>bunniesandcandy</td>
@@ -1518,9 +1791,13 @@
                 <td>-12</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>ChefBoyardee</td>
@@ -1532,9 +1809,13 @@
                 <td>-12</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>plegbot</td>
@@ -1546,9 +1827,13 @@
                 <td>-12</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>Briony</td>
@@ -1560,20 +1845,24 @@
                 <td>-12</td>
             </tr>
             
-            <tr data-tier="squirrel" class="">
+            <tr data-tier="squirrel" 
+                 
+                class="">
                 <td>-</td>
                 <td>
                     
                         <a href="javascript:void(0)" 
                            onclick="handleTierClick(event, 'squirrel')" 
-                           class="tier-anchor-link">
+                           class="tier-anchor-link standard-tier">
                             <div class="tier-icon-container">
                                 <img src="../assets/icons/squirrel.webp" alt="squirrel">
                             </div>
                         </a>
                     
+
+                    
                 </td>
-                <td>MrKent (UTC+7)</td>
+                <td>MrKent (UTC</td>
                 <td>1198</td>
                 <td>18</td>
                 <td>4.0</td>
@@ -1582,17 +1871,21 @@
                 <td>-9</td>
             </tr>
             
-            <tr data-tier="squirrel" class="">
+            <tr data-tier="squirrel" 
+                 
+                class="">
                 <td>-</td>
                 <td>
                     
                         <a href="javascript:void(0)" 
                            onclick="handleTierClick(event, 'squirrel')" 
-                           class="tier-anchor-link">
+                           class="tier-anchor-link standard-tier">
                             <div class="tier-icon-container">
                                 <img src="../assets/icons/squirrel.webp" alt="squirrel">
                             </div>
                         </a>
+                    
+
                     
                 </td>
                 <td>KeyserSoze</td>
@@ -1604,9 +1897,13 @@
                 <td>-7</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>mcauthor</td>
@@ -1618,9 +1915,13 @@
                 <td>-10</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>countthemsheep</td>
@@ -1632,9 +1933,13 @@
                 <td>-8</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>Thewy</td>
@@ -1646,9 +1951,13 @@
                 <td>-8</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>Litch Queen of Hyena Necrocracy</td>
@@ -1660,17 +1969,21 @@
                 <td>-11</td>
             </tr>
             
-            <tr data-tier="squirrel" class="">
+            <tr data-tier="squirrel" 
+                 
+                class="">
                 <td>-</td>
                 <td>
                     
                         <a href="javascript:void(0)" 
                            onclick="handleTierClick(event, 'squirrel')" 
-                           class="tier-anchor-link">
+                           class="tier-anchor-link standard-tier">
                             <div class="tier-icon-container">
                                 <img src="../assets/icons/squirrel.webp" alt="squirrel">
                             </div>
                         </a>
+                    
+
                     
                 </td>
                 <td>NattyKash</td>
@@ -1682,9 +1995,13 @@
                 <td>-7</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>stockbot</td>
@@ -1696,9 +2013,13 @@
                 <td>-10</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>darkcat9000</td>
@@ -1710,9 +2031,13 @@
                 <td>-9</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>aaron_dangerman</td>
@@ -1724,9 +2049,13 @@
                 <td>-10</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>clinicalindication</td>
@@ -1738,9 +2067,13 @@
                 <td>-12</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>Jed</td>
@@ -1752,9 +2085,13 @@
                 <td>-12</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>SunkistDragon</td>
@@ -1766,9 +2103,13 @@
                 <td>-10</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>.doe</td>
@@ -1780,9 +2121,13 @@
                 <td>-10</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>ChopieTheCat</td>
@@ -1794,9 +2139,13 @@
                 <td>-11</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>tentacultist_</td>
@@ -1808,17 +2157,21 @@
                 <td>-11</td>
             </tr>
             
-            <tr data-tier="squirrel" class="">
+            <tr data-tier="squirrel" 
+                 
+                class="">
                 <td>-</td>
                 <td>
                     
                         <a href="javascript:void(0)" 
                            onclick="handleTierClick(event, 'squirrel')" 
-                           class="tier-anchor-link">
+                           class="tier-anchor-link standard-tier">
                             <div class="tier-icon-container">
                                 <img src="../assets/icons/squirrel.webp" alt="squirrel">
                             </div>
                         </a>
+                    
+
                     
                 </td>
                 <td>DemaRogue</td>
@@ -1830,9 +2183,13 @@
                 <td>-5</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>Sweenss</td>
@@ -1844,9 +2201,13 @@
                 <td>-12</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>Silver</td>
@@ -1858,9 +2219,13 @@
                 <td>-11</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>Rho Sternjäger</td>
@@ -1872,9 +2237,13 @@
                 <td>-13</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>Bustin</td>
@@ -1886,17 +2255,21 @@
                 <td>-14</td>
             </tr>
             
-            <tr data-tier="squirrel" class="">
+            <tr data-tier="squirrel" 
+                 
+                class="">
                 <td>-</td>
                 <td>
                     
                         <a href="javascript:void(0)" 
                            onclick="handleTierClick(event, 'squirrel')" 
-                           class="tier-anchor-link">
+                           class="tier-anchor-link standard-tier">
                             <div class="tier-icon-container">
                                 <img src="../assets/icons/squirrel.webp" alt="squirrel">
                             </div>
                         </a>
+                    
+
                     
                 </td>
                 <td>Piechu</td>
@@ -1908,9 +2281,13 @@
                 <td>+33</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>Thungon</td>
@@ -1922,9 +2299,13 @@
                 <td>-9</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>Canyon</td>
@@ -1936,9 +2317,13 @@
                 <td>-8</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>Empress Octavia</td>
@@ -1950,9 +2335,13 @@
                 <td>-10</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>Itay Chang</td>
@@ -1964,9 +2353,13 @@
                 <td>-12</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>XpertAcorn</td>
@@ -1978,9 +2371,13 @@
                 <td>-9</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>theSOFLY</td>
@@ -1992,9 +2389,13 @@
                 <td>-12</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>nvt2508</td>
@@ -2006,9 +2407,13 @@
                 <td>-9</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>smeichel</td>
@@ -2020,9 +2425,13 @@
                 <td>-9</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>Rish</td>
@@ -2034,9 +2443,13 @@
                 <td>-9</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>North Abbot (he/him/his)</td>
@@ -2048,9 +2461,13 @@
                 <td>-8</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>Jalapeno</td>
@@ -2062,9 +2479,13 @@
                 <td>-10</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>BlazeBoy</td>
@@ -2076,9 +2497,13 @@
                 <td>-11</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>Moss</td>
@@ -2090,9 +2515,13 @@
                 <td>-11</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>SEironed</td>
@@ -2104,9 +2533,13 @@
                 <td>-10</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>Agent Narcos</td>
@@ -2118,9 +2551,13 @@
                 <td>-11</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>Hồ Hà Nguyễn</td>
@@ -2132,9 +2569,13 @@
                 <td>-10</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>magiczamboni</td>
@@ -2146,9 +2587,13 @@
                 <td>-9</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>jonismiff</td>
@@ -2160,9 +2605,13 @@
                 <td>-10</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>mwalt92</td>
@@ -2174,9 +2623,13 @@
                 <td>-11</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>AnOkayPotato</td>
@@ -2188,9 +2641,13 @@
                 <td>-12</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>fajfar</td>
@@ -2202,17 +2659,21 @@
                 <td>-11</td>
             </tr>
             
-            <tr data-tier="squirrel" class="">
+            <tr data-tier="squirrel" 
+                 
+                class="">
                 <td>-</td>
                 <td>
                     
                         <a href="javascript:void(0)" 
                            onclick="handleTierClick(event, 'squirrel')" 
-                           class="tier-anchor-link">
+                           class="tier-anchor-link standard-tier">
                             <div class="tier-icon-container">
                                 <img src="../assets/icons/squirrel.webp" alt="squirrel">
                             </div>
                         </a>
+                    
+
                     
                 </td>
                 <td>pooge</td>
@@ -2224,9 +2685,13 @@
                 <td>-6</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>radiantchaos</td>
@@ -2238,9 +2703,13 @@
                 <td>-10</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>Coola101</td>
@@ -2252,9 +2721,13 @@
                 <td>-12</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>Dark Owl</td>
@@ -2266,9 +2739,13 @@
                 <td>-13</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>RondamGemas</td>
@@ -2280,9 +2757,13 @@
                 <td>-11</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>Catzador</td>
@@ -2294,9 +2775,13 @@
                 <td>-10</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>Kernel_</td>
@@ -2308,9 +2793,13 @@
                 <td>-9</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>House Addict</td>
@@ -2322,9 +2811,13 @@
                 <td>-10</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>CUA</td>
@@ -2336,9 +2829,13 @@
                 <td>-11</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>Quents</td>
@@ -2350,9 +2847,13 @@
                 <td>-11</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>IceeCream</td>
@@ -2364,9 +2865,13 @@
                 <td>-12</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>turmoilbyrd</td>
@@ -2378,9 +2883,13 @@
                 <td>-11</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>Dias</td>
@@ -2392,9 +2901,13 @@
                 <td>-11</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>KingLuigiNL</td>
@@ -2406,9 +2919,13 @@
                 <td>-13</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>idyll</td>
@@ -2420,9 +2937,13 @@
                 <td>-10</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>pwarren8590</td>
@@ -2434,9 +2955,13 @@
                 <td>-8</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>Sharkat</td>
@@ -2448,9 +2973,13 @@
                 <td>-10</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>benssoon</td>
@@ -2462,9 +2991,13 @@
                 <td>-12</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>KyloBot</td>
@@ -2476,9 +3009,13 @@
                 <td>-12</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>batmaster</td>
@@ -2490,9 +3027,13 @@
                 <td>-12</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>punkstarman</td>
@@ -2504,9 +3045,13 @@
                 <td>-12</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>Hasan</td>
@@ -2518,9 +3063,13 @@
                 <td>-12</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>Matthijs</td>
@@ -2532,9 +3081,13 @@
                 <td>-13</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>stephkuriboh</td>
@@ -2546,9 +3099,13 @@
                 <td>-7</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>RabbitWarlord</td>
@@ -2560,9 +3117,13 @@
                 <td>-8</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>Malleable Frog</td>
@@ -2574,9 +3135,13 @@
                 <td>-9</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>Lilac Teddy Bear</td>
@@ -2588,9 +3153,13 @@
                 <td>-6</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>MagicDream</td>
@@ -2602,9 +3171,13 @@
                 <td>-7</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>Plasma</td>
@@ -2616,9 +3189,13 @@
                 <td>-9</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>euler's fool</td>
@@ -2630,9 +3207,13 @@
                 <td>-6</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>salo_solomon</td>
@@ -2644,9 +3225,13 @@
                 <td>-11</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>pheobii</td>
@@ -2658,17 +3243,21 @@
                 <td>-8</td>
             </tr>
             
-            <tr data-tier="squirrel" class="">
+            <tr data-tier="squirrel" 
+                 
+                class="">
                 <td>-</td>
                 <td>
                     
                         <a href="javascript:void(0)" 
                            onclick="handleTierClick(event, 'squirrel')" 
-                           class="tier-anchor-link">
+                           class="tier-anchor-link standard-tier">
                             <div class="tier-icon-container">
                                 <img src="../assets/icons/squirrel.webp" alt="squirrel">
                             </div>
                         </a>
+                    
+
                     
                 </td>
                 <td>Lobster (GMT-4)(Indiana)</td>
@@ -2680,9 +3269,13 @@
                 <td>-5</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>Dr. Seal</td>
@@ -2694,9 +3287,13 @@
                 <td>-10</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>MarcustheCat</td>
@@ -2708,17 +3305,21 @@
                 <td>-6</td>
             </tr>
             
-            <tr data-tier="squirrel" class="">
+            <tr data-tier="squirrel" 
+                 
+                class="">
                 <td>-</td>
                 <td>
                     
                         <a href="javascript:void(0)" 
                            onclick="handleTierClick(event, 'squirrel')" 
-                           class="tier-anchor-link">
+                           class="tier-anchor-link standard-tier">
                             <div class="tier-icon-container">
                                 <img src="../assets/icons/squirrel.webp" alt="squirrel">
                             </div>
                         </a>
+                    
+
                     
                 </td>
                 <td>Cookies</td>
@@ -2730,9 +3331,13 @@
                 <td>-7</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>Hurple</td>
@@ -2744,9 +3349,13 @@
                 <td>-7</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>fraaab</td>
@@ -2758,9 +3367,13 @@
                 <td>-8</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>calvinfunfun</td>
@@ -2772,9 +3385,13 @@
                 <td>-9</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>Kvan_</td>
@@ -2786,9 +3403,13 @@
                 <td>-9</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>militech2078</td>
@@ -2800,17 +3421,21 @@
                 <td>-7</td>
             </tr>
             
-            <tr data-tier="squirrel" class="">
+            <tr data-tier="squirrel" 
+                 
+                class="">
                 <td>-</td>
                 <td>
                     
                         <a href="javascript:void(0)" 
                            onclick="handleTierClick(event, 'squirrel')" 
-                           class="tier-anchor-link">
+                           class="tier-anchor-link standard-tier">
                             <div class="tier-icon-container">
                                 <img src="../assets/icons/squirrel.webp" alt="squirrel">
                             </div>
                         </a>
+                    
+
                     
                 </td>
                 <td>Schnaga</td>
@@ -2822,9 +3447,13 @@
                 <td>-6</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>Requiem</td>
@@ -2836,9 +3465,13 @@
                 <td>-5</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>Riverman(luigi)</td>
@@ -2850,9 +3483,13 @@
                 <td>-4</td>
             </tr>
             
-            <tr data-tier="unassigned" class="unassigned">
+            <tr data-tier="unassigned" 
+                 
+                class="unassigned">
                 <td>-</td>
                 <td>
+                    
+
                     
                 </td>
                 <td>Starhard_Fishrinse</td>
@@ -2864,17 +3501,21 @@
                 <td>-6</td>
             </tr>
             
-            <tr data-tier="squirrel" class="">
+            <tr data-tier="squirrel" 
+                 
+                class="">
                 <td>-</td>
                 <td>
                     
                         <a href="javascript:void(0)" 
                            onclick="handleTierClick(event, 'squirrel')" 
-                           class="tier-anchor-link">
+                           class="tier-anchor-link standard-tier">
                             <div class="tier-icon-container">
                                 <img src="../assets/icons/squirrel.webp" alt="squirrel">
                             </div>
                         </a>
+                    
+
                     
                 </td>
                 <td>MentalMendel</td>
@@ -2920,7 +3561,7 @@
 						</a>
 					</span>
 				</div>
-				<div class="footer-date">Updated on 2026-11-22 00:27 UTC</div>
+				<div class="footer-date">Updated on 2026-11-22 21:47 UTC</div>
 			</div>
 		</footer>
     </div>
@@ -2935,6 +3576,13 @@
 				</div>
 				
 				<div class="modal-text-side">
+					<a id="modalSupporterLeft" class="modal-supporter left" href="#" title="">
+						<img src="" alt="">
+					</a>
+					<a id="modalSupporterRight" class="modal-supporter right" href="#" title="">
+						<img src="" alt="">
+					</a>
+
 					<div class="title-row">
 						<h2 id="modalTitle"></h2>
 						<h3 id="modalElo"></h3>
@@ -2955,15 +3603,15 @@
 	<script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
     
     <script>
-		window.PLAYER_PROFILE_MAP = {"Thewy": "thewy", "BW": "bw", "tentacultist_": "tentacultist", "plegbot": "plegbot", "Hasan": "g7asan", "kaiser": "victorvee", "Riverman(luigi)": "riverman", "Canyon": "canyon", "stephkuriboh": "stephkuriboh", "WillRevolt": "willrevolt", "House Addict": "beans8201", "smeichel": "smeichel", "Extortionator (AUS)": "extortionator", "Dias": "niasdias", "lazarus210": "lazarus210", "benssoon": "benssoon", "SEironed": "seironed", "jermcurry": "jermcurry", "Moss": "mossfusion", "Davee_39": "davee_39", "DarthPuniceus (MonteCristo24601)": "darthpuniceus", "countthemsheep": "countthemsheep", "mcauthor": "mcauthor", "Chicken_X": "chicken_x", "ChopieTheCat": "chopiethecat", "Gregoola": "gregoola", "ChefBoyardee": "chefboyardee8120", "AnOkayPotato": "anokaypotato-4405", "Catzador": "catzador", "PokerFace126": "pokerface126_11986", "fraaab": "fraaab", "BlazeBoy": "blazeboy0784", "euler's fool": "eulers_fool", "Slaith": "slaith", "bunniesandcandy": "bunniesandcandy", "xinoehp512": "xinoehp512", "Silver": "silver", "EnzotheBenzo": "enzothebenzo", "Sharkat": "sharkat", ".doe": "doe", "talleyrand19": "talleyrand19", "North Abbot (he/him/his)": "northabbot", "Kethem": "kethem", "scotchbonnet": "scotchbonnet11", "Litch Queen of Hyena Necrocracy": "green_flame", "Tungsten": "tungsten", "radiantchaos": "radiantchaos", "trippingrannys": "trippingrannys", "DemaRogue": "jaredjm41", "Starhard_Fishrinse": "starhardfishrinse", "Lilac Teddy Bear": "lilacteddybear", "clinicalindication": "clinicalindication", "uwtron": "uwtron", "KyloBot": "kylobot", "KeyserSoze": "stoneofjas", "lumpyprol": "lumpyprol", "bendn": "bendn", "Kvan_": "kvan", "darkcat9000": "mes10", "Cosmic Cant": "cosmiccant", "militech2078": "militech2078", "NattyKash": "nattykash", "Nadav253": "nadav253_57576", "Hurple": "hurple0", "nvt2508": "nvt2508_78037", "Thungon": "thungon", "IceeCream": "iceecream", "pooge": "pooge", "Sweenss": "sweenss", "Kernel_": "kernel", "Matthijs": "luengi", "Geetus": "glisteninggeetus", "Agent Narcos": "meisnertechnique", "calvinfunfun": "calvinfun", "Bustin": "bustin", "salo_solomon": "salo_solomon", "Aedalus": "aedalus", "KingLuigiNL": "kingluiginl", "WyvernElement": "wyvernelement", "SNCuller": "snculler", "Dekiru": "dekiru", "MarcustheCat": "marcusthecat", "turmoilbyrd": "turmoilbyrd", "NadtyLite": "cbernadt", "Eletto21": "eletto21", "mwalt92": "mwalt92", "pheobii": "pheobii", "Schnaga": "malefic7m", "Schkitz": "schkitz", "IcarusPanda (cringelordirl)": "icaruspanda", "XpertAcorn": "xpertacorn", "stockbot": "stockbot", "Lylethebrick": "lylethebrick-1438", "MrDrouf": "mrdrouf", "CUA": "powerful_dragon_23094", "Quents": "quents1493", "Malleable Frog": "flowercardianwillow", "theSOFLY": "thesofly", "batmaster": "batmaster", "idyll": "idyll", "pwarren8590": "pwarren8590", "RondamGemas": "rondamgemas", "magiczamboni": "magiczamboni", "Plasma": "plasma", "Empress Octavia": "empress_octavia", "abbreviatedman (he/him)": "abbreviatedman", "Meryn": "meryn", "Requiem": "6requiem", "Lobster (GMT-4)(Indiana)": "lesslobster", "SSSS": "supersupersupportivesupporter", "Rho Sternj\u00e4ger": "rho_sternjaeger", "jazmorow": "jazmorow", "Zaandaa": "zaandaa", "SugieCube": "sugie", "jakattak14": "jakattak14", "SunkistDragon": "sunkistdragon", "Darkwonderer": "darkwonderer", "Simber": "simber_2925", "Cookies": "gmoa", "Dark Owl": "dark_owl", "Aeliott": "aeliott", "Dr. Seal": "drseal", "MentalMendel": "mentalmendel", "Jalapeno": "jalapeno", "punkstarman": "punkstarman", "True American Patriot": "commanderasn", "H\u1ed3 H\u00e0 Nguy\u1ec5n": "hohanguyen2451", "Purplefrowns": "purplefrowns", "Itay Chang": "itaychang", "Piechu": "piechu28", "jonismiff": "jonismiff", "aaron_dangerman": "aaron_dangerman", "fajfar": "fajfar", "Briony": "ashadeferal", "Jed": "jorbbb", "Coola101": "coola101", "coyote": "gcoyote", "sda1611": "sda1611", "MagicDream": "magicdream", "MrKent (UTC+7)": "rootvietnam", "RabbitWarlord": "rabbitwarlord", "Rish": "rish"};
-		window.PLAYER_DATA_MAP = {"Hasan": {"elo": 1163, "games": 3, "is_ranked": false}, "lazarus210": {"elo": 1247, "games": 4, "is_ranked": false}, "militech2078": {"elo": 1138, "games": 6, "is_ranked": false}, "MrDrouf": {"elo": 1234, "games": 27, "is_ranked": false}, "CUA": {"elo": 1165, "games": 3, "is_ranked": false}, "Nadav253": {"elo": 1275, "games": 13, "is_ranked": false}, "RabbitWarlord": {"elo": 1161, "games": 8, "is_ranked": false}, "Kvan_": {"elo": 1138, "games": 6, "is_ranked": false}, "scotchbonnet": {"elo": 1237, "games": 16, "is_ranked": false}, "turmoilbyrd": {"elo": 1165, "games": 3, "is_ranked": false}, "pwarren8590": {"elo": 1164, "games": 8, "is_ranked": false}, "Starhard_Fishrinse": {"elo": 1118, "games": 9, "is_ranked": false}, "aaron_dangerman": {"elo": 1190, "games": 5, "is_ranked": false}, "trippingrannys": {"elo": 1257, "games": 15, "is_ranked": false}, "coyote": {"elo": 1273, "games": 6, "is_ranked": false}, "Cosmic Cant": {"elo": 1249, "games": 18, "is_ranked": false}, "Chicken_X": {"elo": 1300, "games": 17, "is_ranked": false}, "xinoehp512": {"elo": 1282, "games": 5, "is_ranked": false}, "uwtron": {"elo": 1367, "games": 22, "is_ranked": false}, "talleyrand19": {"elo": 1317, "games": 13, "is_ranked": false}, "KingLuigiNL": {"elo": 1164, "games": 3, "is_ranked": false}, "Silver": {"elo": 1188, "games": 5, "is_ranked": false}, "Gregoola": {"elo": 1254, "games": 14, "is_ranked": false}, "punkstarman": {"elo": 1163, "games": 3, "is_ranked": false}, "clinicalindication": {"elo": 1190, "games": 5, "is_ranked": false}, "DarthPuniceus (MonteCristo24601)": {"elo": 1212, "games": 15, "is_ranked": false}, "lumpyprol": {"elo": 1214, "games": 13, "is_ranked": false}, "PokerFace126": {"elo": 1247, "games": 23, "is_ranked": false}, "Slaith": {"elo": 1332, "games": 15, "is_ranked": false}, "Eletto21": {"elo": 1266, "games": 19, "is_ranked": false}, "Lylethebrick": {"elo": 1308, "games": 17, "is_ranked": false}, "BW": {"elo": 1359, "games": 54, "is_ranked": false}, "Jed": {"elo": 1190, "games": 5, "is_ranked": false}, "bunniesandcandy": {"elo": 1202, "games": 4, "is_ranked": false}, "magiczamboni": {"elo": 1167, "games": 3, "is_ranked": false}, "jakattak14": {"elo": 1227, "games": 6, "is_ranked": false}, "Davee_39": {"elo": 1213, "games": 7, "is_ranked": false}, "SNCuller": {"elo": 1264, "games": 16, "is_ranked": false}, "Kethem": {"elo": 1249, "games": 4, "is_ranked": false}, "Hurple": {"elo": 1140, "games": 6, "is_ranked": false}, ".doe": {"elo": 1189, "games": 5, "is_ranked": false}, "sda1611": {"elo": 1279, "games": 5, "is_ranked": false}, "Riverman(luigi)": {"elo": 1121, "games": 9, "is_ranked": false}, "Cookies": {"elo": 1141, "games": 10, "is_ranked": false}, "jonismiff": {"elo": 1167, "games": 3, "is_ranked": false}, "fajfar": {"elo": 1167, "games": 3, "is_ranked": false}, "Briony": {"elo": 1198, "games": 4, "is_ranked": false}, "Coola101": {"elo": 1166, "games": 3, "is_ranked": false}, "Litch Queen of Hyena Necrocracy": {"elo": 1191, "games": 5, "is_ranked": false}, "Simber": {"elo": 1263, "games": 17, "is_ranked": false}, "theSOFLY": {"elo": 1175, "games": 2, "is_ranked": false}, "RondamGemas": {"elo": 1166, "games": 3, "is_ranked": false}, "benssoon": {"elo": 1164, "games": 3, "is_ranked": false}, "pooge": {"elo": 1167, "games": 16, "is_ranked": false}, "salo_solomon": {"elo": 1153, "games": 4, "is_ranked": false}, "Schnaga": {"elo": 1128, "games": 16, "is_ranked": false}, "True American Patriot": {"elo": 1277, "games": 13, "is_ranked": false}, "plegbot": {"elo": 1200, "games": 4, "is_ranked": false}, "KeyserSoze": {"elo": 1194, "games": 11, "is_ranked": false}, "abbreviatedman (he/him)": {"elo": 1207, "games": 12, "is_ranked": false}, "MentalMendel": {"elo": 1094, "games": 30, "is_ranked": false}, "idyll": {"elo": 1164, "games": 3, "is_ranked": false}, "fraaab": {"elo": 1140, "games": 6, "is_ranked": false}, "euler's fool": {"elo": 1157, "games": 9, "is_ranked": false}, "ChefBoyardee": {"elo": 1200, "games": 4, "is_ranked": false}, "Quents": {"elo": 1165, "games": 3, "is_ranked": false}, "MrKent (UTC+7)": {"elo": 1198, "games": 18, "is_ranked": false}, "Aedalus": {"elo": 1205, "games": 17, "is_ranked": false}, "Piechu": {"elo": 1185, "games": 11, "is_ranked": false}, "mwalt92": {"elo": 1167, "games": 3, "is_ranked": false}, "Jalapeno": {"elo": 1169, "games": 3, "is_ranked": false}, "Moss": {"elo": 1168, "games": 3, "is_ranked": false}, "stockbot": {"elo": 1190, "games": 5, "is_ranked": false}, "WyvernElement": {"elo": 1365, "games": 12, "is_ranked": false}, "IceeCream": {"elo": 1165, "games": 3, "is_ranked": false}, "Tungsten": {"elo": 1203, "games": 4, "is_ranked": false}, "WillRevolt": {"elo": 1202, "games": 8, "is_ranked": false}, "Meryn": {"elo": 1297, "games": 13, "is_ranked": false}, "Requiem": {"elo": 1126, "games": 9, "is_ranked": false}, "batmaster": {"elo": 1164, "games": 3, "is_ranked": false}, "Dekiru": {"elo": 1229, "games": 6, "is_ranked": false}, "SEironed": {"elo": 1168, "games": 3, "is_ranked": false}, "KyloBot": {"elo": 1164, "games": 3, "is_ranked": false}, "kaiser": {"elo": 1240, "games": 21, "is_ranked": false}, "countthemsheep": {"elo": 1192, "games": 5, "is_ranked": false}, "House Addict": {"elo": 1166, "games": 3, "is_ranked": false}, "mcauthor": {"elo": 1193, "games": 5, "is_ranked": false}, "NattyKash": {"elo": 1191, "games": 15, "is_ranked": false}, "Dark Owl": {"elo": 1166, "games": 3, "is_ranked": false}, "DemaRogue": {"elo": 1189, "games": 20, "is_ranked": false}, "Darkwonderer": {"elo": 1203, "games": 4, "is_ranked": false}, "Extortionator (AUS)": {"elo": 1267, "games": 6, "is_ranked": false}, "Bustin": {"elo": 1186, "games": 1, "is_ranked": false}, "smeichel": {"elo": 1172, "games": 3, "is_ranked": false}, "Sweenss": {"elo": 1188, "games": 1, "is_ranked": false}, "Lobster (GMT-4)(Indiana)": {"elo": 1145, "games": 11, "is_ranked": false}, "AnOkayPotato": {"elo": 1167, "games": 3, "is_ranked": false}, "Zaandaa": {"elo": 1234, "games": 13, "is_ranked": false}, "jermcurry": {"elo": 1266, "games": 26, "is_ranked": false}, "nvt2508": {"elo": 1173, "games": 7, "is_ranked": false}, "Aeliott": {"elo": 1224, "games": 2, "is_ranked": false}, "Rho Sternj\u00e4ger": {"elo": 1187, "games": 1, "is_ranked": false}, "pheobii": {"elo": 1146, "games": 6, "is_ranked": false}, "NadtyLite": {"elo": 1214, "games": 3, "is_ranked": false}, "tentacultist_": {"elo": 1189, "games": 1, "is_ranked": false}, "MarcustheCat": {"elo": 1143, "games": 7, "is_ranked": false}, "SunkistDragon": {"elo": 1190, "games": 1, "is_ranked": false}, "Dr. Seal": {"elo": 1144, "games": 5, "is_ranked": false}, "Malleable Frog": {"elo": 1160, "games": 4, "is_ranked": false}, "Lilac Teddy Bear": {"elo": 1160, "games": 5, "is_ranked": false}, "IcarusPanda (cringelordirl)": {"elo": 1239, "games": 1, "is_ranked": false}, "calvinfunfun": {"elo": 1139, "games": 7, "is_ranked": false}, "stephkuriboh": {"elo": 1162, "games": 4, "is_ranked": false}, "darkcat9000": {"elo": 1190, "games": 6, "is_ranked": false}, "Thungon": {"elo": 1184, "games": 7, "is_ranked": false}, "Catzador": {"elo": 1166, "games": 3, "is_ranked": false}, "jazmorow": {"elo": 1338, "games": 4, "is_ranked": false}, "Rish": {"elo": 1170, "games": 3, "is_ranked": false}, "Schkitz": {"elo": 1322, "games": 8, "is_ranked": false}, "Plasma": {"elo": 1159, "games": 4, "is_ranked": false}, "Matthijs": {"elo": 1163, "games": 3, "is_ranked": false}, "radiantchaos": {"elo": 1167, "games": 3, "is_ranked": false}, "Itay Chang": {"elo": 1180, "games": 2, "is_ranked": false}, "Empress Octavia": {"elo": 1181, "games": 2, "is_ranked": false}, "MagicDream": {"elo": 1159, "games": 4, "is_ranked": false}, "Agent Narcos": {"elo": 1168, "games": 3, "is_ranked": false}, "H\u1ed3 H\u00e0 Nguy\u1ec5n": {"elo": 1167, "games": 3, "is_ranked": false}, "Dias": {"elo": 1165, "games": 3, "is_ranked": false}, "North Abbot (he/him/his)": {"elo": 1170, "games": 3, "is_ranked": false}, "BlazeBoy": {"elo": 1168, "games": 3, "is_ranked": false}, "Kernel_": {"elo": 1166, "games": 3, "is_ranked": false}, "EnzotheBenzo": {"elo": 1211, "games": 4, "is_ranked": false}, "bendn": {"elo": 1230, "games": 6, "is_ranked": false}, "SSSS": {"elo": 1258, "games": 3, "is_ranked": false}, "Purplefrowns": {"elo": 1204, "games": 4, "is_ranked": false}, "Geetus": {"elo": 1214, "games": 3, "is_ranked": false}, "ChopieTheCat": {"elo": 1189, "games": 1, "is_ranked": false}, "SugieCube": {"elo": 1225, "games": 7, "is_ranked": false}, "Sharkat": {"elo": 1164, "games": 3, "is_ranked": false}, "Thewy": {"elo": 1192, "games": 1, "is_ranked": false}, "XpertAcorn": {"elo": 1179, "games": 2, "is_ranked": false}, "Canyon": {"elo": 1181, "games": 2, "is_ranked": false}};
+		window.PLAYER_PROFILE_MAP = {"Kvan_": "Kvan_", "Moss": "Moss", ".doe": ".doe", "IcarusPanda (cringelordirl)": "IcarusPanda (cringelordirl)", "SugieCube": "SugieCube", "Thewy": "Thewy", "Cookies": "Cookies", "Malleable Frog": "Malleable Frog", "Rho Sternj\u00e4ger": "Rho Sternj\u00e4ger", "Nadav253": "Nadav253", "Schkitz": "Schkitz", "stephkuriboh": "stephkuriboh", "SNCuller": "SNCuller", "NadtyLite": "NadtyLite", "bendn": "bendn", "calvinfunfun": "calvinfunfun", "BlazeBoy": "BlazeBoy", "Lylethebrick": "Lylethebrick", "EnzotheBenzo": "EnzotheBenzo", "uwtron": "uwtron", "sda1611": "sda1611", "Simber": "Simber", "SSSS": "SSSS", "xinoehp512": "xinoehp512", "Aedalus": "Aedalus", "SEironed": "SEironed", "lazarus210": "lazarus210", "MrKent (UTC": "MrKent (UTC+7)", "Requiem": "Requiem", "Plasma": "Plasma", "Schnaga": "Schnaga", "Hurple": "Hurple", "Sweenss": "Sweenss", "tentacultist_": "tentacultist_", "idyll": "idyll", "darkcat9000": "darkcat9000", "nvt2508": "nvt2508", "magiczamboni": "magiczamboni", "H\u1ed3 H\u00e0 Nguy\u1ec5n": "H\u1ed3 H\u00e0 Nguy\u1ec5n", "salo_solomon": "salo_solomon", "WyvernElement": "WyvernElement", "Rish": "Rish", "Thungon": "Thungon", "scotchbonnet": "scotchbonnet", "Empress Octavia": "Empress Octavia", "pwarren8590": "pwarren8590", "Jalapeno": "Jalapeno", "Agent Narcos": "Agent Narcos", "trippingrannys": "trippingrannys", "Kethem": "Kethem", "smeichel": "smeichel", "MagicDream": "MagicDream", "Jed": "Jed", "KeyserSoze": "KeyserSoze", "SunkistDragon": "SunkistDragon", "ChefBoyardee": "ChefBoyardee", "mcauthor": "mcauthor", "Davee_39": "Davee_39", "benssoon": "benssoon", "lumpyprol": "lumpyprol", "Geetus": "Geetus", "DemaRogue": "DemaRogue", "NattyKash": "NattyKash", "euler's fool": "euler's fool", "Dark Owl": "Dark Owl", "Chicken_X": "Chicken_X", "WillRevolt": "WillRevolt", "DarthPuniceus (MonteCristo24601)": "DarthPuniceus (MonteCristo24601)", "CUA": "CUA", "Silver": "Silver", "punkstarman": "punkstarman", "stockbot": "stockbot", "bunniesandcandy": "bunniesandcandy", "fraaab": "fraaab", "KyloBot": "KyloBot", "XpertAcorn": "XpertAcorn", "mwalt92": "mwalt92", "Catzador": "Catzador", "BW": "BW", "MentalMendel": "MentalMendel", "kaiser": "kaiser", "MarcustheCat": "MarcustheCat", "Darkwonderer": "Darkwonderer", "Starhard_Fishrinse": "Starhard_Fishrinse", "True American Patriot": "True American Patriot", "plegbot": "plegbot", "fajfar": "fajfar", "North Abbot (he/him/his)": "North Abbot (he/him/his)", "pheobii": "pheobii", "Piechu": "Piechu", "talleyrand19": "talleyrand19", "Slaith": "Slaith", "KingLuigiNL": "KingLuigiNL", "Zaandaa": "Zaandaa", "Aeliott": "Aeliott", "Coola101": "Coola101", "jazmorow": "jazmorow", "Tungsten": "Tungsten", "Lobster (GMT-4)(Indiana)": "Lobster (GMT-4)(Indiana)", "abbreviatedman (he/him)": "abbreviatedman (he/him)", "turmoilbyrd": "turmoilbyrd", "Riverman(luigi)": "Riverman(luigi)", "AnOkayPotato": "AnOkayPotato", "jakattak14": "jakattak14", "Quents": "Quents", "jermcurry": "jermcurry", "Lilac Teddy Bear": "Lilac Teddy Bear", "militech2078": "militech2078", "Extortionator (AUS)": "Extortionator (AUS)", "radiantchaos": "radiantchaos", "pooge": "pooge", "MrDrouf": "MrDrouf", "Gregoola": "Gregoola", "Cosmic Cant": "Cosmic Cant", "Dekiru": "Dekiru", "Matthijs": "Matthijs", "coyote": "coyote", "aaron_dangerman": "aaron_dangerman", "Eletto21": "Eletto21", "RabbitWarlord": "RabbitWarlord", "Litch Queen of Hyena Necrocracy": "Litch Queen of Hyena Necrocracy", "theSOFLY": "theSOFLY", "Sharkat": "Sharkat", "batmaster": "batmaster", "House Addict": "House Addict", "PokerFace126": "PokerFace126", "ChopieTheCat": "ChopieTheCat", "Dr. Seal": "Dr. Seal", "countthemsheep": "countthemsheep", "Bustin": "Bustin", "Kernel_": "Kernel_", "Meryn": "Meryn", "Purplefrowns": "Purplefrowns", "IceeCream": "IceeCream", "Dias": "Dias", "Itay Chang": "Itay Chang", "Hasan": "Hasan", "Briony": "Briony", "Canyon": "Canyon", "clinicalindication": "clinicalindication", "RondamGemas": "RondamGemas", "jonismiff": "jonismiff"};
+		window.PLAYER_DATA_MAP = {"lazarus210": {"elo": 1247, "games": 4, "is_ranked": false}, "Hasan": {"elo": 1163, "games": 3, "is_ranked": false}, "militech2078": {"elo": 1138, "games": 6, "is_ranked": false}, "MrDrouf": {"elo": 1234, "games": 27, "is_ranked": false}, "pwarren8590": {"elo": 1164, "games": 8, "is_ranked": false}, "scotchbonnet": {"elo": 1237, "games": 16, "is_ranked": false}, "Kvan_": {"elo": 1138, "games": 6, "is_ranked": false}, "turmoilbyrd": {"elo": 1165, "games": 3, "is_ranked": false}, "CUA": {"elo": 1165, "games": 3, "is_ranked": false}, "Nadav253": {"elo": 1275, "games": 13, "is_ranked": false}, "RabbitWarlord": {"elo": 1161, "games": 8, "is_ranked": false}, "aaron_dangerman": {"elo": 1190, "games": 5, "is_ranked": false}, "trippingrannys": {"elo": 1257, "games": 15, "is_ranked": false}, "Starhard_Fishrinse": {"elo": 1118, "games": 9, "is_ranked": false}, "Chicken_X": {"elo": 1300, "games": 17, "is_ranked": false}, "coyote": {"elo": 1273, "games": 6, "is_ranked": false}, "Cosmic Cant": {"elo": 1249, "games": 18, "is_ranked": false}, "talleyrand19": {"elo": 1317, "games": 13, "is_ranked": false}, "uwtron": {"elo": 1367, "games": 22, "is_ranked": false}, "xinoehp512": {"elo": 1282, "games": 5, "is_ranked": false}, "Gregoola": {"elo": 1254, "games": 14, "is_ranked": false}, "Silver": {"elo": 1188, "games": 5, "is_ranked": false}, "KingLuigiNL": {"elo": 1164, "games": 3, "is_ranked": false}, "punkstarman": {"elo": 1163, "games": 3, "is_ranked": false}, "DarthPuniceus (MonteCristo24601)": {"elo": 1212, "games": 15, "is_ranked": false}, "lumpyprol": {"elo": 1214, "games": 13, "is_ranked": false}, "clinicalindication": {"elo": 1190, "games": 5, "is_ranked": false}, "Slaith": {"elo": 1332, "games": 15, "is_ranked": false}, "Eletto21": {"elo": 1266, "games": 19, "is_ranked": false}, "PokerFace126": {"elo": 1247, "games": 23, "is_ranked": false}, "Lylethebrick": {"elo": 1308, "games": 17, "is_ranked": false}, "Jed": {"elo": 1190, "games": 5, "is_ranked": false}, "BW": {"elo": 1359, "games": 54, "is_ranked": false}, "magiczamboni": {"elo": 1167, "games": 3, "is_ranked": false}, "bunniesandcandy": {"elo": 1202, "games": 4, "is_ranked": false}, "SNCuller": {"elo": 1264, "games": 16, "is_ranked": false}, "jakattak14": {"elo": 1227, "games": 6, "is_ranked": false}, "Davee_39": {"elo": 1213, "games": 7, "is_ranked": false}, "Kethem": {"elo": 1249, "games": 4, "is_ranked": false}, "Hurple": {"elo": 1140, "games": 6, "is_ranked": false}, ".doe": {"elo": 1189, "games": 5, "is_ranked": false}, "sda1611": {"elo": 1279, "games": 5, "is_ranked": false}, "Riverman(luigi)": {"elo": 1121, "games": 9, "is_ranked": false}, "Cookies": {"elo": 1141, "games": 10, "is_ranked": false}, "jonismiff": {"elo": 1167, "games": 3, "is_ranked": false}, "fajfar": {"elo": 1167, "games": 3, "is_ranked": false}, "Briony": {"elo": 1198, "games": 4, "is_ranked": false}, "Coola101": {"elo": 1166, "games": 3, "is_ranked": false}, "Simber": {"elo": 1263, "games": 17, "is_ranked": false}, "Litch Queen of Hyena Necrocracy": {"elo": 1191, "games": 5, "is_ranked": false}, "theSOFLY": {"elo": 1175, "games": 2, "is_ranked": false}, "RondamGemas": {"elo": 1166, "games": 3, "is_ranked": false}, "benssoon": {"elo": 1164, "games": 3, "is_ranked": false}, "pooge": {"elo": 1167, "games": 16, "is_ranked": false}, "salo_solomon": {"elo": 1153, "games": 4, "is_ranked": false}, "Schnaga": {"elo": 1128, "games": 16, "is_ranked": false}, "True American Patriot": {"elo": 1277, "games": 13, "is_ranked": false}, "KeyserSoze": {"elo": 1194, "games": 11, "is_ranked": false}, "plegbot": {"elo": 1200, "games": 4, "is_ranked": false}, "MentalMendel": {"elo": 1094, "games": 30, "is_ranked": false}, "abbreviatedman (he/him)": {"elo": 1207, "games": 12, "is_ranked": false}, "idyll": {"elo": 1164, "games": 3, "is_ranked": false}, "fraaab": {"elo": 1140, "games": 6, "is_ranked": false}, "euler's fool": {"elo": 1157, "games": 9, "is_ranked": false}, "ChefBoyardee": {"elo": 1200, "games": 4, "is_ranked": false}, "MrKent (UTC": {"elo": 1198, "games": 18, "is_ranked": false}, "Quents": {"elo": 1165, "games": 3, "is_ranked": false}, "Aedalus": {"elo": 1205, "games": 17, "is_ranked": false}, "Piechu": {"elo": 1185, "games": 11, "is_ranked": false}, "mwalt92": {"elo": 1167, "games": 3, "is_ranked": false}, "stockbot": {"elo": 1190, "games": 5, "is_ranked": false}, "Jalapeno": {"elo": 1169, "games": 3, "is_ranked": false}, "Moss": {"elo": 1168, "games": 3, "is_ranked": false}, "IceeCream": {"elo": 1165, "games": 3, "is_ranked": false}, "WyvernElement": {"elo": 1365, "games": 12, "is_ranked": false}, "Tungsten": {"elo": 1203, "games": 4, "is_ranked": false}, "WillRevolt": {"elo": 1202, "games": 8, "is_ranked": false}, "Requiem": {"elo": 1126, "games": 9, "is_ranked": false}, "batmaster": {"elo": 1164, "games": 3, "is_ranked": false}, "Meryn": {"elo": 1297, "games": 13, "is_ranked": false}, "Dekiru": {"elo": 1229, "games": 6, "is_ranked": false}, "SEironed": {"elo": 1168, "games": 3, "is_ranked": false}, "KyloBot": {"elo": 1164, "games": 3, "is_ranked": false}, "kaiser": {"elo": 1240, "games": 21, "is_ranked": false}, "mcauthor": {"elo": 1193, "games": 5, "is_ranked": false}, "countthemsheep": {"elo": 1192, "games": 5, "is_ranked": false}, "House Addict": {"elo": 1166, "games": 3, "is_ranked": false}, "NattyKash": {"elo": 1191, "games": 15, "is_ranked": false}, "Dark Owl": {"elo": 1166, "games": 3, "is_ranked": false}, "DemaRogue": {"elo": 1189, "games": 20, "is_ranked": false}, "Darkwonderer": {"elo": 1203, "games": 4, "is_ranked": false}, "Extortionator (AUS)": {"elo": 1267, "games": 6, "is_ranked": false}, "Bustin": {"elo": 1186, "games": 1, "is_ranked": false}, "smeichel": {"elo": 1172, "games": 3, "is_ranked": false}, "Sweenss": {"elo": 1188, "games": 1, "is_ranked": false}, "Lobster (GMT-4)(Indiana)": {"elo": 1145, "games": 11, "is_ranked": false}, "AnOkayPotato": {"elo": 1167, "games": 3, "is_ranked": false}, "Zaandaa": {"elo": 1234, "games": 13, "is_ranked": false}, "jermcurry": {"elo": 1266, "games": 26, "is_ranked": false}, "nvt2508": {"elo": 1173, "games": 7, "is_ranked": false}, "Rho Sternj\u00e4ger": {"elo": 1187, "games": 1, "is_ranked": false}, "Aeliott": {"elo": 1224, "games": 2, "is_ranked": false}, "pheobii": {"elo": 1146, "games": 6, "is_ranked": false}, "NadtyLite": {"elo": 1214, "games": 3, "is_ranked": false}, "tentacultist_": {"elo": 1189, "games": 1, "is_ranked": false}, "MarcustheCat": {"elo": 1143, "games": 7, "is_ranked": false}, "SunkistDragon": {"elo": 1190, "games": 1, "is_ranked": false}, "Dr. Seal": {"elo": 1144, "games": 5, "is_ranked": false}, "Malleable Frog": {"elo": 1160, "games": 4, "is_ranked": false}, "Lilac Teddy Bear": {"elo": 1160, "games": 5, "is_ranked": false}, "IcarusPanda (cringelordirl)": {"elo": 1239, "games": 1, "is_ranked": false}, "calvinfunfun": {"elo": 1139, "games": 7, "is_ranked": false}, "stephkuriboh": {"elo": 1162, "games": 4, "is_ranked": false}, "darkcat9000": {"elo": 1190, "games": 6, "is_ranked": false}, "Thungon": {"elo": 1184, "games": 7, "is_ranked": false}, "Catzador": {"elo": 1166, "games": 3, "is_ranked": false}, "jazmorow": {"elo": 1338, "games": 4, "is_ranked": false}, "Rish": {"elo": 1170, "games": 3, "is_ranked": false}, "Plasma": {"elo": 1159, "games": 4, "is_ranked": false}, "Schkitz": {"elo": 1322, "games": 8, "is_ranked": false}, "radiantchaos": {"elo": 1167, "games": 3, "is_ranked": false}, "Matthijs": {"elo": 1163, "games": 3, "is_ranked": false}, "Itay Chang": {"elo": 1180, "games": 2, "is_ranked": false}, "Empress Octavia": {"elo": 1181, "games": 2, "is_ranked": false}, "MagicDream": {"elo": 1159, "games": 4, "is_ranked": false}, "Agent Narcos": {"elo": 1168, "games": 3, "is_ranked": false}, "H\u1ed3 H\u00e0 Nguy\u1ec5n": {"elo": 1167, "games": 3, "is_ranked": false}, "Dias": {"elo": 1165, "games": 3, "is_ranked": false}, "North Abbot (he/him/his)": {"elo": 1170, "games": 3, "is_ranked": false}, "BlazeBoy": {"elo": 1168, "games": 3, "is_ranked": false}, "Kernel_": {"elo": 1166, "games": 3, "is_ranked": false}, "EnzotheBenzo": {"elo": 1211, "games": 4, "is_ranked": false}, "bendn": {"elo": 1230, "games": 6, "is_ranked": false}, "SSSS": {"elo": 1258, "games": 3, "is_ranked": false}, "Purplefrowns": {"elo": 1204, "games": 4, "is_ranked": false}, "ChopieTheCat": {"elo": 1189, "games": 1, "is_ranked": false}, "Geetus": {"elo": 1214, "games": 3, "is_ranked": false}, "SugieCube": {"elo": 1225, "games": 7, "is_ranked": false}, "Sharkat": {"elo": 1164, "games": 3, "is_ranked": false}, "Thewy": {"elo": 1192, "games": 1, "is_ranked": false}, "XpertAcorn": {"elo": 1179, "games": 2, "is_ranked": false}, "Canyon": {"elo": 1181, "games": 2, "is_ranked": false}};
 		window.PROFILE_BASE_URL = "https://www.therootdatabase.com/profile";
 		window.K_CONFIG = {"exp_decay": 9.0, "k_cap_new": 50.0, "k_cap_ranked": 50.0, "k_floor": 25.0, "k_start": 50.0, "t_inactivity": 90};
 
 		const PATH_PREFIX = "../";
 
 		const CONFIG = {
-			colors: {"bear": "#ffffff", "bird": "#7AB5E0", "default": "#7A7347", "fox": "#E55555", "mouse": "#F49E52", "rabbit": "#F2C14E", "squirrel": "#94C160", "stag": "#C686FF"},
+			colors: {"bear": "#ffffff", "bird": "#7AB5E0", "default": "#ffffff", "fox": "#E55555", "frog": "#7B7D10", "mouse": "#F49E52", "rabbit": "#F2C14E", "squirrel": "#94C160", "stag": "#C686FF"},
 			icons: {
 				
 					"bird": "../" + "assets/icons/bird.webp",
@@ -2979,6 +3627,8 @@
 					"stag": "../" + "assets/icons/stag.webp",
 				
 					"bear": "../" + "assets/icons/bear.webp",
+				
+					"frog": "../" + "assets/icons/frog.webp",
 				
 			},
 			currentTier: "bird",
@@ -3023,6 +3673,12 @@
 				subtitle: 'The Legend',
 				desc: 'Has anyone truly seen this mythical beast, or is it only an echo of the wild? What happens to the predator when the woods turn hollow and every path leads back to a mirror of its own perfection? With nothing left to be claimed, is the true crown the silence that follows the chase?'
 			},
+			'frog': {
+				name: 'Frog',
+				elo: 'Beyond Elo',
+				subtitle: 'The Homeland Heralds',
+				desc: 'These dedicated settlers represent the social core of the league. Valued not for feats but for fidelity, they give fellow denizens a clearing to take root. New homelands emerge around these anchors, while shifting allegiances constantly redraw the seasonal map.'
+			},
 			'bear': {
 				name: 'Bear',
 				elo: CONFIG.champMatch ? CONFIG.champMatch.champion : '',
@@ -3041,7 +3697,7 @@
 			window.location.hostname === 'localhost' ||
 			window.location.hostname === '127.0.0.1' ||
 			window.location.href.includes('rootelo-dev') ||
-			window.location.pathname.includes('/dev/')
+			window.location.href.includes('rootelo-test')
 		) {
 			window.goatcounter = { no_onload: true };
 		}

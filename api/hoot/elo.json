@@ -1,7 +1,8 @@
 {
-  "updated_at": "2026-11-22 00:27 UTC",
+  "updated_at": "2026-11-22 21:47 UTC",
   "players": {
     "uwtron": {
+      "player_id": "1629",
       "elo": 1367,
       "rank": 1,
       "tier": "rabbit",
@@ -12,6 +13,7 @@
       "win_rate": "54.5%"
     },
     "wyvernelement": {
+      "player_id": "956",
       "elo": 1365,
       "rank": 2,
       "tier": "rabbit",
@@ -22,6 +24,7 @@
       "win_rate": "58.3%"
     },
     "bw": {
+      "player_id": "326",
       "elo": 1359,
       "rank": 3,
       "tier": "rabbit",
@@ -32,6 +35,7 @@
       "win_rate": "48.1%"
     },
     "jazmorow": {
+      "player_id": "3530",
       "elo": 1338,
       "rank": "-",
       "tier": "unassigned",
@@ -42,6 +46,7 @@
       "win_rate": "100.0%"
     },
     "slaith": {
+      "player_id": "1320",
       "elo": 1332,
       "rank": 4,
       "tier": "rabbit",
@@ -52,6 +57,7 @@
       "win_rate": "53.3%"
     },
     "schkitz": {
+      "player_id": "2047",
       "elo": 1322,
       "rank": "-",
       "tier": "unassigned",
@@ -62,6 +68,7 @@
       "win_rate": "62.5%"
     },
     "talleyrand19": {
+      "player_id": "134",
       "elo": 1317,
       "rank": 5,
       "tier": "rabbit",
@@ -71,7 +78,8 @@
       "wins": 6.0,
       "win_rate": "46.2%"
     },
-    "lylethebrick-1438": {
+    "lylethebrick": {
+      "player_id": "3244",
       "elo": 1308,
       "rank": 6,
       "tier": "rabbit",
@@ -82,6 +90,7 @@
       "win_rate": "47.1%"
     },
     "chicken_x": {
+      "player_id": "2398",
       "elo": 1300,
       "rank": 7,
       "tier": "rabbit",
@@ -92,6 +101,7 @@
       "win_rate": "41.2%"
     },
     "meryn": {
+      "player_id": "325",
       "elo": 1297,
       "rank": 8,
       "tier": "mouse",
@@ -102,6 +112,7 @@
       "win_rate": "46.2%"
     },
     "xinoehp512": {
+      "player_id": "2408",
       "elo": 1282,
       "rank": "-",
       "tier": "unassigned",
@@ -112,6 +123,7 @@
       "win_rate": "60.0%"
     },
     "sda1611": {
+      "player_id": "944",
       "elo": 1279,
       "rank": "-",
       "tier": "unassigned",
@@ -121,7 +133,8 @@
       "wins": 3.0,
       "win_rate": "60.0%"
     },
-    "commanderasn": {
+    "true american patriot": {
+      "player_id": "2407",
       "elo": 1277,
       "rank": 9,
       "tier": "mouse",
@@ -131,7 +144,8 @@
       "wins": 5.0,
       "win_rate": "38.5%"
     },
-    "nadav253_57576": {
+    "nadav253": {
+      "player_id": "317",
       "elo": 1275,
       "rank": 10,
       "tier": "mouse",
@@ -141,7 +155,8 @@
       "wins": 6.0,
       "win_rate": "46.2%"
     },
-    "gcoyote": {
+    "coyote": {
+      "player_id": "44",
       "elo": 1273,
       "rank": "-",
       "tier": "unassigned",
@@ -151,7 +166,8 @@
       "wins": 3.0,
       "win_rate": "50.0%"
     },
-    "extortionator": {
+    "extortionator (aus)": {
+      "player_id": "2839",
       "elo": 1267,
       "rank": "-",
       "tier": "unassigned",
@@ -162,6 +178,7 @@
       "win_rate": "50.0%"
     },
     "eletto21": {
+      "player_id": "2401",
       "elo": 1266,
       "rank": 11,
       "tier": "mouse",
@@ -172,6 +189,7 @@
       "win_rate": "36.8%"
     },
     "jermcurry": {
+      "player_id": "1130",
       "elo": 1266,
       "rank": 12,
       "tier": "mouse",
@@ -182,6 +200,7 @@
       "win_rate": "30.8%"
     },
     "snculler": {
+      "player_id": "1165",
       "elo": 1264,
       "rank": 13,
       "tier": "mouse",
@@ -191,7 +210,8 @@
       "wins": 6.0,
       "win_rate": "37.5%"
     },
-    "simber_2925": {
+    "simber": {
+      "player_id": "2374",
       "elo": 1263,
       "rank": 14,
       "tier": "mouse",
@@ -201,7 +221,8 @@
       "wins": 6.0,
       "win_rate": "35.3%"
     },
-    "supersupersupportivesupporter": {
+    "ssss": {
+      "player_id": "3534",
       "elo": 1258,
       "rank": "-",
       "tier": "unassigned",
@@ -212,6 +233,7 @@
       "win_rate": "66.7%"
     },
     "trippingrannys": {
+      "player_id": "311",
       "elo": 1257,
       "rank": 15,
       "tier": "mouse",
@@ -222,6 +244,7 @@
       "win_rate": "33.3%"
     },
     "gregoola": {
+      "player_id": "128",
       "elo": 1254,
       "rank": 16,
       "tier": "mouse",
@@ -232,6 +255,7 @@
       "win_rate": "35.7%"
     },
     "kethem": {
+      "player_id": "2403",
       "elo": 1249,
       "rank": "-",
       "tier": "unassigned",
@@ -241,7 +265,8 @@
       "wins": 2.0,
       "win_rate": "50.0%"
     },
-    "cosmiccant": {
+    "cosmic cant": {
+      "player_id": "632",
       "elo": 1249,
       "rank": 17,
       "tier": "mouse",
@@ -251,7 +276,8 @@
       "wins": 6.0,
       "win_rate": "33.3%"
     },
-    "pokerface126_11986": {
+    "pokerface126": {
+      "player_id": "2769",
       "elo": 1247,
       "rank": 18,
       "tier": "mouse",
@@ -262,6 +288,7 @@
       "win_rate": "34.8%"
     },
     "lazarus210": {
+      "player_id": "1158",
       "elo": 1247,
       "rank": "-",
       "tier": "unassigned",
@@ -271,7 +298,8 @@
       "wins": 2.0,
       "win_rate": "50.0%"
     },
-    "victorvee": {
+    "kaiser": {
+      "player_id": "2757",
       "elo": 1240,
       "rank": 19,
       "tier": "mouse",
@@ -281,7 +309,8 @@
       "wins": 6.0,
       "win_rate": "28.6%"
     },
-    "icaruspanda": {
+    "icaruspanda (cringelordirl)": {
+      "player_id": "2753",
       "elo": 1239,
       "rank": "-",
       "tier": "unassigned",
@@ -291,7 +320,8 @@
       "wins": 1.0,
       "win_rate": "100.0%"
     },
-    "scotchbonnet11": {
+    "scotchbonnet": {
+      "player_id": "2755",
       "elo": 1237,
       "rank": 20,
       "tier": "mouse",
@@ -302,6 +332,7 @@
       "win_rate": "31.2%"
     },
     "mrdrouf": {
+      "player_id": "975",
       "elo": 1234,
       "rank": 21,
       "tier": "mouse",
@@ -312,6 +343,7 @@
       "win_rate": "25.9%"
     },
     "zaandaa": {
+      "player_id": "1163",
       "elo": 1234,
       "rank": 22,
       "tier": "mouse",
@@ -322,6 +354,7 @@
       "win_rate": "30.8%"
     },
     "bendn": {
+      "player_id": "3496",
       "elo": 1230,
       "rank": "-",
       "tier": "unassigned",
@@ -332,6 +365,7 @@
       "win_rate": "33.3%"
     },
     "dekiru": {
+      "player_id": "1217",
       "elo": 1229,
       "rank": "-",
       "tier": "unassigned",
@@ -342,6 +376,7 @@
       "win_rate": "33.3%"
     },
     "jakattak14": {
+      "player_id": "2304",
       "elo": 1227,
       "rank": "-",
       "tier": "unassigned",
@@ -351,7 +386,8 @@
       "wins": 2.0,
       "win_rate": "33.3%"
     },
-    "sugie": {
+    "sugiecube": {
+      "player_id": "3638",
       "elo": 1225,
       "rank": "-",
       "tier": "unassigned",
@@ -362,6 +398,7 @@
       "win_rate": "28.6%"
     },
     "aeliott": {
+      "player_id": "861",
       "elo": 1224,
       "rank": "-",
       "tier": "unassigned",
@@ -371,7 +408,8 @@
       "wins": 1.0,
       "win_rate": "50.0%"
     },
-    "glisteninggeetus": {
+    "geetus": {
+      "player_id": "515",
       "elo": 1214,
       "rank": "-",
       "tier": "unassigned",
@@ -381,7 +419,8 @@
       "wins": 1.0,
       "win_rate": "33.3%"
     },
-    "cbernadt": {
+    "nadtylite": {
+      "player_id": "2749",
       "elo": 1214,
       "rank": "-",
       "tier": "unassigned",
@@ -392,6 +431,7 @@
       "win_rate": "33.3%"
     },
     "lumpyprol": {
+      "player_id": "224",
       "elo": 1214,
       "rank": 23,
       "tier": "mouse",
@@ -402,6 +442,7 @@
       "win_rate": "23.1%"
     },
     "davee_39": {
+      "player_id": "288",
       "elo": 1213,
       "rank": "-",
       "tier": "unassigned",
@@ -411,7 +452,8 @@
       "wins": 2.0,
       "win_rate": "28.6%"
     },
-    "darthpuniceus": {
+    "darthpuniceus (montecristo24601)": {
+      "player_id": "140",
       "elo": 1212,
       "rank": 24,
       "tier": "mouse",
@@ -422,6 +464,7 @@
       "win_rate": "26.7%"
     },
     "enzothebenzo": {
+      "player_id": "3488",
       "elo": 1211,
       "rank": "-",
       "tier": "unassigned",
@@ -431,7 +474,8 @@
       "wins": 1.0,
       "win_rate": "25.0%"
     },
-    "abbreviatedman": {
+    "abbreviatedman (he/him)": {
+      "player_id": "2706",
       "elo": 1207,
       "rank": 25,
       "tier": "mouse",
@@ -442,6 +486,7 @@
       "win_rate": "25.0%"
     },
     "aedalus": {
+      "player_id": "2729",
       "elo": 1205,
       "rank": 26,
       "tier": "mouse",
@@ -452,6 +497,7 @@
       "win_rate": "23.5%"
     },
     "purplefrowns": {
+      "player_id": "3254",
       "elo": 1204,
       "rank": "-",
       "tier": "unassigned",
@@ -462,6 +508,7 @@
       "win_rate": "25.0%"
     },
     "darkwonderer": {
+      "player_id": "2325",
       "elo": 1203,
       "rank": "-",
       "tier": "unassigned",
@@ -472,6 +519,7 @@
       "win_rate": "25.0%"
     },
     "tungsten": {
+      "player_id": "1011",
       "elo": 1203,
       "rank": "-",
       "tier": "unassigned",
@@ -482,6 +530,7 @@
       "win_rate": "25.0%"
     },
     "willrevolt": {
+      "player_id": "2523",
       "elo": 1202,
       "rank": "-",
       "tier": "unassigned",
@@ -492,6 +541,7 @@
       "win_rate": "25.0%"
     },
     "bunniesandcandy": {
+      "player_id": "2397",
       "elo": 1202,
       "rank": "-",
       "tier": "unassigned",
@@ -501,7 +551,8 @@
       "wins": 1.0,
       "win_rate": "25.0%"
     },
-    "chefboyardee8120": {
+    "chefboyardee": {
+      "player_id": "3011",
       "elo": 1200,
       "rank": "-",
       "tier": "unassigned",
@@ -512,6 +563,7 @@
       "win_rate": "25.0%"
     },
     "plegbot": {
+      "player_id": "408",
       "elo": 1200,
       "rank": "-",
       "tier": "unassigned",
@@ -521,7 +573,8 @@
       "wins": 1.0,
       "win_rate": "25.0%"
     },
-    "ashadeferal": {
+    "briony": {
+      "player_id": "2396",
       "elo": 1198,
       "rank": "-",
       "tier": "unassigned",
@@ -531,7 +584,8 @@
       "wins": 1.0,
       "win_rate": "25.0%"
     },
-    "rootvietnam": {
+    "mrkent (utc+7)": {
+      "player_id": "2747",
       "elo": 1198,
       "rank": "-",
       "tier": "squirrel",
@@ -541,7 +595,8 @@
       "wins": 4.0,
       "win_rate": "22.2%"
     },
-    "stoneofjas": {
+    "keysersoze": {
+      "player_id": "2750",
       "elo": 1194,
       "rank": "-",
       "tier": "squirrel",
@@ -552,6 +607,7 @@
       "win_rate": "18.2%"
     },
     "mcauthor": {
+      "player_id": "92",
       "elo": 1193,
       "rank": "-",
       "tier": "unassigned",
@@ -562,6 +618,7 @@
       "win_rate": "20.0%"
     },
     "countthemsheep": {
+      "player_id": "2666",
       "elo": 1192,
       "rank": "-",
       "tier": "unassigned",
@@ -572,6 +629,7 @@
       "win_rate": "20.0%"
     },
     "thewy": {
+      "player_id": "38",
       "elo": 1192,
       "rank": "-",
       "tier": "unassigned",
@@ -581,7 +639,8 @@
       "wins": 0.0,
       "win_rate": "0.0%"
     },
-    "green_flame": {
+    "litch queen of hyena necrocracy": {
+      "player_id": "261",
       "elo": 1191,
       "rank": "-",
       "tier": "unassigned",
@@ -592,6 +651,7 @@
       "win_rate": "20.0%"
     },
     "nattykash": {
+      "player_id": "1367",
       "elo": 1191,
       "rank": "-",
       "tier": "squirrel",
@@ -602,6 +662,7 @@
       "win_rate": "20.0%"
     },
     "stockbot": {
+      "player_id": "2936",
       "elo": 1190,
       "rank": "-",
       "tier": "unassigned",
@@ -611,7 +672,8 @@
       "wins": 1.0,
       "win_rate": "20.0%"
     },
-    "mes10": {
+    "darkcat9000": {
+      "player_id": "2563",
       "elo": 1190,
       "rank": "-",
       "tier": "unassigned",
@@ -622,6 +684,7 @@
       "win_rate": "16.7%"
     },
     "aaron_dangerman": {
+      "player_id": "2169",
       "elo": 1190,
       "rank": "-",
       "tier": "unassigned",
@@ -632,6 +695,7 @@
       "win_rate": "20.0%"
     },
     "clinicalindication": {
+      "player_id": "2367",
       "elo": 1190,
       "rank": "-",
       "tier": "unassigned",
@@ -641,7 +705,8 @@
       "wins": 1.0,
       "win_rate": "20.0%"
     },
-    "jorbbb": {
+    "jed": {
+      "player_id": "456",
       "elo": 1190,
       "rank": "-",
       "tier": "unassigned",
@@ -652,6 +717,7 @@
       "win_rate": "20.0%"
     },
     "sunkistdragon": {
+      "player_id": "3413",
       "elo": 1190,
       "rank": "-",
       "tier": "unassigned",
@@ -661,7 +727,8 @@
       "wins": 0.0,
       "win_rate": "0.0%"
     },
-    "doe": {
+    ".doe": {
+      "player_id": "2139",
       "elo": 1189,
       "rank": "-",
       "tier": "unassigned",
@@ -672,6 +739,7 @@
       "win_rate": "20.0%"
     },
     "chopiethecat": {
+      "player_id": "3501",
       "elo": 1189,
       "rank": "-",
       "tier": "unassigned",
@@ -681,7 +749,8 @@
       "wins": 0.0,
       "win_rate": "0.0%"
     },
-    "tentacultist": {
+    "tentacultist_": {
+      "player_id": "2928",
       "elo": 1189,
       "rank": "-",
       "tier": "unassigned",
@@ -691,7 +760,8 @@
       "wins": 0.0,
       "win_rate": "0.0%"
     },
-    "jaredjm41": {
+    "demarogue": {
+      "player_id": "2760",
       "elo": 1189,
       "rank": "-",
       "tier": "squirrel",
@@ -702,6 +772,7 @@
       "win_rate": "20.0%"
     },
     "sweenss": {
+      "player_id": "3015",
       "elo": 1188,
       "rank": "-",
       "tier": "unassigned",
@@ -712,6 +783,7 @@
       "win_rate": "0.0%"
     },
     "silver": {
+      "player_id": "226",
       "elo": 1188,
       "rank": "-",
       "tier": "unassigned",
@@ -721,7 +793,8 @@
       "wins": 1.0,
       "win_rate": "20.0%"
     },
-    "rho_sternjaeger": {
+    "rho sternjäger": {
+      "player_id": "2937",
       "elo": 1187,
       "rank": "-",
       "tier": "unassigned",
@@ -732,6 +805,7 @@
       "win_rate": "0.0%"
     },
     "bustin": {
+      "player_id": "2547",
       "elo": 1186,
       "rank": "-",
       "tier": "unassigned",
@@ -741,7 +815,8 @@
       "wins": 0.0,
       "win_rate": "0.0%"
     },
-    "piechu28": {
+    "piechu": {
+      "player_id": "2748",
       "elo": 1185,
       "rank": "-",
       "tier": "squirrel",
@@ -752,6 +827,7 @@
       "win_rate": "18.2%"
     },
     "thungon": {
+      "player_id": "3487",
       "elo": 1184,
       "rank": "-",
       "tier": "unassigned",
@@ -762,6 +838,7 @@
       "win_rate": "14.3%"
     },
     "canyon": {
+      "player_id": "3755",
       "elo": 1181,
       "rank": "-",
       "tier": "unassigned",
@@ -771,7 +848,8 @@
       "wins": 0.0,
       "win_rate": "0.0%"
     },
-    "empress_octavia": {
+    "empress octavia": {
+      "player_id": "3498",
       "elo": 1181,
       "rank": "-",
       "tier": "unassigned",
@@ -781,7 +859,8 @@
       "wins": 0.0,
       "win_rate": "0.0%"
     },
-    "itaychang": {
+    "itay chang": {
+      "player_id": "3517",
       "elo": 1180,
       "rank": "-",
       "tier": "unassigned",
@@ -792,6 +871,7 @@
       "win_rate": "0.0%"
     },
     "xpertacorn": {
+      "player_id": "3201",
       "elo": 1179,
       "rank": "-",
       "tier": "unassigned",
@@ -802,6 +882,7 @@
       "win_rate": "0.0%"
     },
     "thesofly": {
+      "player_id": "2406",
       "elo": 1175,
       "rank": "-",
       "tier": "unassigned",
@@ -811,7 +892,8 @@
       "wins": 0.0,
       "win_rate": "0.0%"
     },
-    "nvt2508_78037": {
+    "nvt2508": {
+      "player_id": "1937",
       "elo": 1173,
       "rank": "-",
       "tier": "unassigned",
@@ -822,6 +904,7 @@
       "win_rate": "14.3%"
     },
     "smeichel": {
+      "player_id": "3014",
       "elo": 1172,
       "rank": "-",
       "tier": "unassigned",
@@ -832,6 +915,7 @@
       "win_rate": "0.0%"
     },
     "rish": {
+      "player_id": "3531",
       "elo": 1170,
       "rank": "-",
       "tier": "unassigned",
@@ -841,7 +925,8 @@
       "wins": 0.0,
       "win_rate": "0.0%"
     },
-    "northabbot": {
+    "north abbot (he/him/his)": {
+      "player_id": "1027",
       "elo": 1170,
       "rank": "-",
       "tier": "unassigned",
@@ -852,6 +937,7 @@
       "win_rate": "0.0%"
     },
     "jalapeno": {
+      "player_id": "1741",
       "elo": 1169,
       "rank": "-",
       "tier": "unassigned",
@@ -861,7 +947,8 @@
       "wins": 0.0,
       "win_rate": "0.0%"
     },
-    "blazeboy0784": {
+    "blazeboy": {
+      "player_id": "3508",
       "elo": 1168,
       "rank": "-",
       "tier": "unassigned",
@@ -871,7 +958,8 @@
       "wins": 0.0,
       "win_rate": "0.0%"
     },
-    "mossfusion": {
+    "moss": {
+      "player_id": "365",
       "elo": 1168,
       "rank": "-",
       "tier": "unassigned",
@@ -882,6 +970,7 @@
       "win_rate": "0.0%"
     },
     "seironed": {
+      "player_id": "2525",
       "elo": 1168,
       "rank": "-",
       "tier": "unassigned",
@@ -891,7 +980,8 @@
       "wins": 0.0,
       "win_rate": "0.0%"
     },
-    "meisnertechnique": {
+    "agent narcos": {
+      "player_id": "3566",
       "elo": 1168,
       "rank": "-",
       "tier": "unassigned",
@@ -901,7 +991,8 @@
       "wins": 0.0,
       "win_rate": "0.0%"
     },
-    "hohanguyen2451": {
+    "hồ hà nguyễn": {
+      "player_id": "3509",
       "elo": 1167,
       "rank": "-",
       "tier": "unassigned",
@@ -912,6 +1003,7 @@
       "win_rate": "0.0%"
     },
     "magiczamboni": {
+      "player_id": "1356",
       "elo": 1167,
       "rank": "-",
       "tier": "unassigned",
@@ -922,6 +1014,7 @@
       "win_rate": "0.0%"
     },
     "jonismiff": {
+      "player_id": "76",
       "elo": 1167,
       "rank": "-",
       "tier": "unassigned",
@@ -932,6 +1025,7 @@
       "win_rate": "0.0%"
     },
     "mwalt92": {
+      "player_id": "458",
       "elo": 1167,
       "rank": "-",
       "tier": "unassigned",
@@ -941,7 +1035,8 @@
       "wins": 0.0,
       "win_rate": "0.0%"
     },
-    "anokaypotato-4405": {
+    "anokaypotato": {
+      "player_id": "2762",
       "elo": 1167,
       "rank": "-",
       "tier": "unassigned",
@@ -952,6 +1047,7 @@
       "win_rate": "0.0%"
     },
     "fajfar": {
+      "player_id": "2201",
       "elo": 1167,
       "rank": "-",
       "tier": "unassigned",
@@ -962,6 +1058,7 @@
       "win_rate": "0.0%"
     },
     "pooge": {
+      "player_id": "173",
       "elo": 1167,
       "rank": "-",
       "tier": "squirrel",
@@ -972,6 +1069,7 @@
       "win_rate": "18.8%"
     },
     "radiantchaos": {
+      "player_id": "199",
       "elo": 1167,
       "rank": "-",
       "tier": "unassigned",
@@ -982,6 +1080,7 @@
       "win_rate": "0.0%"
     },
     "coola101": {
+      "player_id": "2399",
       "elo": 1166,
       "rank": "-",
       "tier": "unassigned",
@@ -991,7 +1090,8 @@
       "wins": 0.0,
       "win_rate": "0.0%"
     },
-    "dark_owl": {
+    "dark owl": {
+      "player_id": "2759",
       "elo": 1166,
       "rank": "-",
       "tier": "unassigned",
@@ -1002,6 +1102,7 @@
       "win_rate": "0.0%"
     },
     "rondamgemas": {
+      "player_id": "2405",
       "elo": 1166,
       "rank": "-",
       "tier": "unassigned",
@@ -1012,6 +1113,7 @@
       "win_rate": "0.0%"
     },
     "catzador": {
+      "player_id": "3483",
       "elo": 1166,
       "rank": "-",
       "tier": "unassigned",
@@ -1021,7 +1123,8 @@
       "wins": 0.0,
       "win_rate": "0.0%"
     },
-    "kernel": {
+    "kernel_": {
+      "player_id": "1514",
       "elo": 1166,
       "rank": "-",
       "tier": "unassigned",
@@ -1031,7 +1134,8 @@
       "wins": 0.0,
       "win_rate": "0.0%"
     },
-    "beans8201": {
+    "house addict": {
+      "player_id": "3012",
       "elo": 1166,
       "rank": "-",
       "tier": "unassigned",
@@ -1041,7 +1145,8 @@
       "wins": 0.0,
       "win_rate": "0.0%"
     },
-    "powerful_dragon_23094": {
+    "cua": {
+      "player_id": "2400",
       "elo": 1165,
       "rank": "-",
       "tier": "unassigned",
@@ -1051,7 +1156,8 @@
       "wins": 0.0,
       "win_rate": "0.0%"
     },
-    "quents1493": {
+    "quents": {
+      "player_id": "3013",
       "elo": 1165,
       "rank": "-",
       "tier": "unassigned",
@@ -1062,6 +1168,7 @@
       "win_rate": "0.0%"
     },
     "iceecream": {
+      "player_id": "1415",
       "elo": 1165,
       "rank": "-",
       "tier": "unassigned",
@@ -1072,6 +1179,7 @@
       "win_rate": "0.0%"
     },
     "turmoilbyrd": {
+      "player_id": "320",
       "elo": 1165,
       "rank": "-",
       "tier": "unassigned",
@@ -1081,7 +1189,8 @@
       "wins": 0.0,
       "win_rate": "0.0%"
     },
-    "niasdias": {
+    "dias": {
+      "player_id": "1574",
       "elo": 1165,
       "rank": "-",
       "tier": "unassigned",
@@ -1092,6 +1201,7 @@
       "win_rate": "0.0%"
     },
     "kingluiginl": {
+      "player_id": "40",
       "elo": 1164,
       "rank": "-",
       "tier": "unassigned",
@@ -1102,6 +1212,7 @@
       "win_rate": "0.0%"
     },
     "idyll": {
+      "player_id": "2526",
       "elo": 1164,
       "rank": "-",
       "tier": "unassigned",
@@ -1112,6 +1223,7 @@
       "win_rate": "0.0%"
     },
     "pwarren8590": {
+      "player_id": "125",
       "elo": 1164,
       "rank": "-",
       "tier": "unassigned",
@@ -1122,6 +1234,7 @@
       "win_rate": "12.5%"
     },
     "sharkat": {
+      "player_id": "3527",
       "elo": 1164,
       "rank": "-",
       "tier": "unassigned",
@@ -1132,6 +1245,7 @@
       "win_rate": "0.0%"
     },
     "benssoon": {
+      "player_id": "1538",
       "elo": 1164,
       "rank": "-",
       "tier": "unassigned",
@@ -1142,6 +1256,7 @@
       "win_rate": "0.0%"
     },
     "kylobot": {
+      "player_id": "776",
       "elo": 1164,
       "rank": "-",
       "tier": "unassigned",
@@ -1152,6 +1267,7 @@
       "win_rate": "0.0%"
     },
     "batmaster": {
+      "player_id": "2644",
       "elo": 1164,
       "rank": "-",
       "tier": "unassigned",
@@ -1162,6 +1278,7 @@
       "win_rate": "0.0%"
     },
     "punkstarman": {
+      "player_id": "539",
       "elo": 1163,
       "rank": "-",
       "tier": "unassigned",
@@ -1171,7 +1288,8 @@
       "wins": 0.0,
       "win_rate": "0.0%"
     },
-    "g7asan": {
+    "hasan": {
+      "player_id": "2402",
       "elo": 1163,
       "rank": "-",
       "tier": "unassigned",
@@ -1181,7 +1299,8 @@
       "wins": 0.0,
       "win_rate": "0.0%"
     },
-    "luengi": {
+    "matthijs": {
+      "player_id": "3493",
       "elo": 1163,
       "rank": "-",
       "tier": "unassigned",
@@ -1192,6 +1311,7 @@
       "win_rate": "0.0%"
     },
     "stephkuriboh": {
+      "player_id": "343",
       "elo": 1162,
       "rank": "-",
       "tier": "unassigned",
@@ -1202,6 +1322,7 @@
       "win_rate": "0.0%"
     },
     "rabbitwarlord": {
+      "player_id": "349",
       "elo": 1161,
       "rank": "-",
       "tier": "unassigned",
@@ -1211,7 +1332,8 @@
       "wins": 1.0,
       "win_rate": "12.5%"
     },
-    "flowercardianwillow": {
+    "malleable frog": {
+      "player_id": "3414",
       "elo": 1160,
       "rank": "-",
       "tier": "unassigned",
@@ -1221,7 +1343,8 @@
       "wins": 0.0,
       "win_rate": "0.0%"
     },
-    "lilacteddybear": {
+    "lilac teddy bear": {
+      "player_id": "3440",
       "elo": 1160,
       "rank": "-",
       "tier": "unassigned",
@@ -1232,6 +1355,7 @@
       "win_rate": "0.0%"
     },
     "magicdream": {
+      "player_id": "1852",
       "elo": 1159,
       "rank": "-",
       "tier": "unassigned",
@@ -1242,6 +1366,7 @@
       "win_rate": "0.0%"
     },
     "plasma": {
+      "player_id": "1953",
       "elo": 1159,
       "rank": "-",
       "tier": "unassigned",
@@ -1251,7 +1376,8 @@
       "wins": 0.0,
       "win_rate": "0.0%"
     },
-    "eulers_fool": {
+    "euler's fool": {
+      "player_id": "2520",
       "elo": 1157,
       "rank": "-",
       "tier": "unassigned",
@@ -1262,6 +1388,7 @@
       "win_rate": "11.1%"
     },
     "salo_solomon": {
+      "player_id": "318",
       "elo": 1153,
       "rank": "-",
       "tier": "unassigned",
@@ -1272,6 +1399,7 @@
       "win_rate": "0.0%"
     },
     "pheobii": {
+      "player_id": "2392",
       "elo": 1146,
       "rank": "-",
       "tier": "unassigned",
@@ -1281,7 +1409,8 @@
       "wins": 0.0,
       "win_rate": "0.0%"
     },
-    "lesslobster": {
+    "lobster (gmt-4)(indiana)": {
+      "player_id": "2450",
       "elo": 1145,
       "rank": "-",
       "tier": "squirrel",
@@ -1291,7 +1420,8 @@
       "wins": 1.0,
       "win_rate": "9.1%"
     },
-    "drseal": {
+    "dr. seal": {
+      "player_id": "2825",
       "elo": 1144,
       "rank": "-",
       "tier": "unassigned",
@@ -1302,6 +1432,7 @@
       "win_rate": "0.0%"
     },
     "marcusthecat": {
+      "player_id": "25",
       "elo": 1143,
       "rank": "-",
       "tier": "unassigned",
@@ -1311,7 +1442,8 @@
       "wins": 0.0,
       "win_rate": "0.0%"
     },
-    "gmoa": {
+    "cookies": {
+      "player_id": "2761",
       "elo": 1141,
       "rank": "-",
       "tier": "squirrel",
@@ -1321,7 +1453,8 @@
       "wins": 1.0,
       "win_rate": "10.0%"
     },
-    "hurple0": {
+    "hurple": {
+      "player_id": "2774",
       "elo": 1140,
       "rank": "-",
       "tier": "unassigned",
@@ -1332,6 +1465,7 @@
       "win_rate": "0.0%"
     },
     "fraaab": {
+      "player_id": "42",
       "elo": 1140,
       "rank": "-",
       "tier": "unassigned",
@@ -1341,7 +1475,8 @@
       "wins": 0.0,
       "win_rate": "0.0%"
     },
-    "calvinfun": {
+    "calvinfunfun": {
+      "player_id": "3250",
       "elo": 1139,
       "rank": "-",
       "tier": "unassigned",
@@ -1351,7 +1486,8 @@
       "wins": 0.0,
       "win_rate": "0.0%"
     },
-    "kvan": {
+    "kvan_": {
+      "player_id": "289",
       "elo": 1138,
       "rank": "-",
       "tier": "unassigned",
@@ -1362,6 +1498,7 @@
       "win_rate": "0.0%"
     },
     "militech2078": {
+      "player_id": "2404",
       "elo": 1138,
       "rank": "-",
       "tier": "unassigned",
@@ -1371,7 +1508,8 @@
       "wins": 0.0,
       "win_rate": "0.0%"
     },
-    "malefic7m": {
+    "schnaga": {
+      "player_id": "248",
       "elo": 1128,
       "rank": "-",
       "tier": "squirrel",
@@ -1381,7 +1519,8 @@
       "wins": 1.0,
       "win_rate": "6.2%"
     },
-    "6requiem": {
+    "requiem": {
+      "player_id": "2457",
       "elo": 1126,
       "rank": "-",
       "tier": "unassigned",
@@ -1391,7 +1530,8 @@
       "wins": 0.0,
       "win_rate": "0.0%"
     },
-    "riverman": {
+    "riverman(luigi)": {
+      "player_id": "1295",
       "elo": 1121,
       "rank": "-",
       "tier": "unassigned",
@@ -1401,7 +1541,8 @@
       "wins": 0.0,
       "win_rate": "0.0%"
     },
-    "starhardfishrinse": {
+    "starhard_fishrinse": {
+      "player_id": "645",
       "elo": 1118,
       "rank": "-",
       "tier": "unassigned",
@@ -1412,6 +1553,7 @@
       "win_rate": "0.0%"
     },
     "mentalmendel": {
+      "player_id": "2519",
       "elo": 1094,
       "rank": "-",
       "tier": "squirrel",
