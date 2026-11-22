@@ -1,9 +1,9 @@
-name: Update Rootelo DEV Mirror (Future)
+name: Update Rootelo DEV Mirror
 
 on:
   push:
     branches:
-      - future
+      - dev
   workflow_dispatch:
     inputs:
       target:
@@ -14,6 +14,10 @@ on:
         options:
           - dev
           - test
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
@@ -43,6 +47,7 @@ jobs:
         env:
           PYTHONHASHSEED: "0"
           API_TOKEN: ${{ secrets.API_TOKEN }}
+          SITE_BASE_URL: ${{ inputs.target == 'test' && 'https://tricholome.github.io/rootelo-test' || 'https://tricholome.github.io/rootelo-dev' }}
         run: |
           python src/main.py --league rdl
           mkdir -p build_site
@@ -54,6 +59,7 @@ jobs:
       - name: Build HOOT League
         env:
           ROOTDB_TOKEN: ${{ secrets.ROOTDB_TOKEN }}
+          SITE_BASE_URL: ${{ inputs.target == 'test' && 'https://tricholome.github.io/rootelo-test' || 'https://tricholome.github.io/rootelo-dev' }}
         run: |
           python src/main.py --league hoot
           cp -r hoot build_site/
