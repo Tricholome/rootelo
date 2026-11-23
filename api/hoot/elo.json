@@ -1,21 +1,10 @@
 {
-  "updated_at": "2026-11-22 21:47 UTC",
+  "updated_at": "2026-11-23 00:27 UTC",
   "players": {
-    "uwtron": {
-      "player_id": "1629",
-      "elo": 1367,
-      "rank": 1,
-      "tier": "rabbit",
-      "bg_color": "#F2C14E",
-      "icon_url": "https://tricholome.github.io/rootelo/assets/icons/rabbit.webp",
-      "games": 22,
-      "wins": 12.0,
-      "win_rate": "54.5%"
-    },
     "wyvernelement": {
       "player_id": "956",
       "elo": 1365,
-      "rank": 2,
+      "rank": 1,
       "tier": "rabbit",
       "bg_color": "#F2C14E",
       "icon_url": "https://tricholome.github.io/rootelo/assets/icons/rabbit.webp",
@@ -26,13 +15,24 @@
     "bw": {
       "player_id": "326",
       "elo": 1359,
-      "rank": 3,
+      "rank": 2,
       "tier": "rabbit",
       "bg_color": "#F2C14E",
       "icon_url": "https://tricholome.github.io/rootelo/assets/icons/rabbit.webp",
       "games": 54,
       "wins": 26.0,
       "win_rate": "48.1%"
+    },
+    "uwtron": {
+      "player_id": "1629",
+      "elo": 1357,
+      "rank": 3,
+      "tier": "rabbit",
+      "bg_color": "#F2C14E",
+      "icon_url": "https://tricholome.github.io/rootelo/assets/icons/rabbit.webp",
+      "games": 23,
+      "wins": 12.0,
+      "win_rate": "52.2%"
     },
     "jazmorow": {
       "player_id": "3530",
@@ -45,17 +45,6 @@
       "wins": 4.0,
       "win_rate": "100.0%"
     },
-    "slaith": {
-      "player_id": "1320",
-      "elo": 1332,
-      "rank": 4,
-      "tier": "rabbit",
-      "bg_color": "#F2C14E",
-      "icon_url": "https://tricholome.github.io/rootelo/assets/icons/rabbit.webp",
-      "games": 15,
-      "wins": 8.0,
-      "win_rate": "53.3%"
-    },
     "schkitz": {
       "player_id": "2047",
       "elo": 1322,
@@ -66,6 +55,17 @@
       "games": 8,
       "wins": 5.0,
       "win_rate": "62.5%"
+    },
+    "slaith": {
+      "player_id": "1320",
+      "elo": 1321,
+      "rank": 4,
+      "tier": "rabbit",
+      "bg_color": "#F2C14E",
+      "icon_url": "https://tricholome.github.io/rootelo/assets/icons/rabbit.webp",
+      "games": 16,
+      "wins": 8.0,
+      "win_rate": "50.0%"
     },
     "talleyrand19": {
       "player_id": "134",
@@ -99,6 +99,17 @@
       "games": 17,
       "wins": 7.0,
       "win_rate": "41.2%"
+    },
+    "ssss": {
+      "player_id": "3534",
+      "elo": 1299,
+      "rank": "-",
+      "tier": "unassigned",
+      "bg_color": null,
+      "icon_url": null,
+      "games": 4,
+      "wins": 3.0,
+      "win_rate": "75.0%"
     },
     "meryn": {
       "player_id": "325",
@@ -144,17 +155,6 @@
       "wins": 5.0,
       "win_rate": "38.5%"
     },
-    "nadav253": {
-      "player_id": "317",
-      "elo": 1275,
-      "rank": 10,
-      "tier": "mouse",
-      "bg_color": "#F49E52",
-      "icon_url": "https://tricholome.github.io/rootelo/assets/icons/mouse.webp",
-      "games": 13,
-      "wins": 6.0,
-      "win_rate": "46.2%"
-    },
     "coyote": {
       "player_id": "44",
       "elo": 1273,
@@ -165,6 +165,17 @@
       "games": 6,
       "wins": 3.0,
       "win_rate": "50.0%"
+    },
+    "nadav253": {
+      "player_id": "317",
+      "elo": 1267,
+      "rank": 10,
+      "tier": "mouse",
+      "bg_color": "#F49E52",
+      "icon_url": "https://tricholome.github.io/rootelo/assets/icons/mouse.webp",
+      "games": 14,
+      "wins": 6.0,
+      "win_rate": "42.9%"
     },
     "extortionator (aus)": {
       "player_id": "2839",
@@ -220,17 +231,6 @@
       "games": 17,
       "wins": 6.0,
       "win_rate": "35.3%"
-    },
-    "ssss": {
-      "player_id": "3534",
-      "elo": 1258,
-      "rank": "-",
-      "tier": "unassigned",
-      "bg_color": null,
-      "icon_url": null,
-      "games": 3,
-      "wins": 2.0,
-      "win_rate": "66.7%"
     },
     "trippingrannys": {
       "player_id": "311",
