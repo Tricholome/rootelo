@@ -39,7 +39,7 @@ jobs:
           PYTHONHASHSEED: "0"
           ROOTDB_TOKEN: ${{ secrets.ROOTDB_TOKEN }}
           SITE_BASE_URL: https://tricholome.github.io/hoot-lab
-       run: |
+        run: |
           python src/main.py --all
           mkdir -p build_site
           cp *.html build_site/ 2>/dev/null || true
