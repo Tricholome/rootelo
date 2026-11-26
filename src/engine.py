@@ -302,13 +302,13 @@ def fetch_raw_matches(
                 if created_at is not None:
                     match_row['Date_Created'] = created_at
                 if 'turn_timing' in m:
-                    raw_turn = p.get('turn_order')
-                    if raw_turn is not None:
-                        try:
-                            match_row['Turn_Order'] = int(raw_turn)
-                        except (TypeError, ValueError):
-                            pass
                     match_row['Turn_Timing'] = m.get('turn_timing')
+                raw_turn = p.get('turn_order')
+                if raw_turn is not None:
+                    try:
+                        match_row['Turn_Order'] = int(raw_turn)
+                    except (TypeError, ValueError):
+                        pass
 
                 raw_data.append(match_row)
 
@@ -649,7 +649,7 @@ def compute_season_elo(
         for pid in inactive_players:
             player_history[pid].append(["Final", round(elo_ratings[pid]), None])
 
-min_games = qualification_config['min_games']
+    min_games = qualification_config['min_games']
     window_days = qualification_config['window_days']
     rank_squirrels = qualification_config['rank_squirrels']
 
