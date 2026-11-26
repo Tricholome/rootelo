@@ -14,6 +14,11 @@
     "endpoint": "https://www.therootdatabase.com/api/games/?elo_system=hoot-rankings&page_size=500",
     "token_env_var": "ROOTDB_TOKEN"
   },
+  "qualification": {
+    "min_games": 10,
+    "window_days": null,
+    "min_elo": 1200
+  },
   "k_factor": {
     "k_floor": 25.0,
     "k_start": 50.0,
@@ -21,11 +26,6 @@
     "k_cap_new": 50.0,
     "k_cap_ranked": 50.0,
     "t_inactivity": 90
-  },
-  "qualification": {
-    "min_games": 10,
-    "window_days": null,
-    "min_elo": 1200
   },
   "network": {
     "enabled": false
