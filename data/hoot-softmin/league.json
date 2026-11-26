@@ -1,0 +1,33 @@
+{
+  "slug": "hoot-softmin",
+  "name": "HOOT • Softmin",
+  "enabled": true,
+  "is_default": false,
+  "order": 4,
+  "output_dir": "hoot-softmin",
+  "current_season_tag": "HOOT 2",
+  "profile_base_url": "https://www.therootdatabase.com/profile",
+  "profile_format_replace_chars": false,
+  "match_base_url": "https://www.therootdatabase.com/game",
+  "api": {
+    "auth_prefix": "Api-Key",
+    "endpoint": "https://www.therootdatabase.com/api/games/?elo_system=hoot-rankings&page_size=500",
+    "token_env_var": "ROOTDB_TOKEN"
+  },
+  "k_factor": {
+    "k_floor": 20.1,
+    "k_start": 115.0,
+    "exp_decay": 41.0,
+    "k_cap_new": 200.0,
+    "k_cap_ranked": 200.0,
+    "t_inactivity": null
+  },
+  "elo_model": {
+    "seat_effects": [32, 7, -20, -19],
+    "field_T": -265.0,
+    "luck_lambda": 0.343,
+    "luck_mode": "prediction_only",
+    "normalize_scores": true
+  },
+  "network": { "enabled": false }
+}
