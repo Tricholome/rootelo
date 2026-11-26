@@ -18,7 +18,7 @@
     "min_games": 10,
     "window_days": 90,
     "min_elo": null
-  }
+  },
   "k_factor": {
     "k_floor": 13.2,
     "k_start": 79.0,
