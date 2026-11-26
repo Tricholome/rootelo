@@ -924,6 +924,7 @@ $(document).ready(function() {
 
 $(document).ready(function () {
     const config = window.NETWORK_CONFIG || {};
+	const prefix = (typeof PATH_PREFIX !== 'undefined') ? PATH_PREFIX : '';
     const rawConstellations = window.PLAYER_CONSTELLATIONS || {};
     const constellations = rawConstellations.players || rawConstellations;
     const { same_tribe, other_tribe, unaligned } = config.colors || {};
@@ -1160,8 +1161,12 @@ $(document).ready(function () {
                 selectedTribeId === d.id ? 'is-selected' : ''
             ].filter(Boolean).join(' '))
             .style('--node-color', d => d.color || null);
-
-        node.select('.node-icon').attr('href', d => d.type === 'tribe' ? (config.tribes?.[d.id]?.icon || '') : null);
+		
+		node.select('.node-icon').attr('href', d => {
+			if (d.type !== 'tribe') return null;
+			const raw = config.tribes?.[d.id]?.icon;
+			return raw ? `${prefix}${raw}` : null;
+		});
         node.select('.num-span').text(d => d.count ?? '');
         node.select('.lbl-span').text(d => ` ${d.count === 1 ? 'denizen' : 'denizens'}`);
         node.select('.player-name-tspan').text(d => d.name || '');
@@ -1484,14 +1489,15 @@ $(document).ready(function () {
             const latest = validMilestones[validMilestones.length - 1];
             const isAlive = (snapshots[dates[refIndex]]?.[tribe]?.length > 0);
 
-            events.push({
-                tribe,
-                foundingIdx: life.firstIndex,
-                idx: latest.idx,
-                label: latest.label,
-                isDissolved: !isAlive,
-                icon: config.tribes?.[tribe]?.icon || ''
-            });
+            const rawIcon = config.tribes?.[tribe]?.icon || '';
+			events.push({
+				tribe,
+				foundingIdx: life.firstIndex,
+				idx: latest.idx,
+				label: latest.label,
+				isDissolved: !isAlive,
+				icon: rawIcon ? `${prefix}${rawIcon}` : ''
+			});
         });
 
         return events.sort((a, b) => a.foundingIdx - b.foundingIdx || a.tribe.localeCompare(b.tribe));
@@ -1611,13 +1617,14 @@ $(document).ready(function () {
                 : history.map(s => {
                     const start = formatShortDate(s.startDate), end = formatShortDate(s.endDate);
                     const label = s.isCurrent ? `since ${start}` : (s.startDate === s.endDate ? start : `${start} &ndash; ${end}`);
-                    return badgeButtonHtml({
-                        tribe: s.tribe,
-                        dateIndex: s.startIndex,
-                        label,
-                        isCurrent: s.isCurrent,
-                        icon: config.tribes?.[s.tribe]?.icon
-                    });
+                    const rawBadgeIcon = config.tribes?.[s.tribe]?.icon || '';
+					return badgeButtonHtml({
+						tribe: s.tribe,
+						dateIndex: s.startIndex,
+						label,
+						isCurrent: s.isCurrent,
+						icon: rawBadgeIcon ? `${prefix}${rawBadgeIcon}` : ''
+					});
                 }).join('');
             $ledger.html(`<div class="hud-title">Allegiances</div>${badges}`);
             return;
