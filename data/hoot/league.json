@@ -22,6 +22,11 @@
     "k_cap_ranked": 50.0,
     "t_inactivity": 90
   },
+  "qualification": {
+    "min_games": 10,
+    "window_days": null,
+    "min_elo": 1200
+  },
   "network": {
     "enabled": false
   }
