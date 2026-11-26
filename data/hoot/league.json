@@ -17,7 +17,7 @@
   "qualification": {
     "min_games": 10,
     "window_days": null,
-    "rank_squirrels": true
+    "rank_squirrels": false
   },
   "k_factor": {
     "k_floor": 25.0,
