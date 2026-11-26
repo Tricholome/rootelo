@@ -112,7 +112,15 @@ def load_all_league_configs():
                     cfg["slug"] = slug
                     configs[slug] = cfg
 
-    return configs
+    sorted_items = sorted(
+        configs.items(),
+        key=lambda item: (
+            0 if item[1].get("is_default") else 1,
+            item[1].get("order", 99),
+            item[0],
+        ),
+    )
+    return dict(sorted_items)
 
 
 # =========================================================================
@@ -213,6 +221,8 @@ def get_match_url(match_id, league_config):
 # --- 4. API FETCHING, CORRECTIONS & ARCHIVES ---
 # =========================================================================
 
+_RAW_MATCHES_CACHE = {}
+
 def fetch_raw_matches(
     league_config,
     tournament_id=None,
@@ -234,6 +244,10 @@ def fetch_raw_matches(
     endpoint = api_cfg.get('endpoint') or (f"{base_url}/api/match/" if base_url else "")
 
     t_id = tournament_id or api_cfg.get('tournament_id')
+    cache_key = (endpoint, t_id, is_legacy)
+    if endpoint and cache_key in _RAW_MATCHES_CACHE:
+        Logger.step(f"Reusing cached API matches for {league_name}.")
+        return _RAW_MATCHES_CACHE[cache_key]
     params = {'limit': 500}
     if t_id:
         params['tournament'] = t_id
@@ -291,12 +305,20 @@ def fetch_raw_matches(
                 if created_at is not None:
                     match_row['Date_Created'] = created_at
                 if 'turn_timing' in m:
+                    raw_turn = p.get('turn_order')
+                    if raw_turn is not None:
+                        try:
+                            match_row['Turn_Order'] = int(raw_turn)
+                        except (TypeError, ValueError):
+                            pass
                     match_row['Turn_Timing'] = m.get('turn_timing')
 
                 raw_data.append(match_row)
 
     unique_matches_count = len({m['GameID'] for m in raw_data})
     Logger.step(f"{unique_matches_count} matches retrieved from API.")
+    if endpoint:
+        _RAW_MATCHES_CACHE[cache_key] = raw_data
     return raw_data
 
 
@@ -431,6 +453,80 @@ def _serialize_timestamp(val):
         return val.isoformat()
     return str(val)
 
+def _compute_match_updates(match_participants, elo_ratings, elo_model):
+    """Computes per-player Elo update steps u_i and scores for a 4-player match."""
+    n = len(match_participants)
+    c = math.log(10.0) / 400.0
+
+    raw_scores = [float(p['Score']) for p in match_participants]
+    if elo_model.get('normalize_scores', False):
+        total_score = sum(raw_scores)
+        scores = [s / total_score for s in raw_scores] if total_score > 0 else raw_scores
+    else:
+        scores = raw_scores
+
+    seat_effects = elo_model.get('seat_effects')
+    x = []
+    for p in match_participants:
+        r = elo_ratings[p['PlayerID']]
+        seat_bonus = 0.0
+        if seat_effects and len(seat_effects) == 4:
+            seat = p.get('Turn_Order')
+            if seat is not None and not pd.isna(seat):
+                seat_idx = int(seat) - 1
+                if 0 <= seat_idx < 4:
+                    seat_bonus = float(seat_effects[seat_idx])
+        x.append(r + seat_bonus)
+
+    field_T = elo_model.get('field_T')
+    weights = None
+    if field_T is not None and n > 1:
+        T = float(field_T)
+        z = []
+        weights = [[0.0] * n for _ in range(n)]
+        for i in range(n):
+            opp_indices = [j for j in range(n) if j != i]
+            scaled = [x[j] / T for j in opp_indices]
+            max_s = max(scaled)
+            exps = [math.exp(s - max_s) for s in scaled]
+            sum_exps = sum(exps)
+            field_i = T * (max_s + math.log(sum_exps / len(opp_indices)))
+            z.append(0.75 * c * (x[i] - field_i))
+            for idx, j in enumerate(opp_indices):
+                weights[i][j] = exps[idx] / sum_exps
+    else:
+        z = [c * xi for xi in x]
+
+    max_z = max(z)
+    exp_z = [math.exp(zi - max_z) for zi in z]
+    sum_exp_z = sum(exp_z)
+    q = [ez / sum_exp_z for ez in exp_z]
+
+    lam = float(elo_model.get('luck_lambda', 0.0))
+    luck_mode = elo_model.get('luck_mode', 'prediction_only')
+    p_pred = [lam / n + (1.0 - lam) * qi for qi in q] if lam > 0 else q
+
+    if lam > 0 and luck_mode == 'expected':
+        v = [scores[i] - p_pred[i] for i in range(n)]
+    elif lam > 0 and luck_mode == 'gradient':
+        w = [
+            (scores[i] * (1.0 - lam) * q[i] / p_pred[i]) if p_pred[i] > 0 else 0.0
+            for i in range(n)
+        ]
+        sum_w = sum(w)
+        v = [w[i] - q[i] * sum_w for i in range(n)]
+    else:
+        v = [scores[i] - q[i] for i in range(n)]
+
+    if weights is not None:
+        u = [
+            0.75 * (v[j] - sum(v[i] * weights[i][j] for i in range(n)))
+            for j in range(n)
+        ]
+    else:
+        u = v
+
+    return u, scores
 
 def compute_season_elo(
     df,
@@ -470,14 +566,14 @@ def compute_season_elo(
             current_dt = pd.to_datetime(match_participants[0]['Date_Closed'])
             current_date = current_dt.strftime('%Y-%m-%d')
 
-            q_scores = {p['PlayerID']: 10 ** (elo_ratings[p['PlayerID']] / 400) for p in match_participants}
-            total_q = sum(q_scores.values())
+            update_steps, effective_scores = _compute_match_updates(
+                match_participants, elo_ratings, elo_model or {}
+            )
 
             deltas_this_match = {}
-            for p in match_participants:
+            for idx, p in enumerate(match_participants):
                 pid = p['PlayerID']
-                actual = p['Score']
-                expected = q_scores[pid] / total_q
+                actual = effective_scores[idx]
 
                 g_count = player_stats[pid]['games']
                 last_dt = player_stats[pid]['last_date']
@@ -486,7 +582,7 @@ def compute_season_elo(
                     g_count, last_dt, current_dt, k_config,
                     is_ranked=is_ranked, is_legacy=is_legacy
                 )
-                change = k * (actual - expected)
+                change = k * update_steps[idx]
 
                 elo_ratings[pid] += change
                 last_diff[pid] = change
