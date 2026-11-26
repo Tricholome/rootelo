@@ -537,6 +537,7 @@ def compute_season_elo(
     is_legacy=False,
     rebalance=False,
     serialize_dates=False,
+    elo_model=None,
 ):
     elo_ratings = dict(inherited_elo)
     inherited_ids = set(inherited_elo.keys())
