@@ -158,9 +158,8 @@ class PlayerRegistry:
             return raw.replace('+', '-').replace('#', '-')
         return raw
 
-
-def get_tier_name(rating, games):
-    if games < 10:
+def get_tier_name(rating, is_qualified=True):
+    if not is_qualified:
         return "unassigned"
     r = round(rating)
     for threshold, tier in TIER_THRESHOLDS:
@@ -653,6 +652,7 @@ def compute_season_elo(
     min_elo = qualification_config['min_elo']
     window_days = qualification_config['window_days']
 
+    window_start = None
     if window_days is not None:
         ref_dt = pd.to_datetime(cutoff_date, utc=True) + pd.Timedelta(days=1)
         window_start = ref_dt - pd.Timedelta(days=window_days)
@@ -663,25 +663,28 @@ def compute_season_elo(
         display_elo = round(rating)
         diff = round(last_diff[pid])
 
-        if window_days is not None:
+        if window_start is not None:
             qualifying_games = sum(1 for d in player_match_dates[pid] if d >= window_start)
         else:
             qualifying_games = s['games']
 
-        is_qual = qualifying_games >= min_games
+        has_tier = qualifying_games >= min_games
+        tier = get_tier_name(rating, is_qualified=has_tier)
+        is_ranked = has_tier
         if min_elo is not None:
-            is_qual = is_qual and (display_elo >= min_elo)
+            is_ranked = is_ranked and (display_elo >= min_elo)
 
         leaderboard_list.append({
             'PlayerID': pid,
             'ELO': rating,
+            'Tier': tier,
             'Games': s['games'],
             'Recent_Games': qualifying_games,
             'Wins': s['wins'],
             'Win Rate': f"{(s['wins'] / s['games']):.1%}" if s['games'] > 0 else "0.0%",
             'Peak': round(peak_elo[pid]),
             'Last': f"+{diff}" if diff > 0 else str(diff),
-            'Qualified': is_qual
+            'Qualified': is_ranked
         })
 
     final_df = pd.DataFrame()
