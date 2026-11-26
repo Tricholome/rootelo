@@ -103,6 +103,7 @@ def run_league_pipeline(league_config, all_leagues_list):
         last_season_ranked_players=last_season_ranked_players,
         k_config=league_config.get('k_factor', {}),
         prev_season_tag=archive_seasons[-1] if archive_seasons else None,
+        elo_model=league_config.get('elo_model', {}),
     )
 
     elo_ratings = elo_result['elo_ratings']
