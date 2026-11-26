@@ -1,9 +1,10 @@
 {
   "slug": "hoot",
-  "name": "HOOT Rankings",
+  "name": "HOOT • Current",
   "enabled": true,
-  "is_default": false,
-  "output_dir": "hoot",
+  "is_default": true,
+  "output_dir": ".",
+  "order": 1,
   "current_season_tag": "HOOT 2",
   "profile_base_url": "https://www.therootdatabase.com/profile",
   "profile_format_replace_chars": false,
