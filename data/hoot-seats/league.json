@@ -16,8 +16,8 @@
   },
   "qualification": {
     "min_games": 10,
-    "window_days": 90,
-    "min_elo": null
+    "window_days": null,
+    "rank_squirrels": true
   },
   "k_factor": {
     "k_floor": 13.2,
