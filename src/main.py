@@ -59,7 +59,7 @@ def run_league_pipeline(league_config, all_leagues_list):
     corrections_file = os.path.join(data_dir, "corrections.csv")
 
     archive_seasons, archives_raw_data, inherited_elo, last_season_ranked_players = load_archives(
-        data_dir, current_season_tag
+        data_dir, current_season_tag, league_config['qualification']['min_games']
     )
     archived_player_ids = set(inherited_elo.keys())
 
