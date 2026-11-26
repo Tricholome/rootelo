@@ -20,5 +20,8 @@
     "k_cap_new": 50.0,
     "k_cap_ranked": 50.0,
     "t_inactivity": 90
+  },
+  "network": {
+    "enabled": false
   }
 }
