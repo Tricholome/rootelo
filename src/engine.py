@@ -132,9 +132,17 @@ class PlayerRegistry:
         self.filepath = filepath
         self.raw_map = load_json(filepath, {}) if filepath else {}
 
-    def register(self, player_id, raw_name):
-        if player_id is not None and raw_name:
-            self.raw_map[str(player_id)] = str(raw_name).strip()
+    def register(self, player_id, raw_name, display_name=None):
+        if player_id is None:
+            return
+        slug = str(raw_name).strip() if raw_name else ""
+        name = str(display_name).strip() if display_name else slug
+        if not slug and not name:
+            return
+        if name and slug and name != slug:
+            self.raw_map[str(player_id)] = {"slug": slug, "name": name}
+        else:
+            self.raw_map[str(player_id)] = slug or name
 
     def save(self):
         if self.filepath:
@@ -144,13 +152,19 @@ class PlayerRegistry:
         if player_id is None:
             return ""
         pid = str(player_id)
-        return self.raw_map.get(pid, pid)
+        entry = self.raw_map.get(pid, pid)
+        if isinstance(entry, dict):
+            return entry.get("slug") or entry.get("name") or pid
+        return entry
 
     def get_clean_name(self, player_id):
         if player_id is None:
             return ""
-        raw = self.get_raw_name(player_id)
-        return str(raw).split('+')[0].split('#')[0].strip()
+        pid = str(player_id)
+        entry = self.raw_map.get(pid, pid)
+        if isinstance(entry, dict):
+            return entry.get("name") or entry.get("slug") or pid
+        return str(entry).split('+')[0].split('#')[0].strip()
 
     def get_profile_slug(self, player_id, replace_chars=False):
         raw = self.get_raw_name(player_id)
@@ -290,12 +304,14 @@ def fetch_raw_matches(
 
             for p in participants:
                 pid = str(p.get('player_id') or p.get('player'))
-                raw_name = p.get('player_name') or p.get('player') or pid
+                raw_name = p.get('player') or pid
+                display_name = p.get('player_name') or raw_name
 
                 match_row = {
                     'GameID': m['id'],
                     'PlayerID': pid,
                     'Raw_Name': raw_name,
+                    'Display_Name': display_name,
                     'Score': float(p.get('tournament_score', 0.0)),
                     'Date_Closed': m.get('date_closed'),
                 }
