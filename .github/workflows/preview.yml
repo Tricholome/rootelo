@@ -1,19 +1,10 @@
-name: 02. Deploy • Preview
+name: 02. Deploy • HOOT Lab
 
 on:
   push:
     branches:
-      - dev
+      - hoot-lab
   workflow_dispatch:
-    inputs:
-      target:
-        description: 'Target repository for deployment'
-        required: true
-        type: choice
-        default: 'dev'
-        options:
-          - dev
-          - test
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -43,32 +34,24 @@ jobs:
         run: |
           pip install -r requirements.txt
 
-      - name: Build RDL League
+      - name: Build HOOT Lab Models
         env:
           PYTHONHASHSEED: "0"
-          API_TOKEN: ${{ secrets.API_TOKEN }}
-          SITE_BASE_URL: ${{ inputs.target == 'test' && 'https://tricholome.github.io/rootelo-test' || 'https://tricholome.github.io/rootelo-dev' }}
+          ROOTDB_TOKEN: ${{ secrets.ROOTDB_TOKEN }}
+          SITE_BASE_URL: https://tricholome.github.io/hoot-lab
         run: |
-          python src/main.py --league rdl
+          python src/main.py --all
           mkdir -p build_site
           cp *.html build_site/
+          cp -r hoot-* build_site/
           cp -r static build_site/
           cp -r assets build_site/
           cp -r api build_site/
 
-      - name: Build HOOT League
-        env:
-          ROOTDB_TOKEN: ${{ secrets.ROOTDB_TOKEN }}
-          SITE_BASE_URL: ${{ inputs.target == 'test' && 'https://tricholome.github.io/rootelo-test' || 'https://tricholome.github.io/rootelo-dev' }}
-        run: |
-          python src/main.py --league hoot
-          cp -r hoot build_site/
-          cp -r api build_site/
-
-      - name: Deploy to GitHub Pages mirror
+      - name: Deploy to HOOT Lab mirror
         uses: peaceiris/actions-gh-pages@v3
         with:
           personal_token: ${{ secrets.DEV_REPO_PAT }}
-          external_repository: ${{ inputs.target == 'test' && 'tricholome/rootelo-test' || 'tricholome/rootelo-dev' }}
+          external_repository: tricholome/hoot-lab
           publish_dir: ./build_site
           publish_branch: gh-pages
