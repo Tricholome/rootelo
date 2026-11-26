@@ -158,9 +158,7 @@ class PlayerRegistry:
             return raw.replace('+', '-').replace('#', '-')
         return raw
 
-def get_tier_name(rating, is_qualified=True):
-    if not is_qualified:
-        return "unassigned"
+def get_tier_name(rating):
     r = round(rating)
     for threshold, tier in TIER_THRESHOLDS:
         if r >= threshold:
@@ -648,38 +646,34 @@ def compute_season_elo(
         for pid in inactive_players:
             player_history[pid].append(["Final", round(elo_ratings[pid]), None])
 
-    min_games = qualification_config['min_games']
-    min_elo = qualification_config['min_elo']
+min_games = qualification_config['min_games']
     window_days = qualification_config['window_days']
+    rank_squirrels = qualification_config['rank_squirrels']
 
     window_start = None
     if window_days is not None:
-        ref_dt = pd.to_datetime(cutoff_date, utc=True) + pd.Timedelta(days=1)
-        window_start = ref_dt - pd.Timedelta(days=window_days)
+        window_start = pd.to_datetime(cutoff_date, utc=True) + pd.Timedelta(days=1 - window_days)
 
     leaderboard_list = []
     for pid, rating in elo_ratings.items():
         s = player_stats[pid]
-        display_elo = round(rating)
         diff = round(last_diff[pid])
 
-        if window_start is not None:
-            qualifying_games = sum(1 for d in player_match_dates[pid] if d >= window_start)
-        else:
-            qualifying_games = s['games']
+        qualifying_games = (
+            sum(1 for d in player_match_dates[pid] if d >= window_start)
+            if window_start is not None
+            else s['games']
+        )
 
         has_tier = qualifying_games >= min_games
-        tier = get_tier_name(rating, is_qualified=has_tier)
-        is_ranked = has_tier
-        if min_elo is not None:
-            is_ranked = is_ranked and (display_elo >= min_elo)
+        tier = get_tier_name(rating) if has_tier else "unassigned"
+        is_ranked = has_tier and (rank_squirrels or tier != "squirrel")
 
         leaderboard_list.append({
             'PlayerID': pid,
             'ELO': rating,
             'Tier': tier,
             'Games': s['games'],
-            'Recent_Games': qualifying_games,
             'Wins': s['wins'],
             'Win Rate': f"{(s['wins'] / s['games']):.1%}" if s['games'] > 0 else "0.0%",
             'Peak': round(peak_elo[pid]),
@@ -775,7 +769,7 @@ def extract_all_streaks(history, player_id, player_registry):
         date_str, elo_val = history[i][0], history[i][1]
         if "-" not in str(date_str):
             continue
-        tier_now = get_tier_name(elo_val, 11)
+        tier_now = get_tier_name(elo_val)
         if tier_now not in TIER_HIERARCHY:
             tier_now = None
 
