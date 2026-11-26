@@ -538,6 +538,8 @@ def compute_season_elo(
     rebalance=False,
     serialize_dates=False,
     elo_model=None,
+    qualification_config=None,
+    cutoff_date=None,
 ):
     elo_ratings = dict(inherited_elo)
     inherited_ids = set(inherited_elo.keys())
@@ -558,6 +560,7 @@ def compute_season_elo(
     }
 
     match_history_data = []
+    player_match_dates = {pid: [] for pid in elo_ratings}
 
     if not df.empty:
         for game_id, group in df.groupby('GameID', sort=False):
@@ -595,6 +598,7 @@ def compute_season_elo(
                 player_stats[pid]['games'] += 1
                 player_stats[pid]['wins'] += actual
                 player_stats[pid]['last_date'] = current_dt
+                player_match_dates[pid].append(current_dt)
 
                 player_history[pid].append([current_date, round(elo_ratings[pid]), int(game_id)])
 
@@ -645,20 +649,37 @@ def compute_season_elo(
         for pid in inactive_players:
             player_history[pid].append(["Final", round(elo_ratings[pid]), None])
 
+    min_games = qualification_config['min_games']
+    min_elo = qualification_config['min_elo']
+    window_days = qualification_config['window_days']
+
+    if window_days is not None:
+        ref_dt = pd.to_datetime(cutoff_date, utc=True) + pd.Timedelta(days=1)
+        window_start = ref_dt - pd.Timedelta(days=window_days)
+
     leaderboard_list = []
     for pid, rating in elo_ratings.items():
-        s = player_stats.get(pid, {'wins': 0, 'games': 0})
+        s = player_stats[pid]
         display_elo = round(rating)
-        diff = round(last_diff.get(pid, 0))
-        is_qual = (s['games'] >= 10 and display_elo >= 1200)
+        diff = round(last_diff[pid])
+
+        if window_days is not None:
+            qualifying_games = sum(1 for d in player_match_dates[pid] if d >= window_start)
+        else:
+            qualifying_games = s['games']
+
+        is_qual = qualifying_games >= min_games
+        if min_elo is not None:
+            is_qual = is_qual and (display_elo >= min_elo)
 
         leaderboard_list.append({
             'PlayerID': pid,
             'ELO': rating,
             'Games': s['games'],
+            'Recent_Games': qualifying_games,
             'Wins': s['wins'],
             'Win Rate': f"{(s['wins'] / s['games']):.1%}" if s['games'] > 0 else "0.0%",
-            'Peak': round(peak_elo.get(pid, rating)),
+            'Peak': round(peak_elo[pid]),
             'Last': f"+{diff}" if diff > 0 else str(diff),
             'Qualified': is_qual
         })
