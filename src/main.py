@@ -72,7 +72,11 @@ def run_league_pipeline(league_config, all_leagues_list):
     raw_data = fetch_raw_matches(league_config)
 
     for item in raw_data:
-        player_registry.register(item.get('PlayerID'), item.get('Raw_Name'))
+        player_registry.register(
+            item.get('PlayerID'),
+            item.get('Raw_Name'),
+            item.get('Display_Name'),
+        )
     player_registry.save()
 
     df = prepare_matches_dataframe(raw_data, cutoff_date, corrections_path=corrections_file)
