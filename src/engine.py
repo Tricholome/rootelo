@@ -360,7 +360,7 @@ def prepare_matches_dataframe(raw_data, cutoff_date, corrections_path=None, is_l
     return df
 
 
-def load_archives(data_dir, current_season_tag):
+def load_archives(data_dir, current_season_tag, min_games):
     archives_dir = os.path.join(data_dir, "archives")
     archive_seasons = sorted([
         d for d in os.listdir(archives_dir)
@@ -390,7 +390,10 @@ def load_archives(data_dir, current_season_tag):
                 )
                 df_ratings['ELO'] = df_ratings['ELO'].round().astype(int)
             if 'Tier' not in df_ratings.columns:
-                df_ratings['Tier'] = None
+                df_ratings['Tier'] = df_ratings.apply(
+                    lambda r: get_tier_name(r['ELO']) if r['Games'] >= min_games else "unassigned",
+                    axis=1
+                )
 
         matches_list = load_json(os.path.join(season_archive_dir, "matches.json"), [])
         history = {str(k): v for k, v in load_json(os.path.join(season_archive_dir, "history.json"), {}).items()}
