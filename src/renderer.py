@@ -80,12 +80,12 @@ def format_relations_data(raw_relations, player_registry):
             "trophy": {
                 "name": player_registry.get_clean_name(t_id) if t_id else None,
                 "elo": t_elo,
-                "tier": get_tier_name(t_elo, 10) if t_elo != -1 else "unassigned"
+                "tier": get_tier_name(t_elo) if t_elo != -1 else "unassigned"
             },
             "bane": {
                 "name": player_registry.get_clean_name(b_id) if b_id else None,
                 "elo": b_elo,
-                "tier": get_tier_name(b_elo, 10) if b_elo != 99999 else "unassigned"
+                "tier": get_tier_name(b_elo) if b_elo != 99999 else "unassigned"
             }
         }
     return prepared
@@ -167,7 +167,7 @@ def prepare_leaderboard_data(df, player_registry, champion_ref=None, is_archive=
         clean_name = player_registry.get_clean_name(pid)
         is_champ = (champ_str is not None and (pid == champ_str or clean_name == clean_champ))
         rank_display = "♔" if (is_champ and is_archive) else row['Rank']
-        tier = "bear" if is_champ else get_tier_name(row['ELO'], row['Games'])
+        tier = "bear" if is_champ else row['Tier']
 
         data.append({
             'Rank': rank_display,
