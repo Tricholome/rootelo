@@ -59,7 +59,7 @@ def run_league_pipeline(league_config, all_leagues_list):
     corrections_file = os.path.join(data_dir, "corrections.csv")
 
     archive_seasons, archives_raw_data, inherited_elo, last_season_ranked_players = load_archives(
-        data_dir, current_season_tag
+        data_dir, current_season_tag, league_config['qualification']['min_games']
     )
     archived_player_ids = set(inherited_elo.keys())
 
@@ -72,7 +72,11 @@ def run_league_pipeline(league_config, all_leagues_list):
     raw_data = fetch_raw_matches(league_config)
 
     for item in raw_data:
-        player_registry.register(item.get('PlayerID'), item.get('Raw_Name'))
+        player_registry.register(
+            item.get('PlayerID'),
+            item.get('Raw_Name'),
+            item.get('Display_Name'),
+        )
     player_registry.save()
 
     df = prepare_matches_dataframe(raw_data, cutoff_date, corrections_path=corrections_file)
@@ -103,6 +107,9 @@ def run_league_pipeline(league_config, all_leagues_list):
         last_season_ranked_players=last_season_ranked_players,
         k_config=league_config.get('k_factor', {}),
         prev_season_tag=archive_seasons[-1] if archive_seasons else None,
+        elo_model=league_config.get('elo_model', {}),
+        qualification_config=league_config['qualification'],
+        cutoff_date=cutoff_date,
     )
 
     elo_ratings = elo_result['elo_ratings']
