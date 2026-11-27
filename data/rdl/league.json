@@ -14,6 +14,11 @@
     "base_url": "https://rootleague.pliskin.dev",
     "tournament_id": 27
   },
+  "qualification": {
+    "min_games": 10,
+    "window_days": null,
+    "rank_squirrels": false
+  },
   "k_factor": {
     "k_floor": 20.0,
     "k_start": 100.0,
