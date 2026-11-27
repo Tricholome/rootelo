@@ -13,6 +13,11 @@
     "endpoint": "https://www.therootdatabase.com/api/games/?elo_system=hoot-rankings&page_size=500",
     "token_env_var": "ROOTDB_TOKEN"
   },
+   "qualification": {
+    "min_games": 10,
+    "window_days": null,
+    "rank_squirrels": false
+  },
   "k_factor": {
     "k_floor": 25.0,
     "k_start": 50.0,
